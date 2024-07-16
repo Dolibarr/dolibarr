@@ -7,8 +7,9 @@ AllEMailings=تمام ای میلز
 MailCard=ای میل کارڈ
 MailRecipients=وصول کنندگان
 MailRecipient=وصول کنندہ
-MailTitle=تفصیل
+MailTitle=Label
 MailFrom=سے
+ForceEmailFrom=Default email From
 PhoneFrom=From
 MailErrorsTo=کی خرابیاں
 MailReply=کا جواب دیں
@@ -18,6 +19,8 @@ MailCC=میں کاپی کریں۔
 MailToCCUsers=صارفین کو کاپی کریں
 MailCCC=میں کیش شدہ کاپی
 MailTopic=ای میل کے موضوع
+MailDate=Email date
+MailReferences=Message IDs in References
 MailText=پیغام
 MailFile=منسلک فائلوں
 MailMessage=ای میل باڈی
@@ -30,7 +33,6 @@ NewSMSing=New smsing
 EditMailing=ای میل میں ترمیم کریں۔
 ResetMailing=ای میل دوبارہ بھیجیں۔
 DeleteMailing=ای میل کو حذف کریں۔
-DeleteAMailing=ایک ای میل کو حذف کریں۔
 PreviewMailing=ای میل کا پیش نظارہ کریں۔
 CreateMailing=ای میل بنائیں
 TestMailing=Test
@@ -111,6 +113,7 @@ MailNoChangePossible=تصدیق شدہ ای میل کے وصول کنندگان 
 SearchAMailing=میلنگ تلاش کریں۔
 SendMailing=ای میل بھیجیں۔
 SentBy=کی طرف سے بھیجا
+AdvancedAlternative=Advanced alternative
 MailingNeedCommand=ای میل بھیجنا کمانڈ لائن سے انجام دیا جاسکتا ہے۔ اپنے سرور کے منتظم سے تمام وصول کنندگان کو ای میل بھیجنے کے لیے درج ذیل کمانڈ شروع کرنے کو کہیں۔
 MailingNeedCommand2=تاہم آپ MAILING_LIMIT_SENDBYWEB پیرامیٹر شامل کرکے انہیں آن لائن بھیج سکتے ہیں جس کی قیمت آپ سیشن کے ذریعے بھیجنا چاہتے ہیں۔ اس کے لیے ہوم - سیٹ اپ - دیگر پر جائیں۔
 ConfirmSendingEmailing=اگر آپ اس اسکرین سے براہ راست ای میل بھیجنا چاہتے ہیں، تو براہ کرم تصدیق کریں کہ آپ کو یقین ہے کہ آپ ابھی اپنے براؤزر سے ای میل بھیجنا چاہتے ہیں؟
@@ -136,8 +139,8 @@ NoNotificationsWillBeSent=اس ایونٹ کی قسم اور کمپنی کے ل�
 ANotificationsWillBeSent=1 خودکار اطلاع بذریعہ ای میل بھیجی جائے گی۔
 SomeNotificationsWillBeSent=%s خودکار اطلاعات بذریعہ ای میل بھیجی جائیں گی۔
 AddNewNotification=ایک نئے خودکار ای میل نوٹیفکیشن کو سبسکرائب کریں (ٹارگٹ/ایونٹ)
-ListOfActiveNotifications=خودکار ای میل اطلاع کے لیے تمام فعال سبسکرپشنز (اہداف/ایونٹس) کی فہرست
-ListOfNotificationsDone=بھیجے گئے تمام خودکار ای میل اطلاعات کی فہرست
+ListOfActiveNotifications=Active subscriptions (targets/events) for automatic email notification
+ListOfNotificationsDone=Automatic email notifications sent
 MailSendSetupIs=ای میل بھیجنے کی ترتیب کو '%s' پر ترتیب دیا گیا ہے۔ یہ موڈ بڑے پیمانے پر ای میل بھیجنے کے لیے استعمال نہیں کیا جا سکتا۔
 MailSendSetupIs2=آپ کو پہلے ایڈمن اکاؤنٹ کے ساتھ مینو میں جانا چاہیے اس موڈ کے ساتھ، آپ اپنے انٹرنیٹ سروس پرووائیڈر کی طرف سے فراہم کردہ SMTP سرور کا سیٹ اپ درج کر سکتے ہیں اور ماس ای میلنگ فیچر استعمال کر سکتے ہیں۔
 MailSendSetupIs3=اگر آپ کے پاس اپنے SMTP سرور کو سیٹ اپ کرنے کے بارے میں کوئی سوال ہے، تو آپ %s سے پوچھ سکتے ہیں۔
@@ -182,13 +185,14 @@ IsAnAnswer=ابتدائی ای میل کا جواب ہے۔
 RecordCreatedByEmailCollector=ای میل کلکٹر %s ای میل %s سے ریکارڈ بنایا گیا
 DefaultBlacklistMailingStatus=نیا رابطہ بناتے وقت فیلڈ '%s' کے لیے ڈیفالٹ قدر
 DefaultStatusEmptyMandatory=خالی لیکن لازمی
-WarningLimitSendByDay=انتباہ: آپ کی مثال کا سیٹ اپ یا معاہدہ آپ کی روزانہ کی ای میلز کی تعداد کو <b>%s<span class='notranslate' تک محدود کرتا ہے۔ ></b></span>۔ مزید بھیجنے کی کوشش کرنے کے نتیجے میں آپ کی مثال سست یا معطل ہو سکتی ہے۔ اگر آپ کو زیادہ کوٹے کی ضرورت ہو تو براہ کرم اپنے سپورٹ سے رابطہ کریں۔
+WarningLimitSendByDay=WARNING: The setup or contract of your instance limits your number of emails per day to <b>%s</b>. Trying to send more may result in having your instance slow down or suspended. Please contact your support if you need a higher quota.
 NoMoreRecipientToSendTo=ای میل بھیجنے کے لیے مزید وصول کنندہ نہیں۔
 EmailOptedOut=ای میل کے مالک نے اس ای میل کے ساتھ مزید رابطہ نہ کرنے کی درخواست کی ہے۔
 EvenUnsubscribe=آپٹ آؤٹ ای میلز شامل کریں۔
 EvenUnsubscribeDesc=جب آپ ای میلز کو اہداف کے طور پر منتخب کرتے ہیں تو آپٹ آؤٹ ای میلز کو شامل کریں۔ مثال کے طور پر لازمی سروس ای میلز کے لیے مفید ہے۔
 XEmailsDoneYActionsDone=%s ای میلز پہلے سے اہل ہیں، %s ای میلز پر کامیابی کے ساتھ کارروائی کی گئی (%s ریکارڈ کے لیے /کارروائیاں ہو چکی ہیں)
-helpWithAi=Generate message from AI
 YouCanMakeSomeInstructionForEmail=You can make some instructions for your Email (Example: generate image in email template...)
 ModelTemplate=Email template
 YouCanChooseAModelForYouMailContent= You can choose one of template models or generate one with AI
+TitleOfMailHolder=Title of the e-mail goes here
+ContentOfMailHolder=Content of email goes here...

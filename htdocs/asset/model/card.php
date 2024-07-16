@@ -28,12 +28,14 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetmodel.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
+require_once DOL_DOCUMENT_ROOT . '/asset/class/assetaccountancycodes.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -42,8 +44,10 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'as
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new AssetModel($db);
+$assetdepreciationoptions = new AssetDepreciationOptions($db);
+$assetaccountancycodes = new AssetAccountancyCodes($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->asset->dir_output . '/temp/massgeneration/' . $user->id;
 $hookmanager->initHooks(array('assetmodelcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -53,7 +57,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -67,7 +71,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')));
 $permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -92,6 +96,20 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
+// Model depreciation options and accountancy codes
+$object->asset_depreciation_options = &$assetdepreciationoptions;
+$object->asset_accountancy_codes = &$assetaccountancycodes;
+if (!empty($id)) {
+	$depreciationoptionserrors = $assetdepreciationoptions->fetchDeprecationOptions(0, $object->id);
+	$accountancycodeserrors = $assetaccountancycodes->fetchAccountancyCodes(0, $object->id);
+
+	if ($depreciationoptionserrors < 0) {
+		setEventMessages($assetdepreciationoptions->error, $assetdepreciationoptions->errors, 'errors');
+	}
+	if ($accountancycodeserrors < 0) {
+		setEventMessages($assetaccountancycodes->error, $assetaccountancycodes->errors, 'errors');
+	}
+}
 
 /*
  * Actions
@@ -144,7 +162,7 @@ $formfile = new FormFile($db);
 
 $title = $langs->trans("AssetModel") . ' - ' . $langs->trans("Card");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-model-card');
 
 // Part to create
 if ($action == 'create') {
@@ -162,8 +180,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">' . "\n";
 
@@ -172,6 +188,14 @@ if ($action == 'create') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_add.tpl.php';
+
+	// Depreciation options
+	include DOL_DOCUMENT_ROOT . '/asset/tpl/depreciation_options_edit.tpl.php';
+
+	// Accountancy codes
+	print '<div class="clearboth"></div>';
+	print '<hr>';
+	include DOL_DOCUMENT_ROOT . '/asset/tpl/accountancy_codes_edit.tpl.php';
 
 	print '</table>' . "\n";
 
@@ -208,6 +232,14 @@ if (($id || $ref) && $action == 'edit') {
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_edit.tpl.php';
+
+	// Depreciation options
+	include DOL_DOCUMENT_ROOT . '/asset/tpl/depreciation_options_edit.tpl.php';
+
+	// Accountancy codes
+	print '<div class="clearboth"></div>';
+	print '<hr>';
+	include DOL_DOCUMENT_ROOT . '/asset/tpl/accountancy_codes_edit.tpl.php';
 
 	print '</table>';
 
@@ -262,20 +294,111 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">' . "\n";
 
 	// Common attributes
-	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
+	$object->fields = dol_sort_array($object->fields, 'position');
+
+	foreach ($object->fields as $key => $val) {
+		if (!empty($keyforbreak) && $key == $keyforbreak) {
+			break; // key used for break on second column
+		}
+
+		// Discard if extrafield is a hidden field on form
+		if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4 && abs($val['visible']) != 5) {
+			continue;
+		}
+
+		if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) {
+			continue; // We don't want this field
+		}
+		if (in_array($key, array('ref', 'status'))) {
+			continue; // Ref and status are already in dol_banner
+		}
+
+		$value = $object->$key;
+
+		print '<tr class="field_'.$key.'"><td';
+		print ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).' fieldname_'.$key;
+		//if ($val['notnull'] > 0) print ' fieldrequired';     // No fieldrequired on the view output
+		if ($val['type'] == 'text' || $val['type'] == 'html') {
+			print ' tdtop';
+		}
+		print '">';
+
+		$labeltoshow = '';
+		if (!empty($val['help'])) {
+			$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+		} else {
+			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
+				$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
+			} else {
+				$labeltoshow .= $langs->trans($val['label']);
+			}
+		}
+		if (empty($val['alwayseditable'])) {
+			print $labeltoshow;
+		} else {
+			print $form->editfieldkey($labeltoshow, $key, $value, $object, 1, $val['type']);
+		}
+
+		print '</td>';
+		print '<td class="valuefield fieldname_'.$key;
+		if ($val['type'] == 'text') {
+			print ' wordbreak';
+		}
+		if (!empty($val['cssview'])) {
+			print ' '.$val['cssview'];
+		}
+		print '">';
+		if (empty($val['alwayseditable'])) {
+			if (preg_match('/^(text|html)/', $val['type'])) {
+				print '<div class="longmessagecut">';
+			}
+			if ($key == 'lang') {
+				$langs->load("languages");
+				$labellang = ($value ? $langs->trans('Language_'.$value) : '');
+				print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
+				print $labellang;
+			} else {
+				if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
+					$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
+					print showValueWithClipboardCPButton($out, 0, $out);
+				} else {
+					print $object->showOutputField($val, $key, $value, '', '', '', 0);
+				}
+			}
+			//print dol_escape_htmltag($object->$key, 1, 1);
+			if (preg_match('/^(text|html)/', $val['type'])) {
+				print '</div>';
+			}
+		} else {
+			print $form->editfieldval($labeltoshow, $key, $value, $object, 1, $val['type']);
+		}
+		print '</td>';
+		print '</tr>';
+	}
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	print '</table>';
 
+	// Depreciation options attributes
+	print '<div class="fichehalfleft">';
+	print '<table class="border centpercent tableforfield">';
+	include DOL_DOCUMENT_ROOT . '/asset/tpl/depreciation_options_view.tpl.php';
 	print '</table>';
 	print '</div>';
+
+	// Accountancy codes attributes
+	print '<div class="fichehalfright">';
+	print '<table class="border centpercent tableforfield">';
+	include DOL_DOCUMENT_ROOT . '/asset/tpl/accountancy_codes_view.tpl.php';
+	print '</table>';
 	print '</div>';
 
+	print '</div>';
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();

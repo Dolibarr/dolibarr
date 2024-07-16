@@ -34,9 +34,9 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'aZ09');
-$fiscal_period_id = GETPOST('fiscal_period_id', 'int');
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
+$fiscal_period_id = GETPOSTINT('fiscal_period_id');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -49,7 +49,7 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancyclosure'));
 
 $object = new BookKeeping($db);
@@ -104,8 +104,8 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if (isset($current_fiscal_period) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 		if ($action == 'confirm_step_1' && $confirm == "yes") {
-			$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-			$date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
 			$result = $object->validateMovementForFiscalPeriod($date_start, $date_end);
 			if ($result > 0) {
@@ -119,7 +119,7 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes") {
-			$new_fiscal_period_id = GETPOST('new_fiscal_period_id', 'int');
+			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
 			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
 			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
 
@@ -133,10 +133,10 @@ if (empty($reshook)) {
 				exit;
 			}
 		} elseif ($action == 'confirm_step_3' && $confirm == "yes") {
-			$inventory_journal_id = GETPOST('inventory_journal_id', 'int');
-			$new_fiscal_period_id = GETPOST('new_fiscal_period_id', 'int');
-			$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-			$date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+			$inventory_journal_id = GETPOSTINT('inventory_journal_id');
+			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
 			$result = $object->insertAccountingReversal($current_fiscal_period['id'], $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end);
 			if ($result < 0) {
@@ -161,7 +161,7 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans('Closure');
 
-$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
 
 llxHeader('', $title, $help_url);
 
@@ -300,7 +300,7 @@ if (!empty($current_fiscal_period)) {
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
 if (empty($current_fiscal_period)) {
-	print $langs->trans('ErrorNoFiscalPeriodActiveFound');
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
 }
 
 if (isset($current_fiscal_period)) {
@@ -309,7 +309,7 @@ if (isset($current_fiscal_period)) {
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep1");
 	$head[0][2] = 'step1';
-	print dol_get_fiche_head($head, 'step1', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step1', '', -1, '');
 
 	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
@@ -334,7 +334,7 @@ if (isset($current_fiscal_period)) {
 		print '<td class="right">' . $langs->trans("Year") . '</td>';
 	}
 	for ($i = 1; $i <= 12; $i++) {
-		print '<td class="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+		print '<td class="right">' . $langs->trans('MonthShort' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
 	print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
 	print '</tr>';
@@ -355,12 +355,14 @@ if (isset($current_fiscal_period)) {
 	print "</table>\n";
 	print '</div>';
 
+	print '<br>';
+
 	// Step 2
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep2");
 	$head[0][2] = 'step2';
-	print dol_get_fiche_head($head, 'step2', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step2', '', -1, '');
 
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
 
@@ -371,12 +373,14 @@ if (isset($current_fiscal_period)) {
 	}
 	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 
+	print '<br>';
+
 	// Step 3
 	$head = array();
 	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
 	$head[0][1] = $langs->trans("AccountancyClosureStep3");
 	$head[0][2] = 'step3';
-	print dol_get_fiche_head($head, 'step3', '', -1, 'title_accountancy');
+	print dol_get_fiche_head($head, 'step3', '', -1, '');
 
 	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep3Desc") . '</span><br>';
 

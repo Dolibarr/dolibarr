@@ -65,7 +65,7 @@ class PriceParser
 		$langs->load("errors");
 		/*
 		-No arg
-		 9, an unexpected error occured
+		 9, an unexpected error occurred
 		14, division by zero
 		19, expression not found
 		20, empty expression
@@ -213,7 +213,7 @@ class PriceParser
 			return -6;
 		}
 
-		//Iterate over each expression splitted by $separator_chr
+		//Iterate over each expression split by $separator_chr
 		$expressions = explode($this->separator_chr, $expression);
 		$expressions = array_slice($expressions, 0, $this->limit);
 		foreach ($expressions as $expr) {
@@ -246,7 +246,7 @@ class PriceParser
 	 *	Calculates product price based on product id and associated expression
 	 *
 	 *	@param	Product				$product    	The Product object to get information
-	 *	@param	array 				$extra_values   Any aditional values for expression
+	 *	@param	array 				$extra_values   Any additional values for expression
 	 *	@return int 						> 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
@@ -293,7 +293,7 @@ class PriceParser
 	 *	Calculates supplier product price based on product supplier price and associated expression
 	 *
 	 *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
-	 *	@param	array 				$extra_values       Any aditional values for expression
+	 *	@param	array 				$extra_values       Any additional values for expression
 	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplier($product_supplier, $extra_values = array())
@@ -324,7 +324,7 @@ class PriceParser
 	 *
 	 *  @param  int					$product_id    	The Product id to get information
 	 *  @param  string 				$expression     The expression to parse
-	 *  @param  array 				$extra_values   Any aditional values for expression
+	 *  @param  array 				$extra_values   Any additional values for expression
 	 *  @return int 				> 0 if OK, < 1 if KO
 	 */
 	public function testExpression($product_id, $expression, $extra_values = array())

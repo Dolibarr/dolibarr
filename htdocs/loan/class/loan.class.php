@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2023  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,21 +70,6 @@ class Loan extends CommonObject
 	public $accountancy_account_insurance;
 	public $accountancy_account_interest;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 	public $insurance_amount;
 
 	/**
@@ -108,7 +93,7 @@ class Loan extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int totalpaid
+	 * @var float totalpaid
 	 */
 	public $totalpaid;
 
@@ -475,7 +460,7 @@ class Loan extends CommonObject
 	 *  Return label of loan status (unpaid, paid)
 	 *
 	 *  @param  int		$mode			0=label, 1=short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -489,7 +474,7 @@ class Loan extends CommonObject
 	 *
 	 *  @param  int		$status			Id status
 	 *  @param  int		$mode			0=Label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Label, 5=Short label + Picto
-	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string					Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -501,21 +486,23 @@ class Loan extends CommonObject
 		$langs->loadLangs(array("customers", "bills"));
 
 		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
-		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
-			$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			}
-			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
-			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			if ($status == 0 && $alreadypaid > 0) {
-				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
-			}
+		// Always true because of 'unset':
+		// if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+		global $langs;
+		$this->labelStatus = array();
+		$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+		$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+		$this->labelStatus[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		if ($status == 0 && $alreadypaid > 0) {
+			$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 		}
+		$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
+		$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+		$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		if ($status == 0 && $alreadypaid > 0) {
+			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
+		}
+		// }  // End of empty(labelStatus,labelStatusShort)
 
 		$statusType = 'status1';
 		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) {
@@ -594,7 +581,7 @@ class Loan extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -609,7 +596,7 @@ class Loan extends CommonObject
 	 *  Used to build previews or test instances.
 	 * 	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -631,6 +618,8 @@ class Loan extends CommonObject
 		$this->capital = 20000;
 		$this->nbterm = 48;
 		$this->rate = 4.3;
+
+		return 1;
 	}
 
 	/**
@@ -737,7 +726,7 @@ class Loan extends CommonObject
 		}
 
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

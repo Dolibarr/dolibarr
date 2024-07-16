@@ -15,7 +15,7 @@ ValidateProp=Kommersiya təklifini təsdiqləyin
 CancelPropal=Ləğv et
 AddProp=Təklif yaradın
 ConfirmDeleteProp=Bu kommersiya təklifini silmək istədiyinizə əminsiniz?
-ConfirmValidateProp=Bu kommersiya təklifini <b>%s<span class='notranslate'></b> adı ilə doğrulamaq istədiyinizə əminsiniz >?
+ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
 ConfirmCancelPropal=Kommersiya təklifini <b>%s</b> ləğv etmək istədiyinizə əminsiniz?
 LastPropals=Ən son %s təkliflər
 LastModifiedProposals=Ən son %s dəyişdirilmiş təkliflər

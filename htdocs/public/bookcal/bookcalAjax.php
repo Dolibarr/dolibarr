@@ -46,8 +46,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$datetocheckbooking = GETPOST('datetocheck', 'int');
+$id = GETPOSTINT('id');
+$datetocheckbooking = GETPOSTINT('datetocheck');
 $error = 0;
 
 // Security check

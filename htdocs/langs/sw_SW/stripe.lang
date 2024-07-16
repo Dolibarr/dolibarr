@@ -26,7 +26,7 @@ YouCanAddTagOnUrl=Unaweza pia kuongeza kigezo cha url <b> &tag= <i> thamani </i>
 SetupStripeToHavePaymentCreatedAutomatically=Sanidi Stripe yako kwa url <b> %s </b>  kufanya malipo kuundwa kiotomatiki yanapothibitishwa na Stripe.
 AccountParameter=Vigezo vya akaunti
 UsageParameter=Vigezo vya matumizi
-InformationToFindParameters=Usaidizi wa kupata <span class='notranslate'>%s</span> yako\n maelezo ya akaunti
+InformationToFindParameters=Help to find your %s account information
 STRIPE_CGI_URL_V2=Url ya moduli ya Stripe CGI kwa malipo
 CSSUrlForPaymentForm=Url ya mtindo wa CSS ya fomu ya malipo
 NewStripePaymentReceived=Malipo mapya ya Stripe yamepokelewa
@@ -70,10 +70,11 @@ StripePayoutList=Orodha ya malipo ya Stripe
 ToOfferALinkForTestWebhook=Unganisha ili kusanidi Stripe WebHook ili kupiga IPN (hali ya majaribio)
 ToOfferALinkForLiveWebhook=Unganisha ili kusanidi Stripe WebHook ili kupiga IPN (modi ya moja kwa moja)
 PaymentWillBeRecordedForNextPeriod=Malipo yatarekodiwa kwa kipindi kijacho.
-ClickHereToTryAgain= <a href="%s"> Bofya hapa ili kujaribu tena... </a> 
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Kwa sababu ya sheria Imara za Uthibitishaji wa Mteja, uundaji wa kadi lazima ufanywe kutoka kwa ofisi ya Stripe backoffice. Unaweza kubofya hapa ili kuwasha rekodi ya mteja ya Stripe: %s
+ClickHereToTryAgain= <a href="%s"> Bofya hapa ili kujaribu tena... </a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
 STRIPE_CARD_PRESENT=Ipo kwa Kadi ya Vituo vya Mistari
 TERMINAL_LOCATION=Mahali (anwani) ya Vituo vya Stripe
 RequestDirectDebitWithStripe=Omba Debit ya Moja kwa moja na Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Washa malipo ya Debit ya Moja kwa Moja kupitia Stripe
-
+StripeConnect_Mode=Stripe Connect mode

@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validert
 StatusSendingProcessedShort=Behandlet
 SendingSheet=Pakkseddel
 ConfirmDeleteSending=Er du sikker på at du vil slette denne forsendelsen?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Er du sikker på at du vil validere denne forsendelsen med referansen <b>%s</b>?
 ConfirmCancelSending=Er du sikker på at du vil kansellere denne forsendelsen?
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Advarsel, ingen varer venter på å sendes.
@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Ingen varer som skal sendes i lager <b> %s </b>. K
 WeightVolShort=Vekt/volum
 ValidateOrderFirstBeforeShipment=Du må validere ordren før du kan utføre forsendelser
 NoLineGoOnTabToAddSome=Ingen linjer, gå til fanen "%s" for å legge til
+CreateInvoiceForThisCustomerFromSendings=Fakturautsendelser
+IfValidateInvoiceIsNoSendingStayUnbilled=Hvis faktura valideringen er 'Nei', vil sendingen forbli til status 'Ufakturert' til faktura er validert.
+OptionToSetSendingBilledNotEnabled=Alternativ fra modul Workflow, for å sette sending til "Fakturert" automatisk når faktura er validert, er ikke aktivert, så du må sette statusen for sendinger til "Fakturert" manuelt etter faktura er generert.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Mer komplett dokumentmodell for leveringskvitteringer og ekst
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke definert
 SumOfProductVolumes=Sum varevolum
 SumOfProductWeights=Sum varevekt
-
 # warehouse details
 DetailWarehouseNumber= Lagerdetaljer
 DetailWarehouseFormat= W:%s (Qty: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Vis siste dato for oppføring i beholdning under opprettelse av forsendelse for serienummer eller batch
+CreationOptions=Tilgjengelige alternativer under opprettelse av forsendelse
 ShipmentDistribution=Forsendelsesdistribusjon
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
+ErrorTooManyCombinationBatchcode=Ingen utsendelse for linje %s da for mange kombinasjoner av lager, vare, batchkode ble funnet (%s).
+ErrorNoCombinationBatchcode=Kunne ikke lagre linjen %s da kombinasjonen av lager-parti/serienummer (%s, %s, %s) ikke ble funnet i beholdning.
 ErrorTooMuchShipped=Antall sendt skal ikke være større enn antall bestilt for linje %s

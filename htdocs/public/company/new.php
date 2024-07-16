@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -85,7 +87,7 @@ if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -202,7 +204,7 @@ if (empty($reshook) && $action == 'add') {
 	// Check Captcha code if is enabled
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode") . "<br>\n";
@@ -215,11 +217,11 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->name = GETPOST('name', 'alphanohtml');
 
-		$societe->client = GETPOST('client', 'int') ? GETPOST('client', 'int') : $societe->client;
+		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
 
 		$societe->address	= GETPOST('address', 'alphanohtml');
 
-		$societe->country_id				= GETPOST('country_id', 'int');
+		$societe->country_id				= GETPOSTINT('country_id');
 
 		$societe->phone					= GETPOST('phone', 'alpha');
 
@@ -229,7 +231,7 @@ if (empty($reshook) && $action == 'add') {
 
 		$societe->client = 2 ; // our client is a prospect
 
-		$societe->code_client		= -1;
+		$societe->code_client		= '-1';
 
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 
@@ -243,14 +245,14 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION')) {
-					$urlback = $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION;
+					$urlback = getDolGlobalString('MEMBER_URL_REDIRECT_SUBSCRIPTION');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"] . "?action=added&token=" . newToken();
 				}
 			} else {
 				$error++;
-				$errmsg .= join('<br>', $societe->errors);
+				$errmsg .= implode('<br>', $societe->errors);
 			}
 		}
 	}
@@ -258,7 +260,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: " . $urlback);
+		header("Location: " . $urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -307,7 +309,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('COMPANY_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->COMPANY_NEWFORM_TEXT) . "<br>\n";
+	print $langs->trans(getDolGlobalString('COMPANY_NEWFORM_TEXT')) . "<br>\n";
 } else {
 	print $langs->trans("ContactUsDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL")) . "<br>\n";
 }
@@ -327,7 +329,7 @@ $messagemandatory = '<span class="">' . $langs->trans("FieldsWithAreMandatory", 
 //print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {

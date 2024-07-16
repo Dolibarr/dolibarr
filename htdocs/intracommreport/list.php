@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ $langs->loadLangs(array('intracommreport'));
 // Get Parameters
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
@@ -42,14 +43,16 @@ $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('searc
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$type = GETPOST("type", "int");
+$mode = GETPOST('mode', 'aZ');
+
+$type = GETPOST("type", 'int');
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -79,7 +82,7 @@ if ((string) $type == '0') {
 	}
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new IntracommReport($db);
 $hookmanager->initHooks(array('intracommreportlist'));
 $extrafields = new ExtraFields($db);
@@ -104,29 +107,22 @@ if (!empty($canvas)) {
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
 
-// Security check
-/*
-if ($search_type=='0') $result=restrictedArea($user, 'produit', '', '', '', '', '', $objcanvas);
-elseif ($search_type=='1') $result=restrictedArea($user, 'service', '', '', '', '', '', $objcanvas);
-else $result=restrictedArea($user, 'produit|service', '', '', '', '', '', $objcanvas);
-*/
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'i.ref'=>"Ref",
-	'pfi.ref_fourn'=>"RefSupplier",
-	'i.label'=>"ProductLabel",
-	'i.description'=>"Description",
-	"i.note"=>"Note",
+	'i.ref' => "Ref",
+	'pfi.ref_fourn' => "RefSupplier",
+	'i.label' => "ProductLabel",
+	'i.description' => "Description",
+	"i.note" => "Note",
 );
 
 $isInEEC = isInEEC($mysoc);
 
 // Definition of fields for lists
 $arrayfields = array(
-	'i.ref' => array('label'=>$langs->trans("Ref"), 'checked'=>1),
-	'i.label' => array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(isModEnabled("product") && isModEnabled("service"))),
+	'i.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
+	'i.label' => array('label' => $langs->trans("Label"), 'checked' => 1),
+	'i.fk_product_type' => array('label' => $langs->trans("Type"), 'checked' => 0, 'enabled' => (isModEnabled("product") && isModEnabled("service"))),
 );
 
 /*
@@ -143,6 +139,7 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 if ($search_type == '0') {
@@ -153,8 +150,8 @@ if ($search_type == '0') {
 	$result = restrictedArea($user, 'produit|service', '', '', '', '', '', 0);
 }
 
-$permissiontoread = $user->rights->intracommreport->read;
-$permissiontodelete = $user->rights->intracommreport->delete;
+$permissiontoread = $user->hasRight('intracommreport', 'read');
+$permissiontodelete = $user->hasRight('intracommreport', 'delete');
 
 
 /*
@@ -360,7 +357,7 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 	//'presend'=>$langs->trans("SendByMail"),
 );
@@ -410,11 +407,14 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if INTRACOMM_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (!isset($moreforfilter)) {
+	$moreforfilter = '';
+}
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -431,7 +431,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -470,7 +471,7 @@ if (!empty($arrayfields['customerorsupplier']['checked'])) {
 
 if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 	print '<td class="liste_titre left">';
-	$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
+	$array = array('-1' => '&nbsp;', '0' => $langs->trans('Product'), '1' => $langs->trans('Service'));
 	print $form->selectarray('search_type', $array, $search_type);
 	print '</td>';
 }
@@ -480,7 +481,7 @@ if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 */
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Date creation
@@ -532,7 +533,7 @@ if (!empty($arrayfields['i.fk_product_type']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 */
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['i.datec']['checked'])) {

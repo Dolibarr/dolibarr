@@ -22,7 +22,7 @@
 
 /**
  *	\file       htdocs/core/modules/cheque/modules_chequereceipts.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File with parent class of check receipt document generators
  */
 
@@ -94,7 +94,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	// Positionne modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
 		if (getDolGlobalString('CHEQUERECEIPT_ADDON_PDF')) {
-			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
+			$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF');
 		} else {
 			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
 			//return 0;
@@ -122,7 +122,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
 		return -1;
 	}
 }

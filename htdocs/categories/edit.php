@@ -34,22 +34,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->load("categories");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');
 $action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = (int) GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
-$color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
-$visible = (int) GETPOST('visible', 'int');
-$parent = (int) GETPOST('parent', 'int');
+$color = preg_replace('/^#/', '', preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml')));
+$position = GETPOSTINT('position');
+$visible = GETPOSTINT('visible');
+$parent = GETPOSTINT('parent');
 
 if ($id == "") {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
@@ -71,7 +72,7 @@ if (is_numeric($type)) {
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
@@ -80,7 +81,7 @@ $error = 0;
 /*
  * Actions
  */
-$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'visible' => $visible, 'parent' => $parent);
+$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -105,6 +106,7 @@ if (empty($reshook)) {
 		$object->label = $label;
 		$object->description    = dol_htmlcleanlastbr($description);
 		$object->color          = $color;
+		$object->position       = $position;
 		$object->socid          = ($socid > 0 ? $socid : 0);
 		$object->visible        = $visible;
 		$object->fk_parent = $parent != -1 ? $parent : 0;
@@ -162,6 +164,7 @@ print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 print dol_get_fiche_head('');
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="border centpercent">';
 
 // Ref
@@ -186,10 +189,16 @@ print '<td>';
 print $formother->selectColor($object->color, 'color');
 print '</td></tr>';
 
+// Position
+print '<tr><td>';
+print $langs->trans("Position").'</td>';
+print '<td><input type="text" class="width50" id="position" name ="position" value="'.$object->position.'" />';
+print '</tr>';
+
 // Parent category
 print '<tr><td>'.$langs->trans("In").'</td><td>';
 print img_picto('', 'category', 'class="pictofixedwidth"');
-print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id);
+print $form->select_all_categories($type, $object->fk_parent, 'parent', 64, $object->id, 0, 0, 'widthcentpercentminusx maxwidth500');
 print ajax_combobox('parent');
 print '</td></tr>';
 
@@ -201,7 +210,7 @@ if (empty($reshook)) {
 }
 
 print '</table>';
-
+print '</div>';
 
 print dol_get_fiche_end();
 

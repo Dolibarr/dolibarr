@@ -16,7 +16,7 @@ ErrorEmailAlreadyExists=Sähköposti %s on jo olemassa.
 ErrorRecordNotFound=Levykauppa ei löytynyt.
 ErrorRecordNotFoundShort=Ei löydetty
 ErrorFailToCopyFile=Epäonnistui kopioida tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
-ErrorFailToCopyDir=Hakemiston <b>%s</b> kopioiminen hakemistoon <b> epäonnistui. ='notranslate'><b></span>%s</b>'.
+ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToRenameFile=Epäonnistui nimetä tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
 ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>' %s'.</b>
 ErrorFailToCreateFile=Luominen epäonnistui file <b>' %s'.</b>
@@ -24,7 +24,7 @@ ErrorFailToRenameDir=Epäonnistui nimetä directory <b>' %s' osaksi' %s'.</b>
 ErrorFailToCreateDir=Luominen epäonnistui directory <b>' %s'.</b>
 ErrorFailToDeleteDir=Poistaminen ei onnistunut directory <b>' %s'.</b>
 ErrorFailToMakeReplacementInto=Epäonnistui korvaaminen muotoon tiedosto '<b>%s</b>'.
-ErrorFailToGenerateFile=tiedosto '<b>%s<span class='notranslate' luominen epäonnistui. ></b></span>'.
+ErrorFailToGenerateFile=Failed to generate file '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Tämä yhteys on jo määritelty yhteyttä tämän tyypin osalta.
 ErrorCashAccountAcceptsOnlyCashMoney=Tämä pankkitili on käteistä huomioon, joten se hyväksyy maksujen tyypin käteisellä vain.
 ErrorFromToAccountsMustDiffers=Lähde ja tavoitteet pankkitilit on erilainen.
@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=Käyttäjää ei voi poistaa. Ehkä se liittyy Dolibarrin kokonaisuuksiin.
 ErrorFieldsRequired=Jotkut pakolliset kentät on jätetty tyhjiksi.
 ErrorSubjectIsRequired=Sähköpostin aihe on pakollinen
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Luominen epäonnistui hakemiston. Tarkista, että Web-palvelin käyttäjällä on oikeudet kirjoittaa Dolibarr asiakirjat hakemistoon. Jos parametri <b>safe_mode</b> on käytössä tämän PHP, tarkista, että Dolibarr php tiedostot omistaa web-palvelimen käyttäjä (tai ryhmä).
 ErrorNoMailDefinedForThisUser=Ei postia määritelty tälle käyttäjälle
 ErrorSetupOfEmailsNotComplete=Sähköpostien määritys ei ole valmis
@@ -79,9 +81,9 @@ ErrorNoValueForSelectType=Täytä arvo valintalistaa varten
 ErrorNoValueForCheckBoxType=Täytä valintaruutuluettelon arvo
 ErrorNoValueForRadioType=Ole hyvä ja täytä radioluettelon arvo
 ErrorBadFormatValueList=Luetteloarvossa voi olla vain yksi pilkku: <u>%s</u>, mutta tarvitset ainakin yhden: avain,arvo
-ErrorFieldCanNotContainSpecialCharacters=Kenttä <b>%s<span class='notranslate'>b09f17f7309f17f8 /span> ei saa sisältää erikoismerkkejä.
-ErrorFieldCanNotContainSpecialNorUpperCharacters=Kenttä <b>%sb09f17f7309f17f8 /span> ei saa sisältää erikoismerkkejä eikä isoja kirjaimia, <span class='notranslate'>ja on aloitettava aakkosmerkillä (a-z)
-ErrorFieldMustHaveXChar=Kenttä <b>%sb09f17f7309f17f8 /span>:ssa on oltava vähintään <span class='notranslate'>%s merkkiä.
+ErrorFieldCanNotContainSpecialCharacters=The field <b>%s</b> must not contains special characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=The field <b>%s</b> must not contain special characters, nor upper case characters, and must start with an alphabetical character (a-z)
+ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=O kirjanpito moduuli aktivoitu
 ErrorExportDuplicateProfil=Tämä profiilinimi on jo olemassa tälle vientijoukolle.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP yhteensovitus ei ole täydellinen.
@@ -93,11 +95,11 @@ ErrorRecordHasAtLeastOneChildOfType=Objektilla %s on vähintään yksi alatason 
 ErrorRecordIsUsedCantDelete=Tietuetta ei voi poistaa. Se on jo käytetty tai sisällytetty toiseen objektiin.
 ErrorModuleRequireJavascript=JavaScriptiä ei saa poistaa käytöstä, jotta tämä ominaisuus toimisi. Ota JavaScript käyttöön tai poista se käytöstä siirtymällä kohtaan valikko Etusivu->Asetukset->Näyttö.
 ErrorPasswordsMustMatch=Molemmat kirjoittaa salasanat on vastattava toisiaan
-ErrorContactEMail=Tapahtui tekninen virhe. Ota yhteyttä järjestelmänvalvojaan seuraavaan sähköpostiin <b>%s</b> ja anna virhekoodi <b>%s<span class='notranslate'>34f18b09 span> viestiisi tai lisää näyttökopio tästä sivusta.
+ErrorContactEMail=A technical error occurred. Please, contact administrator to following email <b>%s</b> and provide the error code <b>%s</b> in your message, or add a screen copy of this page.
 ErrorWrongValueForField=Kenttä <b>%sb09f4b730 span>: '<b>%s</b>' ei vastaa regex-sääntöä <b>%s</b>
 ErrorHtmlInjectionForField=Kenttä <b>%sb09f4b730 span>: Arvo <b>%s</b> sisältää haitallista tietoa ei sallittu
 ErrorFieldValueNotIn=Kenttä <b>%sb09f4b730 span>: '<b>%s</b>' ei löydy arvosta Kenttä <b>%sb09f4b730 span> / <b>%s</b>
-ErrorFieldRefNotIn=Kenttä <b>%sb09f4b730 span>: '<b>%s</b>' ei ole <span-luokka ='notranslate'><b></span>%s</b> olemassa oleva viite
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=Useita tietueita löytyi haettaessa viitteestä <b>%s</b>. Ei voi tietää, mitä tunnusta käyttää.
 ErrorsOnXLines=%s virhettä löydetty
 ErrorFileIsInfectedWithAVirus=Virustentorjuntaohjelma ei voinut tarkistaa tiedoston (tiedosto saattaa olla tartunnan virus)
@@ -134,7 +136,7 @@ ErrorLoginDoesNotExists=Käyttäjälle <b>sisäänkirjoittautumissivuksesi %s</b
 ErrorLoginHasNoEmail=Tämä käyttäjä ei ole sähköpostiosoitetta. Process aborted.
 ErrorBadValueForCode=Bad arvotyypeillä koodin. Yritä uudelleen uuteen arvoon ...
 ErrorBothFieldCantBeNegative=Kentät %s ja %s voi olla sekä kielteisiä
-ErrorFieldCantBeNegativeOnInvoice=Kenttä <strong>%sb0af65c07910f65d span> ei voi olla negatiivinen tämän tyyppisessä laskussa. Jos sinun on lisättävä alennusrivi, <span class='notranslate'>luo alennus ensin (osoitteesta Kenttä ' %s' kolmannen osapuolen kortissa) ja käytä sitä laskussa.
+ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in third-party card) and apply it to the invoice.
 ErrorLinesCantBeNegativeForOneVATRate=Rivien kokonaismäärä (ilman vero) ei voi olla negatiivinen annetulle ei nolla-arvonlisäverokannalle (Löytyi negatiivinen kokonaissumma ALV-prosentille <b>%s</b>%%).
 ErrorLinesCantBeNegativeOnDeposits=Rivit eivät voi olla negatiivisia talletuksissa. Kohtaat ongelmia, kun joudut käyttämään talletuksen loppulaskussa, jos teet niin.
 ErrorQtyForCustomerInvoiceCantBeNegative=Asiakaslaskujen rivin määrä ei voi olla negatiivinen
@@ -154,7 +156,7 @@ ErrorFailedToAddContact=Yhteystiedon lisääminen epäonnistui
 ErrorDateMustBeBeforeToday=päiväys on oltava pienempi kuin nykyään
 ErrorDateMustBeInFuture=päiväys on oltava suurempi kuin nykyään
 ErrorStartDateGreaterEnd=Alku päiväys on suurempi kuin loppu päiväys
-ErrorPaymentModeDefinedToWithoutSetup=maksu-tila asetettiin tyypiksi %s, mutta moduulin Lasku määritystä ei suoritettu loppuun, jotta tälle <span luokalle näytettäviä tietoja määritettiin. ='notranslate'>maksu</span>-tilassa.
+ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 ErrorPHPNeedModule=Virhe, PHP:ssäsi on oltava asennettuna moduuli <b>%s</b>, jotta voit käyttää tätä ominaisuus.
 ErrorOpenIDSetupNotComplete=Määrität Dolibarr-määrityksen tiedosto sallimaan OpenID:n Autentikointi, mutta OpenID-palvelun URL-osoitetta ei ole määritetty vakioksi %s
 ErrorWarehouseMustDiffers=Lähteen ja kohde Varastot täytyy poiketa
@@ -219,7 +221,7 @@ ErrorPhpMailDelivery=Varmista, että et käytä liian suurta määrää vastaano
 ErrorUserNotAssignedToTask=Käyttäjä on määritettävä tehtävään, jotta hän voi syöttää kulutetun ajan.
 ErrorTaskAlreadyAssigned=Tehtävä on jo määrätty käyttäjälle
 ErrorModuleFileSeemsToHaveAWrongFormat=Moduulipaketilla näyttää olevan väärä muoto.
-ErrorModuleFileSeemsToHaveAWrongFormat2=Moduulin zip-tiedostossa on oltava vähintään yksi pakollinen hakemisto: <strong>%sb0a65d071f6fc9 > tai <span class='notranslate'><strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
 ErrorFilenameDosNotMatchDolibarrPackageRules=Moduulipaketin nimi (<strong>%s</strong>) ei täsmää odotetun nimen syntaksi: <strong>%s</strong>
 ErrorDuplicateTrigger=Virhe, kaksoiskäynnistimen nimi %s. Ladattu jo kohteesta %s.
 ErrorNoWarehouseDefined=Virhe, varastoa ei tunnistettu
@@ -258,14 +260,14 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage=Virhe, käännetyn sivun Kieli o
 ErrorBatchNoFoundForProductInWarehouse=Tuotteelle "%s" ei löytynyt erää/sarjaa varastosta "%s".
 ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=Ei tarpeeksi määrää tälle erälle/sarjalle tuotteelle "%s" varastossa "%s".
 ErrorOnlyOneFieldForGroupByIsPossible=Vain yksi Kenttä arvolle "ryhmä by" on mahdollinen (muut hylätään)
-ErrorTooManyDifferentValueForSelectedGroupBy=Löytyi liian monta eri arvoa (yli <b>%s</b>) Kenttä '<b>%sb09f17b73z0f14 /span>", joten emme voi käyttää sitä "<span class='notranslate'>ryhmä by" grafiikkaa varten. Kenttä 'ryhmä Tekijä' on poistettu. Ehkä halusit käyttää sitä X-akselina?
+ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
 ErrorReplaceStringEmpty=Virhe, merkkijono, johon korvataan, on tyhjä
-ErrorProductNeedBatchNumber=Virhe, tuote '<b>%s</b>' tarvitsee paljon/<span> class='notranslate'>Sarjanumero</span>
+ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=Virhe, tuote '<b>%s</b>' ei hyväksy erää/ Sarjanumero
 ErrorFailedToReadObject=Virhe, tyypin <b>%s</b> objektin lukeminen epäonnistui.
-ErrorParameterMustBeEnabledToAllwoThisFeature=Virhe, parametri <b>%s</b> on otettava käyttöön arvossa <b>conf/conf.php<> salliaksesi sisäisen työn ajoituksen komentoriviliittymän käytön
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Virhe, tämä kirjautuminen on kelpoisuusalueen päiväys ulkopuolella
-ErrorValueLength=Kenttä '<b>%s pituus </b>' on oltava suurempi kuin '<b>%s<span class='notranslate'>b09af7f739 '
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=Sana <b>%s</b> on varattu avainsana
 ErrorFilenameReserved=Tiedostonimeä <b>%s</b> ei voi käyttää, koska se on varattu ja suojattu komento.
 ErrorNotAvailableWithThisDistribution=Ei saatavilla tällä jakelulla
@@ -308,7 +310,7 @@ ErrorTableNotFound=Taulukkoa <b>%s</b> ei löydy
 ErrorRefNotFound=Viite <b>%s</b> ei löydy
 ErrorValueForTooLow=Arvo <b>%s</b> on liian pieni
 ErrorValueCantBeNull=Arvo <b>%s</b> ei voi olla tyhjä
-ErrorDateOfMovementLowerThanDateOfFileTransmission=Pankkitapahtuman päiväys ei voi olla pienempi kuin päiväys <span class='notranslate'>tiedosto</span> lähetys
+ErrorDateOfMovementLowerThanDateOfFileTransmission=The date of the bank transaction can't be lower than the date of the file transmission
 ErrorTooMuchFileInForm=Liikaa tiedostoja muodossa, enimmäismäärä on %s tiedosto(s)
 ErrorSessionInvalidatedAfterPasswordChange=Istunto mitätöitiin salasanan, sähköpostiosoitteen, tilan tai päivämäärät voimassaolon muutoksen vuoksi. Ole hyvä ja kirjaudu uudelleen.
 ErrorExistingPermission = Lupa <b>%s</b> objektille  <b>%s</b> on jo olemassa
@@ -322,16 +324,21 @@ ErrorFixThisHere=<a href="%s">Korjaa tämä</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Virhe: nykyisen ilmentymäsi URL-osoite (%s) ei vastaa OAuth2-kirjautumisasetuksissa määritettyä URL-osoitetta (%s). OAuth2-kirjautuminen tällaisessa kokoonpanossa ei ole sallittua.
 ErrorMenuExistValue=Tällä otsikolla tai URL-osoitteella on jo valikko
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG-tiedostoja ei sallita ulkoisina linkkeinä ilman vaihtoehtoa %s
-ErrorTypeMenu=On mahdotonta lisätä toista valikko samalle moduulille navigointipalkkiin, ei vielä kahvaa
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Viivakoodin luonti ei onnistunut (väärä koodimuoto?)
 ErrorObjectNotFound = Objektia <b>%s</b> ei löydy, tarkista URL-osoite
 ErrorCountryCodeMustBe2Char=Maakoodin on oltava 2-merkkinen merkkijono
-ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
+ErrorABatchShouldNotContainsSpaces=Erä tai sarja -numero ei saa sisltää välilyöntejä
 ErrorTableExist=Taulukko <b>%s</b> on jo olemassa
 ErrorDictionaryNotFound=Sanakirjaa <b>%s</b> ei löydy
 ErrorFailedToCreateSymLinkToMedias=Epäonnistunut luo symbolisen linkin %s osoittaminen kohteeseen %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Tarkista viennissä käytetty komento viennin lisäasetuksista
-
+ErrorEndTimeMustBeGreaterThanStartTime=Päättymisajan on oltava myöhemmin kuin alkamisajan
+ErrorIncoherentDates=Alkamisajan on oltava aikaisemmin kuin päättymisaika
+ErrorEndHourIsNull=Loppuaika ei voi olla nolla
+ErrorStartHourIsNull=Alkamisaika ei voi olla nolla
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP-parametrisi upload_max_filesize (%s) on suurempi kuin PHP-parametri post_max_size (%s). Tämä ei ole johdonmukainen asetus.
 WarningPasswordSetWithNoAccount=Tälle jäsenelle on asetettu salasana. Käyttäjätiliä ei kuitenkaan luotu. Joten tämä salasana on tallennettu, mutta sitä ei voida käyttää kirjautumiseen Dolibarriin. Ulkoinen moduuli/käyttöliittymä voi käyttää sitä, mutta jos sinun ei tarvitse määrittää jäsenelle kirjautumistunnusta tai salasanaa, voit poistaa vaihtoehdon "Hallinnoi jokaisen jäsenen kirjautumista" Jäsenmoduulin asetuksista. Jos sinun on hallittava kirjautumista, mutta et tarvitse salasanaa, voit välttää tämän varoituksen jättämällä tämän Kenttä tyhjäksi. Huomautus: Sähköpostia voidaan käyttää myös sisäänkirjautumisena, jos jäsen on linkitetty käyttäjään.
@@ -343,7 +350,8 @@ WarningPassIsEmpty=Varoitus, tietokannan salasana on tyhjä. Tämä on turvallis
 WarningConfFileMustBeReadOnly=Varoitus, config tiedosto <b>(htdocs / conf / conf.php)</b> voidaan korvata jonka web-palvelin. Tämä on vakava tietoturva-aukko. Muokkaa käyttöoikeuksia tiedoston luettavaksi vain tila-käyttöjärjestelmän käyttäjä käyttää Web-palvelimeen. Jos käytät Windows ja FAT oman levy, sinun täytyy tietää, että tämä tiedostojärjestelmä ei mahdollista lisätä käyttöoikeuksia tiedostoon, joten ei voi olla täysin turvallista.
 WarningsOnXLines=Varoitukset <b>%s</b> lähde linjat
 WarningNoDocumentModelActivated=Asiakirjojen luomiseen tarkoitettua mallia ei ole aktivoitu. oletus valitsee mallin, kunnes tarkistat moduulin asetukset.
-WarningLockFileDoesNotExists=Varoitus, kun asennus on valmis, sinun on poistettava asennus-/siirtotyökalut käytöstä lisäämällä tiedosto <b>install.lock</b> hakemistoon <b>%sb09</f47b730f >. Tämän <span class='notranslate'>tiedosto luomisen jättäminen pois on vakava turvallisuusriski.
+WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable the installation/migration tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Omitting the creation of this file is a grave security risk.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=Tämä suojausvaroitus pysyy aktiivisena niin kauan kuin haavoittuvuus on olemassa.
 WarningCloseAlways=Varoitus, sulkeminen suoritetaan, vaikka määrä eroaisi lähde-ja kohdeelementtien välillä. Ota tämä ominaisuus käyttöön varoen.
 WarningUsingThisBoxSlowDown=Varoitus, tämän laatikon käyttäminen hidastaa vakavasti kaikkia laatikkoa näyttäviä sivuja.
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = Moduuli <b>%s</b> on poistettu käytöstä. Älä uno
 WarningPermissionAlreadyExist=Tämän objektin nykyiset käyttöoikeudet
 WarningGoOnAccountancySetupToAddAccounts=Jos tämä luettelo on tyhjä, siirry kohtaan valikko %s - %s - %s ladataksesi tai luo tilikarttasi.
 WarningCorrectedInvoiceNotFound=Korjattua laskua ei löytynyt
-WarningCommentNotFound=Tarkista alun ja loppukommenttien sijainti <b>%s</b> osiossa tiedosto <b>b0ecb4fz87</f429 ><span class='notranslate'></b> ennen toimenpiteen lähettämistä
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Osakeliikkeet ovat jo kääntyneet
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR-lasku voidaan lisätä vain tilisiirtomaksuilla maksettaviin laskuihin.
 SwissQrCreditorAddressInvalid = Luotonantajan osoite on virheellinen (onko ZIP ja kaupunki asetettu? (%s)
 SwissQrCreditorInformationInvalid = Luotonantajan tiedot eivät kelpaa IBAN-numerolle (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN ei ole vielä käytössä
 SwissQrPaymentInformationInvalid = maksu tiedot olivat virheelliset kokonaismäärälle %s : %s
 SwissQrDebitorAddressInvalid = Veloittajan tiedot olivat virheelliset (%s)
-
 # Validate
 RequireValidValue = Arvo ei kelpaa
 RequireAtLeastXString = Vaatii vähintään %s merkkiä
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = Virhe Kenttä: luokkaa ei löydy tar
 BadSetupOfFieldFileNotFound = Virhe: Kenttä: tiedosto ei löytynyt sisällytettäväksi
 BadSetupOfFieldFetchNotCallable = Virhe huonossa Kenttä asennuksessa : Hakua ei voi kutsua luokassa
 ErrorTooManyAttempts= Liian monta yritystä, yritä myöhemmin uudelleen
-
-TotalAmountEmpty=Total Amount Empty
-FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
+TotalAmountEmpty=Kokonaissumma on tyhjä
+FailedToFoundTheConversionRateForInvoice=Laskun muuntokurssia ei löydy
 ThisIdNotDefined=Id not defined
-OperNotDefined=Payment method not defined
+OperNotDefined=Maksutapaa ei ole määritetty
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Tyhjä viesti ei kelpaa

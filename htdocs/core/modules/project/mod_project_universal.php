@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,16 +109,22 @@ class mod_project_universal extends ModeleNumRefProjects
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $project);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
@@ -126,11 +133,11 @@ class mod_project_universal extends ModeleNumRefProjects
 	 *
 	 *  @param   Societe		$objsoc		Object third party
 	 *  @param   Project		$project	Object project
-	 *  @return  string						Value if OK, 0 if KO
+	 *  @return  string|0					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -138,7 +145,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$mask = getDolGlobalString('PROJECT_UNIVERSAL_MASK');
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 
@@ -149,20 +156,5 @@ class mod_project_universal extends ModeleNumRefProjects
 		$numFinal = get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc : ''), $date, 'next', false, null, $entity);
 
 		return  $numFinal;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Project		$project	Object project
-	 *  @return string      			Next not used reference
-	 */
-	public function project_get_num($objsoc = 0, $project = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $project);
 	}
 }

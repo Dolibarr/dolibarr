@@ -2,6 +2,14 @@
 ProductRef=Ref. de producto
 ProductLabel=Etiqueta del producto
 ProductServiceCard=Ficha Productos/Servicios
+ProductVatMassChange=Actualización global del IGV
+ProductVatMassChangeDesc=¡Esta herramienta actualiza la tasa de IGV definida en <b><u>TODOS</u></b> los productos y servicios!
 ProductOrService=Producto o Servicio
+UpdateVAT=Actualizar IGV
+SellingPriceHT=Precio de venta (sin IGV)
+SellingPriceTTC=Precio de venta (con IGV)
+MinPriceHT=Precio de venta mín. (sin IGV)
+MinPriceTTC=Precio de venta mín. (con IGV)
 ListOfStockMovements=Lista de movimientos de stock
 ExportDataset_produit_1=Productos
+VATRateForSupplierProduct=Tasa IGV (para este producto/proveedor)

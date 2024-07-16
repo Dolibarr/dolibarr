@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 
 /**
  *	\file       htdocs/product/class/html.formproduct.class.php
- *	\brief      Fichier de la classe des fonctions predefinie de composants html
+ *	\brief      File for class with methods for building product related HTML components
  */
 
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -235,8 +236,8 @@ class FormProduct
 	 * Return full path to current warehouse in $tab (recursive function)
 	 *
 	 * @param	array	$tab			warehouse data in $this->cache_warehouses line
-	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
-	 * @return	String					full label with all parents, separated by ' >> '
+	 * @param	string	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
+	 * @return	string					full label with all parents, separated by ' >> '
 	 */
 	private function get_parent_path($tab, $final_label = '')
 	{
@@ -260,7 +261,7 @@ class FormProduct
 	/**
 	 *  Return list of warehouses
 	 *
-	 *  @param  string|int|array  $selected           Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
+	 *  @param  string|int|array  $selected     Id of preselected warehouse ('' or '-1' for no value, 'ifone' and 'ifonenodefault' = select value if one value otherwise no value, '-2' to use the default value from setup)
 	 *  @param  string      $htmlname           Name of html select html
 	 *  @param  string      $filterstatus       warehouse status filter, following comma separated filter options can be used
 	 *                                          'warehouseopen' = select products from open warehouses,
@@ -287,7 +288,7 @@ class FormProduct
 	{
 		global $conf, $langs, $user, $hookmanager;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses " . (is_array($selected) ? 'selected is array' : $selected) . ", $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out = '';
 		if (!getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
@@ -309,7 +310,7 @@ class FormProduct
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1) {
 				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
-					$selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+					$selected = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 				}
 			} else {
 				if (is_scalar($selected) && ($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
@@ -346,7 +347,7 @@ class FormProduct
 					$out .= ' selected';
 				}
 			} else {
-				if ($selected == $id || (preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
+				if ($selected == $id || (!empty($selected) && preg_match('/^ifone/', $selected) && $nbofwarehouses == 1)) {
 					$out .= ' selected';
 				}
 			}
@@ -431,7 +432,7 @@ class FormProduct
 		if (strpos($htmlname, 'search_') !== 0) {
 			if (empty($user->fk_workstation) || $user->fk_workstation == -1) {
 				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
-					$selected = $conf->global->MAIN_DEFAULT_WORKSTATION;
+					$selected = getDolGlobalString('MAIN_DEFAULT_WORKSTATION');
 				}
 			} else {
 				if (($selected == '-2' || $selected == 'ifone') && getDolGlobalString('MAIN_DEFAULT_WORKSTATION')) {
@@ -490,10 +491,10 @@ class FormProduct
 	/**
 	 *    Display form to select warehouse
 	 *
-	 *    @param    string  $page        Page
-	 *    @param    int     $selected    Id of warehouse
-	 *    @param    string  $htmlname    Name of select html field
-	 *    @param    int     $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+	 *    @param    string      $page        Page
+	 *    @param    string|int  $selected    Id of warehouse
+	 *    @param    string      $htmlname    Name of select html field
+	 *    @param    int         $addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
 	 *    @return   void
 	 */
 	public function formSelectWarehouses($page, $selected = '', $htmlname = 'warehouse_id', $addempty = 0)
@@ -524,20 +525,20 @@ class FormProduct
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Output a combo box with list of units
-	 *  pour l'instant on ne definit pas les unites dans la base
+	 *  Currently the units are not define in the DB
 	 *
 	 *  @param	string		$name               Name of HTML field
 	 *  @param	string		$measuring_style    Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default            Preselected value
+	 *  @param  string		$selected            Preselected value
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 *  @param  int         $mode               1=Use short label as value, 0=Use rowid
 	 * 	@return	void
 	 *  @deprecated
 	 */
-	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0)
+	public function select_measuring_units($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0)
 	{
 		//phpcs:enable
-		print $this->selectMeasuringUnits($name, $measuring_style, $default, $adddefault, $mode);
+		print $this->selectMeasuringUnits($name, $measuring_style, $selected, $adddefault, $mode);
 	}
 
 	/**
@@ -546,15 +547,15 @@ class FormProduct
 	 *
 	 *  @param  string		$name                Name of HTML field
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume, time
-	 *  @param  string		$default             Preselected value
+	 *  @param  string		$selected            Preselected value
 	 *  @param  int|string	$adddefault			 1=Add empty unit called "Default", ''=Add empty value
 	 *  @param  int         $mode                1=Use short label as value, 0=Use rowid, 2=Use scale (power)
 	 *  @param	string		$morecss			 More CSS
-	 *  @return string
+	 *  @return string|-1
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $default = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
 	{
-		global $langs, $conf, $mysoc, $db;
+		global $langs, $db;
 
 		$langs->load("other");
 
@@ -583,7 +584,7 @@ class FormProduct
 		} else {
 			$return .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$name.'" id="'.$name.'">';
 			if ($adddefault || $adddefault === '') {
-				$return .= '<option value="0">'.($adddefault ? $langs->trans("Default") : '').'</option>';
+				$return .= '<option value="0"'.($selected === '0' ? ' selected' : '').'>'.($adddefault ? '('.$langs->trans("Default").')' : '').'</option>';
 			}
 
 			foreach ($measuringUnits->records as $lines) {
@@ -596,11 +597,11 @@ class FormProduct
 					$return .= $lines->id;
 				}
 				$return .= '"';
-				if ($mode == 1 && $lines->short_label == $default) {
+				if ($mode == 1 && $lines->short_label == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 2 && $lines->scale == $default) {
+				} elseif ($mode == 2 && $lines->scale == $selected) {
 					$return .= ' selected';
-				} elseif ($mode == 0 && $lines->id == $default) {
+				} elseif ($mode == 0 && $lines->id == $selected) {
 					$return .= ' selected';
 				}
 				$return .= '>';
@@ -627,7 +628,7 @@ class FormProduct
 	 *  @param  string		$selected             Preselected value
 	 *  @param  int         $mode                1=Use label as value, 0=Use code
 	 *  @param  int         $showempty           1=show empty value, 0= no
-	 *  @return string
+	 *  @return string|int
 	 */
 	public function selectProductNature($name = 'finished', $selected = '', $mode = 0, $showempty = 1)
 	{
@@ -691,7 +692,7 @@ class FormProduct
 	/**
 	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
 	 *
-	 *  @param	int		$selected		Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param	string|int	$selected	Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname		Name of html select html
 	 *  @param  string	$filterstatus	lot status filter, following comma separated filter options can be used
 	 *  @param  int		$empty			1=Can be empty, 0 if not

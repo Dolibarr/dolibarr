@@ -58,19 +58,19 @@ if (getDolGlobalString('PAYPAL_API_SANDBOX') || GETPOST('forcesandbox', 'alpha')
 // Clean parameters
 $PAYPAL_API_USER = "";
 if (getDolGlobalString('PAYPAL_API_USER')) {
-	$PAYPAL_API_USER = $conf->global->PAYPAL_API_USER;
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
 }
 $PAYPAL_API_PASSWORD = "";
 if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-	$PAYPAL_API_PASSWORD = $conf->global->PAYPAL_API_PASSWORD;
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
 }
 $PAYPAL_API_SIGNATURE = "";
 if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-	$PAYPAL_API_SIGNATURE = $conf->global->PAYPAL_API_SIGNATURE;
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
 }
 $PAYPAL_API_SANDBOX = "";
 if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-	$PAYPAL_API_SANDBOX = $conf->global->PAYPAL_API_SANDBOX;
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 }
 
 // Proxy

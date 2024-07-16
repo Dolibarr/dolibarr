@@ -5,6 +5,8 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,13 +132,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
 	}
 
-	// $conf is already instancied inside inc.php
+	// $conf is already instantiated inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
 	$conf->db->port = $dolibarr_main_db_port;
@@ -515,41 +517,41 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		if (versioncompare($versiontoarray, $versionranarray) >= 0 || versioncompare($versiontoarray, $versionranarray) <= -3) {
 			// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
 			$listofmodule = array(
-				'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
-				'MAIN_MODULE_AGENDA'=>'newboxdefonly',
-				'MAIN_MODULE_BOM'=>'menuonly',
-				'MAIN_MODULE_BANQUE'=>'menuonly',
-				'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-				'MAIN_MODULE_CRON'=>'newboxdefonly',
-				'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
-				'MAIN_MODULE_BLOCKEDLOG'=>'noboxes',
-				'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
-				'MAIN_MODULE_DON'=>'newboxdefonly',
-				'MAIN_MODULE_ECM'=>'newboxdefonly',
-				'MAIN_MODULE_EXTERNALSITE'=>'newboxdefonly',
-				'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
-				'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-				'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
-				'MAIN_MODULE_FICHEINTER'=>'newboxdefonly',
-				'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
-				'MAIN_MODULE_MARGIN'=>'menuonly',
-				'MAIN_MODULE_MRP'=>'menuonly',
-				'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
-				'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
-				'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-				'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-				'MAIN_MODULE_RECRUITMENT'=>'menuonly',
-				'MAIN_MODULE_RESOURCE'=>'noboxes',
-				'MAIN_MODULE_SALARIES'=>'newboxdefonly',
-				'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-				'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
-				'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-				'MAIN_MODULE_STRIPE'=>'menuonly',
-				'MAIN_MODULE_TICKET'=>'newboxdefonly',
-				'MAIN_MODULE_TAKEPOS'=>'newboxdefonly',
-				'MAIN_MODULE_USER'=>'newboxdefonly', //This one must be always done and only into last targeted version)
-				'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
-				'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
+				'MAIN_MODULE_ACCOUNTING' => 'newboxdefonly',
+				'MAIN_MODULE_AGENDA' => 'newboxdefonly',
+				'MAIN_MODULE_BOM' => 'menuonly',
+				'MAIN_MODULE_BANQUE' => 'menuonly',
+				'MAIN_MODULE_BARCODE' => 'newboxdefonly',
+				'MAIN_MODULE_CRON' => 'newboxdefonly',
+				'MAIN_MODULE_COMMANDE' => 'newboxdefonly',
+				'MAIN_MODULE_BLOCKEDLOG' => 'noboxes',
+				'MAIN_MODULE_DEPLACEMENT' => 'newboxdefonly',
+				'MAIN_MODULE_DON' => 'newboxdefonly',
+				'MAIN_MODULE_ECM' => 'newboxdefonly',
+				'MAIN_MODULE_EXTERNALSITE' => 'newboxdefonly',
+				'MAIN_MODULE_EXPENSEREPORT' => 'newboxdefonly',
+				'MAIN_MODULE_FACTURE' => 'newboxdefonly',
+				'MAIN_MODULE_FOURNISSEUR' => 'newboxdefonly',
+				'MAIN_MODULE_FICHEINTER' => 'newboxdefonly',
+				'MAIN_MODULE_HOLIDAY' => 'newboxdefonly',
+				'MAIN_MODULE_MARGIN' => 'menuonly',
+				'MAIN_MODULE_MRP' => 'menuonly',
+				'MAIN_MODULE_OPENSURVEY' => 'newboxdefonly',
+				'MAIN_MODULE_PAYBOX' => 'newboxdefonly',
+				'MAIN_MODULE_PRINTING' => 'newboxdefonly',
+				'MAIN_MODULE_PRODUIT' => 'newboxdefonly',
+				'MAIN_MODULE_RECRUITMENT' => 'menuonly',
+				'MAIN_MODULE_RESOURCE' => 'noboxes',
+				'MAIN_MODULE_SALARIES' => 'newboxdefonly',
+				'MAIN_MODULE_SERVICE' => 'newboxdefonly',
+				'MAIN_MODULE_SYSLOG' => 'newboxdefonly',
+				'MAIN_MODULE_SOCIETE' => 'newboxdefonly',
+				'MAIN_MODULE_STRIPE' => 'menuonly',
+				'MAIN_MODULE_TICKET' => 'newboxdefonly',
+				'MAIN_MODULE_TAKEPOS' => 'newboxdefonly',
+				'MAIN_MODULE_USER' => 'newboxdefonly', //This one must be always done and only into last targeted version)
+				'MAIN_MODULE_VARIANTS' => 'newboxdefonly',
+				'MAIN_MODULE_WEBSITE' => 'newboxdefonly',
 			);
 
 			$result = migrate_reload_modules($db, $langs, $conf, $listofmodule);
@@ -583,7 +585,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 		// Can call a dedicated external upgrade process with hook doUpgradeAfterDB()
 		if (!$error) {
-			$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto, 'conf'=>$conf);
+			$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto, 'conf' => $conf);
 			$object = new stdClass();
 			$action = "upgrade";
 			$reshook = $hookmanager->executeHooks('doUpgradeAfterDB', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -655,7 +657,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
 
 
-		$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto, 'conf'=>$conf);
+		$parameters = array('versionfrom' => $versionfrom, 'versionto' => $versionto, 'conf' => $conf);
 		$object = new stdClass();
 		$action = "upgrade";
 		$reshook = $hookmanager->executeHooks('doUpgradeAfterFiles', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -1575,7 +1577,7 @@ function migrate_price_facture($db, $langs, $conf)
 				$facligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: line ".$rowid.": facid=".$obj->facid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$facligne->update_total();
 
 
@@ -1676,29 +1678,9 @@ function migrate_price_propal($db, $langs, $conf)
 				$propalligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": propalid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$propalligne->update_total();
 
-
-				/* On touche pas a propal mere
-				 $propal = new Propal($db);
-				 $propal->id=$obj->rowid;
-				 if ( $propal->fetch($propal->id) >= 0 )
-				 {
-				 if ( $propal->update_price() > 0 )
-				 {
-				 print ". ";
-				 }
-				 else
-				 {
-				 print "Error id=".$propal->id;
-				 }
-				 }
-				 else
-				 {
-				 print "Error #3";
-				 }
-				 */
 				$i++;
 			}
 		} else {
@@ -1780,7 +1762,7 @@ function migrate_price_contrat($db, $langs, $conf)
 				$contratligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": contratdetid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent."  -> ".$total_ht.", ".$total_tva." , ".$total_ttc);
-				print ". ";
+				print '. ';
 				$contratligne->update_total();
 
 				$i++;
@@ -1861,28 +1843,9 @@ function migrate_price_commande($db, $langs, $conf)
 				$commandeligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid." : commandeid=".$obj->rowid." pu=".$pu." qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global."  -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$commandeligne->update_total();
 
-				/* On touche pas a facture mere
-				 $commande = new Commande($db);
-				 $commande->id = $obj->rowid;
-				 if ( $commande->fetch($commande->id) >= 0 )
-				 {
-				 if ( $commande->update_price() > 0 )
-				 {
-				 print ". ";
-				 }
-				 else
-				 {
-				 print "Error id=".$commande->id;
-				 }
-				 }
-				 else
-				 {
-				 print "Error #3";
-				 }
-				 */
 				$i++;
 			}
 		} else {
@@ -1973,28 +1936,9 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne->total_ttc = $total_ttc;
 
 				dolibarr_install_syslog("upgrade2: Line ".$rowid.": commandeid=".$obj->rowid." pu=".$pu."  qty=".$qty." vatrate=".$vatrate." remise_percent=".$remise_percent." remise_global=".$remise_percent_global." -> ".$total_ht.", ".$total_tva.", ".$total_ttc);
-				print ". ";
+				print '. ';
 				$commandeligne->update_total();
 
-				/* On touche pas a facture mere
-				 $commande = new Commande($db);
-				 $commande->id = $obj->rowid;
-				 if ( $commande->fetch($commande->id) >= 0 )
-				 {
-				 if ( $commande->update_price() > 0 )
-				 {
-				 print ". ";
-				 }
-				 else
-				 {
-				 print "Error id=".$commande->id;
-				 }
-				 }
-				 else
-				 {
-				 print "Error #3";
-				 }
-				 */
 				$i++;
 			}
 		} else {
@@ -2040,11 +1984,11 @@ function migrate_modeles($db, $langs, $conf)
 
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
 
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$modellist = ModelePDFFactures::liste_modeles($db);
 		if (count($modellist) == 0) {
-			// Aucun model par defaut.
+			// Aucun model par default.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('crabe','invoice')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -2053,11 +1997,11 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (isModEnabled('commande')) {
+	if (isModEnabled('order')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
-			// Aucun model par defaut.
+			// Aucun model par default.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('einstein','order')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -2066,11 +2010,11 @@ function migrate_modeles($db, $langs, $conf)
 		}
 	}
 
-	if (isModEnabled("expedition")) {
+	if (isModEnabled("shipping")) {
 		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
-			// Aucun model par defaut.
+			// Aucun model par default.
 			$sql = " insert into ".MAIN_DB_PREFIX."document_model(nom,type) values('rouget','shipping')";
 			$resql = $db->query($sql);
 			if (!$resql) {
@@ -2084,7 +2028,7 @@ function migrate_modeles($db, $langs, $conf)
 
 
 /**
- * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
+ * Correspondence des expeditions et des commandes clients dans la table llx_co_exp
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2125,7 +2069,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2149,7 +2093,7 @@ function migrate_commande_expedition($db, $langs, $conf)
 }
 
 /**
- * Correspondance des livraisons et des commandes clients dans la table llx_co_liv
+ * Correspondence des livraisons et des commandes clients dans la table llx_co_liv
  *
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
@@ -2205,7 +2149,7 @@ function migrate_commande_livraison($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2301,7 +2245,7 @@ function migrate_detail_livraison($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2373,7 +2317,7 @@ function migrate_stocks($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		}
@@ -2437,7 +2381,7 @@ function migrate_menus($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2505,7 +2449,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			} else {
@@ -2589,7 +2533,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				//print ". ";
+				//print '. ';
 				$i++;
 			}
 		} else {
@@ -2648,7 +2592,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				//print ". ";
+				//print '. ';
 				$i++;
 			}
 		} else {
@@ -2725,7 +2669,7 @@ function migrate_project_user_resp($db, $langs, $conf)
 							dol_print_error($db);
 						}
 					}
-					print ". ";
+					print '. ';
 
 					$i++;
 				}
@@ -2803,7 +2747,7 @@ function migrate_project_task_actors($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			}
@@ -2835,9 +2779,9 @@ function migrate_project_task_actors($db, $langs, $conf)
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
  * @param	string		$table			Table name
- * @param	int			$fk_source		Id of element source
+ * @param	string		$fk_source		Id of element source (name of field)
  * @param	string		$sourcetype		Type of element source
- * @param	int			$fk_target		Id of element target
+ * @param	string		$fk_target		Id of element target
  * @param	string		$targettype		Type of element target
  * @return	void
  */
@@ -2884,7 +2828,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			} else {
@@ -2964,7 +2908,7 @@ function migrate_element_time($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$oldtime++;
 					if (!empty($totaltime[$obj->fk_element])) {
 						$totaltime[$obj->fk_element] += $newtime;
@@ -3073,7 +3017,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
 							$error++;
 							dol_print_error($db);
 						}
-						print ". ";
+						print '. ';
 						$i++;
 					}
 				} else {
@@ -3160,7 +3104,7 @@ function migrate_shipping_delivery($db, $langs, $conf)
 							$error++;
 							dol_print_error($db);
 						}
-						print ". ";
+						print '. ';
 					} else {
 						$error++;
 						dol_print_error($db);
@@ -3248,7 +3192,7 @@ function migrate_shipping_delivery2($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3315,7 +3259,7 @@ function migrate_actioncomm_element($db, $langs, $conf)
 				// We will drop at next version because a migrate should be runnable several times if it fails.
 				//$sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."actioncomm DROP COLUMN ".$field;
 				//$db->query($sqlDrop);
-				//print ". ";
+				//print '. ';
 			} else {
 				dol_print_error($db);
 				$db->rollback();
@@ -3392,7 +3336,7 @@ function migrate_mode_reglement($db, $langs, $conf)
 							dol_print_error($db);
 							$error++;
 						}
-						print ". ";
+						print '. ';
 					}
 
 					if (!$error) {
@@ -3433,7 +3377,7 @@ function migrate_clean_association($db, $langs, $conf)
 		$obj = $db->fetch_object($result);
 		if ($obj) {	// It table categorie_association exists
 			$couples = array();
-			$filles = array();
+			$children = array();
 			$sql = "SELECT fk_categorie_mere, fk_categorie_fille";
 			$sql .= " FROM ".MAIN_DB_PREFIX."categorie_association";
 			dolibarr_install_syslog("upgrade: search duplicate");
@@ -3441,10 +3385,10 @@ function migrate_clean_association($db, $langs, $conf)
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				while ($obj = $db->fetch_object($resql)) {
-					if (!isset($filles[$obj->fk_categorie_fille])) {	// Only one record as child (a child has only on parent).
+					if (!isset($children[$obj->fk_categorie_fille])) {	// Only one record as child (a child has only on parent).
 						if ($obj->fk_categorie_mere != $obj->fk_categorie_fille) {
-							$filles[$obj->fk_categorie_fille] = 1; // Set record for this child
-							$couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille] = array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
+							$children[$obj->fk_categorie_fille] = 1; // Set record for this child
+							$couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille] = array('mere' => $obj->fk_categorie_mere, 'fille' => $obj->fk_categorie_fille);
 						}
 					}
 				}
@@ -3536,7 +3480,7 @@ function migrate_categorie_association($db, $langs, $conf)
 						$error++;
 						dol_print_error($db);
 					}
-					print ". ";
+					print '. ';
 					$i++;
 				}
 			} else {
@@ -3560,7 +3504,7 @@ function migrate_categorie_association($db, $langs, $conf)
 }
 
 /**
- * Migrate event assignement to owner
+ * Migrate event assignment to owner
  *
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
@@ -3604,7 +3548,7 @@ function migrate_event_assignement($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3626,7 +3570,7 @@ function migrate_event_assignement($db, $langs, $conf)
 }
 
 /**
- * Migrate event assignement to owner
+ * Migrate event assignment to owner
  *
  * @param	DoliDB		$db				Database handler
  * @param	Translate	$langs			Object langs
@@ -3670,7 +3614,7 @@ function migrate_event_assignement_contact($db, $langs, $conf)
 					$error++;
 					dol_print_error($db);
 				}
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3837,7 +3781,7 @@ function migrate_remise_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3928,7 +3872,7 @@ function migrate_remise_except_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -3993,7 +3937,7 @@ function migrate_user_rights_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -4058,7 +4002,7 @@ function migrate_usergroup_rights_entity($db, $langs, $conf)
 					dol_print_error($db);
 				}
 
-				print ". ";
+				print '. ';
 				$i++;
 			}
 		} else {
@@ -4191,7 +4135,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
 		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete) || preg_match('/\*/', $filetodelete)) {
 			//print "Process file ".$filetodelete."\n";
-			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
+			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, 0);
 			if (!$result) {
 				$langs->load("errors");
 				print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile", DOL_DOCUMENT_ROOT.$filetodelete);
@@ -4247,7 +4191,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
 
 
 /**
- * Disable/Reenable features modules.
+ * Disable/Re-enable features modules.
  * We must do this when internal menu of module or permissions has changed
  * or when triggers have moved.
  *
@@ -4271,36 +4215,36 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		$user = new User($db);	// To avoid error during migration
 	}
 
-	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".join(',', array_keys($listofmodule)));
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force.", listofmodule=".implode(',', array_keys($listofmodule)));
 
 	$reloadactionformodules = array(
-		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove'=> 1),
+		'MAIN_MODULE_AGENDA' => array('class' => 'modAgenda', 'remove' => 1),
 		'MAIN_MODULE_API' => array('class' => 'modApi'),
-		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove'=> 1),
-		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus'=> 1),
-		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove'=> 1),
-		'MAIN_MODULE_EXTERNALSITE' => array('class' => 'modExternalSite', 'remove'=> 1),
-		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove'=> 1),
+		'MAIN_MODULE_BARCODE' => array('class' => 'modBarcode', 'remove' => 1),
+		'MAIN_MODULE_BLOCKEDLOG' => array('class' => 'modBlockedLog', 'deleteinsertmenus' => 1),
+		'MAIN_MODULE_CRON' => array('class' => 'modCron', 'remove' => 1),
+		'MAIN_MODULE_EXTERNALSITE' => array('class' => 'modExternalSite', 'remove' => 1),
+		'MAIN_MODULE_SOCIETE' => array('class' => 'modSociete', 'remove' => 1),
 		'MAIN_MODULE_PRODUIT' => array('class' => 'modProduct'),
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
 		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
 		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
-		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheInter'),
+		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheinter'),
 		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
-		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove'=>1),
+		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove' => 1),
 		'MAIN_MODULE_EXPEDITION' => array('class' => 'modExpedition'),
 		'MAIN_MODULE_EXPENSEREPORT' => array('class' => 'modExpenseReport'),
 		'MAIN_MODULE_DON' => array('class' => 'modDon'),
-		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove'=>1),
-		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove'=>1),
-		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove'=>1),
-		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove'=>1),
+		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove' => 1),
+		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove' => 1),
+		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove' => 1),
+		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove' => 1),
 		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
-		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove'=>1),
-		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove'=>1),
-		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove'=>1),
-		'MAIN_MODULE_TAKEPOS' => array('class' => 'modTakePos', 'remove'=>1),
-		'MAIN_MODULE_EMAILCOLLECTOR' => array('class' => 'modEmailCollector', 'remove'=>1),
+		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove' => 1),
+		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove' => 1),
+		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove' => 1),
+		'MAIN_MODULE_TAKEPOS' => array('class' => 'modTakePos', 'remove' => 1),
+		'MAIN_MODULE_EMAILCOLLECTOR' => array('class' => 'modEmailCollector', 'remove' => 1),
 	);
 
 	foreach ($listofmodule as $moduletoreload => $reloadmode) {	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
@@ -4677,7 +4621,7 @@ function migrate_users_socialnetworks()
 				$obj->socialnetworks = '[]';
 			}
 			$socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."user SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."user SET socialnetworks='".$db->escape(json_encode($socialnetworks))."'";
 			$sqlupd .= ', skype=null';
 			$sqlupd .= ', twitter=null';
 			$sqlupd .= ', facebook=null';
@@ -4769,7 +4713,7 @@ function migrate_members_socialnetworks()
 				$obj->socialnetworks = '[]';
 			}
 			$socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."adherent SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."adherent SET socialnetworks='".$db->escape(json_encode($socialnetworks))."'";
 			$sqlupd .= ', skype=null';
 			$sqlupd .= ', twitter=null';
 			$sqlupd .= ', facebook=null';
@@ -4864,7 +4808,7 @@ function migrate_contacts_socialnetworks()
 				$obj->socialnetworks = '[]';
 			}
 			$socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."socpeople SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."socpeople SET socialnetworks='".$db->escape(json_encode($socialnetworks))."'";
 			$sqlupd .= ', jabberid=null';
 			$sqlupd .= ', skype=null';
 			$sqlupd .= ', twitter=null';
@@ -4956,7 +4900,7 @@ function migrate_thirdparties_socialnetworks()
 				$obj->socialnetworks = '[]';
 			}
 			$socialnetworks = array_merge($arraysocialnetworks, json_decode($obj->socialnetworks, true));
-			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."societe SET socialnetworks='".$db->escape(json_encode($socialnetworks, true))."'";
+			$sqlupd = 'UPDATE '.MAIN_DB_PREFIX."societe SET socialnetworks='".$db->escape(json_encode($socialnetworks))."'";
 			$sqlupd .= ', skype=null';
 			$sqlupd .= ', twitter=null';
 			$sqlupd .= ', facebook=null';
@@ -5075,17 +5019,17 @@ function migrate_contractdet_rank()
 	print '<b>'.$langs->trans('MigrationContractLineRank')."</b><br>\n";
 
 	$sql = "SELECT c.rowid as cid ,cd.rowid as cdid,cd.rang FROM ".$db->prefix()."contratdet as cd INNER JOIN ".$db->prefix()."contrat as c ON c.rowid=cd.fk_contrat AND cd.rang=0";
-	$sql .=" ORDER BY c.rowid,cd.rowid";
+	$sql .= " ORDER BY c.rowid,cd.rowid";
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		$currentRank=0;
-		$current_contract=0;
+		$currentRank = 0;
+		$current_contract = 0;
 		while ($obj = $db->fetch_object($resql)) {
-			if (empty($current_contract) || $current_contract==$obj->cid) {
+			if (empty($current_contract) || $current_contract == $obj->cid) {
 				$currentRank++;
 			} else {
-				$currentRank=1;
+				$currentRank = 1;
 			}
 
 			$sqlUpd = "UPDATE ".$db->prefix()."contratdet SET rang=".(int) $currentRank." WHERE rowid=".(int) $obj->cdid;

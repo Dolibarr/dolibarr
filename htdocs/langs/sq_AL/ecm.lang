@@ -30,7 +30,7 @@ ECMDocsBy=Dokumentet e lidhura me %s
 ECMNoDirectoryYet=Asnjë drejtori nuk u krijua
 ShowECMSection=Shfaq drejtorinë
 DeleteSection=Hiq drejtorinë
-ConfirmDeleteSection=A mund të konfirmoni që dëshironi të fshini direktorinë <b>%s<span class='notranslate'></b></s?
+ConfirmDeleteSection=Can you confirm you want to delete the directory <b>%s</b>?
 ECMDirectoryForFiles=Drejtoria relative për skedarët
 CannotRemoveDirectoryContainsFilesOrDirs=Heqja nuk është e mundur sepse përmban disa skedarë ose nëndrejtori
 CannotRemoveDirectoryContainsFiles=Heqja nuk është e mundur sepse përmban disa skedarë

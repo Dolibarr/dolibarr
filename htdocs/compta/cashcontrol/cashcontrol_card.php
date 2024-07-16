@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Andreu Bisquerra		<jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,21 +36,21 @@ require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php'
 
 $langs->loadLangs(array("install", "cashdesk", "admin", "banks"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 $now = dol_now();
-$syear = (GETPOSTISSET('closeyear') ? GETPOST('closeyear', 'int') : dol_print_date($now, "%Y"));
-$smonth = (GETPOSTISSET('closemonth') ? GETPOST('closemonth', 'int') : dol_print_date($now, "%m"));
-$sday = (GETPOSTISSET('closeday') ? GETPOST('closeday', 'int') : dol_print_date($now, "%d"));
+$syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y"));
+$smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m"));
+$sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d"));
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -65,10 +66,10 @@ if (!$sortorder) {
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 if ($contextpage == 'takepos') {
-	$_GET['optioncss'] = 'print';
+	$optioncss = 'print';
 }
 
-$arrayofpaymentmode = array('cash'=>'Cash', 'cheque'=>'Cheque', 'card'=>'CreditCard');
+$arrayofpaymentmode = array('cash' => 'Cash', 'cheque' => 'Cheque', 'card' => 'CreditCard');
 
 $arrayofposavailable = array();
 if (isModEnabled('cashdesk')) {
@@ -85,11 +86,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user
@@ -164,9 +165,9 @@ if ($action == "start") {
 	}
 
 	if (!$error) {
-		$object->day_close = GETPOST('closeday', 'int');
-		$object->month_close = GETPOST('closemonth', 'int');
-		$object->year_close = GETPOST('closeyear', 'int');
+		$object->day_close = GETPOSTINT('closeday');
+		$object->month_close = GETPOSTINT('closemonth');
+		$object->year_close = GETPOSTINT('closeyear');
 
 		$object->opening = price2num(GETPOST('opening', 'alpha'));
 		$object->posmodule = GETPOST('posmodule', 'alpha');
@@ -180,7 +181,7 @@ if ($action == "start") {
 			$db->commit();
 			$action = "view";
 		} else {
-			$db->rollback;
+			$db->rollback();
 			$action = "view";
 		}
 	}
@@ -235,7 +236,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 	$object->fetch($id);
 
 	if (!($object->id > 0)) {
-		dol_print_error('', 'Error, object must be fetched before being deleted');
+		dol_print_error(null, 'Error, object must be fetched before being deleted');
 		exit;
 	}
 
@@ -351,7 +352,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			} elseif ($key == 'card') {
 				$sql .= " AND cp.code = 'CB'";
 			} else {
-				dol_print_error('Value for key = '.$key.' not supported');
+				dol_print_error(null, 'Value for key = '.$key.' not supported');
 				exit;
 			}
 			if ($syear && !$smonth) {
@@ -388,7 +389,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		if ($contextpage == 'takepos') {
 			print '<input type="hidden" name="contextpage" value="takepos">';
 		}
-		if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1') {
+		if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
 			print '<input type="hidden" name="action" value="add">';
 		} elseif ($action == 'close') {
 			print '<input type="hidden" name="action" value="valid">';
@@ -415,10 +416,11 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable) > 1 ? 1 : 0)).'</td>';
 		print '<td>';
 
-		$array = array();
+		$arrayofpos = array();
 		$numterminals = max(1, getDolGlobalString('TAKEPOS_NUM_TERMINALS'));
 		for ($i = 1; $i <= $numterminals; $i++) {
-			$array[$i] = $i;
+			$nameofterminal = getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$i);
+			$arrayofpos[$i] = array('id' => $i, 'label' => (($nameofterminal != "TAKEPOS_TERMINAL_NAME_".$i) ? '#'.$i.' '.$nameofterminal : $i), 'data-html' => (($nameofterminal != "TAKEPOS_TERMINAL_NAME_".$i) ? '#'.$i.' - '.$nameofterminal : $i));
 		}
 		$selectedposnumber = 0;
 		$showempty = 1;
@@ -426,7 +428,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 			$selectedposnumber = 1;
 			$showempty = 0;
 		}
-		print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ? GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
+		print $form->selectarray('posnumber', $arrayofpos, GETPOSTISSET('posnumber') ? GETPOSTINT('posnumber') : $selectedposnumber, $showempty);
 		//print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
 		print '</td>';
 		// Year
@@ -678,7 +680,11 @@ if (empty($action) || $action == "view" || $action == "close") {
 		if ($action != 'close') {
 			print '<div class="tabsAction">';
 
-			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintTicket').'</a></div>';
+			// Print ticket
+			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'">'.$langs->trans('PrintReport').'</a></div>';
+
+			// Print ticket (no detail)
+			print '<div class="inline-block divButAction"><a target="_blank" rel="noopener noreferrer" class="butAction" href="report.php?id='.((int) $id).'&summaryonly=1">'.$langs->trans('PrintReportNoDetail').'</a></div>';
 
 			if ($object->status == CashControl::STATUS_DRAFT) {
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.((int) $id).'&action=close&token='.newToken().'&contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
@@ -699,7 +705,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 			if ($contextpage == 'takepos') {
 				print '<input type="hidden" name="contextpage" value="takepos">';
 			}
-			if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1') {
+			if ($action == 'start' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '' && GETPOSTINT('posnumber') != '-1') {
 				print '<input type="hidden" name="action" value="add">';
 			} elseif ($action == 'close') {
 				print '<input type="hidden" name="action" value="valid">';

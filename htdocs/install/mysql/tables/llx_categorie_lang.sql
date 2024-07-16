@@ -19,6 +19,9 @@
 --
 -- ============================================================================
 
+
+-- Table to manage the multilanguage of categories (label and description)
+
 create table llx_categorie_lang
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,

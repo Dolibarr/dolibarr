@@ -2,6 +2,8 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014	   Floran Henry  <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,38 +34,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
  */
 class mod_contract_olive extends ModelNumRefContracts
 {
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Olive';
-
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelNumRefContracts class
 	public $name = 'Olive';
+	public $version = 'dolibarr';
 
-	public $code_modifiable = 1; // Code modifiable
-
-	public $code_modifiable_invalide = 1; // Code modifiable si il est invalide
-
-	public $code_modifiable_null = 1; // Code modifiables si il est null
-
-	public $code_null = 1; // Code facultatif
 
 	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
+	 *	Constructor
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 0;
-
-
+	public function __construct()
+	{
+		$this->code_null = 1;
+		$this->code_modifiable = 1;
+		$this->code_modifiable_invalide = 1;
+		$this->code_modifiable_null = 1;
+		$this->code_auto = 0;
+	}
 	/**
 	 *	Return description of module
 	 *

@@ -4,8 +4,9 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -51,7 +53,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -71,7 +72,7 @@ if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	exit;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewleadcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -97,7 +98,7 @@ if (empty($conf->project->enabled)) {
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -199,7 +200,7 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 	// Set default opportunity status
-	$defaultoppstatus = getDolGlobalString('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
+	$defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
 	if (empty($defaultoppstatus)) {
 		$error++;
 		$langs->load("errors");
@@ -228,8 +229,8 @@ if (empty($reshook) && $action == 'add') {
 			$thirdparty->address = GETPOST('address');
 			$thirdparty->zip = GETPOST('zip');
 			$thirdparty->town = GETPOST('town');
-			$thirdparty->country_id = GETPOST('country_id', 'int');
-			$thirdparty->state_id = GETPOST('state_id');
+			$thirdparty->country_id = GETPOSTINT('country_id');
+			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
 			$thirdparty->code_client = 'auto';
 			$thirdparty->code_fournisseur = 'auto';
@@ -237,17 +238,16 @@ if (empty($reshook) && $action == 'add') {
 			// Fill array 'array_options' with data from the form
 			$extrafields->fetch_name_optionals_label($thirdparty->table_element);
 			$ret = $extrafields->setOptionalsFromPost(null, $thirdparty, '', 1);
-			//var_dump($thirdparty->array_options);exit;
 			if ($ret < 0) {
 				$error++;
-				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').join('<br>', $extrafields->errors);
+				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').implode('<br>', $extrafields->errors);
 			}
 
 			if (!$error) {
 				$result = $thirdparty->create($user);
 				if ($result <= 0) {
 					$error++;
-					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').join('<br>', $thirdparty->errors);
+					$errmsg = ($thirdparty->error ? $thirdparty->error.'<br>' : '').implode('<br>', $thirdparty->errors);
 				} else {
 					$proj->socid = $thirdparty->id;
 				}
@@ -303,8 +303,8 @@ if (empty($reshook) && $action == 'add') {
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
-		$proj->opp_status  = $defaultoppstatus;
-		$proj->fk_opp_status  = $defaultoppstatus;
+		$proj->opp_status = $defaultoppstatus;
+		$proj->fk_opp_status = $defaultoppstatus;
 
 		$proj->ip = getUserRemoteIP();
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
@@ -361,7 +361,7 @@ if (empty($reshook) && $action == 'add') {
 					$outputlangs->loadLangs(array("main", "members", "projects"));
 					// Get email content from template
 					$arraydefaultmessage = null;
-					$labeltouse = $conf->global->PROJECT_EMAIL_TEMPLATE_AUTOLEAD;
+					$labeltouse = getDolGlobalString('PROJECT_EMAIL_TEMPLATE_AUTOLEAD');
 
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'project', $user, $outputlangs, 0, 1, $labeltouse);
@@ -396,7 +396,7 @@ if (empty($reshook) && $action == 'add') {
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
 				} elseif (getDolGlobalString('PROJECT_URL_REDIRECT_LEAD')) {
-					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
+					$urlback = getDolGlobalString('PROJECT_URL_REDIRECT_LEAD');
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
 					$urlback = $_SERVER["PHP_SELF"]."?action=added&token=".newToken();
@@ -409,7 +409,7 @@ if (empty($reshook) && $action == 'add') {
 				dol_syslog("project lead ".$proj->ref." has been created, we redirect to ".$urlback);
 			} else {
 				$error++;
-				$errmsg .= $proj->error.'<br>'.join('<br>', $proj->errors);
+				$errmsg .= $proj->error.'<br>'.implode('<br>', $proj->errors);
 			}
 		} else {
 			setEventMessage($errmsg, 'errors');
@@ -419,7 +419,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$db->commit();
 
-		Header("Location: ".$urlback);
+		header("Location: ".$urlback);
 		exit;
 	} else {
 		$db->rollback();
@@ -463,7 +463,7 @@ print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
 if (getDolGlobalString('PROJECT_NEWFORM_TEXT')) {
-	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
+	print $langs->trans(getDolGlobalString('PROJECT_NEWFORM_TEXT'))."<br>\n";
 } else {
 	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
 }
@@ -482,7 +482,7 @@ print '<br>';
 print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -539,7 +539,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}
@@ -547,7 +547,7 @@ if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 }
 
 // Other attributes
-$parameters['tpl_context']='public';	// define template context to public
+$parameters['tpl_context'] = 'public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

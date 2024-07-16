@@ -15,12 +15,12 @@ ErrorGroupAlreadyExists=%s qrupu artıq mövcuddur.
 ErrorEmailAlreadyExists=%s e-poçtu artıq mövcuddur.
 ErrorRecordNotFound=Qeyd tapılmadı.
 ErrorRecordNotFoundShort=Tapılmadı
-ErrorFailToCopyFile='<b>%s</b>' faylını'<span> sinfinə kopyalamaq alınmadı ='notranslate'><b></span>%s</b>'.
-ErrorFailToCopyDir='<b>%s</b>' kataloqunu'<span>'a köçürmək alınmadı ='notranslate'><b></span>%s</b>'.
-ErrorFailToRenameFile='<b>%s</b>' faylının adını dəyişdirmək alınmadı. ='notranslate'><b></span>%s</b>'.
+ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToCopyDir=Failed to copy directory '<b>%s</b>' into '<b>%s</b>'.
+ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToDeleteFile='<b>%s</b>' faylını silmək alınmadı.
 ErrorFailToCreateFile='<b>%s</b>' faylını yaratmaq alınmadı.
-ErrorFailToRenameDir='<b>%s</b>'<span>' qovluğunun adını dəyişmək alınmadı ='notranslate'><b>%s</b>'.
+ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCreateDir='<b>%s</b>' kataloqunu yaratmaq alınmadı.
 ErrorFailToDeleteDir='<b>%s</b>' kataloqunu silmək alınmadı.
 ErrorFailToMakeReplacementInto='<b>%s</b>' faylına dəyişiklik etmək alınmadı.
@@ -51,10 +51,12 @@ ErrorBadDateFormat='%s' dəyərində yanlış tarix formatı var
 ErrorWrongDate=Tarix düzgün deyil!
 ErrorFailedToWriteInDir=%s qovluğuna yazmaq alınmadı
 ErrorFailedToBuildArchive=%s arxiv faylını qurmaq alınmadı
-ErrorFoundBadEmailInFile=Faylda %s sətirləri üçün səhv e-poçt sintaksisi tapıldı (misal sətir %s e-poçtu=<span class='notranslate'>b0ecb4980 /span>)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=İstifadəçi silinə bilməz. Ola bilsin ki, bu, Dolibarr qurumları ilə bağlıdır.
 ErrorFieldsRequired=Bəzi tələb olunan sahələr boş qalıb.
 ErrorSubjectIsRequired=E-poçt mövzusu tələb olunur
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Kataloq yaratmaq alınmadı. Veb server istifadəçisinin Dolibarr sənədlər qovluğuna yazmaq icazəsi olduğunu yoxlayın. Bu PHP-də <b>safe_mode</b> parametri aktivdirsə, Dolibarr php fayllarının veb server istifadəçisinə (və ya qrupa) məxsus olduğunu yoxlayın.
 ErrorNoMailDefinedForThisUser=Bu istifadəçi üçün heç bir poçt təyin olunmayıb
 ErrorSetupOfEmailsNotComplete=E-poçtların quraşdırılması tamamlanmayıb
@@ -81,7 +83,7 @@ ErrorNoValueForRadioType=Zəhmət olmasa radio siyahısı üçün dəyəri doldu
 ErrorBadFormatValueList=Siyahı dəyərində birdən çox vergül ola bilməz: <u>%s</u>, lakin ən azı birinə ehtiyac var: açar, dəyər
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> sahəsində xüsusi simvollar olmamalıdır.
 ErrorFieldCanNotContainSpecialNorUpperCharacters=<b>%s</b> sahəsində xüsusi simvollar və böyük hərflər olmamalıdır simvol və əlifba sırası ilə başlamalıdır (a-z)
-ErrorFieldMustHaveXChar=<b>%s</b> sahəsində ən azı <span class=' olmalıdır notranslate'>%s</span> simvol.
+ErrorFieldMustHaveXChar=The field <b>%s</b> must have at least %s characters.
 ErrorNoAccountancyModuleLoaded=Heç bir mühasibat modulu aktivləşdirilməyib
 ErrorExportDuplicateProfil=Bu profil adı bu ixrac dəsti üçün artıq mövcuddur.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP uyğunluğu tamamlanmayıb.
@@ -94,10 +96,10 @@ ErrorRecordIsUsedCantDelete=Qeydi silmək mümkün deyil. O, artıq istifadə ol
 ErrorModuleRequireJavascript=Bu funksiyanın işləməsi üçün JavaScript deaktiv edilməməlidir. JavaScript-i aktivləşdirmək/deaktiv etmək üçün Ana səhifə->Quraşdırma->Ekran menyusuna keçin.
 ErrorPasswordsMustMatch=Hər iki daxil edilmiş parol bir-birinə uyğun olmalıdır
 ErrorContactEMail=Texniki xəta baş verdi. Zəhmət olmasa, aşağıdakı e-poçt ünvanına administratorla əlaqə saxlayın <b>%s</b> və xətanı təqdim edin. mesajınızda <b>%s</b> kodu və ya ekran nüsxəsini əlavə edin bu səhifə.
-ErrorWrongValueForField=Sahə <b>%s</b>: 'translate class='no <b></span>%s</b>' regex qaydasına uyğun gəlmir b0z838f <span class='notranslate'>%s</b>
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=Sahə <b>%s</b>: '<spanlate class='no dəyəri '><b></span>%s</b>' icazə verilməyən zərərli məlumat ehtiva edir
-ErrorFieldValueNotIn=Sahə <b>%s</b>: 'translate class='no <b></span>%s</b>' <span class='notranslate'3</span>3038f sahəsində tapılan dəyər deyil span>%s</b> <b> %s</b>
-ErrorFieldRefNotIn=Sahə <b>%s</b>: 'translate class='no <b></span>%s</b>' b0aee8735z deyil class='notranslate'>%s</b> mövcud ref
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=<b>%s</b> üzrə axtarış zamanı bir neçə qeyd tapıldı. Hansı identifikatordan istifadə edəcəyinizi bilmək üçün heç bir yol yoxdur.
 ErrorsOnXLines=%s xəta tapıldı
 ErrorFileIsInfectedWithAVirus=Antivirus proqramı faylı təsdiq edə bilmədi (fayl virusla yoluxmuş ola bilər)
@@ -219,7 +221,7 @@ ErrorPhpMailDelivery=Çox sayda alıcı istifadə etmədiyinizi və e-poçt məz
 ErrorUserNotAssignedToTask=İstehlak olunan vaxtı daxil edə bilmək üçün istifadəçi tapşırığa təyin edilməlidir.
 ErrorTaskAlreadyAssigned=Tapşırıq artıq istifadəçiyə təyin edilib
 ErrorModuleFileSeemsToHaveAWrongFormat=Modul paketində səhv format var.
-ErrorModuleFileSeemsToHaveAWrongFormat2=Modulun zipində ən azı bir məcburi kataloq olmalıdır: <strong>%sb0a65d09z06f > və ya <span class='notranslate'><strong>%s</strong>
+ErrorModuleFileSeemsToHaveAWrongFormat2=At least one mandatory directory must exists into zip of module: <strong>%s</strong> or <strong>%s</strong>
 ErrorFilenameDosNotMatchDolibarrPackageRules=Modul paketinin adı (<strong>%s</strong>) uyğun gəlmir gözlənilən ad sintaksisi: <strong>%s</strong>
 ErrorDuplicateTrigger=Xəta, tətik adının dublikatı %s. Artıq %s saytından yüklənib.
 ErrorNoWarehouseDefined=Xəta, anbar müəyyən edilməmişdir.
@@ -263,9 +265,9 @@ ErrorReplaceStringEmpty=Xəta, dəyişdiriləcək sətir boşdur
 ErrorProductNeedBatchNumber=Xəta, '<b>%s</b>' çoxlu/seriyalı nömrə tələb edir
 ErrorProductDoesNotNeedBatchNumber=Xəta, '<b>%s</b>' çox şeyi qəbul etmir/ seriya nömrəsi
 ErrorFailedToReadObject=Xəta, <b>%s</b> tipli obyekti oxumaq alınmadı
-ErrorParameterMustBeEnabledToAllwoThisFeature=Xəta, <b>%s</b> parametri <span sinfində aktivləşdirilməlidir= 'notranslate'><b></span>conf/conf.php<> əmr xətti interfeysindən daxili iş planlayıcısı tərəfindən istifadəyə icazə verin
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Xəta, bu giriş etibarlılıq tarix diapazonundan kənardadır
-ErrorValueLength=Sahənin uzunluğu '<b>%s</b>'-dən yüksək olmalıdır. span class='notranslate'><b></span>%s</b>'
+ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword='<b>%s</b>' sözü qorunmuş açar sözdür
 ErrorFilenameReserved=<b>%s</b> fayl adı olduğu üçün istifadə edilə bilməz qorunan və qorunan komanda.
 ErrorNotAvailableWithThisDistribution=Bu paylama ilə mövcud deyil
@@ -322,34 +324,40 @@ ErrorFixThisHere=<a href="%s">Bunu burada düzəldin</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Xəta: Cari nümunənizin URL-i (%s) OAuth2 giriş quraşdırmanızda müəyyən edilmiş URL ilə uyğun gəlmir (%s). Belə konfiqurasiyada OAuth2 girişinə icazə verilmir.
 ErrorMenuExistValue=Bu Başlıq və ya URL ilə artıq Menyu mövcuddur
 ErrorSVGFilesNotAllowedAsLinksWithout=%s seçimi olmadan SVG fayllarına xarici keçid kimi icazə verilmir
-ErrorTypeMenu=Navbarda eyni modul üçün başqa menyu əlavə etmək mümkün deyil, hələ idarə olunmur
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = <b>%s</b> tapılmadı, url ünvanınızı yoxlayın
 ErrorCountryCodeMustBe2Char=Ölkə kodu 2 simvoldan ibarət olmalıdır
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Cədvəl <b>%s</b> artıq mövcuddur
 ErrorDictionaryNotFound=Lüğət <b>%s</b> tapılmadı
 ErrorFailedToCreateSymLinkToMedias=%s-a işarə etmək üçün %s simvolik linki yaratmaq alınmadı.
 ErrorCheckTheCommandInsideTheAdvancedOptions=İxrac üçün istifadə olunan əmri İxracın Qabaqcıl seçimlərində yoxlayın
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Date start must be less than date end
+ErrorEndHourIsNull=End date cannot be zero
+ErrorStartHourIsNull=Start date cannot be zero
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP parametriniz upload_max_filesize (%s) PHP post_max_size parametrindən (%s) yüksəkdir. Bu ardıcıl quraşdırma deyil.
 WarningPasswordSetWithNoAccount=Bu üzv üçün parol təyin edildi. Bununla belə, heç bir istifadəçi hesabı yaradılmayıb. Beləliklə, bu parol saxlanılır, lakin Dolibarr-a daxil olmaq üçün istifadə edilə bilməz. O, xarici modul/interfeys tərəfindən istifadə oluna bilər, lakin əgər üzv üçün hər hansı bir giriş və ya parol təyin etməyə ehtiyac yoxdursa, siz Üzv modulunun quraşdırılmasından "Hər bir üzv üçün girişi idarə et" seçimini söndürə bilərsiniz. Əgər siz girişi idarə etməlisinizsə, lakin heç bir parola ehtiyacınız yoxdursa, bu xəbərdarlığın qarşısını almaq üçün bu sahəni boş saxlaya bilərsiniz. Qeyd: Üzv bir istifadəçi ilə bağlıdırsa, e-poçt da giriş kimi istifadə edilə bilər.
 WarningMandatorySetupNotComplete=Əsas parametrləri qurmaq üçün bura klikləyin
 WarningEnableYourModulesApplications=Modullarınızı və proqramlarınızı aktivləşdirmək üçün bura klikləyin
-WarningSafeModeOnCheckExecDir=Xəbərdarlıq, PHP seçimi <b>safe_mode</b> aktivdir, ona görə də əmr php parametri <span class=' tərəfindən elan edilmiş kataloqda saxlanmalıdır. notranslate'><b></span>safe_mode_exec_dir</b>.
+WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.
 WarningBookmarkAlreadyExists=Bu başlıq və ya bu hədəf (URL) ilə əlfəcin artıq mövcuddur.
 WarningPassIsEmpty=Xəbərdarlıq, verilənlər bazası parolu boşdur. Bu təhlükəsizlik boşluğudur. Bunu əks etdirmək üçün verilənlər bazanıza parol əlavə etməli və conf.php faylınızı dəyişdirməlisiniz.
 WarningConfFileMustBeReadOnly=Xəbərdarlıq, konfiqurasiya faylınız (<b>htdocs/conf/conf.php</b>) veb server tərəfindən üzərinə yazıla bilər. Bu ciddi təhlükəsizlik boşluğudur. Veb server tərəfindən istifadə edilən əməliyyat sistemi istifadəçisi üçün yalnız oxumaq rejimində olmaq üçün fayldakı icazələri dəyişdirin. Diskiniz üçün Windows və FAT formatından istifadə edirsinizsə, bilməlisiniz ki, bu fayl sistemi fayla icazələr əlavə etməyə imkan vermir, ona görə də tamamilə təhlükəsiz ola bilməz.
 WarningsOnXLines=<b>%s</b> mənbə qeyd(lər)i ilə bağlı xəbərdarlıqlar
 WarningNoDocumentModelActivated=Sənəd yaratmaq üçün heç bir model aktivləşdirilməyib. Siz modul quraşdırmanızı yoxlayana qədər standart olaraq model seçiləcək.
 WarningLockFileDoesNotExists=Xəbərdarlıq, quraşdırma tamamlandıqdan sonra <b>install.lock</b> faylını qovluğa əlavə etməklə quraşdırma/miqrasiya alətlərini deaktiv etməlisiniz. <b>%s</b>. Bu faylın yaradılmasının buraxılması ciddi təhlükəsizlik riskidir.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=Bu təhlükəsizlik xəbərdarlığı zəiflik mövcud olduğu müddətdə aktiv qalacaq.
 WarningCloseAlways=Xəbərdarlıq, bağlama, hətta mənbə və hədəf elementlər arasında fərq olsa belə edilir. Bu funksiyanı ehtiyatla aktivləşdirin.
 WarningUsingThisBoxSlowDown=Xəbərdarlıq, bu qutudan istifadə edərək qutunu göstərən bütün səhifələri ciddi şəkildə yavaşlatır.
 WarningClickToDialUserSetupNotComplete=İstifadəçiniz üçün ClickToDial məlumatının quraşdırılması tamamlanmayıb (istifadəçi kartınızdakı ClickToDial nişanına baxın).
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Displey quraşdırması kor insanlar və ya mətn brauzerləri üçün optimallaşdırıldıqda funksiya deaktiv edilir.
-WarningPaymentDateLowerThanInvoiceDate=Ödəniş tarixi (%s) faktura tarixindən (%s) əvvəldir <span class='notranslate'>b0ecb2ec87f49f span>.
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=Həddindən artıq çox data (%s sətirdən çox). Lütfən, daha çox filtrdən istifadə edin və ya sabit %s dəyərini daha yüksək həddə təyin edin.
 WarningSomeLinesWithNullHourlyRate=Bəzi vaxtlar bəzi istifadəçilər tərəfindən qeydə alınıb, lakin onların saatlıq tarifləri müəyyən edilməyib. Saatda 0 %s dəyəri istifadə edilib, lakin bu, sərf olunan vaxtın yanlış qiymətləndirilməsi ilə nəticələnə bilər.
 WarningYourLoginWasModifiedPleaseLogin=Girişiniz dəyişdirildi. Təhlükəsizlik məqsədi ilə növbəti əməliyyatdan əvvəl yeni girişinizlə daxil olmalısınız.
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = <b>%s</b> modulu deaktiv edilib. Aktivləşdirməyi u
 WarningPermissionAlreadyExist=Bu obyekt üçün mövcud icazələr
 WarningGoOnAccountancySetupToAddAccounts=Bu siyahı boşdursa, menyuya daxil olun %s - %s - %s hesab planınız üçün hesabları yükləmək və ya yaratmaq üçün.
 WarningCorrectedInvoiceNotFound=Düzəliş edilmiş faktura tapılmadı
-WarningCommentNotFound=Lütfən, <b>%s</b> bölməsində başlanğıc və son şərhlərin yerləşdirilməsini yoxlayın. Fəaliyyətinizi təqdim etməzdən əvvəl <b>%s</b> faylı
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Fond hərəkəti artıq tərsinə çevrilib
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR faktura yalnız kredit köçürmə ödənişləri ilə ödəniləcək hesab-fakturalara əlavə edilə bilər.
 SwissQrCreditorAddressInvalid = Kreditor ünvanı yanlışdır (Poçt və şəhər təyin olunub? (%s)
 SwissQrCreditorInformationInvalid = Kreditor məlumatı IBAN üçün etibarsızdır (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN hələ tətbiq olunmayıb
 SwissQrPaymentInformationInvalid = Ödəniş məlumatı cəmi %s üçün etibarsızdır: %s
 SwissQrDebitorAddressInvalid = Debitor məlumatı yanlış idi (%s)
-
 # Validate
 RequireValidValue = Dəyər etibarlı deyil
 RequireAtLeastXString = Ən azı %s simvol tələb edir
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = Sahənin səhv qurulması xətası: 
 BadSetupOfFieldFileNotFound = Sahənin səhv qurulması xətası: Fayl daxil edilmək üçün tapılmadı
 BadSetupOfFieldFetchNotCallable = Sahənin səhv qurulması xətası: Sinifdə çağırıla bilməz
 ErrorTooManyAttempts= Həddindən artıq cəhd, sonra yenidən cəhd edin
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed

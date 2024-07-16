@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=דואר אלקטרוני כדי למנוע שירות חיצוני של HRM
 Establishments=מפעלים
@@ -24,7 +23,7 @@ SkillsManagement=ניהול מיומנויות
 HRM_MAXRANK=מספר רמות מקסימלי לדירוג מיומנות
 HRM_DEFAULT_SKILL_DESCRIPTION=תיאור ברירת מחדל של דרגות כאשר מיומנות נוצרת
 deplacement=מִשׁמֶרֶת
-DateEval=תאריך הערכה
+DateEval=Competency assessment date
 JobCard=כרטיס עבודה
 NewJobProfile=פרופיל עבודה חדש
 JobProfile=פרופיל עבודה
@@ -41,12 +40,12 @@ Skill=מְיוּמָנוּת
 Skills=מיומנויות
 SkillCard=כרטיס מיומנות
 EmployeeSkillsUpdated=כישורי העובד עודכנו (ראה כרטיסיית "מיומנויות" בכרטיס העובד)
-Eval=הַעֲרָכָה
-Evals=הערכות
-NewEval=הערכה חדשה
-ValidateEvaluation=אימות הערכה
-ConfirmValidateEvaluation=האם אתה בטוח שברצונך לאמת הערכה זו עם ההפניה <b>%s</b> >?
-EvaluationCard=כרטיס הערכה
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=דירוג נדרש עבור פרופיל התפקיד
 RequiredRankShort=דרגה נדרשת
 PositionsWithThisProfile=תפקידים עם פרופילי משרה זו
@@ -90,8 +89,9 @@ SaveAddSkill = מיומנויות נוספו
 SaveLevelSkill = רמת המיומנות נשמרה
 DeleteSkill = מיומנות הוסרה
 SkillsExtraFields=תכונות משלימות (מיומנויות)
-JobsExtraFields=תכונות משלימות (פרופיל עבודה)
-EvaluationsExtraFields=תכונות משלימות (הערכות)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=צריך נסיעות עסקים
 NoDescription=אין תיאור
 TheJobProfileHasNoSkillsDefinedFixBefore=לפרופיל התפקיד המוערך של עובד זה אין מיומנות מוגדרת. אנא הוסף מיומנויות, ולאחר מכן מחק והתחל מחדש את ההערכה.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

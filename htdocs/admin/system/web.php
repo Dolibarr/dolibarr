@@ -43,7 +43,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader('', $langs->trans("InfoWebServer"));
+llxHeader('', $langs->trans("InfoWebServer"), '', '', 0, 0, '', '', '', 'mod-admin page-system_web');
 
 print load_fiche_titre($langs->trans("InfoWebServer"), '', 'title_setup');
 
@@ -74,7 +74,7 @@ if (function_exists('exec')) {
 	exec('id', $arrayout, $varout);
 	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>";
 	if (empty($varout)) {	// Test command is ok. Work only on Linux OS.
-		print join(',', $arrayout);
+		print implode(',', $arrayout);
 	} else {
 		$langs->load("errors");
 		print '<span class="opacitymedium">'.$langs->trans("ErrorExecIdFailed").'</span>';

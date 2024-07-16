@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +28,20 @@
  */
 class CdavLib
 {
+	/**
+	 * @var DoliDB
+	 */
 	private $db;
 
+	/**
+	 * @var User
+	 */
 	private $user;
 
-	private $langs;
+	/**
+	 * @var Translate
+	 */
+	private $langs; // @phpstan-ignore-line
 
 	/**
 	 * Constructor
@@ -81,27 +91,17 @@ class CdavLib
 						LEFT OUTER JOIN '.MAIN_DB_PREFIX.'user AS u ON (u.rowid=fk_element)
 						WHERE ar.element_type=\'user\' AND fk_actioncomm=a.id) AS other_users
 				FROM '.MAIN_DB_PREFIX.'actioncomm AS a';
-		if (!$this->user->rights->societe->client->voir) { //FIXME si 'voir' on voit plus de chose ?
-			$sql .= ' LEFT OUTER JOIN '.MAIN_DB_PREFIX.'societe_commerciaux AS sc ON (a.fk_soc = sc.fk_soc AND sc.fk_user='.((int) $this->user->id).')
-					LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = sc.fk_soc)
-					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.fk_soc = sc.fk_soc AND sp.rowid = a.fk_contact)
-					LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_cdav AS ac ON (a.id = ac.fk_object)';
-		} else {
-			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = a.fk_soc)
-					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.rowid = a.fk_contact)
-					LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_cdav AS ac ON (a.id = ac.fk_object)';
-		}
-
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON co.rowid = sp.fk_pays
+		$sql .= " LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON co.rowid = sp.fk_pays
 				LEFT JOIN '.MAIN_DB_PREFIX.'c_country as cos ON cos.rowid = s.fk_pays
-				WHERE 	a.id IN (SELECT ar.fk_actioncomm FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar WHERE ar.element_type=\'user\' AND ar.fk_element='.((int) $calid).')
-						AND a.code IN (SELECT cac.code FROM '.MAIN_DB_PREFIX.'c_actioncomm cac WHERE cac.type<>\'systemauto\')
-						AND a.entity IN ('.getEntity('societe', 1).')';
+				WHERE 	a.id IN (SELECT ar.fk_actioncomm FROM '.MAIN_DB_PREFIX.'actioncomm_resources ar WHERE ar.element_type='user' AND ar.fk_element=".((int) $calid).")
+						AND a.code IN (SELECT cac.code FROM '.MAIN_DB_PREFIX.'c_actioncomm cac WHERE cac.type <> 'systemauto')
+						AND a.entity IN (".getEntity('societe', 1).")";
+		// TODO Restrict on external users
 		if ($oid !== false) {
 			if ($ouri === false) {
-				$sql .= ' AND a.id = '.intval($oid);
+				$sql .= ' AND a.id = '.((int) $oid);
 			} else {
-				$sql .= ' AND (a.id = '.intval($oid).' OR ac.uuidext = \''.$this->db->escape($ouri).'\')';
+				$sql .= ' AND (a.id = '.((int) $oid)." OR ac.uuidext = '".$this->db->escape($ouri)."')";
 			}
 		}
 

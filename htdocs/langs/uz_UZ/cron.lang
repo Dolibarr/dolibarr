@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Rejalashtirilgan ishni o'qing
 Permission23102 = Rejalashtirilgan ishni yaratish / yangilash
 Permission23103 = Rejalashtirilgan ishni o'chirish
@@ -30,7 +29,8 @@ CronExecute=Hozir ishga tushiring
 CronConfirmExecute=Ushbu rejalashtirilgan ishlarni hoziroq bajarishni xohlaysizmi?
 CronInfo=Rejalashtirilgan ish moduli ishlarni avtomatik ravishda bajarilishini rejalashtirishga imkon beradi. Ishlarni qo'lda boshlash ham mumkin.
 CronTask=Ish
-CronNone=None
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Oldin emas
 CronDtEnd=Keyin emas
 CronDtNextLaunch=Keyingi ijro
@@ -49,8 +49,8 @@ CronEach=Har bir
 JobFinished=Ish ishga tushirildi va tugadi
 Scheduled=Rejalashtirilgan
 #Page card
-CronAdd= Ish joylarini qo'shing
-CronEvery=Har bir ishni bajaring
+CronAdd=Ish joylarini qo'shing
+CronEvery=Run job every
 CronObject=Yaratiladigan misol / ob'ekt
 CronArgs=Parametrlar
 CronSaveSucess=Muvaffaqiyatli saqlang
@@ -67,7 +67,7 @@ CronModuleHelp=Dolibarr moduli katalogining nomi (tashqi Dolibarr moduli bilan h
 CronClassFileHelp=Yuklanadigan nisbiy yo'l va fayl nomi (yo'l veb-serverning ildiz katalogiga nisbatan). <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun htdocs / product / class / <u> product.class.php </u>, sinf fayli nomi uchun qiymati <br> a049271ecaf / product07f.c8f
 CronObjectHelp=Yuklanadigan ob'ekt nomi. <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun
 CronMethodHelp=Ob'ektni ishga tushirish usuli. <BR> Masalan, Dolibarr Product ob'ektini olish usulini chaqirish uchun
-CronArgsHelp=Usul argumentlari. <BR> Masalan, Dolibarr mahsuloti obyektining /htdocs/product/class/product.class.php olish usulini chaqirish uchun parametrlar qiymati<span class='notranslate' bo'lishi mumkin. ><br></span><i>0, ProductRef</i>
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Amalga oshirish uchun tizim buyruq satri.
 CronCreateJob=Yangi Rejalashtirilgan ish yarating
 CronFrom=Kimdan

@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2023		Charlene BENKE		<charlene@patas-monkey.com>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2023	Charlene BENKE				<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,51 +39,53 @@ require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
 $langs->loadLangs(array('companies', 'contracts', 'tickets'));
 
-$socid=GETPOST('socid', 'int');
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
+$socid = GETPOSTINT('socid');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 if ($id == '' && $ref == '') {
-	dol_print_error('', 'Bad parameter');
+	dol_print_error(null, 'Bad parameter');
 	exit;
 }
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0) {
-	$socid=$user->socid;
+	$socid = $user->socid;
 }
 
-$result=restrictedArea($user, 'contrat', $id);
+$result = restrictedArea($user, 'contrat', $id);
 
 
 /*
  *	View
  */
+$title = $langs->trans("Contract") . ' - ' . $langs->trans("Tickets");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader("", $langs->trans("Tickets"), "Contrat");
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_ticket');
 
 $form = new Form($db);
-$userstatic=new User($db);
+$userstatic = new User($db);
 
-$object= new Contrat($db);
-$result=$object->fetch($id, $ref);
-$ret=$object->fetch_thirdparty();
+$object = new Contrat($db);
+$result = $object->fetch($id, $ref);
+$ret = $object->fetch_thirdparty();
 $head = contract_prepare_head($object);
 
 
-dol_fiche_head($head, 'ticket', $langs->trans("Contract"), -1, 'contract');
+dol_get_fiche_head($head, 'ticket', $langs->trans("Contract"), -1, 'contract');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid) ? '?socid='.$socid : '').'">';
-$linkback.= $langs->trans("BackToList").'</a>';
+$linkback .= $langs->trans("BackToList").'</a>';
 
-$morehtmlref='';
-$morehtmlref.=$object->ref;
+$morehtmlref = '';
+$morehtmlref .= $object->ref;
 
-$morehtmlref.='<div class="refidno">';
+$morehtmlref .= '<div class="refidno">';
 // Ref customer
-$morehtmlref.=$form->editfieldkey(
+$morehtmlref .= $form->editfieldkey(
 	"RefCustomer",
 	'ref_customer',
 	$object->ref_customer,
@@ -92,7 +96,7 @@ $morehtmlref.=$form->editfieldkey(
 	0,
 	1
 );
-$morehtmlref.=$form->editfieldval(
+$morehtmlref .= $form->editfieldval(
 	"RefCustomer",
 	'ref_customer',
 	$object->ref_customer,
@@ -106,8 +110,8 @@ $morehtmlref.=$form->editfieldval(
 	1
 );
 // Ref supplier
-$morehtmlref.='<br>';
-$morehtmlref.=$form->editfieldkey(
+$morehtmlref .= '<br>';
+$morehtmlref .= $form->editfieldkey(
 	"RefSupplier",
 	'ref_supplier',
 	$object->ref_supplier,
@@ -118,7 +122,7 @@ $morehtmlref.=$form->editfieldkey(
 	0,
 	1
 );
-$morehtmlref.=$form->editfieldval(
+$morehtmlref .= $form->editfieldval(
 	"RefSupplier",
 	'ref_supplier',
 	$object->ref_supplier,
@@ -132,25 +136,25 @@ $morehtmlref.=$form->editfieldval(
 	1
 );
 // Thirdparty
-$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+$morehtmlref .= '<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 // Project
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 	$langs->load("projects");
-	$morehtmlref.='<br>'.$langs->trans('Project') . ' : ';
+	$morehtmlref .= '<br>'.$langs->trans('Project') . ' : ';
 	if (! empty($object->fk_project)) {
 		$proj = new Project($db);
 		$proj->fetch($object->fk_project);
-		$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=';
-		$morehtmlref.=$object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-		$morehtmlref.=$proj->ref;
-		$morehtmlref.='</a>';
+		$morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id=';
+		$morehtmlref .= $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		$morehtmlref .= $proj->ref;
+		$morehtmlref .= '</a>';
 	} else {
-		$morehtmlref.='';
+		$morehtmlref .= '';
 	}
 }
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'none', $morehtmlref);
 
@@ -158,10 +162,10 @@ print '<div class="underbanner clearboth"></div>';
 
 
 /*
- * Referers types
+ * Referrers types
  */
 
-$title=$langs->trans("ListTicketsLinkToContract");
+$title = $langs->trans("ListTicketsLinkToContract");
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

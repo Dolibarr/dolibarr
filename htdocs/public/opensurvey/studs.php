@@ -60,7 +60,7 @@ $nblines = $object->fetch_lines();
 $canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 // Security check
-if (empty($conf->opensurvey->enabled)) {
+if (!isModEnabled('opensurvey')) {
 	httponly_accessforbidden('Module Survey not enabled');
 }
 
@@ -288,7 +288,7 @@ if ($testmodifier) {
 }
 
 // Delete comment
-$idcomment = GETPOST('deletecomment', 'int');
+$idcomment = GETPOSTINT('deletecomment');
 if ($idcomment) {
 	if (!$canbemodified) {
 		httponly_accessforbidden('ErrorForbidden');
@@ -570,7 +570,7 @@ while ($compteur < $num) {
 			}
 		}
 	} else {
-		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour saisie
+		// Else, replace the user's choices with a line of checkboxes for entry
 		if ($compteur == $ligneamodifier) {
 			for ($i = 0; $i < $nbcolonnes; $i++) {
 				$car = substr($ensemblereponses, $i, 1);

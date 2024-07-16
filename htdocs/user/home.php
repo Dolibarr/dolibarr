@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2005-2024	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $langs->load("users");
 
 $canreadperms = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
+	$canreadperms = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 }
 
 // Security check (for external users)
@@ -52,7 +52,7 @@ if ($user->socid > 0) {
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('userhome'));
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
@@ -63,8 +63,8 @@ $resultboxes = FormOther::getBoxesArea($user, "1");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -73,12 +73,16 @@ if (GETPOST('addbox')) {
 	}
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+
 /*
  * View
  */
+
 $title = $langs->trans("MenuUsersAndGroups");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-home');
 
 
 print load_fiche_titre($langs->trans("MenuUsersAndGroups"), $resultboxes['selectboxlist'], 'user');
@@ -108,7 +112,7 @@ $searchbox .= '</form>';
 /*
  * Latest created users
  */
-$max = 10;
+
 $lastcreatedbox = '';
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
 $sql .= ", u.entity";
@@ -141,8 +145,15 @@ if ($resql) {
 
 	$lastcreatedbox .= '<div class="div-table-responsive-no-min">';
 	$lastcreatedbox .= '<table class="noborder centpercent">';
-	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
-	$lastcreatedbox .= '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	$lastcreatedbox .= '<tr class="liste_titre"><td colspan="3" class="valignmiddle">';
+	$lastcreatedbox .= '<span class="valignmiddle">'.$langs->trans("LastUsersCreated", min($num, $max)).'</span>';
+	$lastcreatedbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+	$lastcreatedbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
+	$lastcreatedbox .= '</a>';
+	$lastcreatedbox .= '</td>';
+	$lastcreatedbox .= '<td class="right" colspan="2">';
+	//$lastcreatedbox .= '<a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList");
+	$lastcreatedbox .= '</td>';
 	$lastcreatedbox .= '</tr>'."\n";
 	$i = 0;
 
@@ -151,6 +162,7 @@ if ($resql) {
 
 		$fuserstatic->id = $obj->rowid;
 		$fuserstatic->statut = $obj->statut;
+		$fuserstatic->status = $obj->statut;
 		$fuserstatic->lastname = $obj->lastname;
 		$fuserstatic->firstname = $obj->firstname;
 		$fuserstatic->login = $obj->login;
@@ -220,8 +232,6 @@ if ($resql) {
  */
 $lastgroupbox = '';
 if ($canreadperms) {
-	$max = 5;
-
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 	if (isModEnabled('multicompany') && $conf->entity == 1 && (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') || ($user->admin && !$user->entity))) {
@@ -242,8 +252,16 @@ if ($canreadperms) {
 
 		$lastgroupbox .= '<div class="div-table-responsive-no-min">';
 		$lastgroupbox .= '<table class="noborder centpercent">';
-		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</td>';
-		$lastgroupbox .= '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		$lastgroupbox .= '<tr class="liste_titre"><td colspan="'.$colspan.'">';
+		$lastgroupbox .= '<span class="valignmiddle">'.$langs->trans("LastGroupsCreated", ($num ? $num : $max)).'</span>';
+		$lastgroupbox .= '<a class="valignmiddle marginleftonlyshort" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$lastgroupbox .= '<span class="badge marginleftonlyshort valignmiddle">...</span>';
+		$lastgroupbox .= '</a>';
+
+		$lastgroupbox .= '</td>';
+		$lastgroupbox .= '<td class="right">';
+		//$lastgroupbox .= '<a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList");
+		$lastgroupbox .= '</td>';
 		$lastgroupbox .= '</tr>';
 		$i = 0;
 
@@ -305,7 +323,7 @@ print $boxlist;
 
 print '</div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardUsersGroups', $parameters, $object); // Note that $action and $object may have been modified by hook
 

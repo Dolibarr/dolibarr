@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       Juanjo Menent	        <jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,16 +93,22 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$remise = new RemiseCheque($db);
+		$remise->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $remise);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
@@ -111,7 +117,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string      				Value if KO, <0 if KO
+	 *  @return string|0      				Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -120,7 +126,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We get cursor rule
-		$mask = $conf->global->CHEQUERECEIPTS_THYME_MASK;
+		$mask = getDolGlobalString('CHEQUERECEIPTS_THYME_MASK');
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';
@@ -130,20 +136,5 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, empty($object) ? dol_now() : $object->date_bordereau);
 
 		return  $numFinal;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
-	 */
-	public function chequereceipt_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

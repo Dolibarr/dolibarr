@@ -63,8 +63,8 @@ $langs->loadLangs(array("mymodule@mymodule"));
 
 $action = GETPOST('action', 'aZ09');
 
-$max = 5;
 $now = dol_now();
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check - Protection if external user
 $socid = GETPOST('socid', 'int');
@@ -183,9 +183,6 @@ END MODULEBUILDER DRAFT MYOBJECT */
 
 print '</div><div class="fichetwothirdright">';
 
-
-$NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject

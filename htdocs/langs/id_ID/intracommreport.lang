@@ -6,18 +6,15 @@ IntracommReportAbout = Tentang intracommreport
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Nomor persetujuan (dikeluarkan oleh CISD lampiran)
 INTRACOMMREPORT_TYPE_ACTEUR=Tipe aktor
-INTRACOMMREPORT_ROLE_ACTEUR=Peran yang dimainkan oleh aktor 
+INTRACOMMREPORT_ROLE_ACTEUR=Peran yang dimainkan oleh aktor
 INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Tingkat kewajiban pada perkenalan
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Tingkat kewajiban pengiriman
 INTRACOMMREPORT_CATEG_FRAISDEPORT=Kategori layanan dari jenis "Ongkos Kirim"
-
 INTRACOMMREPORT_NUM_DECLARATION=Nomor deklarator
-
 # Menu
 MenuIntracommReport=Laporan intrakom
 MenuIntracommReportNew=Deklarasi baru
 MenuIntracommReportList=Daftar
-
 # View
 NewDeclaration=Deklarasi baru
 Declaration=Deklarasi
@@ -25,16 +22,13 @@ AnalysisPeriod=Periode analisis
 TypeOfDeclaration=Jenis deklarasi
 DEB=Deklarasi pertukaran barang (DEB)
 DES=Deklarasi pertukaran layanan (DES)
-
 # Export page
 IntracommReportTitle=Persiapan file XML dalam format ProDouane
-
 # List
 IntracommReportList=Daftar deklarasi yang dihasilkan
 IntracommReportNumber=Nomor deklarasi
 IntracommReportPeriod=Periode analisis
 IntracommReportTypeDeclaration=Jenis deklarasi
 IntracommReportDownload=unduh file XML
-
 # Invoice
 IntracommReportTransportMode=Moda transportasi

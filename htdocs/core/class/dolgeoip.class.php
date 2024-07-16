@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2009-2012  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,18 @@
 class DolGeoIP
 {
 	/**
-	 * @var GeoIp2\Database\Reader
+	 * @var GeoIp2\Database\Reader|string
 	 */
 	public $gi;
 
+	/**
+	 * @var string
+	 */
 	public $error;
+
+	/**
+	 * @var string
+	 */
 	public $errorlabel;
 
 	/**
@@ -53,7 +61,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or geoip version '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($type == 'country') {
@@ -122,7 +130,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -180,7 +188,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if (empty($this->gi)) {
@@ -201,7 +209,7 @@ class DolGeoIP
 	}
 
 	/**
-	 * Return verion of data file
+	 * Return version of data file
 	 *
 	 * @return  string      Version of datafile
 	 */
@@ -211,7 +219,7 @@ class DolGeoIP
 
 		$geoipversion = '2'; // 'php', or '2'
 		if (getDolGlobalString('GEOIP_VERSION')) {
-			$geoipversion = $conf->global->GEOIP_VERSION;
+			$geoipversion = getDolGlobalString('GEOIP_VERSION');
 		}
 
 		if ($geoipversion == 'php') {

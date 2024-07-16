@@ -100,7 +100,7 @@ if ($action == 'add_currency') {
 	$error = 0;
 
 	if (GETPOST('updatecurrency', 'alpha')) {
-		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
+		$fk_multicurrency = GETPOSTINT('fk_multicurrency');
 		$rate = price2num(GETPOST('rate', 'alpha'));
 		$currency = new MultiCurrency($db);
 
@@ -117,11 +117,11 @@ if ($action == 'add_currency') {
 			}
 		}
 	} elseif (GETPOST('deletecurrency', 'alpha')) {
-		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
+		$fk_multicurrency = GETPOSTINT('fk_multicurrency');
 		$currency = new MultiCurrency($db);
 
 		if ($currency->fetch($fk_multicurrency) > 0) {
-			if ($currency->delete() > 0) {
+			if ($currency->delete($user) > 0) {
 				setEventMessages($langs->trans('RecordDeleted'), array());
 			} else {
 				setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
@@ -173,7 +173,7 @@ $form = new Form($db);
 $page_name = "MultiCurrencySetup";
 $help_url = '';
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-multicurrency');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

@@ -165,8 +165,10 @@ class Export
 											//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 											if (!empty($perm[2])) {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]}) ? $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]} : false;
-											} else {
+											} elseif (!empty($perm[1])) {
 												$bool = isset($user->rights->{$perm[0]}->{$perm[1]}) ? $user->rights->{$perm[0]}->{$perm[1]} : false;
+											} else {
+												$bool = false;
 											}
 											if ($perm[0] == 'user' && $user->admin) {
 												$bool = true;
@@ -204,11 +206,11 @@ class Export
 									$this->array_export_label[$i] = $module->getExportDatasetLabel($r);
 									// Table of fields to export / Tableau des champ a exporter (cle=champ, valeur=libelle)
 									$this->array_export_fields[$i] = $module->export_fields_array[$r];
-									// Table of fields to be filtered / Tableau des champs a filtrer (cle=champ, valeur1=type de donnees) on verifie que le module a des filtres
+									// Table of fields to be filtered (key=field, value1=data type) Verifies that the module has filters
 									$this->array_export_TypeFields[$i] = (isset($module->export_TypeFields_array[$r]) ? $module->export_TypeFields_array[$r] : '');
-									// Table of entities for export / Tableau des entites a exporter (cle=champ, valeur=entite)
+									// Table of entities to export (key=field, value=entity)
 									$this->array_export_entities[$i] = $module->export_entities_array[$r];
-									// Table of entities requiring DISTINCT abandonment / Tableau des entites qui requiert abandon du DISTINCT (cle=entite, valeur=champ id child records)
+									// Table of entities requiring to abandon DISTINCT (key=entity, valeur=field id child records)
 									$this->array_export_dependencies[$i] = (!empty($module->export_dependencies_array[$r]) ? $module->export_dependencies_array[$r] : '');
 									// Table of special field operations / Tableau des operations speciales sur champ
 									$this->array_export_special[$i] = (!empty($module->export_special_array[$r]) ? $module->export_special_array[$r] : '');
@@ -313,7 +315,7 @@ class Export
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Build the conditionnal string from filter the query
+	 *      Build the conditional string from filter the query
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @param		string	$NameField		Name of the field to filter
@@ -476,7 +478,8 @@ class Export
 				if ($InfoFieldList[1] == 'select_company') {
 					$szFilterField .= $form->select_company('', $NameField, '', 1, 0, 0, [], 0, 'maxwidth200');
 				} elseif ($InfoFieldList[1] == 'selectcontacts') {
-					$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;', '', '', 0, 'maxwidth200');
+					//$szFilterField .= $form->selectcontacts(0, '', $NameField, '&nbsp;', '', '', 0, 'maxwidth200');
+					$szFilterField .= $form->select_contact(0, '', $NameField, '&nbsp;', '', '', 0, 'minwidth100imp maxwidth200', true);
 				} elseif ($InfoFieldList[1] == 'select_dolusers') {
 					$szFilterField .= $form->select_dolusers('', $NameField, 1, null, 0, '', '', '', 0, 0, "", 0, "", "maxwidth200");
 				}
@@ -764,7 +767,7 @@ class Export
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
 								$computestring = $this->array_export_special[$indice][$key];
-								//$tmp = dol_eval($computestring, 1, 0, '1');
+								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
 								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
@@ -802,8 +805,6 @@ class Export
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		dol_syslog("Export.class.php::create");
 
 		$this->db->begin();

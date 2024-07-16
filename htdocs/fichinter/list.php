@@ -8,6 +8,9 @@
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
@@ -47,13 +50,13 @@ $langs->loadLangs(array('companies', 'bills', 'interventions'));
 if (isModEnabled('project')) {
 	$langs->load("projects");
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$langs->load("contracts");
 }
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOST('show_files', 'int');
+$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
@@ -67,16 +70,24 @@ $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $optioncss = GETPOST('optioncss', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 $diroutputmassaction = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -91,7 +102,7 @@ if (!$sortfield) {
 	$sortfield = "f.ref";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -104,11 +115,11 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'f.ref'=>'Ref',
-	's.nom'=>"ThirdParty",
-	'f.description'=>'Description',
-	'f.note_public'=>'NotePublic',
-	'fd.description'=>'DescriptionOfLine',
+	'f.ref' => 'Ref',
+	's.nom' => "ThirdParty",
+	'f.description' => 'Description',
+	'f.note_public' => 'NotePublic',
+	'fd.description' => 'DescriptionOfLine',
 );
 if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
@@ -119,37 +130,39 @@ if (getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 
 // Definition of fields for list
 $arrayfields = array(
-	'f.ref'=>array('label'=>'Ref', 'checked'=>1),
-	'f.ref_client'=>array('label'=>'RefCustomer', 'checked'=>1),
-	's.nom'=>array('label'=>'ThirdParty', 'checked'=>1),
-	'pr.ref'=>array('label'=>'Project', 'checked'=>1, 'enabled'=>(!isModEnabled('project') ? 0 : 1)),
-	'c.ref'=>array('label'=>'Contract', 'checked'=>1, 'enabled'=>(empty($conf->contrat->enabled) ? 0 : 1)),
-	'f.description'=>array('label'=>'Description', 'checked'=>1),
-	'f.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>500),
-	'f.tms'=>array('label'=>'DateModificationShort', 'checked'=>0, 'position'=>500),
-	'f.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'position'=>510, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
-	'f.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'position'=>511, 'enabled'=>(!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
-	'f.fk_statut'=>array('label'=>'Status', 'checked'=>1, 'position'=>1000),
-	'fd.description'=>array('label'=>"DescriptionOfLine", 'checked'=>1, 'enabled'=>!getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
-	'fd.date'=>array('label'=>'DateOfLine', 'checked'=>1, 'enabled'=>!getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
-	'fd.duree'=>array('label'=>'DurationOfLine', 'type'=> 'duration', 'checked'=>1, 'enabled'=>!getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
+	'f.ref' => array('label' => 'Ref', 'checked' => 1),
+	'f.ref_client' => array('label' => 'RefCustomer', 'checked' => 1),
+	's.nom' => array('label' => 'ThirdParty', 'checked' => 1),
+	'pr.ref' => array('label' => 'Project', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1)),
+	'c.ref' => array('label' => 'Contract', 'checked' => 1, 'enabled' => (empty($conf->contrat->enabled) ? 0 : 1)),
+	'f.description' => array('label' => 'Description', 'checked' => 1),
+	'f.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 500),
+	'f.tms' => array('label' => 'DateModificationShort', 'checked' => 0, 'position' => 500),
+	'f.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'position' => 510, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
+	'f.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'position' => 511, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'f.fk_statut' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
+	'fd.description' => array('label' => "DescriptionOfLine", 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
+	'fd.date' => array('label' => 'DateOfLine', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0),
+	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => 1, 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? 1 : 0), //type duration is here because in database, column 'duree' is double
 );
+'@phan-var-force array{label:string,type?:string,checked:int,position?:int,enabled?:int,langfile?:string,help:string} $arrayfields';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
-$permissiontoread = $user->rights->ficheinter->lire;
-$permissiontoadd = $user->rights->ficheinter->creer;
-$permissiontodelete = $user->rights->ficheinter->supprimer;
+$permissiontoread = $user->hasRight('ficheinter', 'lire');
+$permissiontoadd = $user->hasRight('ficheinter', 'creer');
+$permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
 
 
 /*
@@ -164,7 +177,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -183,6 +196,14 @@ if (empty($reshook)) {
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -208,7 +229,7 @@ $companystatic = new Societe($db);
 if (isModEnabled('project')) {
 	$projetstatic = new Project($db);
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$contratstatic = new Contrat($db);
 }
 
@@ -232,7 +253,7 @@ foreach ($arrayfields as $tmpkey => $tmpval) {
 }
 
 $sql = "SELECT";
-$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_public, f.note_private,";
+$sql .= " f.ref, f.ref_client, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_modification, f.note_public, f.note_private,";
 if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
 	$sql .= " fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 }
@@ -240,7 +261,7 @@ $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.s
 if (isModEnabled('project')) {
 	$sql .= ", pr.rowid as projet_id, pr.ref as projet_ref, pr.title as projet_title";
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$sql .= ", c.rowid as contrat_id, c.ref as contrat_ref, c.ref_customer as contrat_ref_customer, c.ref_supplier as contrat_ref_supplier";
 }
 // Add fields from extrafields
@@ -260,7 +281,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 if (isModEnabled('project')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr on f.fk_projet = pr.rowid";
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on f.fk_contrat = c.rowid";
 }
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
@@ -275,7 +296,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -306,7 +327,15 @@ if ($search_desc) {
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && empty($socid)) {
+if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines) {
+	if ($search_date_start) {
+		$sql .= " AND fd.date >= '".$db->idate($search_date_start)."'";
+	}
+	if ($search_date_end) {
+		$sql .= " AND fd.date <= '".$db->idate($search_date_end)."'";
+	}
+}
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($socid) {
@@ -383,7 +412,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fichinter page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -410,7 +439,7 @@ if ($search_all) {
 	$param .= "&search_all=".urlencode($search_all);
 }
 if ($socid) {
-	$param .= "&socid=".urlencode($socid);
+	$param .= "&socid=".urlencode((string) ($socid));
 }
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
@@ -427,8 +456,26 @@ if ($search_desc) {
 if ($search_status != '' && $search_status > -1) {
 	$param .= "&search_status=".urlencode($search_status);
 }
+if ($search_date_startday > 0) {
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
+}
+if ($search_date_startmonth > 0) {
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
+}
+if ($search_date_startyear > 0) {
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
+}
+if ($search_date_endday > 0) {
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
+}
+if ($search_date_endmonth > 0) {
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
+}
+if ($search_date_endyear > 0) {
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
+}
 if ($show_files) {
-	$param .= '&show_files='.urlencode($show_files);
+	$param .= '&show_files='.urlencode((string) ($show_files));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -442,14 +489,14 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>$langs->trans("SendByMail"),
 );
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -475,8 +522,8 @@ if (!empty($socid)) {
 	$url .= '&socid='.$socid;
 }
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewIntervention'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('ficheinter', 'creer'));
 
@@ -495,7 +542,7 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if MYOBJECT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>'."\n";
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>'."\n";
 }
 
 $moreforfilter = '';
@@ -518,7 +565,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -568,7 +616,7 @@ if (!empty($arrayfields['f.description']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['f.datec']['checked'])) {
@@ -603,6 +651,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 		unset($liststatus[2]); // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	}
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status width100 onrightofpage');
 	print '</td>';
 }
@@ -611,7 +660,14 @@ if (!empty($arrayfields['fd.description']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 if (!empty($arrayfields['fd.date']['checked'])) {
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_start ?: -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_end ?: -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+	print '</div>';
+	print '</td>';
 }
 if (!empty($arrayfields['fd.duree']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -663,7 +719,7 @@ if (!empty($arrayfields['f.description']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['f.datec']['checked'])) {
@@ -755,6 +811,7 @@ while ($i < $imaxinloop) {
 		}
 
 		$objectstatic->duration = $obj->duree;
+		$arraydata = array();
 		$arraydata['thirdparty'] = $companystatic;
 		print $objectstatic->getKanbanView('', $arraydata);
 		if ($i == ($imaxinloop - 1)) {
@@ -780,11 +837,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Picto + Ref
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print "<td>";
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
 			print $objectstatic->getNomUrl(1);
 			print '</td>';
@@ -816,8 +874,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Customer ref
 		if (!empty($arrayfields['f.ref_client']['checked'])) {
-			// Customer ref
 			print '<td class="nowrap tdoverflowmax200">';
 			print dol_escape_htmltag($obj->ref_client);
 			print '</td>';
@@ -825,16 +884,18 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Project ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$projetstatic->id = $obj->projet_id;
 			$projetstatic->ref = $obj->projet_ref;
 			$projetstatic->title = $obj->projet_title;
@@ -846,8 +907,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Contract
 		if (!empty($arrayfields['c.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$contratstatic->id = $obj->contrat_id;
 			$contratstatic->ref = $obj->contrat_ref;
 			$contratstatic->ref_customer = $obj->contrat_ref_customer;
@@ -870,12 +932,12 @@ while ($i < $imaxinloop) {
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['f.datec']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -884,8 +946,8 @@ while ($i < $imaxinloop) {
 		}
 		// Date modification
 		if (!empty($arrayfields['f.tms']['checked'])) {
-			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
+			print '<td class="center nowraponall">';
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -893,17 +955,16 @@ while ($i < $imaxinloop) {
 		}
 		// Note public
 		if (!empty($arrayfields['f.note_public']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_public);
-			print '</td>';
-			if (!$i) {
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_public);
+			print '</td>';if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Note private
 		if (!empty($arrayfields['f.note_private']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_private);
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -918,17 +979,24 @@ while ($i < $imaxinloop) {
 		}
 		// Fields of detail of line
 		if (!empty($arrayfields['fd.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1));
+			print '<td>';
+			print '<div class="classfortooltip tdoverflowmax250" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
+			print dol_escape_htmltag($text);
+			print '</div>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Date line
 		if (!empty($arrayfields['fd.date']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Duration line
 		if (!empty($arrayfields['fd.duree']['checked'])) {
 			print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
 			if (!$i) {
@@ -982,7 +1050,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

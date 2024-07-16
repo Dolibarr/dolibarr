@@ -112,10 +112,10 @@ BoxTitleSuspenseAccount=Antal ikke-tildelte linjer
 NumberOfLinesInSuspenseAccount=Antal linie i midlertidig konto
 SuspenseAccountNotDefined=Midlertidig konto er ikke defineret
 BoxLastCustomerShipments=Sidste kunde forsendelser
-BoxTitleLastCustomerShipments=Nyeste %s forsendelser kunde
+BoxTitleLastCustomerShipments=Seneste %s ændrede kundeforsendelser
 BoxTitleLastLeaveRequests=Latest %s modified leave requests
 NoRecordedShipments=Ingen registreret kundeforsendelse
-BoxCustomersOutstandingBillReached=Kunder med en udestående grænse nået
+BoxCustomersOutstandingBillReached=Kunder med udestående grænse nået
 # Pages
 UsersHome=Hjemmebrugere og grupper
 MembersHome=Hjemmemedlemskab

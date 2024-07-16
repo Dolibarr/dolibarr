@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 abstract class CommonHookActions
 {
 	/**
-	 * @var string	String of results.
+	 * @var ?string	String of results.
 	 */
 	public $resprints;
 
@@ -36,4 +37,27 @@ abstract class CommonHookActions
 	 * @var array 	Array of results.
 	 */
 	public $results = array();
+
+	/**
+	 * Check context of hook
+	 * @param array $parameters Hook parameters.
+	 * @param array|string $allContexts Context to check
+	 * @return bool
+	 */
+	protected function isContext($parameters, $allContexts)
+	{
+		if (is_array($allContexts)) {
+			foreach ($allContexts as $context) {
+				if ($this->isContext($parameters, $context)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		if ($parameters['currentcontext'] == $allContexts) {
+			return true;
+		}
+		$contexts = explode(':', $parameters['context']);
+		return in_array($allContexts, $contexts);
+	}
 }

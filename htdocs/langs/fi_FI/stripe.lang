@@ -22,8 +22,9 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL-osoite, jolla tarjotaan %s online
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL-osoite, jolla tarjotaan %s online- maksu -sivu minkä tahansa summan ilman objektia
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-osoite, joka tarjoaa %s online- maksu -sivun jäsentilaukselle
 ToOfferALinkForOnlinePaymentOnDonation=URL-osoite, jolla tarjotaan %s online maksu -sivu maksu lahjoituksesta
-YouCanAddTagOnUrl=Voit myös lisätä URL-parametrin <b>&tag=<i>value</i> class='notranslate'></b></span> mihin tahansa näistä URL-osoitteista (pakollinen vain maksulle, jota ei ole linkitetty objektiin), jotta voit lisätä oman maksu kommenttitunniste.<br>Voit myös lisätä parametrin <strong> sellaisten maksujen URL-osoitteeseen, joissa ei ole olemassa olevaa objektia. >> class='notranslate'>maksu arvoksi 1 jokaiselle eri linkille ilman tätä parametria)
-SetupStripeToHavePaymentCreatedAutomatically=Määritä Stripe URL-osoitteella <b>%s</b>, jotta saat <span class=' 'notranslate'>maksu</span> luodaan automaattisesti, kun Stripe on vahvistanut.
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Tilin parametrit
 UsageParameter=Käyttöparametrien
 InformationToFindParameters=Auta löytää %s tilitiedot
@@ -38,7 +39,7 @@ STRIPE_TEST_WEBHOOK_KEY=Webhook-testiavain
 STRIPE_LIVE_SECRET_KEY=Salainen live-avain
 STRIPE_LIVE_PUBLISHABLE_KEY=Julkaistu live-avain
 STRIPE_LIVE_WEBHOOK_KEY=Webhook live-avain
-ONLINE_PAYMENT_WAREHOUSE=Osake käytettäväksi varastossa vähentää, kun online-tilassa maksu on valmis<br>(TODO) Kun vaihtoehto vähentää on tehty laskun ja toiminnolle, online <span class='notranslate'>maksu span> luo itse laskun?)
+ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live käytössä (muuten testi/hiekkalaatikkotila)
 StripeImportPayment=Tuo Stripe-maksut
 ExampleOfTestCreditCard=Esimerkki luottokortista testiä varten maksu: %s => kelvollinen, %s > => virhe CVC, %s => vanhentunut, %s => veloitus epäonnistuu
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Stripe Terminalsin sijainti (osoite).
 RequestDirectDebitWithStripe=Pyydä suoraveloitus Stripen kautta
 RequesCreditTransferWithStripe=Pyydä tilisiirtoa Stripelta
 STRIPE_SEPA_DIRECT_DEBIT=Ota suoraveloitusmaksut käyttöön Stripen kautta
+STRIPE_KLARNA=Aktivoi Klarna maksut
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Stripe Connect -tila
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

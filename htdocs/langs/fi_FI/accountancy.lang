@@ -64,35 +64,30 @@ MainAccountForVatPaymentNotDefined=ALV-tiliä (tilikaaviosta) maksu ei ole mää
 MainAccountForSubscriptionPaymentNotDefined=Tili (tilikaaviosta) jäsenyydelle maksu ei määritetty asetuksissa
 MainAccountForRetainedWarrantyNotDefined=Tili (tilikaaviosta) säilytetylle takuulle, jota ei ole määritetty asetuksissa
 UserAccountNotDefined=Kirjanpito tili käyttäjälle, jota ei ole määritetty asetuksissa
-
 AccountancyArea=Kirjanpito alue
 AccountancyAreaDescIntro=Kirjanpitomoduulin käyttö tapahtuu useassa vaiheessa:
 AccountancyAreaDescActionOnce=Seuraavat toimenpiteet suoritetaan yleensä vain kerran tai kerran vuodessa...
 AccountancyAreaDescActionOnceBis=Seuraavat vaiheet kannattaa tehdä, jotta säästät aikaasi tulevaisuudessa ehdottamalla sinulle automaattisesti oikeaa oletus Kirjanpito -tiliä, kun siirrät tietoja verkkotunnuksessa Kirjanpito
 AccountancyAreaDescActionFreq=Seuraavat toiminnot suoritetaan yleensä kuukausittain, Viikko tai joka päivä erittäin suurille yrityksille...
-
 AccountancyAreaDescJournalSetup=VAIHE %s: Tarkista päiväkirjaluettelosi sisältö osoitteesta valikko %s
-AccountancyAreaDescChartModel=VAIHE %s: Tarkista, että tilikartan malli on olemassa tai luo mallista valikko /span> <span class='notranslate'>%s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=VAIHE %s: Valitse ja|tai täydennä tilikarttasi osoitteessa valikko %s
-
-AccountancyAreaDescFiscalPeriod=VAIHE %s: Määritä tilivuosi oletus mukaan, johon Kirjanpito-tilisi integroidaan. > merkintöjä. Käytä tähän <span class='notranslate'>valikko-merkintää %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=VAIHE %s: Määritä kirjanpitotilit kullekin ALV-hinnalle. Käytä tähän valikko-merkintää %s.
 AccountancyAreaDescDefault=VAIHE %s: Määritä oletus kirjanpitotilit. Käytä tähän valikko-merkintää %s.
-AccountancyAreaDescExpenseReport=VAIHE %s: Määritä oletus kirjanpitotilit kullekin <span class=-tyypille 'notranslate'>kuluraportti</span>. Käytä tähän valikko-merkintää %s.
+AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=VAIHE %s: Määritä oletus kirjanpitotilit kohteelle maksu palkoista. Käytä tähän valikko-merkintää %s.
 AccountancyAreaDescContrib=VAIHE %s: Määritä oletus kirjanpitotilit kohteelle Verot (Erikoiskustannukset). Käytä tähän valikko-merkintää %s.
 AccountancyAreaDescDonation=VAIHE %s: Määritä lahjoitus oletus kirjanpitotilit. Käytä tähän valikko-merkintää %s.
 AccountancyAreaDescSubscription=VAIHE %s: Määritä jäsentilaukselle oletus kirjanpitotilit. Käytä tähän valikko-merkintää %s.
 AccountancyAreaDescMisc=VAIHE %s: Määritä pakolliset oletus tilit ja oletus kirjanpitotilit sekalaisille tapahtumille. Käytä tähän valikko-merkintää %s.
 AccountancyAreaDescLoan=VAIHE %s: Määritä oletus kirjanpitotilit sanalle lainat. Käytä tähän valikko-merkintää %s.
-AccountancyAreaDescBank=VAIHE %s: Määritä kirjanpitotilit ja päiväkirjakoodi jokaiselle pankille ='notranslate'>ja</span> rahoitustilit. Käytä tähän valikko-merkintää %s.
+AccountancyAreaDescBank=STEP %s: Define accounting accounts and journal code for each bank and financial accounts. For this, use the menu entry %s.
 AccountancyAreaDescProd=VAIHE %s: Määritä kirjanpitotilit tuotteet/Services. Käytä tähän valikko-merkintää %s.
-
 AccountancyAreaDescBind=VAIHE %s: Tarkista olemassa olevien %s rivien välinen sidos ja Kirjanpito -tili on valmis, joten sovellus voi kirjata tapahtumat Ledgeriin yhdellä napsautuksella. Täydelliset puuttuvat sidokset. Käytä tähän valikko-merkintää %s.
-AccountancyAreaDescWriteRecords=VAIHE %s: Kirjoita tapahtumat pääkirjaan. Tätä varten siirry kohtaan valikko <strong>%s</strong>, ja klikkaa painiketta <strong>0</fecb492fz8 <span class='notranslate'></strong>.
+AccountancyAreaDescWriteRecords=STEP %s: Write transactions into the Ledger. For this, go into menu <strong>%s</strong>, and click into button <strong>%s</strong>.
 AccountancyAreaDescAnalyze=VAIHE %s: Lue raportteja tai luo vientitiedostoja muille kirjanpitäjille.
 AccountancyAreaDescClosePeriod=VAIHE %s: Sulje jakso, jotta emme voi siirtää enää tietoja samalla ajanjaksolla tulevaisuudessa.
-
 TheFiscalPeriodIsNotDefined=Määrityksen pakollista vaihetta ei ole suoritettu loppuun (tilikausi ei ole määritetty)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Pakollista asennuksen vaihetta ei ole suoritettu (Kirjanpito koodipäiväkirjaa ei ole määritetty kaikille pankkitileille)
 Selectchartofaccounts=Valitse aktiivinen tilikartta
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Tilin ehdottamiseen käytetyt tiedot
 AccountAccountingSuggest=Tiliä ehdotettu
 MenuDefaultAccounts=Oletustilit
 MenuBankAccounts=Pankkitilit
-MenuVatAccounts=Arvonlisäverotilit
+MenuVatAccounts=ALV tilit
 MenuTaxAccounts=Verotilit
 MenuExpenseReportAccounts=Kuluraportti tilit
 MenuLoanAccounts=Lainatilit
@@ -144,8 +139,6 @@ ExpenseReportLines=Sidottavat rivit kuluraportit
 ExpenseReportLinesDone=Sidotut rivit kuluraportit
 IntoAccount=Sido rivi Kirjanpito-tilin kanssa
 TotalForAccount=Kirjanpito tili yhteensä
-
-
 Ventilate=Sitoa
 LineId=Rivin tunniste
 Processing=Käsittelyssä
@@ -158,22 +151,21 @@ VentilatedinAccount=Sidottu onnistuneesti kirjanpitotilille
 NotVentilatedinAccount=Ei sidottu kirjanpitotilille
 XLineSuccessfullyBinded=%s tuotteet/palvelut sidottu onnistuneesti Kirjanpito-tiliin
 XLineFailedToBeBinded=%s tuotteet/palveluita ei sidottu mihinkään Kirjanpito-tiliin
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Enintään rivimäärä luettelossa ja sidossivulla (suositus: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Aloita sivun "Sitova tehtävä" lajittelu uusimpien elementtien mukaan
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Aloita sivun "Sidonta tehty" lajittelu uusimpien elementtien mukaan
-
 ACCOUNTING_LENGTH_DESCRIPTION=Lyhennä tuotteen ja palvelun kuvaus tiedoissa x merkin jälkeen (paras = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Leikkaa tuote- ja palvelutilin kuvauslomake tiedoissa x merkin jälkeen (paras = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Yleisen kirjanpitotilit pituus (jos asetat arvoksi 6, tili "706" näkyy näytöllä muodossa "706000")
 ACCOUNTING_LENGTH_AACCOUNT=Kolmannen osapuolen kirjanpitotilit pituus (jos asetat tässä arvoksi 6, tili 401 näkyy näytöllä muodossa 401000)
 ACCOUNTING_MANAGE_ZERO=Salli hallita eri määrän nollia Kirjanpito-tilin lopussa. Tarvitaan joissakin maissa (kuten Sveitsissä). Jos asetus on pois päältä (oletus), voit asettaa seuraavat kaksi parametria pyytääksesi sovellusta lisäämään virtuaalisia nollia.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Poista tapahtuman suora tallennus käytöstä pankkitili
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Ota käyttöön Luonnos vienti päiväkirjassa
 ACCOUNTANCY_COMBO_FOR_AUX=Ota yhdistelmäluettelo käyttöön tytäryhtiötilille (voi olla hidasta, jos sinulla on paljon kolmansia osapuolia, riko kyky etsiä arvoa)
 ACCOUNTING_DATE_START_BINDING=Poista sidonta ja siirto käytöstä kirjanpidossa, kun päiväys on tämän päiväys alapuolella (tapahtumat ennen tätä b0bdac1c207d62z  sulkee pois oletus)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Mikä on oletus:n valitsema ajanjakso sivulla tietojen siirtämiseksi kirjanpitoon
-
 ACCOUNTING_SELL_JOURNAL=Myyntipäiväkirja - ja palautukset
 ACCOUNTING_PURCHASE_JOURNAL=Hankinta journal - Hankinta ja palauttaa
 ACCOUNTING_BANK_JOURNAL=Käteisvarat päiväkirja - kuitit ja maksut
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Yleinen päiväkirja
 ACCOUNTING_HAS_NEW_JOURNAL=On uusi lehti
 ACCOUNTING_INVENTORY_JOURNAL=Varastopäiväkirja
 ACCOUNTING_SOCIAL_JOURNAL=Sosiaalinen päiväkirja
-
 ACCOUNTING_RESULT_PROFIT=Tulos Kirjanpito -tili (voitto)
 ACCOUNTING_RESULT_LOSS=Tulos Kirjanpito tili (tappio)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Päättymispäiväkirja
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Kirjanpito ryhmää, jota käytetään saldo taulukkotilissä (erottele pilkulla)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Kirjanpito tuloslaskelmassa käytettyjä ryhmiä (erottele pilkulla)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Tili (tilikarttasta) käytettäväksi tilisiirtojen tilisiirroissa
 TransitionalAccount=Siirtymäaikainen pankkisiirtotili
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Tili (tilikartasta), jota käytetään tilinä kohdentamattomille varoille, jotka ovat joko vastaanotettuja tai maksettuja eli varoja "odotustilassa"
 DONATION_ACCOUNTINGACCOUNT=Tili (tilikaaviosta), jota käytetään lahjoitusten rekisteröintiin (lahjoitusmoduuli)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tili (tilikartalta), jota käytetään jäsenmaksujen rekisteröintiin (Jäsenyysmoduuli - jos jäsenyys kirjataan ilman laskua)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Tili (tilikartasta), jota käytetään oletus-tilinä asiakkaan talletuksen rekisteröintiin
 UseAuxiliaryAccountOnCustomerDeposit=Tallenna asiakastili henkilökohtaisena tilinä tytäryhtiön kirjanpitoon käsirahariveille (jos se on poistettu käytöstä, henkilötili osamaksu-riville jää tyhjiksi)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Tili (tilikaaviosta), jota käytetään oletus
 UseAuxiliaryAccountOnSupplierDeposit=Tallenna toimittaja-tili henkilökohtaisena tilinä tytäryhtiön kirjanpitoon käsirahariveille (jos se on poistettu käytöstä, osamaksu-rivien henkilökohtainen tili jää tyhjiksi )
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Kirjanpito tililtä oletus asiakkaan säilyttämän takuun rekisteröimiseksi
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Tili (tilikartasta), jota käytetään oletus-tilinä samassa maassa ostetulle tuotteet -tilille (käytetään, jos ei määritelty tuoteselosteessa)
-ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Tili (tilikaaviosta), jota käytetään oletus-tilinä tuotteet -tiliin, joka on ostettu <span class='notranslatelta '>ETA</span> toiseen ETA maahan (käytetään, jos sitä ei ole määritelty tuoteselosteessa)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products purchased from EEC to another EEC country (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Tili (tilikaaviosta), jota käytetään oletus-tilinä tuotteet ostetulle ja tuotu mistä tahansa muusta ulkomailta (käytetään, jos sitä ei ole määritelty tuoteselosteessa)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Tili (tilikaaviosta) käytettäväksi oletus -tilinä myydylle tuotteet (käytetään, jos sitä ei ole määritelty tuotelehti)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Tili (tilikaaviosta), jota käytetään oletus-tilinä tuotteet -tiliin, jota myydään ETA toiseen ETA maahan (käytetään, jos sitä ei ole määritelty tuoteselosteessa)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Tili (tilikaaviosta) käytettäväksi <span class='notranslate' myydyn <span class='notranslate' tuotteet -tilinä oletus. >ja</span> viedään mihin tahansa muuhun ulkomaahan (käytetään, jos sitä ei ole määritelty tuoteselosteessa)
-
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the products sold and exported to any other foreign country (used if not defined in the product sheet)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Tili (tilikartasta), jota käytetään oletus -tilinä samassa maassa ostetuissa palveluissa (käytetään, jos sitä ei ole määritelty palvelulomakkeessa)
-ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Tili (tilikaaviosta), jota käytetään oletus-tilinä palveluille, jotka on ostettu henkilöltä ETA toiselle <span-luokalle ='notranslate'>ETA</span> maa (käytetään, jos sitä ei ole määritelty palvelulomakkeessa)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services purchased from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Tili (tilikartasta), jota käytetään oletus -tilinä ostetuille palveluille ja, jotka on tuotu muusta ulkomailta ( käytetään, jos sitä ei ole määritelty palvelulomakkeessa)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Tili (tilikartasta), jota käytetään oletus -tilinä myydyissä palveluissa (käytetään, jos sitä ei ole määritelty palvelulomakkeessa)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Tili (tilikartasta), jota käytetään oletus-tilinä palveluille, jotka myydään ETA toiselle <span-luokalle ='notranslate'>ETA</span> maa (käytetään, jos sitä ei ole määritelty palvelulomakkeessa)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Account (from the Chart Of Account) to be used as the default account for the services sold from EEC to another EEC country (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Tili (tilikartasta), jota käytetään oletus tilinä myydyille palveluille ja, jotka viedään muihin ulkomaihin (käytetään, jos sitä ei ole määritelty palvelulomakkeessa)
-
 Doctype=Asiakirjan tyyppi
 Docdate=Päiväys
 Docref=Viite
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=Voit määrittää tässä joitakin Kirjanpito-tilin
 ByAccounts=Tilien mukaan
 ByPredefinedAccountGroups=Ennalta määritettyjen ryhmien mukaan
 ByPersonalizedAccountGroups=Henkilökohtaisilla ryhmillä
-ByYear=Vuoden mukaan
 NotMatch=Ei valittu
 DeleteMvt=Poista joitakin rivejä kohteesta Kirjanpito
 DelMonth=Poistettava kuukausi
@@ -263,7 +247,7 @@ ListeMvts=Lista liikkeistä
 ErrorDebitCredit=Debit and Credit cannot have a value at the same time
 AddCompteFromBK=Lisää kirjanpitotilit kohtaan ryhmä
 ReportThirdParty=Luettelo kolmannen osapuolen tilit
-DescThirdPartyReport=Katso tästä luettelo kolmannen osapuolen asiakkaat ja toimittajista ja span class='notranslate'>kirjanpitotilit
+DescThirdPartyReport=Consult here the list of third-party customers and vendors and their accounting accounts
 ListAccounts=List of the accounting accounts
 UnknownAccountForThirdparty=Tuntematon kolmannen osapuolen tili. Käytämme %s
 UnknownAccountForThirdpartyBlocking=Tuntematon kolmannen osapuolen tili. Estovirhe
@@ -276,16 +260,12 @@ OpeningBalance=Avaus saldo
 ShowOpeningBalance=Näytä avaus saldo
 HideOpeningBalance=Piilota avaus saldo
 ShowSubtotalByGroup=Näytä välisumma tason mukaan
-
 Pcgtype=ryhmä tilistä
 PcgtypeDesc=ryhmä tiliä käytetään ennalta määritettyinä 'suodattimina' ja ryhmittelyehtoina joillekin b0c0d4305f0d43095f0d430.  raportoi. Esimerkiksi 'TULO' tai 'KULUT' käytetään ryhminä kirjanpitotilit / tuotteet kulu-/tuloraportin luomiseen.
 AccountingCategoriesDesc=Muokattuja ryhmä tilejä voidaan käyttää ryhmä kirjanpitotilit yhteen nimeen helpottaa suodattimen käyttöä tai mukautettujen raporttien luomista.
-
 Reconcilable=Sovittava
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=Katso tästä luettelo asiakaslaskurin riveistä, jotka on sidottu (tai ei) tuotetiliin tilikartasta
 DescVentilMore=Useimmissa tapauksissa, jos käytät ennalta määritettyä tuotteet tai palveluita ja, asetat tilin (tilikartalta) tuotteelle/ palvelukortti, sovellus voi tehdä kaiken sitomisen laskurivien välillä ja tilikarttasi Kirjanpito , yhdellä napsautuksella painikkeella <strong>"%s"</strong>. Jos tiliä ei ole asetettu tuote-/palvelukorteille tai jos sinulla on edelleen joitakin rivejä, joita ei ole sidottu tiliin, sinun on tehtävä manuaalinen sidonta tiedostosta valikko "<strong>%s</strong>".
 DescVentilDoneCustomer=Katso tästä luettelo laskuriveistä asiakkaat ja heidän tuotetilinsä tilikartasta
@@ -293,12 +273,11 @@ DescVentilTodoCustomer=Sido laskurivit, joita ei ole vielä sidottu tuotetiliin 
 ChangeAccount=Muuta tuote-/palvelutiliä (tilikartasta) valituille riveille seuraavalla tilillä:
 Vide=-
 DescVentilSupplier=Katso tästä luettelo ostolasku -riveistä, jotka on sidottu tai ei ole vielä sidottu tuotetiliin tilikartalta (näkyvät vain tietueet, joita ei ole vielä siirretty kirjanpitoon)
-DescVentilDoneSupplier=Katso täältä Toimittaja laskujen rivit ja heidän <span class='notranslate'>Kirjanpito-tilinsä
+DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Sido kuluraportti riviä, jota ei ole vielä sidottu maksulla Kirjanpito-tili
 DescVentilExpenseReport=Katso tästä luettelo kuluraportti riveistä, jotka on sidottu (tai ei) maksuun Kirjanpito-tili
-DescVentilExpenseReportMore=Jos määrität Kirjanpito-tilin kuluraportti-riville, sovellus voi tehdä kaiken sitomisen <span-luokkasi välillä. ='notranslate'>kuluraportti</span> riviä ja tilikarttasi Kirjanpito tilille yhdellä napsautuksella painike <strong>"%s"</strong>. Jos tiliä ei ole asetettu maksusanakirjaan tai jos sinulla on edelleen joitakin rivejä, joita ei ole sidottu mihinkään tiliin, sinun on tehtävä manuaalinen sidonta tiedostosta valikko "<strong>%s</strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Katso tästä luettelo kuluraporttien riveistä ja niiden maksuista Kirjanpito tili
-
 Closure=Vuosittainen sulkeminen
 AccountancyClosureStep1Desc=Katso täältä liikkeiden määrä kuukausittain, jota ei ole vielä vahvistettu ja lukittu
 OverviewOfMovementsNotValidated=Yleiskatsaus liikkeistä, joita ei ole vahvistettu ja lukittu
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=Kaikki liikkeet kirjattiin vahvistetuiksi ja
 NotAllMovementsCouldBeRecordedAsValidated=Kaikkia liikkeitä ei voitu tallentaa vahvistetuiksi ja lukittu
 ValidateMovements=Vahvista ja lukkoliikkeet
 DescValidateMovements=Kaikki kirjoitusten, ja -poistojen muuttaminen tai poistaminen on kielletty. Kaikki harjoitukseen ilmoittautuneet on vahvistettava, muuten sulkeminen ei ole mahdollista
-
 ValidateHistory=Sido automaattisesti
 AutomaticBindingDone=Automaattiset sidokset tehty (%s) – Automaattinen sidonta ei ole mahdollista joillekin tietueille (%s)
 DoManualBindingForFailedRecord=Sinun on tehtävä manuaalinen linkki %s riville, joita ei ole linkitetty automaattisesti.
-
 ErrorAccountancyCodeIsAlreadyUse=Virhe, et voi poistaa tai poistaa käytöstä tätä tilikarttatiliä, koska sitä käytetään
 MvtNotCorrectlyBalanced=Liikkeet eivät ole tasapainossa. Veloitus = %s ja luotto = %s
 Balancing=Tasapainottaminen
@@ -323,19 +300,18 @@ ChangeBinding=Vaihda sidonta
 Accounted=Kirjattu pääkirjanpitoon
 NotYetAccounted=Ei vielä siirretty Kirjanpito
 ShowTutorial=Näytä opetusohjelma
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Täsmäyttämätön
 WarningRecordWithoutSubledgerAreExcluded=Varoitus, kaikki rivit, joissa ei ole määritetty alikirjatiliä, suodatetaan ja pois tästä näkymästä
 AccountRemovedFromCurrentChartOfAccount=Kirjanpito tili, jota ei ole nykyisessä tilikartassa
-
 ## Admin
-BindingOptions=Sidontavaihtoehdot
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Käytä massaluokkia
 AddAccountFromBookKeepingWithNoCategories=Käytettävissä oleva tili ei ole vielä personoidussa ryhmä
 CategoryDeleted=Tilin Kirjanpito luokka on poistettu
 AccountingJournals=Kirjanpitotilityypit
 AccountingJournal=Kirjanpito päiväkirja
 NewAccountingJournal=Uusi Kirjanpito -päiväkirja
-ShowAccountingJournal=Näytä Kirjanpito päiväkirja
 NatureOfJournal=Lehden luonne
 AccountingJournalType1=Erilaiset toiminnot
 AccountingJournalType2=Myynti
@@ -346,14 +322,14 @@ AccountingJournalType8=Varasto
 AccountingJournalType9=Kertyneet voittovarat
 GenerationOfAccountingEntries=Kirjanpito merkinnän luominen
 ErrorAccountingJournalIsAlreadyUse=Tämä päiväkirja on jo käytössä
-AccountingAccountForSalesTaxAreDefinedInto=Huomautus: Kirjanpito myyntitili vero on määritelty valikko <b>%s</b> - b058span87f3 <span class='notranslate'>%s</b>
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Sisäänpääsyjen lukumäärä
 NumberOfAccountancyMovements=Liikkeiden määrä
 ACCOUNTING_DISABLE_BINDING_ON_SALES=Poista sidonta ja siirto käytöstä myynnin kirjanpidossa (asiakaslaskuja ei oteta huomioon Kirjanpito)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Poista sidonta ja siirto käytöstä ostojen kirjanpidossa (Toimittaja laskuja ei oteta huomioon Kirjanpito)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Poista sidonta ja siirto käytöstä kirjanpidossa kuluraportit (kuluraportit ei oteta huomioon b0d4305fc47d )
 ACCOUNTING_ENABLE_LETTERING=Ota kirjaintoiminto käyttöön Kirjanpito
-ACCOUNTING_ENABLE_LETTERING_DESC=Kun tämä asetus on käytössä, voit määrittää jokaiselle Kirjanpito-merkinnölle koodin, jotta voit ryhmä eri Kirjanpito liikettä yhdessä. Aikaisemmin, kun eri lehtiä hallittiin itsenäisesti, tämä ominaisuus oli tarpeen ryhmä eri lehtien rivien siirtämiseksi yhteen. Kuitenkin Dolibarr-kirjanpidossa tällainen seurantakoodi, nimeltään "<b>%s<span class='notranslate'></b> span>" on jo tallennettu automaattisesti, joten automaattinen kirjoitus on jo tehty ilman virheriskiä, joten tästä ominaisuudesta on tullut hyödytön yleisessä käytössä. Manuaalinen kirjainominaisuus tarjotaan loppukäyttäjille, jotka eivät todellakaan luota kirjanpidon tietojen siirtoa suorittavaan tietokonemoottoriin.
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=Tämän ominaisuuden käyttöönotto ei ole enää välttämätöntä tiukan Kirjanpito hallinnan kannalta.
 ACCOUNTING_ENABLE_AUTOLETTERING=Ota automaattinen kirjain käyttöön siirtäessäsi kohteeseen Kirjanpito
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Kirjoituksen koodi luodaan automaattisesti ja lisättynä ja, jota loppukäyttäjä ei ole valinnut
@@ -361,8 +337,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Kirjainten määrä kirjainkoodia luotaessa (olet
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Jotkut Kirjanpito ohjelmistot hyväksyvät vain kaksikirjaimisen koodin. Tämän parametrin avulla voit asettaa tämän kuvasuhteen. oletus kirjainten määrä on kolme.
 OptionsAdvanced=Edistyneet asetukset
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivoi toimittaja ostosten ALV:n käännetyn verotuksen hallinta
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kun tämä vaihtoehto on käytössä, voit määrittää, että toimittaja tai tietty ostolasku on siirrettävä kirjanpitoon eri tavalla: Lisäveloitus ja luottoraja luodaan Kirjanpito kahdelle tietylle tilille "<span class=" määritellystä tilikaaviosta. 'notranslate'>%s</span>" -asetussivulla.
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kun tämä vaihtoehto on käytössä, voit määrittää, että toimittaja tai tietty ostolasku on siirrettävä kirjanpitoon eri tavalla: Lisäveloitus ja luottoraja luodaan Kirjanpito kahdelle tietylle tilille "<span class=" määritellystä tilikaaviosta%s asetussivulla.
 ## Export
 NotExportLettering=Älä vie kirjaimia luodessasi tiedosto
 NotifiedExportDate=Merkitse viemättömät rivit viedyiksi <span class="warning"> (jos haluat muokata viedyksi merkittyä riviä, sinun on poistettava koko tapahtuma ja siirrä se uudelleen muotoon Kirjanpito)</span>
@@ -372,7 +347,7 @@ DateValidationAndLock=päiväys vahvistus ja lukko
 ConfirmExportFile=Kirjanpito-viennin tiedosto luomisen vahvistus?
 ExportDraftJournal=Vie Luonnos päiväkirja
 Modelcsv=Vientimalli
-Selectmodelcsv=Valitse vientimalli
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Klassinen vienti
 Modelcsv_CEGID=Vie CEGID Expert Comptabilitéa varten
 Modelcsv_COALA=Vienti Sage Coalalle
@@ -394,7 +369,6 @@ Modelcsv_Gestinumv3=Vienti Gestinumille (v3)
 Modelcsv_Gestinumv5=Vienti Gestinumille (v5)
 Modelcsv_charlemagne=Vienti Aplim Charlemagelle
 ChartofaccountsId=Tilikartta Id
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Alkukirjanpito
 InitAccountancyDesc=Tätä sivua voidaan käyttää Kirjanpito-tilin alustamiseen tuotteet ja-palveluissa jolla ei ole Kirjanpito-tiliä, joka on määritetty myyntiin ja.
@@ -427,14 +401,15 @@ SaleEECWithVAT=Alennus ETA ja ALV ei ole tyhjä, joten oletamme, että tämä EI
 SaleEECWithoutVATNumber=Myynti: ETA ilman arvonlisäveroa, mutta kolmannen osapuolen ALV-tunnusta ei ole määritetty. Palaamme takaisin normaalimyyntien tilille. Voit tarvittaessa korjata kolmannen osapuolen ALV-tunnuksen tai muuttaa sitovaksi ehdotettua tuotetiliä.
 ForbiddenTransactionAlreadyExported=Kielletty: tapahtuma on vahvistettu ja/tai viety.
 ForbiddenTransactionAlreadyValidated=Kielletty: Tapahtuma on vahvistettu.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Tilin Kirjanpito alue
 Calculated=Laskettu
 Formula=Kaava
-
 ## Reconcile
 LetteringAuto=Automaattinen sovitus
 LetteringManual=Sovitusopas
+LetteringPartial=Reconcile partial
 Unlettering=Sovimaton
 UnletteringAuto=Yhteensopimaton auto
 UnletteringManual=Yhteensopimaton käsikirja
@@ -444,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s täsmäytys muokattu onnistuneesti
 AccountancyNoUnletteringModified=Ei sovitusta muokattu
 AccountancyOneUnletteringModifiedSuccessfully=Yhtä sovitusvirhettä muokattu onnistuneesti
 AccountancyUnletteringModifiedSuccessfully=%s sovituksen purku muokattu onnistuneesti
-
 ## Closure
 AccountancyClosureStep1=Vaihe 1 : Vahvista ja lukitse liikkeet
 AccountancyClosureStep2=Vaihe 2 : Sulje tilikausi
@@ -456,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Luo Kertyneet tulot -merkinn
 AccountancyClosureSeparateAuxiliaryAccounts=Kun luot Kertyneet voittovarat -merkintöjä, esitä alikirjanpitotiedot
 AccountancyClosureCloseSuccessfully=tilikausi on suljettu onnistuneesti
 AccountancyClosureInsertAccountingReversalSuccessfully=Kertyneet voittovarat -kirjanpito on lisätty onnistuneesti
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Automaattinen joukkotarkistuksen vahvistus
 ConfirmMassUnletteringManual=Joukkomanuaalinen täsmäysvirhevahvistus
@@ -465,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Joukkopoiston vahvistus
 ConfirmMassDeleteBookkeepingWritingQuestion=Tämä poistaa tapahtuman kohteesta Kirjanpito (kaikki samaan tapahtumaan liittyvät rivimerkinnät poistetaan). Haluatko varmasti poistaa %s valitut merkinnät?
 AccountancyClosureConfirmClose=Haluatko varmasti sulkea nykyisen tilikausi ? <span class="warning">Ymmärrät, että tilikausi:n sulkeminen on peruuttamaton toiminto. ja estää merkintöjen muuttamisen tai poistamisen tänä aikana</span>.
 AccountancyClosureConfirmAccountingReversal=Oletko varma, että haluat kirjata Kertyneet voittovarat -kohtaan?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Joitakin pakollisia määritysvaiheita ei suoritettu, suorita ne
 ErrorNoAccountingCategoryForThisCountry=Kirjanpito-tiliä ryhmä ei ole saatavilla maassa %s (katso %s - %s - %s)
@@ -483,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=saldo (%s) ei ole yhtä suuri kuin 0
 AccountancyErrorLetteringBookkeeping=Tapahtumissa on tapahtunut virheitä: %s
 ErrorAccountNumberAlreadyExists=Numero Kirjanpito %s on jo olemassa
 ErrorArchiveAddFile="%s" tiedosto ei voi laittaa arkistoon
-ErrorNoFiscalPeriodActiveFound=Ei aktiivisia tilikausi
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Kirjanpitoasiakirja päiväys ei ole aktiivisen tilikausi sisällä.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Kirjanpitoasiakirja päiväys on suljetussa tilikausi
-
 ## Import
 ImportAccountingEntries=Kirjanpito merkintää
 ImportAccountingEntriesFECFormat=Kirjanpito merkintää - FEC-muoto
@@ -508,11 +479,9 @@ FECFormatReconcilableDate=Yhteensovitettava päiväys (DateLet)
 FECFormatValidateDate=Pala päiväys vahvistettu (ValidDate)
 FECFormatMulticurrencyAmount=Usean valuutan määrä (Montdevise)
 FECFormatMulticurrencyCode=Usean valuutan koodi (Idevise)
-
 DateExport=päiväys vienti
 WarningReportNotReliable=Varoitus, tämä raportti ei perustu Reskontraan, joten se ei sisällä Reskontrassa manuaalisesti muokattuja tapahtumia. Jos päiväkirjaasi on enintään päiväys, kirjanpitonäkymä on tarkempi.
 ExpenseReportJournal=kuluraportti Päiväkirja
 DocsAlreadyExportedAreIncluded=Mukana ovat jo viedyt asiakirjat
 ClickToShowAlreadyExportedLines=Napsauta näyttääksesi jo viedyt rivit
-
 NAccounts=%s tiliä

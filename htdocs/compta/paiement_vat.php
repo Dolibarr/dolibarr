@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills"));
 
-$chid = GETPOST("id", 'int');
+$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel');
 
@@ -58,9 +58,9 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		exit;
 	}
 
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 
-	if (!(GETPOST("paiementtype", 'int') > 0)) {
+	if (!(GETPOSTINT("paiementtype") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -70,7 +70,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 		$error++;
 		$action = 'create';
 	}
-	if (isModEnabled("banque") && !(GETPOST("accountid", 'int') > 0)) {
+	if (isModEnabled("bank") && !(GETPOSTINT("accountid") > 0)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("AccountToDebit")), null, 'errors');
 		$error++;
 		$action = 'create';
@@ -80,7 +80,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 	foreach ($_POST as $key => $value) {
 		if (substr($key, 0, 7) == 'amount_') {
 			$other_chid = substr($key, 7);
-			$amounts[$other_chid] = price2num(GETPOST($key));
+			$amounts[$other_chid] = (float) price2num(GETPOST($key));
 		}
 	}
 
@@ -116,7 +116,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
 			}
 
 			if (!$error) {
-				$result = $paiement->addPaymentToBank($user, 'payment_vat', '(VATPayment)', GETPOST('accountid', 'int'), '', '');
+				$result = $paiement->addPaymentToBank($user, 'payment_vat', '(VATPayment)', GETPOSTINT('accountid'), '', '');
 				if (!($result > 0)) {
 					$error++;
 					setEventMessages($paiement->error, null, 'errors');
@@ -201,22 +201,22 @@ if ($action == 'create') {
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td>'.price($total-$sumpaid,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
-	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOST("remonth", 'int') ? $datepaye : -1) : 0;
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	$datepaye = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
+	$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? (GETPOSTINT("remonth") ? $datepaye : -1) : 0;
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	print $form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOST("paiementtype", "int") : $tva->paiementtype, "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
+	print $form->select_types_paiements(GETPOSTISSET("paiementtype") ? GETPOSTINT("paiementtype") : $tva->paiementtype, "paiementtype", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
-	print img_picto('', 'bank_account', 'pictofixedwidth');
-	$form->select_comptes(GETPOST("accountid", "int") ? GETPOST("accountid", "int") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
+	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
+	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -240,7 +240,7 @@ if ($action == 'create') {
 	$num = 1;
 	$i = 0;
 
-	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
@@ -253,6 +253,7 @@ if ($action == 'create') {
 
 	$total = 0;
 	$totalrecu = 0;
+	$total_ttc = 0.;
 
 	while ($i < $num) {
 		$objp = $tva;

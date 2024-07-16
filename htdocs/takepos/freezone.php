@@ -53,7 +53,7 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : '0'); // $place 
 
 $invoiceid = GETPOST('invoiceid', 'int');
 
-$idline = GETPOST('idline', 'int');
+$idline = GETPOSTINT('idline');
 $action = GETPOST('action', 'aZ09');
 
 if (!$user->hasRight('takepos', 'run')) {

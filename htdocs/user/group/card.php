@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,14 +52,14 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$userid = GETPOST('user', 'int');
+$userid = GETPOSTINT('user');
 
 $object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
@@ -66,10 +67,10 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 $object->getrights();
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
 
 // Security check
@@ -222,7 +223,7 @@ if (empty($reshook)) {
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
-				$object->entity = GETPOST("entity", "int");
+				$object->entity = GETPOSTINT("entity");
 			}
 
 			$ret = $object->update();
@@ -256,7 +257,7 @@ if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
 }
 $help_url = "";
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_card');
 
 
 $form = new Form($db);
@@ -274,7 +275,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head(array(), '', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -324,7 +325,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * Card in view mode
 		 */
 
 		if ($action != 'edit') {
@@ -401,7 +402,7 @@ if ($action == 'create') {
 
 			print load_fiche_titre($langs->trans("ListOfUsersInGroup"), '', 'user');
 
-			// On selectionne les users qui ne sont pas deja dans le groupe
+			// Select the users that do not belong to the group yet
 			$exclude = array();
 
 			if (!empty($object->members)) {
@@ -420,7 +421,7 @@ if ($action == 'create') {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
-					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
@@ -439,7 +440,7 @@ if ($action == 'create') {
 				 * Group members
 				 */
 
-				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
@@ -513,7 +514,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode edition
+		 * Card in edit mode
 		 */
 
 		if ($action == 'edit' && $caneditperms) {

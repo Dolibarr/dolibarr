@@ -56,10 +56,10 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
-	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public');
+if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
 	// HTTP/1.0
 	header('Pragma: token=public');
 } else {
@@ -146,7 +146,7 @@ if (empty($reshook)) {
 
 print "\n";
 print "<!-- Begin Bookmarks list -->\n";
-print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $bookmarkList;

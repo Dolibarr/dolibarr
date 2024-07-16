@@ -29,7 +29,7 @@ OAUTH_GOOGLE_SECRET=OAuth گوگل سیکریٹ
 OAUTH_GITHUB_NAME=OAuth GitHub سروس
 OAUTH_GITHUB_ID=OAuth GitHub Id
 OAUTH_GITHUB_SECRET=OAuth GitHub سیکریٹ
-OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">اس صفحہ<span class="fas fa-external-link-alt paddingleft"></span><span class='notranslate' پر جائیں ></a></span> اپنی OAuth ID اور خفیہ بنانے یا حاصل کرنے کے لیے
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth اسٹرائپ ٹیسٹ
 OAUTH_STRIPE_LIVE_NAME=OAuth اسٹرائپ لائیو
 OAUTH_ID=OAuth کلائنٹ ID

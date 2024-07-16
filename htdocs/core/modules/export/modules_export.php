@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 /**
  *	Parent class for export modules
  */
-class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by listOfAvailableExportFormat
+class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance properties loaded by listOfAvailableExportFormat
 {
 	/**
 	 * @var string Error code (or message)

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +64,9 @@ class modCollab extends DolibarrModules
 		//-------------
 		$this->config_page_url = array(/*'collab.php'*/);
 
-		// Dependancies
+		// Dependencies
 		//-------------
-		$this->hidden = getDolGlobalString('MODULE_COLLAB_DISABLED'); // A condition to disable module
+		$this->hidden = getDolGlobalInt('MODULE_COLLAB_DISABLED'); // A condition to disable module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
@@ -109,18 +110,18 @@ class modCollab extends DolibarrModules
 		// Main menu entries
 		$r = 0;
 		$this->menu[$r] = array(
-			'fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Left menu entry
-			'titre'=>'Collab',
+			'fk_menu' => '0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'top', // This is a Left menu entry
+			'titre' => 'Collab',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
-			'mainmenu'=>'collab',
-			'url'=>'/collab/index.php',
-			'langs'=>'collab', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>100,
-			'enabled'=>'$conf->collab->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
+			'mainmenu' => 'collab',
+			'url' => '/collab/index.php',
+			'langs' => 'collab', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 100,
+			'enabled' => '$conf->collab->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '1', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 	}

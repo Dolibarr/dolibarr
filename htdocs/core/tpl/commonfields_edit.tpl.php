@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -25,7 +25,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -69,7 +69,7 @@ foreach ($object->fields as $key => $val) {
 	}
 
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $object->$key;
+		$value = GETPOSTISSET($key) ? GETPOSTINT($key) : $object->$key;
 	} elseif ($val['type'] == 'double') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
 	} elseif (preg_match('/^text/', $val['type'])) {
@@ -89,7 +89,7 @@ foreach ($object->fields as $key => $val) {
 		}
 		$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $object->$key;
 	} elseif (in_array($val['type'], array('date', 'datetime'))) {
-		$value = GETPOSTISSET($key) ? dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int')) : $object->$key;
+		$value = GETPOSTISSET($key) ? dol_mktime(GETPOSTINT($key.'hour'), GETPOSTINT($key.'min'), GETPOSTINT($key.'sec'), GETPOSTINT($key.'month'), GETPOSTINT($key.'day'), GETPOSTINT($key.'year')) : $object->$key;
 	} elseif ($val['type'] == 'price') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key)) : price2num($object->$key);
 	} elseif ($key == 'lang') {

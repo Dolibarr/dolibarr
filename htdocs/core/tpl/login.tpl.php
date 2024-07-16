@@ -27,7 +27,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // DDOS protection
@@ -84,13 +84,12 @@ $php_self = preg_replace('/(&amp;)+/', '&amp;', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION)),
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
 // We display application title instead Login term
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$titleofloginpage = $conf->global->MAIN_APPLICATION_TITLE;
+	$titleofloginpage = getDolGlobalString('MAIN_APPLICATION_TITLE');
 } else {
 	$titleofloginpage = $langs->trans('Login');
 }
@@ -111,8 +110,8 @@ $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
@@ -122,7 +121,7 @@ if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 	<?php
 } else {
 	?>
-	<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+	<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode(getDolGlobalString('MAIN_LOGIN_BACKGROUND')).'\')"'; ?>>
 	<?php
 }
 ?>
@@ -313,7 +312,7 @@ if ($forgetpasslink || $helpcenterlink) {
 	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (getDolGlobalString('MAIN_PASSWORD_FORGOTLINK')) {
-			$url = $conf->global->MAIN_PASSWORD_FORGOTLINK;
+			$url = getDolGlobalString('MAIN_PASSWORD_FORGOTLINK');
 		}
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
@@ -327,7 +326,7 @@ if ($forgetpasslink || $helpcenterlink) {
 	if ($helpcenterlink) {
 		$url = DOL_URL_ROOT.'/support/index.php'.$moreparam;
 		if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
-			$url = $conf->global->MAIN_HELPCENTER_LINKTOUSE;
+			$url = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
 		}
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
@@ -343,7 +342,8 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+	$state = hash('sha256', session_id());
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state='.$state;
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
@@ -406,9 +406,9 @@ if (!empty($_SESSION['dol_loginmesg'])) {
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
 	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
 		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning">';
+		print '<div class="warning" role="alert">';
 	} else {
-		print '<div class="error">';
+		print '<div class="error" role="alert">';
 	}
 	print dol_escape_htmltag($message);
 	print '</div>'; ?>
@@ -428,6 +428,7 @@ if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 		if (LIBXML_VERSION < 20900) {
 			// Avoid load of external entities (security problem).
 			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
 			libxml_disable_entity_loader(true);
 		}
 

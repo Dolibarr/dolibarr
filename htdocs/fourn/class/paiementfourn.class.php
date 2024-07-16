@@ -9,6 +9,8 @@
  * Copyright (C) 2018       Frédéric France         <frederic.francenetlogic.fr>
  * Copyright (C) 2023      Joachim Kueter		  <git-jk@bloxera.com>
  * Copyright (C) 2023      Sylvain Legrand		  <technique@infras.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +161,7 @@ class PaiementFourn extends Paiement
 	 *	Create payment in database
 	 *
 	 *	@param		User	   $user        		Object of creating user
-	 *	@param		int		   $closepaidinvoices   1=Also close payed invoices to paid, 0=Do nothing more
+	 *	@param		int		   $closepaidinvoices   1=Also close paid invoices to paid, 0=Do nothing more
 	 *  @param      Societe    $thirdparty          Thirdparty
 	 *	@return     int         					id of created payment, < 0 if error
 	 */
@@ -236,8 +238,8 @@ class PaiementFourn extends Paiement
 		}
 
 
-		$totalamount = price2num($totalamount);
-		$totalamount_converted = price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount);
+		$totalamount_converted = (float) price2num($totalamount_converted);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
@@ -278,9 +280,9 @@ class PaiementFourn extends Paiement
 							// If we want to closed paid invoices
 							if ($closepaidinvoices) {
 								$paiement = $invoice->getSommePaiement();
-								$creditnotes=$invoice->getSumCreditNotesUsed();
+								$creditnotes = $invoice->getSumCreditNotesUsed();
 								//$creditnotes = 0;
-								$deposits=$invoice->getSumDepositsUsed();
+								$deposits = $invoice->getSumDepositsUsed();
 								//$deposits = 0;
 								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
 								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
@@ -427,13 +429,15 @@ class PaiementFourn extends Paiement
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
 	 *	@TODO Add User $user as first param
-	 *
+	 *  @param		User	$user			User making the deletion
 	 *	@param		int		$notrigger		No trigger
-	 *	@return     int     Return integer <0 si ko, >0 si ok
+	 *	@return     int     				Return integer <0 si ko, >0 si ok
 	 */
-	public function delete($notrigger = 0)
+	public function delete($user = null, $notrigger = 0)
 	{
-		global $user;
+		if (empty($user)) {
+			global $user;
+		}
 
 		$bank_line_id = $this->bank_line;
 
@@ -515,7 +519,7 @@ class PaiementFourn extends Paiement
 	/**
 	 *	Information on object
 	 *
-	 *	@param	int		$id      Id du paiement dont il faut afficher les infos
+	 *	@param	int		$id      Id du paiement don't il faut afficher les infos
 	 *	@return	void
 	 */
 	public function info($id)
@@ -709,7 +713,7 @@ class PaiementFourn extends Paiement
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -725,7 +729,7 @@ class PaiementFourn extends Paiement
 	 *	id must be 0 if object instance is a specimen.
 	 *
 	 *	@param	string		$option		''=Create a specimen invoice with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen($option = '')
 	{
@@ -740,6 +744,8 @@ class PaiementFourn extends Paiement
 		$this->facid = 1;
 		$this->socid = 1;
 		$this->datepaye = $nownotime;
+
+		return 1;
 	}
 
 	/**
@@ -768,7 +774,7 @@ class PaiementFourn extends Paiement
 			$mybool = false;
 
 			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
-			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
+			$classname = getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -778,7 +784,7 @@ class PaiementFourn extends Paiement
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file)) {
-					$mybool |= include_once $dir.$file;
+					$mybool = (include_once $dir.$file) || $mybool;
 				}
 			}
 
@@ -793,13 +799,13 @@ class PaiementFourn extends Paiement
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool |= include_once $dir.$file;
+						$mybool = (include_once $dir.$file) || $mybool;
 					}
 				}
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -844,7 +850,7 @@ class PaiementFourn extends Paiement
 		// Set the model on the model name to use
 		if (empty($modele)) {
 			if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF')) {
-				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
+				$modele = getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF');
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}

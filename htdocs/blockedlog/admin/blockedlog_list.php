@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018  Laurent Destailleur     <eldy@destailleur.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
+ * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
@@ -46,17 +49,17 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bl
 $backtopage  = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss   = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
-$search_showonlyerrors = GETPOST('search_showonlyerrors', 'int');
+$search_showonlyerrors = GETPOSTINT('search_showonlyerrors');
 if ($search_showonlyerrors < 0) {
 	$search_showonlyerrors = 0;
 }
 
-$search_startyear = GETPOST('search_startyear', 'int');
-$search_startmonth = GETPOST('search_startmonth', 'int');
-$search_startday = GETPOST('search_startday', 'int');
-$search_endyear = GETPOST('search_endyear', 'int');
-$search_endmonth = GETPOST('search_endmonth', 'int');
-$search_endday = GETPOST('search_endday', 'int');
+$search_startyear = GETPOSTINT('search_startyear');
+$search_startmonth = GETPOSTINT('search_startmonth');
+$search_startday = GETPOSTINT('search_startday');
+$search_endyear = GETPOSTINT('search_endyear');
+$search_endmonth = GETPOSTINT('search_endmonth');
+$search_endday = GETPOSTINT('search_endday');
 $search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
@@ -80,10 +83,10 @@ if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_start
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -154,14 +157,17 @@ if ($action === 'downloadblockchain') {
 	$previoushash = '';
 	$firstid = '';
 
-	if (!$error) {
+	if (! (GETPOSTINT('yeartoexport') > 0)) {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Year")), null, "errors");
+		$error++;
+	} else {
 		// Get ID of first line
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".$conf->entity;
-		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0) {
-			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 12);
+		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
+			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
+			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
 			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql .= " ORDER BY rowid ASC"; // Required so we get the first one
@@ -189,9 +195,9 @@ if ($action === 'downloadblockchain') {
 		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object, signature, fk_user, object_data, object_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
-		if (GETPOST('monthtoexport', 'int') > 0 || GETPOST('yeartoexport', 'int') > 0) {
-			$dates = dol_get_first_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 1);
-			$datee = dol_get_last_day(GETPOST('yeartoexport', 'int'), GETPOST('monthtoexport', 'int') ? GETPOST('monthtoexport', 'int') : 12);
+		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
+			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
+			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
 			$sql .= " AND date_creation BETWEEN '".$db->idate($dates)."' AND '".$db->idate($datee)."'";
 		}
 		$sql .= " ORDER BY rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
@@ -200,7 +206,7 @@ if ($action === 'downloadblockchain') {
 		if ($res) {
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOST('yeartoexport', 'int') > 0 ? GETPOST('yeartoexport', 'int').(GETPOST('monthtoexport', 'int') > 0 ? sprintf("%02d", GETPOST('monthtoexport', 'int')) : '').'-' : '').$previoushash.".csv\"");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').$previoushash.".csv\"");
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -292,15 +298,16 @@ if ($action === 'downloadblockchain') {
  */
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if (GETPOST('withtab', 'alpha')) {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
 } else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
-$help_url="EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
+$help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
 $MAXLINES = 10000;
 
@@ -344,25 +351,25 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_startyear > 0) {
-	$param .= '&search_startyear='.urlencode($search_startyear);
+	$param .= '&search_startyear='.((int) $search_startyear);
 }
 if ($search_startmonth > 0) {
-	$param .= '&search_startmonth='.urlencode($search_startmonth);
+	$param .= '&search_startmonth='.((int) $search_startmonth);
 }
 if ($search_startday > 0) {
-	$param .= '&search_startday='.urlencode($search_startday);
+	$param .= '&search_startday='.((int) $search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode($search_endyear);
+	$param .= '&search_endyear='.((int) $search_endyear);
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode($search_endmonth);
+	$param .= '&search_endmonth='.((int) $search_endmonth);
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode($search_endday);
+	$param .= '&search_endday='.((int) $search_endday);
 }
 if ($search_showonlyerrors > 0) {
-	$param .= '&search_showonlyerrors='.urlencode($search_showonlyerrors);
+	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -374,24 +381,14 @@ if (GETPOST('withtab', 'alpha')) {
 // Add $param from extra fields
 //include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?output=file">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
-$smonth = GETPOST('monthtoexport', 'int');
 // Month
-$retstring = '';
-$retstring .= '<select class="flat valignmiddle maxwidth75imp marginrightonly" id="monthtoexport" name="monthtoexport">';
-$retstring .= '<option value="0" selected>&nbsp;</option>';
-for ($month = 1; $month <= 12; $month++) {
-	$retstring .= '<option value="'.$month.'"'.($month == $smonth ? ' selected' : '').'>';
-	$retstring .= dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
-	$retstring .= "</option>";
-}
-$retstring .= "</select>";
-print $retstring;
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport', 'int').'">';
+print $formother->select_month(GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {
@@ -415,8 +412,8 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder centpercent">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+print '<table class="noborder centpercent liste">';
 
 // Line of filters
 print '<tr class="liste_titre_filter">';
@@ -441,12 +438,12 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150');
 print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth200', 1);
+print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth150', 1);
 print '</td>';
 
 // Ref
@@ -465,9 +462,9 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 
 // Status
-print '<td class="liste_titre">';
+print '<td class="liste_titre center minwidth75imp parentonrightofpage">';
 $array = array("1" => "OnlyNonValid");
-print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status maxwidth200 onrightofpage', 1);
+print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors, 1, 0, 0, '', 1, 0, 0, 'ASC', 'search_status width100 onrightofpage', 1);
 print '</td>';
 
 // Status note

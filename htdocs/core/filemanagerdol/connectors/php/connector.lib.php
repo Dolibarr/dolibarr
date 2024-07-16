@@ -2,6 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -242,14 +243,11 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
  */
 function CreateFolder($resourceType, $currentFolder)
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sErrorNumber = '0';
 	$sErrorMsg = '';
 
 	if (isset($_GET['NewFolderName'])) {
-		$sNewFolderName = $_GET['NewFolderName'];
+		$sNewFolderName = GETPOST('NewFolderName');
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
 		if (strpos($sNewFolderName, '..') !== false) {
@@ -550,8 +548,8 @@ function GetParentFolder($folderPath)
 /**
  * CreateServerFolder
  *
- * @param 	string	$folderPath		Folder
- * @param 	string	$lastFolder		Folder
+ * @param 	string	$folderPath		Folder - Folder to create (recursively)
+ * @param 	?string	$lastFolder		Internal - Child Folder we are creating, prevents recursion
  * @return	string					''=success, error message otherwise
  */
 function CreateServerFolder($folderPath, $lastFolder = null)
@@ -579,11 +577,12 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 
 	// Check if the parent exists, or create it.
 	if (!empty($sParent) && !file_exists($sParent)) {
-		//prevents agains infinite loop when we can't create root folder
+		//prevents against infinite loop when we can't create root folder
 		if (!is_null($lastFolder) && $lastFolder === $sParent) {
 			return "Can't create $folderPath directory";
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$sErrorMsg = CreateServerFolder($sParent, $folderPath);
 		if ($sErrorMsg != '') {
 			return $sErrorMsg;
@@ -678,7 +677,7 @@ function Server_MapPath($path)
  * Is Allowed Extension
  *
  * @param   string $sExtension      File extension
- * @param   string $resourceType    ressource type
+ * @param   string $resourceType    resource type
  * @return  boolean                 true or false
  */
 function IsAllowedExt($sExtension, $resourceType)
@@ -702,7 +701,7 @@ function IsAllowedExt($sExtension, $resourceType)
 /**
  * Is Allowed Type
  *
- * @param   string $resourceType    ressource type
+ * @param   string $resourceType    resource type
  * @return  boolean                 true or false
  */
 function IsAllowedType($resourceType)
@@ -739,9 +738,6 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
@@ -933,7 +929,7 @@ function ConvertToXmlAttribute($value)
 }
 
 /**
- * Check whether given extension is in html etensions list
+ * Check whether given extension is in html extensions list
  *
  * @param 	string 		$ext				Extension
  * @param 	array 		$formExtensions		Array of extensions
@@ -954,10 +950,9 @@ function IsHtmlExtension($ext, $formExtensions)
 /**
  * Detect HTML in the first KB to prevent against potential security issue with
  * IE/Safari/Opera file type auto detection bug.
- * Returns true if file contain insecure HTML code at the beginning.
  *
  * @param string $filePath absolute path to file
- * @return boolean
+ * @return bool|-1		Returns true if the file contains insecure HTML code at the beginning, or -1 if error
  */
 function DetectHtml($filePath)
 {
@@ -1015,11 +1010,10 @@ function DetectHtml($filePath)
 /**
  * Check file content.
  * Currently this function validates only image files.
- * Returns false if file is invalid.
  *
  * @param 	string 	$filePath 		Absolute path to file
  * @param 	string 	$extension 		File extension
- * @return 	boolean					True or false
+ * @return 	bool|-1					Returns true if the file is valid, false if the file is invalid, -1 if error.
  */
 function IsImageValid($filePath, $extension)
 {

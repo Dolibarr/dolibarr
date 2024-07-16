@@ -21,7 +21,6 @@ MenuDoneMyActions=Mənim dayandırılmış hadisələrim
 ListOfEvents=Tədbirlərin siyahısı (defolt təqvim)
 ActionsAskedBy=Hadisələr xəbər verir
 ActionsToDoBy=Tədbirlər təyin edildi
-ActionsDoneBy=tərəfindən həyata keçirilən tədbirlər
 ActionAssignedTo=Tədbir təyin edildi
 ViewCal=Ay görünüşü
 ViewDay=Gün görünüşü
@@ -135,12 +134,14 @@ AgendaModelModule=Tədbir üçün sənəd şablonları
 DateActionStart=Başlama tarixi
 DateActionEnd=Bitmə vaxtı
 AgendaUrlOptions1=Siz həmçinin çıxışı filtrləmək üçün aşağıdakı parametrləri əlavə edə bilərsiniz:
-AgendaUrlOptions3=<b>logina=%s</b> çıxışı istifadəçinin sahib olduğu əməliyyatlarla məhdudlaşdırmaq <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> hasilatı sahib olmayan fəaliyyətlərlə məhdudlaşdırmaq istifadəçi <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> çıxışı istifadəçinin fəaliyyətinə məhdudlaşdırmaq üçün <span> span class='notranslate'><b></span>%s</b> (sahibi və başqaları).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>, çıxışı <span class='notranslate'37>f08387 layihəsi ilə əlaqəli əməliyyatlarla məhdudlaşdırmaq __PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> avtomatik hadisələri istisna etmək üçün.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> bayram günlərini əhatə edəcək.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Əlaqələrin ad günləri
 AgendaHideBirthdayEvents=Kontaktların ad günlərini gizlədin
 Busy=Məşğul
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Rezervasyonunuz yadda saxlanıldı
 BookingReservationHourAfter=%s tarixində görüşümüzü rezerv etməyi təsdiq edirik
 BookcalBookingTitle=Onlayn görüş
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

@@ -44,7 +44,7 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $bankcateg = new BankCateg($db);
 
 
@@ -109,7 +109,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Label").'</td>';

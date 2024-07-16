@@ -29,7 +29,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google құпиясы
 OAUTH_GITHUB_NAME=OAuth GitHub қызметі
 OAUTH_GITHUB_ID=OAuth GitHub идентификаторы
 OAUTH_GITHUB_SECRET=OAuth GitHub құпиясы
-OAUTH_URL_FOR_CREDENTIAL=<a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">осы бетке өтіңіз<span class="fas fa-external-link-alt paddingleft"></span><span><spante class='notranslate OAuth идентификаторын және құпиясын жасау немесе алу үшін ></a></span>
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth жолақ сынағы
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe тікелей эфирі
 OAUTH_ID=OAuth клиент идентификаторы

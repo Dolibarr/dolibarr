@@ -165,7 +165,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("OrderDispatch");
 
-		//If dispach process running we add the number of item to dispatch into the head
+		//If dispatch process running we add the number of item to dispatch into the head
 		if (in_array($object->statut, array($object::STATUS_ORDERSENT, $object::STATUS_RECEIVED_PARTIALLY, $object::STATUS_RECEIVED_COMPLETELY))) {
 			$sumQtyAllreadyDispatched = 0;
 			$sumQtyOrdered = 0;
@@ -246,7 +246,7 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 }
 
 /**
- *  Return array head with list of tabs to view object informations.
+ *  Return array head with list of tabs to view object information.
  *
  *  @return	array   	        head array with tabs
  */

@@ -97,7 +97,7 @@ ReceiptPrinterMethodDescription=วิธีการอันทรงพลั
 ByTerminal=โดยเทอร์มินัล
 TakeposNumpadUsePaymentIcon=ใช้ไอคอนแทนข้อความบนปุ่มชำระเงินของ numpad
 CashDeskRefNumberingModules=โมดูลการกำหนดหมายเลขสำหรับการขาย POS
-CashDeskGenericMaskCodes6 = <br><b>{TN}</b><span class='notranslate'></b></span span> ใช้แท็กเพื่อเพิ่มหมายเลขเทอร์มินัล
+CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=Merge lines of the same products
 StartAParallelSale=เริ่มการขายแบบคู่ขนานใหม่
 SaleStartedAt=เริ่มขายที่ %s

@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Intet produkt til afsendelse fundet i lageret <b> 
 WeightVolShort=Vægt / vol.
 ValidateOrderFirstBeforeShipment=Du skal først bekræfte ordren, inden du kan foretage forsendelser.
 NoLineGoOnTabToAddSome=Ingen linje, gå på fanen "%s" for at tilføje
+CreateInvoiceForThisCustomerFromSendings=Regninger sendes
+IfValidateInvoiceIsNoSendingStayUnbilled=Hvis fakturavalidering er 'Nej', forbliver afsendelsen til status 'Ufaktureret', indtil fakturaen er valideret.
+OptionToSetSendingBilledNotEnabled=Mulighed fra modul Workflow, for automatisk at sætte afsendelse til 'Faktureret' når faktura er valideret, er ikke aktiveret, så du skal indstille status for afsendelser til 'Faktureret' manuelt efter at fakturaen er genereret.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Mere komplet dokumentmodel for leveringskvitteringer og ekstr
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke defineret
 SumOfProductVolumes=Summen af ​​produktmængder
 SumOfProductWeights=Summen af ​​produktvægt
-
 # warehouse details
 DetailWarehouseNumber= Lager detaljer
 DetailWarehouseFormat= W: %s(Antal:%d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Vis sidste dato for indførsel på lager under oprettelse af forsendelse for serienummer eller batch
 CreationOptions=Tilgængelige muligheder under oprettelse af forsendelse
-
 ShipmentDistribution=Forsendelsesfordeling
-
 ErrorTooManyCombinationBatchcode=Ingen afsendelse for linje %s, da der blev fundet for mange kombinationer af lager, produkt, batchkode (%s).
 ErrorNoCombinationBatchcode=Linjen %s kunne ikke gemmes som kombinationen af warehouse-product-lot/serial (%s, %s, %s) blev ikke fundet på lager.
-
 ErrorTooMuchShipped=Den afsendte mængde bør ikke være større end den bestilte mængde for linje %s

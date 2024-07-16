@@ -28,7 +28,7 @@
 
 
 // Protection to understand what happen when submitting files larger than post_max_size
-if (GETPOST('uploadform', 'int') && empty($_POST) && empty($_FILES)) {
+if (GETPOSTINT('uploadform') && empty($_POST) && empty($_FILES)) {
 	dol_syslog("The PHP parameter 'post_max_size' is too low. All POST parameters and FILES were set to empty.");
 	$langs->loadLangs(array("errors", "install"));
 	print $langs->trans("ErrorFileSizeTooLarge").' ';
@@ -77,7 +77,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 			if (GETPOST('section_dir', 'alpha')) {
 				$generatethumbs = 0;
 			}
-			$allowoverwrite = (GETPOST('overwritefile', 'int') ? 1 : 0);
+			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object);
@@ -119,7 +119,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 
 // Delete file/link
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissiontoadd)) {
-	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
 		$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
@@ -130,7 +130,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$fileold = $upload_dirold."/".$urlfile;
 		}
 	}
-	$linkid = GETPOST('linkid', 'int');
+	$linkid = GETPOSTINT('linkid');
 
 	if ($urlfile) {
 		// delete of a file
@@ -192,7 +192,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 
 	$link = new Link($db);
-	$f = $link->fetch(GETPOST('linkid', 'int'));
+	$f = $link->fetch(GETPOSTINT('linkid'));
 	if ($f) {
 		$link->url = GETPOST('link', 'alpha');
 		if (substr($link->url, 0, 7) != 'http://' && substr($link->url, 0, 8) != 'https://' && substr($link->url, 0, 7) != 'file://') {
@@ -253,6 +253,13 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			if ($filenamefrom && $filenameto) {
 				$srcpath = $upload_dir.'/'.$filenamefrom;
 				$destpath = $upload_dir.'/'.$filenameto;
+				if ($modulepart == "ticket" && !dol_is_file($srcpath)) {
+					$srcbis = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenamefrom;
+					if (dol_is_file($srcbis)) {
+						$srcpath = $srcbis;
+						$destpath = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenameto;
+					}
+				}
 
 				$reshook = $hookmanager->initHooks(array('actionlinkedfiles'));
 				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);
@@ -299,12 +306,12 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	}
 
 	// Update properties in ECM table
-	if (GETPOST('ecmfileid', 'int') > 0) {
+	if (GETPOSTINT('ecmfileid') > 0) {
 		$shareenabled = GETPOST('shareenabled', 'alpha');
 
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
-		$result = $ecmfile->fetch(GETPOST('ecmfileid', 'int'));
+		$result = $ecmfile->fetch(GETPOSTINT('ecmfileid'));
 		if ($result > 0) {
 			if ($shareenabled) {
 				if (empty($ecmfile->share)) {

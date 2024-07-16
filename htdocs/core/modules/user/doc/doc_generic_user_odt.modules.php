@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -327,7 +328,7 @@ class doc_generic_user_odt extends ModelePDFUser
 						$socobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -440,7 +441,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	/**
 	 * get substitution array for object
 	 *
-	 * @param User          $object         user
+	 * @param CommonObject  $object         user
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
 	 * @return array                        array of substitutions
@@ -448,12 +449,18 @@ class doc_generic_user_odt extends ModelePDFUser
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
+		if (!$object instanceof User) {
+			dol_syslog("Expected User object, got ".gettype($object), LOG_ERR);
+			return array();
+		}
+
 		$array_other = array();
 		foreach ($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
 				$array_other[$array_key.'_'.$key] = $value;
 			}
 		}
+
 		return $array_other;
 	}
 }

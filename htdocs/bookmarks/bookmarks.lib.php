@@ -29,7 +29,7 @@
  */
 function printDropdownBookmarksList()
 {
-	global $conf, $user, $db, $langs, $sortfield, $sortorder;
+	global $user, $db, $langs, $sortfield, $sortorder;
 
 	require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
@@ -40,7 +40,7 @@ function printDropdownBookmarksList()
 	$url = $_SERVER["PHP_SELF"];
 	$url_param = array();
 	if (!empty($_SERVER["QUERY_STRING"])) {
-		if (is_array($_GET)) {
+		if (is_array($_GET)) {	// Parse the original GET URL. So we must keep $_GET here.
 			foreach ($_GET as $key => $val) {
 				if (is_array($val)) {
 					foreach ($val as $tmpsubval) {
@@ -112,7 +112,7 @@ function printDropdownBookmarksList()
 		if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$bookmarkList = '<div id="dropdown-bookmarks-list" >';
 			$i = 0;
-			while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+			while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < getDolGlobalInt('BOOKMARKS_SHOW_IN_MENU')) && $obj = $db->fetch_object($resql)) {
 				$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"  rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 				$bookmarkList .= dol_escape_htmltag($obj->title);
 				$bookmarkList .= '</a>';
@@ -123,7 +123,7 @@ function printDropdownBookmarksList()
 
 			$searchForm .= '<input name="bookmark" id="top-bookmark-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Bookmarks').'" autocomplete="off" >';
 		} else {
-			$searchForm .= '<select name"=bookmark" id="boxbookmark" class="topmenu-bookmark-dropdown .dropdown-toggle">';
+			$searchForm .= '<select name="bookmark" id="boxbookmark" class="topmenu-bookmark-dropdown .dropdown-toggle maxwidth100">';
 			//$searchForm .= '<option>--'.$langs->trans("Bookmarks").'--</option>';
 			$searchForm .= '<option hidden value="listbookmarks" class="optiongrey" selected rel="'.DOL_URL_ROOT.'/bookmarks/list.php">'.$langs->trans('Bookmarks').'</option>';
 			$searchForm .= '<option value="listbookmark" class="optionblue" rel="'.dol_escape_htmltag(DOL_URL_ROOT.'/bookmarks/list.php').'" ';
@@ -138,7 +138,7 @@ function printDropdownBookmarksList()
 				}
 			}
 			$i = 0;
-			while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+			while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < getDolGlobalInt('BOOKMARKS_SHOW_IN_MENU')) && $obj = $db->fetch_object($resql)) {
 				$searchForm .= '<option name="bookmark'.$obj->rowid.'" value="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' rel="'.dol_escape_htmltag($obj->url).'" >';
 				$searchForm .= dol_escape_htmltag($obj->title);
 				$searchForm .= '</option>';

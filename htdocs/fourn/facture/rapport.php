@@ -51,7 +51,7 @@ if (!$user->hasRight("societe", "client", "voir") || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
-$year = GETPOST("year", 'int');
+$year = GETPOSTINT("year");
 if (!$year) {
 	$year = date("Y");
 }
@@ -73,14 +73,14 @@ if ($action == 'builddoc') {
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, GETPOST("remonth", 'int'), GETPOST("reyear", 'int'), $outputlangs) > 0) {
+	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
 		dol_print_error($db, $obj->error);
 	}
 
-	$year = GETPOST("reyear", 'int');
+	$year = GETPOSTINT("reyear");
 }
 
 
@@ -93,7 +93,7 @@ $formfile = new FormFile($db);
 
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
 
-llxHeader('', $titre);
+llxHeader('', $titre, '', '', 0, 0, '', '', '', 'mod-fourn-facture page-rapport');
 
 print load_fiche_titre($titre, '', 'supplier_invoice');
 

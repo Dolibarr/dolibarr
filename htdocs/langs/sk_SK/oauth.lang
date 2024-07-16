@@ -12,8 +12,8 @@ TokenDeleted=Token bol odstránený
 GetAccess=Kliknutím sem získate token
 RequestAccess=Kliknite sem, ak chcete požiadať/obnoviť prístup a získať nový token
 DeleteAccess=Kliknutím sem odstránite token
-RedirectURL=Redirect URL
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URL when creating your credentials with your OAuth provider
+RedirectURL=Adresa URL presmerovania
+UseTheFollowingUrlAsRedirectURI=Pri vytváraní poverení u vášho poskytovateľa OAuth použite nasledujúcu webovú adresu ako adresu URL presmerovania
 ListOfSupportedOauthProviders=Pridajte svojich poskytovateľov tokenov OAuth2. Potom prejdite na stránku správcu poskytovateľa OAuth a vytvorte/získajte ID a tajný kľúč OAuth a uložte ich tu. Po dokončení prepnite na druhú kartu a vygenerujte svoj token.
 OAuthSetupForLogin=Stránka na správu (generovanie/odstránenie) tokenov OAuth
 SeePreviousTab=Pozrite si predchádzajúcu kartu
@@ -29,7 +29,7 @@ OAUTH_GOOGLE_SECRET=OAuth Google Secret
 OAUTH_GITHUB_NAME=Služba OAuth GitHub
 OAUTH_GITHUB_ID=Id OAuth GitHub
 OAUTH_GITHUB_SECRET=Tajomstvo OAuth GitHub
-OAUTH_URL_FOR_CREDENTIAL=Prejdite na <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">túto stránku<span class="fas fa-external-link-alt paddingleft"></span><spante class='notranslate ></a></span> a vytvorte alebo získajte svoje ID a tajný kľúč OAuth
+OAUTH_URL_FOR_CREDENTIAL=Go to <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external">this page<span class="fas fa-external-link-alt paddingleft"></span></a> to create or get your OAuth ID and Secret
 OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
 OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
 OAUTH_ID=ID klienta OAuth

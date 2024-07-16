@@ -94,7 +94,7 @@ SeeExamples=ראה דוגמאות כאן
 EnabledDesc=תנאי להפעלת שדה זה.<br><br>דוגמאות:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=האם השדה נראה לעין? (דוגמאות: 0=לעולם לא נראה, 1=גלוי ברשימה וצור/עדכן/הצג טפסים, 2=גלוי ברשימה בלבד, 3=גלוי בטופס יצירה/עדכון/הצג בלבד (לא ברשימות), 4=גלוי ברשימות וטופס עדכון/הצג בלבד (לא צור), 5=גלוי ברשימה ובטופס הצג בלבד (לא צור, לא עדכון).<br><br> שימוש בערך שלילי פירושו שהשדה אינו מוצג כברירת מחדל ברשימה אך ניתן לבחור אותו לצפייה).
 ItCanBeAnExpression=זה יכול להיות ביטוי. דוגמה:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=הצג שדה זה במסמכי PDF תואמים, אתה יכול לנהל מיקום עם השדה "Position".<br><strong>עבור מסמך:</strong><br>0 = לא מוצג <br>1 = display<br>2 = הצג רק אם לא ריק<br><br>b0e7843947 span>עבור שורות מסמך:<span class='notranslate'></strong><br>0 = לא מוצג <br>1 = מוצג בעמודה<br>3 = הצגת עמודת תיאור שורה אחרי התיאור<br>4 = תצוגה בעמודת תיאור אחרי התיאור רק אם לא ריק
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=ב-PDF
 IsAMeasureDesc=האם ניתן לצבור את הערך של השדה כדי לקבל סכום כולל לרשימה? (דוגמאות: 1 או 0)
 SearchAllDesc=האם השדה משמש לביצוע חיפוש מכלי החיפוש המהיר? (דוגמאות: 1 או 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=הגדירו בקובץ הטריגר את הקוד שברצונכ
 SeeIDsInUse=ראה מזהים שנמצאים בשימוש בהתקנה שלך
 SeeReservedIDsRangeHere=ראה מגוון תעודות זהות שמורות
 ToolkitForDevelopers=ערכת כלים למפתחי Dolibarr
-TryToUseTheModuleBuilder=אם יש לך ידע ב-SQL ו-PHP, תוכל להשתמש באשף בניית המודולים המקורי.<br>הפעל את המודול <strong>%s</strong> והשתמש באשף על ידי לחיצה על <span class="fa fa-bug"></span> בתפריט הימני העליון.<br>אזהרה: זוהי תכונת מפתחים מתקדמת, אל <b> ניסוי span class='notranslate'></b></span> באתר הייצור שלך!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=ראה <span class="fa fa-bug"></span> בתפריט הימני העליון
 AddLanguageFile=הוסף קובץ שפה
 YouCanUseTranslationKey=אתה יכול להשתמש כאן במפתח שהוא מפתח התרגום שנמצא לקובץ השפה (ראה לשונית "שפות")
@@ -148,7 +148,7 @@ CSSListClass=CSS לרשימה
 NotEditable=לא ניתן לעריכה
 ForeignKey=מפתח זר
 ForeignKeyDesc=אם יש להבטיח שהערך של שדה זה קיים בטבלה אחרת. הזן כאן תחביר תואם ערך: tablename.parentfieldtocheck
-TypeOfFieldsHelp=דוגמה:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>סיסמהbzcc</03492fzcc</03492 span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>date<br>datetime<br>timestamp <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fccfda19b /span><span class='notranslate'><br>'1' פירושו שאנו מוסיפים כפתור + אחרי המשולב כדי ליצור את הרשומה<br>'מסנן' הוא תנאי תחביר מסנן אוניברסלי, דוגמה: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (ישות:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=זהו סוג השדה/תכונה.
 AsciiToHtmlConverter=ממיר Ascii ל-HTML
 AsciiToPdfConverter=ממיר Ascii ל-PDF
@@ -180,7 +180,7 @@ FailedToAddCodeIntoDescriptor=הוספת הקוד לתיאור נכשלה. בד�
 DictionariesCreated=מילון <b>%s</b> נוצר בהצלחה
 DictionaryDeleted=מילון <b>%s</b> הוסר בהצלחה
 PropertyModuleUpdated=הנכס <b>%s</b> עודכן בהצלחה
-InfoForApiFile=* כאשר אתה יוצר קובץ בפעם הראשונה, כל השיטות ייווצרו <strong>עבור כל אובייקט.</strong><br>* כשאתה לוחץ ב-<strong>remove</strong> אתה פשוט מסיר את כל השיטות עבור ה-<span ='notranslate'><strong></span>האובייקט שנבחר</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=עמוד להגדרת מודול
 EmailingSelectors=Emails selectors
 EmailingSelectorDesc=אתה יכול ליצור ולערוך כאן את קבצי הכיתה כדי לספק בוררי יעד חדשים לדוא"ל עבור מודול שליחת הדוא"ל ההמונית

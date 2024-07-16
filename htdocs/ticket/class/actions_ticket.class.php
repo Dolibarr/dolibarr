@@ -179,14 +179,14 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Show ticket original message
 	 *
-	 * @param 	User		$user		User wich display
+	 * @param 	User		$user		User which display
 	 * @param 	string 		$action    	Action mode
 	 * @param	Ticket		$object		Object ticket
 	 * @return	void
 	 */
 	public function viewTicketOriginalMessage($user, $action, $object)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		print '<!-- initial message of ticket -->'."\n";
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
@@ -198,8 +198,8 @@ class ActionsTicket extends CommonHookActions
 		}
 
 		// Initial message
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-		print '<table class="noborder centpercent margintable margintable">';
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+		print '<table class="border centpercent margintable bordertopimp">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
@@ -216,12 +216,15 @@ class ActionsTicket extends CommonHookActions
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
 			$ckeditorenabledforticket = getDolGlobalString('FCKEDITOR_ENABLE_TICKET');
+			if (!$ckeditorenabledforticket) {
+				$msg = dol_string_nohtmltag($msg, 2);
+			}
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
 			print '<div class="longmessagecut">';
 			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
-			print dolPrintHTML($object->message);
+			print nl2br($object->message);
 			print '</div>';
 			/*print '<div class="clear center">';
 			print $langs->trans("More").'...';
@@ -231,8 +234,8 @@ class ActionsTicket extends CommonHookActions
 		}
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
 			print '<div class="center">';
-			print ' <input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
 		}
 		print '</td>';
@@ -415,7 +418,7 @@ class ActionsTicket extends CommonHookActions
 
 			foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
 				if (!$arraymsgs['private']
-				|| ($arraymsgs['private'] == "1" && $show_private)
+					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					print '<div class="cd-timeline-block">';
 					print '<div class="cd-timeline-img">';
@@ -467,14 +470,18 @@ class ActionsTicket extends CommonHookActions
 		// Exclude status which requires specific method
 		$exclude_status = array(Ticket::STATUS_CLOSED, Ticket::STATUS_CANCELED);
 		// Exclude actual status
-		$exclude_status = array_merge($exclude_status, array(intval($object->fk_statut)));
+		$exclude_status = array_merge($exclude_status, array((int) $object->status));
+		// Exclude also the Waiting/Pending/Suspended status
+		if (!getDolGlobalString('TICKET_INCLUDE_SUSPENDED_STATUS')) {
+			$exclude_status[] = $object::STATUS_WAITING;
+		}
 
 		// Sort results to be similar to status object list
 		//sort($exclude_status);
 
 		foreach ($object->labelStatusShort as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
-				print '<div class="inline-block center marginbottomonly">';
+				print '<div class="inline-block center margintoponly marginbottomonly">';
 
 				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_read&token='.newToken(); // To set as read, we use a dedicated action

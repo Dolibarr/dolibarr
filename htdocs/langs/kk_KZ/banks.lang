@@ -101,6 +101,8 @@ Conciliated=Татуласты
 ReConciliedBy=Татуластырған
 DateConciliating=Сәйкестендіру күні
 BankLineConciliated=Кіріс банк түбіртегімен салыстырылды
+TransfertOnlyConciliatedBankLine=Банктен тек салыстырылған сызықтарды аударыңыз
+TransfertAllBankLines=Барлық желілерді олар салыстырылмаса да, банктен аударыңыз
 BankLineReconciled=Татуласты
 BankLineNotReconciled=Татуласпаған
 CustomerInvoicePayment=Тұтынушының төлемі
@@ -115,7 +117,7 @@ MenuBankInternalTransfer=Ішкі аударым
 TransferDesc=Бір шоттан екіншісіне аудару үшін ішкі аударымды қолданыңыз, қосымшада екі жазба жазылады: бастапқы шоттағы дебет және мақсатты шоттағы несие. Бұл транзакция үшін сол сома, белгі және күн қолданылады.
 TransferFrom=Қайдан
 TransferTo=Кімге
-TransferFromToDone=<b>%s</b> файлынан <span class='notranslate файлына тасымалдау ><b></span>%s</b> b0aee833608><span=span> 'notranslate'>%s</b> %s жазылды.
+TransferFromToDone=A transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=Жіберуші
 ValidateCheckReceipt=Бұл чек түбіртегін растау керек пе?
 ConfirmValidateCheckReceipt=Бұл чек түбіртегін тексеру үшін жібергіңіз келетініне сенімдісіз бе? Тексерілгеннен кейін ешқандай өзгерту мүмкін болмайды.

@@ -115,7 +115,7 @@ MenuBankInternalTransfer=Transferimi i brendshëm
 TransferDesc=Përdorni transferimin e brendshëm për të transferuar nga një llogari në tjetrën, aplikacioni do të shkruajë dy regjistrime: një debi në llogarinë burimore dhe një kredi në llogarinë e synuar. E njëjta shumë, etiketë dhe datë do të përdoren për këtë transaksion.
 TransferFrom=Nga
 TransferTo=te
-TransferFromToDone=Një transferim nga <b>%s</b>'no në <span' class='notranslate' ><b></span>%s</b> nga %s</b> nga b30span838 'notranslate'>%s</b> %s është regjistruar.
+TransferFromToDone=A transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=Dërguesi
 ValidateCheckReceipt=Të vërtetohet kjo faturë çeku?
 ConfirmValidateCheckReceipt=Jeni i sigurt që dëshironi ta dorëzoni këtë faturë çeku për vërtetim? Asnjë ndryshim nuk do të jetë i mundur pasi të vërtetohet.

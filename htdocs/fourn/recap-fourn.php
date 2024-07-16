@@ -32,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 
 /*
@@ -49,7 +49,7 @@ $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 $form = new Form($db);
 $userstatic = new User($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-fourn page-recap-fourn');
 
 if ($socid > 0) {
 	$societe = new Societe($db);

@@ -1,6 +1,68 @@
 ChangeLog
 =========
 
+5.1.10 (2023-08-18)
+------------------
+
+* #225 Enhance tests/bootstrap.php to find autoloader in more environments (@phil-davis)
+
+5.1.9 (2023-08-17)
+------------------
+
+* #223 skip testParseMimeTypeOnInvalidMimeType (@phil-davis)
+
+5.1.8 (2023-08-17)
+------------------
+
+* #215 Improve CURLOPT_HTTPHEADER Setting Assignment (@amrita-shrestha)
+
+5.1.7 (2023-06-26)
+------------------
+
+* #98 and #176 Add more tests (@peter279k)
+* #207 fix: handle client disconnect properly with ignore_user_abort true (@kesselb)
+
+5.1.6 (2022-07-15)
+------------------
+
+* #187 Allow testSendToGetLargeContent peak memory usage to be specified externally (@phil-davis)
+* #188 Fix various small typos and grammar (@phil-davis)
+* #189 Fix typo in text of status code 203 'Non-Authoritative Information' (@phil-davis)
+
+5.1.5 (2022-07-09)
+------------------
+
+* #184 Remove 4GB file size workaround for 32bit OS / Stream Videos on IOS (@schoetju)
+
+5.1.4 (2022-06-24)
+------------------
+
+* #182 Fix encoding detection on PHP 8.1 (@come-nc)
+
+5.1.3 (2021-11-04)
+------------------
+
+* #179 version bump that was missed in 5.1.2 (@phil-davis)
+
+5.1.2 (2021-11-04)
+-------------------------
+
+* #169 Ensure $_SERVER keys are read as strings (@fredrik-eriksson)
+* #170 Fix deprecated usages on PHP 8.1 (@cedric-anne)
+* #175 Add resource size to CURL options in client (from #172 ) (@Dartui)
+
+5.1.1 (2020-10-03)
+-------------------------
+
+* #160: Added support for PHP 8.0 (@phil-davis)
+
+5.1.0 (2020-01-31)
+-------------------------
+
+* Added support for PHP 7.4, dropped support for PHP 7.0 (@phil-davis)
+* Updated testsuite for phpunit8, added phpstan coverage (@phil-davis)
+* Added autoload-dev for test classes (@C0pyR1ght)
+
 5.0.5 (2019-11-28)
 -------------------------
 
@@ -48,7 +110,7 @@ ChangeLog
 * #65: It's now possible to supply request/response bodies using a callback
   functions. This allows very high-speed/low-memory responses to be created.
   (@petrkotek).
-* Strict typing is used every where this is applicable.
+* Strict typing is used everywhere this is applicable.
 * Removed `URLUtil` class. It was deprecated a long time ago, and most of
   its functions moved to the `sabre/uri` package.
 * Removed `Util` class. Most of its functions moved to the `functions.php`
@@ -67,7 +129,7 @@ ChangeLog
 4.2.3 (2017-06-12)
 ------------------
 
-* #74, #77: Work around 4GB file size limit at 32 Bit systems
+* #74, #77: Work around 4GB file size limit at 32-Bit systems
 
 
 4.2.2 (2017-01-02)
@@ -255,7 +317,7 @@ ChangeLog
 * Changed: Response::send() is now Sapi::sendResponse($response).
 * Changed: Request::createFromPHPRequest is now Sapi::getRequest().
 * Changed: Message::getBodyAsStream and Message::getBodyAsString were added. The
-  existing Message::getBody changed it's behavior, so be careful.
+  existing Message::getBody changed its behavior, so be careful.
 
 
 2.0.0alpha5 (2013-11-07)

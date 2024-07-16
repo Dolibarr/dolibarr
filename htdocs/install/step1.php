@@ -5,6 +5,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ $db_host = GETPOST('db_host', 'alpha') ? GETPOST('db_host', 'alpha') : (empty($a
 $db_name = GETPOST('db_name', 'aZ09') ? GETPOST('db_name', 'aZ09') : (empty($argv[10]) ? '' : $argv[10]);
 $db_user = GETPOST('db_user', 'alpha') ? GETPOST('db_user', 'alpha') : (empty($argv[11]) ? '' : $argv[11]);
 $db_pass = GETPOST('db_pass', 'none') ? GETPOST('db_pass', 'none') : (empty($argv[12]) ? '' : $argv[12]);
-$db_port = GETPOST('db_port', 'int') ? GETPOST('db_port', 'int') : (empty($argv[13]) ? '' : $argv[13]);
+$db_port = GETPOSTINT('db_port') ? GETPOSTINT('db_port') : (empty($argv[13]) ? '' : $argv[13]);
 $db_prefix = GETPOST('db_prefix', 'aZ09') ? GETPOST('db_prefix', 'aZ09') : (empty($argv[14]) ? '' : $argv[14]);
 $db_create_database = GETPOST('db_create_database', 'alpha') ? GETPOST('db_create_database', 'alpha') : (empty($argv[15]) ? '' : $argv[15]);
 $db_create_user = GETPOST('db_create_user', 'alpha') ? GETPOST('db_create_user', 'alpha') : (empty($argv[16]) ? '' : $argv[16]);
@@ -95,6 +96,8 @@ if (@file_exists($forcedfile)) {
 		if (!empty($argv[4])) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
+		// In mode 3 the main_url is custom
+		if ($force_install_noedit != 3)
 		$main_url = detect_dolibarr_main_url_root();
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
@@ -113,7 +116,7 @@ if (@file_exists($forcedfile)) {
 			$passroot = $argv[7]; // override when executing the script in command line
 		}
 	}
-	if ($force_install_noedit == 2) {
+	if (($force_install_noedit == 2) || ($force_install_noedit == 3)) {
 		if (!empty($force_install_type)) {
 			$db_type = $force_install_type;
 		}
@@ -200,6 +203,15 @@ if (!empty($db_prefix) && !preg_match('/^[a-z0-9]+_$/i', $db_prefix)) {
 	$error++;
 }
 
+$main_dir = dol_sanitizePathName($main_dir);
+$main_data_dir = dol_sanitizePathName($main_data_dir);
+
+if (!filter_var($main_url, FILTER_VALIDATE_URL)) {
+	print '<div class="error">'.$langs->trans("ErrorBadValueForParameter", $main_url, $langs->transnoentitiesnoconv("URLRoot")).'</div>';
+	print '<br>';
+	print $langs->trans("ErrorGoBackAndCorrectParameters");
+	$error++;
+}
 
 // Remove last / into dans main_dir
 if (substr($main_dir, dol_strlen($main_dir) - 1) == "/") {
@@ -254,8 +266,7 @@ if (!$error) {
 
 			$db = getDoliDBInstance($db_type, $db_host, $userroot, $passroot, $databasefortest, (int) $db_port);
 
-			dol_syslog("databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected, LOG_DEBUG);
-			//print "databasefortest=".$databasefortest." connected=".$db->connected." database_selected=".$db->database_selected;
+			dol_syslog("databasefortest=".$databasefortest." connected=".json_encode($db->connected)." database_selected=".json_encode($db->database_selected), LOG_DEBUG);
 
 			if (empty($db_create_database) && $db->connected && !$db->database_selected) {
 				print '<div class="error">'.$langs->trans("ErrorConnectedButDatabaseNotFound", $db_name).'</div>';
@@ -426,7 +437,7 @@ if (!$error && $db->connected && $action == "set") {
 				}
 			}
 
-			// Documents are stored above the web pages root to prevent being downloaded without authentification
+			// Documents are stored above the web pages root to prevent being downloaded without authentication
 			$dir = array();
 			$dir[] = $main_data_dir."/mycompany";
 			$dir[] = $main_data_dir."/medias";
@@ -685,7 +696,7 @@ if (!$error && $db->connected && $action == "set") {
 		// We test access with dolibarr database user (not admin)
 		if (!$error) {
 			dolibarr_install_syslog("step1: connection type=".$conf->db->type." on host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name);
-			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
+			//print "connection de type=".$conf->db->type." sur host=".$conf->db->host." port=".$conf->db->port." user=".$conf->db->user." name=".$conf->db->name;
 
 			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
@@ -797,9 +808,9 @@ function write_main_file($mainfile, $main_dir)
 	$fp = @fopen("$mainfile", "w");
 	if ($fp) {
 		clearstatcache();
-		fputs($fp, '<?php'."\n");
-		fputs($fp, "// Wrapper to include main into htdocs\n");
-		fputs($fp, "include_once '".$main_dir."/main.inc.php';\n");
+		fwrite($fp, '<?php'."\n");
+		fwrite($fp, "// Wrapper to include main into htdocs\n");
+		fwrite($fp, "include_once '".$main_dir."/main.inc.php';\n");
 		fclose($fp);
 	}
 }
@@ -817,9 +828,9 @@ function write_master_file($masterfile, $main_dir)
 	$fp = @fopen("$masterfile", "w");
 	if ($fp) {
 		clearstatcache();
-		fputs($fp, '<?php'."\n");
-		fputs($fp, "// Wrapper to include master into htdocs\n");
-		fputs($fp, "include_once '".$main_dir."/master.inc.php';\n");
+		fwrite($fp, '<?php'."\n");
+		fwrite($fp, "// Wrapper to include master into htdocs\n");
+		fwrite($fp, "include_once '".$main_dir."/master.inc.php';\n");
 		fclose($fp);
 	}
 }
@@ -842,7 +853,7 @@ function write_conf_file($conffile)
 	global $db_host, $db_port, $db_name, $db_user, $db_pass, $db_type, $db_character_set, $db_collation;
 	global $conffile, $conffiletoshow, $conffiletoshowshort;
 	global $force_dolibarr_lib_NUSOAP_PATH;
-	global $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
+	global $force_dolibarr_lib_FPDF_PATH, $force_dolibarr_lib_TCPDF_PATH, $force_dolibarr_lib_FPDI_PATH;
 	global $force_dolibarr_lib_GEOIP_PATH;
 	global $force_dolibarr_lib_ODTPHP_PATH, $force_dolibarr_lib_ODTPHP_PATHTOPCLZIP;
 	global $force_dolibarr_js_CKEDITOR, $force_dolibarr_js_JQUERY, $force_dolibarr_js_JQUERY_UI;
@@ -850,181 +861,180 @@ function write_conf_file($conffile)
 
 	$error = 0;
 
-	$key = md5(uniqid(mt_rand(), true)); // Generate random hash
+	$key = md5(uniqid((string) mt_rand(), true)); // Generate random hash
 
 	$fp = fopen("$conffile", "w");
 	if ($fp) {
 		clearstatcache();
 
-		fputs($fp, '<?php'."\n");
-		fputs($fp, '//'."\n");
-		fputs($fp, '// File generated by Dolibarr installer '.DOL_VERSION.' on '.dol_print_date(dol_now(), '')."\n");
-		fputs($fp, '//'."\n");
-		fputs($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
-		fputs($fp, '// and explanations for all possibles parameters.'."\n");
-		fputs($fp, '//'."\n");
+		fwrite($fp, '<?php'."\n");
+		fwrite($fp, '//'."\n");
+		fwrite($fp, '// File generated by Dolibarr installer '.DOL_VERSION.' on '.dol_print_date(dol_now(), '')."\n");
+		fwrite($fp, '//'."\n");
+		fwrite($fp, '// Take a look at conf.php.example file for an example of '.$conffiletoshowshort.' file'."\n");
+		fwrite($fp, '// and explanations for all possibles parameters.'."\n");
+		fwrite($fp, '//'."\n");
+		fwrite($fp, '$dolibarr_main_url_root=\''.dol_escape_php(trim($main_url), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_url_root=\''.str_replace("'", "\'", trim($main_url)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_document_root="'.dol_escape_php(dol_sanitizePathName(trim($main_dir))).'";');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_document_root=\''.str_replace("'", "\'", trim($main_dir)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.dol_escape_php(trim("/".$main_alt_dir_name), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.str_replace("'", "\'", trim("/".$main_alt_dir_name)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt="'.dol_escape_php(dol_sanitizePathName(trim($main_dir."/".$main_alt_dir_name))).'";');
+		fwrite($fp, "\n");
 
-		fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.str_replace("'", "\'", trim($main_dir."/".$main_alt_dir_name)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_data_root="'.dol_escape_php(dol_sanitizePathName(trim($main_data_dir))).'";');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'", "\'", trim($main_data_dir)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_host=\''.dol_escape_php(trim($db_host), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'", "\'", trim($db_host)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_port=\''.((int) $db_port).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'", "\'", trim($db_port)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_name=\''.dol_escape_php(trim($db_name), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'", "\'", trim($db_name)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_prefix=\''.dol_escape_php(trim($main_db_prefix), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'", "\'", trim($main_db_prefix)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_user=\''.dol_escape_php(trim($db_user), 1).'\';');
+		fwrite($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_pass=\''.dol_escape_php(trim($db_pass), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'", "\'", trim($db_user)).'\';');
-		fputs($fp, "\n");
-		fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'", "\'", trim($db_pass)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_type=\''.dol_escape_php(trim($db_type), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'", "\'", trim($db_type)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_character_set=\''.dol_escape_php(trim($db_character_set), 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'", "\'", trim($db_character_set)).'\';');
-		fputs($fp, "\n");
-
-		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'", "\'", trim($db_collation)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_db_collation=\''.dol_escape_php(trim($db_collation), 1).'\';');
+		fwrite($fp, "\n");
 
 		// Authentication
-		fputs($fp, '// Authentication settings');
-		fputs($fp, "\n");
+		fwrite($fp, '// Authentication settings');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
-		fputs($fp, "\n\n");
+		fwrite($fp, '$dolibarr_main_authentication=\'dolibarr\';');
+		fwrite($fp, "\n\n");
 
-		fputs($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
-		fputs($fp, "\n");
+		fwrite($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '// Security settings');
-		fputs($fp, "\n");
+		fwrite($fp, '// Security settings');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_prod=\'0\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_prod=\'0\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_force_https=\''.dol_escape_php($main_force_https, 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pgrestore, clamdscan, clamscan.exe\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_restrict_os_commands=\'mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_nocsrfcheck=\'0\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_main_instance_unique_id=\''.$key.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_instance_unique_id=\''.dol_escape_php($key, 1).'\';');
+		fwrite($fp, "\n");
 
-		fputs($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
-		fputs($fp, "\n");
-		fputs($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_mailing_limit_sendbyweb=\'0\';');
+		fwrite($fp, "\n");
+		fwrite($fp, '$dolibarr_mailing_limit_sendbycli=\'0\';');
+		fwrite($fp, "\n");
 
 		// Write params to overwrites default lib path
-		fputs($fp, "\n");
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDF_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_FPDF_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_FPDF_PATH=\''.$force_dolibarr_lib_FPDF_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_FPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDF_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDF_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_TCPDF_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_TCPDF_PATH=\''.$force_dolibarr_lib_TCPDF_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_TCPDF_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDF_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_FPDI_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_FPDI_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_FPDI_PATH=\''.$force_dolibarr_lib_FPDI_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_FPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_FPDI_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_TCPDI_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_TCPDI_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_TCPDI_PATH=\''.$force_dolibarr_lib_TCPDI_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_TCPDI_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_TCPDI_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_GEOIP_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_GEOIP_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_GEOIP_PATH=\''.$force_dolibarr_lib_GEOIP_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_GEOIP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_GEOIP_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_NUSOAP_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_NUSOAP_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_NUSOAP_PATH=\''.$force_dolibarr_lib_NUSOAP_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_NUSOAP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_NUSOAP_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATH)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_ODTPHP_PATH = '';
 		}
-		fputs($fp, '$dolibarr_lib_ODTPHP_PATH=\''.$force_dolibarr_lib_ODTPHP_PATH.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_ODTPHP_PATH="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATH)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP = '';
 		}
-		fputs($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP=\''.$force_dolibarr_lib_ODTPHP_PATHTOPCLZIP.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_lib_ODTPHP_PATHTOPCLZIP="'.dol_escape_php(dol_sanitizePathName($force_dolibarr_lib_ODTPHP_PATHTOPCLZIP)).'";');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_CKEDITOR)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_js_CKEDITOR = '';
 		}
-		fputs($fp, '$dolibarr_js_CKEDITOR=\''.$force_dolibarr_js_CKEDITOR.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_js_CKEDITOR=\''.dol_escape_php($force_dolibarr_js_CKEDITOR, 1).'\';');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_js_JQUERY = '';
 		}
-		fputs($fp, '$dolibarr_js_JQUERY=\''.$force_dolibarr_js_JQUERY.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_js_JQUERY=\''.dol_escape_php($force_dolibarr_js_JQUERY, 1).'\';');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_js_JQUERY_UI)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_js_JQUERY_UI = '';
 		}
-		fputs($fp, '$dolibarr_js_JQUERY_UI=\''.$force_dolibarr_js_JQUERY_UI.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_js_JQUERY_UI=\''.dol_escape_php($force_dolibarr_js_JQUERY_UI, 1).'\';');
+		fwrite($fp, "\n");
 
 		// Write params to overwrites default font path
-		fputs($fp, "\n");
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_font_DOL_DEFAULT_TTF = '';
 		}
-		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.$force_dolibarr_font_DOL_DEFAULT_TTF.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF, 1).'\';');
+		fwrite($fp, "\n");
 		if (empty($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD)) {
-			fputs($fp, '//');
+			fwrite($fp, '//');
 			$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD = '';
 		}
-		fputs($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.$force_dolibarr_font_DOL_DEFAULT_TTF_BOLD.'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_font_DOL_DEFAULT_TTF_BOLD=\''.dol_escape_php($force_dolibarr_font_DOL_DEFAULT_TTF_BOLD, 1).'\';');
+		fwrite($fp, "\n");
 
 		// Other
-		fputs($fp, '$dolibarr_main_distrib=\''.str_replace("'", "\'", trim($dolibarr_main_distrib)).'\';');
-		fputs($fp, "\n");
+		fwrite($fp, '$dolibarr_main_distrib=\''.dol_escape_php(trim($dolibarr_main_distrib), 1).'\';');
+		fwrite($fp, "\n");
 
 		fclose($fp);
 

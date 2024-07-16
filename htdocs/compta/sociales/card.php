@@ -47,7 +47,7 @@ if (isModEnabled('accounting')) {
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -55,20 +55,20 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 
-$fk_project = (GETPOST('fk_project') ? GETPOST('fk_project', 'int') : 0);
+$fk_project = (GETPOST('fk_project') ? GETPOSTINT('fk_project') : 0);
 
 $dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
 $dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOST('actioncode');
-$fk_user = GETPOST('userid', 'int') > 0 ? GETPOST('userid', 'int') : 0;
+$fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('taxcard', 'globalcard'));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new ChargeSociales($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
@@ -83,15 +83,15 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-$permissiontoread = $user->rights->tax->charges->lire;
-$permissiontoadd = $user->rights->tax->charges->creer; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->tax->charges->creer; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->tax->charges->creer; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('tax', 'charges', 'lire');
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->rights->tax->charges->supprimer || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
+$permissionnote = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->tax->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -146,7 +146,7 @@ if (empty($reshook)) {
 
 	// payment mode
 	if ($action == 'setmode' && $permissiontoadd) {
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -154,7 +154,7 @@ if (empty($reshook)) {
 
 	// Bank account
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
+		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -204,9 +204,9 @@ if (empty($reshook)) {
 			$object->period = $dateperiod;
 			$object->amount = $amount;
 			$object->fk_user			= $fk_user;
-			$object->mode_reglement_id = (int) GETPOST('mode_reglement_id', 'int');
-			$object->fk_account = (int) GETPOST('fk_account', 'int');
-			$object->fk_project = (int) GETPOST('fk_project', 'int');
+			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
+			$object->fk_account = GETPOSTINT('fk_account');
+			$object->fk_project = GETPOSTINT('fk_project');
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -259,7 +259,8 @@ if (empty($reshook)) {
 		$originalId = $object->id;
 
 		if ($object->id > 0) {
-			$object->id = $object->ref = null;
+			$object->id = 0;
+			$object->ref = '';
 			$object->paye = 0;
 			if (GETPOST('amount', 'alphanohtml')) {
 				$object->amount = price2num(GETPOST('amount', 'alphanohtml'), 'MT', 2);
@@ -271,14 +272,14 @@ if (empty($reshook)) {
 				$object->label = $langs->trans("CopyOf").' '.$object->label;
 			}
 
-			if (GETPOST('clone_for_next_month', 'int')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
+			if (GETPOSTINT('clone_for_next_month')) {	// This can be true only if TAX_ADD_CLONE_FOR_NEXT_MONTH_CHECKBOX has been set
 				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
-				$newdateperiod = dol_mktime(0, 0, 0, GETPOST('clone_periodmonth', 'int'), GETPOST('clone_periodday', 'int'), GETPOST('clone_periodyear', 'int'));
-				$newdateech = dol_mktime(0, 0, 0, GETPOST('clone_date_echmonth', 'int'), GETPOST('clone_date_echday', 'int'), GETPOST('clone_date_echyear', 'int'));
+				$newdateperiod = dol_mktime(0, 0, 0, GETPOSTINT('clone_periodmonth'), GETPOSTINT('clone_periodday'), GETPOSTINT('clone_periodyear'));
+				$newdateech = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_echmonth'), GETPOSTINT('clone_date_echday'), GETPOSTINT('clone_date_echyear'));
 				if ($newdateperiod) {
 					$object->periode = $newdateperiod;
 					$object->period = $newdateperiod;
@@ -423,13 +424,13 @@ if ($action == 'create') {
 
 	// Payment Mode
 	print '<tr><td>'.$langs->trans('DefaultPaymentMode').'</td><td colspan="2">';
-	$form->select_types_paiements(GETPOST('mode_reglement_id', 'int'), 'mode_reglement_id');
+	$form->select_types_paiements(GETPOSTINT('mode_reglement_id'), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		print '<tr><td>'.$langs->trans('DefaultBankAccount').'</td><td colspan="2">';
-		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOST('fk_account', 'int'), 'fk_account', 0, '', 2, '', 0, '', 1);
+		print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes(GETPOSTINT('fk_account'), 'fk_account', 0, '', 2, '', 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -572,7 +573,7 @@ if ($id > 0) {
 
 		$object->totalpaid = $totalpaid; // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
-		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
+		dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, $morehtmlright);
 
 		print '<div class="fichecenter">';
 		print '<div class="fichehalfleft">';
@@ -631,7 +632,7 @@ if ($id > 0) {
 		print '</td></tr>';
 
 		// Bank account
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			print '<tr><td class="nowrap">';
 			print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 			print $langs->trans('DefaultBankAccount');
@@ -663,7 +664,7 @@ if ($id > 0) {
 		print '<div class="underbanner clearboth"></div>';
 
 		$nbcols = 3;
-		if (isModEnabled("banque")) {
+		if (isModEnabled("bank")) {
 			$nbcols++;
 		}
 
@@ -692,13 +693,13 @@ if ($id > 0) {
 			$i = 0;
 			$total = 0;
 
-			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 			print '<table class="noborder paymenttable">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
 			print '<td>'.$langs->trans("Type").'</td>';
-			if (isModEnabled("banque")) {
+			if (isModEnabled("bank")) {
 				print '<td class="liste_titre right">'.$langs->trans('BankAccount').'</td>';
 			}
 			print '<td class="right">'.$langs->trans("Amount").'</td>';
@@ -721,7 +722,7 @@ if ($id > 0) {
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
 					$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
-					if (isModEnabled("banque")) {
+					if (isModEnabled("bank")) {
 						$bankaccountstatic->id = $objp->baid;
 						$bankaccountstatic->ref = $objp->baref;
 						$bankaccountstatic->label = $objp->baref;
@@ -843,9 +844,8 @@ if ($id > 0) {
 				$relativepath = $objref.'/'.$objref.'.pdf';
 				$filedir = $conf->tax->dir_output.'/'.$objref;
 				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-				//$genallowed = $user->rights->tax->charges->lire; // If you can read, you can build the PDF to read content
 				$genallowed = 0;
-				$delallowed = $user->rights->tax->charges->creer; // If you can create/edit, you can remove a file on card
+				$delallowed = $user->hasRight('tax', 'charges', 'creer'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('tax', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 			}
 
@@ -884,7 +884,7 @@ if ($id > 0) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	} else {
 		/* Social contribution not found */
-		dol_print_error('', $object->error);
+		dol_print_error(null, $object->error);
 	}
 }
 

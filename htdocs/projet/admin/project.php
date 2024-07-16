@@ -6,6 +6,8 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,18 +103,16 @@ if ($action == 'updateMaskTask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -137,18 +137,16 @@ if ($action == 'updateMaskTask') {
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/task/doc/pdf_".$modele.".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
 			$classname = "pdf_".$modele;
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -243,7 +241,7 @@ if ($action == 'updateMaskTask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("ProjectsSetup"));
+llxHeader("", $langs->trans("ProjectsSetup"), '', '', 0, 0, '', '', '', 'mod-project page-admin');
 
 $form = new Form($db);
 
@@ -513,7 +511,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -533,6 +533,7 @@ print "</tr>\n";
 
 clearstatcache();
 
+$filelist = array();
 foreach ($dirmodels as $reldir) {
 	foreach (array('', '/doc') as $valdir) {
 		$dir = dol_buildpath($reldir."core/modules/project/".$valdir);
@@ -656,7 +657,9 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 		$num_rows = $db->num_rows($resql);
 		while ($i < $num_rows) {
 			$array = $db->fetch_array($resql);
-			array_push($def, $array[0]);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
 			$i++;
 		}
 	} else {
@@ -730,7 +733,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 										print "</td>";
 									}
 
-									// Defaut
+									// Default
 									print '<td class="center">';
 									if ($conf->global->PROJECT_TASK_ADDON_PDF == "$name") {
 										print img_picto($langs->trans("Default"), 'on');
@@ -801,10 +804,10 @@ if (!$conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td width="60" class="right">';
-	$arrval = array('0'=>$langs->trans("No"),
-		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	$arrval = array('0' => $langs->trans("No"),
+		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
+		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
+		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
 	);
 	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString("PROJECT_USE_SEARCH_TO_SELECT"));
 	print '</td><td class="right">';
@@ -825,13 +828,13 @@ print '</tr>';
 
 $key = 'PROJECT_CLASSIFY_CLOSED_WHEN_ALL_TASKS_DONE';
 echo '<tr class="oddeven">',
-		'<td class="left">',
-			$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
-		'</td>',
-		'<td class="right" colspan="2">',
-			ajax_constantonoff($key),
-		'</td>',
-	'</tr>';
+'<td class="left">',
+$form->textwithpicto($langs->transnoentities($key), $langs->transnoentities($key . '_help')),
+'</td>',
+'<td class="right" colspan="2">',
+ajax_constantonoff($key),
+'</td>',
+'</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TimesheetPreventAfterFollowingMonths").'</td>';
@@ -841,6 +844,16 @@ print '<input type="number" class="width50" id="timesheetFreezeDuration" name="t
 print '<input type="submit" class="button small reposition" name="PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td class="left">';
+print $form->textwithpicto($langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT'), $langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CONTACT_help'));
+print '</td>';
+print '<td class="right" colspan="2">';
+print ajax_constantonoff('PROJECT_DISPLAY_LINKED_BY_CONTACT');
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 

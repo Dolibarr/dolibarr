@@ -348,6 +348,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 		fwrite($fichier, "<channel>\n");
 		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");
+		fwrite($fichier, "<description>".dol_escape_xml($title)."</description>\n");
 		if ($langcode) {
 			fwrite($fichier, "<language>".dol_escape_xml($langcode)."</language>\n");
 		}
@@ -359,15 +360,16 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 		// Url
 		if (empty($url)) {
-			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY);
+			$url = $urlwithroot."/public/agenda/agendaexport.php?format=rss&exportkey=".urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'));
 		}
 		fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 
 		// Image
 		if (!empty($mysoc->logo_squarred_small)) {
 			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
-			if ($urlimage) {
-				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>'.$title.</title></image>\n");
+			//$urlimage = $GLOBALS['website']->virtualhost
+			if ($urlimage && (empty($GLOBALS['website']) || preg_match('/'.preg_quote($GLOBALS['website']->virtualhost, '/').'/', $urlwithroot))) {
+				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>".htmlspecialchars($title)."</title><link><![CDATA[".$url."]]></link></image>\n");
 			}
 		}
 
@@ -384,28 +386,52 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$nbevents++;
 
 				if (is_object($event) && get_class($event) == 'WebsitePage') {
-					// Convert object into an array
+					// Convert object WebsitePage into an array $event
 					$tmpevent = array();
-					$tmpevent['uid'] = $event->id;
+					$tmpevent['uid'] = (string) $event->id;
 					$tmpevent['startdate'] = $event->date_creation;
 					$tmpevent['summary'] = $event->title;
 					$tmpevent['url'] = $event->fullpageurl ? $event->fullpageurl : $event->pageurl.'.php';
 					$tmpevent['author'] = $event->author_alias ? $event->author_alias : 'unknown';
 					//$tmpevent['category'] = '';
 					$tmpevent['desc'] = $event->description;
-					$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
+					if (!empty($event->image)) {
+						$tmpevent['image'] = $GLOBALS['website']->virtualhost.'/medias/'.$event->image;
+					}
+					$tmpevent['content'] = $event->content;
+
 					$event = $tmpevent;
 				}
 
 				$uid		  = $event["uid"];
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];
-				$url		  = $event["url"];
+				$description  = $event["desc"];
+				$url		  = empty($event["url"]) ? '' : $event["url"];
 				$author       = $event["author"];
 				$category     = empty($event["category"]) ? null : $event["category"];
+				$image        = '';
 				if (!empty($event["image"])) {
 					$image = $event["image"];
+				} else {
+					$reg = array();
+					// If we found a link into content like <img alt="..." class="..." src="..."
+					if (!empty($event["content"]) && preg_match('/<img\s*(?:alt="[^"]*"\s*)?(?:class="[^"]*"\s*)?src="([^"]+)"/m', $event["content"], $reg)) {
+						if (!empty($reg[0])) {
+							$image = $reg[1];
+						}
+						// Convert image "/medias/...." and "/viewimage.php?modulepart=medias&file=(.*)"
+						if (!empty($GLOBALS['website']->virtualhost)) {
+							if (preg_match('/^\/medias\//', $image)) {
+								$image = $GLOBALS['website']->virtualhost.$image;
+							} elseif (preg_match('/^\/viewimage\.php\?modulepart=medias&[^"]*file=([^&"]+)/', $image, $reg)) {
+								$image = $GLOBALS['website']->virtualhost.'/medias/'.$reg[1];
+							}
+						}
+					}
 				}
+
+
 				/* No place inside a RSS
 				$priority     = $event["priority"];
 				$fulldayevent = $event["fulldayevent"];
@@ -418,10 +444,11 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<item>\n");
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
 				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
-				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
+				//fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
 				if (!empty($category)) {
 					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
 				}
+				//fwrite($fichier, "<description><![CDATA[".$summary."]]></description>\n");
 				fwrite($fichier, "<description><![CDATA[");
 				if (!empty($image)) {
 					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
@@ -435,8 +462,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 				fwrite($fichier, "]]></description>\n");
 				fwrite($fichier, "<pubDate>".date("r", $startdate)."</pubDate>\n");
-				fwrite($fichier, "<guid isPermaLink=\"true\"><![CDATA[".$uid."]]></guid>\n");
-				fwrite($fichier, "<source><![CDATA[Dolibarr]]></source>\n");
+				fwrite($fichier, '<guid isPermaLink="false"><![CDATA['.str_pad($uid, 10, "0", STR_PAD_LEFT).']]></guid>'."\n");
+				fwrite($fichier, '<source url="'.$url.'"><![CDATA[Dolibarr]]></source>'."\n");
 				fwrite($fichier, "</item>\n");
 			}
 		}

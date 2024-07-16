@@ -3,8 +3,9 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016-2023	Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +42,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled("supplier_invoice")) {
@@ -56,10 +57,10 @@ if (isModEnabled("supplier_invoice")) {
 if (isModEnabled("supplier_order")) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 if (isModEnabled('deplacement')) {
@@ -68,7 +69,7 @@ if (isModEnabled('deplacement')) {
 if (isModEnabled('agenda')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 }
-if (isModEnabled('expedition')) {
+if (isModEnabled('shipping')) {
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 }
 
@@ -124,16 +125,15 @@ class doc_generic_project_odt extends ModelePDFProjects
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par defaut, si n'etait pas defini
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // Par default, si n'etait pas defini
 		}
 	}
-
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   Project			$object             Main object to use as data source
+	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
@@ -141,7 +141,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
 		// phpcs:enable
-		global $conf;
+		if (!$object instanceof Project) {
+			dol_syslog("Expected Project object, got ".gettype($object), LOG_ERR);
+			return array();
+		}
 
 		$resarray = array(
 			$array_key.'_id'=>$object->id,
@@ -220,7 +223,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
 		$pc = 'projcontacts_'; // prefix to avoid typos
 
 		$ret = array(
@@ -278,8 +280,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_project_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
 			'projfile_name'=>$file['name'],
 			'projfile_date'=>dol_print_date($file['date'], 'day'),
@@ -315,23 +315,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$taskressource			Reference array
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *	@param  array			$taskresource			Reference array
+	 *	@param  Translate		$outputlangs        	Lang object to use for output
+	 *  @return	array									Return a substitution array
 	 */
-	public function get_substitutionarray_tasksressource($taskressource, $outputlangs)
+	public function get_substitutionarray_tasksressource($taskresource, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
+
 		//dol_syslog(get_class($this).'::get_substitutionarray_tasksressource taskressource='.var_export($taskressource,true),LOG_DEBUG);
 		return array(
-		'taskressource_rowid'=>$taskressource['rowid'],
-		'taskressource_role'=>$taskressource['libelle'],
-		'taskressource_lastname'=>$taskressource['lastname'],
-		'taskressource_firstname'=>$taskressource['firstname'],
-		'taskressource_fullcivname'=>$taskressource['fullname'],
-		'taskressource_socname'=>$taskressource['socname'],
-		'taskressource_email'=>$taskressource['email']
+			'taskressource_rowid' => $taskresource['rowid'],
+			'taskressource_role' => $taskresource['libelle'],
+			'taskressource_lastname' => $taskresource['lastname'],
+			'taskressource_firstname' => $taskresource['firstname'],
+			'taskressource_fullcivname' => $taskresource['fullname'],
+			'taskressource_socname' => $taskresource['socname'],
+			'taskressource_email' => $taskresource['email']
 		);
 	}
 
@@ -339,28 +339,26 @@ class doc_generic_project_odt extends ModelePDFProjects
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  object			$tasktime			times object
+	 *	@param  array			$tasktime			Array of times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-		'tasktime_rowid'=>$tasktime['rowid'],
-		'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
-		'tasktime_task_duration_sec'=>$tasktime['task_duration'],
-		'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
-		'tasktime_note'=>$tasktime['note'],
-		'tasktime_fk_user'=>$tasktime['fk_user'],
-		'tasktime_user_name'=>$tasktime['name'],
-		'tasktime_user_first'=>$tasktime['firstname'],
-		'tasktime_fullcivname'=>$tasktime['fullcivname'],
-		'tasktime_amountht'=>$tasktime['amountht'],
-		'tasktime_amountttc'=>$tasktime['amountttc'],
-		'tasktime_thm'=>$tasktime['thm'],
+			'tasktime_rowid'=>$tasktime['rowid'],
+			'tasktime_task_date'=>dol_print_date($tasktime['task_date'], 'day'),
+			'tasktime_task_duration_sec'=>$tasktime['task_duration'],
+			'tasktime_task_duration'=>convertSecondToTime($tasktime['task_duration'], 'all'),
+			'tasktime_note'=>$tasktime['note'],
+			'tasktime_fk_user'=>$tasktime['fk_user'],
+			'tasktime_user_name'=>$tasktime['name'],
+			'tasktime_user_first'=>$tasktime['firstname'],
+			'tasktime_fullcivname'=>$tasktime['fullcivname'],
+			'tasktime_amountht'=>$tasktime['amountht'],
+			'tasktime_amountttc'=>$tasktime['amountttc'],
+			'tasktime_thm'=>$tasktime['thm'],
 		);
 	}
 
@@ -375,12 +373,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $conf;
-
 		return array(
-		'tasksfile_name'=>$file['name'],
-		'tasksfile_date'=>dol_print_date($file['date'], 'day'),
-		'tasksfile_size'=>$file['size']
+			'tasksfile_name'=>$file['name'],
+			'tasksfile_date'=>dol_print_date($file['date'], 'day'),
+			'tasksfile_size'=>$file['size']
 		);
 	}
 
@@ -592,7 +588,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// Recipient name
 				$contactobject = null;
 				if (!empty($usecontact)) {
-					// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
+					// if we have a PROJECTLEADER contact and we don't use it as recipient we store the contact object for later use
 					$contactobject = $object->contact;
 				}
 
@@ -600,8 +596,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				// Make substitution
 				$substitutionarray = array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
+					'__FROM_NAME__' => $this->emetteur->name,
+					'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -614,10 +610,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->project->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->project->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -628,9 +624,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
-				//print html_entity_decode($odfHandler->__toString());
-				//print exit;
-
 
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -690,8 +683,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -732,8 +723,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestaskres->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -742,7 +731,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							}
 						}
 
-						//Time ressources
+						//Time resources
 						$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 						$sql .= ", u.lastname, u.firstname, t.thm";
 						$sql .= " FROM ".MAIN_DB_PREFIX."element_time as t";
@@ -776,8 +765,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -809,8 +796,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -835,8 +820,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listtasksfiles->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -870,8 +853,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 						foreach ($tmparray as $key => $val) {
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
 							} catch (SegmentException $e) {
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -917,8 +898,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -946,102 +925,102 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListOrdersAssociatedProject",
 						'class' => 'Commande',
 						'table' => 'commande',
-						'test' => isModEnabled('commande') && $user->hasRight('commande', 'lire')
+						'test' => isModEnabled('order') && $user->hasRight('commande', 'lire')
 					),
 					'invoice' => array(
 						'title' => "ListInvoicesAssociatedProject",
 						'class' => 'Facture',
 						'table' => 'facture',
-						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 					),
 					'invoice_predefined' => array(
 						'title' => "ListPredefinedInvoicesAssociatedProject",
 						'class' => 'FactureRec',
 						'table' => 'facture_rec',
-						'test' => isModEnabled('facture') && $user->hasRight('facture', 'lire')
+						'test' => isModEnabled('invoice') && $user->hasRight('facture', 'lire')
 					),
 					'proposal_supplier' => array(
 						'title' => "ListSupplierProposalsAssociatedProject",
 						'class' => 'SupplierProposal',
 						'table' => 'supplier_proposal',
-						'test' => isModEnabled('supplier_proposal') && $user->rights->supplier_proposal->lire
+						'test' => isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')
 					),
 					'order_supplier' => array(
 						'title' => "ListSupplierOrdersAssociatedProject",
 						'table' => 'commande_fournisseur',
 						'class' => 'CommandeFournisseur',
-						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'commande', 'lire')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))
 					),
 					'invoice_supplier' => array(
 						'title' => "ListSupplierInvoicesAssociatedProject",
 						'table' => 'facture_fourn',
 						'class' => 'FactureFournisseur',
-						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'facture', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 					),
 					'contract' => array(
 						'title' => "ListContractAssociatedProject",
 						'class' => 'Contrat',
 						'table' => 'contrat',
-						'test' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire')
+						'test' => isModEnabled('contract') && $user->hasRight('contrat', 'lire')
 					),
 					'intervention' => array(
 						'title' => "ListFichinterAssociatedProject",
 						'class' => 'Fichinter',
 						'table' => 'fichinter',
 						'disableamount' => 1,
-						'test' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')
+						'test' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire')
 					),
 					'shipping' => array(
 						'title' => "ListShippingAssociatedProject",
 						'class' => 'Expedition',
 						'table' => 'expedition',
 						'disableamount' => 1,
-						'test' => isModEnabled('expedition') && $user->rights->expedition->lire
+						'test' => isModEnabled('shipping') && $user->hasRight('expedition', 'lire')
 					),
 					'trip' => array(
 						'title' => "ListTripAssociatedProject",
 						'class' => 'Deplacement',
 						'table' => 'deplacement',
 						'disableamount' => 1,
-						'test' => isModEnabled('deplacement') && $user->rights->deplacement->lire
+						'test' => isModEnabled('deplacement') && $user->hasRight('deplacement', 'lire')
 					),
 					'expensereport' => array(
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReportLine',
 						'table' => 'expensereport_det',
-						'test' => isModEnabled('expensereport') && $user->rights->expensereport->lire
+						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire')
 					),
 					'donation' => array(
 						'title' => "ListDonationsAssociatedProject",
 						'class' => 'Don',
 						'table' => 'don',
-						'test' => isModEnabled('don') && $user->rights->don->lire
+						'test' => isModEnabled('don') && $user->hasRight('don', 'lire')
 					),
 					'loan' => array(
 						'title' => "ListLoanAssociatedProject",
 						'class' => 'Loan',
 						'table' => 'loan',
-						'test' => isModEnabled('loan') && $user->rights->loan->read
+						'test' => isModEnabled('loan') && $user->hasRight('loan', 'read')
 					),
 					'chargesociales' => array(
 						'title' => "ListSocialContributionAssociatedProject",
 						'class' => 'ChargeSociales',
 						'table' => 'chargesociales',
 						'urlnew' => DOL_URL_ROOT.'/compta/sociales/card.php?action=create&projectid='.$object->id,
-						'test' => isModEnabled('tax') && $user->rights->tax->charges->lire
+						'test' => isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')
 					),
 					'stock_mouvement' => array(
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW'))
+						'test' => (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire') && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW'))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",
 						'class' => 'ActionComm',
 						'table' => 'actioncomm',
 						'disableamount' => 1,
-						'test' => isModEnabled('agenda') && $user->rights->agenda->allactions->lire
+						'test' => isModEnabled('agenda') && $user->hasRight('agenda', 'allactions', 'lire')
 					),
 				);
 
@@ -1109,8 +1088,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 									foreach ($tmparray as $key => $val) {
 										try {
 											$listlines->setVars($key, $val, true, 'UTF-8');
-										} catch (OdfException $e) {
-											dol_syslog($e->getMessage(), LOG_INFO);
 										} catch (SegmentException $e) {
 											dol_syslog($e->getMessage(), LOG_INFO);
 										}

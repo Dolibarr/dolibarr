@@ -20,12 +20,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $outputalsopricetotalwithtax
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
@@ -36,8 +36,11 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 global $filtertype;
 if (empty($filtertype)) {
@@ -58,7 +61,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product or sub-bom
-print '<td class="linecoldescription">'.$langs->trans('Description');
+print '<td class="linecoldescription bomline">'.$langs->trans('Description');
 if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 	print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 	print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
@@ -66,11 +69,11 @@ if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 print '</td>';
 
 // Qty
-print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
+print '<td class="linecolqty width100 right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
+		print '<td class="linecoluseunit"></td>';
 	}
 
 	// Qty frozen
@@ -85,10 +88,14 @@ if ($filtertype != 1) {
 	// Cost
 	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 } else {
-	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
+	print '<td class="linecolunit"></td>';
 
+	// Qty frozen
+	print '<td class="linecolqtyfrozen right">' .$form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
+
+	// Workstation
 	if (isModEnabled('workstation')) {
-		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+		print '<td class="linecolworkstation">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
 	}
 
 	// Cost
@@ -98,7 +105,7 @@ if ($filtertype != 1) {
 
 
 
-print '<td class="linecoledit"></td>'; // No width to allow autodim
+print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim
 
 print '<td class="linecoldelete" style="width: 10px"></td>';
 

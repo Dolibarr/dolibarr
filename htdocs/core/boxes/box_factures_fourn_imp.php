@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,17 +35,6 @@ class box_factures_fourn_imp extends ModeleBoxes
 	public $boximg = "object_bill";
 	public $boxlabel = "BoxOldestUnpaidSupplierBills";
 	public $depends = array("facture", "fournisseur");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -99,14 +89,14 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql2 = " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql2 .= ",".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql2 .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql2 .= " WHERE f.fk_soc = s.rowid";
 			$sql2 .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 			$sql2 .= " AND f.paye = 0";
 			$sql2 .= " AND fk_statut = 1";
-			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql2 .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -148,6 +138,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					//$alreadypaid = $facturestatic->getSommePaiement();
 
 					$facturestatic->paye = $objp->paye;
+					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
 
 					$thirdpartystatic->id = $objp->socid;
@@ -169,6 +160,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
+						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
 					}
 
@@ -177,7 +169,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="nowraponall"',
 						'text' => $facturestatic->getNomUrl(1),
-						'text2'=> $late,
+						'text2' => $late,
 						'asis' => 1,
 					);
 
@@ -212,7 +204,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=> '<span class="opacitymedium">'.$langs->trans("NoUnpaidSupplierBills").'</span>',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidSupplierBills").'</span>',
 					);
 				}
 
@@ -249,7 +241,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}

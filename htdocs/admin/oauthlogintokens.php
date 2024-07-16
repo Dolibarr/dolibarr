@@ -126,7 +126,10 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("TokenManager"));
+$title = $langs->trans("TokenManager");
+$help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauthlogintokens');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
@@ -143,6 +146,7 @@ if ($mode == 'setup' && $user->admin) {
 	print '<span class="opacitymedium">'.$langs->trans("OAuthSetupForLogin")."</span><br><br>\n";
 
 	// Define $listinsetup
+	$listinsetup = array();
 	foreach ($conf->global as $key => $val) {
 		if (!empty($val) && preg_match('/^OAUTH_.*_ID$/', $key)) {
 			$provider = preg_replace('/_ID$/', '', $key);
@@ -156,9 +160,9 @@ if ($mode == 'setup' && $user->admin) {
 		}
 	}
 
-	$oauthstateanticsrf = bin2hex(random_bytes(128/8));
+	$oauthstateanticsrf = bin2hex(random_bytes(128 / 8));
 
-	// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
+	// $list is defined into oauth.lib.php to the list of supported OAuth providers.
 	if (!empty($listinsetup)) {
 		foreach ($listinsetup as $key) {
 			$supported = 0;
@@ -264,6 +268,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setconst">';
+			print '<input type="hidden" name="page_y" value="">';
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">'."\n";
@@ -289,7 +294,7 @@ if ($mode == 'setup' && $user->admin) {
 			print "</tr>\n";
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("OAuthIDSecret").'</td>';
 			print '<td>';
@@ -308,42 +313,48 @@ if ($mode == 'setup' && $user->admin) {
 			print '</td></tr>';
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("IsTokenGenerated");
 			print '</td>';
 			print '<td>';
-			if (is_object($tokenobj)) {
-				print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').' state='.dol_escape_htmltag($storage->state));
+			if ($keyforprovider != 'Login') {
+				if (is_object($tokenobj)) {
+					print $form->textwithpicto(yn(1), $langs->trans("HasAccessToken").' : '.dol_print_date($storage->date_modification, 'dayhour').' state='.dol_escape_htmltag($storage->state));
+				} else {
+					print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
+				}
 			} else {
-				print '<span class="opacitymedium">'.$langs->trans("NoAccessToken").'</span>';
+				print '<span class="opacitymedium">'.$langs->trans("TokenNotRequiredForOAuthLogin").'</span>';
 			}
 			print '</td>';
 			print '<td width="50%">';
-			// Links to delete/checks token
-			if (is_object($tokenobj)) {
-				//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
-				if ($urltodelete) {
-					print '<a class="button smallpaddingimp" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
-				} else {
-					print '<span class="opacitymedium">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span><br>';
+			if ($keyforprovider != 'Login') {
+				// Links to delete/checks token
+				if (is_object($tokenobj)) {
+					//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
+					if ($urltodelete) {
+						print '<a class="button smallpaddingimp reposition" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+					} else {
+						print '<span class="opacitymedium">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span><br>';
+					}
 				}
-			}
-			// Request remote token
-			if ($urltorenew) {
-				print '<a class="button smallpaddingimp" href="'.$urltorenew.'">'.$langs->trans('GetAccess').'</a>';
-				print $form->textwithpicto('', $langs->trans('RequestAccess'));
-				print '<br>';
-			}
-			// Check remote access
-			if ($urltocheckperms) {
-				print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
+				// Request remote token
+				if ($urltorenew) {
+					print '<a class="button smallpaddingimp reposition" href="'.$urltorenew.'">'.$langs->trans('GetAccess').'</a>';
+					print $form->textwithpicto('', $langs->trans('RequestAccess'));
+					print '<br>';
+				}
+				// Check remote access
+				if ($urltocheckperms) {
+					print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
+				}
 			}
 			print '</td>';
 			print '</tr>';
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("Token").'</td>';
 			print '<td colspan="2">';
@@ -364,7 +375,7 @@ if ($mode == 'setup' && $user->admin) {
 			if (is_object($tokenobj)) {
 				// Token refresh
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_REFRESH");
 				print '</td>';
@@ -375,7 +386,7 @@ if ($mode == 'setup' && $user->admin) {
 
 				// Token expired
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_EXPIRED");
 				print '</td>';
@@ -386,7 +397,7 @@ if ($mode == 'setup' && $user->admin) {
 
 				// Token expired at
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_EXPIRE_AT");
 				print '</td>';

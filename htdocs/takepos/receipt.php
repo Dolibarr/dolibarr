@@ -53,10 +53,10 @@ $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 
 $action = GETPOST('action', 'aZ09');
-$gift = GETPOST('gift', 'int');
+$gift = GETPOSTINT('gift');
 
 if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
@@ -104,9 +104,9 @@ if (!empty($hookmanager->resPrint)) {
 }
 </style>
 <center>
-<font size="4">
+<div style="font-size: 1.5em">
 <?php echo '<b>'.$mysoc->name.'</b>'; ?>
-</font>
+</div>
 </center>
 <br>
 <p class="left">
@@ -175,7 +175,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 	<tbody>
 	<?php
 	if ($action == 'without_details') {
-		$qty = GETPOST('qty', 'int') > 0 ? GETPOST('qty', 'int') : 1;
+		$qty = GETPOSTINT('qty') > 0 ? GETPOSTINT('qty') : 1;
 		print '<tr>';
 		print '<td>' . GETPOST('label', 'alphanohtml') . '</td>';
 		print '<td class="right">' . $qty . '</td>';
@@ -227,7 +227,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 		echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n";
 					  } ?></td>
 </tr>
-<?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
+<?php if (getDolGlobalString('TAKEPOS_TICKET_VAT_GROUPPED')) {
 		$vat_groups = array();
 	foreach ($object->lines as $line) {
 		if (!array_key_exists($line->tva_tx, $vat_groups)) {

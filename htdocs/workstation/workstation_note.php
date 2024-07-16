@@ -2,6 +2,7 @@
 
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +36,13 @@ global $conf, $db, $hookmanager, $langs, $user;
 $langs->loadLangs(array('mrp', 'companies'));
 
 // Get parameters
-$id         = GETPOST('id', 'int');
+$id         = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Workstation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->workstation->dir_output.'/temp/massgeneration/'.$user->id;
@@ -51,13 +52,13 @@ $hookmanager->initHooks(array('workstationnote', 'globalcard'));       // Note t
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->workstation->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = rtrim(getMultidirOutput($object, '', 1), '/');
 }
 
-$permissionnote = $user->rights->workstation->workstation->write;      // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->workstation->workstation->write;     // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');     // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check
 $isdraft = 0;
@@ -73,7 +74,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -85,7 +86,7 @@ $form = new Form($db);
 
 $help_url = 'EN:Module_Workstation';
 
-llxHeader('', $langs->trans('Workstation'), $help_url);
+llxHeader('', $langs->trans('Workstation'), $help_url, '', 0, 0, '', '', '', 'mod-workstation page-card_workstation_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

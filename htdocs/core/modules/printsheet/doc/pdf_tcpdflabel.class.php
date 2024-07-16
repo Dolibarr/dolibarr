@@ -23,7 +23,7 @@
 /**
  *	\file		htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
  *	\ingroup	core
- *	\brief		Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *	\brief		Fichier de la class permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -248,9 +248,9 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	array		$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
@@ -265,7 +265,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 		$this->type = 'pdf';
@@ -323,7 +323,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {

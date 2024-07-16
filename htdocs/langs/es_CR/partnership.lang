@@ -5,7 +5,6 @@ PartnershipDescriptionLong=Gestión Módulo Asociaciones
 Partnership=Asociación
 PartnershipAbout=Acerca de la asociación
 PublicFormRegistrationPartnerDesc=Dolibarr puede proporcionarle una URL/sitio web público para permitir que los visitantes externos soliciten ser parte del programa de asociación
-ReasonDeclineOrCancel=Reason for refusal or cancellation
 KeywordToCheckInWebsite=Si desea comprobar que una determinada palabra clave está presente en el sitio web de cada socio, defina esta palabra clave aquí
 PartnershipCanceled=Cancelado
 PartnershipManagedFor=Los socios son

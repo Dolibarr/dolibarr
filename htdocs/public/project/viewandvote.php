@@ -36,6 +36,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and get of entity must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1))));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -66,6 +67,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+$errmsg = '';
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
@@ -172,7 +174,7 @@ if (strlen($idvote)) {
 		// Has not already voted
 		$conforbooth = new ActionComm($db);
 		$resultconforbooth = $conforbooth->fetch($idvote);
-		if ($resultconforbooth<=0) {
+		if ($resultconforbooth <= 0) {
 			$error++;
 			$errmsg .= $conforbooth->error;
 		} else {
@@ -188,11 +190,11 @@ if (strlen($idvote)) {
 			}
 		}
 	}
-	if ($votestatus=="ok") {
+	if ($votestatus == "ok") {
 		setEventMessage($langs->trans("VoteOk"), 'mesgs');
-	} elseif ($votestatus=="ko") {
+	} elseif ($votestatus == "ko") {
 		setEventMessage($langs->trans("AlreadyVoted"), 'warnings');
-	} elseif ($votestatus=="err") {
+	} elseif ($votestatus == "err") {
 		setEventMessage($langs->trans("VoteError"), 'warnings');
 	}
 	header("Refresh:0;url=".dol_buildpath('/public/project/viewandvote.php?id='.$id.'&securekey=', 1).$securekeyreceived);
@@ -225,7 +227,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox', 'int').'" />';
+print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 
@@ -234,10 +236,10 @@ print "\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
-	$logosmall = $conf->global->$paramlogo;
+if (getDolGlobalString($paramlogo)) {
+	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
-	$logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
+	$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
 }
 //print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 // Define urllogo

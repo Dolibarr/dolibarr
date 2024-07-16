@@ -32,11 +32,11 @@ dol_include_once('/core/lib/product.lib.php');
 $langs->loadLangs(array('other', 'products'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->productlot->dir_output.'/temp/massgeneration/'.$user->id;
@@ -45,12 +45,12 @@ $hookmanager->initHooks(array('productlotnote')); // Note that conf->hooks_modul
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->productlot->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->produit->lire; // Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->hasRight('produit', 'lire'); // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -70,7 +70,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -81,7 +81,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('productlot'), $help_url);
+llxHeader('', $langs->trans('productlot'), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

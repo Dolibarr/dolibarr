@@ -219,7 +219,7 @@ foreach ($dups as $string => $pages) {
 
 		$s.=$file." ";
 
-		// Loop on each line keword was found into file.
+		// Loop on each line keyword was found into file.
 		$listoffilesforthisentry=array();
 		foreach ($lines as $line => $translatedvalue) {
 			if (!empty($listoffilesforthisentry[$file])) {

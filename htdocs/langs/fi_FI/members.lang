@@ -173,7 +173,7 @@ MembersAndSubscriptions=Jäsenet ja lahjoitukset
 MoreActions=Täydentäviä toimia tallennus
 MoreActionsOnSubscription=Täydentävä toimenpide, jota oletus ehdotti tekstityksen tallennuksen yhteydessä, myös automaattisesti maksu verkossa.
 MoreActionBankDirect=luo suora merkintä pankkitili
-MoreActionBankViaInvoice=luo lasku, ja a maksu <span class='notranslatessa '>pankkitili</span>
+MoreActionBankViaInvoice=Create an invoice, and a payment on bank account
 MoreActionInvoiceOnly=Luo laskun maksua
 LinkToGeneratedPages=Käyntikorttien tai osoitelehtien luominen
 LinkToGeneratedPagesDesc=Tässä näytössä voit luoda PDF-tiedostoja käyntikortit kaikki jäsenet tai tietyssä jäsenvaltiossa.
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

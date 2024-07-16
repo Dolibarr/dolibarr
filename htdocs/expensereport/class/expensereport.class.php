@@ -3,8 +3,10 @@
  * Copyright (C) 2015 		Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Alexandre Spangaro  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (c) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +73,14 @@ class ExpenseReport extends CommonObject
 	 */
 	public $line;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_debut;
 
+	/**
+	 * @var int|string
+	 */
 	public $date_fin;
 
 	/**
@@ -85,6 +93,9 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int ID
+	 */
 	public $user_approve_id;
 
 	/**
@@ -102,12 +113,32 @@ class ExpenseReport extends CommonObject
 	 */
 	public $fk_statut;
 
+	/**
+	 * @var int ID
+	 */
 	public $fk_c_paiement;
+
+	/**
+	 * @var int ID
+	 */
 	public $modepaymentid;
 
 	public $paid;
 
+	// Paiement
+	/**
+	 * @var string Firstname Lastname
+	 */
+	public $user_paid_infos;
+
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_author_infos;
+
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_validator_infos;
 
 	public $rule_warning_message;
@@ -115,6 +146,9 @@ class ExpenseReport extends CommonObject
 	// ACTIONS
 
 	// Create
+	/**
+	 * @var int|string
+	 */
 	public $date_create;
 
 	/**
@@ -128,16 +162,41 @@ class ExpenseReport extends CommonObject
 	public $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
 
 	// Update
+	/**
+	 * @var int|string
+	 */
 	public $date_modif;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user_modif;
 
 	// Refus
+	/**
+	 * @var int|string
+	 */
 	public $date_refuse;
+
+	/**
+	 * @var string
+	 */
 	public $detail_refuse;
+
+	/**
+	 * @var int ID
+	 */
 	public $fk_user_refuse;
 
 	// Annulation
+	/**
+	 * @var int|string
+	 */
 	public $date_cancel;
+
+	/**
+	 * @var string
+	 */
 	public $detail_cancel;
 
 	/**
@@ -168,36 +227,25 @@ class ExpenseReport extends CommonObject
 	 * @var int ID of User making validation
 	 */
 	public $fk_user_valid;
+
+	/**
+	 * @var string Firstname Lastname
+	 */
 	public $user_valid_infos;
 
 	// Approve
+	/**
+	 * @var int|string
+	 */
 	public $date_approve;
-	public $fk_user_approve; // User that has approved
 
-	// Paiement
-	public $user_paid_infos;
+	/**
+	 * @var int ID User that has approved
+	 */
+	public $fk_user_approve;
 
 	public $localtax1;	// for backward compatibility (real field should be total_localtax1 defined into CommonObject)
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
-
-	public $labelStatus = array();
-	public $labelStatusShort = array();
-
-	// Multicurrency
-	/**
-	 * @var int Currency ID
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var string multicurrency code
-	 */
-	public $multicurrency_code;
-	public $multicurrency_tx;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
 
 	/**
 	 * Draft status
@@ -230,55 +278,55 @@ class ExpenseReport extends CommonObject
 	const STATUS_REFUSED = 99;
 
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>15),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>20),
-		'ref_number_int' =>array('type'=>'integer', 'label'=>'Ref number int', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
-		'ref_ext' =>array('type'=>'integer', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'total_ht' =>array('type'=>'double(24,8)', 'label'=>'Total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'total_tva' =>array('type'=>'double(24,8)', 'label'=>'Total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'localtax1' =>array('type'=>'double(24,8)', 'label'=>'Localtax1', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'localtax2' =>array('type'=>'double(24,8)', 'label'=>'Localtax2', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'date_debut' =>array('type'=>'date', 'label'=>'Date debut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>60),
-		'date_fin' =>array('type'=>'date', 'label'=>'Date fin', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>65),
-		'date_valid' =>array('type'=>'datetime', 'label'=>'Date valid', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'date_approve' =>array('type'=>'datetime', 'label'=>'Date approve', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
-		'date_refuse' =>array('type'=>'datetime', 'label'=>'Date refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'date_cancel' =>array('type'=>'datetime', 'label'=>'Date cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'fk_user_author' =>array('type'=>'integer', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>100),
-		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
-		'fk_user_valid' =>array('type'=>'integer', 'label'=>'Fk user valid', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'fk_user_validator' =>array('type'=>'integer', 'label'=>'Fk user validator', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
-		'fk_user_approve' =>array('type'=>'integer', 'label'=>'Fk user approve', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
-		'fk_user_refuse' =>array('type'=>'integer', 'label'=>'Fk user refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
-		'fk_user_cancel' =>array('type'=>'integer', 'label'=>'Fk user cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
-		'fk_c_paiement' =>array('type'=>'integer', 'label'=>'Fk c paiement', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
-		'paid' =>array('type'=>'integer', 'label'=>'Paid', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>145),
-		'note_public' =>array('type'=>'html', 'label'=>'Note public', 'enabled'=>1, 'visible'=>0, 'position'=>150),
-		'note_private' =>array('type'=>'html', 'label'=>'Note private', 'enabled'=>1, 'visible'=>0, 'position'=>155),
-		'detail_refuse' =>array('type'=>'varchar(255)', 'label'=>'Detail refuse', 'enabled'=>1, 'visible'=>-1, 'position'=>160),
-		'detail_cancel' =>array('type'=>'varchar(255)', 'label'=>'Detail cancel', 'enabled'=>1, 'visible'=>-1, 'position'=>165),
-		'integration_compta' =>array('type'=>'integer', 'label'=>'Integration compta', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'fk_bank_account' =>array('type'=>'integer', 'label'=>'Fk bank account', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
-		'fk_multicurrency' =>array('type'=>'integer', 'label'=>'Fk multicurrency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
-		'multicurrency_code' =>array('type'=>'varchar(255)', 'label'=>'Multicurrency code', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
-		'multicurrency_tx' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency tx', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
-		'multicurrency_total_ht' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ht', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
-		'multicurrency_total_tva' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total tva', 'enabled'=>1, 'visible'=>-1, 'position'=>205),
-		'multicurrency_total_ttc' =>array('type'=>'double(24,8)', 'label'=>'Multicurrency total ttc', 'enabled'=>1, 'visible'=>-1, 'position'=>210),
-		'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
-		'date_create' =>array('type'=>'datetime', 'label'=>'Date create', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>300),
-		'tms' =>array('type'=>'timestamp', 'label'=>'Tms', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>305),
-		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>1000),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>1010),
-		'fk_statut' =>array('type'=>'integer', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>500),
+		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 15),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 20),
+		'ref_number_int' => array('type' => 'integer', 'label' => 'Ref number int', 'enabled' => 1, 'visible' => -1, 'position' => 25),
+		'ref_ext' => array('type' => 'integer', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total ht', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'total_tva' => array('type' => 'double(24,8)', 'label' => 'Total tva', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'localtax1' => array('type' => 'double(24,8)', 'label' => 'Localtax1', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'date_debut' => array('type' => 'date', 'label' => 'Date debut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
+		'date_fin' => array('type' => 'date', 'label' => 'Date fin', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 65),
+		'date_valid' => array('type' => 'datetime', 'label' => 'Date valid', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'date_approve' => array('type' => 'datetime', 'label' => 'Date approve', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'date_refuse' => array('type' => 'datetime', 'label' => 'Date refuse', 'enabled' => 1, 'visible' => -1, 'position' => 85),
+		'date_cancel' => array('type' => 'datetime', 'label' => 'Date cancel', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'fk_user_author' => array('type' => 'integer', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
+		'fk_user_modif' => array('type' => 'integer', 'label' => 'Fk user modif', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'fk_user_valid' => array('type' => 'integer', 'label' => 'Fk user valid', 'enabled' => 1, 'visible' => -1, 'position' => 110),
+		'fk_user_validator' => array('type' => 'integer', 'label' => 'Fk user validator', 'enabled' => 1, 'visible' => -1, 'position' => 115),
+		'fk_user_approve' => array('type' => 'integer', 'label' => 'Fk user approve', 'enabled' => 1, 'visible' => -1, 'position' => 120),
+		'fk_user_refuse' => array('type' => 'integer', 'label' => 'Fk user refuse', 'enabled' => 1, 'visible' => -1, 'position' => 125),
+		'fk_user_cancel' => array('type' => 'integer', 'label' => 'Fk user cancel', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'fk_c_paiement' => array('type' => 'integer', 'label' => 'Fk c paiement', 'enabled' => 1, 'visible' => -1, 'position' => 140),
+		'paid' => array('type' => 'integer', 'label' => 'Paid', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
+		'note_public' => array('type' => 'html', 'label' => 'Note public', 'enabled' => 1, 'visible' => 0, 'position' => 150),
+		'note_private' => array('type' => 'html', 'label' => 'Note private', 'enabled' => 1, 'visible' => 0, 'position' => 155),
+		'detail_refuse' => array('type' => 'varchar(255)', 'label' => 'Detail refuse', 'enabled' => 1, 'visible' => -1, 'position' => 160),
+		'detail_cancel' => array('type' => 'varchar(255)', 'label' => 'Detail cancel', 'enabled' => 1, 'visible' => -1, 'position' => 165),
+		'integration_compta' => array('type' => 'integer', 'label' => 'Integration compta', 'enabled' => 1, 'visible' => -1, 'position' => 170),
+		'fk_bank_account' => array('type' => 'integer', 'label' => 'Fk bank account', 'enabled' => 1, 'visible' => -1, 'position' => 175),
+		'fk_multicurrency' => array('type' => 'integer', 'label' => 'Fk multicurrency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
+		'multicurrency_code' => array('type' => 'varchar(255)', 'label' => 'Multicurrency code', 'enabled' => 1, 'visible' => -1, 'position' => 190),
+		'multicurrency_tx' => array('type' => 'double(24,8)', 'label' => 'Multicurrency tx', 'enabled' => 1, 'visible' => -1, 'position' => 195),
+		'multicurrency_total_ht' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ht', 'enabled' => 1, 'visible' => -1, 'position' => 200),
+		'multicurrency_total_tva' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total tva', 'enabled' => 1, 'visible' => -1, 'position' => 205),
+		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'Multicurrency total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 210),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 220),
+		'date_create' => array('type' => 'datetime', 'label' => 'Date create', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 300),
+		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
+		'fk_statut' => array('type' => 'integer', 'label' => 'Fk statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	);
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param  DoliDB  $db     Handler acces base de donnees
+	 *  @param  DoliDB  $db     Handler access base de donnees
 	 */
 	public function __construct($db)
 	{
@@ -499,7 +547,7 @@ class ExpenseReport extends CommonObject
 		// Clear fields
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_author = $fk_user_author; // Note fk_user_author is not the 'author' but the guy the expense report is for.
-		$this->fk_user_valid = '';
+		$this->fk_user_valid = 0;
 		$this->date_create = '';
 		$this->date_creation = '';
 		$this->date_validation = '';
@@ -521,7 +569,7 @@ class ExpenseReport extends CommonObject
 		if (!$error) {
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
-				$parameters = array('objFrom'=>$objFrom);
+				$parameters = array('objFrom' => $objFrom);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -616,8 +664,6 @@ class ExpenseReport extends CommonObject
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT d.rowid, d.entity, d.ref, d.note_public, d.note_private,"; // DEFAULT
 		$sql .= " d.detail_refuse, d.detail_cancel, d.fk_user_refuse, d.fk_user_cancel,"; // ACTIONS
 		$sql .= " d.date_refuse, d.date_cancel,"; // ACTIONS
@@ -845,6 +891,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " WHERE f.rowid = ".((int) $id);
 		$sql .= " AND f.entity = ".$conf->entity;
 
+
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -876,15 +924,15 @@ class ExpenseReport extends CommonObject
 	 *  Used to build previews or test instances.
 	 *  id must be 0 if object instance is a specimen.
 	 *
-	 *  @return void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$now = dol_now();
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -898,7 +946,6 @@ class ExpenseReport extends CommonObject
 		$type_fees_id = 2; // TF_TRIP
 
 		$this->status = 5;
-		$this->fk_statut = 5;
 
 		$this->fk_user_author = $user->id;
 		$this->fk_user_validator = $user->id;
@@ -932,6 +979,8 @@ class ExpenseReport extends CommonObject
 			$this->total_tva += $line->total_tva;
 			$this->total_ttc += $line->total_ttc;
 		}
+
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -942,10 +991,10 @@ class ExpenseReport extends CommonObject
 	 * @param   User    $user           User
 	 * @return  int                     Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch_line_by_project($projectid, $user = '')
+	public function fetch_line_by_project($projectid, $user)
 	{
 		// phpcs:enable
-		global $conf, $db, $langs;
+		global $langs;
 
 		$langs->load('trips');
 
@@ -977,8 +1026,8 @@ class ExpenseReport extends CommonObject
 					$objp->fk_c_expensereport_status = $obj->status;
 					$objp->rowid = $obj->rowid;
 
-					$total_HT = $total_HT + $objp->total_ht;
-					$total_TTC = $total_TTC + $objp->total_ttc;
+					$total_HT += $objp->total_ht;
+					$total_TTC += $objp->total_ttc;
 					$author = new User($this->db);
 					$author->fetch($objp->fk_user_author);
 
@@ -1045,8 +1094,6 @@ class ExpenseReport extends CommonObject
 	public function fetch_lines()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$this->lines = array();
 
 		$sql = ' SELECT de.rowid, de.comments, de.qty, de.value_unit, de.date, de.rang,';
@@ -1135,10 +1182,10 @@ class ExpenseReport extends CommonObject
 	 * Delete object in database
 	 *
 	 * @param   User|null   $user       User that delete
-	 * @param 	bool 		$notrigger  false=launch triggers after, true=disable triggers
+	 * @param 	int 		$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return  int         	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null, $notrigger = false)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1269,7 +1316,7 @@ class ExpenseReport extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -1653,7 +1700,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 * Return next reference of expense report not already used
 	 *
-	 * @return    string            free ref
+	 * @return    string|int<-2,-1>            free ref, or <0 if error
 	 */
 	public function getNextNumRef()
 	{
@@ -1664,7 +1711,7 @@ class ExpenseReport extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('EXPENSEREPORT_ADDON') . ".php";
-			$classname = $conf->global->EXPENSEREPORT_ADDON;
+			$classname = getDolGlobalString('EXPENSEREPORT_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1672,11 +1719,11 @@ class ExpenseReport extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/expensereport/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+			if (!$mybool) {
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1702,13 +1749,13 @@ class ExpenseReport extends CommonObject
 	 *
 	 * @param array $params ex option, infologin
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,total_ht?:string,total_tva?:string,total_ttc?:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
 		global $conf, $langs;
 
-		$langs->load('expensereport');
+		$langs->load('trips');
 
 		$nofetch = !empty($params['nofetch']);
 		$moretitle = $params['moretitle'] ?? '';
@@ -1751,7 +1798,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $hookmanager;
+		global $langs, $hookmanager;
 
 		$result = '';
 
@@ -1819,7 +1866,7 @@ class ExpenseReport extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1840,9 +1887,9 @@ class ExpenseReport extends CommonObject
 	public function update_totaux_add($ligne_total_ht, $ligne_total_tva)
 	{
 		// phpcs:enable
-		$this->total_ht = $this->total_ht + $ligne_total_ht;
-		$this->total_tva = $this->total_tva + $ligne_total_tva;
-		$this->total_ttc = $this->total_ht + $this->total_tva;
+		$this->total_ht += (float) $ligne_total_ht;
+		$this->total_tva += (float) $ligne_total_tva;
+		$this->total_ttc += $this->total_tva;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql .= " total_ht = ".$this->total_ht;
@@ -1865,7 +1912,7 @@ class ExpenseReport extends CommonObject
 	 * @param    float       $qty                      Qty
 	 * @param    double      $up                       Unit price (price with tax)
 	 * @param    int         $fk_c_type_fees           Type payment
-	 * @param    string      $vatrate                  Vat rate (Can be '10' or '10 (ABC)')
+	 * @param    int<-1,0>|string	$vatrate                  Vat rate (Can be '10' or '10 (ABC)')
 	 * @param    string      $date                     Date
 	 * @param    string      $comments                 Description
 	 * @param    int         $fk_project               Project id
@@ -1876,7 +1923,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function addline($qty = 0, $up = 0, $fk_c_type_fees = 0, $vatrate = 0, $date = '', $comments = '', $fk_project = 0, $fk_c_exp_tax_cat = 0, $type = 0, $fk_ecm_files = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		dol_syslog(get_class($this)."::addline qty=$qty, up=$up, fk_c_type_fees=$fk_c_type_fees, vatrate=$vatrate, date=$date, fk_project=$fk_project, type=$type, comments=$comments", LOG_DEBUG);
 
@@ -1900,7 +1947,7 @@ class ExpenseReport extends CommonObject
 				$fk_project = 0;
 			}
 
-			$qty = price2num($qty);
+			$qty = (float) price2num($qty);
 			if (!preg_match('/\s*\((.*)\)/', $vatrate)) {
 				$vatrate = price2num($vatrate); // $txtva can have format '5.0 (XXX)' or '5'
 			}
@@ -1925,7 +1972,7 @@ class ExpenseReport extends CommonObject
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $up, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+			$tmp = calcul_price_total($qty, $up, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
 
@@ -1988,7 +2035,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function checkRules($type = 0, $seller = '')
 	{
-		global $user, $conf, $db, $langs, $mysoc;
+		global $conf, $db, $langs, $mysoc;
 
 		$langs->load('trips');
 
@@ -2033,7 +2080,7 @@ class ExpenseReport extends CommonObject
 					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationWarning', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency));
 				}
 
-				// No break, we sould test if another rule is violated
+				// No break, we should test if another rule is violated
 			}
 		}
 
@@ -2064,7 +2111,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function applyOffset($type = 0, $seller = '')
 	{
-		global $conf, $mysoc;
+		global $mysoc;
 
 		if (!getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 			return false;
@@ -2185,19 +2232,17 @@ class ExpenseReport extends CommonObject
 			// Clean vat code
 			$reg = array();
 			$vat_src_code = '';
-			if (preg_match('/\((.*)\)/', $vatrate, $reg)) {
+			if (preg_match('/\((.*)\)/', (string) $vatrate, $reg)) {
 				$vat_src_code = $reg[1];
-				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+				$vatrate = preg_replace('/\s*\(.*\)/', '', (string) $vatrate); // Remove code into vatrate.
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
-			//var_dump($vatrate);var_dump($localtaxes_type);var_dump($tmp);exit;
+			$tmp = calcul_price_total($qty, $value_unit, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 			// calcul total of line
-			//$total_ttc  = price2num($qty*$value_unit, 'MT');
+			// $total_ttc  = price2num($qty*$value_unit, 'MT');
 
-			$tx_tva = $vatrate / 100;
-			$tx_tva = $tx_tva + 1;
+			$tx_tva = 1 + (float) $vatrate / 100;
 
 			$this->line = new ExpenseReportLine($this->db);
 			$this->line->comments        = $comments;
@@ -2240,7 +2285,7 @@ class ExpenseReport extends CommonObject
 				$this->db->free($resql);
 			}
 
-			// Select des informations du projet
+			// Select des information du projet
 			$sql = "SELECT p.ref as ref_projet, p.title as title_projet";
 			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 			$sql .= " WHERE p.rowid = ".((int) $projet_id);
@@ -2286,14 +2331,14 @@ class ExpenseReport extends CommonObject
 	/**
 	 * deleteline
 	 *
-	 * @param   int     $rowid      	Row id
-	 * @param   User    $fuser      	User
-	 * @param   int     $notrigger      1=No trigger
-	 * @return  int                 	Return integer <0 if KO, >0 if OK
+	 * @param   int			$rowid      	Row id
+	 * @param   User|string	$fuser      	User
+	 * @param   int<0,1>	$notrigger      1=No trigger
+	 * @return  int<-1,1>                 	Return integer <0 if KO, >0 if OK
 	 */
-	public function deleteline($rowid, $fuser = '', $notrigger = 0)
+	public function deleteLine($rowid, $fuser = '', $notrigger = 0)
 	{
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
@@ -2420,27 +2465,25 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Create a document onto disk accordign to template module.
+	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param      string      $modele         Force le mnodele a utiliser ('' to not force)
-	 *  @param      Translate   $outputlangs    objet lang a utiliser pour traduction
+	 *  @param      Translate   $outputlangs    object lang a utiliser pour traduction
 	 *  @param      int         $hidedetails    Hide details of lines
 	 *  @param      int         $hidedesc       Hide description
 	 *  @param      int         $hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
+	 *  @param  	?array  $moreparams     Array to provide more information
 	 *  @return     int                         0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf;
-
 		$outputlangs->load("trips");
 
 		if (!dol_strlen($modele)) {
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('EXPENSEREPORT_ADDON_PDF')) {
-				$modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+				$modele = getDolGlobalString('EXPENSEREPORT_ADDON_PDF');
 			}
 		}
 
@@ -2482,16 +2525,14 @@ class ExpenseReport extends CommonObject
 		return $ret;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Charge indicateurs this->nb pour le tableau de bord
+	 *      Load the indicators this->nb for the state board
 	 *
 	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
-		global $conf, $user;
+		global $user;
 
 		$this->nb = array();
 
@@ -2501,8 +2542,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2523,7 +2564,7 @@ class ExpenseReport extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user   		Objet user
+	 *      @param	User	$user   		Object user
 	 *      @param  string  $option         'topay' or 'toapprove'
 	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
@@ -2548,8 +2589,8 @@ class ExpenseReport extends CommonObject
 		$sql .= " AND ex.entity IN (".getEntity('expensereport').")";
 		if (!$user->hasRight('expensereport', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
-			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(join(',', $userchildids)).")";
-			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(join(',', $userchildids))."))";
+			$sql .= " AND (ex.fk_user_author IN (".$this->db->sanitize(implode(',', $userchildids)).")";
+			$sql .= " OR ex.fk_user_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
 		}
 
 		$resql = $this->db->query($sql);
@@ -2674,9 +2715,9 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicule category
+	 *  \brief Compute the cost of the kilometers expense based on the number of kilometers and the vehicle category
 	 *
-	 *  @param     int		$fk_cat           Category of the vehicule used
+	 *  @param     int		$fk_cat           Category of the vehicle used
 	 *  @param     float	$qty              Number of kilometers
 	 *  @param     float	$tva              VAT rate
 	 *  @return    int              		  Return integer <0 if KO, total ttc if OK
@@ -2704,7 +2745,7 @@ class ExpenseReport extends CommonObject
 		$currentUser->fetch($this->fk_user);
 		$currentUser->getrights('expensereport');
 		//Clean
-		$qty = price2num($qty);
+		$qty = (float) price2num($qty);
 
 		$sql  = " SELECT r.range_ik, t.ikoffset, t.coef";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport_ik t";
@@ -2722,10 +2763,10 @@ class ExpenseReport extends CommonObject
 				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."c_type_fees tf ON tf.id = n.fk_c_type_fees";
-				$sql.= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
-				$sql.= " AND YEAR(n.date) = ".(int) $arrayDate['year'];
-				$sql.= " AND tf.code = 'EX_KME' ";
-				$sql.= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
+				$sql .= " WHERE e.fk_user_author = ".(int) $this->fk_user_author;
+				$sql .= " AND YEAR(n.date) = ".(int) $arrayDate['year'];
+				$sql .= " AND tf.code = 'EX_KME' ";
+				$sql .= " AND e.fk_statut = ".(int) ExpenseReport::STATUS_VALIDATED;
 
 				$resql = $this->db->query($sql);
 
@@ -2734,7 +2775,7 @@ class ExpenseReport extends CommonObject
 					$cumulYearQty = $obj->cumul;
 				}
 
-				$qty = $cumulYearQty + $qty;
+				$qty += (float) $cumulYearQty;
 			}
 
 			$num = $this->db->num_rows($result);
@@ -2749,7 +2790,7 @@ class ExpenseReport extends CommonObject
 
 				for ($i = 0; $i < $num; $i++) {
 					if ($i < ($num - 1)) {
-						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i+1]->range_ik) {
+						if ($qty > $ranges[$i]->range_ik && $qty < $ranges[$i + 1]->range_ik) {
 							$coef = $ranges[$i]->coef;
 							$offset = $ranges[$i]->ikoffset;
 						}
@@ -2774,7 +2815,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with optional picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
@@ -2841,6 +2882,10 @@ class ExpenseReportLine extends CommonObjectLine
 	public $rowid;
 
 	public $comments;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $value_unit;
 	public $date;
@@ -3001,7 +3046,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0, $fromaddline = false)
 	{
-		global $user, $conf;
+		global $user;
 
 		$error = 0;
 
@@ -3012,7 +3057,7 @@ class ExpenseReportLine extends CommonObjectLine
 		if (empty($this->value_unit)) {
 			$this->value_unit = 0;
 		}
-		$this->qty = price2num($this->qty);
+		$this->qty = (float) price2num($this->qty);
 		$this->vatrate = price2num($this->vatrate);
 		if (empty($this->fk_c_exp_tax_cat)) {
 			$this->fk_c_exp_tax_cat = 0;
@@ -3143,7 +3188,7 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function update(User $user)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 

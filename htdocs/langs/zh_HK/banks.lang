@@ -68,7 +68,7 @@ AccountCard=賬戶卡
 DeleteAccount=刪除帳戶
 ConfirmDeleteAccount=您確定要刪除該帳戶嗎？
 BankTransactionByCategories=按類別分類的銀行分錄
-BankTransactionForCategory=類別 <span class='notranslate'><b></span> 的銀行條目\n %s </b> 
+BankTransactionForCategory=Bank entries for category <b>%s</b>
 RemoveFromRubrique=刪除帶有類別的鏈接
 RemoveFromRubriqueConfirm=您確定要刪除條目和類別之間的鏈接嗎？
 ListBankTransactions=銀行分錄清單
@@ -115,7 +115,7 @@ MenuBankInternalTransfer=Internal transfer
 TransferDesc=使用內部轉賬從一個賬戶轉賬到另一個賬戶，應用程序將寫入兩條記錄：源賬戶中的借方和目標賬戶中的貸方。本次交易將使用相同的金額、標籤和日期。
 TransferFrom=從
 TransferTo=到
-TransferFromToDone=來自 <span class='notranslate'><b></span> 的轉賬\n %s </b>  至 <b> %s </b>  <b> %s </b>  %s 已被記錄。
+TransferFromToDone=A transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=發件人
 ValidateCheckReceipt=驗證此支票收據嗎？
 ConfirmValidateCheckReceipt=您確定要提交此支票收據進行驗證嗎？一旦驗證，將無法更改。

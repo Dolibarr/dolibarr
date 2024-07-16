@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Jean-François Ferry <jfefe@aternatik.fr>
  * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      MDW                 <mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +94,7 @@ class modResource extends DolibarrModules
 		// List of modules id that must be enabled if this module is enabled
 		$this->depends = array();
 		// List of modules id to disable if this one is disabled
-		$this->requiredby = array('modPlace');
+		$this->requiredby = array('');
 		// Minimum version of PHP required by module
 		$this->phpmin = array(7, 0);
 
@@ -124,7 +125,7 @@ class modResource extends DolibarrModules
 		// 'product'			to add a tab in product view
 		// 'stock'				to add a tab in stock view
 		// 'propal'				to add a tab in propal view
-		// 'member'				to add a tab in fundation member view
+		// 'member'				to add a tab in foundation member view
 		// 'contract'			to add a tab in contract view
 		// 'user'				to add a tab in user view
 		// 'group'				to add a tab in group view
@@ -185,49 +186,49 @@ class modResource extends DolibarrModules
 
 		// Menus declaration
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=agenda',
-			'type'=>'left',
-			'titre'=> 'MenuResourceIndex',
+			'fk_menu' => 'fk_mainmenu=agenda',
+			'type' => 'left',
+			'titre' => 'MenuResourceIndex',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em92"'),
-			'mainmenu'=>'agenda',
-			'leftmenu'=> 'resource',
-			'url'=> '/resource/list.php',
-			'langs'=> 'resource',
-			'position'=> 100,
-			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
-			'user'=> 0
+			'mainmenu' => 'agenda',
+			'leftmenu' => 'resource',
+			'url' => '/resource/list.php',
+			'langs' => 'resource',
+			'position' => 100,
+			'enabled' => '1',
+			'perms' => '$user->rights->resource->read',
+			'user' => 0
 		);
 		$r++;
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
-			'type'=> 'left', // Toujours un menu gauche
-			'titre'=> 'MenuResourceAdd',
-			'mainmenu'=> 'agenda',
-			'leftmenu'=> 'resource_add',
-			'url'=> '/resource/card.php?action=create',
-			'langs'=> 'resource',
-			'position'=> 101,
-			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->write',
-			'target'=> '',
-			'user'=> 0
+			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'type' => 'left', // Toujours un menu gauche
+			'titre' => 'MenuResourceAdd',
+			'mainmenu' => 'agenda',
+			'leftmenu' => 'resource_add',
+			'url' => '/resource/card.php?action=create',
+			'langs' => 'resource',
+			'position' => 101,
+			'enabled' => '1',
+			'perms' => '$user->rights->resource->write',
+			'target' => '',
+			'user' => 0
 		);
 
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
-			'type'=> 'left', // Toujours un menu gauche
-			'titre'=> 'List',
-			'mainmenu'=> 'agenda',
-			'leftmenu'=> 'resource_list',
-			'url'=> '/resource/list.php',
-			'langs'=> 'resource',
-			'position'=> 102,
-			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
-			'target'=> '',
-			'user'=> 0
+			'fk_menu' => 'fk_mainmenu=agenda,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'type' => 'left', // Toujours un menu gauche
+			'titre' => 'List',
+			'mainmenu' => 'agenda',
+			'leftmenu' => 'resource_list',
+			'url' => '/resource/list.php',
+			'langs' => 'resource',
+			'position' => 102,
+			'enabled' => '1',
+			'perms' => '$user->rights->resource->read',
+			'target' => '',
+			'user' => 0
 		);
 
 
@@ -250,7 +251,7 @@ class modResource extends DolibarrModules
 
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
-		$this->export_dependencies_array[$r] = array('resource'=>array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
+		$this->export_dependencies_array[$r] = array('resource' => array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'resource as r';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.code = r.fk_code_type_resource';
@@ -269,8 +270,8 @@ class modResource extends DolibarrModules
 		$this->import_label[$r] = 'ImportDataset_resource_1';
 		$this->import_icon[$r] = 'resource';
 		$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r] = array('r'=>MAIN_DB_PREFIX.'resource', 'extra'=>MAIN_DB_PREFIX.'resource_extrafields'); // List of tables to insert into (insert done in same order)
-		$this->import_fields_array[$r] = array('r.ref'=>"ResourceFormLabel_ref*", 'r.fk_code_type_resource'=>'ResourceTypeCode', 'r.description'=>'ResourceFormLabel_description', 'r.note_private'=>"NotePrivate", 'r.note_public'=>"NotePublic", 'r.asset_number'=>'AssetNumber', 'r.datec'=>'DateCreation');
+		$this->import_tables_array[$r] = array('r' => MAIN_DB_PREFIX.'resource', 'extra' => MAIN_DB_PREFIX.'resource_extrafields'); // List of tables to insert into (insert done in same order)
+		$this->import_fields_array[$r] = array('r.ref' => "ResourceFormLabel_ref*", 'r.fk_code_type_resource' => 'ResourceTypeCode', 'r.description' => 'ResourceFormLabel_description', 'r.note_private' => "NotePrivate", 'r.note_public' => "NotePublic", 'r.asset_number' => 'AssetNumber', 'r.datec' => 'DateCreation');
 		// Add extra fields
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE type <> 'separate' AND elementtype = 'resource' AND entity IN (0,".$conf->entity.")";
 		$resql = $this->db->query($sql);
@@ -282,14 +283,14 @@ class modResource extends DolibarrModules
 			}
 		}
 		// End add extra fields
-		$this->import_fieldshidden_array[$r] = array('r.fk_user_author'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'resource'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_fieldshidden_array[$r] = array('r.fk_user_author' => 'user->id', 'extra.fk_object' => 'lastrowid-'.MAIN_DB_PREFIX.'resource'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
-				'r.fk_code_type_resource'=>array('rule'=>'fetchidfromcodeorlabel', 'classfile'=>'/core/class/ctyperesource.class.php', 'class'=>'Ctyperesource', 'method'=>'fetch', 'dict'=>'DictionaryResourceType'),
+				'r.fk_code_type_resource' => array('rule' => 'fetchidfromcodeorlabel', 'classfile' => '/core/class/ctyperesource.class.php', 'class' => 'Ctyperesource', 'method' => 'fetch', 'dict' => 'DictionaryResourceType'),
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-		$this->import_regex_array[$r] = array('s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
-		$this->import_examplevalues_array[$r] = array('r.ref'=>"REF1", 'r.fk_code_type_resource'=>"Code from dictionary resource type", 'r.datec'=>"2017-01-01 or 2017-01-01 12:30:00");
-		$this->import_updatekeys_array[$r] = array('r.rf'=>'ResourceFormLabel_ref');
+		$this->import_regex_array[$r] = array('s.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
+		$this->import_examplevalues_array[$r] = array('r.ref' => "REF1", 'r.fk_code_type_resource' => "Code from dictionary resource type", 'r.datec' => "2017-01-01 or 2017-01-01 12:30:00");
+		$this->import_updatekeys_array[$r] = array('r.rf' => 'ResourceFormLabel_ref');
 	}
 
 	/**

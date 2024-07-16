@@ -3,7 +3,7 @@
 // Page created by Shepard [Fabian Pijcke] <Shepard8@laposte.net>
 // Arno Esterhuizen <arno.esterhuizen@gmail.com>
 // and Romain Bourdon <romain@anaska.com>
-//  
+//
 // icones by Mark James <http://www.famfamfam.com/lab/icons/silk/>
 //
 // Modified from WampServer project by Laurent Destailleur (NLTechno)
@@ -260,7 +260,7 @@ if (isset($_GET['askhelp']))
 // Show PHPInfo
 if (isset($_GET['phpinfo']))
 {
-	phpinfo();
+	phpinfo(INFO_GENERAL|INFO_MODULES);
 	exit();
 }
 
@@ -274,27 +274,27 @@ if (isset($_GET['img']))
         header("Content-type: image/png");
         echo base64_decode($pngFolder);
         exit();
-        
+
         case 'pngFolderGo' :
         header("Content-type: image/png");
         echo base64_decode($pngFolderGo);
         exit();
-        
+
         case 'pngLogo' :
         header("Content-type: image/png");
         echo base64_decode($pngLogo);
         exit();
-        
+
         case 'pngPlugin' :
         header("Content-type: image/png");
         echo base64_decode($pngPlugin);
         exit();
-        
+
         case 'pngWrench' :
         header("Content-type: image/png");
         echo base64_decode($pngWrench);
         exit();
-        
+
         case 'favicon' :
         header("Content-type: image/x-icon");
         echo base64_decode($favicon);
@@ -324,7 +324,7 @@ foreach ($loaded_extensions as $extension) {
 	$phpExtContents .= "<li>${extension}</li>";
 }
 
-	
+
 // Read alias directory
 $listoffile=array();
 $aliasarray=array();
@@ -337,10 +337,10 @@ if (is_dir($aliasDir)) {
     	}
     }
 	sort($listoffiles);
-	
+
 	foreach($listoffiles as $file) {
 	    if (is_file($aliasDir.$file) && preg_match('/\.conf/',$file))
-	    {		
+	    {
 		    $msg = '';
 
 			$aliasContents.='<tr><td><ul class="aliases">';
@@ -350,7 +350,7 @@ if (is_dir($aliasDir)) {
 			if (preg_match('/dolibarr/i',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>http://<i>ipofyourserver</i>'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td></tr>';
 			elseif (preg_match('/phpmyadmin/i',$file)) $aliasContents .= $file.'</a></li></ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
 			else $aliasContents .= $file.'</a></li></ul></td> <td> </td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
-			
+
 			$aliasarray[]=$file;
 	    }
     }
@@ -358,13 +358,13 @@ if (is_dir($aliasDir)) {
 }
 if (!isset($aliasContents))
 	$aliasContents = '<tr><td colspan="3">'.$langues[$langue]['txtNoAlias'].'</td></tr>';
-	
+
 
 // Read projects in www dir
 $listoffiles=array();
 $handle=opendir(".");
 if (is_resource($handle)) {
-    while ($file = readdir($handle)) 
+    while ($file = readdir($handle))
     {
     	$listoffiles[]=$file;
     }
@@ -372,14 +372,14 @@ if (is_resource($handle)) {
 }
 
 foreach($listoffiles as $file) {
-	if (is_dir($file) && !in_array($file,$projectsListIgnore) && !in_array($file,$aliasarray)) 
-	{		
+	if (is_dir($file) && !in_array($file,$projectsListIgnore) && !in_array($file,$aliasarray))
+	{
 		$projectContents .= '<tr><td><ul class="projects">';
-		
+
 		$projectContents .= '<li><a href="'.$file.'/">';
 		$projectContents .= $file.'</a>';
 		$projectContents .= '</li>';
-		
+
 		$projectContents .= '</ul></td><td>http://localhost'.($apachePort != 80?':'.$apachePort:'').'/'.$file.'/)'.'</td><td>'.$langues[$langue]['NotAvailable'].'</td></tr>';
 	}
 }
@@ -509,7 +509,7 @@ a:hover {
 	font-size: 0.85em;
 }
 </style>
-    
+
 	<link rel="shortcut icon" href="index.php?img=favicon" type="image/ico" />
 </head>
 
@@ -533,7 +533,7 @@ a:hover {
 		<dd>${apacheVersion} &nbsp;</dd>
 		<dt>{$langues[$langue]['versp']}</dt>
 		<dd>${phpVersion} &nbsp;</dd>
-		<dt>{$langues[$langue]['phpExt']}</dt> 
+		<dt>{$langues[$langue]['phpExt']}</dt>
 		<dd>
 			<ul>
 			${phpExtContents}
@@ -554,8 +554,8 @@ a:hover {
 	</td><td valign="middle">
 	{$langues[$langue]['FromInternet']}
 	</td></tr>
-	${aliasContents}			
-	${projectContents}			
+	${aliasContents}
+	${projectContents}
 	</table>
 
 	<h2>{$langues[$langue]['titrePage']}</h2>

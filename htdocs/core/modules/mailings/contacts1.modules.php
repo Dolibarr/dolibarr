@@ -67,7 +67,7 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getSqlArrayForStats()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("commercial");
 
@@ -391,7 +391,7 @@ class mailing_contacts1 extends MailingTargets
 		if (empty($this->evenunsubscribe)) {
 			$sql .= " AND NOT EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = sp.email and mu.entity = ".((int) $conf->entity).")";
 		}
-		// Exclude unsubscribed email adresses
+		// Exclude unsubscribed email addresses
 		$sql .= " AND sp.statut = 1";
 		$sql .= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".((int) $mailing_id).")";
 

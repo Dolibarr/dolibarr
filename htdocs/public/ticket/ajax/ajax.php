@@ -53,7 +53,7 @@ if (!defined('NOBROWSERNOTIF')) {
 include_once '../../../main.inc.php'; // Load $user and permissions
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $email = GETPOST('email', 'custom', 0, FILTER_VALIDATE_EMAIL);
 
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
  * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  *   	\file       htdocs/core/class/translate.class.php
  *      \ingroup    core
- *		\brief      File for Tanslate class
+ *		\brief      File for Translate class
  */
 
 
@@ -29,20 +30,67 @@
  */
 class Translate
 {
-	public $dir; // Directories that contains /langs subdirectory
+	/**
+	 * @var string[]      Directory containing the /langs subdirectory
+	 */
+	public $dir;
 
-	public $defaultlang; // Current language for current user
-	public $shortlang; // Short language for current user
-	public $charset_output = 'UTF-8'; // Codage used by "trans" method outputs
+	/**
+	 * @var string      Current language for current user
+	 */
+	public $defaultlang;
 
-	public $tab_translate = array(); // Array of all translations key=>value
-	private $_tab_loaded = array(); // Array to store result after loading each language file
+	/**
+	 * @var string      Short language code for current user
+	 */
+	public $shortlang;
 
-	public $cache_labels = array(); // Cache for labels return by getLabelFromKey method
-	public $cache_currencies = array(); // Cache to store currency symbols
+	/**
+	 * @var string      Codage used by "trans" method outputs
+	 */
+	public $charset_output = 'UTF-8';
+
+
+	/**
+	 * @var array       Array of all translations key=>value
+	 */
+	public $tab_translate = array();
+
+	/**
+	 * @var array       Array to store result after loading each language file
+	 */
+	private $_tab_loaded = array();
+
+	/**
+	 * @var array       Cache for labels returned by getLabelFromKey method
+	 */
+	public $cache_labels = array();
+
+	/**
+	 * @var array       Cache to store currency symbols
+	 */
+	public $cache_currencies = array();
+
+	/**
+	 * @var bool        True if all currencies have been loaded in this->cache_currencies
+	 * @see $cache_currencies
+	 */
 	private $cache_currencies_all_loaded = false;
+
+	/**
+	 * @var string      Language to use
+	 */
 	public $origlang;
+
+	/**
+	 * @var string      Error message
+	 * @see $errors
+	 */
 	public $error;
+
+	/**
+	 * @var string[]    Array of error messages
+	 */
 	public $errors = array();
 
 
@@ -197,13 +245,15 @@ class Translate
 	 *												then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
 	 *  @param	integer	$alt         				0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection			Stop when the DIRECTION tag is found (optimize speed)
-	 * 	@param	int		$forcelangdir				To force a different lang directory
+	 * 	@param	string	$forcelangdir				To force a different lang directory
 	 *  @param  int     $loadfromfileonly   		1=Do not load overwritten translation from file or old conf.
 	 *  @param  int     $forceloadifalreadynotfound	Force attempt to reload lang file if it was previously not found
+	 *  @param  array   $tabtranslatedomain			Store translations to be stored in cache
+	 *  @param  string  $langkey                    To create key for cachekey in recursivity
 	 *	@return	int									Return integer <0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 *  @see loadLangs()
 	 */
-	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0)
+	public function load($domain, $alt = 0, $stopafterdirection = 0, $forcelangdir = '', $loadfromfileonly = 0, $forceloadifalreadynotfound = 0, &$tabtranslatedomain = [], $langkey = '')
 	{
 		global $conf, $db;
 
@@ -211,7 +261,7 @@ class Translate
 
 		// Check parameters
 		if (empty($domain)) {
-			dol_print_error('', get_class($this) . "::Load ErrorWrongParameters");
+			dol_print_error(null, get_class($this) . "::Load ErrorWrongParameters");
 			return -1;
 		}
 		if ($this->defaultlang === 'none_NONE') {
@@ -246,6 +296,7 @@ class Translate
 
 		$fileread = 0;
 		$langofdir = (empty($forcelangdir) ? $this->defaultlang : $forcelangdir);
+		$langkey = (empty($langkey) ? $langofdir : $langkey);
 
 		// Redefine alt
 		$langarray = explode('_', $langofdir);
@@ -261,6 +312,7 @@ class Translate
 			return -1;
 		}
 
+		$usecachekey = '';
 		foreach ($this->dir as $searchdir) {
 			// Directory of translation files
 			$file_lang = $searchdir . ($modulename ? '/' . $modulename : '') . "/langs/" . $langofdir . "/" . $newdomain . ".lang";
@@ -280,22 +332,18 @@ class Translate
 				$usecachekey = '';
 				// Using a memcached server
 				if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
-					$usecachekey = $newdomain . '_' . $langofdir . '_' . md5($file_lang); // Should not contains special chars
-				} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+					$usecachekey = $newdomain . '_' . $langkey . '_' . md5($file_lang); // Should not contains special chars
+				} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 					// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 					$usecachekey = $newdomain;
 				}
 
 				if ($usecachekey) {
 					//dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
-					//global $aaa; $aaa+=1;
-					//print $aaa." ".$usecachekey."\n";
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 					$tmparray = dol_getcache($usecachekey);
 					if (is_array($tmparray) && count($tmparray)) {
 						$this->tab_translate += $tmparray; // Faster than array_merge($tmparray,$this->tab_translate). Note: If a value already exists into tab_translate, value into tmparaay is not added.
-						//print $newdomain."\n";
-						//var_dump($this->tab_translate);
 						if ($alt == 2) {
 							$fileread = 1;
 						}
@@ -306,7 +354,7 @@ class Translate
 				if (!$found) {
 					if ($fp = @fopen($file_lang, "rt")) {
 						if ($usecachekey) {
-							$tabtranslatedomain = array(); // To save lang content in cache
+							// $tabtranslatedomain = array(); // To save lang content in cache
 						}
 
 						/**
@@ -344,16 +392,6 @@ class Translate
 						fclose($fp);
 						$fileread = 1;
 
-						// TODO Move cache write out of loop on dirs
-						// To save lang content for usecachekey into cache
-						if ($usecachekey && count($tabtranslatedomain)) {
-							$ressetcache = dol_setcache($usecachekey, $tabtranslatedomain);
-							if ($ressetcache < 0) {
-								$error = 'Failed to set cache for usecachekey=' . $usecachekey . ' result=' . $ressetcache;
-								dol_syslog($error, LOG_ERR);
-							}
-						}
-
 						if (!getDolGlobalString('MAIN_FORCELANGDIR')) {
 							break; // Break loop on each root dir. If a module has forced dir, we do not stop loop.
 						}
@@ -373,7 +411,7 @@ class Translate
 			if ($langofdir == 'ar_AR') {
 				$langofdir = 'ar_SA'; // main parent for ar_EG is not 'ar_AR' but 'ar_SA'
 			}
-			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir);
+			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir, 0, 0, $tabtranslatedomain, $langkey);
 		}
 
 		// Now we complete with reference file (en_US)
@@ -381,7 +419,7 @@ class Translate
 			// This function MUST NOT contains call to syslog
 			//dol_syslog("Translate::Load loading alternate translation file (to complete ".$this->defaultlang."/".$newdomain.".lang file)", LOG_DEBUG);
 			$langofdir = 'en_US';
-			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir);
+			$this->load($domain, $alt + 1, $stopafterdirection, $langofdir, 0, 0, $tabtranslatedomain, $langkey);
 		}
 
 		// We are in the pass of the reference file. No more files to scan to complete.
@@ -399,7 +437,7 @@ class Translate
 		// Kept for backward compatibility.
 		if (empty($loadfromfileonly)) {
 			$overwritekey = 'MAIN_OVERWRITE_TRANS_' . $this->defaultlang;
-			if (!empty($conf->global->$overwritekey)) {    // Overwrite translation with key1:newstring1,key2:newstring2
+			if (getDolGlobalString($overwritekey)) {    // Overwrite translation with key1:newstring1,key2:newstring2
 				// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
 				$tmparray = explode(',', getDolGlobalString($overwritekey));
 				foreach ($tmparray as $tmp) {
@@ -408,6 +446,15 @@ class Translate
 						$this->tab_translate[$tmparray2[0]] = $tmparray2[1];
 					}
 				}
+			}
+		}
+
+		// To save lang content for usecachekey into cache
+		if ($usecachekey && count($tabtranslatedomain)) {
+			$ressetcache = dol_setcache($usecachekey, $tabtranslatedomain);
+			if ($ressetcache < 0) {
+				$error = 'Failed to set cache for usecachekey=' . $usecachekey . ' result=' . $ressetcache;
+				dol_syslog($error, LOG_ERR);
 			}
 		}
 
@@ -473,7 +520,7 @@ class Translate
 		// Using a memcached server
 		if (isModEnabled('memcached') && getDolGlobalString('MEMCACHED_SERVER')) {
 			$usecachekey = $newdomain . '_' . $langofdir; // Should not contains special chars
-		} elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02)) {
+		} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {
 			// Using cache with shmop. Speed gain: 40ms - Memory overusage: 200ko (Size of session cache file)
 			$usecachekey = $newdomain;
 		}
@@ -571,7 +618,7 @@ class Translate
 	 * Return translated value of key for special keys ("Currency...", "Civility...", ...).
 	 * Search in lang file, then into database. Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
-	 * The string return is not formated (translated with transnoentitiesnoconv).
+	 * The string return is not formatted (translated with transnoentitiesnoconv).
 	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey->getLabelFromKey), if you modify this function,
 	 * check that getLabelFromKey is never called with the same value than $key.
 	 *
@@ -629,14 +676,12 @@ class Translate
 	 */
 	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
 	{
-		global $conf;
-
 		if (!empty($this->tab_translate[$key])) {	// Translation is available
 			$str = $this->tab_translate[$key];
 
 			// Make some string replacement after translation
 			$replacekey = 'MAIN_REPLACE_TRANS_' . $this->defaultlang;
-			if (!empty($conf->global->$replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
+			if (getDolGlobalString($replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
@@ -654,6 +699,7 @@ class Translate
 
 			if (strpos($key, 'Format') !== 0) {
 				try {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
 				} catch (Exception $e) {
 					// No exception managed
@@ -680,7 +726,6 @@ class Translate
 
 			return $str;
 		} else { // Translation is not available
-			//if ($key[0] == '$') { return dol_eval($key, 1, 1, '1'); }
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -730,7 +775,7 @@ class Translate
 
 			// Make some string replacement after translation
 			$replacekey = 'MAIN_REPLACE_TRANS_' . $this->defaultlang;
-			if (!empty($conf->global->$replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
+			if (getDolGlobalString($replacekey)) {    // Replacement translation variable with string1:newstring1;string2:newstring2
 				$tmparray = explode(';', getDolGlobalString($replacekey));
 				foreach ($tmparray as $tmp) {
 					$tmparray2 = explode(':', $tmp);
@@ -740,6 +785,7 @@ class Translate
 
 			if (!preg_match('/^Format/', $key)) {
 				//print $str;
+				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
 			}
 
@@ -749,9 +795,6 @@ class Translate
 
 			return $str;
 		} else {
-			/*if ($key[0] == '$') {
-				return dol_eval($key, 1, 1, '1');
-			}*/
 			return $this->getTradFromKey($key);
 		}
 	}
@@ -767,8 +810,9 @@ class Translate
 	 */
 	public function transcountry($str, $countrycode)
 	{
-		if (!empty($this->tab_translate["$str$countrycode"])) {
-			return $this->trans("$str$countrycode");
+		$strLocaleKey = $str.$countrycode;
+		if (!empty($this->tab_translate[$strLocaleKey])) {
+			return $this->trans($strLocaleKey);
 		} else {
 			return $this->trans($str);
 		}
@@ -776,7 +820,7 @@ class Translate
 
 
 	/**
-	 *  Retourne la version traduite du texte passe en parametre complete du code pays
+	 *  Retourne la version traduite du texte passe en parameter complete du code pays
 	 *
 	 *  @param	string	$str            string root to translate
 	 *  @param  string	$countrycode    country code (FR, ...)
@@ -785,8 +829,9 @@ class Translate
 	 */
 	public function transcountrynoentities($str, $countrycode)
 	{
-		if (!empty($this->tab_translate["$str$countrycode"])) {
-			return $this->transnoentities("$str$countrycode");
+		$strLocaleKey = $str.$countrycode;
+		if (!empty($this->tab_translate[$strLocaleKey])) {
+			return $this->transnoentities($strLocaleKey);
 		} else {
 			return $this->transnoentities($str);
 		}
@@ -899,7 +944,7 @@ class Translate
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
 	 *  @param	string	$filename       Language filename to search
-	 *  @param  integer	$searchalt      Search also alernate language file
+	 *  @param  integer	$searchalt      Search also alternate language file
 	 *  @return boolean         		true if exists and readable
 	 */
 	public function file_exists($filename, $searchalt = 0)
@@ -980,7 +1025,7 @@ class Translate
 	 * 		@param	string	$fieldlabel		Field for label. This value must always be a hardcoded string and not a value coming from user input.
 	 *      @param	string	$keyforselect	Use another value than the translation key for the where into select
 	 *      @param  int		$filteronentity	Use a filter on entity
-	 *      @return string					Label in UTF8 (but without entities)
+	 *      @return string|int				Label in UTF8 (but without entities) or -1 if error
 	 *      @see dol_getIdFromCode()
 	 */
 	public function getLabelFromKey($db, $key, $tablename, $fieldkey, $fieldlabel, $keyforselect = '', $filteronentity = 0)

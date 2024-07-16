@@ -55,7 +55,7 @@ $result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', 
 $vline = GETPOST('vline');
 $page = GETPOSTISSET("page") ? GETPOST("page") : 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('banktreso', 'globalcard'));
 
 
@@ -80,12 +80,12 @@ if (GETPOST("account") || GETPOST("ref")) {
 	}
 
 	$object = new Account($db);
-	if (GETPOST("account", 'int')) {
-		$result = $object->fetch(GETPOST("account", 'int'));
+	if (GETPOSTINT("account")) {
+		$result = $object->fetch(GETPOSTINT("account"));
 	}
 	if (GETPOST("ref")) {
 		$result = $object->fetch(0, GETPOST("ref"));
-		$_GET["account"] = $object->id;
+		$id = $object->id;
 	}
 
 	$title = $object->ref.' - '.$langs->trans("PlannedTransactions");

@@ -53,18 +53,18 @@ $result = restrictedArea($user, 'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
-$id_product = GETPOST('productid', 'int');
-$id_sw = GETPOST('id_sw', 'int');
-$id_tw = GETPOST('id_tw', 'int');
+$id_product = GETPOSTINT('productid');
+$id_sw = GETPOSTINT('id_sw');
+$id_tw = GETPOSTINT('id_tw');
 $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -296,7 +296,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					}
 				}
 			} else {
-				// dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error(null,"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -308,7 +308,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 		$db->commit();
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php'); // Redirect to avoid pb when using back
 		exit;
 	} else {
 		$db->rollback();
@@ -519,14 +519,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		$param .= '&endatlinenb='.urlencode($endatlinenb);
 	}
 
-	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 
@@ -548,7 +548,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Best
 
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_massstomove');
 
 print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
@@ -585,7 +585,7 @@ $out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
 if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
@@ -688,7 +688,7 @@ if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
-	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');

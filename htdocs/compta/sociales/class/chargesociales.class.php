@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2022 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +22,15 @@
 
 /**
  *      \file       htdocs/compta/sociales/class/chargesociales.class.php
- *		\ingroup    facture
- *		\brief      Fichier de la classe des charges sociales
+ *		\ingroup    invoice
+ *		\brief      File for the ChargesSociales class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
- *	Classe permettant la gestion des paiements des charges
- *  La tva collectee n'est calculee que sur les factures payees.
+ *	Class for managing the social charges.
+ *  The collected VAT is computed only on the paid invoices/charges
  */
 class ChargeSociales extends CommonObject
 {
@@ -64,6 +65,9 @@ class ChargeSociales extends CommonObject
 	public $label;
 	public $type;
 	public $type_label;
+	public $type_code;
+	public $type_accountancy_code;
+
 	public $amount;
 	public $paye;
 	/**
@@ -71,21 +75,6 @@ class ChargeSociales extends CommonObject
 	 */
 	public $periode;
 	public $period;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string $date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string $date_validation
-	 */
-	public $date_validation;
 
 	/**
 	 * @deprecated Use label instead
@@ -155,7 +144,7 @@ class ChargeSociales extends CommonObject
 		$sql = "SELECT cs.rowid, cs.date_ech";
 		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
 		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
-		$sql .= ", c.libelle as type_label";
+		$sql .= ", c.libelle as type_label, c.code as type_code, c.accountancy_code as type_accountancy_code";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
@@ -180,6 +169,8 @@ class ChargeSociales extends CommonObject
 				$this->label				= $obj->label;
 				$this->type					= $obj->fk_type;
 				$this->type_label			= $obj->type_label;
+				$this->type_code			= $obj->type_code;
+				$this->type_accountancy_code = $obj->type_accountancy_code;
 				$this->fk_account			= $obj->fk_account;
 				$this->mode_reglement_id = $obj->fk_mode_reglement;
 				$this->mode_reglement_code = $obj->mode_reglement_code;
@@ -192,7 +183,7 @@ class ChargeSociales extends CommonObject
 				$this->paye = $obj->paye;
 				$this->periode = $this->db->jdate($obj->period);
 				$this->period = $this->db->jdate($obj->period);
-				$this->import_key = $this->import_key;
+				$this->import_key = $obj->import_key;
 
 				$this->db->free($resql);
 
@@ -236,7 +227,7 @@ class ChargeSociales extends CommonObject
 
 		$now = dol_now();
 
-		// Nettoyage parametres
+		// Nettoyage parameters
 		$newamount = price2num($this->amount, 'MT');
 
 		if (!$this->check()) {
@@ -405,8 +396,8 @@ class ChargeSociales extends CommonObject
 	/**
 	 * Calculate amount remaining to pay by year
 	 *
-	 * @param   int     $year       Year
-	 * @return  number
+	 * @param   int			$year       Year
+	 * @return  int|float 	  	        Returns -1 when error (Note: could be mistaken with an amount)
 	 */
 	public function solde($year = 0)
 	{
@@ -518,7 +509,7 @@ class ChargeSociales extends CommonObject
 	 *  Retourne le libelle du statut d'une charge (impaye, payee)
 	 *
 	 *  @param	int		$mode       	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return	string        			Label
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -532,7 +523,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount paid if you have it, 1 otherwise)
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
 	 *  @return string        			Label
 	 */
 	public function LibStatut($status, $mode = 0, $alreadypaid = -1)
@@ -575,7 +566,7 @@ class ChargeSociales extends CommonObject
 
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -586,7 +577,7 @@ class ChargeSociales extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $short = 0, $save_lastsearch_value = -1)
 	{
-		global $langs, $conf, $user, $form, $hookmanager;
+		global $langs, $conf, $user, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -627,6 +618,9 @@ class ChargeSociales extends CommonObject
 		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
+			if (!empty($this->type_accountancy_code)) {
+				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.$this->type_accountancy_code.')</span>';
+			}
 		}
 
 		$linkclose = '';
@@ -651,15 +645,17 @@ class ChargeSociales extends CommonObject
 			$result .= $this->ref;
 		}
 		$result .= $linkend;
+
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
 		} else {
 			$result .= $hookmanager->resPrint;
 		}
+
 		return $result;
 	}
 
@@ -695,7 +691,7 @@ class ChargeSociales extends CommonObject
 	}
 
 	/**
-	 * 	Charge les informations d'ordre info dans l'objet entrepot
+	 * 	Charge l'information d'ordre info dans l'objet entrepot
 	 *
 	 *  @param	int		$id     Id of social contribution
 	 *  @return	int				Return integer <0 if KO, >0 if OK
@@ -737,7 +733,7 @@ class ChargeSociales extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -754,6 +750,8 @@ class ChargeSociales extends CommonObject
 		$this->label = 'Social contribution label';
 		$this->type = 1;
 		$this->type_label = 'Type of social contribution';
+
+		return 1;
 	}
 
 	/**

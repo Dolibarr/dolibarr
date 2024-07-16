@@ -21,7 +21,6 @@ MenuDoneMyActions=אירועי הסתיימו שלי
 ListOfEvents=רשימת אירועים (לוח שנה ברירת מחדל)
 ActionsAskedBy=אירועים שדווחו על ידי
 ActionsToDoBy=אירועים הוקצו ל
-ActionsDoneBy=אירועים שנעשו על ידי
 ActionAssignedTo=האירוע הוקצה ל
 ViewCal=תצוגת חודש
 ViewDay=תצוגת יום
@@ -135,12 +134,14 @@ AgendaModelModule=תבניות מסמכים לאירוע
 DateActionStart=תאריך התחלה
 DateActionEnd=תאריך סיום
 AgendaUrlOptions1=אתה יכול גם להוסיף את הפרמטרים הבאים לסינון הפלט:
-AgendaUrlOptions3=<b>logina=%s</b> כדי להגביל את הפלט לפעולות שבבעלות משתמש <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> כדי להגביל פלט לפעולות שאינן בבעלות משתמש <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> כדי להגביל את הפלט לפעולות ש<strong>הוקצו למשתמש span class='notranslate'><b></span>%s</b> (בעלים ואחרים).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> כדי להגביל את הפלט לפעולות המקושרות לפרויקט b0aee87365 __PROJECT_ID__<span class='notranslate'></b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> כדי לא לכלול אירועים אוטומטיים.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> כדי לכלול אירועים של חגים.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=ימי הולדת של אנשי קשר
 AgendaHideBirthdayEvents=הסתר ימי הולדת של אנשי קשר
 Busy=עסוק
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=ההזמנה שלך נשמרה
 BookingReservationHourAfter=אנו מאשרים את ההזמנה של הפגישה שלנו בתאריך %s
 BookcalBookingTitle=פגישה מקוונת
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

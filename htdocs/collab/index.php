@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ $conf->dol_hide_leftmenu = 1; // Force hide of left menu.
 $error = 0;
 $website = GETPOST('website', 'alpha');
 $page = GETPOST('page', 'alpha');
-$pageid = GETPOST('pageid', 'int');
+$pageid = GETPOSTINT('pageid');
 $action = GETPOST('action', 'aZ09');
 
 if (GETPOST('delete')) {
@@ -163,7 +164,7 @@ $form = new Form($db);
 
 $help_url = '';
 
-llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, '', '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url, '', 0, 0, '', '', '', '', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.newToken().'">';

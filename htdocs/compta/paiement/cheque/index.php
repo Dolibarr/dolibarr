@@ -136,7 +136,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 
 	$resql = $db->query($sql);
 	if ($resql) {
-		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th>';
@@ -148,7 +148,7 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 		}
 		print '</th>';
 		print '<th>'.$langs->trans("Date")."</th>";
-		print '<th>'.$langs->trans("Account").'</th>';
+		print '<th>'.$langs->trans("BankAccount").'</th>';
 		print '<th class="right">'.$langs->trans("NbOfCheques").'</th>';
 		print '<th class="right">'.$langs->trans("Amount").'</th>';
 		print '<th class="right">'.$langs->trans("Status").'</th>';
@@ -177,8 +177,8 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 			print '<td class="nowraponall">'.$checkdepositstatic->getNomUrl(1).'</td>';
 			print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
 			print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
-			print '<td class="right">'.$objp->nbcheque.'</td>';
-			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+			print '<td class="right">'.dol_escape_htmltag($objp->nbcheque).'</td>';
+			print '<td class="right"><span class="amount nowraponall">'.price($objp->amount).'</span></td>';
 			print '<td class="right">'.$checkdepositstatic->LibStatut($objp->status, 3).'</td>';
 
 			print '</tr>';

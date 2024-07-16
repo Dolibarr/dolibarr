@@ -153,7 +153,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape)) 
 		}
 		$object->cond_reglement_id = dol_getIdFromCode($db, $condpayment, 'c_payment_term', 'libelle_facture', 'rowid', 1);
 		if (empty($object->cond_reglement_id)) {
-			print " - Error cant find payment mode for ".$condpayment."\n";
+			print " - Error can't find payment mode for ".$condpayment."\n";
 			$errorrecord++;
 		}
 	}

@@ -24,7 +24,6 @@ ExportDataset_ticket_1=Entradas
 Read=Leer
 NeedMoreInformation=Esperando comentarios del reportero
 Waiting=Espera
-Type=Tipo
 TicketGroupIsPublic=el grupo es publico
 TicketGroupIsPublicDesc=Si un grupo de tickets es público, será visible en el formulario al crear un ticket desde la interfaz pública
 MailToSendTicketMessage=Para enviar un correo electrónico desde el mensaje del ticket

@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,37 +41,37 @@ $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $mode = GETPOST("mode", 'alpha');
-$id = GETPOST('id', 'int');
-$taskid = GETPOST('taskid', 'int');
+$id = GETPOSTINT('id');
+$taskid = GETPOSTINT('taskid');
 
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'perweekcard';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'timespent';
 
 $mine = 0;
 if ($mode == 'mine') {
 	$mine = 1;
 }
 
-$projectid = GETPOSTISSET("id") ? GETPOST("id", "int", 1) : GETPOST("projectid", "int");
+$projectid = GETPOSTISSET("id") ? GETPOSTINT("id", 1) : GETPOSTINT("projectid");
 
 $hookmanager->initHooks(array('timesheetpermonthcard'));
 
 // Security check
 $socid = 0;
-// For external user, no check is done on company because readability is managed by public status of project and assignement.
+// For external user, no check is done on company because readability is managed by public status of project and assignment.
 // if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now = dol_now();
 
-$year = GETPOST('reyear', 'int') ? GETPOST('reyear', 'int') : (GETPOST("year", 'int') ? GETPOST("year", "int") : date("Y"));
-$month = GETPOST('remonth', 'int') ? GETPOST('remonth', 'int') : (GETPOST("month", 'int') ? GETPOST("month", "int") : date("m"));
-$day = GETPOST('reday', 'int') ? GETPOST('reday', 'int') : (GETPOST("day", 'int') ? GETPOST("day", "int") : date("d"));
-$week = GETPOST("week", "int") ? GETPOST("week", "int") : date("W");
+$year = GETPOSTINT('reyear') ? GETPOSTINT('reyear') : (GETPOSTINT("year") ? GETPOSTINT("year") : date("Y"));
+$month = GETPOSTINT('remonth') ? GETPOSTINT('remonth') : (GETPOSTINT("month") ? GETPOSTINT("month") : date("m"));
+$day = GETPOSTINT('reday') ? GETPOSTINT('reday') : (GETPOSTINT("day") ? GETPOSTINT("day") : date("d"));
+$week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
 
 $day = (int) $day;
 
 //$search_categ = GETPOST("search_categ", 'alpha');
-$search_usertoprocessid = GETPOST('search_usertoprocessid', 'int');
+$search_usertoprocessid = GETPOSTINT('search_usertoprocessid');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
@@ -125,9 +127,9 @@ $arrayfields = array();
  'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
  'p.usage_bill_time'=>array('label'=>$langs->trans("BillTimeShort"), 'checked'=>0, 'position'=>115),
  );*/
-$arrayfields['t.planned_workload'] = array('label'=>'PlannedWorkload', 'checked'=>1, 'enabled'=>1, 'position'=>5);
-$arrayfields['t.progress'] = array('label'=>'ProgressDeclared', 'checked'=>1, 'enabled'=>1, 'position'=>10);
-$arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'enabled'=>1, 'position'=>15);
+$arrayfields['t.planned_workload'] = array('label' => 'PlannedWorkload', 'checked' => 1, 'enabled' => 1, 'position' => 5);
+$arrayfields['t.progress'] = array('label' => 'ProgressDeclared', 'checked' => 1, 'enabled' => 1, 'position' => 10);
+$arrayfields['timeconsumed'] = array('label' => 'TimeConsumed', 'checked' => 1, 'enabled' => 1, 'position' => 15);
 /*foreach($object->fields as $key => $val)
  {
  // If $val['visible']==0, then we never show the field
@@ -138,7 +140,7 @@ $arrayfields['timeconsumed'] = array('label'=>'TimeConsumed', 'checked'=>1, 'ena
 if (!empty($extrafields->attributes['projet_task']['label']) && is_array($extrafields->attributes['projet_task']['label']) && count($extrafields->attributes['projet_task']['label']) > 0) {
 	foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) {
 		if (!empty($extrafields->attributes['projet_task']['list'][$key])) {
-			$arrayfields["efpt.".$key] = array('label'=>$extrafields->attributes['projet_task']['label'][$key], 'checked'=>(($extrafields->attributes['projet_task']['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes['projet_task']['pos'][$key], 'enabled'=>(abs((int) $extrafields->attributes['projet_task']['list'][$key]) != 3 && $extrafields->attributes['projet_task']['perms'][$key]));
+			$arrayfields["efpt.".$key] = array('label' => $extrafields->attributes['projet_task']['label'][$key], 'checked' => (($extrafields->attributes['projet_task']['list'][$key] < 0) ? 0 : 1), 'position' => $extrafields->attributes['projet_task']['pos'][$key], 'enabled' => (abs((int) $extrafields->attributes['projet_task']['list'][$key]) != 3 && $extrafields->attributes['projet_task']['perms'][$key]));
 		}
 	}
 }
@@ -154,6 +156,7 @@ $error = 0;
 /*
  * Actions
  */
+
 $parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid, 'TWeek' => $TWeek, 'TFirstDays' => $TFirstDays, 'TLastDays' => $TLastDays);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -182,8 +185,8 @@ if (GETPOST("button_search_x", 'alpha') || GETPOST("button_search.x", 'alpha') |
 }
 
 if (GETPOST('submitdateselect')) {
-	if (GETPOST('remonth', 'int') && GETPOST('reday', 'int') && GETPOST('reyear', 'int')) {
-		$daytoparse = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+	if (GETPOSTINT('remonth') && GETPOSTINT('reday') && GETPOSTINT('reyear')) {
+		$daytoparse = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	}
 
 	$action = '';
@@ -281,7 +284,7 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 						$object->fetch($tmptaskid);
 
 						if (GETPOSTISSET($tmptaskid.'progress')) {
-							$object->progress = GETPOST($tmptaskid.'progress', 'int');
+							$object->progress = GETPOSTINT($tmptaskid.'progress');
 						} else {
 							unset($object->progress);
 						}
@@ -308,8 +311,8 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 				$object->fetch($tmptaskid);
 				//var_dump($object->progress);
 				//var_dump(GETPOST($tmptaskid . 'progress', 'int')); exit;
-				if ($object->progress != GETPOST($tmptaskid.'progress', 'int')) {
-					$object->progress = GETPOST($tmptaskid.'progress', 'int');
+				if ($object->progress != GETPOSTINT($tmptaskid.'progress')) {
+					$object->progress = GETPOSTINT($tmptaskid.'progress');
 					$result = $object->update($user);
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -325,9 +328,9 @@ if ($action == 'addtime' && $user->hasRight('projet', 'lire') && GETPOST('formfi
 
 			$param = '';
 			$param .= ($mode ? '&mode='.urlencode($mode) : '');
-			$param .= ($projectid ? 'id='.urlencode($projectid) : '');
+			$param .= ($projectid ? 'id='.urlencode((string) ($projectid)) : '');
 			$param .= ($search_usertoprocessid ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
-			$param .= ($day ? '&day='.urlencode($day) : '').($month ? '&month='.urlencode($month) : '').($year ? '&year='.urlencode($year) : '');
+			$param .= ($day ? '&day='.urlencode((string) ($day)) : '').($month ? '&month='.urlencode((string) ($month)) : '').($year ? '&year='.urlencode((string) ($year)) : '');
 			$param .= ($search_project_ref ? '&search_project_ref='.urlencode($search_project_ref) : '');
 			$param .= ($search_usertoprocessid > 0 ? '&search_usertoprocessid='.urlencode($search_usertoprocessid) : '');
 			$param .= ($search_thirdparty ? '&search_thirdparty='.urlencode($search_thirdparty) : '');
@@ -420,7 +423,7 @@ $tasksrole = $taskstatic->getUserRolesForProjectsOrTasks(null, $usertoprocess, (
 //var_dump($taskrole);
 
 
-llxHeader("", $title, "", '', '', '', array('/core/js/timesheet.js'));
+llxHeader('', $title, '', '', 0, 0, array('/core/js/timesheet.js'), '', '', 'mod-project project-activity page-activity_permonth');
 
 //print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num, '', 'project');
 
@@ -444,7 +447,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav .= ' <span id="month_name">'.dol_print_date(dol_mktime(0, 0, 0, $month, 1, $year), "%Y").", ".$langs->trans(date('F', mktime(0, 0, 0, $month, 10)))." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
+$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, ($conf->dol_optimize_smallscreen ? 0 : 1)).' ';
 $nav .= ' <button type="submit" name="submitdateselect" value="x" class="bordertransp nobordertransp button_search_x"><span class="fa fa-search"></span></button>';
 
 $picto = 'clock';
@@ -493,7 +496,7 @@ if ($usertoprocess->id != $user->id) {
 }
 print '<div class="taskiddiv inline-block">';
 print img_picto('', 'projecttask', 'class="pictofixedwidth"');
-$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx');
+$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, 'widthcentpercentminusx', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'position', 0, 'maxwidth150onsmartphone');
@@ -516,14 +519,21 @@ if (isModEnabled("categorie")) {
 }*/
 
 // If the user can view user other than himself
-$moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
 $includeonly = 'hierarchyme';
 if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"').$form->select_dolusers($search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id, 'search_usertoprocessid', $user->hasRight('user', 'user', 'lire') ? 0 : 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
-$moreforfilter .= '</div>';
+$selecteduser = $search_usertoprocessid ? $search_usertoprocessid : $usertoprocess->id;
+$moreforfiltertmp = $form->select_dolusers($selecteduser, 'search_usertoprocessid', 0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+if ($form->num > 1 || empty($conf->dol_optimize_smallscreen)) {
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="inline-block hideonsmartphone"></div>';
+	$moreforfilter .= img_picto($langs->trans('Filter').' '.$langs->trans('User'), 'user', 'class="paddingright pictofixedwidth"');
+	$moreforfilter .= $moreforfiltertmp;
+	$moreforfilter .= '</div>';
+} else {
+	$moreforfilter .= '<input type="hidden" name="search_usertoprocessid" value="'.$selecteduser.'">';
+}
 
 if (!getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -546,6 +556,24 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
+$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+
+$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+
+// This must be after the $selectedfields
+$addcolspan = 0;
+if (!empty($arrayfields['t.planned_workload']['checked'])) {
+	$addcolspan++;
+}
+if (!empty($arrayfields['t.progress']['checked'])) {
+	$addcolspan++;
+}
+foreach ($arrayfields as $key => $val) {
+	if ($val['checked'] && substr($key, 0, 5) == 'efpt.') {
+		$addcolspan++;
+	}
+}
+
 print '<div class="div-table-responsive">';
 
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'" id="tablelines3">'."\n";
@@ -558,15 +586,21 @@ if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 }
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
-print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
+if (!empty($arrayfields['t.planned_workload']['checked'])) {
+	print '<td class="liste_titre"></td>';
+}
+if (!empty($arrayfields['t.progress']['checked'])) {
+	print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
+}
+if (!empty($arrayfields['timeconsumed']['checked'])) {
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+}
 foreach ($TWeek as $week_number) {
 	print '<td class="liste_titre"></td>';
 }
 // Action column
-print '<td class="liste_titre nowrap" align="right">';
+print '<td class="liste_titre nowrap right">';
 $searchpicto = $form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -580,26 +614,31 @@ if (getDolGlobalString('PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT')) {
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 }
 print '<td>'.$langs->trans("Task").'</td>';
-print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
-/*print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'</td>';
- if ($usertoprocess->id == $user->id) print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByYou").'</td>';
- else print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<td class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
-print '<span class="nowraponall">';
-print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
-print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
-print '</span>';
-print '</td>';
-print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</td>';
-
-foreach ($TWeek as $week_number) {
-	print '<td width="6%" class="center bold hide">'.$langs->trans("Week").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</td>';
+if (!empty($arrayfields['t.planned_workload']['checked'])) {
+	print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$form->textwithpicto($langs->trans("PlannedWorkloadShort"), $langs->trans("PlannedWorkload")).'</td>';
 }
-print '<td></td>';
+if (!empty($arrayfields['t.progress']['checked'])) {
+	print '<td class="right maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
+}
+if (!empty($arrayfields['timeconsumed']['checked'])) {
+	print '<td class="right maxwidth100">'.$langs->trans("TimeSpentSmall").'<br>';
+	print '<span class="nowraponall">';
+	print '<span class="opacitymedium nopadding userimg"><img alt="Photo" class="photouserphoto userphoto" src="'.DOL_URL_ROOT.'/theme/common/everybody.png"></span>';
+	print '<span class="opacitymedium paddingleft">'.$langs->trans("EverybodySmall").'</span>';
+	print '</span>';
+	print '</td>';
+	print '<td class="right maxwidth75">'.$langs->trans("TimeSpentSmall").($usertoprocess->firstname ? '<br><span class="nowraponall">'.$usertoprocess->getNomUrl(-2).'<span class="opacitymedium paddingleft">'.dol_trunc($usertoprocess->firstname, 10).'</span></span>' : '').'</td>';
+}
+foreach ($TWeek as $week_number) {
+	print '<td width="6%" class="center bold hide">'.$langs->trans("WeekShort").' '.$week_number.'<br>('.$TFirstDays[$week_number].'...'.$TLastDays[$week_number].')</td>';
+}
+
+//print '<td></td>';
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+
 print "</tr>\n";
 
-$colspan = 5;
+$colspan = 1;
 
 
 // Get if user is available or not for each day
@@ -607,7 +646,7 @@ $isavailable = array();
 // TODO See code into perweek.php to initialize isavailable array
 
 // By default, we can edit only tasks we are assigned to
-$restrictviewformytask = ((!isset($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)) ? 2 : $conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED);
+$restrictviewformytask = getDolGlobalInt('PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED', 2);
 if (count($tasksarray) > 0) {
 	//var_dump($tasksarray);				// contains only selected tasks
 	//var_dump($tasksarraywithoutfilter);	// contains all tasks (if there is a filter, not defined if no filter)
@@ -615,7 +654,7 @@ if (count($tasksarray) > 0) {
 
 	$j = 0;
 	$level = 0;
-	$totalforvisibletasks = projectLinesPerMonth($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $TWeek);
+	$totalforvisibletasks = projectLinesPerMonth($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $isavailable, 0, $TWeek, $arrayfields);
 	//var_dump($totalforvisibletasks);
 
 	// Show total for all other tasks
@@ -658,8 +697,20 @@ if (count($tasksarray) > 0) {
 		print '<td colspan="'.$colspan.'" class="opacitymedium">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
+		if (!empty($arrayfields['t.planned_workload']['checked'])) {
+			print '<td class="liste_total"></td>';
+		}
+		if (!empty($arrayfields['t.progress']['checked'])) {
+			print '<td class="liste_total"></td>';
+		}
+		if (!empty($arrayfields['timeconsumed']['checked'])) {
+			print '<td class="liste_total"></td>';
+			print '<td class="liste_total"></td>';
+		}
+		$j = 0;
 		foreach ($TWeek as $weekNb) {
-			print '<td class="center hide">';
+			$j++;
+			print '<td class="center hide'.($j <= 1 ? ' borderleft' : '').'">';
 
 			$timeonothertasks = ($totalforeachweek[$weekNb] - $totalforvisibletasks[$weekNb]);
 			if ($timeonothertasks) {
@@ -675,13 +726,19 @@ if (count($tasksarray) > 0) {
 
 	if ($conf->use_javascript_ajax) {
 		print '<tr class="liste_total">';
-		print '<td class="liste_total" colspan="'.$colspan.'">';
+		print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
 		print $langs->trans("Total");
 		print '<span class="opacitymediumbycolor">  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong></span>';
 		print '</td>';
+		if (!empty($arrayfields['timeconsumed']['checked'])) {
+			print '<td class="liste_total"></td>';
+			print '<td class="liste_total"></td>';
+		}
 
+		$j = 0;
 		foreach ($TWeek as $weekNb) {
-			print '<td class="liste_total hide'.$weekNb.'" align="center"><div class="totalDay'.$weekNb.'">'.convertSecondToTime($totalforvisibletasks[$weekNb], 'allhourmin').'</div></td>';
+			$j++;
+			print '<td class="liste_total hide'.$weekNb.' center'.($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$weekNb.'">'.convertSecondToTime($totalforvisibletasks[$weekNb], 'allhourmin').'</div></td>';
 		}
 		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';

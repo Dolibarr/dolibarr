@@ -17,4 +17,4 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_reception_extrafields ADD INDEX idx_reception_extrafields (fk_object);
+ALTER TABLE llx_reception_extrafields ADD UNIQUE INDEX uk_reception_extrafields (fk_object);

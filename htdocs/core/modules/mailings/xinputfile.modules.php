@@ -164,7 +164,7 @@ class mailing_xinputfile extends MailingTargets
 
 						if (!empty($buffer)) {
 							//print 'xx'.dol_strlen($buffer).empty($buffer)."<br>\n";
-							if (isValidEMail($email)) {
+							if (isValidEmail($email)) {
 								if ($old != $email) {
 									$cibles[$j] = array(
 													'email' => $email,

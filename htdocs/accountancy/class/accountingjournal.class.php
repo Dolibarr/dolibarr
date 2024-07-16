@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +44,6 @@ class AccountingJournal extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * @var int  	Does object support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
@@ -77,11 +74,6 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array array of lines
-	 */
-	public $lines;
-
-	/**
 	 * @var array 		Accounting account cached
 	 */
 	public static $accounting_account_cached = array();
@@ -107,16 +99,18 @@ class AccountingJournal extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**
 	 * Load an object from database
 	 *
-	 * @param	int		$rowid				Id of record to load
-	 * @param 	string 	$journal_code		Journal code
+	 * @param	int			$rowid			Id of record to load
+	 * @param 	string|null $journal_code	Journal code
 	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
-	public function fetch($rowid = null, $journal_code = null)
+	public function fetch($rowid = 0, $journal_code = null)
 	{
 		global $conf;
 
@@ -159,75 +153,6 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 * Load object in memory from the database
-	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int Return integer <0 if KO, >0 if OK
-	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-	{
-		$sql = "SELECT rowid, code, label, nature, active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
-					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
-				} elseif ($key == 't.rowid' || $key == 't.active') {
-					$sqlwhere[] = $key.'='.$value;
-				}
-			}
-		}
-		$sql .= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
-		}
-
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield, $sortorder);
-		}
-		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
-		$this->lines = array();
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new self($this->db);
-
-				$line->id = $obj->rowid;
-				$line->code = $obj->code;
-				$line->label = $obj->label;
-				$line->nature = $obj->nature;
-				$line->active = $obj->active;
-
-				$this->lines[] = $line;
-			}
-
-			$this->db->free($resql);
-
-			return $num;
-		} else {
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-
-			return -1;
-		}
-	}
-
-	/**
 	 * Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
@@ -239,7 +164,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $conf, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -285,7 +210,7 @@ class AccountingJournal extends CommonObject
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
-			$key = $langs->trans("AccountingJournalType".strtoupper($this->nature));
+			$key = $langs->trans("AccountingJournalType".$this->nature);
 			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
@@ -301,7 +226,7 @@ class AccountingJournal extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('accountingjournaldao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -407,12 +332,12 @@ class AccountingJournal extends CommonObject
 				case 1: // Various Journal
 					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
 					break;
-				//              case 2: // Sells Journal
-				//              case 3: // Purchases Journal
-				//              case 4: // Bank Journal
-				//              case 5: // Expense reports Journal
-				//              case 8: // Inventory Journal
-				//              case 9: // hasnew Journal
+					//              case 2: // Sells Journal
+					//              case 3: // Purchases Journal
+					//              case 4: // Bank Journal
+					//              case 5: // Expense reports Journal
+					//              case 8: // Inventory Journal
+					//              case 9: // hasnew Journal
 			}
 		}
 
@@ -930,7 +855,7 @@ class AccountingJournal extends CommonObject
 		global $conf, $langs, $hookmanager;
 
 		if (empty($sep)) {
-			$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+			$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 		}
 		$out = '';
 

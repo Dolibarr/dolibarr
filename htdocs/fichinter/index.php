@@ -37,19 +37,20 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('interventionindex'));
 
 // Load translation files required by the page
 $langs->load("interventions");
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -62,20 +63,18 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
-llxHeader("", $langs->trans("Interventions"), $help_url);
+llxHeader("", $langs->trans("Interventions"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-index');
 
 print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -83,7 +82,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($user->socid) {
 	$sql .= ' AND f.fk_soc = '.((int) $user->socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " GROUP BY f.fk_statut";
@@ -94,10 +93,11 @@ if ($resql) {
 	$total = 0;
 	$totalinprocess = 0;
 	$dataseries = array();
+	$colorseries = array();
 	$vals = array();
 	$bool = false;
 	// -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
-	if ($num>0) {
+	if ($num > 0) {
 		while ($row = $db->fetch_row($resql)) {
 			if (!isset($vals[$row[1]])) {
 				$vals[$row[1]] = 0;
@@ -172,11 +172,11 @@ if ($resql) {
 /*
  * Draft orders
  */
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -185,7 +185,7 @@ if (isModEnabled('ficheinter')) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 
@@ -216,8 +216,6 @@ if (isModEnabled('ficheinter')) {
 print '</div><div class="fichetwothirdright">';
 
 
-$max = 5;
-
 /*
  * Last modified interventions
  */
@@ -226,7 +224,7 @@ $sql = "SELECT f.rowid, f.ref, f.fk_statut, f.date_valid as datec, f.tms as date
 $sql .= " s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -235,7 +233,7 @@ $sql .= " AND f.fk_soc = s.rowid";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY f.tms DESC";
@@ -295,11 +293,11 @@ if ($resql) {
  * interventions to process
  */
 
-if (isModEnabled('ficheinter')) {
+if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, f.fk_statut, s.nom as name, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
@@ -308,7 +306,7 @@ if (isModEnabled('ficheinter')) {
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " ORDER BY f.rowid DESC";

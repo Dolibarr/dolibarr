@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2018  Charlene BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2015-2021  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,17 +36,7 @@ class box_task extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("projet");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $enabled = 1; // enable because fixed ;-).
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $enabled = 1;
 
 	/**
 	 *  Constructor
@@ -64,7 +54,7 @@ class box_task extends ModeleBoxes
 		$this->boxlabel = "Tasks";
 		$this->db = $db;
 
-		$this->hidden = (getDolGlobalString('PROJECT_HIDE_TASKS') || empty($user->rights->projet->lire));
+		$this->hidden = (getDolGlobalString('PROJECT_HIDE_TASKS') || !$user->hasRight('projet', 'lire'));
 	}
 
 	/**
@@ -134,7 +124,7 @@ class box_task extends ModeleBoxes
 						});
 						</script>';
 				// set cookie by js
-				$boxcontent .= '<script nonce="'.getNonce().'">date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+				$boxcontent .= '<script nonce="'.getNonce().'">date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ ; SameSite=Lax"; </script>';
 			}
 			$this->info_box_contents[0][] = array(
 				'tr' => 'class="nohover showiffilter'.$this->boxcode.' hideobject"',
@@ -184,7 +174,7 @@ class box_task extends ModeleBoxes
 					$taskstatic->ref = $objp->ref;
 					$taskstatic->label = $objp->label;
 					$taskstatic->progress = $objp->progress;
-					$taskstatic->fk_statut = $objp->fk_statut;
+					$taskstatic->status = $objp->fk_statut;
 					$taskstatic->date_end = $this->db->jdate($objp->datee);
 					$taskstatic->planned_workload = $objp->planned_workload;
 					$taskstatic->duration_effective = $objp->duration_effective;

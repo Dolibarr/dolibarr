@@ -29,7 +29,7 @@ RestrictYearToExport=Beschränke Zeitraum (Monat/Jahr) für den Export
 BlockedLogEnabled=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde aktiviert
 BlockedLogDisabled=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde deaktiviert, nachdem schon einige Aufzeichnungen durchgeführt wurden. Es wurde ein spezieller Fingerabdruck gespeichert, um die Kette als gebrochen zu markieren
 BlockedLogDisabledBis=Das System zum Protokollieren von Ereignissen in unveränderbaren Logs wurde deaktiviert. Dies ist möglich, da noch keine Aufzeichnungen vorgenommen wurden.
-LinkHasBeenDisabledForPerformancePurpose=Aus Leistungsgründen wird der direkte Link zum Dokument nach der 100. Zele nicht angezeigt.<span class='notranslate'>
+LinkHasBeenDisabledForPerformancePurpose=For performance purpose, direct link to the document is not shown after the 100th line.
 
 ## logTypes
 logBILL_DELETE=Kundenrechnung automatisch gelöscht

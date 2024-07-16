@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +195,7 @@ class ExportExcel2007 extends ModeleExports
 	public function open_file($file, $outputlangs)
 	{
 		// phpcs:enable
-		global $user, $conf, $langs;
+		global $user, $langs;
 
 		dol_syslog(get_class($this)."::open_file file=".$file);
 		$this->file = $file;
@@ -257,7 +259,6 @@ class ExportExcel2007 extends ModeleExports
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		global $conf;
 
 		// Create a format for the column headings
 		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
@@ -270,7 +271,7 @@ class ExportExcel2007 extends ModeleExports
 			$alias = $array_export_fields_label[$code];
 			//print "dd".$alias;
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
 
@@ -283,13 +284,17 @@ class ExportExcel2007 extends ModeleExports
 			}
 			$this->col++;
 		}
+
+		// Complete with some columns to add columns with the labels of columns of type Select, so we have more then the ID
 		foreach ($selectlabel as $key => $value) {
+			$code = preg_replace('/_label$/', '', $key);
 			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, $outputlangs->transnoentities($value));
 			if (!empty($array_types[$code]) && in_array($array_types[$code], array('Date', 'Numeric', 'TextAuto'))) {		// Set autowidth for some types
 				$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($this->col + 1))->setAutoSize(true);
 			}
 			$this->col++;
 		}
+
 		$this->row++;
 		return 0;
 	}
@@ -299,7 +304,7 @@ class ExportExcel2007 extends ModeleExports
 	 *  Output record line into file
 	 *
 	 *  @param      array		$array_selected_sorted      Array with list of field to export
-	 *  @param      resource	$objp                       A record from a fetch with all fields from select
+	 *  @param      Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
 	 * 	@return		int										Return integer <0 if KO, >0 if OK
@@ -307,7 +312,6 @@ class ExportExcel2007 extends ModeleExports
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
 		// phpcs:enable
-		global $conf;
 
 		// Define first row
 		$this->col = 1;
@@ -321,9 +325,10 @@ class ExportExcel2007 extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
-			$newvalue = $objp->$alias;
+
+			$newvalue = !empty($objp->$alias) ? $objp->$alias : '';
 
 			$newvalue = $this->excel_clean($newvalue);
 			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
@@ -370,7 +375,12 @@ class ExportExcel2007 extends ModeleExports
 			}
 			$this->col++;
 		}
+
+		// Complete with some columns to add columns with the labels of columns of type Select, so we have more then the ID
 		foreach ($selectlabelvalues as $key => $newvalue) {
+			$code = preg_replace('/_label$/', '', $key);
+			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
+
 			if (preg_match('/^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$/i', $newvalue)) {
 				$newvalue = dol_stringtotime($newvalue);
 				$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($this->col, $this->row + 1, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($newvalue));
@@ -393,6 +403,7 @@ class ExportExcel2007 extends ModeleExports
 			}
 			$this->col++;
 		}
+
 		$this->row++;
 		return 0;
 	}
@@ -421,7 +432,6 @@ class ExportExcel2007 extends ModeleExports
 	public function close_file()
 	{
 		// phpcs:enable
-		global $conf;
 
 		$objWriter = new Xlsx($this->workbook);
 		$objWriter->save($this->file);
@@ -651,11 +661,11 @@ class ExportExcel2007 extends ModeleExports
 	/**
 	 * Set a value cell and merging it by giving a starting cell and a length
 	 *
-	 * @param string $val       Cell value
-	 * @param string $startCell Starting cell
-	 * @param int    $length    Length
-	 * @param int    $offset    Starting offset
-	 * @return string Coordinate or -1 if KO
+	 * @param	string		$val		Cell value
+	 * @param	string		$startCell	Starting cell
+	 * @param	int			$length		Length
+	 * @param	int			$offset		Starting offset
+	 * @return	int|string				Coordinate or if KO: -1
 	 */
 	public function setMergeCellValueByLength($val, $startCell, $length, $offset = 0)
 	{

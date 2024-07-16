@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2017-2023	Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+/* Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017       Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020       Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,18 +44,18 @@ $massaction = GETPOST('massaction', 'aZ09');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
-$search_ref = GETPOST('search_ref', 'int');
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_user = GETPOST('search_user', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$search_datep_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
-$search_datep_end = dol_mktime(23, 59, 59, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
-$search_datev_start = dol_mktime(0, 0, 0, GETPOST('search_date_value_startmonth', 'int'), GETPOST('search_date_value_startday', 'int'), GETPOST('search_date_value_startyear', 'int'));
-$search_datev_end = dol_mktime(23, 59, 59, GETPOST('search_date_value_endmonth', 'int'), GETPOST('search_date_value_endday', 'int'), GETPOST('search_date_value_endyear', 'int'));
+$search_datep_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
+$search_datep_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'));
+$search_datev_start = dol_mktime(0, 0, 0, GETPOSTINT('search_date_value_startmonth'), GETPOSTINT('search_date_value_startday'), GETPOSTINT('search_date_value_startyear'));
+$search_datev_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_value_endmonth'), GETPOSTINT('search_date_value_endday'), GETPOSTINT('search_date_value_endyear'));
 $search_amount_deb = GETPOST('search_amount_deb', 'alpha');
 $search_amount_cred = GETPOST('search_amount_cred', 'alpha');
-$search_bank_account = GETPOST('search_account', 'int');
-$search_bank_entry = GETPOST('search_bank_entry', 'int');
+$search_bank_account = GETPOST('search_account', "intcomma");
+$search_bank_entry = GETPOST('search_bank_entry', 'alpha');
 $search_accountancy_account = GETPOST("search_accountancy_account");
 if ($search_accountancy_account == - 1) {
 	$search_accountancy_account = '';
@@ -64,22 +65,22 @@ if ($search_accountancy_subledger == - 1) {
 	$search_accountancy_subledger = '';
 }
 if (empty($search_datep_start)) {
-	$search_datep_start = GETPOST("search_datep_start", 'int');
+	$search_datep_start = GETPOSTINT("search_datep_start");
 }
 if (empty($search_datep_end)) {
-	$search_datep_end = GETPOST("search_datep_end", 'int');
+	$search_datep_end = GETPOSTINT("search_datep_end");
 }
 if (empty($search_datev_start)) {
-	$search_datev_start = GETPOST("search_datev_start", 'int');
+	$search_datev_start = GETPOSTINT("search_datev_start");
 }
 if (empty($search_datev_end)) {
-	$search_datev_end = GETPOST("search_datev_end", 'int');
+	$search_datev_end = GETPOSTINT("search_datev_end");
 }
 $search_type_id = GETPOST('search_type_id', 'int');
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -88,7 +89,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new PaymentVarious($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
@@ -149,33 +150,34 @@ $search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) 
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
-	'v.rowid'=>"Ref",
-	'v.label'=>"Label",
-	'v.datep'=>"DatePayment",
-	'v.datev'=>"DateValue",
-	'v.amount'=>$langs->trans("Debit").", ".$langs->trans("Credit"),
+	'v.rowid' => "Ref",
+	'v.label' => "Label",
+	'v.datep' => "DatePayment",
+	'v.datev' => "DateValue",
+	'v.amount' => $langs->trans("Debit").", ".$langs->trans("Credit"),
 );
 
 // Definition of fields for lists
 $arrayfields = array(
-	'ref'			=>array('label'=>"Ref", 'checked'=>1, 'position'=>100),
-	'label'			=>array('label'=>"Label", 'checked'=>1, 'position'=>110),
-	'datep'			=>array('label'=>"DatePayment", 'checked'=>1, 'position'=>120),
-	'datev'			=>array('label'=>"DateValue", 'checked'=>-1, 'position'=>130),
-	'type'			=>array('label'=>"PaymentMode", 'checked'=>1, 'position'=>140),
-	'project'		=>array('label'=>"Project", 'checked'=>1, 'position'=>200, "enabled"=>isModEnabled('project')),
-	'bank'			=>array('label'=>"BankAccount", 'checked'=>1, 'position'=>300, "enabled"=>isModEnabled("banque")),
-	'entry'			=>array('label'=>"BankTransactionLine", 'checked'=>1, 'position'=>310, "enabled"=>isModEnabled("banque")),
-	'account'		=>array('label'=>"AccountAccountingShort", 'checked'=>1, 'position'=>400, "enabled"=>isModEnabled('accounting')),
-	'subledger'		=>array('label'=>"SubledgerAccount", 'checked'=>1, 'position'=>410, "enabled"=>isModEnabled('accounting')),
-	'debit'			=>array('label'=>"Debit", 'checked'=>1, 'position'=>500),
-	'credit'		=>array('label'=>"Credit", 'checked'=>1, 'position'=>510),
+	'ref'			=> array('label' => "Ref", 'checked' => 1, 'position' => 100),
+	'label'			=> array('label' => "Label", 'checked' => 1, 'position' => 110),
+	'datep'			=> array('label' => "DatePayment", 'checked' => 1, 'position' => 120),
+	'datev'			=> array('label' => "DateValue", 'checked' => -1, 'position' => 130),
+	'type'			=> array('label' => "PaymentMode", 'checked' => 1, 'position' => 140),
+	'project'		=> array('label' => "Project", 'checked' => 1, 'position' => 200, "enabled" => isModEnabled('project')),
+	'bank'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 300, "enabled" => isModEnabled("bank")),
+	'entry'			=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 310, "enabled" => isModEnabled("bank")),
+	'account'		=> array('label' => "AccountAccountingShort", 'checked' => 1, 'position' => 400, "enabled" => isModEnabled('accounting')),
+	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => 1, 'position' => 410, "enabled" => isModEnabled('accounting')),
+	'debit'			=> array('label' => "Debit", 'checked' => 1, 'position' => 500),
+	'credit'		=> array('label' => "Credit", 'checked' => 1, 'position' => 510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
-$socid = GETPOST("socid", "int");
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -356,7 +358,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$id);
@@ -366,7 +368,7 @@ if ($num == 1 && !getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sea
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -402,7 +404,7 @@ if ($search_datev_end) {
 	$param .= '&search_datev_end='.urlencode($search_datev_end);
 }
 if ($search_type_id > 0) {
-	$param .= '&search_type_id='.urlencode($search_type_id);
+	$param .= '&search_type_id='.urlencode((string) ($search_type_id));
 }
 if ($search_amount_deb) {
 	$param .= '&search_amount_deb='.urlencode($search_amount_deb);
@@ -411,7 +413,7 @@ if ($search_amount_cred) {
 	$param .= '&search_amount_cred='.urlencode($search_amount_cred);
 }
 if ($search_bank_account > 0) {
-	$param .= '&search_account='.urlencode($search_bank_account);
+	$param .= '&search_account='.urlencode((string) ($search_bank_account));
 }
 if ($search_accountancy_account > 0) {
 	$param .= '&search_accountancy_account='.urlencode($search_accountancy_account);
@@ -422,7 +424,7 @@ if ($search_accountancy_subledger > 0) {
 
 $url = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create';
 if (!empty($socid)) {
-	$url .= '&socid='.urlencode($socid);
+	$url .= '&socid='.urlencode((string) ($socid));
 }
 
 // List of mass actions available
@@ -444,8 +446,8 @@ print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton  = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewVariousPayment'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('banque', 'modifier'));
 
@@ -458,19 +460,20 @@ if ($search_all) {
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if VARIOUSPAYMENT_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $arrayofmassactions = array();
 
-$moreforfilter= '';
+$moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
@@ -663,7 +666,7 @@ if ($arrayfields['credit']['checked']) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
@@ -905,7 +908,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

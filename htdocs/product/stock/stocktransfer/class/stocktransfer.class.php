@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,25 +53,14 @@ class StockTransfer extends CommonObject
 	public $table_element_line = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
-	 * @var string    Field with ID of parent key if this object has a parent
+	 * @var string    Field name which stores ID of parent key if this object has a parent
 	 */
 	public $fk_element = 'fk_stocktransfer';
 
 	/**
-	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 * @var string[]    List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array('stocktransfer_stocktransferline');
 
@@ -86,16 +76,34 @@ class StockTransfer extends CommonObject
 	 */
 	public $ref_customer;
 
-
 	/**
 	 * @var string String with name of icon for stocktransfer. Must be the part after the 'object_' into object_stocktransfer.png
 	 */
 	public $picto = 'stock';
 
+	/**
+	 * @var null|int|'' outgoing date (sql date)
+	 */
 	public $date_prevue_depart;
+
+	/**
+	 * @var null|int|'' incoming date (sql date)
+	 */
 	public $date_prevue_arrivee;
+
+	/**
+	 * @var null|int|'' effective outgoing date (sql date)
+	 */
 	public $date_reelle_depart;
+
+	/**
+	 * @var null|int|'' effective incoming date (sql date)
+	 */
 	public $date_reelle_arrivee;
+
+	/**
+	 * @var string origin type
+	 */
 	public $origin_type;
 
 
@@ -109,14 +117,14 @@ class StockTransfer extends CommonObject
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
 	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
@@ -132,51 +140,51 @@ class StockTransfer extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid'                    => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
-		'entity'                   => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>1, 'default'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
-		'ref'                      => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label'                    => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'css'=>'minwidth100', 'csslist'=>'tdoverflowmax125', 'autofocusoncreate'=>1),
-		'description'              => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>3,),
-		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax125'),
-		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/, 'picto'=>'company', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax125'),
-		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource', 'picto'=>'stock', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination', 'picto'=>'stock', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
-		'note_public'              => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
-		'note_private'             => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-		'date_creation'            => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'date_prevue_depart'       => array('type'=>'date', 'label'=>'DatePrevueDepart', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>1,),
-		'date_reelle_depart'       => array('type'=>'date', 'label'=>'DateReelleDepart', 'enabled'=>'1', 'position'=>101, 'notnull'=>0, 'visible'=>5,),
-		'date_prevue_arrivee'      => array('type'=>'date', 'label'=>'DatePrevueArrivee', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>1,),
-		'date_reelle_arrivee'      => array('type'=>'date', 'label'=>'DateReelleArrivee', 'enabled'=>'1', 'position'=>103, 'notnull'=>0, 'visible'=>5,),
-		'lead_time_for_warning'    => array('type'=>'integer', 'label'=>'LeadTimeForWarning', 'enabled'=>'1', 'position'=>200, 'default'=>0, 'notnull'=>0, 'visible'=>1),
-		'tms'                      => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat'            => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif'            => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ChangedBy', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'import_key'               => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'model_pdf'                => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'fk_incoterms'             => array('type'=>'integer', 'label'=>'IncotermCode', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-2, 'position'=>220),
-		'location_incoterms'       => array('type'=>'varchar(255)', 'label'=>'IncotermLabel', 'enabled'=>'$conf->incoterm->enabled', 'visible'=>-2, 'position'=>225),
-		'status'                   => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '2'=>'StockStransferDecremented', '3'=>'StockStransferIncremented'),),
+	public $fields = array(
+		'rowid'                    => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
+		'entity'                   => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'position' => 1, 'default' => '1', 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
+		'ref'                      => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of object"),
+		'label'                    => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'css' => 'minwidth100', 'csslist' => 'tdoverflowmax125', 'autofocusoncreate' => 1),
+		'description'              => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 3,),
+		'fk_project'               => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => '$conf->project->enabled', 'position' => 32, 'notnull' => -1, 'visible' => -1, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
+		'fk_soc'                   => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 1, 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1/*, 'help'=>"LinkToThirdparty"*/, 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax125'),
+		'fk_warehouse_source'      => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt source', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferSource', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'fk_warehouse_destination' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php', 'label' => 'Entrepôt de destination', 'enabled' => 1, 'position' => 51, 'notnull' => 0, 'visible' => 1, 'help' => 'HelpWarehouseStockTransferDestination', 'picto' => 'stock', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
+		'note_public'              => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
+		'note_private'             => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
+		'date_creation'            => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'date_prevue_depart'       => array('type' => 'date', 'label' => 'DatePrevueDepart', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => 1,),
+		'date_reelle_depart'       => array('type' => 'date', 'label' => 'DateReelleDepart', 'enabled' => 1, 'position' => 101, 'notnull' => 0, 'visible' => 5,),
+		'date_prevue_arrivee'      => array('type' => 'date', 'label' => 'DatePrevueArrivee', 'enabled' => 1, 'position' => 102, 'notnull' => 0, 'visible' => 1,),
+		'date_reelle_arrivee'      => array('type' => 'date', 'label' => 'DateReelleArrivee', 'enabled' => 1, 'position' => 103, 'notnull' => 0, 'visible' => 5,),
+		'lead_time_for_warning'    => array('type' => 'integer', 'label' => 'LeadTimeForWarning', 'enabled' => 1, 'position' => 200, 'default' => '0', 'notnull' => 0, 'visible' => 1),
+		'tms'                      => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat'            => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif'            => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'ChangedBy', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'import_key'               => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
+		'model_pdf'                => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
+		'fk_incoterms'             => array('type' => 'integer', 'label' => 'IncotermCode', 'enabled' => '$conf->incoterm->enabled', 'visible' => -2, 'position' => 220),
+		'location_incoterms'       => array('type' => 'varchar(255)', 'label' => 'IncotermLabel', 'enabled' => '$conf->incoterm->enabled', 'visible' => -2, 'position' => 225),
+		'status'                   => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '2' => 'StockStransferDecremented', '3' => 'StockStransferIncremented'),),
 	);
 	public $rowid;
 	public $ref;
 	public $label;
-	public $socid;
-	public $fk_soc;	// deprecated
-	public $fk_project;
 	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
-	public $tms;
+
+	/**
+	 * @var int ID of thirparty
+	 */
+	public $socid;
+
+	/**
+	 * @var int ID of thirparty
+	 * @deprecated
+	 */
+	public $fk_soc;
 	public $lead_time_for_warning;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
-	public $model_pdf;
 	public $status;
 
 	/**
@@ -184,7 +192,14 @@ class StockTransfer extends CommonObject
 	 */
 	public $lines;
 
+	/**
+	 * @var int ID of warehouse source
+	 */
 	public $fk_warehouse_source;
+
+	/**
+	 * @var int ID of warehouse destination
+	 */
 	public $fk_warehouse_destination;
 	// END MODULEBUILDER PROPERTIES
 
@@ -192,13 +207,17 @@ class StockTransfer extends CommonObject
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
+
 		$this->origin_type = 'StockTransfer@product/stock/stocktransfer';
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -237,15 +256,11 @@ class StockTransfer extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
-		$model_pdf = GETPOST('model');
-		if (!empty($model_pdf)) {
-			$this->model_pdf = $model_pdf;
-		}
 		$this->status = (int) $this->status;
 		if ($this->fk_warehouse_source <= 0) {
 			$this->fk_warehouse_source = 0;
@@ -316,8 +331,7 @@ class StockTransfer extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -411,7 +425,7 @@ class StockTransfer extends CommonObject
 		}
 		if (!empty($this->lines)) {
 			foreach ($this->lines as $l) {
-				$total_pmp+= ($l->pmp * $l->qty);
+				$total_pmp += ($l->pmp * $l->qty);
 			}
 		}
 
@@ -421,18 +435,17 @@ class StockTransfer extends CommonObject
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -445,23 +458,14 @@ class StockTransfer extends CommonObject
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key.'='.$value;
-				} elseif (strpos($key, 'date') !== false) {
-					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} else {
-					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -490,7 +494,7 @@ class StockTransfer extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -500,12 +504,12 @@ class StockTransfer extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
-		$this->tms = ''; // Will be done automatically because tms field is on update cascade
+		$this->tms = 0; // Will be done automatically because tms field is on update cascade
 		$res = $this->updateCommon($user, $notrigger);
 		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
 			$this->fetch_thirdparty();
@@ -519,11 +523,11 @@ class StockTransfer extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		if ($this->status > self::STATUS_VALIDATED) {
 			return 0;
@@ -537,10 +541,10 @@ class StockTransfer extends CommonObject
 	 *
 	 *	@param  User	$user       User that delete
 	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
 	 *  @return int         		>0 if OK, <0 if KO
 	 */
-	public function deleteLine(User $user, $idline, $notrigger = false)
+	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
 		if ($this->status < 0) {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
@@ -570,7 +574,7 @@ class StockTransfer extends CommonObject
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
-			dol_syslog(get_class($this)."::validate action abandonned: already validated", LOG_WARNING);
+			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
 
@@ -759,7 +763,7 @@ class StockTransfer extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -854,7 +858,7 @@ class StockTransfer extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('stocktransferdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => $result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -943,11 +947,11 @@ class StockTransfer extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
-		$this->initAsSpecimenCommon();
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -960,7 +964,7 @@ class StockTransfer extends CommonObject
 		$this->lines = array();
 
 		$objectline = new StockTransferLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_stocktransfer = '.$this->id));
+		$result = $objectline->fetchAll('ASC', 'rang', 0, 0, "(fk_stocktransfer:=:".((int) $this->id).")");
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;
@@ -990,7 +994,7 @@ class StockTransfer extends CommonObject
 			$mybool = false;
 
 			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON') . ".php";
-			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON;
+			$classname = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -998,11 +1002,11 @@ class StockTransfer extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/stocktransfer/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
 			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
@@ -1031,7 +1035,7 @@ class StockTransfer extends CommonObject
 	 *  Create a document onto disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
@@ -1053,7 +1057,7 @@ class StockTransfer extends CommonObject
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('STOCKTRANSFER_ADDON_PDF')) {
-				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
+				$modele = getDolGlobalString('STOCKTRANSFER_ADDON_PDF');
 			}
 		}
 
@@ -1096,27 +1100,3 @@ class StockTransfer extends CommonObject
 		return $error;
 	}
 }
-
-/**
- * Class StockTransferLine. You can also remove this and generate a CRUD class for lines objects.
- */
-//class StockTransferLine
-//{
-//	// To complete with content of an object StockTransferLine
-//	// We should have a field rowid, fk_stocktransfer and position
-//
-//	/**
-//	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-//	 */
-//	public $isextrafieldmanaged = 0;
-//
-//	/**
-//	 * Constructor
-//	 *
-//	 * @param DoliDb $db Database handler
-//	 */
-//	public function __construct(DoliDB $db)
-//	{
-//		$this->db = $db;
-//	}
-//}

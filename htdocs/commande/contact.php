@@ -21,7 +21,7 @@
 
 /**
  *     \file       htdocs/commande/contact.php
- *     \ingroup    commande
+ *     \ingroup    order
  *     \brief      Onglet de gestion des contacts de commande
  */
 
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -45,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordercontact', 'globalcard'));
 
 $result = restrictedArea($user, 'commande', $id, '');
@@ -71,7 +71,7 @@ if (empty($reshook)) {
 		$result = $object->fetch($id);
 
 		if ($result > 0 && $id > 0) {
-			$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
@@ -90,14 +90,14 @@ if (empty($reshook)) {
 	} elseif ($action == 'swapstatut' && $user->hasRight('commande', 'creer')) {
 		// Toggle the status of a contact
 		if ($object->fetch($id)) {
-			$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 		} else {
 			dol_print_error($db);
 		}
 	} elseif ($action == 'deletecontact' && $user->hasRight('commande', 'creer')) {
 		// Delete contact
 		$object->fetch($id);
-		$result = $object->delete_contact(GETPOST("lineid", 'int'));
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
 
 		if ($result >= 0) {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -120,7 +120,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -130,7 +130,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-		llxHeader('', $title, $help_url);
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_contact');
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');

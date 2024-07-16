@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +31,15 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
-
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
-$conf->global->MAIN_UMASK='0666';
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
+$conf->global->MAIN_UMASK = '0666';
 
 
 /**
@@ -48,42 +49,10 @@ $conf->global->MAIN_UMASK='0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIContactTest extends PHPUnit\Framework\TestCase
+class RestAPIContactTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
 	protected $api_url;
 	protected $api_key;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return RestAPIContactTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		if (!isModEnabled('api')) {
-			print __METHOD__." module api must be enabled.\n";
-			die(1);
-		}
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
 
 	/**
 	 * setUpBeforeClass
@@ -95,18 +64,10 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
+		if (!isModEnabled('api')) {
+			print __METHOD__." module api must be enabled.\n";
+			die(1);
+		}
 
 		print __METHOD__."\n";
 	}
@@ -119,19 +80,19 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 	protected function setUp(): void
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
 		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
 
-		$login='admin';
-		$password='admin';
-		$url=$this->api_url.'/login?login='.$login.'&password='.$password;
+		$login = 'admin';
+		$password = 'admin';
+		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
 		// Call the API login method to save api_key for this test class.
 		// At first call, if token is not defined a random value is generated and returned.
-		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result = ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
@@ -144,16 +105,6 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		$this->api_key = $object['success']['token'];
 
 		print __METHOD__." api_key: $this->api_key \n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
 	}
 
 
@@ -174,7 +125,7 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		print __METHOD__." result for get on unexisting contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
-		$object=json_decode($result['content'], true);
+		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(404, $object['error']['code'], 'Error code is not 404');
 
@@ -182,11 +133,11 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		$url = $this->api_url.'/contacts/1?api_key='.$this->api_key;
 
 		print __METHOD__." Request GET url=".$url."\n";
-		$result=getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
+		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result for get on an existing contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
-		$object=json_decode($result['content'], true);
+		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(1, $object['statut']);
 	}
@@ -204,16 +155,16 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
-		$addheaders=array('Content-Type: application/json');
+		$addheaders = array('Content-Type: application/json');
 
-		$bodyobj= array(
+		$bodyobj = array(
 			"firstname" => "firstname"
 		);
 
 		$body = json_encode($bodyobj);
 
 		//print __METHOD__." Request POST url=".$url."\n";
-		$result=getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
+		$result = getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 		//print __METHOD__." Result for creating incomplete contact".var_export($result, true)."\n";
 		//print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
 		$this->assertEquals($result['curl_error_no'], '');
@@ -259,7 +210,7 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
-		$addheaders=array('Content-Type: application/json');
+		$addheaders = array('Content-Type: application/json');
 
 		//update the contact
 
@@ -279,7 +230,7 @@ class RestAPIContactTest extends PHPUnit\Framework\TestCase
 		print_r($updateResponse);
 
 		// Check if the updated fields match the changes you made
-		$this->assertTrue($updateResponse['firstname'] === $updateBody['firstname'], 'Update might have failed');
+		$this->assertEquals($updateBody['firstname'], $updateResponse['firstname'], 'Update failed for request body: '.$updateRequestBody);
 
 		// Deleting the Contact
 		/*

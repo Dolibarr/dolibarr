@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
+/* Copyright (C) 2021-2024  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "accountancy", "compta", "other", "errors"));
 
-$id_journal = GETPOST('id_journal', 'int');
+$id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
 
 $date_startmonth = GETPOST('date_startmonth');
@@ -44,13 +44,13 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-// Get information of journal
+// Get information of a journal
 $object = new AccountingJournal($db);
 $result = $object->fetch($id_journal);
 if ($result > 0) {
 	$id_journal = $object->id;
 } elseif ($result < 0) {
-	dol_print_error('', $object->error, $object->errors);
+	dol_print_error(null, $object->error, $object->errors);
 } elseif ($result == 0) {
 	accessforbidden('ErrorRecordNotFound');
 }
@@ -100,7 +100,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -196,8 +196,8 @@ if ($object->nature == 2) {
 }
 
 $title = $langs->trans("GenerationOfAccountingEntries") . ' - ' . $object->getNomUrl(0, 2, 1, '', 1);
-
-llxHeader('', dol_string_nohtmltag($title));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#G&eacute;n&eacute;ration_des_&eacute;critures_en_comptabilit&eacute;';
+llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-variousjournal');
 
 $nom = $title;
 $nomlink = '';

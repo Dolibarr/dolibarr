@@ -442,7 +442,7 @@ if ($step == 4 && $action == 'submitFormField') {
  */
 
 if ($step == 1 || !$datatoexport) {
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step1');
 
 	$h = 0;
 
@@ -502,7 +502,7 @@ if ($step == 2 && $datatoexport) {
 		accessforbidden();
 	}
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step2');
 
 	$h = 0;
 
@@ -684,7 +684,7 @@ if ($step == 3 && $datatoexport) {
 		accessforbidden();
 	}
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step3');
 
 	$h = 0;
 
@@ -855,7 +855,7 @@ if ($step == 4 && $datatoexport) {
 
 	asort($array_selected);
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step4');
 
 	$stepoffset = 0;
 	$h = 0;
@@ -1129,7 +1129,7 @@ if ($step == 5 && $datatoexport) {
 
 	asort($array_selected);
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step5');
 
 	$h = 0;
 	$stepoffset = 0;

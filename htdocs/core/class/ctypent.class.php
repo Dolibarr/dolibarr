@@ -41,7 +41,7 @@ class Ctypent extends CommonDict
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -64,7 +64,7 @@ class Ctypent extends CommonDict
 		// Clean parameters
 
 		if (isset($this->id)) {
-			$this->id = trim($this->id);
+			$this->id = (int) $this->id;
 		}
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
@@ -73,7 +73,7 @@ class Ctypent extends CommonDict
 			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->module)) {
 			$this->module = trim($this->module);
@@ -193,7 +193,7 @@ class Ctypent extends CommonDict
 			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->module)) {
 			$this->module = trim($this->module);

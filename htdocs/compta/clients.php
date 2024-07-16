@@ -45,21 +45,21 @@ $langs->load("companies");
 
 $mode = GETPOST("mode");
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
 if (!$sortfield) {
 	$sortfield = "nom";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
 }
 
 
@@ -89,22 +89,20 @@ if ($mode == 'search') {
 
 
 
-/*
- * Mode List
- */
+// Mode List
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
 $sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", sc.fk_soc, sc.fk_user ";
 }
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client in (1, 3)";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if (dol_strlen($stcomm)) {
@@ -151,16 +149,16 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+	print '<input class="flat" type="text" name="search_nom" value="'.GETPOST("search_nom").'"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+	print '<input class="flat" type="text" size="10" name="search_code_client" value="'.GETPOST("search_code_client").'">';
 	print '</td>';
 
 	print '<td class="liste_titre left">';
-	print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
+	print '<input class="flat" type="text" size="10" name="search_compta" value="'.GETPOST("search_compta").'">';
 	print '</td>';
 
 	print '<td colspan="2" class="liste_titre right">';

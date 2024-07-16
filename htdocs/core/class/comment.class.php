@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,13 +48,6 @@ class Comment extends CommonObject
 	public $description;
 
 	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $tms;
-
-	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -83,7 +77,7 @@ class Comment extends CommonObject
 	public $comments = array();
 
 	/**
-	 * @var Comment 	Object oldcopy
+	 * @var static 	Object oldcopy
 	 */
 	public $oldcopy;
 
@@ -246,7 +240,7 @@ class Comment extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_element)) {
-			$this->fk_project = (int) trim($this->fk_element);
+			$this->fk_project = (int) trim((string) $this->fk_element);
 		}
 		if (isset($this->description)) {
 			$this->description = trim($this->description);
