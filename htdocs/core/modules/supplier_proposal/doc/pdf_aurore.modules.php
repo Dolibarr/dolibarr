@@ -1353,7 +1353,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 			// If CUSTOMER contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+			if (getDolGlobalInt('SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT')) {
+				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
+			} else {
+				$arrayidcontact = array_merge($object->getIdContact('external', 'CUSTOMER'), $object->getIdContact('external', 'BILLING'));
+			}
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
