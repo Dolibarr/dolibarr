@@ -73,7 +73,7 @@ class Ai
 	 *
 	 * @param   string  	$instructions   Instruction to generate content
 	 * @param   string  	$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
-	 * @param   string  	$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiotext', 'imagegeneration', 'translation')
+	 * @param   string  	$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
 	 * @param	string		$format			Format for output ('', 'html', ...)
 	 * @return  mixed   	$response
 	 */
@@ -91,7 +91,7 @@ class Ai
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
 					}
 				}
-			} elseif ($function == 'audiotext') {
+			} elseif ($function == 'audiogeneration') {
 				if ($this->apiService == 'chatgpt') {
 					$this->apiEndpoint = 'https://api.openai.com/v1/audio/speech';
 					if ($model == 'auto') {

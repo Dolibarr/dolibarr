@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=Korisnik se ne može izbrisati. Možda je povezan sa Dolibarr entitetima.
 ErrorFieldsRequired=Neka obavezna polja su ostavljena prazna.
 ErrorSubjectIsRequired=Predmet e-pošte je obavezan
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
 ErrorSetupOfEmailsNotComplete=Postavljanje e-pošte nije završeno
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Greška, niz za zamjenu je prazan
 ErrorProductNeedBatchNumber=Greška, proizvodu '<b>%s</b>' potreban je broj/serijski broj
 ErrorProductDoesNotNeedBatchNumber=Greška, proizvod '<b>%s</b>' ne prihvata lot/ serijski broj
 ErrorFailedToReadObject=Greška, nije uspjelo čitanje objekta tipa <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Greška, ova prijava je izvan raspona datuma valjanosti
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=Riječ '<b>%s</b>' je rezervirana ključna riječ
@@ -322,16 +324,21 @@ ErrorFixThisHere=<a href="%s">Popravi ovo ovdje</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Greška: URL vaše trenutne instance (%s) se ne podudara s URL-om definiranim u vašoj OAuth2 postavci prijave (%s). OAuth2 prijava u takvoj konfiguraciji nije dozvoljena.
 ErrorMenuExistValue=Meni već postoji sa ovim naslovom ili URL-om
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG datoteke nisu dozvoljene kao vanjske veze bez opcije %s
-ErrorTypeMenu=Nemoguće je dodati još jedan meni za isti modul na navigacijsku traku, još nije rukovati
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = Objekt <b>%s</b> nije pronađen, provjerite svoj url
 ErrorCountryCodeMustBe2Char=Kôd zemlje mora biti niz od 2 karaktera
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Tabela <b>%s</b> već postoji
 ErrorDictionaryNotFound=Rječnik <b>%s</b> nije pronađen
 ErrorFailedToCreateSymLinkToMedias=Nije uspjelo kreiranje simboličke veze %s koja ukazuje na %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Provjerite naredbu koja se koristi za izvoz u Napredne opcije izvoza
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Date start must be less than date end
+ErrorEndHourIsNull=End date cannot be zero
+ErrorStartHourIsNull=Start date cannot be zero
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Vaš PHP parametar upload_max_filesize (%s) je veći od PHP parametra post_max_size (%s). Ovo nije dosljedna postavka.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
@@ -344,6 +351,7 @@ WarningConfFileMustBeReadOnly=Warning, your config file (<b>htdocs/conf/conf.php
 WarningsOnXLines=Warnings on <b>%s</b> source record(s)
 WarningNoDocumentModelActivated=Nijedan model za generiranje dokumenata nije aktiviran. Model će biti odabran prema zadanim postavkama dok ne provjerite postavke vašeg modula.
 WarningLockFileDoesNotExists=Upozorenje, kada se postavljanje završi, morate onemogućiti alate za instalaciju/migraciju dodavanjem datoteke <b>install.lock</b> u direktorij <b>%s</b>. Izostavljanje kreiranja ove datoteke predstavlja ozbiljan sigurnosni rizik.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=Ovo sigurnosno upozorenje će ostati aktivno sve dok je ranjivost prisutna.
 WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
 WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = Modul <b>%s</b> je onemogućen. Ne zaboravite to omog
 WarningPermissionAlreadyExist=Postojeće dozvole za ovaj objekt
 WarningGoOnAccountancySetupToAddAccounts=Ako je ova lista prazna, idite u meni %s - %s - %s da učitate ili kreirate račune za vaš kontni plan.
 WarningCorrectedInvoiceNotFound=Ispravljena faktura nije pronađena
-WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Kretanje dionica je već obrnuto
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR faktura se može dodati samo na fakture postavljene da se plaćaju plaćanjem kreditnim transferom.
 SwissQrCreditorAddressInvalid = Adresa kreditora je nevažeća (da li je ZIP i postavljen na grad? (%s)
 SwissQrCreditorInformationInvalid = Podaci o kreditoru su nevažeći za IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN još nije implementiran
 SwissQrPaymentInformationInvalid = Podaci o plaćanju su bili nevažeći za ukupno %s : %s
 SwissQrDebitorAddressInvalid = Podaci o dužniku su bili nevažeći (%s)
-
 # Validate
 RequireValidValue = Vrijednost nije važeća
 RequireAtLeastXString = Zahtijeva najmanje %s karakter(e)
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = Greška loše postavke polja: klasa 
 BadSetupOfFieldFileNotFound = Greška loše postavke polja: Datoteka nije pronađena za uključivanje
 BadSetupOfFieldFetchNotCallable = Greška loše postavke polja: Dohvaćanje nije moguće pozvati na klasi
 ErrorTooManyAttempts= Previše pokušaja, pokušajte ponovo kasnije
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed

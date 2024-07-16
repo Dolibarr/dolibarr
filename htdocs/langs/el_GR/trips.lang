@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Αποθηκεύτηκε από
 AUTHORPAIEMENT=Πληρώθηκε από
 AddTrip=Δημιουργία αναφοράς εξόδων
@@ -13,6 +13,8 @@ byEX_EXP=ανά γραμμή (περιορισμός σε %s)
 byEX_MON=ανά μήνα (περιορισμός σε %s)
 byEX_YEA=ανά έτος (περιορισμός σε %s)
 CANCEL_USER=Διαγράφηκε από
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Λογαριασμός (από το λογιστικό σχέδιο) που χρησιμοποιείται από προεπιλογή για "χρήστες" στις αναφορές εξόδων
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Ο αποκλειστικός λογαριασμός που ορίζεται στην κάρτα χρήστη θα χρησιμοποιηθεί μόνο για το Subledger Λογιστική. Αυτό θα χρησιμοποιηθεί για το Γενικό Λογιστικό, και επίσης ως η προεπιλεγμένη τιμή του Subledger Λογιστική εάν δεν υπάρχει αποκλειστικό  Λογιστική δεν έχει οριστεί στο χρήστη.
 CarCategory=Κατηγορία οχήματος
 ClassifyRefunded=Ταξινόμηση ως "Επιστροφή χρημάτων"
 CompanyVisited=Επισκέψεις εταιρείας/οργανισμού
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=ανά έτος (χωρίς περιορισμό)
 NoTripsToExportCSV=Δεν υπάρχει αναφορά εξόδων για εξαγωγή για αυτήν την περίοδο.
 NOT_AUTHOR=Δεν είστε ο συντάκτης αυτής της αναφοράς εξόδων. Η λειτουργία ακυρώθηκε.
 OnExpense=Γραμμή εξόδων
-PDFStandardExpenseReports=Τυπικό πρότυπο για τη δημιουργία ενός εγγράφου PDF για την αναφορά εξόδων
+PDFStandardExpenseReports=Τυπικό πρότυπο για τη δημιουργία ενός εγγράφου PDF για μια αναφορά εξόδων
 PaidTrip=Πληρώστε μια αναφορά εξόδων
 REFUSEUR=Απορρίφθηκε από
 RangeIk=Εύρος χιλιομέτρων
@@ -103,7 +105,7 @@ ShowExpenseReport=Εμφάνιση αναφοράς εξόδων
 ShowTrip=Εμφάνιση αναφοράς εξόδων
 TripCard=Καρτέλα αναφοράς εξόδων
 TripId=Αναγνωριστικό αναφοράς εξόδων
-TripNDF=Πληροφορίες αναφοράς εξόδων
+TripNDF=Πληροφορίες αναφοράς εξόδων 
 TripSociete=Πληροφορίες εταιρίας
 Trips=Αναφορές εξόδων
 TripsAndExpenses=Αναφορές εξόδων
@@ -115,6 +117,10 @@ VALIDOR=Εγκρίθηκε από
 ValidateAndSubmit=Επικύρωση και υποβολή για έγκριση
 ValidatedWaitingApproval=Επικυρώθηκε (αναμονή για έγκριση)
 ValideTrip=Έγκριση αναφοράς εξόδων
+ExpenseReportPayments=πληρωμές αναφορών εξόδων
+TaxUndefinedForThisCategory = Ο φόρος δεν έχει καθοριστεί για αυτήν την κατηγορία
+errorComputeTtcOnMileageExpense=Σφάλμα κατά τον υπολογισμό των εξόδων χιλιομέτρων
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Μόνο τα στοιχεία σε κατάσταση πρόχειρου μπορούν να διαγραφούν στη μαζική δράση
 
 ## Dictionary
 EX_BRE=Πρωινό γεύμα

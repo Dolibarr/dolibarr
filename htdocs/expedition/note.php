@@ -92,7 +92,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-card_note');
 
 $form = new Form($db);
 

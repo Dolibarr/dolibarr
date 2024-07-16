@@ -523,7 +523,7 @@ if ($action == "set") {
 
 		print "<br>";
 
-		$morehtml = '<br><div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
+		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
 		$morehtml .= '</a></div><br>';
 	} else {
@@ -533,7 +533,7 @@ if ($action == "set") {
 
 		print "<br>";
 
-		$morehtml = '<br><div class="center"><a href="../install/index.php">';
+		$morehtml = '<br><div class="center"><a class="buttonGoToupgrade" href="../install/index.php">';
 		$morehtml .= '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		$morehtml .= '</a></div>';
 	}

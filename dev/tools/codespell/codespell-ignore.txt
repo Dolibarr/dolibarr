@@ -80,3 +80,6 @@ fonction
 espace
 methode
 datee
+
+# other
+blacklists

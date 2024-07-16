@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Pengaturan modul PayPal
-PaypalDesc=Modul ini memungkinkan pembayaran oleh pelanggan melalui <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Ini dapat digunakan untuk pembayaran ad-hoc atau untuk pembayaran yang terkait dengan objek Dolibarr (faktur, pesanan, ...)
+PaypalDesc=Modul ini memungkinkan pembayaran oleh pelanggan melalui <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPal</a>. Ini dapat digunakan untuk pembayaran ad-hoc atau untuk pembayaran yang terkait dengan objek Dolibarr (faktur, pesanan, ...)
 PaypalOrCBDoPayment=Bayar dengan PayPal (Kartu atau PayPal)
 PaypalDoPayment=Bayar dengan PayPal
 PAYPAL_API_SANDBOX=Tes mode / kotak pasir
@@ -34,3 +34,4 @@ ARollbackWasPerformedOnPostActions=Kembalikan dilakukan pada semua tindakan Post
 ValidationOfPaymentFailed=Validasi pembayaran gagal
 CardOwner=Pemegang kartu
 PayPalBalance=Kredit Paypal
+OnlineSubscriptionPaymentLine=Langganan online dicatat pada %s<br>Dibayar melalui %s<br>Alamat IP asal: %s<br>ID Transaksi: %s 

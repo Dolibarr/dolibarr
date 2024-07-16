@@ -234,16 +234,16 @@ if ($num == 1 && (GETPOST("mode") == 'search')) {
 }
 
 if (!empty($supplier->id)) {
-	$texte = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
+	$title = $langs->trans("ListOfSupplierProductForSupplier", $supplier->name);
 } else {
-	$texte = $langs->trans("List");
+	$title = $langs->trans("List");
 }
 
 
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader("", "", $texte);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -265,7 +265,7 @@ $param = "&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type) ? "&
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/list.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton);
 
 if (!empty($catid)) {
 	print "<div id='ways'>";

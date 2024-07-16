@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Прочитайте заплановану роботу
 Permission23102 = Створити/оновити заплановану роботу
 Permission23103 = Видалити заплановану роботу
@@ -30,7 +29,8 @@ CronExecute=Запустити
 CronConfirmExecute=Ви впевнені, що хочете виконати ці заплановані завдання зараз?
 CronInfo=Модуль запланованих завдань дозволяє планувати завдання для їх автоматичного виконання. Роботи також можна запускати вручну.
 CronTask=Робота
-CronNone=Жодного
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Не раніше
 CronDtEnd=Не після
 CronDtNextLaunch=Наступне виконання
@@ -49,8 +49,8 @@ CronEach=Кожен
 JobFinished=Робота запущена та завершена
 Scheduled=За розкладом
 #Page card
-CronAdd= Додайте вакансії
-CronEvery=Виконайте завдання кожен
+CronAdd=Додайте вакансії
+CronEvery=Run job every
 CronObject=Примірник/об’єкт для створення
 CronArgs=Параметри
 CronSaveSucess=Зберегти успішно
