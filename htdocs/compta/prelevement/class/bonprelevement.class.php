@@ -2178,7 +2178,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
 			$XML_DEBITOR .= '					</MndtRltdInf>'.$CrLf;
 			$XML_DEBITOR .= '				</DrctDbtTx>'.$CrLf;
-			if (empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
+			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) {
 				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
 				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
