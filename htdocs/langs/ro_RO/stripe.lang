@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine= URL oferit pentru %s plată online p
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL oferit pentru %s plată online pentru orice sumă fără un produs/serviciu existent
 ToOfferALinkForOnlinePaymentOnMemberSubscription= URL oferit pentru %s plată online pentru o cotizaţie de membru
 ToOfferALinkForOnlinePaymentOnDonation= URL oferit pentru %s plată online pentru o achitare sau donaţie
-YouCanAddTagOnUrl=Puteți adăuga, de asemenea, parametrul url <b>&tag<i> = valoare</i></b> la oricare dintre respectivele URL (obligatoriu numai pentru plata care nu este legată de un obiect) pentru a adăuga motivul efectuării.<br> Pentru adresa URL a plăților fără obiect existent, puteți adăuga și parametrul <strong>&noidempotency= 1</strong> pentru ca aceeași legătură cu aceeași etichetă să poată fi folosită de mai multe ori (anumite moduri de plată pot plafona plata la 1 pentru fiecare link diferit fără acest parametru) 
+YouCanAddTagOnUrl=Puteți adăuga, de asemenea, parametrul url <b>&tag<i> = valoare</i></b> la oricare dintre respectivele URL (obligatoriu numai pentru plata care nu este legată de un obiect) pentru a adăuga motivul efectuării.<br> Pentru adresa URL a plăților fără obiect existent, puteți adăuga și parametrul <strong>&noidempotency= 1</strong> pentru ca aceeași legătură cu aceeași etichetă să poată fi folosită de mai multe ori (anumite moduri de plată pot plafona plata la 1 pentru fiecare link diferit fără acest parametru)
+YouCanEmbedOnWebsite=Dacă vrei să integrezi pagina de plată într-un site web Dolibarr, poți include parametrul: <b>&ws=website_ref</b>. <br>În plus, două pagini denumite <b>paymentok</b> și <b>paymentko</b> trebuie să fie create pe site pentru a primi redirecționarea după o plată online cu succes sau eșuată.
 SetupStripeToHavePaymentCreatedAutomatically=Configurare Stripe cu URL <b> %s </b> pentru a avea o plată creată automat când este validată de Stripe.
 AccountParameter=Parametri cont
 UsageParameter=Parametri de utilizare
@@ -67,7 +68,7 @@ CreateBANOnStripe=Creare cont bancar în Stripe
 ShowInStripe=Arată în Stripe
 StripeUserAccountForActions=Cont utilizator pe care să îl utilizați pentru notificarea prin email a anumitor evenimente Stripe (plăți Stripe)
 StripePayoutList=Listă de plăți Stripe
-ToOfferALinkForTestWebhook=Link de configurare Stripe WebHook pentru a apel IPN (mod de test) 
+ToOfferALinkForTestWebhook=Link de configurare Stripe WebHook pentru a apel IPN (mod de test)
 ToOfferALinkForLiveWebhook=Link de configurare Stripe WebHook pentru a apel IPN (mod live)
 PaymentWillBeRecordedForNextPeriod=Plata va fi înregistrată pentru perioada următoare.
 ClickHereToTryAgain=<a href="%s">Clic aici pentru a încerca din nou...</a>
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Locația (adresa) pentru Stripe Terminals
 RequestDirectDebitWithStripe=Ordin de debitare directă cu Stripe
 RequesCreditTransferWithStripe=Solicitare Transfer de credit cu Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activare plăți prin debit direct prin Stripe
+STRIPE_KLARNA=Activare plăți cu Klarna
+STRIPE_BANCONTACT=Activare plăți cu BANCONTACT
+STRIPE_IDEAL=Activare plăți cu IDEAL
+STRIPE_GIROPAY=Activare plăți cu GIROPAY
+STRIPE_SOFORT=Activare plăți cu SOFORT
 StripeConnect_Mode=Mod conectare Stripe
+ExampleOnlyForBECustomers=Doar pentru clienții belgieni
+ExampleOnlyForDECustomers=Doar pentru clienții germani
+ExampleOnlyForNLCustomers=Doar pentru clienții olandezi
+ExampleOnlyForATBEDEITNLESCustomers=Doar pentru clienții din Austria, Belgia, Germania, Italia, Olanda, Spania

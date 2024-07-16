@@ -267,7 +267,7 @@ Reconcilable=Uzlaştırılabilir
 TotalVente=Vergi öncesi toplam gelir
 TotalMarge=Toplam satışlar kar oranı
 DescVentilCustomer=Hesap planından bir ürün hesabına bağlı (veya bağlı olmayan) müşteri fatura satırlarının listesine buradan bakın
-DescVentilMore=Çoğu durumda, önceden tanımlanmış ürün veya hizmetleri kullanıyorsanız ve ürün/hizmet kartındaki hesabı (hesap planından) ayarlarsanız, uygulama, fatura satırlarınız ile grafiğinizin muhasebe hesabı arasındaki tüm bağlamaları yapabilecektir. <strong>"%s"</strong> düğmesiyle tek tıklamayla hesapların sayısı >. Ürün/hizmet kartlarında hesap ayarlanmamışsa veya hala bir hesaba bağlı olmayan bazı hatlarınız varsa, "<strong><span menüsünden manuel bağlama yapmanız gerekecektir. class='notranslate'>%s</span></strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account (from chart of account) on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Müşterilerin fatura satırları listesine ve hesap planındaki ürün hesaplarına buradan bakın
 DescVentilTodoCustomer=Hesap planından bir ürün hesabına henüz bağlanmamış fatura satırlarını bağlayın
 ChangeAccount=Seçilen satırların ürün/hizmet hesabını (hesap planından) aşağıdaki hesapla değiştirin:
@@ -276,7 +276,7 @@ DescVentilSupplier=Hesap planından bir ürün hesabına bağlanmış veya henü
 DescVentilDoneSupplier=Satıcı faturası satırlarının ve muhasebe hesaplarının listesine buradan bakın
 DescVentilTodoExpenseReport=Halihazırda bir ücret muhasebesi hesabına bağlı olmayan gider raporu satırlarını bağlayın
 DescVentilExpenseReport=Bir ücret muhasebesi hesabına bağlı (veya bağlı olmayan) gider raporu satırlarının listesine buradan bakın
-DescVentilExpenseReportMore=Muhasebe hesabını gider raporu satır türü üzerinde ayarlarsanız, uygulama, <span class='notranslate düğmesiyle tek tıklamayla gider raporu satırlarınız ile hesap planınızın muhasebe hesabı arasındaki tüm bağlamaları yapabilecektir. '><strong></span>"%s"</strong>. Hesap, ücretler sözlüğünde ayarlanmamışsa veya hâlâ herhangi bir hesaba bağlı olmayan bazı satırlarınız varsa, "<strong><span class= menüsünden manuel bağlama yapmanız gerekecektir. 'notranslate'>%s</span></strong>".
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Gider satırları raporlarının listesine ve bunların ücret muhasebe hesabına buradan bakın
 Closure=Yıllık kapanış
 AccountancyClosureStep1Desc=Henüz doğrulanmamış ve kilitlenmemiş aya göre hareket sayısına buradan bakın
@@ -329,7 +329,7 @@ ACCOUNTING_DISABLE_BINDING_ON_SALES=Satışlarda muhasebede bağlama ve aktarmay
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Satın alımlarda muhasebede bağlama ve aktarımı devre dışı bırakın (satıcı faturaları muhasebede dikkate alınmayacaktır)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Gider raporlarında muhasebede bağlama ve aktarmayı devre dışı bırakın (gider raporları muhasebede dikkate alınmayacaktır)
 ACCOUNTING_ENABLE_LETTERING=Muhasebede yazı işlevini etkinleştirin
-ACCOUNTING_ENABLE_LETTERING_DESC=Bu seçenek etkinleştirildiğinde, her muhasebe girişinde bir kod tanımlayabilir, böylece farklı muhasebe hareketlerini birlikte gruplayabilirsiniz. Geçmişte, farklı dergilerin bağımsız olarak yönetildiği zamanlarda, bu özellik, farklı dergilerin hareket çizgilerini bir arada gruplamak için gerekliydi. Bununla birlikte, Dolibarr muhasebesi ile, " <b> </span class = 'notranslate'> b0cb2ec87f49fz0  <span class = 'notranslate'> b09a4b739f17 span>" zaten otomatik olarak kaydedilmiş olduğundan, hata riski olmadan otomatik harflendirme zaten yapılmıştır, bu nedenle bu özellik ortak kullanım için işe yaramaz hale gelmiştir. Muhasebede veri aktarımı yapan bilgisayar motoruna pek güvenmeyen son kullanıcılar için manuel yazı özelliği sağlanmıştır.
+ACCOUNTING_ENABLE_LETTERING_DESC=Bu seçenek etkinleştirildiğinde, her muhasebe girişinde bir kod tanımlayabilir, böylece farklı muhasebe hareketlerini birlikte gruplayabilirsiniz. Geçmişte, farklı dergilerin bağımsız olarak yönetildiği zamanlarda, bu özellik, farklı dergilerin hareket çizgilerini bir arada gruplamak için gerekliydi. Bununla birlikte, Dolibarr muhasebesi ile, " <b>%s</b>" zaten otomatik olarak kaydedilmiş olduğundan, hata riski olmadan otomatik harflendirme zaten yapılmıştır, bu nedenle bu özellik ortak kullanım için işe yaramaz hale gelmiştir. Muhasebede veri aktarımı yapan bilgisayar motoruna pek güvenmeyen son kullanıcılar için manuel yazı özelliği sağlanmıştır.
 EnablingThisFeatureIsNotNecessary=Bu özelliğin etkinleştirilmesi artık sıkı bir muhasebe yönetimi için gerekli değildir.
 ACCOUNTING_ENABLE_AUTOLETTERING=Muhasebeye aktarırken otomatik harfleri etkinleştirin
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Harfleme kodu otomatik olarak oluşturulur ve artırılır ve son kullanıcı tarafından seçilmez.
@@ -337,7 +337,7 @@ ACCOUNTING_LETTERING_NBLETTERS=Harf kodu oluşturulurken harf sayısı (varsayı
 ACCOUNTING_LETTERING_NBLETTERS_DESC=Bazı muhasebe yazılımları yalnızca iki harfli kodu kabul eder. Bu parametre bu yönü ayarlamanızı sağlar. Varsayılan harf sayısı üçtür.
 OptionsAdvanced=Gelişmiş seçenekler
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Tedarikçi alımlarında KDV ters ücreti yönetiminin etkinleştirilmesi
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Bu seçenek etkinleştirildiğinde, bir tedarikçinin veya belirli bir satıcı faturasının muhasebeye farklı şekilde aktarılması gerektiğini tanımlayabilirsiniz: "<" içinde tanımlanan hesap planından belirli 2 hesaptaki muhasebeye ek bir borç ve bir alacak limiti oluşturulacaktır. span class='notranslate'>%s</span>" kurulum sayfasına gidin.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ## Export
 NotExportLettering=Dosyayı oluştururken harfleri dışa aktarmayın
 NotifiedExportDate=Henüz dışa aktarılmamış satırları Dışa Aktarıldı olarak işaretle <span class="warning">(dışa aktarılmış olarak işaretlenmiş bir satırı değiştirmek için tüm işlemi silmeniz ve muhasebeye yeniden aktarmanız gerekir)</span>

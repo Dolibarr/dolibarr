@@ -226,6 +226,7 @@ Permission2502=Uploaden of verwijderen van documenten
 Permission2503=In te dienen of te verwijderen documenten
 Permission2515=Instellen documentabonneelijsten
 Permission50202=Import transacties
+VATIsUsedDesc=Bij het maken van voorstellen, facturen, bestellingen etc. volgt het BTW-tarief standaard de actieve standaardregel:<br>Als de verkoper niet onderworpen is aan omzetbelasting, wordt de omzetbelasting standaard ingesteld op 0 . Einde van regel.<br>Als (land van de verkoper = land van de koper), is de omzetbelasting standaard gelijk aan de omzetbelasting van het product in het land van de verkoper. Einde van de regel.<br>Als de verkoper en koper zich beide in de Europese Gemeenschap bevindt en goederen zijn transportgerelateerd producten (transport, verzending, luchtvaartmaatschappij), de standaard BTW is 0. Deze regel is afhankelijk van het land van de verkoper - raadpleeg uw accountant. De BTW moet Betaald zijn door de koper naar het douanekantoor in zijn land en span> niet aan de verkoper. Einde van de regel.<br>Als de verkoper en koper zich beide in de Europese Gemeenschap bevindt en de koper is geen bedrijf (met een geregistreerde intracommunautaire BTW Nummer ), dan wordt het BTW standaard ingesteld op het BTW tarief van het land van de verkoper. Einde van de regel.<br>Als de verkoper en koper zich beide in de Europese Gemeenschap bevindt en de koper is een bedrijf (met een geregistreerde intracommunautaire BTW Nummer), dan is BTW standaard 0. Einde van de regel.<br>In elk ander geval is de voorgestelde standaard omzetbelasting=0. Einde van de heerschappij.
 DatabaseUser=Databasegebruikersnaam
 DatabasePassword=Databasewachwoord
 Skin=Uiterlijksthema
@@ -253,4 +254,5 @@ ExportSetup=Installatie van module Exporteren
 InventorySetup=Inventaris instellen
 ShowAdvancedOptions=Geavanceerde opties weergeven
 Images=Beelden
+HelpCssOnViewDesc=The CSS used when viewing the field.
 YouAreHere=U bent hier

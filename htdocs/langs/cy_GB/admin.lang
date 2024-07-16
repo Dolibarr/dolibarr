@@ -370,7 +370,7 @@ GenericMaskCodes3EAN=Bydd pob nod arall yn y mwgwd yn aros yn gyfan (ac eithrio 
 GenericMaskCodes4a=<u>Enghraifft ar 99eg %s trydydd parti TheCompany, gyda dyddiad 2023-01-31:</u><br>
 GenericMaskCodes4b=<u>Enghraifft ar drydydd parti a grëwyd ar 2023-01-31:</u><br> >
 GenericMaskCodes4c=<u>Enghraifft o gynnyrch a grëwyd ar 2023-01-31:</u><br>
-GenericMaskCodes5=Bydd <b>ABC{yy}{mm}-{000000}</b> yn rhoi b0aee833f8z0 span>ABC2301-000099</b><br><b>@1+ Bydd }-ZZZ/{dd}/XXX<span class='notranslate'></b> yn rhoi <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> yn rhoi <b>IN2301-0099-A<span class='notranslate'></b> o'r math o gwmni 'Responsable Inscripto' gyda chod ar gyfer math sef 'A_RI'
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Yn dychwelyd rhif y gellir ei addasu yn ôl mwgwd diffiniedig.
 ServerAvailableOnIPOrPort=Mae'r gweinydd ar gael yn y cyfeiriad <b> %s </b> ar borthladd <b> %s </b>
 ServerNotAvailableOnIPOrPort=Nid yw'r gweinydd ar gael yn y cyfeiriad <b> %s </b> ar borthladd <b> %s </b>
@@ -515,7 +515,7 @@ WarningPHPMailA=- Using the server of the Email Service Provider increases the t
 WarningPHPMailB=- Nid yw rhai Darparwyr Gwasanaeth E-bost (fel Yahoo) yn caniatáu ichi anfon e-bost o weinydd arall yn hytrach na'u gweinydd eu hunain. Mae eich gosodiad presennol yn defnyddio gweinydd y rhaglen i anfon e-bost ac nid gweinydd eich darparwr e-bost, felly bydd rhai derbynwyr (yr un sy'n gydnaws â'r protocol DMARC cyfyngol), yn gofyn i'ch darparwr e-bost a allant dderbyn eich e-bost a rhai darparwyr e-bost Efallai y bydd (fel Yahoo) yn ymateb "na" oherwydd nad yw'r gweinydd yn perthyn iddynt, felly mae'n bosibl na fydd ychydig o'r E-byst a anfonwyd gennych yn cael eu derbyn i'w hanfon (byddwch yn ofalus hefyd o gwota anfon eich darparwr e-bost).
 WarningPHPMailC=- Mae defnyddio gweinydd SMTP eich Darparwr Gwasanaeth E-bost eich hun i anfon e-byst hefyd yn ddiddorol felly bydd yr holl negeseuon e-bost a anfonir o'r cais hefyd yn cael eu cadw yn eich cyfeiriadur "Anfonwyd" o'ch blwch post.
 WarningPHPMailD=Argymhellir felly newid y dull anfon e-byst i'r gwerth "SMTP".
-WarningPHPMailDbis=Os ydych chi wir eisiau cadw'r dull "PHP" rhagosodedig i anfon e-byst, anwybyddwch y rhybudd hwn, neu ei ddileu trwy %s clicio yma<span class='notranslate'>%s< /rhychwant>.
+WarningPHPMailDbis=Os ydych chi wir eisiau cadw'r dull "PHP" rhagosodedig i anfon e-byst, anwybyddwch y rhybudd hwn, neu ei ddileu trwy %s clicio yma%s.
 WarningPHPMail2=Os oes angen i'ch darparwr SMTP e-bost gyfyngu cleient e-bost i rai cyfeiriadau IP (prin iawn), dyma gyfeiriad IP yr asiant defnyddiwr post (MUA) ar gyfer eich cais CRM ERP: <strong> %s </strong> .
 WarningPHPMailSPF=Os yw'r enw parth yn eich cyfeiriad e-bost anfonwr wedi'i warchod gan gofnod SPF (gofynnwch i'ch cofrestrydd enw parth), rhaid i chi ychwanegu'r IPs canlynol yng nghofnod SPF DNS eich parth: <strong> %s </strong> .
 ActualMailSPFRecordFound=Wedi canfod cofnod SPF gwirioneddol (ar gyfer e-bost %s): %s
@@ -1886,7 +1886,7 @@ PastDelayVCalExport=Peidiwch ag allforio digwyddiad hŷn na
 SecurityKey = Allwedd diogelwch
 ##### ClickToDial #####
 ClickToDialSetup=Cliciwch I Ddeialu gosodiad modiwl
-ClickToDialUrlDesc=Gelwir URL pan fydd llun clic ar y ffôn wedi'i wneud. Yn URL, gallwch ddefnyddio tagiau <br><b>__PHONETO__</b> a fydd yn ei le rhoddwyd rhif ffôn y person i'w ffonio<br><b>__PHONEFROM__</b> hynny yn cael ei ddisodli gan rif ffôn y person sy'n galw (eich un chi)<br><b>__LOGIN__b09a4b739f8z0 span> a fydd yn cael ei ddisodli gan fewngofnodi clictodial (a ddiffinnir ar gerdyn defnyddiwr)<span class='notranslate'><br><b>__PASS__ </b> a fydd yn cael ei ddisodli gan gyfrinair clicktodial (a ddiffinnir ar gerdyn defnyddiwr).
+ClickToDialUrlDesc=Gelwir URL pan fydd llun clic ar y ffôn wedi'i wneud. Yn URL, gallwch ddefnyddio tagiau <br><b>__PHONETO__</b> a fydd yn ei le rhoddwyd rhif ffôn y person i'w ffonio<br><b>__PHONEFROM__</b> hynny yn cael ei ddisodli gan rif ffôn y person sy'n galw (eich un chi)<br><b>__LOGIN__ a fydd yn cael ei ddisodli gan fewn</b>gofnodi clictodial (a ddiffinnir ar gerdyn defnyddiwr)<br><b>__PASS__ </b> a fydd yn cael ei ddisodli gan gyfrinair clicktodial (a ddiffinnir ar gerdyn defnyddiwr).
 ClickToDialDesc=Mae'r modiwl hwn yn newid rhifau ffôn, wrth ddefnyddio cyfrifiadur bwrdd gwaith, yn ddolenni clicadwy. Bydd clic yn galw'r rhif. Gellir defnyddio hwn i gychwyn yr alwad ffôn wrth ddefnyddio ffôn meddal ar eich bwrdd gwaith neu wrth ddefnyddio system CTI yn seiliedig ar brotocol SIP er enghraifft. Nodyn: Wrth ddefnyddio ffôn clyfar, mae modd clicio ar rifau ffôn bob amser.
 ClickToDialUseTelLink=Defnyddiwch ddolen "ffôn:" ar rifau ffôn yn unig
 ClickToDialUseTelLinkDesc=Defnyddiwch y dull hwn os oes gan eich defnyddwyr ffôn meddal neu ryngwyneb meddalwedd, wedi'i osod ar yr un cyfrifiadur â'r porwr, a'i alw pan fyddwch chi'n clicio ar ddolen sy'n dechrau gyda "tel:" yn eich porwr. Os oes angen dolen arnoch sy'n dechrau gyda "sip:" neu ddatrysiad gweinydd llawn (dim angen gosod meddalwedd lleol), rhaid i chi osod hwn i "Na" a llenwi'r maes nesaf.
@@ -2328,7 +2328,7 @@ APIsAreNotEnabled=Nid yw modiwlau APIs wedi'u galluogi
 YouShouldSetThisToOff=Dylech osod hwn i 0 neu i ffwrdd
 InstallAndUpgradeLockedBy=Mae gosod ac uwchraddio yn cael eu cloi gan y ffeil <b> %s </b>
 InstallLockedBy=Mae Gosod/Ailosod wedi'i gloi gan y ffeil <b>%s</b>
-InstallOfAddonIsNotBlocked=Nid yw gosodiadau ategion wedi'u cloi. Creu ffeil <b>installmodules.lock</b> i gyfeiriadur <b> ='notranslate'>%s</span></b> i rwystro gosod ategion/modiwlau allanol.
+InstallOfAddonIsNotBlocked=Nid yw gosodiadau ategion wedi'u cloi. Creu ffeil <b>installmodules.lock</b> i gyfeiriadur <b>%s</b> i rwystro gosod ategion/modiwlau allanol.
 OldImplementation=Hen weithrediad
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Os yw rhai modiwlau talu ar-lein wedi'u galluogi (Paypal, Stripe, ...), ychwanegwch ddolen ar y PDF i wneud y taliad ar-lein
 DashboardDisableGlobal=Analluoga yn fyd-eang holl fodiau gwrthrychau agored
@@ -2446,7 +2446,7 @@ NotAvailableByDefaultEnabledOnModuleActivation=Heb ei greu yn ddiofyn. Wedi'i gr
 CSSPage=Arddull CSS
 Defaultfortype=Diofyn
 DefaultForTypeDesc=Templed a ddefnyddir yn ddiofyn wrth greu e-bost newydd ar gyfer y math o dempled
-OptionXShouldBeEnabledInModuleY=Dylid galluogi opsiwn "<b>%s</b>" i fodiwl dosbarth ='notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Dylid galluogi opsiwn "<b>%s</b>" i fodiwl dosbarth <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=Mae opsiwn "<b>%s</b>" wedi'i alluogi i fodiwl <b>%s</b>
 AllowOnLineSign=Caniatáu llofnod Ar-lein
 AllowOnLineSignDesc=A link to allow to sign online a bank document (mandate for direct debit for example) is available in list of payment modes of third parties for bank accounts

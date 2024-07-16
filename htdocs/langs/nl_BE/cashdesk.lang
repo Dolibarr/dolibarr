@@ -16,7 +16,7 @@ NotAvailableWithBrowserPrinter=Niet beschikbaar als de printer voor kasticket is
 Receipt=Kasticket
 RealAmount=Echt bedrag
 TakeposNeedsCategories=TakePOS heeft ten minste één product categorie nodig om te werken
-TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=TakePOS heeft minimaal 1 product categorie nodig onder categorie <b><span klasse ='notranslate'>%s</span></b> om te werken
+TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=TakePOS heeft minimaal 1 product categorie nodig onder categorie <b>%s</b> om te werken
 CashDeskBankAccountFor=Standaardrekening die moet worden gebruikt voor betalingen in
 NoPaimementModesDefined=Er is geen betalingsmodus gedefinieerd in de TakePOS-configuratie
 ConfirmDiscardOfThisPOSSale=Wilt u deze huidige verkoop annuleren?

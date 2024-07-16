@@ -409,7 +409,7 @@ Formula=Τύπος
 ## Reconcile
 LetteringAuto=Αυτόματη συμφωνία
 LetteringManual=Χειροκίνητη συμφωνία
-LetteringPartial=Reconcile partial
+LetteringPartial=Μερική λογιστική συμφωνία
 Unlettering=Αναίρεση λογιστικής συμφωνίας
 UnletteringAuto=Αυτόματη αναίρεση λογιστικής συμφωνίας
 UnletteringManual=Χειροκίνητη αναίρεση λογιστικής συμφωνίας

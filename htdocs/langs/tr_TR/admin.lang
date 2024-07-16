@@ -470,7 +470,7 @@ ExtrafieldParamHelpPassword=Bu alanı boş bırakmak, bu değerin şifreleme OLM
 ExtrafieldParamHelpselect=Değerlerin listesi, biçim anahtarı ve değeri olan satırlar olmalıdır (burada anahtar '0' olamaz)<br><br>örneğin: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>Listenin başka bir tamamlayıcı öznitelik listesine bağlı olması için: <br>1, değer1|options_<i>parent_list_code</i>:parent_key<br>2, value2|options_<i>parent_list_code</i>:parent_key<br><br>Listenin başka bir listeye bağlı olması için:<br>1, value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=Değerler listesi, biçim anahtarı ve değeri olan satırlar olmalıdır (burada anahtar '0' olamaz)<br><br>örneğin: <br>1, değer1<br>2,değer2<br>3,değer3<br>...
 ExtrafieldParamHelpradio=Değerler listesi, biçim anahtarı ve değeri olan satırlar olmalıdır (burada anahtar '0' olamaz)<br><br>örneğin: <br>1,değer1<br>2,değer2<br>3,değer3<br>...
-ExtrafieldParamHelpsellist=Değerlerin listesi bir tablodan gelir<br>Sözdizimi: table_name:label_field:id_field::filtersql<br>Örnek: c_typent:libelle:id ::filtersql<br><br>- id_field mutlaka bir birincil int anahtarıdır<br> - filtersql bir SQL koşuludur. Yalnızca etkin değeri görüntülemek basit bir test olabilir (örn. active=1)<br>Ayrıca, geçerli nesnenin<span sınıfının geçerli kimliği olan $ID$ filtresini de kullanabilirsiniz. ='notranslate'><br></span>Filtrede SELECT kullanmak için, enjeksiyon önleme korumasını atlamak üzere $SEL$ anahtar kelimesini kullanın.<br>ekstra alanları filtrelemek istiyorsanız söz dizimini kullanın extra.fieldcode=... (burada alan kodu, ekstra alanın kodudur)<br><br> başka bir tamamlayıcı özellik listesine bağlı liste:<br>c_typent:libelle:id:options_<i>parent_list_code </i>|parent_column:filter <br><br>Listenin başka bir listeye bağlı olması için:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Değerlerin listesi bir tablodan gelir<br>Sözdizimi: table_name: label_field: id_field :: filtersql<br>Örnek: c_typent: libelle: id :: filtersql<br><br> filtre basit bir test olabilir (ör. active=1) sadece aktif değeri görüntülemek için<br>Ayrıca filtre adı içinde $ID$ kullanabilirsiniz, geçerli nesnenin geçerli kimliğidir<br>Filtrede SELECT yapmak için, extrafields'da filtrelemek istiyorsanız $SEL$<br>kullanın sözdizimi extra.fieldcode=... (burada alan kodu extrafield kodudur)<br><br> Listenin başka bir tamamlayıcı nitelik listesine bağlı olması için:<br>c_typent: libelle: id: options_ <i> parent_list_code </i> | parent_column: filter<br><br> Listenin başka bir listeye bağlı olması için:<br>c_typent: libelle: id: <i> parent_list_code </i> | parent_column: filter
 ExtrafieldParamHelplink=Parametreler NesneAdı olmalıdır: Sınıfyolu<br>Sözdizimi:NesneAdı:Sınıfyolu ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Basit bir ayırıcı için boş tut<br>Daraltılan ayırıcı için bunu 1 olarak ayarlayın (yeni oturum için varsayılan olarak açılır, ardından her kullanıcı oturumu için durum tutulur)<br>Daraltılan ayırıcı için bunu 2 olarak ayarlayın (varsayılan olarak daraltıldı yeni oturum, ardından durum her kullanıcı oturumu için tutulur)
@@ -515,7 +515,7 @@ WarningPHPMailA=- Using the server of the Email Service Provider increases the t
 WarningPHPMailB=- Bazı E-posta Servis Sağlayıcıları kendi sunucularından başka bir sunucudan e-posta göndermenize izin vermez. Mevcut kurulumunuz e-posta göndermek için uygulama sunucusunu kullanıyor, e-posta sağlayıcınızın sunucusunu değil, bu nedenle bazı alıcılar (kısıtlayıcı DMARC protokolüyle uyumlu olan) e-posta sağlayıcınıza e-postanızı ve bazı e-posta sağlayıcılarını kabul edip edemeyeceklerini soracaktır. (Yahoo gibi), sunucu kendilerine ait olmadığı için "hayır" yanıtını verebilir, bu nedenle, gönderdiğiniz E-postaların çok azı teslim için kabul edilmeyebilir (e-posta sağlayıcınızın gönderme kotasına da dikkat edin).
 WarningPHPMailC=- E-posta göndermek için kendi E-posta Servis Sağlayıcınızın SMTP sunucusunu kullanmak da ilginçtir, bu nedenle uygulamadan gönderilen tüm e-postalar ayrıca posta kutunuzun "Gönderilen" dizinine kaydedilecektir.
 WarningPHPMailD=Bu nedenle e-postaların gönderim yönteminin "SMTP" değerine değiştirilmesi tavsiye edilir.
-WarningPHPMailDbis=E-posta göndermek için gerçekten varsayılan "PHP" yöntemini korumak istiyorsanız, bu uyarıyı dikkate almayın veya %sburayı tıklayarak<span class='notranslate'>%s< kaldırarak uyarıyı kaldırın. /açıklık>.
+WarningPHPMailDbis=If you really want to keep the default "PHP" method to send emails, just ignore this warning, or remove it by %sclicking here%s.
 WarningPHPMail2=E-posta SMTP sağlayıcınızın e-posta istemcisini bazı IP adresleriyle kısıtlaması gerekiyorsa (çok nadir), bu, ERP CRM uygulamanız için posta kullanıcı aracısının (MUA) IP adresidir: <strong>%s</strong>.
 WarningPHPMailSPF=Gönderen e-posta adresinizdeki alan adı bir SPF kaydı tarafından korunuyorsa (alan adı kayıt kuruluşunuzdan isteyin), alan adınızın DNS'sinin SPF kaydına aşağıdaki IP'leri eklemeniz gerekir: <strong>%s</strong>.
 ActualMailSPFRecordFound=Gerçek SPF kaydı bulundu (e-posta için %s): %s
@@ -1266,7 +1266,7 @@ SetupDescription2=Aşağıdaki iki bölümün kurulumu zorunludur (Ayarlar menü
 SetupDescription3=<a href="%s">%s -> %s</a><br><br> Uygulamanızın varsayılan davranışını özelleştirmek için kullanılan temel parametreler (ör. ülkeyle ilgili özellikler için).
 SetupDescription4= <a href="%s"> %s -> %s </a> <br> <br> Bu yazılım birçok modül/uygulama paketidir. Gereksinimlerinizle ilgili modüller etkinleştirilmeli ve yapılandırılmalıdır. Bu modüllerin etkinleştirilmesiyle menü girişleri görünecektir.
 SetupDescription5=Ayarlar menüsündeki diğer girişler isteğe bağlı parametreleri yönetmenizi sağlar.
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'></a>< /açıklık>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Uygulamanızın varsayılan davranışını özelleştirmek için kullanılan temel parametreler (ör. ülkeye özgü özellikler için).
 SetupDescription4b=Bu yazılım birçok modül/uygulamadan oluşan bir pakettir. İhtiyaçlarınızla ilgili modüllerin aktif edilmesi gerekmektedir. Bu modüllerin aktif edilmesiyle menü girişleri karşınıza çıkacaktır.
 AuditedSecurityEvents=Denetlenen güvenlik olayları
@@ -1416,7 +1416,7 @@ SearchOptim=Optimizasyon ara
 YouHaveXObjectUseComboOptim=Veritabanında %s %s var. Tuşa basıldığında açılan listenin yüklenmesini etkinleştirmek için modülün kurulumuna gidebilirsiniz.
 YouHaveXObjectUseSearchOptim=Veritabanında %s %s var. %s sabitini Home-Setup-Other'da 1'e ekleyebilirsiniz.
 YouHaveXObjectUseSearchOptimDesc=Bu, aramayı dizelerin başlangıcıyla sınırlandırır, bu da veritabanının dizinleri kullanmasını mümkün kılar ve anında yanıt almanız gerekir.
-YouHaveXObjectAndSearchOptimOn=Veritabanında %s %s var ve %s sabiti < olarak ayarlı span class='notranslate'>%s</span>'ı Ev-Kurulum-Diğer'de açın.
+YouHaveXObjectAndSearchOptimOn=You have %s %s in the database and constant %s is set to %s in Home-Setup-Other.
 BrowserIsOK=%s web tarayıcısını kullanıyorsunuz. Bu tarayıcı güvenlik ve performans açısından uygundur.
 BrowserIsKO=%s web tarayıcısını kullanıyorsunuz. Bu tarayıcının güvenlik, performans ve güvenilirlik açısından kötü bir seçim olduğu bilinmektedir. Firefox, Chrome, Opera veya Safari kullanmanızı öneririz.
 PHPModuleLoaded=%s PHP bileşeni yüklendi
@@ -2245,7 +2245,7 @@ UseDebugBar=Hata ayıklama çubuğunu kullan
 DEBUGBAR_LOGS_LINES_NUMBER=Konsolda saklanacak son günlük satırı sayısı
 WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramatically output
 ModuleActivated=Modül 1 %s etkinleştirilmiştir ve arayüzü yavaşlatıyor.
-ModuleActivatedWithTooHighLogLevel=%s modülü çok yüksek bir günlük kaydıyla etkinleştirildi seviye (daha düşük bir <span class='notranslate'>seviye< kullanmayı deneyin) /span> daha iyi performans ve güvenlik için)
+ModuleActivatedWithTooHighLogLevel=Module %s is activated with a too high logging level (try to use a lower level for better performances and security)
 ModuleSyslogActivatedButLevelNotTooVerbose=%s modülü etkinleştirildi ve günlük düzeyi (%s) doğru (çok ayrıntılı değil)
 IfYouAreOnAProductionSetThis=Bir üretim ortamındaysanız, bu özelliği %s olarak ayarlamalısınız.
 AntivirusEnabledOnUpload=Yüklenen dosyalarda antivirüs etkin
@@ -2328,7 +2328,7 @@ APIsAreNotEnabled=API modülleri etkin değil
 YouShouldSetThisToOff=Bunu 0'a veya kapalı olarak ayarlamanız gerekir
 InstallAndUpgradeLockedBy=Yükleme ve yükseltmeler <b>%s</b> dosyası tarafından kilitlenir.
 InstallLockedBy=Yükleme/Yeniden Yükleme, <b>%s</b> dosyası tarafından kilitlendi
-InstallOfAddonIsNotBlocked=Eklentilerin kurulumları kilitli değildir. <b>installmodules.lock</b> dosyasını <b><span sınıfı dizinine bir dosya oluşturun ='notranslate'>%s</span></b> harici eklentilerin/modüllerin kurulumunu engellemek için.
+InstallOfAddonIsNotBlocked=Eklentilerin kurulumları kilitli değildir. <b>installmodules.lock</b> dosyasını <b>%s</b> harici eklentilerin/modüllerin kurulumunu engellemek için.
 OldImplementation=Eski uygulama
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Bazı çevrimiçi ödeme modülleri etkinse (Paypal, Stripe, ...), çevrimiçi ödemeyi yapmak için PDF'ye bir bağlantı ekleyin
 DashboardDisableGlobal=Açık nesnelerin tüm başparmaklarını genel olarak devre dışı bırakın
@@ -2446,8 +2446,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Varsayılan olarak oluşturulmam�
 CSSPage=CSS Stili
 Defaultfortype=Varsayılan
 DefaultForTypeDesc=Şablon türü için yeni bir e-posta oluştururken varsayılan olarak kullanılan şablon
-OptionXShouldBeEnabledInModuleY="<b>%s</b>" seçeneği <span class modülünde etkinleştirilmelidir ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY="<b>%s</b>" seçeneği <span class= modülünde etkinleştirildi 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Çevrimiçi imzaya izin ver
 AllowOnLineSignDesc=Banka hesapları için üçüncü tarafların ödeme yöntemleri listesinde, bir banka belgesinin (örneğin otomatik ödeme talimatı) çevrimiçi olarak imzalanmasına izin veren bir bağlantı mevcuttur.
 AtBottomOfPage=Sayfanın alt kısmında

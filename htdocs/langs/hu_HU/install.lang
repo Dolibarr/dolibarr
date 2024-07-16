@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Linux csomagból (Ubuntu, Debian, Fedora...) használta a D
 KeepDefaultValuesMamp=A Dolibarr beállító varázslót használta a DoliMamp-tól, így az itt javasolt értékek már optimalizálva vannak. Csak akkor változtasd meg őket, ha tudod, mit csinálsz.
 KeepDefaultValuesProxmox=Egy Proxmox virtuális készülékről használta a Dolibarr telepítővarázslót, így az itt javasolt értékek már optimalizálva vannak. Csak akkor változtasd meg őket, ha tudod, mit csinálsz.
 UpgradeExternalModule=Futtassa a külső modul dedikált frissítési folyamatát
-SetAtLeastOneOptionAsUrlParameter=Állítson be legalább egy beállítást paraméterként az URL-ben. Például: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Állítson be legalább egy beállítást paraméterként az URL-ben „teszt” vagy „megerősített” értékkel. Például: '...repair.php?standard=confirmed'
 NothingToDelete=Nincs mit tisztítani/törölni
 NothingToDo=Nincs tennivaló
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Az alkalmazás megpróbált önállóan frissít
 YouTryUpgradeDisabledByMissingFileUnLock=Az alkalmazás megpróbált önállóan frissíteni, de a frissítési folyamat jelenleg nem engedélyezett.<br>
 ClickHereToGoToApp=Kattintson ide az alkalmazás megnyitásához
 ClickOnLinkOrRemoveManualy=Ha frissítés van folyamatban, kérjük, várjon. Ha nem, kattintson a következő linkre. Ha mindig ugyanazt az oldalt látja, el kell távolítania/át kell neveznie az install.lock fájlt a dokumentumok könyvtárában.
-ClickOnLinkOrCreateUnlockFileManualy=Ha frissítés van folyamatban, kérjük, várjon... Ha nem, távolítsa el az install.lock fájlt, vagy hozzon létre egy upgrade.unlock fájlt a Dolibarr dokumentumok könyvtárában.
+ClickOnLinkOrCreateUnlockFileManualy=Ha frissítés van folyamatban, kérjük, várjon... Ha nem, távolítsa el az install.lock fájlt (vagy hozzon létre egy upgrade.unlock fájlt a frissítéshez) a Dolibarr dokumentumok könyvtárából.
 Loaded=Töltve
 FunctionTest=Funkcióteszt
 NodoUpgradeAfterDB=A külső modulok nem kérnek semmilyen műveletet az adatbázis frissítése után
