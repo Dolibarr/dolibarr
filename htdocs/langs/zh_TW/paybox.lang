@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox模組設定
 PayBoxDesc=此模組允許客戶以<a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a>付款。這可以用於臨時付款或與Dolibarr項目有關的付款（發票，訂單等）。
-FollowingUrlAreAvailableToMakePayments=以下網址可提供給客戶的網頁上，能夠作出Dolibarr支付對象
-PaymentForm=付款方式
-WelcomeOnPaymentPage=歡迎使用我們的線上支付服務
-ThisScreenAllowsYouToPay=這個屏幕允許你進行網上支付%s。
-ThisIsInformationOnPayment=這是在做付款信息
-ToComplete=要完成
-YourEMail=付款確認的電子郵件
-Creditor=債權人
-PaymentCode=付款代碼
 PayBoxDoPayment=用Paybox付款
 YouWillBeRedirectedOnPayBox=您將被重定向擔保Paybox頁，輸入您的信用卡信息
-Continue=未來
 SetupPayBoxToHavePaymentCreatedAutomatically=使用網址<b>%s</b>設定您的Paybox,以便在通過Paybox驗證後自動新增付款
 YourPaymentHasBeenRecorded=本頁面確認您的付款已記錄。謝謝。
 YourPaymentHasNotBeenRecorded=您的付款尚未記錄，交易已被取消。謝謝。
-AccountParameter=帳戶參數
-UsageParameter=使用參數
-InformationToFindParameters=幫助，找到你的%s帳戶信息
 PAYBOX_CGI_URL_V2=付款出納CGI模塊的網址
-CSSUrlForPaymentForm=付款方式的CSS樣式表的URL
 NewPayboxPaymentReceived=收到新的Paybox付款
 NewPayboxPaymentFailed=新的Paybox付款已嘗試但已失敗
 PAYBOX_PAYONLINE_SENDEMAIL=嘗試付款後的電子郵件通知（成功或失敗）

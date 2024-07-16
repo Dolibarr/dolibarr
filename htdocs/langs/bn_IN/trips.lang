@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=দ্বারা নথিভুক্ত
 AUTHORPAIEMENT=দ্বারা পরিশোধ করা হয়
 AddTrip=ব্যয় প্রতিবেদন তৈরি করুন
@@ -13,6 +13,8 @@ byEX_EXP=লাইন দ্বারা (%s এর সীমাবদ্ধত�
 byEX_MON=মাস অনুসারে (%s এর সীমাবদ্ধতা)
 byEX_YEA=বছর অনুসারে (%s এর সীমাবদ্ধতা)
 CANCEL_USER=দ্বারা মুছে ফেলা হয়েছে
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=যানবাহন বিভাগ
 ClassifyRefunded='ফেরত' শ্রেণীবদ্ধ করুন
 CompanyVisited=কোম্পানি/সংস্থা পরিদর্শন করা হয়েছে
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=বছরের দ্বারা (কোন সীমাবদ
 NoTripsToExportCSV=এই সময়ের জন্য রপ্তানি করার জন্য কোন খরচের রিপোর্ট নেই।
 NOT_AUTHOR=আপনি এই ব্যয় প্রতিবেদনের লেখক নন। অপারেশন বাতিল করা হয়েছে।
 OnExpense=ব্যয়ের লাইন
-PDFStandardExpenseReports=ব্যয় প্রতিবেদনের জন্য একটি পিডিএফ নথি তৈরি করতে স্ট্যান্ডার্ড টেমপ্লেট
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=একটি খরচ রিপোর্ট প্রদান
 REFUSEUR=দ্বারা অস্বীকার করা হয়েছে
 RangeIk=মাইলেজ পরিসীমা
@@ -106,7 +108,7 @@ TripId=আইডি খরচ রিপোর্ট
 TripNDF=তথ্য ব্যয় প্রতিবেদন
 TripSociete=তথ্য সংস্থা
 Trips=খরচ রিপোর্ট
-TripsAndExpenses=খরচ রিপোর্ট
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=খরচ রিপোর্ট পরিসংখ্যান
 TypeFees=ফি এর প্রকার
 UploadANewFileNow=এখন একটি নতুন নথি আপলোড করুন
@@ -115,6 +117,10 @@ VALIDOR=দ্বারা অনুমোদিত
 ValidateAndSubmit=যাচাই করুন এবং অনুমোদনের জন্য জমা দিন
 ValidatedWaitingApproval=বৈধ (অনুমোদনের জন্য অপেক্ষা করা হচ্ছে)
 ValideTrip=ব্যয় প্রতিবেদন অনুমোদন করুন
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=সকালের নাস্তা
