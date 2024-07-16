@@ -2670,7 +2670,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<table class="border tableforfield centpercent">';
 
 			// Type Prospect/Customer/Supplier
-			print '<tr><td class="titlefieldhalf">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 			print $object->getTypeUrl(1);
 			print '</td></tr>';
 
