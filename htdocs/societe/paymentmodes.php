@@ -136,11 +136,11 @@ if (empty($reshook)) {
 
 	if ($action == 'update') {
 		// Update the bank account
-		if (!GETPOST('label', 'alpha') || !GETPOST('bank', 'alpha')) {
+		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') or !empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')))) {
 			if (!GETPOST('label', 'alpha')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
-			if (!GETPOST('bank', 'alpha')) {
+			if (!GETPOST('bank', 'alpha') and empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 			}
 			$action = 'edit';
@@ -153,7 +153,7 @@ if (empty($reshook)) {
 				$action = 'edit';
 				$error++;
 			}
-			if (!GETPOST('bic')) {
+			if (!GETPOST('bic') and empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 				$action = 'edit';
 				$error++;
@@ -329,7 +329,7 @@ if (empty($reshook)) {
 					$action = 'create';
 					$error++;
 				}
-				if (!GETPOST('bic')) {
+				if (!GETPOST('bic') and empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 					$action = 'create';
 					$error++;
@@ -1969,7 +1969,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
+	$required = empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')) ? "fieldrequired" : "";
+	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'"></td></tr>';
 
 	// Show fields of bank account
@@ -2006,7 +2007,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $bankaccount->bic;
-			if ($bankaccount->needIBAN()) {
+			if ($bankaccount->needIBAN() and empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
@@ -2178,7 +2179,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $companybankaccount->bic;
-			if ($companybankaccount->needIBAN()) {
+			if ($companybankaccount->needIBAN() and empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';

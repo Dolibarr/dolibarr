@@ -1128,7 +1128,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						$verif = checkSwiftForAccount(null, $fac[10]);
-						if ($verif) {
+						if ($verif or (empty($fac[10]) and getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							$verif = checkIbanForAccount(null, $fac[11]);
 						}
 
@@ -2178,11 +2178,13 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
 			$XML_DEBITOR .= '					</MndtRltdInf>'.$CrLf;
 			$XML_DEBITOR .= '				</DrctDbtTx>'.$CrLf;
-			$XML_DEBITOR .= '				<DbtrAgt>'.$CrLf;
-			$XML_DEBITOR .= '					<FinInstnId>'.$CrLf;
-			$XML_DEBITOR .= '						<BIC>'.$row_bic.'</BIC>'.$CrLf;
-			$XML_DEBITOR .= '					</FinInstnId>'.$CrLf;
-			$XML_DEBITOR .= '				</DbtrAgt>'.$CrLf;
+			if(empty(getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
+				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
+				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
+				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+				$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
+				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
+			}
 			$XML_DEBITOR .= '				<Dbtr>'.$CrLf;
 			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))).'</Nm>'.$CrLf;
 			$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
