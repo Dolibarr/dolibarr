@@ -1530,7 +1530,7 @@ if ($step == 4 && $datatoimport) {
 
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport) {
-	$max_execution_time_for_importexport = (!getDolGlobalString('IMPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_execution_time_for_importexport = getDolGlobalInt('IMPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -2019,7 +2019,7 @@ if ($step == 5 && $datatoimport) {
 
 // STEP 6: Real import
 if ($step == 6 && $datatoimport) {
-	$max_execution_time_for_importexport = (!getDolGlobalString('IMPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_execution_time_for_importexport = getDolGlobalInt('IMPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -2057,7 +2057,7 @@ if ($step == 6 && $datatoimport) {
 		$obj->import_close_file();
 	}
 
-	$nboflines = GETPOST("nboflines", dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
+	$nboflines = (GETPOSTISSET("nboflines") ? GETPOSTINT("nboflines") : dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
 	$param = '&format='.$format.'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines);
 	if ($excludefirstline) {
