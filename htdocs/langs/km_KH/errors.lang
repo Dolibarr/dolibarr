@@ -51,7 +51,7 @@ ErrorBadDateFormat=តម្លៃ '%s' មានទម្រង់កាលប�
 ErrorWrongDate=កាលបរិច្ឆេទ​មិន​ត្រឹមត្រូវ!
 ErrorFailedToWriteInDir=បរាជ័យក្នុងការសរសេរក្នុងថត %s
 ErrorFailedToBuildArchive=បរាជ័យ​ក្នុង​ការ​បង្កើត​ឯកសារ​បណ្ណសារ %s
-ErrorFoundBadEmailInFile=បានរកឃើញវាក្យសម្ព័ន្ធអ៊ីមែលមិនត្រឹមត្រូវសម្រាប់បន្ទាត់ %s នៅក្នុងឯកសារ (ឧទាហរណ៍បន្ទាត់ %s ជាមួយ email=<span class='notranslate'>b0ecb2ec87f49f /span>)
+ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=%s)
 ErrorUserCannotBeDelete=អ្នកប្រើប្រាស់មិនអាចលុបបានទេ។ ប្រហែលជាវាត្រូវបានភ្ជាប់ទៅអង្គភាព Dolibarr ។
 ErrorFieldsRequired=វាលដែលត្រូវការមួយចំនួនត្រូវបានទុកចោល។
 ErrorSubjectIsRequired=ប្រធានបទអ៊ីមែលត្រូវបានទាមទារ
@@ -98,7 +98,7 @@ ErrorPasswordsMustMatch=ពាក្យសម្ងាត់ដែលបាន�
 ErrorContactEMail=កំហុសបច្ចេកទេសបានកើតឡើង។ សូមទាក់ទងអ្នកគ្រប់គ្រងដើម្បីធ្វើតាមអ៊ីមែល <b>%s</b> និងផ្តល់បញ្ហា លេខកូដ <b>%s</b> នៅក្នុងសាររបស់អ្នក ឬបន្ថែមច្បាប់ចម្លងអេក្រង់នៃ ទំព័រនេះ។
 ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=វាល <b>%s</b>: តម្លៃ '<b>%s</b>' មានទិន្នន័យព្យាបាទដែលមិនត្រូវបានអនុញ្ញាត
-ErrorFieldValueNotIn=វាល <b>%s</b>: ' <b>%s</b>' មិនមែនជាតម្លៃដែលរកឃើញក្នុងវាល b05878333 span><span class='notranslate'>%s</b> នៃ <b> %s</b>
+ErrorFieldValueNotIn=Field <b>%s</b>: '<b>%s</b>' is not a value found in field <b>%s</b> of <b>%s</b>
 ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=កំណត់ត្រាជាច្រើនបានរកឃើញនៅពេលស្វែងរកពី ref <b>%s</b>។ មិនដឹងថាត្រូវប្រើ ID មួយណាទេ។
 ErrorsOnXLines=%s រកឃើញកំហុស
@@ -381,7 +381,7 @@ WarningModuleNeedRefresh = ម៉ូឌុល <b>%s</b> ត្រូវបាន
 WarningPermissionAlreadyExist=ការអនុញ្ញាតដែលមានស្រាប់សម្រាប់វត្ថុនេះ។
 WarningGoOnAccountancySetupToAddAccounts=ប្រសិនបើបញ្ជីនេះទទេ សូមចូលទៅកាន់ម៉ឺនុយ %s - %s - %s ដើម្បីផ្ទុក ឬបង្កើតគណនីសម្រាប់តារាងគណនីរបស់អ្នក។
 WarningCorrectedInvoiceNotFound=រកមិនឃើញវិក្កយបត្រដែលបានកែតម្រូវទេ។
-WarningCommentNotFound=ការព្រមាន៖ មិនអាចស្វែងរកមតិយោបល់ចាប់ផ្តើម និង/ឬបញ្ចប់សម្រាប់ផ្នែក <b>%s </b> ទៅក្នុងឯកសារ <b>%s<span class='notranslate'>b09a4b7390f17
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=ចលនាភាគហ៊ុនបានបញ្ច្រាសរួចហើយ
 WarningParentIDDoesNotExistAnymore=លេខសម្គាល់មាតាបិតានេះមិនមានទៀតទេ
 WarningReadBankAlsoAllowedIfUserHasPermission=ការព្រមាន ការអានគណនីធនាគារក៏ត្រូវបានអនុញ្ញាតដោយមានការអនុញ្ញាតក្នុងការគ្រប់គ្រងតារាងគណនីផងដែរ។

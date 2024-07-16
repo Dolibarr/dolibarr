@@ -2108,7 +2108,7 @@ TypeCdr=ប្រើ "គ្មាន" ប្រសិនបើកាលបរ�
 BaseCurrency=រូបិយប័ណ្ណ​យោង​របស់​ក្រុមហ៊ុន (ចូល​ទៅ​ក្នុង​ការ​បង្កើត​ក្រុមហ៊ុន​ដើម្បី​ផ្លាស់​ប្តូ​រ​នេះ​)
 WarningNoteModuleInvoiceForFrenchLaw=ម៉ូឌុលនេះ %s គឺអនុលោមតាមច្បាប់របស់បារាំង (Loi Finance 2016)។
 WarningNoteModulePOSForFrenchLaw=ម៉ូឌុលនេះ %s គឺអនុលោមតាមច្បាប់បារាំង (Loi Finance 2016) ពីព្រោះម៉ូឌុល Non Reversible Logs ត្រូវបានដំណើរការដោយស្វ័យប្រវត្តិ។
-WarningInstallationMayBecomeNotCompliantWithLaw=អ្នកកំពុងព្យាយាមដំឡើងម៉ូឌុល %s ដែលជាម៉ូឌុលខាងក្រៅ។ ការធ្វើឱ្យម៉ូឌុលខាងក្រៅធ្វើឱ្យសកម្មមានន័យថាអ្នកជឿទុកចិត្តលើអ្នកបោះពុម្ពម៉ូឌុលនោះ ហើយអ្នកប្រាកដថាម៉ូឌុលនេះមិនប៉ះពាល់អវិជ្ជមានដល់អាកប្បកិរិយានៃកម្មវិធីរបស់អ្នកទេ ហើយស្របតាមច្បាប់នៃប្រទេសរបស់អ្នក (<span class='notranslate'>%s</ វិសាលភាព>) ។ ប្រសិនបើម៉ូឌុលណែនាំមុខងារខុសច្បាប់ អ្នកទទួលខុសត្រូវចំពោះការប្រើប្រាស់កម្មវិធីខុសច្បាប់។
+WarningInstallationMayBecomeNotCompliantWithLaw=You are trying to install module %s that is an external module. Activating an external module means you trust the publisher of that module and that you are sure that this module does not adversely impact the behavior of your application, and is compliant with laws of your country (%s). If the module introduces an illegal feature, you become responsible for the use of illegal software.
 WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=ប្រសិនបើអ្នកកំពុងប្រើរបៀបពិសោធន៍សម្រាប់វិក្កយបត្រស្ថានភាព អ្នកនឹងត្រូវធ្វើបច្ចុប្បន្នភាពទិន្នន័យរបស់អ្នក ដើម្បីប្តូរពីរបៀបពិសោធន៍ទៅរបៀបផ្លូវការ។ អ្នកអាចទាក់ទងដៃគូដើម្បីជួយអ្នកក្នុងកិច្ចការនេះ។ បញ្ជីនៃដៃគូដែលពេញចិត្តអាចរកបានដោយធ្វើតាម <a href="%s" target="_blank">តំណភ្ជាប់នេះ</a>
 MAIN_PDF_MARGIN_LEFT=រឹមខាងឆ្វេងនៅលើ PDF
 MAIN_PDF_MARGIN_RIGHT=រឹមខាងស្តាំនៅលើ PDF

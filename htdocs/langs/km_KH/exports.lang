@@ -93,7 +93,7 @@ ErrorMissingMandatoryValue=ទិន្នន័យចាំបាច់គឺ�
 TooMuchErrors=នៅមាន <b>%s</b> ខ្សែប្រភពផ្សេងទៀតដែលមានកំហុស ប៉ុន្តែលទ្ធផលមាន ត្រូវ​បាន​កំណត់។
 TooMuchWarnings=នៅមាន <b>%s</b> ខ្សែប្រភពផ្សេងទៀតដែលមានការព្រមាន ប៉ុន្តែលទ្ធផលមាន ត្រូវ​បាន​កំណត់។
 EmptyLine=បន្ទាត់ទទេ (នឹងត្រូវបោះចោល)
-CorrectErrorBeforeRunningImport=អ្នក <b>ត្រូវតែ</b> កែកំហុសទាំងអស់ <b>ពីមុន notranslate'></b></span> កំពុងដំណើរការការនាំចូលច្បាស់លាស់។
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=ឯកសារត្រូវបាននាំចូលដោយលេខ <b>%s</b>។
 YouCanUseImportIdToFindRecord=អ្នកអាចស្វែងរកកំណត់ត្រាដែលបាននាំចូលទាំងអស់នៅក្នុងមូលដ្ឋានទិន្នន័យរបស់អ្នកដោយត្រងនៅលើវាល <b>import_key='%s'</b> ។
 NbOfLinesOK=ចំនួនបន្ទាត់ដែលគ្មានកំហុស និងគ្មានការព្រមាន៖ <b>%s</b>។
@@ -119,8 +119,8 @@ Separator=អ្នកបំបែកវាល
 Enclosure=កំណត់ព្រំដែនខ្សែអក្សរ
 SpecialCode=លេខកូដពិសេស
 ExportStringFilter=%% អនុញ្ញាតឱ្យជំនួសតួអក្សរមួយ ឬច្រើននៅក្នុងអត្ថបទ
-ExportDateFilter=YYYY, YYYYMM, YYYYYMM, YYYYMMDD: ត្រងដោយមួយឆ្នាំ/ខែ/ថ្ងៃ<br>YYYY+YYYY, YYYYMM+YYYYYMM, YYYYMMDD+YY<YYYMMDD: ត្រងលើជួរនៃថ្ងៃ/ឆ្នាំ span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMDD: តម្រងលើឆ្នាំបន្តបន្ទាប់ទាំងអស់/ខែ/ថ្ងៃ<br> <YYYY, <YYYY, <YYYY YYYYMMDD៖ ត្រងលើឆ្នាំមុនទាំងអស់/ខែ/ថ្ងៃ
-ExportNumericFilter=NNNNN ត្រងដោយតម្លៃមួយ<br>NNNNNN+NNNNNN ត្រងលើជួរតម្លៃ<br><span class='notranslate'>b08912a07ede /span>> NNNNN ត្រងដោយតម្លៃខ្ពស់ជាង
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=នាំចូលដោយចាប់ផ្តើមពីលេខបន្ទាត់
 EndAtLineNb=បញ្ចប់ដោយលេខបន្ទាត់
 ImportFromToLine=ជួរកំណត់ (ពី - ទៅ) ។ ឧ. ដើម្បីលុបបន្ទាត់បឋមកថា។

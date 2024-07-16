@@ -282,9 +282,9 @@ MinimumRecommendedPrice=តម្លៃដែលបានណែនាំអប�
 PriceExpressionEditor=កម្មវិធីនិពន្ធកន្សោមតម្លៃ
 PriceExpressionSelected=កន្សោមតម្លៃដែលបានជ្រើសរើស
 PriceExpressionEditorHelp1="price = 2 + 2" ឬ "2 + 2" សម្រាប់ការកំណត់តម្លៃ។ ប្រើ; ដើម្បីបំបែកកន្សោម
-PriceExpressionEditorHelp2=អ្នកអាចចូលប្រើ ExtraFields ជាមួយនឹងអថេរដូចជា <b>#extrafield_myextrafieldkey#</b> និងអថេរសកលជាមួយ <span class='notranslate'333 /span>#global_mycode#</b>
+PriceExpressionEditorHelp2=You can access ExtraFields with variables like <b>#extrafield_myextrafieldkey#</b> and global variables with <b>#global_mycode#</b>
 PriceExpressionEditorHelp3=នៅក្នុងទាំងផលិតផល/សេវាកម្ម និងតម្លៃអ្នកលក់ មានអថេរទាំងនេះមាន៖<br><b>#tva_tx# #localtax1_tx# #localtax2_tx# weight# #length# #surface# #price_min#</b>
-PriceExpressionEditorHelp4=នៅក្នុងតម្លៃផលិតផល/សេវាកម្មតែប៉ុណ្ណោះ៖ <b>#supplier_min_price#</b>b0342fccfda19b តម្លៃអ្នកលក់តែប៉ុណ្ណោះ៖ <span class='notranslate'><b>#supplier_quantity# និង #supplier_tva_tx#</b>
+PriceExpressionEditorHelp4=In product/service price only: <b>#supplier_min_price#</b><br>In vendor prices only: <b>#supplier_quantity# and #supplier_tva_tx#</b>
 PriceExpressionEditorHelp5=តម្លៃសកលដែលអាចប្រើបាន៖
 PriceMode=របៀបតម្លៃ
 PriceNumeric=ចំនួន

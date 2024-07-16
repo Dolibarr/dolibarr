@@ -44,7 +44,7 @@ Eval=ការវាយតម្លៃសមត្ថភាព
 Evals=ការវាយតម្លៃសមត្ថភាព
 NewEval=ការវាយតម្លៃសមត្ថភាពថ្មី។
 ValidateEvaluation=ធ្វើឱ្យការវាយតម្លៃសមត្ថភាពមានសុពលភាព
-ConfirmValidateEvaluation=តើ​អ្នក​ប្រាកដ​ជា​ចង់​ធ្វើ​ឱ្យ​មាន​សុពលភាព​ការ​វាយ​តម្លៃ​សមត្ថភាព​នេះ​ដោយ​មាន​ឯកសារ​យោង <b>%s<span class='notranslate'>b09a4b739f17f8z វិសាលភាព>?
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
 EvaluationCard=ការវាយតម្លៃសមត្ថភាព
 RequiredRank=ចំណាត់ថ្នាក់ដែលត្រូវការសម្រាប់ប្រវត្តិរូបការងារ
 RequiredRankShort=ចំណាត់ថ្នាក់ដែលត្រូវការ

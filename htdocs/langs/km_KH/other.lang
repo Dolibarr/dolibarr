@@ -194,7 +194,7 @@ EnterNewPasswordHere=បញ្ចូលពាក្យសម្ងាត់ថ�
 BackToLoginPage=ត្រឡប់ទៅទំព័រចូល
 AuthenticationDoesNotAllowSendNewPassword=របៀបផ្ទៀងផ្ទាត់គឺ <b>%s</b>។<br>នៅក្នុងរបៀបនេះ Dolibarr មិនអាចដឹង ឬផ្លាស់ប្តូរពាក្យសម្ងាត់របស់អ្នកបានទេ។<br>សូមទាក់ទងអ្នកគ្រប់គ្រងប្រព័ន្ធរបស់អ្នកប្រសិនបើអ្នកចង់ផ្លាស់ប្តូរពាក្យសម្ងាត់របស់អ្នក។
 EnableGDLibraryDesc=ដំឡើង ឬបើកបណ្ណាល័យ GD នៅលើការដំឡើង PHP របស់អ្នក ដើម្បីប្រើជម្រើសនេះ។
-ProfIdShortDesc=<b>Prof Id %s</b> គឺជាព័ត៌មានអាស្រ័យលើប្រទេសភាគីទីបី។ <br>ឧទាហរណ៍ សម្រាប់ប្រទេស <b>%s</b> វាជាលេខកូដ <b>%s<span class='notranslate'>b09a4b9.
+ProfIdShortDesc=<b>Prof Id %s</b> is an information depending on third party country.<br>For example, for country <b>%s</b>, it's code <b>%s</b>.
 DolibarrDemo=ការបង្ហាញ Dolibarr ERP/CRM
 StatsByAmount=ស្ថិតិលើបរិមាណផលិតផល/សេវាកម្ម
 StatsByAmountProducts=ស្ថិតិនៃបរិមាណផលិតផល

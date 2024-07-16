@@ -169,7 +169,7 @@ CalcModeLT1Debt=របៀប <b>%sRE នៅលើវិក្កយបត្រ�
 CalcModeLT1Rec= របៀប <b>%sRE នៅលើវិក្កយបត្រអ្នកផ្គត់ផ្គង់%s</b>
 CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
-CalcModeLT2Rec= របៀប <b>%sIRPF លើវិក្កយបត្រអ្នកផ្គត់ផ្គង់%s<span class='notranslate' '></b></span>
+CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
 AnnualSummaryDueDebtMode=សមតុល្យនៃប្រាក់ចំណូល និងការចំណាយ សង្ខេបប្រចាំឆ្នាំ
 AnnualSummaryInputOutputMode=សមតុល្យនៃចំណូល និងចំណាយ សង្ខេបប្រចាំឆ្នាំ
 AnnualByCompanies=សមតុល្យនៃប្រាក់ចំណូល និងការចំណាយ ដោយក្រុមគណនីដែលបានកំណត់ជាមុន

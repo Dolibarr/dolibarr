@@ -148,7 +148,7 @@ CSSListClass=CSS សម្រាប់បញ្ជី
 NotEditable=មិនអាចកែបាន។
 ForeignKey=សោបរទេស
 ForeignKeyDesc=ប្រសិនបើតម្លៃនៃវាលនេះត្រូវតែត្រូវបានធានាថានឹងមាននៅក្នុងតារាងផ្សេងទៀត។ បញ្ចូលវាក្យសម្ព័ន្ធដែលត្រូវគ្នានឹងតម្លៃនៅទីនេះ៖ tablename.parentfieldtocheck
-TypeOfFieldsHelp=ឧទាហរណ៍៖<br>varchar(99)<br>email<br>ទូរសព្ទ<br>ip<br>url<br>passwordb0342fcc span>double(24,8)<span class='notranslate'><br>real<br>text<br>html <br>date<br>datetime<br>timestamp <br>ចំនួនគត់<br>ចំនួនគត់៖ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342bzcfda /span><span class='notranslate'><br>'1' មានន័យថាយើងបន្ថែមប៊ូតុង + បន្ទាប់ពីបន្សំដើម្បីបង្កើតកំណត់ត្រា <br>'filter' គឺជា លក្ខខណ្ឌវាក្យសម្ព័ន្ធតម្រងសកល ឧទាហរណ៍៖ '((ស្ថានភាព៖=:1) AND (fk_user:=:__USER_ID__) និង (អង្គភាព៖ IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=នេះគឺជាប្រភេទនៃវាល/គុណលក្ខណៈ។
 AsciiToHtmlConverter=Ascii ទៅកម្មវិធីបម្លែង HTML
 AsciiToPdfConverter=Ascii ទៅកម្មវិធីបំលែង PDF
@@ -181,7 +181,7 @@ FailedToAddCodeIntoDescriptor=បរាជ័យក្នុងការបន�
 DictionariesCreated=វចនានុក្រម <b>%s</b> ត្រូវបានបង្កើតដោយជោគជ័យ
 DictionaryDeleted=វចនានុក្រម <b>%s</b> បានយកចេញដោយជោគជ័យ
 PropertyModuleUpdated=អចលនទ្រព្យ <b>%s</b> ត្រូវបានធ្វើបច្ចុប្បន្នភាពដោយជោគជ័យ
-InfoForApiFile=* នៅពេលអ្នកបង្កើតឯកសារជាលើកដំបូង នោះវិធីសាស្ត្រទាំងអស់នឹងត្រូវបានបង្កើត <strong>សម្រាប់វត្ថុនីមួយៗ។</strong><br>* នៅពេលអ្នកចុចនៅក្នុង <strong>remove</strong> អ្នកគ្រាន់តែលុប class ទាំងអស់សម្រាប់ <span ='notranslate'><strong></span>វត្ថុដែលបានជ្រើសរើស</strong>។
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=ទំព័រសម្រាប់ការដំឡើងម៉ូឌុល
 EmailingSelectors=អ្នកជ្រើសរើសអ៊ីមែល
 EmailingSelectorDesc=អ្នក​អាច​បង្កើត និង​កែសម្រួល​ឯកសារ​ថ្នាក់​នៅ​ទីនេះ ដើម្បី​ផ្តល់​អ្នក​ជ្រើសរើស​គោលដៅ​អ៊ីមែល​ថ្មី​សម្រាប់​ម៉ូឌុល​ផ្ញើ​អ៊ីមែល​ដ៏ធំ

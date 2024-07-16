@@ -26,7 +26,7 @@ ConfirmDeleteUser=តើអ្នកប្រាកដថាចង់លុប�
 ConfirmDeleteGroup=តើអ្នកប្រាកដថាចង់លុបក្រុម <b>%s</b>?
 ConfirmEnableUser=តើអ្នកប្រាកដថាចង់បើកអ្នកប្រើប្រាស់ <b>%s</b>?
 ConfirmReinitPassword=តើអ្នកប្រាកដថាចង់បង្កើតពាក្យសម្ងាត់ថ្មីសម្រាប់អ្នកប្រើប្រាស់ <b>%s</b>?
-ConfirmSendNewPassword=តើអ្នកប្រាកដថាចង់បង្កើត និងផ្ញើពាក្យសម្ងាត់ថ្មីសម្រាប់អ្នកប្រើប្រាស់ <b>%s<span class='notranslate'></b></ វិសាលភាព>?
+ConfirmSendNewPassword=Are you sure you want to generate and send new password for user <b>%s</b>?
 NewUser=អ្នកប្រើប្រាស់​ថ្មី
 CreateUser=បង្កើតអ្នកប្រើប្រាស់
 LoginNotDefined=ការចូលមិនត្រូវបានកំណត់ទេ។

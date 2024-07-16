@@ -26,7 +26,7 @@ EventOrganizationSetup=ការរៀបចំអង្គការព្រឹ
 EventOrganization=អង្គការព្រឹត្តិការណ៍
 EventOrganizationSetupPage = ទំព័ររៀបចំអង្គការព្រឹត្តិការណ៍
 EVENTORGANIZATION_TASK_LABEL = ស្លាកនៃភារកិច្ចដើម្បីបង្កើតដោយស្វ័យប្រវត្តិនៅពេលដែលគម្រោងត្រូវបានបញ្ជាក់
-EVENTORGANIZATION_TASK_LABELTooltip = នៅពេលដែលអ្នកធ្វើឱ្យមានសុពលភាពព្រឹត្តិការណ៍ដើម្បីរៀបចំ កិច្ចការមួយចំនួនអាចត្រូវបានបង្កើតដោយស្វ័យប្រវត្តិនៅក្នុងគម្រោង<br><br>ឧទាហរណ៍៖ <br>ផ្ញើការហៅសម្រាប់សន្និសីទ<br>ផ្ញើការហៅសម្រាប់ស្តង់<br>កំណត់សុពលភាពការផ្ដល់យោបល់នៃថ្នាក់ ='notranslate'><br></span>មានសុពលភាពកម្មវិធីសម្រាប់ Booths<br>បើកការជាវទៅកាន់ព្រឹត្តិការណ៍សម្រាប់អ្នកចូលរួម<br>Send នៃព្រឹត្តិការណ៍នេះទៅកាន់វាគ្មិន<br>ផ្ញើការរំលឹកអំពីព្រឹត្តិការណ៍នេះទៅកាន់ម្ចាស់កម្មវិធី Booth<br>ផ្ញើការរំលឹកអំពីព្រឹត្តិការណ៍នេះទៅកាន់អ្នកចូលរួម
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth

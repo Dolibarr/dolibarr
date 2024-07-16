@@ -14,7 +14,7 @@ PHPSupportPOSTGETKo=វាអាចទៅរួចដែលការដំឡើ
 PHPSupportSessions=PHP នេះគាំទ្រវគ្គ។
 PHPSupport=PHP នេះគាំទ្រមុខងារ %s ។
 PHPMemoryOK=អង្គចងចាំសម័យ PHP អតិបរមារបស់អ្នកត្រូវបានកំណត់ទៅ <b>%s</b>។ នេះគួរតែគ្រប់គ្រាន់ហើយ។
-PHPMemoryTooLow=អង្គចងចាំសម័យ PHP អតិបរមារបស់អ្នកត្រូវបានកំណត់ទៅ <b>%s</b> bytes។ នេះគឺទាបពេក។ ផ្លាស់ប្តូរ <b>php.ini</b> របស់អ្នកដើម្បីកំណត់ <b> class_limit ='notranslate'></b></span> ប៉ារ៉ាម៉ែត្រទៅយ៉ាងហោចណាស់ <b>%s<span class='notranslate'7b09a /span> បៃ។
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=សូមចុចទីនេះសម្រាប់ការធ្វើតេស្តលម្អិតបន្ថែម
 ErrorPHPDoesNotSupportSessions=ការដំឡើង PHP របស់អ្នកមិនគាំទ្រវគ្គទេ។ មុខងារនេះត្រូវបានទាមទារដើម្បីអនុញ្ញាតឱ្យ Dolibarr ដំណើរការ។ ពិនិត្យមើលការដំឡើង PHP របស់អ្នក និងការអនុញ្ញាតនៃថតវគ្គ។
 ErrorPHPDoesNotSupport=ការដំឡើង PHP របស់អ្នកមិនគាំទ្រមុខងារ %s ទេ។

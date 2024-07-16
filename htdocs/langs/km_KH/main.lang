@@ -68,7 +68,7 @@ ErrorNoRequestInError=គ្មាន​សំណើ​ដោយ​មាន​�
 ErrorServiceUnavailableTryLater=សេវាកម្មមិនមានទេនៅពេលនេះ។ ព្យាយាម​ម្តង​ទៀត​នៅ​ពេលក្រោយ។
 ErrorDuplicateField=តម្លៃស្ទួននៅក្នុងវាលតែមួយគត់
 ErrorSomeErrorWereFoundRollbackIsDone=កំហុសមួយចំនួនត្រូវបានរកឃើញ។ ការ​ផ្លាស់​ប្តូ​រ​ត្រូវ​បាន​ត្រឡប់​មក​វិញ​។
-ErrorConfigParameterNotDefined=ប៉ារ៉ាម៉ែត្រ <b>%s</b> មិនត្រូវបានកំណត់នៅក្នុងឯកសារ <Dolibarr config class='notranslate'><b></span>conf.php</b>។
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=បានបរាជ័យក្នុងការស្វែងរកអ្នកប្រើប្រាស់ <b>%s</b> នៅក្នុងមូលដ្ឋានទិន្នន័យ Dolibarr។
 ErrorNoVATRateDefinedForSellerCountry=មាន​បញ្ហា គ្មាន​អត្រា vat បាន​កំណត់​សម្រាប់​ប្រទេស '%s'។
 ErrorNoSocialContributionForSellerCountry=កំហុស គ្មានប្រភេទពន្ធសង្គម/សារពើពន្ធដែលបានកំណត់សម្រាប់ប្រទេស '%s'។
@@ -103,7 +103,7 @@ RecordDeleted=បានលុបកំណត់ត្រា
 RecordGenerated=បានបង្កើតកំណត់ត្រា
 LevelOfFeature=កម្រិតនៃលក្ខណៈពិសេស
 NotDefined=មិន​ត្រូវ​បាន​កំណត់
-DolibarrInHttpAuthenticationSoPasswordUseless=របៀបផ្ទៀងផ្ទាត់ Dolibarr ត្រូវបានកំណត់ទៅ <b>%s</b> in configuration class='notranslate'><b></span>conf.php</b>.<br>នេះមានន័យថា មូលដ្ឋានទិន្នន័យពាក្យសម្ងាត់គឺខាងក្រៅ។ Dolibarr ដូច្នេះការផ្លាស់ប្តូរវាលនេះប្រហែលជាគ្មានប្រសិទ្ធភាពទេ។
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is set to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that the password database is external to Dolibarr, so changing this field may have no effect.
 Administrator=អ្នក​គ្រប់គ្រង​ប្រព័ន្ធ
 AdministratorDesc=អ្នកគ្រប់គ្រងប្រព័ន្ធ (អាចគ្រប់គ្រងអ្នកប្រើប្រាស់ ការអនុញ្ញាត ប៉ុន្តែក៏មានការដំឡើងប្រព័ន្ធ និងការកំណត់រចនាសម្ព័ន្ធម៉ូឌុល)
 Undefined=មិនបានកំណត់

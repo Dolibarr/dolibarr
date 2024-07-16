@@ -211,7 +211,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=នៅក្នុងប្រ
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=ប្រើជម្រើសនេះប្រសិនបើផ្សេងទៀតទាំងអស់មិនសមស្រប
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>អតិថិជនមិនល្អ</b> គឺជាអតិថិជនដែលមិនព្រមសងបំណុលរបស់គាត់។
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=ជម្រើស​នេះ​ត្រូវ​បាន​ប្រើ​នៅ​ពេល​ការ​បង់​ប្រាក់​មិន​បាន​បញ្ចប់​ដោយ​សារ​តែ​ផលិតផល​មួយ​ចំនួន​ត្រូវ​បាន​ប្រគល់​ជូន​វិញ។
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=ចំនួនដែលមិនបានបង់គឺ <b>ថ្លៃសេវាធនាគារអន្តរការី</b> កាត់ដោយផ្ទាល់ពី b0aee83365837 >ចំនួនត្រឹមត្រូវ<span class='notranslate'></b> បង់ដោយអតិថិជន។
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=ចំនួនទឹកប្រាក់ដែលមិនបានបង់នឹងមិនត្រូវបានបង់ទេព្រោះវាជាពន្ធកាត់ទុក
 ConfirmClassifyPaidPartiallyReasonOtherDesc=ប្រើជម្រើសនេះ ប្រសិនបើអ្នកផ្សេងទៀតទាំងអស់មិនសមរម្យ ឧទាហរណ៍ក្នុងស្ថានភាពដូចខាងក្រោម៖<br>- ការទូទាត់មិនបានបញ្ចប់ទេ ដោយសារផលិតផលមួយចំនួនត្រូវបានដឹកជញ្ជូនត្រឡប់មកវិញ<br>- ចំនួន​ប្រាក់​ដែល​បាន​ទាមទារ​សំខាន់​ពេក​ដោយ​សារ​តែ​ការ​បញ្ចុះ​តម្លៃ​ត្រូវ​បាន​បំភ្លេច​ចោល <br>ក្នុង​គ្រប់​ករណី​ទាំងអស់ ចំនួន​ដែល​ទាមទារ​លើស​ត្រូវ​តែ​ត្រូវ​បាន​កែ​តម្រូវ​ក្នុង​ប្រព័ន្ធ​គណនេយ្យ​ដោយ​បង្កើត​កំណត់​ត្រា​ឥណទាន។
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>អ្នកផ្គត់ផ្គង់មិនល្អ</b> គឺជាអ្នកផ្គត់ផ្គង់ដែលយើងបដិសេធមិនបង់ប្រាក់។

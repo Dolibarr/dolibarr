@@ -12,7 +12,7 @@ multicurrency_appId=សោ API
 multicurrency_appCurrencySource=ប្រភពរូបិយប័ណ្ណ
 multicurrency_alternateCurrencySource=រូបិយប័ណ្ណប្រភពជំនួស
 CurrenciesUsed=រូបិយប័ណ្ណដែលបានប្រើ
-CurrenciesUsed_help_to_add=បន្ថែមរូបិយប័ណ្ណ និងអត្រាផ្សេងៗគ្នាដែលអ្នកត្រូវការប្រើនៅលើ <b>សំណើ</b>, b0aee83365837 /span>ការបញ្ជាទិញ<span class='notranslate'></b> ជាដើម។
+CurrenciesUsed_help_to_add=Add the different currencies and rates you need to use on your <b>proposals</b>, <b>orders</b> etc.
 rate=អត្រា
 MulticurrencyReceived=បានទទួល, រូបិយប័ណ្ណដើម
 MulticurrencyRemainderToTake=ចំនួនទឹកប្រាក់ដែលនៅសល់ រូបិយប័ណ្ណដើម

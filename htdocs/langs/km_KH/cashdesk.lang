@@ -100,7 +100,7 @@ ReceiptPrinterMethodDescription=វិធីសាស្រ្តដ៏មាន
 ByTerminal=តាមស្ថានីយ
 TakeposNumpadUsePaymentIcon=ប្រើរូបតំណាងជំនួសឱ្យអត្ថបទនៅលើប៊ូតុងទូទាត់នៃលេខ
 CashDeskRefNumberingModules=ម៉ូឌុលលេខសម្រាប់លក់ម៉ាស៊ីនឆូតកាត
-CashDeskGenericMaskCodes6 = <br><b>{TN}<span class='notranslate'>b09f1f7b span> tag ត្រូវបានប្រើដើម្បីបន្ថែមលេខស្ថានីយ
+CashDeskGenericMaskCodes6 = <br><b>{TN}</b> tag is used to add the terminal number
 TakeposGroupSameProduct=បញ្ចូលបន្ទាត់នៃផលិតផលដូចគ្នា។
 StartAParallelSale=ចាប់ផ្តើមការលក់ប៉ារ៉ាឡែលថ្មី។
 SaleStartedAt=ការលក់បានចាប់ផ្តើមនៅ %s

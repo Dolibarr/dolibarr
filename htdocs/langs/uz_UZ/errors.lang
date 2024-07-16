@@ -265,7 +265,7 @@ ErrorReplaceStringEmpty=Xato, o'rnini bosadigan satr bo'sh
 ErrorProductNeedBatchNumber=Xato, '<b> %s </b>' mahsulotiga juda ko'p / seriya raqami kerak
 ErrorProductDoesNotNeedBatchNumber=Xato, '<b> %s </b>' mahsuloti ko'p / seriya raqamini qabul qilmaydi
 ErrorFailedToReadObject=Xato, <b> %s </b> turidagi ob'ekt o'qilmadi
-ErrorParameterMustBeEnabledToAllwoThisFeature=Xato, <b>%s</b> parametri <span class= yoqilgan boʻlishi kerak. 'notranslate'><b></span>conf/conf.php</b> ichki ish rejalashtiruvchisi tomonidan buyruq qatori interfeysidan foydalanishga ruxsat berish
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Xato, ushbu kirish amal qilish muddati oralig'ida emas
 ErrorValueLength='<b> %s </b>' maydonining uzunligi '<b> %s </b>' dan yuqori bo'lishi kerak
 ErrorReservedKeyword='<b> %s </b>' so'zi zaxiralangan kalit so'z

@@ -72,7 +72,7 @@ ExpenseReportRulesDesc=អ្នកអាចកំណត់ច្បាប់ច
 ExpenseReportWaitingForApproval=របាយការណ៍ចំណាយថ្មីត្រូវបានដាក់ជូនសម្រាប់ការអនុម័ត
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=របាយការណ៍ចំណាយត្រូវបានដាក់ជូនសម្រាប់ការអនុម័តឡើងវិញ
-ExpenseReportWaitingForReApprovalMessage=របាយការណ៍ចំណាយត្រូវបានដាក់ស្នើ ហើយកំពុងរង់ចាំការអនុម័តឡើងវិញ។<br>The %s អ្នកបដិសេធមិនយល់ព្រមលើរបាយការណ៍ចំណាយសម្រាប់ ហេតុផលនេះ៖ %s។<br>កំណែថ្មីត្រូវបានស្នើឡើង ហើយកំពុងរង់ចាំការយល់ព្រមរបស់អ្នក។ <br> - អ្នកប្រើប្រាស់៖ %s<br> - រយៈពេល៖ b0ecb2ec87f8 <span class='notranslate'><br>ចុចទីនេះដើម្បីបញ្ជាក់៖ %s
+ExpenseReportWaitingForReApprovalMessage=An expense report has been submitted and is waiting for re-approval.<br>The %s, you refused to approve the expense report for this reason: %s.<br>A new version has been proposed and waiting for your approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportsIk=ការកំណត់រចនាសម្ព័ន្ធការគិតប្រាក់ចំងាយ
 ExpenseReportsRules=ច្បាប់នៃរបាយការណ៍ចំណាយ
 ExpenseReportsToApprove=របាយការណ៍ចំណាយដើម្បីអនុម័ត
