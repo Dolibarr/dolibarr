@@ -132,5 +132,7 @@ ShowAllPerms=Afficher toutes les lignes d'autorisation
 HideAllPerms=Masquer toutes les lignes d'autorisation
 UserPublicPageDesc=Vous pouvez activer une carte virtuelle pour cet utilisateur. Une URL avec le profil utilisateur et un code barre sera disponible pour permettre à quiconque muni d'un smartphone de le scanner et d'ajouter le contact à son carnet d'adresse.
 EnablePublicVirtualCard=Activer la carte de visite virtuelle de l'utilisateur
+ExcludedByFilter=Non qualifié par les filtres, mais affiché pour voir sa hiérarchie
 UserEnabledDisabled=État de l'utilisateur modifié : %s
 AlternativeEmailForOAuth2=E-mail alternatif pour la connexion OAuth2
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Erreur, La mise à jour a été annulée, car l'une des données, qui devrait être unique, existe déjà

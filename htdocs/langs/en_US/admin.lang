@@ -1169,6 +1169,8 @@ NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), yo
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 LabelOrTranslationKey=Label or translation key
+TranslationFound=Translation found
+TheTranslationIsSearchedFromKey=The translation is searched from the translation key: <b>%s</b>
 TranslationKey=Translation key
 ValueOfConstantKey=Value of a configuration constant
 ConstantIsOn=Option %s is on
@@ -1966,6 +1968,8 @@ CloseFiscalYear=Close accounting period
 DeleteFiscalYear=Delete accounting period
 ConfirmDeleteFiscalYear=Are you sure to delete this accounting period?
 ShowFiscalYear=Show accounting period
+##### Assets #####
+AssetNumberingModules=Assets numbering module
 AlwaysEditable=Can always be edited
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimum number of uppercase characters
@@ -1978,6 +1982,7 @@ SortOrder=Sort order
 Format=Format
 TypePaymentDesc=0:Customer payment type, 1:Vendor payment type, 2:Both customers and suppliers payment type
 IncludePath=Include path (defined into variable %s)
+##### Expense reports #####
 ExpenseReportsSetup=Setup of module Expense Reports
 TemplatePDFExpenseReports=Document templates to generate expense report document
 ExpenseReportsRulesSetup=Setup of module Expense Reports - Rules
@@ -2104,8 +2109,7 @@ BaseCurrency=Reference currency of the company (go into setup of company to chan
 WarningNoteModuleInvoiceForFrenchLaw=This module %s is compliant with French laws (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=This module %s is compliant with French laws (Loi Finance 2016) because module Non Reversible Logs is automatically activated.
 WarningInstallationMayBecomeNotCompliantWithLaw=You are trying to install module %s that is an external module. Activating an external module means you trust the publisher of that module and that you are sure that this module does not adversely impact the behavior of your application, and is compliant with laws of your country (%s). If the module introduces an illegal feature, you become responsible for the use of illegal software.
-WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=If you're using the experimental mode for situation invoices, you'll need to update your data to switch to the official mode. Contact a preferred partner who will help you with this task. List of preferred partners available by following <a href="%s" target="_blank">this link</a>
-
+WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=If you are using the experimental mode for situation invoices, you will need to update your data to switch from the experimental mode to the official mode. You can contact a partner to help you with this task. A list of preferred partners is available by following <a href="%s" target="_blank">this link</a>
 MAIN_PDF_MARGIN_LEFT=Left margin on PDF
 MAIN_PDF_MARGIN_RIGHT=Right margin on PDF
 MAIN_PDF_MARGIN_TOP=Top margin on PDF
@@ -2417,7 +2421,7 @@ CssOnEdit=CSS on edit pages
 CssOnView=CSS on view pages
 CssOnList=CSS on lists
 HelpCssOnEditDesc=The CSS used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
-HelpCssOnViewDesc=The CSS used when viewing the field.
+HelpCssOnViewDesc=The CSS used when viewing the field.<br>Example: "longmessagecut"
 HelpCssOnListDesc=The CSS used when field is inside a list table.<br>Example: "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions

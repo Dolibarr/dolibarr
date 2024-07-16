@@ -206,7 +206,7 @@ if ($type == 'f') {
 // Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
-$hookmanager->initHooks(array($contextpage));
+$hookmanager->initHooks(array($contextpage, 'thirdpartylist'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

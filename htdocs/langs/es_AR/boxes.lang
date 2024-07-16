@@ -65,5 +65,4 @@ BoxTitleSuspenseAccount=Número de líneas no sin asignar
 NumberOfLinesInSuspenseAccount=Número de línea en cuenta temporal
 SuspenseAccountNotDefined=No se ha definido Cuenta temporal
 BoxLastCustomerShipments=Últimos envíos de clientes
-BoxTitleLastCustomerShipments=Últimos %s envíos de clientes
 NoRecordedShipments=No se ha registrado el envío del cliente

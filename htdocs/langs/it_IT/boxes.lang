@@ -112,10 +112,10 @@ BoxTitleSuspenseAccount=Numero di righe non allocate
 NumberOfLinesInSuspenseAccount=Numero di riga nell'account suspense
 SuspenseAccountNotDefined=L'account Suspense non è definito
 BoxLastCustomerShipments=Ultime spedizioni cliente
-BoxTitleLastCustomerShipments=Ultime %s spedizioni cliente
+BoxTitleLastCustomerShipments=Latest %s modified customer shipments
 BoxTitleLastLeaveRequests=Ultime %s richieste di assenza modificate
 NoRecordedShipments=Nessuna spedizione cliente registrata
-BoxCustomersOutstandingBillReached=Clienti con limite eccezionale raggiunto
+BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 # Pages
 UsersHome=Utenti domestici e gruppi
 MembersHome=Abbonamento domestico
