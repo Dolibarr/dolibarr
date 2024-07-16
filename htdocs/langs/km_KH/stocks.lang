@@ -283,7 +283,7 @@ ModuleStockTransferName=ការផ្ទេរភាគហ៊ុនកម្�
 ModuleStockTransferDesc=ការគ្រប់គ្រងកម្រិតខ្ពស់នៃការផ្ទេរភាគហ៊ុន ជាមួយនឹងការបង្កើតសន្លឹកផ្ទេរប្រាក់
 StockTransferNew=ការផ្ទេរភាគហ៊ុនថ្មី។
 StockTransferList=បញ្ជីផ្ទេរភាគហ៊ុន
-ConfirmValidateStockTransfer=តើ​អ្នក​ប្រាកដ​ជា​ចង់​ធ្វើ​ឱ្យ​មាន​សុពលភាព​ការ​ផ្ទេរ​ភាគហ៊ុន​នេះ​ដោយ​ប្រើ​ឯកសារ​យោង <b>%s<span class='notranslate'></b></ វិសាលភាព> ?
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=ការថយចុះនៃភាគហ៊ុនជាមួយនឹងការផ្ទេរ %s
 ConfirmDestockCancel=បោះបង់​ការ​ធ្លាក់​ចុះ​នៃ​ស្តុក​ដោយ​ការ​ផ្ទេរ %s
 DestockAllProduct=ការធ្លាក់ចុះនៃភាគហ៊ុន

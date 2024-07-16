@@ -181,7 +181,7 @@ FailedToAddCodeIntoDescriptor=Ба дескриптор код илова кар
 DictionariesCreated=Луғати <b>%s</b> бомуваффақият сохта шуд
 DictionaryDeleted=Луғати <b>%s</b> бомуваффақият хориҷ карда шуд
 PropertyModuleUpdated=Амволи <b>%s</b> бомуваффақият нав карда шуд
-InfoForApiFile=* Вақте ки шумо бори аввал файл тавлид мекунед, пас ҳамаи усулҳо <strong>барои ҳар як объект сохта мешаванд.</strong><br>* Вақте ки шумо тугмаи <strong>ро клик мекунед</strong> шумо танҳо ҳамаи усулҳоро барои <span хориҷ мекунед ='notranslate'><strong></span>объекти интихобшуда</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Саҳифа барои танзими модул
 EmailingSelectors=Интихобкунандагони почтаи электронӣ
 EmailingSelectorDesc=Шумо метавонед дар ин ҷо файлҳои синфро тавлид ва таҳрир кунед, то интихобкунандагони нави ҳадафҳои почтаи электрониро барои модули почтаи оммавӣ таъмин кунанд

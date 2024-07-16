@@ -70,7 +70,7 @@ ExpenseReportRuleErrorOnSave=កំហុស៖ %s
 ExpenseReportRuleSave=ច្បាប់របាយការណ៍ចំណាយត្រូវបានរក្សាទុក
 ExpenseReportRulesDesc=អ្នកអាចកំណត់ច្បាប់ចំនួនអតិបរមាសម្រាប់របាយការណ៍ចំណាយ។ ច្បាប់ទាំងនេះនឹងត្រូវបានអនុវត្តនៅពេលដែលការចំណាយថ្មីត្រូវបានបញ្ចូលទៅក្នុងរបាយការណ៍ចំណាយ
 ExpenseReportWaitingForApproval=របាយការណ៍ចំណាយថ្មីត្រូវបានដាក់ជូនសម្រាប់ការអនុម័ត
-ExpenseReportWaitingForApprovalMessage=របាយការណ៍ចំណាយថ្មីត្រូវបានដាក់បញ្ជូន ហើយកំពុងរង់ចាំការយល់ព្រម។<br> - អ្នកប្រើប្រាស់៖ %s <br> - រយៈពេល៖ %s<br>ចុចទីនេះដើម្បីធ្វើសុពលភាព៖ <span class='notranslate'>80ecb វិសាលភាព>
+ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.<br> - User: %s<br> - Period: %s<br>Click here to validate: %s
 ExpenseReportWaitingForReApproval=របាយការណ៍ចំណាយត្រូវបានដាក់ជូនសម្រាប់ការអនុម័តឡើងវិញ
 ExpenseReportWaitingForReApprovalMessage=របាយការណ៍ចំណាយត្រូវបានដាក់ស្នើ ហើយកំពុងរង់ចាំការអនុម័តឡើងវិញ។<br>The %s អ្នកបដិសេធមិនយល់ព្រមលើរបាយការណ៍ចំណាយសម្រាប់ ហេតុផលនេះ៖ %s។<br>កំណែថ្មីត្រូវបានស្នើឡើង ហើយកំពុងរង់ចាំការយល់ព្រមរបស់អ្នក។ <br> - អ្នកប្រើប្រាស់៖ %s<br> - រយៈពេល៖ b0ecb2ec87f8 <span class='notranslate'><br>ចុចទីនេះដើម្បីបញ្ជាក់៖ %s
 ExpenseReportsIk=ការកំណត់រចនាសម្ព័ន្ធការគិតប្រាក់ចំងាយ

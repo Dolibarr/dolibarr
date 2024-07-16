@@ -150,7 +150,7 @@ UseFormatFileEmailToTarget=ឯកសារដែលបាននាំចូល�
 UseFormatInputEmailToTarget=បញ្ចូលខ្សែអក្សរដែលមានទម្រង់ <strong>email;name;firstname;other</strong>
 MailAdvTargetRecipients=អ្នកទទួល (ជម្រើសកម្រិតខ្ពស់)
 AdvTgtTitle=បំពេញវាលបញ្ចូលដើម្បីជ្រើសរើសភាគីទីបីជាមុន ឬទំនាក់ទំនង/អាសយដ្ឋានដែលត្រូវកំណត់គោលដៅ
-AdvTgtSearchTextHelp=ប្រើ %% ជាអក្សរជំនួស។ ឧទាហរណ៍ ដើម្បីស្វែងរកធាតុទាំងអស់ដូចជា <b>jean, joe, jim</b> អ្នកអាចបញ្ចូល  <b>j%%</b> អ្នកអាចប្រើ ; ជាសញ្ញាបំបែកសម្រាប់តម្លៃ និងប្រើប្រាស់ ! លើកលែងតែតម្លៃនេះ។ ឧទាហរណ៍ <b>jean;joe;jim%%;!jimo;!jimab07e63171f5dacz span><span class='notranslate'></b> នឹង​កំណត់​គោល​ដៅ​ទាំង​អស់​ jean, joe, ចាប់​ផ្ដើម​ដោយ jim ប៉ុន្តែ​មិន​មែន jimo និង​មិន​មែន​អ្វី​គ្រប់​យ៉ាង​ដែល​ចាប់​ផ្ដើម​ដោយ jima
+AdvTgtSearchTextHelp=Use %% as wildcards. For example to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For example  <b>jean;joe;jim%%;!jimo;!jima%%</b> will target all jean, joe, start with jim but not jimo and not everything that starts with jima
 AdvTgtSearchIntHelp=ប្រើចន្លោះពេលដើម្បីជ្រើសរើសតម្លៃ int ឬអណ្តែត
 AdvTgtMinVal=តម្លៃអប្បបរមា
 AdvTgtMaxVal=តម្លៃអតិបរមា

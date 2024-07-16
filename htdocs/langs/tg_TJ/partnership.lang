@@ -71,6 +71,6 @@ YourPartnershipCanceledContent=Мо ба шумо хабар медиҳем, к�
 CountLastUrlCheckError=Шумораи хатогиҳо барои санҷиши охирини URL
 LastCheckBacklink=Санаи санҷиши охирини URL
 NewPartnershipRequest=Дархости нави шарикӣ
-NewPartnershipRequestDesc=Ин шакл ба шумо имкон медиҳад, ки як қисми барномаи шарикии мо бошед. Агар ба шумо барои пур кардани ин шакл кӯмак лозим бошад, лутфан бо почтаи электронӣ тамос гиред <b>%s<span class='notranslate'></b> span>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ин саҳифа бояд ақаллан як истинод ба яке аз доменҳои зерин дошта бошад: %s
 IPOfApplicant=IP-и аризадиҳанда

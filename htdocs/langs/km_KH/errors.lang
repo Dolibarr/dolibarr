@@ -20,7 +20,7 @@ ErrorFailToCopyDir=បានបរាជ័យក្នុងការចម្�
 ErrorFailToRenameFile=បានបរាជ័យក្នុងការប្តូរឈ្មោះឯកសារ '<b>%s</b>' ទៅជា '<b>%s</b>'។
 ErrorFailToDeleteFile=បានបរាជ័យក្នុងការយកឯកសារ '<b>%s</b>'។
 ErrorFailToCreateFile=បរាជ័យក្នុងការបង្កើតឯកសារ '<b>%s</b>'។
-ErrorFailToRenameDir=បានបរាជ័យក្នុងការប្តូរឈ្មោះថត '<b>%s</b>' ទៅជា '<span ='notranslate'><b></span>%s</b>'។
+ErrorFailToRenameDir=Failed to rename directory '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToCreateDir=បានបរាជ័យក្នុងការបង្កើតថត '<b>%s</b>'។
 ErrorFailToDeleteDir=បានបរាជ័យក្នុងការលុបថត '<b>%s</b>'។
 ErrorFailToMakeReplacementInto=បានបរាជ័យក្នុងការធ្វើការជំនួសឯកសារ '<b>%s</b>'។
@@ -96,10 +96,10 @@ ErrorRecordIsUsedCantDelete=មិនអាចលុបកំណត់ត្រ�
 ErrorModuleRequireJavascript=JavaScript មិនត្រូវបិទដើម្បីឱ្យមុខងារនេះដំណើរការបានទេ។ ដើម្បីបើក/បិទ JavaScript សូមចូលទៅកាន់មឺនុយ Home->Setup->Display។
 ErrorPasswordsMustMatch=ពាក្យសម្ងាត់ដែលបានវាយទាំងពីរត្រូវតែផ្គូផ្គងគ្នាទៅវិញទៅមក
 ErrorContactEMail=កំហុសបច្ចេកទេសបានកើតឡើង។ សូមទាក់ទងអ្នកគ្រប់គ្រងដើម្បីធ្វើតាមអ៊ីមែល <b>%s</b> និងផ្តល់បញ្ហា លេខកូដ <b>%s</b> នៅក្នុងសាររបស់អ្នក ឬបន្ថែមច្បាប់ចម្លងអេក្រង់នៃ ទំព័រនេះ។
-ErrorWrongValueForField=វាល <b>%s</b>: ' <b>%s</b>' មិនត្រូវគ្នានឹងច្បាប់ regex b0587833 <span class='notranslate'>%s</b>
+ErrorWrongValueForField=Field <b>%s</b>: '<b>%s</b>' does not match regex rule <b>%s</b>
 ErrorHtmlInjectionForField=វាល <b>%s</b>: តម្លៃ '<b>%s</b>' មានទិន្នន័យព្យាបាទដែលមិនត្រូវបានអនុញ្ញាត
 ErrorFieldValueNotIn=វាល <b>%s</b>: ' <b>%s</b>' មិនមែនជាតម្លៃដែលរកឃើញក្នុងវាល b05878333 span><span class='notranslate'>%s</b> នៃ <b> %s</b>
-ErrorFieldRefNotIn=វាល <b>%s</b>: ' <b>%s</b>' មិនមែនជា b0aee><83f36583 class='notranslate'>%s</b> ឯកសារយោងដែលមានស្រាប់
+ErrorFieldRefNotIn=Field <b>%s</b>: '<b>%s</b>' is not a <b>%s</b> existing ref
 ErrorMultipleRecordFoundFromRef=កំណត់ត្រាជាច្រើនបានរកឃើញនៅពេលស្វែងរកពី ref <b>%s</b>។ មិនដឹងថាត្រូវប្រើ ID មួយណាទេ។
 ErrorsOnXLines=%s រកឃើញកំហុស
 ErrorFileIsInfectedWithAVirus=កម្មវិធីកំចាត់មេរោគមិនអាចផ្ទៀងផ្ទាត់ឯកសារបានទេ (ឯកសារអាចឆ្លងមេរោគ)
@@ -357,7 +357,7 @@ WarningCloseAlways=ការព្រមាន ការបិទត្រូវ
 WarningUsingThisBoxSlowDown=ការព្រមាន ការប្រើប្រអប់នេះបន្ថយល្បឿនយ៉ាងធ្ងន់ធ្ងរទំព័រទាំងអស់ដែលបង្ហាញប្រអប់។
 WarningClickToDialUserSetupNotComplete=ការដំឡើងព័ត៌មាន ClickToDial សម្រាប់អ្នកប្រើប្រាស់របស់អ្នកមិនពេញលេញទេ (សូមមើលផ្ទាំង ClickToDial នៅលើកាតអ្នកប្រើប្រាស់របស់អ្នក)។
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=មុខងារត្រូវបានបិទនៅពេលដែលការរៀបចំការបង្ហាញត្រូវបានធ្វើឱ្យប្រសើរសម្រាប់មនុស្សពិការភ្នែក ឬកម្មវិធីរុករកអត្ថបទ។
-WarningPaymentDateLowerThanInvoiceDate=កាលបរិច្ឆេទទូទាត់ប្រាក់ (%s) គឺលឿនជាងកាលបរិច្ឆេទវិក្កយបត្រ (%s) សម្រាប់វិក្កយបត្រ <span class='notranslate'>%s</ វិសាលភាព> ។
+WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=ទិន្នន័យច្រើនពេក (ច្រើនជាងបន្ទាត់ %s)។ សូមប្រើតម្រងបន្ថែម ឬកំណត់ %s ថេរទៅដែនកំណត់ខ្ពស់ជាងនេះ។
 WarningSomeLinesWithNullHourlyRate=ពេលខ្លះត្រូវបានកត់ត្រាដោយអ្នកប្រើប្រាស់មួយចំនួន ខណៈដែលអត្រាម៉ោងរបស់ពួកគេមិនត្រូវបានកំណត់។ តម្លៃ 0 %s ក្នុង​មួយ​ម៉ោង​ត្រូវ​បាន​ប្រើ ប៉ុន្តែ​វា​អាច​នាំ​ឱ្យ​មាន​ការ​វាយ​តម្លៃ​ខុស​នៃ​ការ​ចំណាយ​ពេល​វេលា។
 WarningYourLoginWasModifiedPleaseLogin=ការចូលរបស់អ្នកត្រូវបានកែប្រែ។ សម្រាប់គោលបំណងសុវត្ថិភាព អ្នកនឹងត្រូវចូលដោយប្រើការចូលថ្មីរបស់អ្នក មុនពេលសកម្មភាពបន្ទាប់។

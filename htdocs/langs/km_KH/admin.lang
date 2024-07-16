@@ -347,7 +347,7 @@ ThisIsAlternativeProcessToFollow=នេះគឺជាដំណើរការ�
 StepNb=ជំហាន %s
 FindPackageFromWebSite=ស្វែងរកកញ្ចប់ដែលផ្តល់នូវលក្ខណៈពិសេសដែលអ្នកត្រូវការ (ឧទាហរណ៍នៅលើគេហទំព័រផ្លូវការ %s)។
 DownloadPackageFromWebSite=ទាញយកកញ្ចប់ (ឧទាហរណ៍ពីគេហទំព័រផ្លូវការ %s)។
-UnpackPackageInDolibarrRoot=ពន្លា/ពន្លាឯកសារដែលបានខ្ចប់ទៅក្នុងថតម៉ាស៊ីនមេ Dolibarr របស់អ្នក៖ <b>%s<span class='notranslate'>b09a4b739f17f8z >
+UnpackPackageInDolibarrRoot=Unpack/unzip the packaged files into your Dolibarr server directory: <b>%s</b>
 UnpackPackageInModulesRoot=ដើម្បីដាក់ពង្រាយ/ដំឡើងម៉ូឌុលខាងក្រៅ អ្នកត្រូវតែពន្លា/ពន្លាឯកសារបណ្ណសារទៅក្នុងថតម៉ាស៊ីនមេដែលឧទ្ទិសដល់ម៉ូឌុលខាងក្រៅ៖<br><b>%s</b>
 SetupIsReadyForUse=ការ​ដាក់​ពង្រាយ​ម៉ូឌុល​ត្រូវ​បាន​បញ្ចប់។ ទោះយ៉ាងណាក៏ដោយ អ្នកត្រូវតែបើក និងរៀបចំម៉ូឌុលនៅក្នុងកម្មវិធីរបស់អ្នកដោយចូលទៅកាន់ម៉ូឌុលដំឡើងទំព័រ៖ <a href="%s">%s</a>។
 NotExistsDirect=ថតឫសជំនួសមិនត្រូវបានកំណត់ទៅថតដែលមានស្រាប់ទេ។<br>
@@ -489,7 +489,7 @@ ExternalModule=ម៉ូឌុលខាងក្រៅ
 InstalledInto=បានដំឡើងទៅក្នុងថត %s
 BarcodeInitForThirdparties=Mass barcode init សម្រាប់ភាគីទីបី
 BarcodeInitForProductsOrServices=របារកូដដ៏ធំ init ឬកំណត់ឡើងវិញសម្រាប់ផលិតផល ឬសេវាកម្ម
-CurrentlyNWithoutBarCode=បច្ចុប្បន្ន អ្នកមាន <strong>%s</strong> នៅលើ <strong>%s</strong> <span class='notranslate'>b0ecb2ecz87f4 .
+CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> record on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=តម្លៃ Init សម្រាប់ %s បាកូដទទេ
 EraseAllCurrentBarCode=លុបតម្លៃបាកូដបច្ចុប្បន្នទាំងអស់។
 ConfirmEraseAllCurrentBarCode=តើអ្នកប្រាកដថាចង់លុបតម្លៃបាកូដបច្ចុប្បន្នទាំងអស់មែនទេ?
@@ -1266,7 +1266,7 @@ SetupDescription2=ផ្នែកទាំងពីរខាងក្រោម�
 SetupDescription3=<a href="%s">%s -> %sb0e40d <br><br>ប៉ារ៉ាម៉ែត្រមូលដ្ឋានដែលប្រើដើម្បីប្ដូរឥរិយាបថលំនាំដើមនៃកម្មវិធីរបស់អ្នក (ឧ. សម្រាប់លក្ខណៈពិសេសទាក់ទងនឹងប្រទេស)។
 SetupDescription4=<a href="%s">%s -> %sb0e40d <br><br>កម្មវិធីនេះគឺជាសំណុំនៃម៉ូឌុល/កម្មវិធីជាច្រើន។ ម៉ូឌុលដែលទាក់ទងនឹងតម្រូវការរបស់អ្នកត្រូវតែបើក និងកំណត់រចនាសម្ព័ន្ធ។ ធាតុម៉ឺនុយនឹងលេចឡើងជាមួយនឹងការធ្វើឱ្យសកម្មនៃម៉ូឌុលទាំងនេះ។
 SetupDescription5=ធាតុម៉ឺនុយដំឡើងផ្សេងទៀតគ្រប់គ្រងប៉ារ៉ាម៉ែត្រស្រេចចិត្ត។
-SetupDescriptionLink=<a href="%s">%s - %s<span class='notranslate'>b0e40dc /span>
+SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=ប៉ារ៉ាម៉ែត្រមូលដ្ឋានដែលប្រើដើម្បីប្ដូរឥរិយាបថលំនាំដើមនៃកម្មវិធីរបស់អ្នកតាមបំណង (ឧ. សម្រាប់លក្ខណៈពិសេសទាក់ទងនឹងប្រទេស)។
 SetupDescription4b=កម្មវិធីនេះគឺជាឈុតនៃម៉ូឌុល/កម្មវិធីជាច្រើន។ ម៉ូឌុលដែលទាក់ទងនឹងតម្រូវការរបស់អ្នកត្រូវតែធ្វើឱ្យសកម្ម។ ធាតុម៉ឺនុយនឹងលេចឡើងជាមួយនឹងការធ្វើឱ្យសកម្មនៃម៉ូឌុលទាំងនេះ។
 AuditedSecurityEvents=ព្រឹត្តិការណ៍សុវត្ថិភាពដែលត្រូវបានធ្វើសវនកម្ម
@@ -1299,7 +1299,7 @@ AvailableModules=កម្មវិធី/ម៉ូឌុលដែលមាន
 ToActivateModule=ដើម្បីធ្វើសកម្មភាពម៉ូឌុល សូមចូលទៅកាន់តំបន់រៀបចំ (ទំព័រដើម->ការដំឡើង->ម៉ូឌុល)។
 SessionTimeOut=អស់ពេលសម្រាប់វគ្គ
 SessionExplanation=លេខនេះធានាថា session នឹងមិនផុតកំណត់មុនពេលពន្យារពេលនេះទេ ប្រសិនបើ session cleaner ត្រូវបានធ្វើឡើងដោយ Internal PHP session cleaner (និងគ្មានអ្វីផ្សេងទៀត)។ អ្នកសម្អាតសម័យ PHP ខាងក្នុងមិនធានាថាវគ្គនឹងផុតកំណត់បន្ទាប់ពីការពន្យារពេលនេះទេ។ វានឹងផុតកំណត់បន្ទាប់ពីការពន្យារពេលនេះ ហើយនៅពេលដែលកម្មវិធីសម្អាតវគ្គត្រូវបានដំណើរការ ដូច្នេះរាល់ <b>%s/%s</b> ការចូលប្រើប្រាស់ ប៉ុន្តែមានតែក្នុងអំឡុងពេលចូលប្រើដែលធ្វើឡើងដោយវគ្គផ្សេងទៀត (ប្រសិនបើតម្លៃគឺ 0 វាមានន័យថាការសម្អាតវគ្គគឺធ្វើឡើងដោយដំណើរការខាងក្រៅតែប៉ុណ្ណោះ) .<br>ចំណាំ៖ នៅលើម៉ាស៊ីនមេមួយចំនួនដែលមានយន្តការសម្អាតសម័យខាងក្រៅ (cron under debian, ubuntu...) វគ្គអាចនឹងត្រូវបំផ្លាញបន្ទាប់ពីរយៈពេលកំណត់ដោយការដំឡើងខាងក្រៅ។ មិនថាតម្លៃដែលបានបញ្ចូលនៅទីនេះជាអ្វីទេ។
-SessionsPurgedByExternalSystem=វគ្គនៅលើម៉ាស៊ីនមេនេះហាក់ដូចជាត្រូវបានសម្អាតដោយយន្តការខាងក្រៅ (cron under debian, ubuntu ...) ប្រហែលជារាល់ <b>%s</b> វិនាទី (= តម្លៃនៃប៉ារ៉ាម៉ែត្រ <b>session.gc_maxlifetime<span class='notranslate'>b09a4b7390f17 ដូច្នេះការផ្លាស់ប្តូរតម្លៃនៅទីនេះគ្មានប្រសិទ្ធភាពទេ។ អ្នក​ត្រូវ​តែ​សួរ​អ្នក​គ្រប់គ្រង​ម៉ាស៊ីន​មេ​ឱ្យ​ផ្លាស់ប្ដូរ​ការ​ពន្យារពេល​សម័យ។
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=គន្លឹះដែលមាន
 TriggersDesc=Triggers គឺជាឯកសារដែលនឹងកែប្រែឥរិយាបថនៃលំហូរការងារ Dolibarr នៅពេលដែលបានចម្លងទៅក្នុងថត <b>htdocs/core/triggers</b>។ ពួកគេដឹងពីសកម្មភាពថ្មី ធ្វើឱ្យសកម្មនៅលើព្រឹត្តិការណ៍ Dolibarr (ការបង្កើតក្រុមហ៊ុនថ្មី សុពលភាពវិក្កយបត្រ...)។
 TriggerDisabledByName=កេះនៅក្នុងឯកសារនេះត្រូវបានបិទដោយ <b>-NORUN</b> នៅក្នុងឈ្មោះរបស់ពួកគេ។
@@ -1390,7 +1390,7 @@ SendmailOptionMayHurtBuggedMTA=មុខងារផ្ញើសំបុត្�
 TranslationSetup=ការរៀបចំការបកប្រែ
 TranslationKeySearch=ស្វែងរកគន្លឹះបកប្រែ ឬខ្សែអក្សរ
 TranslationOverwriteKey=សរសេរជាន់លើខ្សែអក្សរបកប្រែ
-TranslationDesc=របៀបកំណត់ភាសាបង្ហាញ៖<br>* Default/Systemwide: menu <strong>Home -> Setup -> Display</strong><br>* ក្នុងមួយអ្នកប្រើប្រាស់៖ ចុចលើឈ្មោះអ្នកប្រើប្រាស់នៅផ្នែកខាងលើនៃអេក្រង់ ហើយកែប្រែ <strong></span span>ការកំណត់ការបង្ហាញអ្នកប្រើប្រាស់<span class='notranslate'></strong> ផ្ទាំងនៅលើកាតអ្នកប្រើប្រាស់។
+TranslationDesc=How to set the display language:<br>* Default/Systemwide: menu <strong>Home -> Setup -> Display</strong><br>* Per user: Click on the username at the top of the screen and modify the <strong>User Display Setup</strong> tab on the user card.
 TranslationOverwriteDesc=អ្នកក៏អាចបដិសេធខ្សែអក្សរដែលបំពេញតារាងខាងក្រោម។ ជ្រើសរើសភាសារបស់អ្នកពី "%s" ទម្លាក់ចុះ បញ្ចូលខ្សែអក្សរគន្លឹះបកប្រែទៅក្នុង "%s" និងការបកប្រែថ្មីរបស់អ្នកទៅជា "%s"
 TranslationOverwriteDesc2=អ្នក​អាច​ប្រើ​ផ្ទាំង​ផ្សេង​ទៀត​ដើម្បី​ជួយ​អ្នក​ដឹង​ថា​គន្លឹះ​បកប្រែ​ណា​ដែល​ត្រូវ​ប្រើ
 TranslationString=ខ្សែអក្សរបកប្រែ
@@ -1687,7 +1687,7 @@ LDAPDescUsers=ទំព័រនេះអនុញ្ញាតឱ្យអ្ន
 LDAPDescGroups=ទំព័រនេះអនុញ្ញាតឱ្យអ្នកកំណត់ឈ្មោះគុណលក្ខណៈ LDAP នៅក្នុងមែកធាង LDAP សម្រាប់ទិន្នន័យនីមួយៗដែលបានរកឃើញនៅលើក្រុម Dolibarr ។
 LDAPDescMembers=ទំព័រនេះអនុញ្ញាតឱ្យអ្នកកំណត់ឈ្មោះគុណលក្ខណៈ LDAP នៅក្នុងមែកធាង LDAP សម្រាប់ទិន្នន័យនីមួយៗដែលរកឃើញនៅលើម៉ូឌុលសមាជិក Dolibarr ។
 LDAPDescMembersTypes=ទំព័រនេះអនុញ្ញាតឱ្យអ្នកកំណត់ឈ្មោះគុណលក្ខណៈ LDAP នៅក្នុងមែកធាង LDAP សម្រាប់ទិន្នន័យនីមួយៗដែលរកឃើញនៅលើប្រភេទសមាជិក Dolibarr ។
-LDAPDescValues=តម្លៃឧទាហរណ៍ត្រូវបានរចនាឡើងសម្រាប់ <b>OpenLDAP</b> ជាមួយនឹងគ្រោងការណ៍ដែលបានផ្ទុកដូចខាងក្រោម៖ b0aee83365837f core.schema, cosine.schema, inetorgperson.schema<span class='notranslate'></b>)។ ប្រសិនបើអ្នកប្រើតម្លៃទាំងនោះ និង OpenLDAP សូមកែប្រែឯកសារកំណត់រចនាសម្ព័ន្ធ LDAP របស់អ្នក <b>slapd.conf</b> ដើម្បីផ្ទុកគ្រោងការណ៍ទាំងនោះទាំងអស់។
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use those values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all those schemas loaded.
 ForANonAnonymousAccess=សម្រាប់​ការ​ចូល​ប្រើប្រាស់​ដែល​មាន​ការ​ផ្ទៀងផ្ទាត់ (សម្រាប់​ការ​ចូល​ដំណើរ​ការ​សរសេរ​ជា​ឧទាហរណ៍)
 PerfDolibarr=របាយការណ៏ដំឡើង/បង្កើនប្រសិទ្ធភាព
 YouMayFindPerfAdviceHere=ទំព័រនេះផ្តល់នូវការត្រួតពិនិត្យ ឬដំបូន្មានមួយចំនួនទាក់ទងនឹងការអនុវត្ត។
@@ -1886,7 +1886,7 @@ PastDelayVCalExport=កុំនាំចេញព្រឹត្តិការ
 SecurityKey = សោសុវត្ថិភាព
 ##### ClickToDial #####
 ClickToDialSetup=ចុច​ដើម្បី​ហៅ​ទូរស័ព្ទ​ទៅ​ការ​ដំឡើង​ម៉ូឌុល
-ClickToDialUrlDesc=URL បានហៅនៅពេលចុចលើរូបភាពទូរសព្ទរួចរាល់។  នៅក្នុង URL អ្នកអាចប្រើស្លាក<br><b>__PHONETO__</b> ជំនួសដោយលេខទូរស័ព្ទរបស់មនុស្សដែលត្រូវហៅទៅ<br><b>__PHONEFROM__b09a4b739f17f8z នឹងត្រូវបានជំនួសដោយលេខទូរស័ព្ទរបស់អ្នកហៅទូរសព្ទ (របស់អ្នក)<span class='notranslate'><br><b>__LOGIN__b09a4b7390f17f17 span> ដែលនឹងត្រូវបានជំនួសដោយការចូល clicktodial (កំណត់នៅលើកាតអ្នកប្រើប្រាស់)<span class='notranslate'><br><b>__PASS__ </b> ដែលនឹងត្រូវបានជំនួសដោយពាក្យសម្ងាត់ clicktodial (កំណត់នៅលើកាតអ្នកប្រើប្រាស់)។
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=ម៉ូឌុលនេះផ្លាស់ប្តូរលេខទូរស័ព្ទ នៅពេលប្រើកុំព្យូទ័រលើតុទៅជាតំណភ្ជាប់ដែលអាចចុចបាន។ ចុចមួយនឹងហៅទៅលេខ។ វាអាចត្រូវបានប្រើដើម្បីចាប់ផ្តើមការហៅទូរសព្ទនៅពេលប្រើទូរស័ព្ទទន់នៅលើកុំព្យូទ័ររបស់អ្នក ឬនៅពេលប្រើប្រព័ន្ធ CTI ដោយផ្អែកលើពិធីការ SIP ជាឧទាហរណ៍។ ចំណាំ៖ នៅពេលប្រើស្មាតហ្វូន លេខទូរស័ព្ទអាចចុចបានជានិច្ច។
 ClickToDialUseTelLink=ប្រើ​តែ​តំណ "tel:" លើ​លេខ​ទូរសព្ទ
 ClickToDialUseTelLinkDesc=ប្រើវិធីនេះ ប្រសិនបើអ្នកប្រើរបស់អ្នកមាន softphone ឬចំណុចប្រទាក់កម្មវិធី ដំឡើងនៅលើកុំព្យូទ័រដូចគ្នាជាមួយ browser ហើយបានហៅនៅពេលអ្នកចុចលើតំណដែលចាប់ផ្តើមដោយ "tel:" នៅក្នុង browser របស់អ្នក។ ប្រសិនបើអ្នកត្រូវការតំណដែលចាប់ផ្តើមដោយ "sip:" ឬដំណោះស្រាយម៉ាស៊ីនមេពេញលេញ (មិនត្រូវការការដំឡើងកម្មវិធីមូលដ្ឋានទេ) អ្នកត្រូវតែកំណត់វាទៅជា "ទេ" ហើយបំពេញវាលបន្ទាប់។
@@ -1948,7 +1948,7 @@ IfSetToYesDontForgetPermission=ប្រសិនបើកំណត់ទៅជ�
 GeoIPMaxmindSetup=ការដំឡើងម៉ូឌុល GeoIP Maxmind
 PathToGeoIPMaxmindCountryDataFile=ផ្លូវទៅកាន់ឯកសារដែលមាន Maxmind ip ទៅការបកប្រែប្រទេស
 NoteOnPathLocation=ចំណាំថាឯកសារទិន្នន័យ ip ទៅប្រទេសត្រូវតែស្ថិតនៅក្នុងថតឯកសារ PHP របស់អ្នកអាចអានបាន (ពិនិត្យមើលការដំឡើង PHP open_basedir និងការអនុញ្ញាតប្រព័ន្ធឯកសារ)។
-YouCanDownloadFreeDatFileTo=អ្នកអាចទាញយក <b>កំណែសាកល្បងដោយឥតគិតថ្លៃ</b> នៃឯកសារប្រទេស Maxmind GeoIP នៅ <span class='notranslate'>b0ecb2ecz87f49f /span> ។
+YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
 YouCanDownloadAdvancedDatFileTo=អ្នកក៏អាចទាញយក <b>កំណែពេញលេញបន្ថែមទៀត ជាមួយនឹងការអាប់ដេត </b> នៃឯកសារប្រទេស Maxmind GeoIP នៅ %s។
 TestGeoIPResult=តេស្តនៃការបំប្លែង IP -> ប្រទេស
 ##### Projects #####
@@ -2002,7 +2002,7 @@ SomethingMakeInstallFromWebNotPossible=ការ​ដំឡើង​ម៉ូ�
 SomethingMakeInstallFromWebNotPossible2=សម្រាប់ហេតុផលនេះ ដំណើរការដំឡើងកំណែដែលបានពិពណ៌នានៅទីនេះគឺជាដំណើរការដោយដៃតែអ្នកប្រើប្រាស់ដែលមានសិទ្ធិអាចអនុវត្តបាន។
 InstallModuleFromWebHasBeenDisabledContactUs=ដំឡើង ឬអភិវឌ្ឍម៉ូឌុលខាងក្រៅ ឬគេហទំព័រថាមវន្ត ពីកម្មវិធីបច្ចុប្បន្នត្រូវបានចាក់សោសម្រាប់គោលបំណងសុវត្ថិភាព។ សូមទាក់ទងមកយើងខ្ញុំ ប្រសិនបើអ្នកត្រូវការបើកមុខងារនេះ។
 InstallModuleFromWebHasBeenDisabledByFile=ការដំឡើងម៉ូឌុលខាងក្រៅពីកម្មវិធីត្រូវបានបិទដោយអ្នកគ្រប់គ្រងរបស់អ្នក។ អ្នកត្រូវតែសុំឱ្យគាត់លុបឯកសារ <strong>%s</strong> ដើម្បីអនុញ្ញាតវា លក្ខណៈ។
-ConfFileMustContainCustom=ការដំឡើង ឬបង្កើតម៉ូឌុលខាងក្រៅពីកម្មវិធីចាំបាច់ត្រូវរក្សាទុកឯកសារម៉ូឌុលទៅក្នុងថត <strong>%s </strong>។ ដើម្បីឲ្យថតឯកសារនេះដំណើរការដោយ Dolibarr អ្នកត្រូវតែរៀបចំ <strong>conf/conf.php</strong> របស់អ្នក ដើម្បីបន្ថែមបន្ទាត់ណែនាំចំនួន 2៖ <br><strong>$dolibarr_main_url_root_alt='/custom'; b0a65d071f ='notranslate'><br><strong>$dolibarr_main_document_root_alt='%scustom'0</span> '></strong></span>
+ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong>
 HighlightLinesOnMouseHover=រំលេច​បន្ទាត់​តារាង នៅពេល​ផ្លាស់ទី​កណ្ដុរ​ឆ្លងកាត់
 HighlightLinesColor=បន្លិចពណ៌នៃបន្ទាត់ នៅពេលកណ្តុរឆ្លងកាត់ (ប្រើ 'ffffff' សម្រាប់គ្មានការបន្លិច)
 HighlightLinesChecked=បន្លិចពណ៌នៃបន្ទាត់នៅពេលវាត្រូវបានគូស (ប្រើ 'ffffff' សម្រាប់គ្មានការបន្លិច)
@@ -2099,7 +2099,7 @@ DetectionNotPossible=ការរកឃើញមិនអាចទៅរួច�
 UrlToGetKeyToUseAPIs=Url ដើម្បីទទួលបានសញ្ញាសម្ងាត់ដើម្បីប្រើ API (នៅពេលដែលសញ្ញាសម្ងាត់ត្រូវបានទទួល វាត្រូវបានរក្សាទុកក្នុងតារាងអ្នកប្រើប្រាស់មូលដ្ឋានទិន្នន័យ ហើយត្រូវតែផ្តល់ឱ្យនៅលើការហៅ API នីមួយៗ)
 ListOfAvailableAPIs=បញ្ជី APIs ដែលមាន
 activateModuleDependNotSatisfied=ម៉ូឌុល "%s" អាស្រ័យលើម៉ូឌុល "%s" ដែលបាត់ ដូច្នេះម៉ូឌុល " %1$s" ប្រហែលជាមិនដំណើរការត្រឹមត្រូវ។ សូមដំឡើងម៉ូឌុល "%2$s" ឬបិទម៉ូឌុល "%1$s" ប្រសិនបើអ្នកចង់មានសុវត្ថិភាពពីការភ្ញាក់ផ្អើលណាមួយ
-CommandIsNotInsideAllowedCommands=ពាក្យ​បញ្ជា​ដែល​អ្នក​កំពុង​ព្យាយាម​រត់​មិន​ស្ថិត​ក្នុង​បញ្ជី​ពាក្យ​បញ្ជា​ដែល​បាន​អនុញ្ញាត​ដែល​បាន​កំណត់​ក្នុង​ប៉ារ៉ាម៉ែត្រ <strong>$dolibarr_main_restrict_os_commands</strong> ក្នុង class='notranslate'><strong></span>conf.php</strong> ។
+CommandIsNotInsideAllowedCommands=The command you are trying to run is not in the list of allowed commands defined in parameter <strong>$dolibarr_main_restrict_os_commands</strong> in the <strong>conf.php</strong> file.
 LandingPage=ទំព័រចុះចត
 SamePriceAlsoForSharedCompanies=ប្រសិនបើអ្នកប្រើម៉ូឌុលពហុក្រុមហ៊ុន ជាមួយនឹងជម្រើស "តម្លៃតែមួយ" តម្លៃក៏នឹងដូចគ្នាសម្រាប់ក្រុមហ៊ុនទាំងអស់ ប្រសិនបើផលិតផលត្រូវបានចែករំលែករវាងបរិស្ថាន។
 ModuleEnabledAdminMustCheckRights=ម៉ូឌុលត្រូវបានធ្វើឱ្យសកម្ម។ ការអនុញ្ញាតសម្រាប់ម៉ូឌុលដែលបានធ្វើឱ្យសកម្មត្រូវបានផ្តល់ឱ្យតែអ្នកប្រើប្រាស់អ្នកគ្រប់គ្រងប៉ុណ្ណោះ។ អ្នកប្រហែលជាត្រូវផ្តល់ការអនុញ្ញាតដល់អ្នកប្រើប្រាស់ ឬក្រុមផ្សេងទៀតដោយដៃប្រសិនបើចាំបាច់។
@@ -2328,7 +2328,7 @@ APIsAreNotEnabled=ម៉ូឌុល APIs មិនត្រូវបានប�
 YouShouldSetThisToOff=អ្នកគួរតែកំណត់វាជា 0 ឬបិទ
 InstallAndUpgradeLockedBy=ការដំឡើង និងការអាប់ដេតត្រូវបានចាក់សោដោយឯកសារ <b>%s</b>
 InstallLockedBy=ការដំឡើង/ដំឡើងឡើងវិញត្រូវបានចាក់សោដោយឯកសារ <b>%s</b>
-InstallOfAddonIsNotBlocked=ការដំឡើង addons មិនត្រូវបានចាក់សោទេ។ បង្កើតឯកសារ <b>installmodules.lock</b> ទៅក្នុងថត <b></span ='notranslate'>%s</b> ដើម្បីទប់ស្កាត់ការដំឡើងកម្មវិធីបន្ថែម/ម៉ូឌុលខាងក្រៅ។
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=ការអនុវត្តចាស់
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=ប្រសិនបើម៉ូឌុលទូទាត់តាមអ៊ីនធឺណិតមួយចំនួនត្រូវបានបើក (Paypal, Stripe, ...) សូមបន្ថែមតំណនៅលើ PDF ដើម្បីធ្វើការទូទាត់តាមអ៊ីនធឺណិត។
 DashboardDisableGlobal=បិទរាល់មេដៃរបស់វត្ថុដែលបើកជាសកល

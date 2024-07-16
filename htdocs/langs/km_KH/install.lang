@@ -115,7 +115,7 @@ OrphelinsPaymentsDetectedByMethod=ការបង់ប្រាក់កុម�
 RemoveItManuallyAndPressF5ToContinue=យកវាចេញដោយដៃ ហើយចុច F5 ដើម្បីបន្ត។
 FieldRenamed=បានប្តូរឈ្មោះវាល
 IfLoginDoesNotExistsCheckCreateUser=ប្រសិនបើអ្នកប្រើប្រាស់មិនទាន់មាននៅឡើយ អ្នកត្រូវតែពិនិត្យមើលជម្រើស "បង្កើតអ្នកប្រើប្រាស់"
-ErrorConnection=ម៉ាស៊ីនមេ "<b>%s</b>", ឈ្មោះមូលដ្ឋានទិន្នន័យ "<b>%s</b>", ចូល "35838 span><span class='notranslate'>%s</b>" ឬពាក្យសម្ងាត់មូលដ្ឋានទិន្នន័យអាចខុស ឬកំណែកម្មវិធី PHP អាចចាស់ពេកបើប្រៀបធៀបទៅនឹងកំណែមូលដ្ឋានទិន្នន័យ .
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or the PHP client version may be too old compared to the database version.
 InstallChoiceRecommanded=ជម្រើសដែលបានណែនាំដើម្បីដំឡើងកំណែ <b>%s</b> ពីកំណែបច្ចុប្បន្នរបស់អ្នក <b>%s</b>
 InstallChoiceSuggested=<b>ដំឡើងជម្រើសដែលស្នើដោយអ្នកដំឡើង </b>។
 MigrateIsDoneStepByStep=កំណែគោលដៅ (%s) មានគម្លាតនៃកំណែជាច្រើន។ អ្នកជំនួយការដំឡើងនឹងត្រលប់មកវិញដើម្បីណែនាំការផ្លាស់ប្តូរបន្ថែមទៀត នៅពេលដែលកម្មវិធីនេះត្រូវបានបញ្ចប់។

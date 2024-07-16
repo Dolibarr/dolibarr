@@ -135,7 +135,7 @@ DateActionStart=ថ្ងៃ​ចាប់ផ្តើម
 DateActionEnd=កាលបរិច្ឆេទបញ្ចប់
 AgendaUrlOptions1=អ្នកក៏អាចបន្ថែមប៉ារ៉ាម៉ែត្រខាងក្រោមដើម្បីត្រងលទ្ធផល៖
 AgendaUrlOptions3=<b>logina=%s</b> ដើម្បីដាក់កម្រិតលទ្ធផលទៅនឹងសកម្មភាពរបស់អ្នកប្រើប្រាស់ <b>%s</b> (ប្រើ 30aee logina=!%s</b> សម្រាប់ព្រឹត្តិការណ៍ដែលមិនមែនជារបស់អ្នកប្រើប្រាស់)។
-AgendaUrlOptions4=<b>logint=%s</b> ដើម្បីដាក់កម្រិត <span output ចំពោះសកម្មភាពដែលបានកំណត់ទៅអ្នកប្រើប្រាស់ span class='notranslate'><b></span>%s</b> (ម្ចាស់ និងអ្នកដទៃ)។
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> ដើម្បីដាក់កម្រិតលទ្ធផលទៅនឹងសកម្មភាពដែលភ្ជាប់ទៅគម្រោង b05878333 __PROJECT_ID__<span class='notranslate'></b>។
 AgendaUrlOptionsType=<b>actiontype=%s</b> ដើម្បីទទួលបានព្រឹត្តិការណ៍ដោយស្វ័យប្រវត្តិ ឬដោយដៃ
 AgendaUrlOptionsCode=<b>actioncode=%s</b> ដើម្បីទទួលបានតែព្រឹត្តិការណ៍ដែលមានលេខកូដដែលបានផ្តល់ឱ្យ

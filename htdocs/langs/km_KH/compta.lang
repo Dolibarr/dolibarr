@@ -164,11 +164,11 @@ CalcModeEngagement=ការវិភាគនៃការទូទាត់ដ�
 CalcModePayment=ការវិភាគនៃការទូទាត់ដែលបានកត់ត្រា
 CalcModeBookkeeping=ការវិភាគទិន្នន័យដែលបានកត់ត្រានៅក្នុងតារាងបញ្ជីគណនេយ្យ។
 CalcModeNoBookKeeping=ទោះបីជាពួកគេមិនទាន់ត្រូវបានបញ្ចូលទៅក្នុងបញ្ជីឈ្មោះក៏ដោយ។
-CalcModeLT1= របៀប <b>%sRE នៅលើវិក្កយបត្ររបស់អតិថិជន - វិក្កយបត្រអ្នកផ្គត់ផ្គង់ %s<span ='notranslate'></b></span>
+CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
 CalcModeLT1Debt=របៀប <b>%sRE នៅលើវិក្កយបត្ររបស់អតិថិជន%s</b>
 CalcModeLT1Rec= របៀប <b>%sRE នៅលើវិក្កយបត្រអ្នកផ្គត់ផ្គង់%s</b>
-CalcModeLT2= របៀប <b>%sIRPF លើវិក្កយបត្ររបស់អតិថិជន - វិក្កយបត្រអ្នកផ្គត់ផ្គង់%s</span ='notranslate'></b>
-CalcModeLT2Debt=របៀប <b>%sIRPF លើវិក្កយបត្ររបស់អតិថិជន%s<span class='notranslate' '></b></span>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
+CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
 CalcModeLT2Rec= របៀប <b>%sIRPF លើវិក្កយបត្រអ្នកផ្គត់ផ្គង់%s<span class='notranslate' '></b></span>
 AnnualSummaryDueDebtMode=សមតុល្យនៃប្រាក់ចំណូល និងការចំណាយ សង្ខេបប្រចាំឆ្នាំ
 AnnualSummaryInputOutputMode=សមតុល្យនៃចំណូល និងចំណាយ សង្ខេបប្រចាំឆ្នាំ

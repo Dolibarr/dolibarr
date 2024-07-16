@@ -71,6 +71,6 @@ YourPartnershipCanceledContent=យើងសូមជូនដំណឹងដល�
 CountLastUrlCheckError=ចំនួននៃកំហុសសម្រាប់ការពិនិត្យ URL ចុងក្រោយ
 LastCheckBacklink=កាលបរិច្ឆេទពិនិត្យ URL ចុងក្រោយ
 NewPartnershipRequest=ពាក្យសុំដៃគូថ្មី។
-NewPartnershipRequestDesc=ទម្រង់បែបបទនេះអនុញ្ញាតឱ្យអ្នកស្នើសុំឱ្យក្លាយជាផ្នែកមួយនៃកម្មវិធីភាពជាដៃគូរបស់យើង។ ប្រសិនបើអ្នកត្រូវការជំនួយក្នុងការបំពេញទម្រង់នេះ សូមទាក់ទងតាមអ៊ីមែល <b>%s<span class='notranslate'></b></ វិសាលភាព> ។
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=ទំព័រនេះត្រូវតែមានយ៉ាងហោចណាស់តំណមួយទៅកាន់ដែនមួយក្នុងចំណោមដែនខាងក្រោម៖ %s
 IPOfApplicant=IP របស់អ្នកដាក់ពាក្យ

@@ -1063,7 +1063,7 @@ Select2NotFound=រកមិនឃើញលទ្ធផលទេ។
 Select2Enter=បញ្ចូល
 Select2MoreCharacter=ឬតួអក្សរច្រើន។
 Select2MoreCharacters=ឬតួអក្សរច្រើន។
-Select2MoreCharactersMore=<strong>វាក្យសម្ព័ន្ធស្វែងរក៖</strong><br><span class='notranslate' <kbd></span><strong> |</strong>b0860de534fda6 notranslate'><kbd> ឬ</kbd> (a|b)<br>703aec /span><span class='notranslate'><strong>*</strong></kbd><kbd> តួអក្សរណាមួយ</kbd> (a*b)<br>b03aec07a6 span><span class='notranslate'><strong>^</strong></kbd> <kbd> ចាប់ផ្តើមជាមួយ </kbd> (^ab)<br>b03aec07a60 <span class='notranslate'><strong>$</strong></kbd>a03a /span> បញ្ចប់ដោយ<span class='notranslate'></kbd> (ab$)<br>
+Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=កំពុង​ផ្ទុក​លទ្ធផល​បន្ថែម...
 Select2SearchInProgress=ការស្វែងរកកំពុងដំណើរការ...
 SearchIntoThirdparties=Third parties
