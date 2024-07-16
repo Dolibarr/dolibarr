@@ -1190,7 +1190,6 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$objectstatic = new Facture($db);
 			$objectstatic->fetch($line->fk_doc);
-			$modulepart = 'facture'; // or use $objectstatic->element
 
 			$filename = dol_sanitizeFileName($line->doc_ref);
 			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
@@ -1202,11 +1201,10 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$objectstatic = new FactureFournisseur($db);
 			$objectstatic->fetch($line->fk_doc);
-			$modulepart = 'invoice_supplier'; // or use $objectstatic->element
 
 			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $objectstatic->element).dol_sanitizeFileName($line->doc_ref);
+			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $objectstatic->element).dol_sanitizeFileName($line->doc_ref);
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
 		} elseif ($line->doc_type == 'expense_report') {
 			$langs->loadLangs(array('trips'));
@@ -1214,7 +1212,6 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$objectstatic = new ExpenseReport($db);
 			$objectstatic->fetch($line->fk_doc);
-			$modulepart = 'expensereport'; // or use $objectstatic->element
 
 			$filename = dol_sanitizeFileName($line->doc_ref);
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
