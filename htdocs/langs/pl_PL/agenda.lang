@@ -21,7 +21,6 @@ MenuDoneMyActions=Moje zdarzenia zakończone
 ListOfEvents=Lista wydarzeń (domyślny kalendarz)
 ActionsAskedBy=Zdarzenia zarejestrowane przez
 ActionsToDoBy=Zdarzenia przypisane do
-ActionsDoneBy=Zdarzenia wykonane przez
 ActionAssignedTo=Wydarzenie przypisane do
 ViewCal=Pokaż miesiąc
 ViewDay=Pokaż dzień
@@ -135,12 +134,14 @@ AgendaModelModule=Szablon dokumentu dla zdarzenia
 DateActionStart=Data rozpoczęcia
 DateActionEnd=Data zakończenia
 AgendaUrlOptions1=Możesz także dodać następujące parametry do filtr wyjściowy:
-AgendaUrlOptions3=<b>logina =%s</b>, aby ograniczyć wyjścia do działań będących własnością użytkownika <b>%s</b>.
-AgendaUrlOptionsNotAdmin= <b> logina =! %s </b>, aby ograniczyć dane wyjściowe do działań nienależących do użytkownika <b> %s </b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b>, aby ograniczyć wyjście do działań przypisanych do użytkownika <b> %s </b> (właściciel i inni).
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b>, aby ograniczyć dane wyjściowe do działań powiązanych z projektem <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b>, aby wykluczyć zdarzenia automatyczne.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeeholidays = 1 </b>, aby uwzględnić wydarzenia związane z wakacjami.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Urodziny kontaktów
 AgendaHideBirthdayEvents=Ukryj urodziny kontaktów
 Busy=Zajęty
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Twoja rezerwacja została zapisana
 BookingReservationHourAfter=Potwierdzamy rezerwację naszego spotkania w terminie %s
 BookcalBookingTitle=Spotkanie online
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

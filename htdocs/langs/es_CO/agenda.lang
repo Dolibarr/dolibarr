@@ -65,7 +65,6 @@ AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar
 AgendaUrlOptions3=<b> logina = %s </b> para restringir la salida a acciones propiedad de un usuario <b> %s </b>.
 AgendaUrlOptions4=<b> logint = %s </b> para restringir la salida a las acciones asignadas al usuario <b> %s </b> (propietario y otros).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID__ </b> para restringir la salida a acciones vinculadas al proyecto <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> para excluir eventos automáticos.
 AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b> para incluir eventos de vacaciones.
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda

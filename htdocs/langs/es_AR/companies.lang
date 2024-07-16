@@ -138,7 +138,6 @@ ProfId2DZ=Artículo
 VATIntra=ID IVA
 VATIntraShort=ID IVA
 VATIntraSyntaxIsValid=La sintaxis es correcta
-VATReturn=Devolución de IVA
 ProspectCustomer=Cliente Potencial / Cliente
 CustomerCard=Ficha de Cliente
 CustomerRelativeDiscount=Descuento por cliente

@@ -93,7 +93,7 @@ $formfile = new FormFile($db);
 
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
 
-llxHeader('', $titre);
+llxHeader('', $titre, '', '', 0, 0, '', '', '', 'mod-fourn-facture page-rapport');
 
 print load_fiche_titre($titre, '', 'supplier_invoice');
 

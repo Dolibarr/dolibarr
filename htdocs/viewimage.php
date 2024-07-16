@@ -180,14 +180,21 @@ if ($modulepart == 'fckeditor') {
  */
 
 if (GETPOST("cache", 'alpha')) {
-	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-	// Add param cache=abcdef
+	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
+	// We are here when param cache=xxx to force a cache policy:
+	//  xxx=1 means cache of 3600s
+	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
 	if (empty($dolibarr_nocache)) {
-		header('Cache-Control: max-age=3600, public, must-revalidate');
+		if (GETPOST('cache', 'alpha') != '1') {
+			$delaycache = 3600 * 24 * 7;
+		} else {
+			$delaycache = 3600;
+		}
+		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + 3600).' GMT');	// This is to avoid to have Expires set by proxy or web server
-		//header('Expires: '.strtotime('+1 hour');
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 	} else {
+		// If any cache on files were disable by config file (for test purpose)
 		header('Cache-Control: no-cache');
 	}
 	//print $dolibarr_nocache; exit;

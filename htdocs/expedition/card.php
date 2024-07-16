@@ -893,7 +893,7 @@ if ($action == 'create2') {
 }
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card');
 
 if (empty($action)) {
 	$action = 'view';

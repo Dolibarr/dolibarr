@@ -39,7 +39,6 @@ WithdrawalsSetup=Einstellungen für Lastschriftaufträge
 CreditTransferSetup=Einstellungen Modul Zahlung per Überweisung
 WithdrawStatistics=Statistik Lastschriftzahlungen
 CreditTransferStatistics=Statistiken Überweisungen
-Rejects=Ablehnungen
 LastWithdrawalReceipt=Letzte 1%s Einnahmen per Lastschrift
 MakeWithdrawRequest=Lastschrift erstellen
 MakeWithdrawRequestStripe=Fordern Sie eine Lastschriftzahlung über Stripe an
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Gehälter, die auf Zahlung per Überweisung warten
 RefSalary=Gehalt
 NoSalaryInvoiceToWithdraw=Kein Gehalt, des auf  '%s' wartet. Gehen Sie auf den Tab  „%s“  auf der Gehaltsseite, um eine Anfrage zu erstellen.
 SalaryInvoiceWaitingWithdraw=Gehälter , die auf Zahlung per Überweisung warten
-

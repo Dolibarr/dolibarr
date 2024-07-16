@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Politika privatnosti podataka
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Modul za upravljanje privatnošću podataka (sukladnost s GDPR-om)
-
-#
 # Administration page
-#
 datapolicySetup = Podešavanje pravila o privatnosti podataka modula
 Deletion = Brisanje podataka
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni potencijalni/ni kupac
 DATAPOLICY_CONTACT_FOURNISSEUR = Dobavljač
 DATAPOLICY_ADHERENT = Član
 DATAPOLICY_Tooltip_SETUP = Vrsta kontakta - navedite svoje izbore za svaku vrstu.
-DATAPOLICYMail = Postavljanje e-pošte
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Sadržaj e-pošta
-DATAPOLICYSUBSITUTION = Možete koristiti sljedeće varijable u svom e-pošta (LINKACCEPT omogućuje izradi vezu koja bilježi suglasnost osobe, LINKREFUSED to čini moguće zabilježiti odbijanje osobe):
-DATAPOLICYACCEPT = Poruka nakon dogovora
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Možete poslati GDPR e-pošta svim svojim relevantnim kontaktima (koji još nisu primili e-pošta i za koje niste registrirali ništa o njihovom GDPR ugovoru). Da biste to učinili, koristite sljedeći gumb.
 SendAgreement = Pošaljite e-poštu
 AllAgreementSend = Svi e-mailovi su poslani
 TXTLINKDATAPOLICYACCEPT = Tekst za link "ugovor"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Obrada osobnih podataka
 DATAPOLICY_consentement = Dobivena suglasnost za obradu osobnih podataka
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizirajte treću stranu
-DATAPOLICY_POPUP_ANONYME_TEXTE = Ne možete izbrisati ovaj kontakt iz Dolibarra jer postoje povezane stavke. U skladu s GDPR-om, učinit ćete sve ove podatke anonimnima kako biste poštivali svoje obveze. Želite li nastaviti?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Prenosivost GDPR
-DATAPOLICY_PORTABILITE_TITLE = Iznos osobnih podataka
-DATAPOLICY_PORTABILITE_CONFIRMATION = Želite izvesti osobne podatke ovog kontakta. Jesi li siguran ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonimizirao %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Pošalji GDPR e-pošta
 MailSent = e-pošta je poslano
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

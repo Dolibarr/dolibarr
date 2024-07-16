@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Aceite
 SupplierProposalStatusNotSignedShort=Recusado
 CopyAskFrom=Crie uma solicitação de preço copiando uma solicitação existente
 CreateEmptyAsk=Criar pedido em branco
-ConfirmCloneAsk=Tem certeza que deseja clonar o orçamento do fornecedor, <b>%s</b>?
 ConfirmReOpenAsk=Tem certeza que deseja reabrir o orçamento do fornecedor, <b>%s</b>?
 SendAskByMail=Enviar orçamento do fornecedor por email
 SendAskRef=A enviar o orçamento do fornecedor, %s

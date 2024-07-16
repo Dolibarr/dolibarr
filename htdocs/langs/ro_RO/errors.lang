@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=S-a găsit o sintaxă de email incorectă pentru liniil
 ErrorUserCannotBeDelete=Utilizatorul nu poate fi șters. Poate este asociat unor entități de sistem.
 ErrorFieldsRequired=Unele câmpuri obligatorii nu au fost completate.
 ErrorSubjectIsRequired=Subiectul emailului este obligatoriu
+ErrorInAddAttachmentsImageBaseOnMedia=Eroare la crearea fișierelor imagine în directorul media pentru atașare
+ErrorInAddAttachmentsImageBaseIsSrcData=Eroare la crearea fișierelor imagine (găsite ca date:) în directorul temporar pentru atașare
 ErrorFailedToCreateDir=Eşec la crearea unui director. Verificaţi dacă user-ul server-ului web are permisiuni pentru a scrie în directorul de documente. Dacă parametrul <b>safe_mode</b> este activat în PHP, verifică dacă user-ul sistem deţine fişierele  de pe server(sau grup).
 ErrorNoMailDefinedForThisUser=Nicio adresă de email definită pentru acest utilizator
 ErrorSetupOfEmailsNotComplete=Configurarea emailurilor nu este finalizată
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Eroare, şirul înlocuitor este gol
 ErrorProductNeedBatchNumber=Eroare, produsul '<b>%s</b>' necesită un număr de lot/serie
 ErrorProductDoesNotNeedBatchNumber=Eroare, produsul '<b>%s</b>' nu acceptă un număr de lot/serie
 ErrorFailedToReadObject=Eroare, nu am putut citi tipul obiectului <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Eroare, parametrul <b>%s</b> trebuie să fie activat în <b>conf/conf.php<> pentru a permite utilizarea interfeței liniei de comandă de către programatorul intern de lucrări
+ErrorParameterMustBeEnabledToAllwoThisFeature=Eroare, parametrul <b>%s</b> trebuie să fie activat în <b>conf/conf.php</b> pentru a permite utilizarea interfeței liniei de comandă de către programatorul intern de lucrări
 ErrorLoginDateValidity=Eroare, această conectare se află în afara intervalului temporal valabil
 ErrorValueLength=Lungimea câmpului '<b>%s</b>' trebuie să fie mai mare de '<b>%s</b>'
 ErrorReservedKeyword=Cuvântul '<b>%s</b>' este un cuvânt cheie rezervat
@@ -322,16 +324,21 @@ ErrorFixThisHere=<a href="%s">Remediază acest lucru aici</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Eroare: Adresa URL a instanței tale actuale (%s) nu se potrivește cu adresa URL definită în configurația ta de conectare OAuth2 (%s). Autentificarea OAuth2 într-o astfel de configurație nu este permisă.
 ErrorMenuExistValue=Există deja un Meniu cu acest titlu sau această adresă URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Fișierele SVG nu sunt permise ca legături externe fără opțiunea %s
-ErrorTypeMenu=Imposibil de adăugat un alt meniu pentru același modul în bara de navigare, nu poate fi gestionat încă 
+ErrorTypeMenu=Imposibil de adăugat un alt meniu pentru același modul în bara de navigare, încă neimplementat
+ErrorGeneratingBarcode=Eroare la generarea codului de bare (probabil format de cod invalid)
 ErrorObjectNotFound = Obiectul <b>%s</b> nu a fost găsit, verifică adresa URL
 ErrorCountryCodeMustBe2Char=Codul de țară trbuie să fie un șir de 2 caractere
 ErrorABatchShouldNotContainsSpaces=Un lot sau un număr de serie nu trebuie să conțină spații
-
 ErrorTableExist=Tabelul <b>%s</b> există deja
 ErrorDictionaryNotFound=Dicționarul <b>%s</b> nu a fost găsit
 ErrorFailedToCreateSymLinkToMedias=Eșec la crearea legăturii simbolice %s care direcționează către %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Verifică comanda utilizată pentru export în Opțiuni avansate ale exportului
-
+ErrorEndTimeMustBeGreaterThanStartTime=Ora de încheiere trebuie să fie mai mare decât ora de început
+ErrorIncoherentDates=Data de început trebuie să fie mai mică decât data de sfârșit
+ErrorEndHourIsNull=Dată sfârșit nu poate fi zero
+ErrorStartHourIsNull=Dată început nu poate fi zero
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Prea multe linii de procesat. Utilizează un filtru mai selectiv.
+ErrorEmptyValueForQty=Cantitatea nu poate fi zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Parametrul tău PHP upload_max_filesize (%s) este mai mare decât paramentrul PHP post_max_size (%s). Aceasta nu este o configuraţie consistentă.
 WarningPasswordSetWithNoAccount= O parolă a fost trimisă către acest membru. Cu toate acestea, nu a fost creat nici un cont de utilizator. Astfel, această parolă este stocată, dar nu poate fi utilizată pentru autentificare. Poate fi utilizată de către un modul / interfată externă, dar dacă nu aveți nevoie să definiți un utilizator sau o parolă pentru un membru, puteți dezactiva opțiunea "Gestionați o conectare pentru fiecare membru" din modul de configurare membri. În cazul în care aveți nevoie să gestionați un utilizator, dar nu este nevoie de parolă, aveți posibilitatea să păstrați acest câmp gol pentru a evita acest avertisment. Notă: Adresa de e-mail poate fi utilizată ca utilizator la autentificare, în cazul în care membrul este legat de un utilizator. 
@@ -344,6 +351,7 @@ WarningConfFileMustBeReadOnly=Atenţie, fişierul tău de configurare (<b>htdocs
 WarningsOnXLines=Avertismente pe <b>%s</b> înregistrare(ări) sursă
 WarningNoDocumentModelActivated=Nu a fost activat niciun model, pentru generarea de documente. Un model va fi ales în mod implicit până când verificați configurarea modulului.
 WarningLockFileDoesNotExists=Atenţie, o dată ce configurarea este finalizată, trebuie să dezactivați instrumentele de instalare/migrare adăugând un fișier <b>install.lock</b> în directorul <b> %s </b>. Omiterea creării acestui fișier reprezintă un risc serios de securitate.
+WarningUpgradeHasBeenUnlocked=Atenție, procesul de actualizare a fost deblocat pentru toată lumea
 WarningUntilDirRemoved=Acest avertisment de securitate va rămâne activ atâta timp cât vulnerabilitatea este prezentă.
 WarningCloseAlways=Atenţie, închiderea are loc chiar dacă suma diferă. Nu activati aceasta funcţionalitate decât  în cunoștinţă de cauză.
 WarningUsingThisBoxSlowDown=Atenție, folosind această casetă încetiniţi serios toate paginile care afişează caseta.
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = Modulul <b>%s</b> a fost dezactivat. Nu uita să-l ac
 WarningPermissionAlreadyExist=Permisiuni existente pentru acest obiect
 WarningGoOnAccountancySetupToAddAccounts=Dacă această listă este goală, accesează meniul %s - %s - %s pentru a încărca sau crea conturi pentru planul de conturi.
 WarningCorrectedInvoiceNotFound=Factura de corecție nu a fost găsită
-WarningCommentNotFound=Verifică plasarea de început și de sfârșit a comentariilor pentru <b>%s</b> secțiunea din fișierul <b>%s</b> înainte de a trimite acțiunea
+WarningCommentNotFound=Atenție: Nu se găsesc comentariile de început și/sau de sfârșit pentru secțiunea <b>%s</b> în fișierul <b>%s</b>
 WarningAlreadyReverse=Mișcarea de stoc a fost inversată deja
-
+WarningParentIDDoesNotExistAnymore=Acest ID părinte nu mai există
+WarningReadBankAlsoAllowedIfUserHasPermission=Atenție, citirea contului bancar este permisă și cu permisiunea de a gestiona planul de conturi
+WarningNoDataTransferedInAccountancyYet=Reține că nu există date în tabela contabilă. Transferă datele înregistrate în aplicație în secțiunea de contabilitate sau să schimbă modul de calcul pentru a analiza datele înregistrate în afara contabilității.
+WarningChangingThisMayBreakStopTaskScheduler=Atenție, modificarea acestei valori poate dezactiva programatorul de taskuri
 SwissQrOnlyVIR = Factura SwissQR poate fi adăugată numai pe facturile setate să fie plătite cu plăți prin transfer de credit. 
 SwissQrCreditorAddressInvalid = Adresa creditorului este invalidă (este setat codul poștal și județul? (%s)
 SwissQrCreditorInformationInvalid = Informațiile despre creditor sunt invalide pentru IBAN-ul (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN nu este implementat încă
 SwissQrPaymentInformationInvalid = Informațiile de plată nu au fost valide pentru totalul %s : %s
 SwissQrDebitorAddressInvalid = Informațiile despre Debitor au fost invalide (%s)
-
 # Validate
 RequireValidValue = Valoare invalidă
 RequireAtLeastXString = Necesită cel puţin %s caracter(e)
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = Eroare setare valoare câmp : Clasa 
 BadSetupOfFieldFileNotFound = Eroare setare valoare câmp : Fișierul nu a fost găsit pentru includere
 BadSetupOfFieldFetchNotCallable = Eroare setare valoare câmp : Operaţia fetch nu este apelabilă din clasă
 ErrorTooManyAttempts= Prea multe încercări, încearcă mai târziu
-
 TotalAmountEmpty=Suma totală goală
 FailedToFoundTheConversionRateForInvoice=Nu s-a găsit cursul de schimb pentru factură
 ThisIdNotDefined=Id nedefinit
 OperNotDefined=Metoda de plată nedefinită
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s este deja definit ca și contact pentru acest tip.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Persoanele de contact cu acest grup sunt deja definite ca persoane de contact pentru acest tip.
+EmptyMessageNotAllowedError=Mesajul gol nu este permis

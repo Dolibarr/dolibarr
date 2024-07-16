@@ -47,6 +47,7 @@ DateContract=Data contracte
 DateServiceActivate=Data activació del servei
 ListOfServices=Llistat de serveis
 ListOfInactiveServices=Llistat de serveis inactius
+ListOfNotExpiredServices=Llista de serveis actius no caducats
 ListOfExpiredServices=Llistat de serveis actius expirats
 ListOfClosedServices=Llistat de serveis tancats
 ListOfRunningServices=Llistat de serveis actius

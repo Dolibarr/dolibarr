@@ -1082,8 +1082,6 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public function drawPaymentsTable(&$pdf, $object, $posy, $outputlangs)
 	{
-		global $conf;
-
 		$sign = 1;
 		if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 			$sign = -1;
@@ -1173,7 +1171,7 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		// Loop on each payment
-		// TODO Call getListOfPaymentsgetListOfPayments instead of hard coded sql
+		// TODO Call getListOfPayments instead of hard coded sql
 		$sql = "SELECT p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 		$sql .= " cp.code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";

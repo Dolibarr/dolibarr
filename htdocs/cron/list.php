@@ -240,7 +240,7 @@ $cronjob = new Cronjob($db);
 
 $title = $langs->trans("CronList");
 
-llxHeader('', $title, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $TTestNotAllowed = array();
 $sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
