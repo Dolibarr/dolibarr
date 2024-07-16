@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/socialnetwork.lib.php';
 
 // constants for IDs of core dictionaries
 const DICT_FORME_JURIDIQUE = 1;
@@ -1260,6 +1261,15 @@ $form = new Form($db);
 $title = $langs->trans("DictionarySetup");
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
+$object = new modSocialNetworks($db);
+
+if (preg_match('/[?&]id=([0-9]+)/', $object->config_page_url[0], $matches)) {
+	$id = $matches[1];
+}
+
+$head = socialnetwork_prepare_head($id);
+
+print dol_get_fiche_head($head, 'dict', $langs->trans('MenuDict'), -1, 'user');
 
 $linkback = '';
 if ($id && empty($from)) {
