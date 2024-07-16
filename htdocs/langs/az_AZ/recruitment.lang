@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = İşə qəbul
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Yeni iş yerləri üçün işə qəbul kampaniyalarını idarə edin və izləyin
-
-#
 # Admin page
-#
 RecruitmentSetup = İşə qəbulun qurulması
 RecruitmentSetupPage = İşə qəbul modulu üçün əsas seçimlərin quraşdırılmasını buraya daxil edin
 RecruitmentArea=İşə qəbul sahəsi
 PublicInterfaceRecruitmentDesc=İş yerlərinin ictimai səhifələri açıq iş yerlərini göstərmək və onlara cavab vermək üçün ictimai URL-lərdir. Hər bir iş qeydində tapılan hər açıq iş üçün fərqli bir keçid var.
 EnablePublicRecruitmentPages=Açıq iş yerlərinin ictimai səhifələrini aktivləşdirin
 
-#
-# About page
-#
-RecruitmentAbout = İşə Qəbul Haqqında
-RecruitmentAboutPage = Səhifə üzrə işə qəbul
 NbOfEmployeesExpected=İşçilərin gözlənilən nb
 JobLabel=İş yerinin etiketi
 WorkPlace=İş yeri
@@ -47,7 +34,6 @@ PositionToBeFilled=İş mövqeyi
 PositionsToBeFilled=İş yerləri
 ListOfPositionsToBeFilled=Vəzifələrin siyahısı
 NewPositionToBeFilled=Yeni iş yerləri
-
 JobOfferToBeFilled=Doldurulacaq iş yeri
 ThisIsInformationOnJobPosition=Doldurulacaq iş yeri haqqında məlumat
 ContactForRecruitment=İşə qəbul üçün əlaqə saxlayın
@@ -77,4 +63,4 @@ WeAreRecruiting=İşə qəbul edirik. Bu doldurulmalı olan açıq vəzifələri
 NoPositionOpen=Hazırda heç bir vəzifə açıq deyil
 ConfirmClose=Ləğv etməyi təsdiqləyin
 ConfirmCloseAsk=Bu işə qəbul namizədliyini ləğv etmək istədiyinizə əminsiniz
-recruitment=İşə qəbul
+Recruitment=Recruitment

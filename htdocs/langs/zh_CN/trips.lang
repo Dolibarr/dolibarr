@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=记录人员
 AUTHORPAIEMENT=付款人
 AddTrip=创建费用报销单
@@ -13,6 +13,8 @@ byEX_EXP=按行（限制为%s）
 byEX_MON=按月（限制为%s）
 byEX_YEA=按年（限制为%s）
 CANCEL_USER=删除者
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=车辆类别
 ClassifyRefunded=归类 '已退款'
 CompanyVisited=公司/组织访问过
@@ -24,7 +26,7 @@ ConfirmPaidTrip=您确定要将此费用报销单的状态更改为“已支付�
 ConfirmRefuseTrip=您确定要拒绝此费用报销单吗？
 ConfirmSaveTrip=您确定要验证此费用报销单吗？
 ConfirmValideTrip=您确定要批准通过此费用报销单吗？
-DATE_CANCEL=取消日期
+DATE_CANCEL=Cancellation date
 DATE_PAIEMENT=付款日期
 DATE_REFUS=拒绝日期
 DATE_SAVE=验证日期
@@ -39,7 +41,7 @@ expenseReportCoef=系数
 expenseReportCoefUndefined=（值未定义）
 expenseReportOffset=偏移
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=范围已禁用 - 请参阅c_exp_tax_range词典
+expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionary
 expenseReportRangeFromTo=从%d到%d
 expenseReportRangeMoreThan=超过%d
 expenseReportTotalForFive=<u> d </u> = 5的示例
@@ -91,9 +93,9 @@ nolimitbyEX_EXP=按行（没有限制）
 nolimitbyEX_MON=按月（无限制）
 nolimitbyEX_YEA=按年（无限制）
 NoTripsToExportCSV=此期间没有要导出的费用报销单。
-NOT_AUTHOR=您不是此费用报销单的作者。操作已被取消。
+NOT_AUTHOR=You are not the author of this expense report. Operation canceled.
 OnExpense=费用行
-PDFStandardExpenseReports=用于生成费用报销单的PDF文档的标准模板
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=支付费用报销单
 REFUSEUR=拒绝人
 RangeIk=里程范围
@@ -101,12 +103,12 @@ RangeNum=范围%d
 SaveTrip=验证费用报销单
 ShowExpenseReport=显示费用报销单
 ShowTrip=显示费用报销单
-TripCard=费用报销单标签卡
+TripCard=费用报销单
 TripId=费用报销单 ID
-TripNDF=费用报销单信息
+TripNDF=Information expense report
 TripSociete=公司资料信息
 Trips=费用报销单
-TripsAndExpenses=费用报销单
+TripsAndExpenses=费用报销
 TripsAndExpensesStatistics=费用报销单统计
 TypeFees=费用类型
 UploadANewFileNow=立即上传新文档
@@ -115,6 +117,10 @@ VALIDOR=批准人
 ValidateAndSubmit=验证并提请批准
 ValidatedWaitingApproval=已验证 (待批准)
 ValideTrip=批准费用报销单
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=早餐

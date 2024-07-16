@@ -21,7 +21,6 @@ MenuDoneMyActions=আমার সমাপ্ত ঘটনা
 ListOfEvents=ইভেন্টের তালিকা (ডিফল্ট ক্যালেন্ডার)
 ActionsAskedBy=দ্বারা রিপোর্ট করা ঘটনা
 ActionsToDoBy=ইভেন্ট বরাদ্দ করা হয়েছে
-ActionsDoneBy=দ্বারা সম্পন্ন ঘটনা
 ActionAssignedTo=ইভেন্ট বরাদ্দ করা হয়েছে
 ViewCal=মাস ভিউ
 ViewDay=দিনের দৃশ্য
@@ -135,12 +134,14 @@ AgendaModelModule=ইভেন্টের জন্য নথির টেম�
 DateActionStart=শুরুর তারিখ
 DateActionEnd=শেষ তারিখ
 AgendaUrlOptions1=আপনি ফিল্টার আউটপুট নিম্নলিখিত পরামিতি যোগ করতে পারেন:
-AgendaUrlOptions3=<b>logina=%s</b> ব্যবহারকারীর মালিকানাধীন ক্রিয়াকলাপগুলিতে আউটপুট সীমাবদ্ধ করতে <b>%s</b>।
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> আউটপুটকে নিজের নয় এমন ক্রিয়াগুলিতে সীমাবদ্ধ করতে ব্যবহারকারী <b>%s</b>।
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=স্বয়ংক্রিয় ইভেন্টগুলি বাদ দিতে <b>notactiontype=systemauto</b>।
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=ছুটির ইভেন্টগুলি অন্তর্ভুক্ত করতে <b>includeholidays=1</b>।
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=পরিচিতির জন্মদিন
 AgendaHideBirthdayEvents=পরিচিতির জন্মদিন লুকান
 Busy=ব্যস্ত
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=আপনার বুকিং সংরক্ষণ 
 BookingReservationHourAfter=আমরা %s তারিখে আমাদের সভার রিজার্ভেশন নিশ্চিত করি
 BookcalBookingTitle=অনলাইন অ্যাপয়েন্টমেন্ট
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

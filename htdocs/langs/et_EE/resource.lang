@@ -1,36 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressursid
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceAdd=Uus ressurss
+DeleteResource=Kustuta ressurss
+ConfirmDeleteResourceElement=Kinnita selle elemendi ressursi kustutamine
+NoResourceInDatabase=Andmebaasis ressursse ei ole
+NoResourceLinked=Seotud ressursid puuduvad
+ActionsOnResource=Sündmused selle ressursi kohta
+ResourcePageIndex=Ressursside nimestik
+ResourceSingular=Ressurss
+ResourceCard=Ressursi kaart
+NewResource=Uus ressurss
+AddResource=Loo ressurss
+ResourceFormLabel_ref=Ressursi nimi
+ResourceFormLabel_description=Ressursi kirjeldus
+ResourceType=Ressursi tüüp
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
+ResourcesLinkedToElement=Elemendiga seotud ressursid
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
-
-ResourcesLinkedToElement=Resources linked to element
-
-ShowResource=Show resource
-
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
-
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+ShowResource=Näita ressurssi
+ResourceElementPage=Elemendi ressursid
+ResourceCreatedWithSuccess=Ressurss on edukalt loodud
+RessourceLineSuccessfullyDeleted=Ressursi rida on edukalt kustutatud
+RessourceLineSuccessfullyUpdated=Ressursi rida on edukalt uuendatud
+ResourceLinkedWithSuccess=Ressurss on edukalt seostatud
+ConfirmDeleteResource=Kinnita selle ressursi kustutamine
+RessourceSuccessfullyDeleted=Ressurss on edukalt kustutatud
+DictionaryResourceType=Ressursside tüüp
+SelectResource=Vali ressurss
+IdResource=Ressursi ID
+AssetNumber=Seerianumber
+ResourceTypeCode=Ressursi tüübi kood
 ImportDataset_resource_1=Ressursid
+ErrorResourcesAlreadyInUse=Mõned ressursid on kasutusel
+ErrorResourceUseInEvent=%s kasutusel %s sündmuse juures
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

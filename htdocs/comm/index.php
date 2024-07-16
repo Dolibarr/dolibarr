@@ -181,6 +181,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
 				$propalstatic->statut = $obj->status;
+				$propalstatic->statut = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -716,7 +717,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
  */
 
 if (isModEnabled('propal')) {
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.tms as datem,";
 	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -756,6 +757,7 @@ if (isModEnabled('propal')) {
 
 				$propalstatic->id = $obj->rowid;
 				$propalstatic->ref = $obj->ref;
+				$propalstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;
@@ -763,6 +765,7 @@ if (isModEnabled('propal')) {
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->email = $obj->email;
 				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->code_compta_client = $obj->code_compta;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -780,7 +783,7 @@ if (isModEnabled('propal')) {
 				print '</table>';
 				print '</td>';
 
-				print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 				$datem = $db->jdate($obj->datem);
 				print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';

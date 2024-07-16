@@ -128,7 +128,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_document');
 
 if ($object->id > 0) {
 	$projectstatic->fetch_thirdparty();

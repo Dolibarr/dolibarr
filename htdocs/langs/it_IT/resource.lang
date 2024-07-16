@@ -9,31 +9,30 @@ ActionsOnResource=Eventi su questa risorsa
 ResourcePageIndex=Elenco delle risorse
 ResourceSingular=Risorsa
 ResourceCard=Scheda risorsa
+NewResource=Nuova risorsa
 AddResource=Crea una risorsa
 ResourceFormLabel_ref=Nome della risorsa
-ResourceType=Tipo di risorsa
 ResourceFormLabel_description=Descrizione della risorsa
-
+ResourceType=Tipo di risorsa
+ResourceTypeID=Risorsa ID tipo
+ResourceTypeLabel=Risorsa digita etichetta
 ResourcesLinkedToElement=Risorse collegate all'elemento
 
 ShowResource=Mostra risorsa
-
 ResourceElementPage=Risorse dell'elemento
 ResourceCreatedWithSuccess=Risorsa creata con successo
 RessourceLineSuccessfullyDeleted=Riga di risorsa eliminata correttamente
 RessourceLineSuccessfullyUpdated=Riga di risorsa aggiornata correttamente
 ResourceLinkedWithSuccess=Risorsa collegata con successo
-
 ConfirmDeleteResource=Conferma l'eliminazione di questa risorsa
 RessourceSuccessfullyDeleted=Risorsa eliminata con successo
 DictionaryResourceType=Tipo di risorse
-
 SelectResource=Seleziona risorsa
-
 IdResource=ID risorsa
 AssetNumber=Numero seriale
 ResourceTypeCode=Codice tipo risorsa
 ImportDataset_resource_1=Risorse
-
 ErrorResourcesAlreadyInUse=Alcune risorse sono in uso
 ErrorResourceUseInEvent=%s utilizzato nell'evento %s
+MaxUsers=Utenti massimi (posti, posti, ecc.)
+MaxUsersLabel=Utenti massimi

@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = 採用
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = 新規職種の採用キャンペーンを管理およびフォローする
-
-#
 # Admin page
-#
 RecruitmentSetup = 採用設定
 RecruitmentSetupPage = 採用モジュールの主なオプションの設定をここに入力する
 RecruitmentArea=採用エリア
 PublicInterfaceRecruitmentDesc=求人の公開ページは、開いている求人を表示して回答するための公開URLである。開いているジョブごとに1つの異なるリンクがあり、各ジョブレコードごとにある。
 EnablePublicRecruitmentPages=開いている求人の公開ページを有効化
 
-#
-# About page
-#
-RecruitmentAbout = 採用について
-RecruitmentAboutPage = 採用に関してページ
 NbOfEmployeesExpected=予想される従業員数
 JobLabel=役職のラベル
 WorkPlace=職場
@@ -47,7 +34,6 @@ PositionToBeFilled=役職
 PositionsToBeFilled=役職
 ListOfPositionsToBeFilled=役職一覧
 NewPositionToBeFilled=新規役職s
-
 JobOfferToBeFilled=募集する職務
 ThisIsInformationOnJobPosition=募集する職務の情報
 ContactForRecruitment=採用担当者
@@ -77,4 +63,4 @@ WeAreRecruiting=募集中。これは、募集職種のリスト...
 NoPositionOpen=現在募集職種なし
 ConfirmClose=確定 キャンセル
 ConfirmCloseAsk=この採用候補をキャンセルしてもよいか
-recruitment=採用
+Recruitment=採用

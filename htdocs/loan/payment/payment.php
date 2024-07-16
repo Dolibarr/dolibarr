@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2018	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,10 +226,12 @@ if ($action == 'add_payment') {
 /*
  * View
  */
-
-llxHeader();
-
 $form = new Form($db);
+
+$title = $langs->trans('Loans');
+$help_url = "EN:Module_Loan|FR:Module_Emprunt";
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-payment-list');
 
 
 // Form to create loan's payment
