@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2015       Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2014-2024  Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,10 +145,8 @@ if (empty($reshook)) {
 $form = new Form($db);
 $now = dol_now();
 
-$help_url="EN:Module_Loan|FR:Module_Emprunt";
-$help_url = '';
 $title = $langs->trans('Loans');
-
+$help_url = "EN:Module_Loan|FR:Module_Emprunt";
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -223,7 +221,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
