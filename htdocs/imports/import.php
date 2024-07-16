@@ -1218,10 +1218,11 @@ if ($step == 4 && $datatoimport) {
 					$tmpstring1 = $line['example1'];
 					$tmpstring2 = '';
 				}
-				$tmpstring1 = strtolower(str_replace('*', '', trim($tmpstring1)));
-				$tmpstring2 = strtolower(str_replace('*', '', trim($tmpstring2)));
+				$tmpstring1 = strtolower(dol_string_unaccent(str_replace('*', '', trim($tmpstring1))));
+				$tmpstring2 = strtolower(dol_string_unaccent(str_replace('*', '', trim($tmpstring2))));
 
-				// $tmpstring1 and $tmpstring2 are string from input file.
+				// $tmpstring1 and $tmpstring2 are string from the input file title of column "Label (fieldname)".
+				// $tmpval is array of target fields read from the module import profile.
 				foreach ($tmpval['labelkeyarray'] as $tmpval2) {
 					$labeltarget = $langs->transnoentities($tmpval2);
 					//var_dump($tmpstring1.' - '.$tmpstring2.' - '.$tmpval['labelkey'].' - '.$tmpval['label'].' - '.$tmpval2.' - '.$labeltarget);
