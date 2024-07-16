@@ -27,7 +27,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-dol_include_once('/core/lib/openid_connect.lib.php');
+include_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
 
 /**
  * Check validity of user/password/entity
