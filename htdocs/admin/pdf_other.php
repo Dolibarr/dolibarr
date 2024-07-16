@@ -301,7 +301,7 @@ if (isModEnabled('facture')) {
 	}
 	print '</td></tr>';
 	*/
-	
+
 	print '</table>';
 	print '</div>';
 }
