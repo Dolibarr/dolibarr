@@ -86,48 +86,87 @@ class Ai
 		if (empty($this->apiEndpoint)) {
 			if ($function == 'imagegeneration') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/images/generations');
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/images/generations';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
+					}
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/images/generations';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_GROK_MODEL_IMAGE', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+					}
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/images/generations';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CUSTOM_MODEL_IMAGE', 'dall-e-3');
 					}
 				}
 			} elseif ($function == 'audiogeneration') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/audio/speech');
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/audio/speech';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_AUDIO', 'tts-1');
+					}
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/audio/speech';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_GROK_MODEL_AUDIO', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+					}
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/audio/speech';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CUSTOM_MODEL_AUDIO', 'tts-1');
 					}
 				}
 			} elseif ($function == 'transcription') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/transcriptions');
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/transcriptions';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSCRIPT', 'whisper-1');
+					}
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/transcriptions';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSCRIPT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+					}
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/transcriptions';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CUSTOM_TRANSCRIPT', 'whisper-1');
 					}
 				}
 			} elseif ($function == 'translation') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/translation');
-					$this->apiEndpoint = 'https://api.openai.com/v1/audio/translations';
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/translations';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSLATE', 'whisper-1');
 					}
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/translations';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSLATE', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+					}
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/translations';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CUSTOM_TRANSLATE', 'whisper-1');
+					}
 				}
 			} else {	// else textgeneration...
-				if ($this->apiService == 'groq') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/chat/completions');
-					if ($model == 'auto') {
-						$model = getDolGlobalString('AI_API_GROK_MODEL_TEXT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
-					}
-				} elseif ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/chat/completions');
+				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1').'/chat/completions';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TEXT', 'gpt-3.5-turbo');
 					}
-				} elseif ($this->apiService == 'custom') {
-					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '');
+				} elseif ($this->apiService == 'groq') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_GROK_URL', 'https://api.groq.com/openai/v1').'/chat/completions';
 					if ($model == 'auto') {
-						$model = getDolGlobalString('AI_API_CUSTOM_URL', 'gpt-3.5-turbo');
+						$model = getDolGlobalString('AI_API_GROK_MODEL_TEXT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
+					}
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '').'/chat/completions';
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CUSTOM_MODEL_TEXT', 'gpt-3.5-turbo');
 					}
 				}
 			}
