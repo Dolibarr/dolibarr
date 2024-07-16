@@ -80,33 +80,34 @@ class Ai
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
 		if (empty($this->apiKey)) {
-			return array('error' => true, 'message' => 'API key is not defined for the AI enabled service '.$this->apiService);
+			return array('error' => true, 'message' => 'API key is not defined for the AI enabled service ('.$this->apiService.')');
 		}
 
 		if (empty($this->apiEndpoint)) {
 			if ($function == 'imagegeneration') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = 'https://api.openai.com/v1/images/generations';
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/images/generations');
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_IMAGE', 'dall-e-3');
 					}
 				}
 			} elseif ($function == 'audiogeneration') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = 'https://api.openai.com/v1/audio/speech';
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/audio/speech');
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_AUDIO', 'tts-1');
 					}
 				}
 			} elseif ($function == 'transcription') {
 				if ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = 'https://api.openai.com/v1/audio/transcriptions';
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/transcriptions');
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSCRIPT', 'whisper-1');
 					}
 				}
 			} elseif ($function == 'translation') {
 				if ($this->apiService == 'chatgpt') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/translation');
 					$this->apiEndpoint = 'https://api.openai.com/v1/audio/translations';
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TRANSLATE', 'whisper-1');
@@ -114,14 +115,19 @@ class Ai
 				}
 			} else {	// else textgeneration...
 				if ($this->apiService == 'groq') {
-					$this->apiEndpoint = 'https://api.groq.com/openai/v1/chat/completions';
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/chat/completions');
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_GROK_MODEL_TEXT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
 					}
 				} elseif ($this->apiService == 'chatgpt') {
-					$this->apiEndpoint = 'https://api.openai.com/v1/chat/completions';
+					$this->apiEndpoint = getDolGlobalString('AI_API_CHATGPT_URL', 'https://api.openai.com/v1/chat/completions');
 					if ($model == 'auto') {
 						$model = getDolGlobalString('AI_API_CHATGPT_MODEL_TEXT', 'gpt-3.5-turbo');
+					}
+				} elseif ($this->apiService == 'custom') {
+					$this->apiEndpoint = getDolGlobalString('AI_API_CUSTOM_URL', '');
+					if ($model == 'auto') {
+						$model = getDolGlobalString('AI_API_CUSTOM_URL', 'gpt-3.5-turbo');
 					}
 				}
 			}
@@ -169,7 +175,7 @@ class Ai
 				throw new Exception('API request failed. No http received');
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
-				throw new Exception('API request failed with status code ' . $response['http_code']);
+				throw new Exception('API request on endpoint '.$this->apiEndpoint.' failed with status code ' . $response['http_code']);
 			}
 			// Decode JSON response
 			$decodedResponse = json_decode($response['content'], true);

@@ -2480,6 +2480,7 @@ CustomPrompt=Custom prompts
 AiDescription=AI (Artificial Intelligence) features
 AiDescriptionLong=Provides AI (Artificial Intelligence) features in different parts of the application. Need external AI API.
 AI_API_KEY=Key for AI api
+AI_API_URL=Endpoint URL for AI api
 AI_API_SERVICE=Service to use for AI features
 AiSetup=AI module setup
 AiCustomPrompt=AI custom prompt
