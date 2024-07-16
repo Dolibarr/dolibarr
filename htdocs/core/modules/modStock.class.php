@@ -397,15 +397,15 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
 		// Export inventory
-		/*
+
 		$r++;
-		$this->export_code[$r] = $this->rights_class.'_movement';
+		$this->export_code[$r] = $this->rights_class.'_inventory';
 		$this->export_label[$r] = "Inventories"; // Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r] = "movement";
+		$this->export_icon[$r] = "inventory";
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
-			'i.rowid' => 'InventoryId', 'i.ref' => 'Inventoryref', 'i.date_inventory' => 'DateInventory',
-			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated',
+			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
+			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated', 'id.fk_warehouse' => 'InventoryEntrepot',
 			'id.batch' => 'Lotserial',
 			'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 			'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
@@ -418,7 +418,10 @@ class modStock extends DolibarrModules
 			'id.rowid' => 'Numeric', 'sm.value' => 'Numeric', 'sm.datem' => 'Date', 'sm.batch' => 'Text', 'sm.label' => 'Text', 'sm.inventorycode' => 'Text',
 			'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.description' => 'Text', 'e.lieu' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 			'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
-			'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date'
+			'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date',
+			'i.rowid' => 'Numeric', 'i.ref' => 'Text', 'i.date_inventory' => 'Date', 'i.status' => 'Numeric', 'i.title' => 'Text',
+			'id.qty_view' => 'Numeric', 'id.qty_stock' => 'Numeric', 'id.batch' => 'Text',
+			'id.qty_regulated' => 'Numeric', 'id.fk_warehouse' => 'Numeric',
 		);
 		if (isModEnabled('barcode')) {
 			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode' => 'Text'));
@@ -441,9 +444,9 @@ class modStock extends DolibarrModules
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'inventory as i, '.MAIN_DB_PREFIX.'inventorydet as id, '.MAIN_DB_PREFIX.'entrepot as e';
-		$this->export_sql_end[$r] .= ' WHERE p.rowid = id.fk_product AND id.fk_inventory = i.rowid AND id.fk_entrepot = e.rowid';
+		$this->export_sql_end[$r] .= ' WHERE p.rowid = id.fk_product AND id.fk_inventory = i.rowid AND id.fk_warehouse = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
-		*/
+
 
 
 		// Imports
