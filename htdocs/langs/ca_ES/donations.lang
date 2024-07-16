@@ -35,3 +35,4 @@ DonationPayments=Pagaments de donacions
 DonationValidated=Donació %s validada
 DonationUseThirdparties=Utilitzeu l'adreça d'un thirdparty existent com a adreça del donant
 DonationsStatistics=Estadístiques de donació
+NbOfDonations=Nombre de donacions

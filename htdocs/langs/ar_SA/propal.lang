@@ -16,7 +16,7 @@ CancelPropal=إلغاء
 AddProp=إنشاء اقتراح
 ConfirmDeleteProp=هل أنت متأكد أنك تريد حذف هذا العرض التجاري؟
 ConfirmValidateProp=هل أنت متأكد من أنك تريد التحقق من صحة هذا العرض التجاري تحت الاسم <b> %s </b>؟
-ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
+ConfirmCancelPropal=هل أنت متأكد أنك تريد إلغاء العرض التجاري <b>%s</b>؟
 LastPropals=أحدث مقترحات %s
 LastModifiedProposals=أحدث %s العروض المعدلة 
 AllPropals=جميع المقترحات
@@ -29,7 +29,7 @@ NbOfProposals=عدد من المقترحات والتجاري
 ShowPropal=وتظهر اقتراح
 PropalsDraft=المسودات
 PropalsOpened=فتح
-PropalStatusCanceled=Canceled (Abandoned)
+PropalStatusCanceled=ملغى (مهجور)
 PropalStatusDraft=مشروع (لا بد من التحقق من صحة)
 PropalStatusValidated=صادق (اقتراح فتح)
 PropalStatusSigned=وقعت (لمشروع القانون)
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 أسبوع
 AvailabilityTypeAV_2W=2 أسابيع
 AvailabilityTypeAV_3W=3 أسابيع
 AvailabilityTypeAV_1M=1 شهر
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=اقتراح ممثل متابعة
 TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 TypeContact_propal_external_SHIPPING=الاتصال بالعميل للتسليم
-
 # Document models
 CantBeNoSign=لا يمكن تعيين غير موقعة
 CaseFollowedBy=حالة متبوعة
@@ -122,3 +120,5 @@ SignSociete_rib=ولاية التوقيع
 SignPropal=قبول الاقتراح
 Signed=وقعت
 SignedOnly=وقعت فقط
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

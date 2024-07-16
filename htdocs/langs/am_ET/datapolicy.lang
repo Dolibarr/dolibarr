@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = የውሂብ ግላዊነት መመሪያ
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = የውሂብ ግላዊነትን ለማስተዳደር ሞጁል (ከGDPR ጋር መስማማት)
-
-#
 # Administration page
-#
 datapolicySetup = የሞዱል ውሂብ የግላዊነት መመሪያ ማዋቀር
 Deletion = የውሂብ መሰረዝ
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ወይም ተስፋ/ ደንበኛም �
 DATAPOLICY_CONTACT_FOURNISSEUR = አቅራቢ
 DATAPOLICY_ADHERENT = አባል
 DATAPOLICY_Tooltip_SETUP = የግንኙነት አይነት - ለእያንዳንዱ አይነት ምርጫዎን ያመልክቱ.
-DATAPOLICYMail = ኢሜይሎች ማዋቀር
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = የኢሜል ይዘት
-DATAPOLICYSUBSITUTION = በኢሜልዎ ውስጥ የሚከተሉትን ተለዋዋጮች መጠቀም ይችላሉ (LINKACCEPT የሰውየውን ስምምነት የሚቀዳ አገናኝ ለመፍጠር ይፈቅዳል፣ LINKREFUSED የሰውየውን እምቢተኝነት ለመመዝገብ ያስችላል)
-DATAPOLICYACCEPT = ከስምምነት በኋላ መልእክት
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = ለሁሉም ተዛማጅ እውቂያዎች የGDPR ኢሜል መላክ ይችላሉ (እስካሁን ኢሜይል ላላገኙ እና ስለ GDPR ስምምነታቸው ምንም ነገር ላላመዘገቡበት)። ይህንን ለማድረግ የሚከተለውን አዝራር ይጠቀሙ.
 SendAgreement = ኢሜይሎችን ላክ
 AllAgreementSend = ሁሉም ኢሜይሎች ተልከዋል።
 TXTLINKDATAPOLICYACCEPT = ለ "ስምምነት" አገናኝ ጽሑፍ
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: የግል መረጃን ማካሄድ
 DATAPOLICY_consentement = የግል መረጃን ለማስኬድ የተገኘ ስምምነት
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = የሶስተኛ ወገን ስም አይስጡ
-DATAPOLICY_POPUP_ANONYME_TEXTE = ተዛማጅ ነገሮች ስላሉ ይህን አድራሻ ከዶሊባር መሰረዝ አይችሉም። በGDPR መሠረት፣ ግዴታዎችዎን ለማክበር ይህን ሁሉ ውሂብ እንዳይታወቅ ያደርጋሉ። መቀጠል ይፈልጋሉ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = ተንቀሳቃሽነት GDPR
-DATAPOLICY_PORTABILITE_TITLE = የግል ውሂብ ወደ ውጭ መላክ
-DATAPOLICY_PORTABILITE_CONFIRMATION = የዚህን እውቂያ የግል ውሂብ ወደ ውጭ መላክ ይፈልጋሉ። ኧረ ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = የ%s ስም-አልባ
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = የ GDPR ኢሜይል ይላኩ።
 MailSent = ኢሜል ተልኳል።
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

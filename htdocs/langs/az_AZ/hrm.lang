@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=HRM xarici xidmətinin qarşısını almaq üçün e-poçt
 Establishments=Müəssisələr
@@ -24,7 +23,7 @@ SkillsManagement=Bacarıqların idarə edilməsi
 HRM_MAXRANK=Bir bacarığı sıralamaq üçün maksimum səviyyə sayı
 HRM_DEFAULT_SKILL_DESCRIPTION=Bacarıq yaradılan zaman dərəcələrin defolt təsviri
 deplacement=Shift
-DateEval=Qiymətləndirmə tarixi
+DateEval=Competency assessment date
 JobCard=İş kartı
 NewJobProfile=Yeni İş Profili
 JobProfile=İş profili
@@ -41,12 +40,12 @@ Skill=Bacarıq
 Skills=bacarıqlar
 SkillCard=Bacarıq kartı
 EmployeeSkillsUpdated=İşçilərin bacarıqları yeniləndi (işçi kartının "Bacarıqlar" sekmesine baxın)
-Eval=Qiymətləndirmə
-Evals=Qiymətləndirmələr
-NewEval=Yeni qiymətləndirmə
-ValidateEvaluation=Qiymətləndirməni təsdiq edin
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Qiymətləndirmə kartı
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=İş profili üçün tələb olunan dərəcə
 RequiredRankShort=Tələb olunan dərəcə
 PositionsWithThisProfile=Bu iş profilləri ilə vəzifələr
@@ -90,8 +89,9 @@ SaveAddSkill = Bacarıq(lar) əlavə edildi
 SaveLevelSkill = Bacarıq(lar) səviyyəsi saxlanıldı
 DeleteSkill = Bacarıq silindi
 SkillsExtraFields=Tamamlayıcı atributlar (Bacarıqlar)
-JobsExtraFields=Tamamlayıcı atributlar (İş profili)
-EvaluationsExtraFields=Tamamlayıcı atributlar (Qiymətləndirmələr)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=İşgüzar səfərlər lazımdır
 NoDescription=təsvirsiz
 TheJobProfileHasNoSkillsDefinedFixBefore=Bu işçinin qiymətləndirilən iş profilində müəyyən edilmiş bacarıq yoxdur. Zəhmət olmasa bacarıq(lar) əlavə edin, sonra silin və qiymətləndirməni yenidən başladın.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

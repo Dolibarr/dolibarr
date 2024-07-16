@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=راه اندازی ماژول خزانه
-PayBoxDesc=این ماژول صفحات پیشنهاد به اجازه پرداخت در <a href="http://www.paybox.com" target="_blank">خزانه</a> شده توسط مشتریان. این می تواند برای پرداخت رایگان و پرداخت در یک شیء خاص Dolibarr استفاده می شود (فاکتور، سفارش، ...)
-FollowingUrlAreAvailableToMakePayments=از آدرس های زیر در دسترس است به ارائه یک صفحه به مشتریان به پرداخت در اشیاء Dolibarr است
-PaymentForm=فرم پرداخت
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=این صفحه نمایش به شما اجازه ایجاد پرداخت آنلاین به٪ s.
-ThisIsInformationOnPayment=این اطلاعات در پرداخت به انجام است
-ToComplete=برای تکمیل
-YourEMail=ایمیل برای دریافت تاییدیه پرداخت
-Creditor=بستانکار
-PaymentCode=کد های پرداخت
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 PayBoxDoPayment=Pay with Paybox
 YouWillBeRedirectedOnPayBox=شما می توانید در صفحه خزانه امن برای ورودی هدایت می شوید اطلاعات کارت اعتباری شما
-Continue=بعد
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=این صفحه تایید می کند که پرداخت شما ثبت شده است. متشکرم.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=پارامترهای حساب
-UsageParameter=پارامترهای طریقه استفاده
-InformationToFindParameters=کمک برای پیدا کردن٪ شما اطلاعات حساب
 PAYBOX_CGI_URL_V2=آدرس از خزانه ماژول CGI برای پرداخت
-VendorName=نام فروشنده
-CSSUrlForPaymentForm=آدرس شیوه نامه CSS برای فرم پرداخت
 NewPayboxPaymentReceived=پرداخت خزانه های جدید را دریافت کرد
 NewPayboxPaymentFailed=پرداخت خزانه جدید تلاش کردند اما موفق
 PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)

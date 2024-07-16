@@ -32,6 +32,7 @@ PRINTIPP_HOST=Servidor de impresión
 PRINTIPP_PORT=Porto
 PRINTIPP_USER=Usuario
 PRINTIPP_PASSWORD=Contrasinal
+PRINTIPP_SSL=Usa SSL
 NoDefaultPrinterDefined=Non hai impresora definida defecto
 DefaultPrinter=Impresora por defecto
 Printer=Impresora
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Variables de configuración para o controlador de imp
 PrintingDriverDescprintipp=Variables de configuración  de drivers para impresoras Cups
 PrintTestDescprintgcp=Listaxe de impresoras para Google Cloud Print.
 PrintTestDescprintipp=Listaxe de impresoras para servidor Cups
+Testbbbb

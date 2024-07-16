@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Email për të parandaluar shërbimin e jashtëm HRM
 Establishments=Institucionet
@@ -24,7 +23,7 @@ SkillsManagement=Menaxhimi i aftësive
 HRM_MAXRANK=Numri maksimal i niveleve për të renditur një aftësi
 HRM_DEFAULT_SKILL_DESCRIPTION=Përshkrimi i parazgjedhur i gradave kur krijohet aftësia
 deplacement=Ndërrimi
-DateEval=Data e vlerësimit
+DateEval=Competency assessment date
 JobCard=Karta e punës
 NewJobProfile=Profili i ri i punës
 JobProfile=Profili i punës
@@ -41,12 +40,12 @@ Skill=Shkathtësi
 Skills=Aftësitë
 SkillCard=Karta e aftësive
 EmployeeSkillsUpdated=Aftësitë e punonjësve janë përditësuar (shih skedën "Aftësitë" të kartës së punonjësit)
-Eval=Vlerësimi
-Evals=vlerësimet
-NewEval=Vlerësim i ri
-ValidateEvaluation=Vërtetoni vlerësimin
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Karta e vlerësimit
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Grada e kërkuar për profilin e punës
 RequiredRankShort=Grada e kërkuar
 PositionsWithThisProfile=Pozicionet me këto profile pune
@@ -90,8 +89,9 @@ SaveAddSkill = Aftësitë e shtuara
 SaveLevelSkill = Niveli i aftësive u ruajt
 DeleteSkill = Aftësia është hequr
 SkillsExtraFields=Atributet plotësuese (aftësitë)
-JobsExtraFields=Atributet plotësuese (profili i punës)
-EvaluationsExtraFields=Atributet plotësuese (Vlerësimet)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Keni nevojë për udhëtime biznesi
 NoDescription=pa pershkrim
 TheJobProfileHasNoSkillsDefinedFixBefore=Profili i vlerësuar i punës i këtij punonjësi nuk ka asnjë aftësi të përcaktuar në të. Ju lutemi shtoni aftësitë, më pas fshini dhe rinisni vlerësimin.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

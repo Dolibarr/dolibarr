@@ -234,7 +234,7 @@ if (isModEnabled('project')) {
 
 $title = $object->ref." - ".$langs->trans('Shipments');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-shipment');
 
 
 if ($id > 0 || !empty($ref)) {

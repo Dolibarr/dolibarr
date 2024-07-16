@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Eseményszervezés
 EventOrganizationDescription = Eseményszervezés a modulprojekten keresztül
 EventOrganizationDescriptionLong= Esemény szervezésének kezelése (műsor, konferenciák, résztvevők vagy előadók, nyilvános oldalakkal javaslatokhoz, szavazáshoz vagy regisztrációhoz)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Szervezett események
 EventOrganizationConferenceOrBoothMenuLeft = Konferencia vagy stand
-
 PaymentEvent=Esemény fizetése
-
-#
+EventFee=Rendezvény díja
 # Admin page
-#
 NewRegistration=Regisztráció
 EventOrganizationSetup=Eseményszervezés beállítása
 EventOrganization=Rendezvényszervezés
@@ -48,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-mail-sablon, amelyet akkor kel
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = E-mail-sablon, amelyet akkor kell használni, amikor e-maileket küld a résztvevők listáján szereplő „E-mailek küldése” csoportból
 EVENTORGANIZATION_FILTERATTENDEES_CAT = A résztvevő létrehozására/hozzáadására szolgáló űrlapon a harmadik felek listáját a kategóriában lévő harmadik felekre korlátozza
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = A résztvevő létrehozására/hozzáadására szolgáló űrlapon a harmadik felekre korlátozza a harmadik felek listáját.
-
-#
 # Object
-#
 OrganizedEvent=Szervezett rendezvény
 EventOrganizationConfOrBooth= Konferencia vagy stand
 EventOrganizationConfOrBoothes=Konferenciák vagy standok
@@ -63,10 +50,7 @@ DateOfRegistration = A regisztráció dátuma
 ConferenceOrBoothAttendee = Konferencia vagy stand résztvevője
 ApplicantOrVisitor=Jelentkező vagy látogató
 Speaker=Hangszóró
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Konferenciára vonatkozó kérése megérkezett
 YourOrganizationEventBoothRequestWasReceived = A standra vonatkozó kérése megérkezett
 EventOrganizationEmailAskConf = Konferencia kérése
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Regisztráció egy eseményre
 EventOrganizationMassEmailAttendees = Kommunikáció a résztvevőkkel
 EventOrganizationMassEmailSpeakers = Kommunikáció az előadókkal
 ToSpeakers=A hangszórókhoz
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Konferenciák javaslatának engedélyezése
 AllowUnknownPeopleSuggestConfHelp=Engedélyezi az ismeretlen személyeknek, hogy javasoljanak egy konferenciát
 AllowUnknownPeopleSuggestBooth=Engedélyezi az embereknek, hogy jelentkezzenek egy standra
@@ -88,29 +69,29 @@ PriceOfRegistration=Regisztráció ára
 PriceOfRegistrationHelp=Az eseményen való részvételért vagy regisztrációért fizetendő ár
 PriceOfBooth=Előfizetési ár, hogy megállja a helyét
 PriceOfBoothHelp=Előfizetési ár, hogy megállja a helyét
+EventOrganizationICSLinkProject=Link ICS az eseményhez
 EventOrganizationICSLink=ICS összekapcsolása konferenciákhoz
 ConferenceOrBoothInformation=Konferencia vagy stand információ
+ConferenceOrBoothFormat=Konferencia vagy stand mód
+ConferenceOrBoothFormatID=Konferencia vagy stand mód azonosítója
+ConferenceOrBoothFormatCode=Konferencia vagy stand mód kódja
+ConferenceOrBoothFormatLabel=címke konferencia vagy stand mód
 Attendees=Részvevők
-ListOfAttendeesOfEvent=Az eseményprojekt résztvevőinek listája
+ListOfAttendeesOfEvent=A rendezvényprojektek résztvevőinek listája
+ListOfConfOrBoothOfEvent=Konferenciák vagy rendezvényprojektek standjainak listája
 DownloadICSLink = ICS hivatkozás letöltése
 EVENTORGANIZATION_SECUREKEY = Magvető a nyilvános regisztrációs oldal kulcsának biztosításához konferencia javaslatához
 SERVICE_BOOTH_LOCATION = A standhellyel kapcsolatos számlasorhoz használt szolgáltatás
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Az esemény résztvevőinek előfizetéséről szóló számlasorhoz használt szolgáltatás
 NbVotes=Szavazatok száma
-
-#
 # Status
-#
 EvntOrgDraft = Piszkozat
 EvntOrgSuggested = Javasolt
 EvntOrgConfirmed = Megerősítve
 EvntOrgNotQualified = Nem minősített
 EvntOrgDone = Kész
 EvntOrgCancelled = Megszakítva
-
-#
 # Other
-#
 SuggestForm = Javaslat oldal
 SuggestOrVoteForConfOrBooth = Javaslat vagy szavazás oldala
 EvntOrgRegistrationHelpMessage = Itt szavazhat egy konferenciára, vagy javasolhat újat az eseményhez. A rendezvény ideje alatt is lehet jelentkezni standra.
@@ -133,6 +114,7 @@ EventType = Esemény típusa
 LabelOfBooth=Stand címke
 LabelOfconference=Konferencia címke
 ConferenceIsNotConfirmed=A regisztráció nem érhető el, a konferencia még nincs megerősítve
+EventRegistrationAreClosed=A rendezvények regisztrációja lezárult
 DateMustBeBeforeThan=az %s előtt az %s előtt kell lennie
 DateMustBeAfterThan=%s %s után kell lennie
 MaxNbOfAttendeesReached=Elérte a résztvevők maximális számát
@@ -174,6 +156,7 @@ DateEndEvent=Az esemény befejezési dátuma
 ModifyStatus=Állapot módosítása
 ConfirmModifyStatus=Állapotmódosítás megerősítése
 ConfirmModifyStatusQuestion=Biztosan módosítani szeretné a %s kiválasztott rekordot?
-RecordsUpdated = %s A rekordok frissítve
-RecordUpdated = A rekord frissítve
-NoRecordUpdated = Nincs rekord frissítve
+RecordsUpdated=%s A rekordok frissítve
+RecordUpdated=A rekord frissítve
+NoRecordUpdated=Nincs rekord frissítve
+ProfitPerValidatedAttendee=Résztvevőnkénti nyereség
