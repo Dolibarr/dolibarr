@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Pengaturan modul stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Tawarkan kepada pelanggan Anda halaman pembayaran online untuk pembayaran dengan kartu kredit/debit melalui <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. Ini dapat digunakan untuk memungkinkan pelanggan Anda melakukan pembayaran ad-hoc atau pembayaran yang terkait dengan objek Dolibarr tertentu (faktur, pesanan, ...)
 StripeOrCBDoPayment=Bayar dengan kartu kredit atau Stripe
 FollowingUrlAreAvailableToMakePayments=URL berikut tersedia untuk menawarkan halaman kepada pelanggan untuk melakukan pembayaran pada objek Dolibarr
 PaymentForm=Formulir pembayaran
@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL untuk menawarkan halaman pembayaran
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL untuk menawarkan halaman pembayaran online %s untuk berlangganan anggota
 ToOfferALinkForOnlinePaymentOnDonation=URL untuk menawarkan halaman pembayaran online %s untuk pembayaran donasi
 YouCanAddTagOnUrl=Anda juga dapat menambahkan parameter url<b>& tag = <i> nilai </i></b>ke salah satu URL tersebut (hanya wajib untuk pembayaran yang tidak terkait dengan objek) untuk menambahkan tag komentar pembayaran Anda sendiri. <br> Untuk URL pembayaran tanpa objek yang ada, Anda juga dapat menambahkan parameter<strong>& noidempotency = 1 </strong> sehingga tautan yang sama dengan tag yang sama dapat digunakan beberapa kali (beberapa mode pembayaran dapat membatasi pembayaran ke 1 untuk setiap tautan berbeda tanpa ini) parameter)
+YouCanEmbedOnWebsite=Jika Anda ingin mengintegrasikan halaman pembayaran ke situs web Dolibarr, Anda dapat menyertakan parameter: <b>&ws=website_ref</b>.<br>Selain itu, dua laman bernama <b>pembayaranok</b> dan <b>pembayaran</b> harus dibuat di situs web untuk menerima pengalihan setelah pembayaran online berhasil gagal.
 SetupStripeToHavePaymentCreatedAutomatically=Siapkan Stripe Anda dengan url<b>%s</b>agar pembayaran dibuat secara otomatis saat divalidasi oleh Stripe.
 AccountParameter=Parameter akun
 UsageParameter=Parameter penggunaan
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Kata kunci webhook live
 ONLINE_PAYMENT_WAREHOUSE=Stok yang akan digunakan untuk penurunan stok ketika pembayaran online dilakukan <br> (TODO Kapan opsi untuk mengurangi stok dilakukan atas tindakan faktur dan pembayaran online menghasilkan sendiri faktur itu?)
 StripeLiveEnabled=Stripe langsung diaktifkan (jika tidak, uji / mode kotak pasir)
 StripeImportPayment=Impor pembayaran Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Contoh kartu kredit untuk pembayaran percobaan: %s => valid, %s => error CVC, %s => habis masa berlakunya, %s => tagihan gagal
+ExampleOfTestBankAcountForSEPA=Contoh BAN rekening bank untuk tes debit langsung: %s
 StripeGateways=Gerbang gateway Stripe
 OAUTH_STRIPE_TEST_ID=Stripe Connect ID Klien (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect ID Klien (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=Akun stripe
 StripeChargeList=Daftar biaya Stripe
 StripeTransactionList=Daftar transaksi Stripe
 StripeCustomerId=ID pelanggan Stripe
+StripePaymentId=ID pembayaran garis
 StripePaymentModes=Mode pembayaran Stripe
 LocalID=ID lokal
 StripeID=ID Stripe
@@ -62,7 +64,7 @@ DeleteACard=Hapus Kartu
 ConfirmDeleteCard=Anda yakin ingin menghapus kartu Kredit atau Debit ini?
 CreateCustomerOnStripe=Buat pelanggan di Stripe
 CreateCardOnStripe=Buat kartu di Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Buat bank di Stripe
 ShowInStripe=Tunjukkan di Stripe
 StripeUserAccountForActions=Akun pengguna yang akan digunakan untuk pemberitahuan email tentang beberapa acara Stripe (pembayaran Stripe)
 StripePayoutList=Daftar pembayaran Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Tautan ke pengaturan Stripe WebHook untuk memanggil I
 ToOfferALinkForLiveWebhook=Tautan ke setup Stripe WebHook untuk memanggil IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Pembayaran akan dicatat untuk periode berikutnya.
 ClickHereToTryAgain= <a href="%s"> Klik di sini untuk mencoba lagi ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Karena aturan Otentikasi Pelanggan yang Kuat, pembuatan kartu harus dilakukan dari Stripe backoffice. Anda dapat mengklik di sini untuk mengaktifkan catatan pelanggan Stripe: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Karena aturan Otentikasi Pelanggan yang Kuat, pembuatan kartu harus dilakukan dari back office Stripe. Anda dapat mengklik di sini untuk mengaktifkan data pelanggan Stripe: %s
+STRIPE_CARD_PRESENT=Hadiah Kartu untuk Terminal Stripe
+TERMINAL_LOCATION=Lokasi (alamat) Terminal Stripe
+RequestDirectDebitWithStripe=Minta Debit Langsung dengan Stripe
+RequesCreditTransferWithStripe=Minta Transfer Kredit dengan Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Aktifkan pembayaran Debit Langsung melalui Stripe
+STRIPE_KLARNA=Aktifkan pembayaran menggunakan Klarna
+STRIPE_BANCONTACT=Aktifkan pembayaran menggunakan BANCONTACT
+STRIPE_IDEAL=Aktifkan pembayaran menggunakan IDEAL
+STRIPE_GIROPAY=Aktifkan pembayaran menggunakan GIROPAY
+STRIPE_SOFORT=Aktifkan pembayaran menggunakan SOFORT
+StripeConnect_Mode=Mode Sambungan Garis
+ExampleOnlyForBECustomers=Hanya untuk pelanggan Belgia
+ExampleOnlyForDECustomers=Hanya untuk pelanggan Jerman
+ExampleOnlyForNLCustomers=Hanya untuk pelanggan Belanda
+ExampleOnlyForATBEDEITNLESCustomers=Hanya untuk pelanggan dari Austria, Belgia, Jerman, Italia, Belanda, Spanyol

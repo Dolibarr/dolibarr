@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Uwasilishaji
 DeliveryRef=Uwasilishaji wa Marejeleo
-DeliveryCard=Risiti ya hisa
+DeliveryCard=Delivery receipt
 DeliveryOrder=Risiti ya uwasilishaji
 DeliveryDate=Tarehe ya utoaji
 CreateDeliveryOrder=Tengeneza risiti ya uwasilishaji

@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Sera ya Faragha ya Data
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Moduli ya kudhibiti Faragha ya Data (Kulingana na GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Usanidi wa Sera ya Faragha ya Data ya Moduli
 Deletion = Ufutaji wa data
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Wala mtarajiwa/Wala mteja
 DATAPOLICY_CONTACT_FOURNISSEUR = Msambazaji
 DATAPOLICY_ADHERENT = Mwanachama
 DATAPOLICY_Tooltip_SETUP = Aina ya mwasiliani - Onyesha chaguo zako kwa kila aina.
-DATAPOLICYMail = Usanidi wa Barua pepe
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Maudhui ya barua pepe
-DATAPOLICYSUBSITUTION = Unaweza kutumia vigeu vifuatavyo katika barua pepe yako (LINKKUBALI huruhusu kuunda kiungo kinachorekodi makubaliano ya mtu huyo, LINKREFUSED huwezesha kurekodi kukataa kwa mtu huyo):
-DATAPOLICYACCEPT = Ujumbe baada ya makubaliano
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Unaweza kutuma barua pepe ya GDPR kwa watu unaowasiliana nao wote husika (ambao bado hawajapokea barua pepe na ambao haujasajili chochote kuhusu makubaliano yao ya GDPR). Ili kufanya hivyo, tumia kifungo kifuatacho.
 SendAgreement = Tuma barua pepe
 AllAgreementSend = Barua pepe zote zimetumwa
 TXTLINKDATAPOLICYACCEPT = Maandishi ya kiungo "makubaliano"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Usindikaji wa data ya kibinafsi
 DATAPOLICY_consentement = Idhini iliyopatikana kwa usindikaji wa data ya kibinafsi
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a third party
-DATAPOLICY_POPUP_ANONYME_TEXTE = Huwezi kufuta anwani hii kutoka kwa Dolibarr kwa sababu kuna vipengee vinavyohusiana. Kwa mujibu wa GDPR, utafanya data hii yote isijulikane ili kuheshimu wajibu wako. Je, ungependa kuendelea?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = GDPR ya Kubebeka
-DATAPOLICY_PORTABILITE_TITLE = Usafirishaji wa data ya kibinafsi
-DATAPOLICY_PORTABILITE_CONFIRMATION = Unataka kuhamisha data ya kibinafsi ya mwasiliani huyu. Una uhakika ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Bila jina %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Tuma barua pepe ya GDPR
 MailSent = Barua pepe imetumwa
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

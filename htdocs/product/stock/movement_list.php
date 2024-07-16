@@ -821,7 +821,7 @@ if ($msid) {
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_movement_list');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-product page-stock_movement_list');
 
 /*
  * Show tab only if we ask a particular warehouse
