@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Ați folosit expertul de configurare Dolibarr dintr-un pach
 KeepDefaultValuesMamp=Ați folosit expertul de configurare Dolibarr de la DoliMamp, deci valorile propuse aici sunt deja optimizate. Modificați-le numai dacă știți ce faceți.
 KeepDefaultValuesProxmox=Ați folosit expertul de configurare Dolibarr pentru o maşină virtuală Proxmox, deci valorile propuse aici sunt deja optimizate. Modificați-le numai dacă știți ce faceți.
 UpgradeExternalModule=Rulați procesul de actualizare specializat al modulului extern
-SetAtLeastOneOptionAsUrlParameter=Setează cel puțin o opțiune ca parametru în adresa URL. De exemplu: "...repair.php?standard=confirmed"
+SetAtLeastOneOptionAsUrlParameter=Setează cel puțin o opțiune ca parametru în URL cu valoarea 'test' sau 'confirmed'. De exemplu: '...repair.php?standard=confirmed'
 NothingToDelete=Nimic de curățat/șters
 NothingToDo=Nimic de făcut
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Aplicația a încercat să se autoactualizeze, �
 YouTryUpgradeDisabledByMissingFileUnLock=Aplicația a încercat să se auto-actualizeze, dar procesul de actualizare nu este permis în prezent.<br>
 ClickHereToGoToApp=Faceți clic aici pentru a merge la aplicația ta.
 ClickOnLinkOrRemoveManualy=Dacă o actualizare este în curs, așteptați. Dacă nu, faceți clic pe următorul link. Dacă vedeți întotdeauna aceeași pagină, trebuie să eliminați/să redenumiți fișierul install.lock din directorul documentelor.
-ClickOnLinkOrCreateUnlockFileManualy=Dacă o actualizare este în curs, așteaptă... Dacă nu, trebuie să elimini fișierul install.lock sau să creezi un fișier upgrade.unlock în directorul de documente al sistemului.
+ClickOnLinkOrCreateUnlockFileManualy=Dacă o actualizare este în curs, așteaptă... Dacă nu, trebuie să elimini fișierul install.lock (sau să creezi un fișier upgrade.unlock pentru actualizare) în directorul de documente Dolibarr.
 Loaded=Încărcat
 FunctionTest=Test de funcţionare
 NodoUpgradeAfterDB=Nicio acțiune solicitată de module externe după actualizarea bazei de date

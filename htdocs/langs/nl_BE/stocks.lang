@@ -1,5 +1,24 @@
 # Dolibarr language file - Source file is en_US - stocks
+ListOfStockMovements=Voorraadmutatielijst
+LastMovements=Laatste verplaatsingen
+WarehouseAskWarehouseDuringOrder=Stel een magazijn in op Verkooporders
 QtyToDispatchShort=Aantal te verzenden
+DesiredStock=Gewenste voorraad
+CurentlyUsingVirtualStock=Virtuele voorraad
+InventoryDate=Inventarisdatum
+Inventories=Inventarissen
+NewInventory=Nieuwe inventaris
+inventorySetup =Inventaris instellen
+inventoryCreatePermission=Nieuwe inventaris maken
+inventoryReadPermission=Bekijk inventarissen
+inventoryWritePermission=Inventarissen bijwerken
+inventoryValidatePermission=Valideren inventaris
+inventoryDeletePermission=Inventaris verwijderen
+inventoryTitle=Inventaris
+inventoryListTitle=Inventarissen
 inventoryDraft=Actief
 inventoryConfirmCreate=Aanmaken
+inventoryOnDate=Inventaris
 inventoryDeleteLine=Verwijder lijn
+StockIncrease=Voorraad verhogen
+StockDecrease=Voorraad verlagen

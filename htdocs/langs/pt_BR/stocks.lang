@@ -54,7 +54,6 @@ RealStock=Estoque real
 RealStockDesc=Estoque físico/real é o estoque atualmente nos depósitos.
 RealStockWillAutomaticallyWhen=O estoque real será modificado de acordo com esta regra (conforme definido no módulo Stock):
 VirtualStock=Estoque virtual
-AtDate=Na data
 IdWarehouse=Id. armazenamento
 DescWareHouse=Descrição do armazém
 LieuWareHouse=Localização do armazenamento

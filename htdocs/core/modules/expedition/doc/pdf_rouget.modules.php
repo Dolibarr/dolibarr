@@ -750,11 +750,11 @@ class pdf_rouget extends ModelePdfExpedition
 			$object->volume_units = (float) $object->size_units * 3;
 		}
 
-		if ($totalWeight != '') {
-			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs);
+		if (!empty($totalWeight)) {
+			$totalWeighttoshow = showDimensionInBestUnit($totalWeight, 0, "weight", $outputlangs, -1, 'no', 1);
 		}
-		if ($totalVolume != '') {
-			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs);
+		if (!empty($totalVolume)) {
+			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
 		if (!empty($object->trueWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs);

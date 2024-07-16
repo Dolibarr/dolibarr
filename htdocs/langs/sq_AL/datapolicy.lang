@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Politika e privatësisë së të dhënave
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Moduli për menaxhimin e privatësisë së të dhënave (përputhje me GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Konfigurimi i politikës së privatësisë së të dhënave të modulit
 Deletion = Fshirja e të dhënave
 datapolicySetupPage = Në varësi të ligjeve të vendeve tuaja (Shembull <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Neni 5</a> i GDPR), të dhënat personale duhet të mbahen për një periudhë duke mos e tejkaluar kohëzgjatjen, të dhënat nevojiten për qëllimin për të cilin janë mbledhur, përveç për qëllime arkivore.<br>Fshirja do të bëhet automatikisht pas një kohëzgjatjeje të caktuar pa ngjarje (kohëzgjatja të cilat do t'i keni treguar më poshtë).
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = As perspektivë/As klient
 DATAPOLICY_CONTACT_FOURNISSEUR = Furnizuesi
 DATAPOLICY_ADHERENT = Anëtar
 DATAPOLICY_Tooltip_SETUP = Lloji i kontaktit - Tregoni zgjedhjet tuaja për secilin lloj.
-DATAPOLICYMail = Konfigurimi i emaileve
-DATAPOLICYSUBJECTMAIL = Subjekti i emailit
-DATAPOLICYCONTENTMAIL = Përmbajtja e emailit
-DATAPOLICYSUBSITUTION = Ju mund të përdorni variablat e mëposhtëm në emailin tuaj (LINKACCEPT lejon krijimin e një lidhjeje që regjistron marrëveshjen e personit, LINKREFUSED bën të mundur regjistrimin e refuzimit të personit):
-DATAPOLICYACCEPT = Mesazh pas marrëveshjeje
-DATAPOLICYREFUSE = Mesazh pas mosmarrëveshjes
 SendAgreementText = Ju mund t'u dërgoni një email GDPR të gjithë kontakteve tuaja përkatëse (të cilët nuk kanë marrë ende një email dhe për të cilët nuk keni regjistruar asgjë në lidhje me marrëveshjen e tyre GDPR). Për ta bërë këtë, përdorni butonin e mëposhtëm.
 SendAgreement = Dërgo email
 AllAgreementSend = Të gjitha emailet janë dërguar
 TXTLINKDATAPOLICYACCEPT = Teksti për lidhjen "marrëveshje"
 TXTLINKDATAPOLICYREFUSE = Teksti për lidhjen "mosmarrëveshje"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Përpunimi i të dhënave personale
 DATAPOLICY_consentement = Pëlqimi i marrë për përpunimin e të dhënave personale
 DATAPOLICY_opposition_traitement = Kundërshton përpunimin e të dhënave të tij personale
 DATAPOLICY_opposition_prospection = Kundërshton përpunimin e të dhënave të tij personale për qëllime kërkimi
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonimizoni një palë të tretë
-DATAPOLICY_POPUP_ANONYME_TEXTE = Nuk mund ta fshish këtë kontakt nga Dolibarr sepse ka artikuj të lidhur. Në përputhje me GDPR, ju do t'i bëni të gjitha këto të dhëna anonime për të respektuar detyrimet tuaja. Dëshironi të vazhdoni?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Transportueshmëri GDPR
-DATAPOLICY_PORTABILITE_TITLE = Eksporti i të dhënave personale
-DATAPOLICY_PORTABILITE_CONFIRMATION = Ju dëshironi të eksportoni të dhënat personale të këtij kontakti. A je i sigurt ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonimoi %s
-
 DATAPOLICY_date = Data e marrëveshjes/mosmarrëveshjes GDPR
 DATAPOLICY_send = Data e dërgimit të email-it të marrëveshjes
-DATAPOLICY_SEND = Dërgo email GDPR
 MailSent = Email është dërguar
-
-# ERROR
-=Për shkak të një problemi teknik, ne nuk mundëm të regjistronim zgjedhjen tuaj. Kërkojmë falje për këtë. Na kontaktoni për të na njoftuar zgjedhjen tuaj.
 NUMBER_MONTH_BEFORE_DELETION = Numri i muajve para fshirjes

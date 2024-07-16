@@ -39,7 +39,6 @@ WithdrawalsSetup=Ρύθμιση πληρωμής άμεσης χρέωσης
 CreditTransferSetup=Ρύθμιση μεταφοράς πίστωσης
 WithdrawStatistics=Στατιστικά στοιχεία πληρωμής άμεσης χρέωσης
 CreditTransferStatistics=Στατιστικά στοιχεία μεταφοράς πιστώσεων
-Rejects=Απορρίψεις
 LastWithdrawalReceipt=Τελευταίες %s εισπράξεις άμεσης χρέωσης 
 MakeWithdrawRequest=Υποβάλετε αίτημα πληρωμής με άμεση χρέωση
 MakeWithdrawRequestStripe=Υποβάλετε αίτημα πληρωμής άμεσης χρέωσης μέσω Stripe
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Μισθοί σε αναμονή για πληρωμή μ�
 RefSalary=Μισθός
 NoSalaryInvoiceToWithdraw=Δεν υπάρχει μισθός σε αναμονή για ένα '%s'. Μεταβείτε στην καρτέλα '%s' στην κάρτα μισθού για να υποβάλετε ένα αίτημα.
 SalaryInvoiceWaitingWithdraw=Μισθοί σε αναμονή για πληρωμή με μεταφορά πίστωσης
-

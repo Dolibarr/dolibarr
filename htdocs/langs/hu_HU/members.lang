@@ -200,7 +200,7 @@ MembersStatisticsDesc=Válassza ki az olvasni kívánt statisztikákat...
 MenuMembersStats=Statisztikák
 LastMemberDate=Utolsó tagsági dátum
 LatestSubscriptionDate=A legutóbbi hozzájárulás dátuma
-MemberNature=A tag természete
+MemberNature=A tag jellege
 MembersNature=A tagok természete
 Public=%s közzéteheti tagságomat a <a target="_blank" href="%s">nyilvános nyilvántartásban</a>
 MembershipPublic=Nyilvános tagság
@@ -239,10 +239,11 @@ MemberLastname=Tag vezetékneve
 MemberCodeDesc=Tagkód, minden tag számára egyedi
 MemberSubscriptionStartFirstDayOf=A tagság kezdetének időpontja megegyezik a
 MemberSubscriptionStartAfter=A feliratkozás kezdő dátumának hatálybalépése előtti minimális időtartam, kivéve a megújításokat (például +3 m = +3 hónap, -5d = -5 nap, +1Y = +1 év )
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
+SubscriptionLinkedToConciliatedTransaction=A tagság egyeztetett tranzakcióhoz kapcsolódik, így ez a módosítás nem megengedett.
+ConfirmMassSubsriptionCreation=A feliratkozás létrehozásának megerősítése
+ConfirmMassSubsriptionCreationQuestion=Biztosan létrehozza a %s kiválasztott feliratkozás(oka)t?
+XSubsriptionCreated=%s feliratkozás létrehozva
+XSubsriptionErrors=%s feliratkozás(s), ahol a hiba
 CreateSubscription=Előfizetés létrehozása
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=Ezzel a masszírozással semmilyen kiegészítő művelet nem hajtható végre a felvételen
+NewMembership=Új tagság

@@ -180,7 +180,9 @@ $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
 
-llxHeader('', $langs->trans('ListPayment'), '', 0, 0, '', '', '', 'bodyforlist');
+$title = $langs->trans('ListPayment');
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happen. For debug only.

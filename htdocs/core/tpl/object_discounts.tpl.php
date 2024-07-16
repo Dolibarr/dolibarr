@@ -67,9 +67,10 @@ print ' '.$addrelativediscount;
 
 // Is there is commercial discount or down payment available ?
 if ($absolute_discount > 0) {
+	print '<!-- absolute_discount -->';
 	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut > $objclassname::STATUS_DRAFT || $object->type == $objclassname::TYPE_CREDIT_NOTE || $object->type == $objclassname::TYPE_DEPOSIT) {
 		$translationKey = empty($discount_type) ? 'CompanyHasDownPaymentOrCommercialDiscount' : 'HasDownPaymentOrCommercialDiscountFromSupplier';
-		$text = $langs->trans($translationKey, price($absolute_discount, 1, $langs, 1, -1, -1, $conf->currency)).'.';
+		$text = $langs->trans($translationKey, price($absolute_discount, 0, $langs, 1, -1, -1, $conf->currency)).'.';
 
 		if ($isInvoice && !$isNewObject && $object->statut > $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('AbsoluteDiscountUse'));
@@ -94,10 +95,11 @@ if ($absolute_discount > 0) {
 
 // Is there credit notes availables ?
 if ($absolute_creditnote > 0) {
+	print '<!-- absolute_creditnote -->';
 	// If validated, we show link "add credit note to payment"
 	if (!empty($cannotApplyDiscount) || !$isInvoice || $isNewObject || $object->statut != $objclassname::STATUS_VALIDATED || $object->type == $objclassname::TYPE_CREDIT_NOTE) {
 		$translationKey = empty($discount_type) ? 'CompanyHasCreditNote' : 'HasCreditNoteFromSupplier';
-		$text = $langs->trans($translationKey, price($absolute_creditnote, 1, $langs, 1, -1, -1, $conf->currency));
+		$text = $langs->trans($translationKey, price($absolute_creditnote, 0, $langs, 1, -1, -1, $conf->currency));
 
 		if ($isInvoice && !$isNewObject && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('CreditNoteDepositUse'));

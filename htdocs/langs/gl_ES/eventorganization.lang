@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organización de eventos
 EventOrganizationDescription = Organización de eventos mediante o Módulo de Proxectos
 EventOrganizationDescriptionLong= Xestionar a organización dun evento (espectáculo, conferencias, asistentes ou ponentes, con páxinas públicas para suxestión, votación ou rexistro) 
-#
-# Menu
-#
 EventOrganizationMenuLeft = Eventos organizados
 EventOrganizationConferenceOrBoothMenuLeft = Conferencia ou Stand
-
 PaymentEvent=Pagamento do evento 
-
-#
+EventFee=Tarifa do evento
 # Admin page
-#
 NewRegistration=Rexistro
 EventOrganizationSetup=Configuración da Organización de Eventos
 EventOrganization=Organización de eventos
@@ -48,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Padrón de correo electrónico p
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Padrón de correo electrónico para usar ao enviar correos electrónicos desde a acción masiva "Enviar correos electrónicos" aos asistentes
 EVENTORGANIZATION_FILTERATTENDEES_CAT = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a  na categoría de terceiros
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = No formulario para crear/engadir un asistente, restrinxe a lista de terceiros a aos de natureza terceiros 
-
-#
 # Object
-#
 OrganizedEvent=Evento organizado
 EventOrganizationConfOrBooth= Conferencia ou Stand
 EventOrganizationConfOrBoothes=Conferencias ou Stands
@@ -63,10 +50,7 @@ DateOfRegistration = Data de rexistro
 ConferenceOrBoothAttendee = Asistente á conferencia ou stand 
 ApplicantOrVisitor=Solicitante ou visitante
 Speaker=Ponente
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = A súa solicitude para a conferencia foi recibida
 YourOrganizationEventBoothRequestWasReceived = A súa solicitude para a stand foi recibida
 EventOrganizationEmailAskConf = Solicitude de conferencia 
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Inscrición nun evento
 EventOrganizationMassEmailAttendees = Comunicación aos asistentes 
 EventOrganizationMassEmailSpeakers = Comunicación aos relatores
 ToSpeakers=Aos ponentes
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Permitir á xente suxerir conferencias 
 AllowUnknownPeopleSuggestConfHelp=Permitir que persoas descoñecidas suxiran unha conferencia que queren facer 
 AllowUnknownPeopleSuggestBooth=Permite que a xente solicite un stand
@@ -88,29 +69,29 @@ PriceOfRegistration=Prezo da inscrición
 PriceOfRegistrationHelp=Prezo a pagar para inscribirse ou participar no evento 
 PriceOfBooth=Prezo da subscrición para estar nun stand
 PriceOfBoothHelp=Prezo da subscrición para estar nun stand
+EventOrganizationICSLinkProject=Ligazón ICS para o evento
 EventOrganizationICSLink=Ligazón ICS para conferencias
 ConferenceOrBoothInformation=Información sobre conferencia ou stand
+ConferenceOrBoothFormat=Modo conferencia ou stand
+ConferenceOrBoothFormatID=ID do modo conferencia ou stand
+ConferenceOrBoothFormatCode=Código de modo conferencia ou stand
+ConferenceOrBoothFormatLabel=Etiqueta do modo conferencia ou stand
 Attendees=Asistentes 
-ListOfAttendeesOfEvent=Listaxe de asistentes ao evento 
+ListOfAttendeesOfEvent=Listaxe de asistentes a proxectos do evento
+ListOfConfOrBoothOfEvent=Listaxe de conferencias ou stands de proxectos de eventos
 DownloadICSLink = Descargar ligazón ICS
 EVENTORGANIZATION_SECUREKEY = Semente para asegurar a chave da páxina pública de rexistro para suxerir unha conferencia
 SERVICE_BOOTH_LOCATION = Servizo empregado para a fila de facturas sobre a situación do stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servizo utilizado para a fila da factura sobre a subscrición dun asistente a un evento
 NbVotes=Número de votos 
-
-#
 # Status
-#
 EvntOrgDraft = Non validada
 EvntOrgSuggested = Suxerido 
 EvntOrgConfirmed = Confirmado 
 EvntOrgNotQualified = Non cualificado 
 EvntOrgDone = Realizados
 EvntOrgCancelled = Anulado
-
-#
 # Other
-#
 SuggestForm = Páxina de suxestións
 SuggestOrVoteForConfOrBooth = Páxina para suxestión ou voto 
 EvntOrgRegistrationHelpMessage = Aquí pode votar por unha conferencia ou suxerir unha nova para o evento. Tamén pode solicitar ter un stand durante o evento. 
@@ -133,6 +114,7 @@ EventType = Tipo de evento
 LabelOfBooth=Etiqueta de stand
 LabelOfconference=Etiqueta de conferencia 
 ConferenceIsNotConfirmed=Rexistro non dispoñible, a conferencia aínda non está confirmada
+EventRegistrationAreClosed=As inscricións para eventos están pechadas
 DateMustBeBeforeThan=%s debe ser antes de %s
 DateMustBeAfterThan=%s debe ser despois de %s
 MaxNbOfAttendeesReached=Alcanzouse o número máximo de participantes
@@ -174,6 +156,7 @@ DateEndEvent=Data de finalización do evento
 ModifyStatus=Modificar o estado
 ConfirmModifyStatus=Confirmar a modificación de estado
 ConfirmModifyStatusQuestion=Está certo de querer modificar o %s rexistro(s) seleccionado(s)?
-RecordsUpdated = %s Rexistros actualizados
-RecordUpdated = Rexistro actualizado
-NoRecordUpdated = Non se actualizou ningún rexistro
+RecordsUpdated=%s Rexistros actualizados
+RecordUpdated=Rexistro actualizado
+NoRecordUpdated=Non se actualizou ningún rexistro
+ProfitPerValidatedAttendee=Beneficio por asistente

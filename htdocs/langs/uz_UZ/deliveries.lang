@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Yetkazib berish
 DeliveryRef=Yetkazib berish
-DeliveryCard=Birja kvitansiyasi
+DeliveryCard=Delivery receipt
 DeliveryOrder=Yetkazib berish kvitansiyasi
 DeliveryDate=Yetkazib berish sanasi
 CreateDeliveryOrder=Yetkazib berish kvitansiyasini yarating

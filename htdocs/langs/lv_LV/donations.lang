@@ -35,3 +35,4 @@ DonationPayments=Ziedojumu maksājumi
 DonationValidated=Ziedojums %s apstiprināts
 DonationUseThirdparties=Izmantojiet esošas trešās puses adresi kā donora adresi
 DonationsStatistics=Ziedojumu statistika
+NbOfDonations=Ziedojumu skaits
