@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Βρέθηκε λανθασμένη σύνταξη emai
 ErrorUserCannotBeDelete=Ο χρήστης δεν μπορεί να διαγραφεί. Ίσως σχετίζεται με οντότητες Dolibarr.
 ErrorFieldsRequired=Ορισμένα υποχρεωτικά πεδία έχουν μείνει κενά.
 ErrorSubjectIsRequired=Το θέμα του email είναι υποχρεωτικό
+ErrorInAddAttachmentsImageBaseOnMedia=Σφάλμα κατά τη δημιουργία αρχείων εικόνας για επισύναψη στον κατάλογο media
+ErrorInAddAttachmentsImageBaseIsSrcData=Σφάλμα κατά τη δημιουργία αρχείων εικόνας (βρέθηκαν ως δεδομένα:) για επισύναψη στον temp κατάλογο
 ErrorFailedToCreateDir=Αποτυχία δημιουργίας καταλόγου. Ελέγξτε ότι ο χρήστης του διακομιστή Web έχει δικαιώματα εγγραφής στον κατάλογο εγγράφων Dolibarr. Εάν η παράμετρος <b> safe_mode </b> είναι ενεργοποιημένη σε αυτήν την PHP, ελέγξτε ότι τα αρχεία php Dolibarr ανήκουν σε χρήστη (ή ομάδα) διακομιστή web.
 ErrorNoMailDefinedForThisUser=Δεν έχει οριστεί mail για αυτόν το χρήστη
 ErrorSetupOfEmailsNotComplete=Η ρύθμιση των email δεν έχει ολοκληρωθεί
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Σφάλμα, η συμβολοσειρά(string) για
 ErrorProductNeedBatchNumber=Σφάλμα, το προϊόν "<b> %s </b>" χρειάζεται παρτίδα/σειριακό αριθμό
 ErrorProductDoesNotNeedBatchNumber=Σφάλμα, το προϊόν "<b> %s </b>" δεν δέχεται αριθμό παρτίδας/σειριακού αριθμού
 ErrorFailedToReadObject=Σφάλμα, αποτυχία ανάγνωσης αντικειμένου τύπου <b> %s </b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Σφάλμα, η παράμετρος <b> %s </b> πρέπει να είναι ενεργοποιημένη στο <b> conf/conf.php<b>για να επιτρέπει τη χρήση της διεπαφής γραμμής εντολών από τον εσωτερικό προγραμματιστή εργασιών
+ErrorParameterMustBeEnabledToAllwoThisFeature=Σφάλμα, η παράμετρος <b> %s </b> πρέπει να είναι ενεργοποιημένη στο <b> conf/conf.php </b>για να επιτρέπει τη χρήση της διεπαφής γραμμής εντολών από τον εσωτερικό προγραμματιστή εργασιών
 ErrorLoginDateValidity=Σφάλμα, αυτή η σύνδεση είναι εκτός του εύρους ημερομηνιών εγκυρότητας
 ErrorValueLength=Το μήκος του πεδίου ' <b> %s </b> ' πρέπει να είναι μεγαλύτερο από το ' <b> %s </b>'
 ErrorReservedKeyword=Η λέξη "<b> %s </b>" είναι μια δεσμευμένη λέξη-κλειδί
@@ -322,16 +324,21 @@ ErrorFixThisHere= <a href="%s"> Διορθώστε το εδώ </a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Σφάλμα: Η διεύθυνση URL της τρέχουσας παρουσίας σας (%s) δεν ταιριάζει με τη διεύθυνση URL που ορίζεται στη ρύθμιση σύνδεσης OAuth2 (%s). Δεν επιτρέπεται η σύνδεση στο OAuth2 σε μια τέτοια διαμόρφωση.
 ErrorMenuExistValue=Υπάρχει ήδη ένα μενού με αυτόν τον τίτλο ή τη διεύθυνση URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Τα αρχεία SVG δεν επιτρέπονται ως εξωτερικοί σύνδεσμοι χωρίς την επιλογή %s
-ErrorTypeMenu=Αδύνατη η προσθήκη ενός ακόμα μενού για την ίδια ενότητα στη γραμμή πλοήγησης, δεν υποστηρίζεται
+ErrorTypeMenu=Δεν είναι δυνατή η προσθήκη και άλλου μενού για την ίδια ενότητα στη γραμμή πλοήγησης, δεν υποστηρίζεται ακόμα
+ErrorGeneratingBarcode=Σφάλμα κατά τη δημιουργία του γραμμικού κώδικα (πιθανώς μη έγκυρο σχήμα κώδικα)
 ErrorObjectNotFound = Το αντικείμενο <b>%s</b> δεν βρέθηκε, ελέγξτε το url σας
 ErrorCountryCodeMustBe2Char=Ο κωδικός χώρας πρέπει να είναι μια συμβολοσειρά 2 χαρακτήρων
 ErrorABatchShouldNotContainsSpaces=Η παρτίδα ή ο σειριακός αριθμός δεν πρέπει να περιέχει κενά
-
 ErrorTableExist=Ο πίνακας <b> %s </b> υπάρχει ήδη
 ErrorDictionaryNotFound=Το λεξικό <b> %s </b> δεν βρέθηκε
 ErrorFailedToCreateSymLinkToMedias=Απέτυχε η δημιουργία του συμβολικού συνδέσμου %s που οδηγεί στο %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Ελέγξτε την εντολή που χρησιμοποιείται για την εξαγωγή στις επιλογές για προχωρημένους
-
+ErrorEndTimeMustBeGreaterThanStartTime=Η ώρα λήξης πρέπει να είναι μεταγενέστερη της ώρας έναρξης
+ErrorIncoherentDates=Η ημερομηνία έναρξης πρέπει να είναι προγενέστερη της ημερομηνίας λήξης
+ErrorEndHourIsNull=Το τέλος Ημερομηνία δεν μπορεί να είναι μηδέν
+ErrorStartHourIsNull=Έναρξη Ημερομηνία δεν μπορεί να είναι μηδέν
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Πάρα πολλές γραμμές για επεξεργασία. Χρησιμοποιήστε ένα πιο επιλεκτικό φίλτρο.
+ErrorEmptyValueForQty=Η ποσότητα δεν μπορεί να είναι μηδενική.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Η παράμετρος PHP upload_max_filesize (%s) είναι υψηλότερη από την παράμετρο PHP post_max_size (%s). Αυτή δεν είναι μια συνεπής ρύθμιση.
 WarningPasswordSetWithNoAccount=Ορίστηκε κωδικός πρόσβασης για αυτό το μέλος. Ωστόσο, δεν δημιουργήθηκε λογαριασμός χρήστη. Επομένως, αυτός ο κωδικός πρόσβασης είναι αποθηκευμένος, αλλά δεν μπορεί να χρησιμοποιηθεί για τη σύνδεση στο Dolibarr. Μπορεί να χρησιμοποιηθεί από μια εξωτερική ενότητα/διεπαφή, αλλά αν δεν χρειάζεται να ορίσετε κανένα στοιχείο σύνδεσης ή κωδικό πρόσβασης για ένα μέλος, μπορείτε να απενεργοποιήσετε την επιλογή "Διαχείριση σύνδεσης για κάθε μέλος" από τη ρύθμιση της ενότητας μέλους. Εάν θέλετε να διαχειριστείτε μια σύνδεση, αλλά δεν χρειάζεστε κωδικό πρόσβασης, μπορείτε να διατηρήσετε αυτό το πεδίο κενό για να αποφύγετε αυτήν την προειδοποίηση. Σημείωση: Το email μπορεί επίσης να χρησιμοποιηθεί ως σύνδεση εάν το μέλος είναι συνδεδεμένο με έναν χρήστη.
@@ -344,6 +351,7 @@ WarningConfFileMustBeReadOnly=Προειδοποίηση, το αρχείο ρυ
 WarningsOnXLines=Προειδοποιήσεις στις <b>%s</b> εγγραφές κώδικα
 WarningNoDocumentModelActivated=Δεν έχει ενεργοποιηθεί κανένα μοντέλο για την παραγωγή εγγράφων. Ένα πρότυπο θα επιλεγεί από προεπιλογή μέχρι να ελέγξετε τη ρύθμιση της ενότητας σας.
 WarningLockFileDoesNotExists=Προειδοποίηση, αφού ολοκληρωθεί η εγκατάσταση, πρέπει να απενεργοποιήσετε τα εργαλεία εγκατάστασης / μετεγκατάστασης προσθέτοντας ένα αρχείο <b>install.lock</b> στον κατάλογο <b>%s</b> . Η παράλειψη της δημιουργίας αυτού του αρχείου αποτελεί σοβαρό κίνδυνο για την ασφάλεια.
+WarningUpgradeHasBeenUnlocked=Προειδοποίηση, η διαδικασία αναβάθμισης έχει ξεκλειδωθεί
 WarningUntilDirRemoved=Αυτή η προειδοποίηση ασφαλείας θα παραμείνει ενεργή όσο υπάρχει η ευπάθεια.
 WarningCloseAlways=Προειδοποίηση, το κλείσιμο πραγματοποιείται ακόμη και αν το ποσό διαφέρει μεταξύ των στοιχείων πηγής και προορισμού. Ενεργοποιήστε αυτήν τη δυνατότητα με προσοχή.
 WarningUsingThisBoxSlowDown=Προειδοποίηση, χρησιμοποιώντας αυτό το πλαίσιο επιβραδύνετε σοβαρά όλες τις σελίδες που εμφανίζουν το πλαίσιο.
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = Η ενότητα <b> %s </b> έχει απενεργ
 WarningPermissionAlreadyExist=Υπάρχοντα δικαιώματα για αυτό το αντικείμενο
 WarningGoOnAccountancySetupToAddAccounts=Εάν αυτή η λίστα είναι κενή, μεταβείτε στο μενού %s - %s - %s για να φορτώσετε ή να δημιουργήσετε λογαριασμούς για το λογιστικό σας σχέδιο.
 WarningCorrectedInvoiceNotFound=Το διορθωμένο τιμολόγιο δεν βρέθηκε
-WarningCommentNotFound=Ελέγξτε την τοποθέτηση των σχολίων έναρξης και τέλους για την ενότητα <b>%s</b> στο αρχείο <b>%s</b> πριν υποβάλετε την ενέργειά σας
+WarningCommentNotFound=Προειδοποίηση: Δεν βρέθηκαν τα σχόλια έναρξης και/ή τέλους για την ενότητα <b>%s</b> στο αρχείο <b>%s</b>
 WarningAlreadyReverse=Η κίνηση αποθέματος έχει ήδη αντιστραφεί
-
+WarningParentIDDoesNotExistAnymore=Αυτό το αναγνωριστικό γονέα δεν υπάρχει πλέον
+WarningReadBankAlsoAllowedIfUserHasPermission=Προειδοποίηση, η ανάγνωση τραπεζικού λογαριασμού επιτρέπεται επίσης με την άδεια Διαχείρισης του λογιστικού σχεδίου
+WarningNoDataTransferedInAccountancyYet=Λάβετε υπόψη ότι δεν υπάρχουν δεδομένα στον πίνακα Λογιστικής. Μεταφέρετε τα δεδομένα σας που έχουν καταγραφεί στην εφαρμογή στην ενότητα Λογιστική ή αλλάξτε τη λειτουργία υπολογισμού για να αναλύσετε τα δεδομένα που έχουν καταγραφεί εκτός της λογιστικής.
+WarningChangingThisMayBreakStopTaskScheduler=Προειδοποίηση, η αλλαγή αυτής της τιμής μπορεί να απενεργοποιήσει τον προγραμματιστή
 SwissQrOnlyVIR = Το SwissQR μπορεί να προστεθεί μόνο σε τιμολόγια που έχουν οριστεί για πληρωμή με πληρωμές μεταφοράς πίστωσης.
 SwissQrCreditorAddressInvalid = Η διεύθυνση του πιστωτή δεν είναι έγκυρη (Έχουν οριστεί ο ταχυδρομικός κώδικας και η πόλη; (%s)
 SwissQrCreditorInformationInvalid = Τα στοιχεία του πιστωτή δεν είναι έγκυρα για το IBAN (%s): %s
 SwissQrIbanNotImplementedYet = Το QR-IBAN δεν έχει εφαρμοστεί ακόμα
 SwissQrPaymentInformationInvalid = Τα στοιχεία πληρωμής δεν ήταν έγκυρα για το σύνολο %s : %s
 SwissQrDebitorAddressInvalid = Οι πληροφορίες του οφειλέτη δεν ήταν έγκυρες (%s)
-
 # Validate
 RequireValidValue = Η τιμή δεν είναι έγκυρη
 RequireAtLeastXString = Απαιτεί τουλάχιστον %s χαρακτήρα(ες)
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = Σφάλμα κακής ρύθμισ
 BadSetupOfFieldFileNotFound = Σφάλμα κακής ρύθμισης πεδίου : Το αρχείο δεν βρέθηκε για συμπερίληψη
 BadSetupOfFieldFetchNotCallable = Σφάλμα κακής ρύθμισης του πεδίου : Fetch not callable on class
 ErrorTooManyAttempts= Πάρα πολλές προσπάθειες, παρακαλώ δοκιμάστε ξανά αργότερα
-
 TotalAmountEmpty=Συνολικό Ποσό Κενό
 FailedToFoundTheConversionRateForInvoice=Αποτυχία εύρεσης του ποσοστού ισοτιμίας για το τιμολόγιο
-ThisIdNotDefined=Id not defined
-OperNotDefined=Payment method not defined
+ThisIdNotDefined=Το Id δεν έχει καθοριστεί.
+OperNotDefined=Η μέθοδος πληρωμής δεν έχει οριστεί
 ErrorThisContactXIsAlreadyDefinedAsThisType=Η επαφή %s έχει ήδη οριστεί ως επαφή για αυτόν τον τύπο.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Οι επαφές με αυτήν την ομάδα έχουν ήδη οριστεί ως επαφή για αυτόν τον τύπο.
+EmptyMessageNotAllowedError=Δεν επιτρέπεται το κενό μήνυμα

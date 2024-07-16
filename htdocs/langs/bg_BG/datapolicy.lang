@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Политика за поверителност на данните
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Модул за управление на поверителността на данните (съответствие с GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Настройка на политиката за поверителност на данните на модула
 Deletion = Изтриване на данни
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Нито перспектива/Нит�
 DATAPOLICY_CONTACT_FOURNISSEUR = Доставчик
 DATAPOLICY_ADHERENT = Член
 DATAPOLICY_Tooltip_SETUP = Тип контакт - Посочете избора си за всеки тип.
-DATAPOLICYMail = Настройка на имейли
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Съдържание на имейла
-DATAPOLICYSUBSITUTION = Можете да използвате следните променливи във вашия имейл (LINKACCEPT позволява да се създаде връзка, записваща съгласието на лицето, LINKREFUSED позволява да се запише отказът на лицето):
-DATAPOLICYACCEPT = Съобщение след споразумение
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Можете да изпратите имейл за GDPR до всички ваши съответни контакти (които все още не са получили имейл и за които не сте регистрирали нищо относно тяхното споразумение за GDPR). За да направите това, използвайте следния бутон.
 SendAgreement = Изпращайте имейли
 AllAgreementSend = Всички имейли са изпратени
 TXTLINKDATAPOLICYACCEPT = Текст за връзката "договор"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Обработка на лични данни
 DATAPOLICY_consentement = Получено съгласие за обработка на лични данни
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Анонимизирайте трета страна
-DATAPOLICY_POPUP_ANONYME_TEXTE = Не можете да изтриете този контакт от Dolibarr, защото има свързани елементи. В съответствие с GDPR вие ще направите всички тези данни анонимни, за да спазите задълженията си. Искате ли да продължите?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Преносимост GDPR
-DATAPOLICY_PORTABILITE_TITLE = Експорт на лични данни
-DATAPOLICY_PORTABILITE_CONFIRMATION = Искате да експортирате личните данни на този контакт. Сигурен ли си ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Анонимизира %s
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = Изпратете имейл за GDPR
 MailSent = Имейлът беше изпратен
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

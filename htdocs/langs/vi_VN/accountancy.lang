@@ -64,18 +64,15 @@ MainAccountForVatPaymentNotDefined=Tài khoản (từ Sơ đồ tài khoản) ch
 MainAccountForSubscriptionPaymentNotDefined=Tài khoản (từ Sơ đồ tài khoản) dành cho thành viên thanh toán không được xác định trong thiết lập
 MainAccountForRetainedWarrantyNotDefined=Tài khoản (từ Sơ đồ tài khoản) cho bảo hành được giữ lại không được xác định trong thiết lập
 UserAccountNotDefined=Tài khoản kế toán cho người dùng không được xác định trong thiết lập
-
 AccountancyArea=Khu vực kế toán
 AccountancyAreaDescIntro=Việc sử dụng mô đun kế toán được thực hiện trong một số bước:
 AccountancyAreaDescActionOnce=Các hành động sau thường được thực hiện một lần duy nhất hoặc một lần mỗi năm ...
 AccountancyAreaDescActionOnceBis=Các bước tiếp theo cần được thực hiện để giúp bạn tiết kiệm thời gian trong tương lai bằng cách tự động gợi ý cho bạn tài khoản kế toán mặc định chính xác khi chuyển dữ liệu trong kế toán
 AccountancyAreaDescActionFreq=Các hành động sau đây thường được thực hiện mỗi tháng, tuần hoặc ngày đối với các công ty rất lớn ...
-
 AccountancyAreaDescJournalSetup=BƯỚC %s: Kiểm tra nội dung danh sách tạp chí của bạn từ menu %s
 AccountancyAreaDescChartModel=BƯỚC %s: Kiểm tra xem mô hình biểu đồ tài khoản có tồn tại hay không hoặc tạo một mô hình từ menu %s
 AccountancyAreaDescChart=BƯỚC %s: Chọn và|hoặc hoàn thành biểu đồ tài khoản của bạn từ menu %s
-
-AccountancyAreaDescFiscalPeriod=BƯỚC %s: Xác định năm tài chính theo mặc định để tích hợp các mục kế toán của bạn. Để thực hiện việc này, hãy sử dụng mục menu %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=BƯỚC %s: Xác định tài khoản kế toán cho mỗi mức thuế VAT. Để làm điều này, sử dụng mục menu %s.
 AccountancyAreaDescDefault=BƯỚC %s: Xác định tài khoản kế toán mặc định. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescExpenseReport=BƯỚC %s: Xác định tài khoản kế toán mặc định cho từng loại Báo cáo chi phí. Để thực hiện việc này, hãy sử dụng mục menu %s.
@@ -87,12 +84,10 @@ AccountancyAreaDescMisc=BƯỚC %s: Xác định tài khoản mặc định bắ
 AccountancyAreaDescLoan=BƯỚC %s: Xác định tài khoản kế toán mặc định cho các khoản vay. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescBank=BƯỚC %s: Xác định tài khoản kế toán và mã nhật ký cho từng ngân hàng và tài khoản tài chính. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescProd=BƯỚC %s: Xác định tài khoản kế toán trên Sản phẩm/Dịch vụ của bạn. Để thực hiện việc này, hãy sử dụng mục menu %s.
-
 AccountancyAreaDescBind=BƯỚC %s: Kiểm tra ràng buộc giữa các dòng %s hiện tại và tài khoản kế toán được thực hiện, do đó, ứng dụng sẽ có thể ghi nhật ký giao dịch trong Sổ cái chỉ bằng một cú nhấp chuột. Hoàn thành các ràng buộc còn thiếu. Đối với điều này, sử dụng mục menu %s.
 AccountancyAreaDescWriteRecords=BƯỚC %s: Viết giao dịch vào Sổ Cái. Để làm điều này, hãy vào menu <strong>%s</strong> và nhấp vào nút <strong>%s</strong> .
 AccountancyAreaDescAnalyze=BƯỚC %s: Đọc báo cáo hoặc tạo tệp xuất cho những người kế toán khác.
 AccountancyAreaDescClosePeriod=BƯỚC %s: Đóng khoảng thời gian để chúng tôi không thể chuyển tiếp dữ liệu trong cùng khoảng thời gian trong tương lai.
-
 TheFiscalPeriodIsNotDefined=Một bước bắt buộc trong quá trình thiết lập chưa được hoàn thành (Giai đoạn tài chính chưa được xác định)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Một bước bắt buộc trong quá trình thiết lập chưa được hoàn thành (nhật ký mã kế toán chưa được xác định cho tất cả các tài khoản ngân hàng)
 Selectchartofaccounts=Chọn biểu đồ tài khoản đang hoạt động
@@ -111,7 +106,7 @@ DataUsedToSuggestAccount=Dữ liệu dùng để đề xuất tài khoản
 AccountAccountingSuggest=Tài khoản được đề xuất
 MenuDefaultAccounts=Tài khoản mặc định
 MenuBankAccounts=Tài khoản ngân hàng
-MenuVatAccounts=Tài khoản VAT
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=Tài khoản thuế
 MenuExpenseReportAccounts=Tài khoản báo cáo chi phí
 MenuLoanAccounts=Tài khoản cho vay
@@ -144,8 +139,6 @@ ExpenseReportLines=Dòng báo cáo chi phí để ràng buộc
 ExpenseReportLinesDone=Giới hạn dòng của báo cáo chi phí
 IntoAccount=Ràng buộc dòng với tài khoản kế toán
 TotalForAccount=Tổng tài khoản kế toán
-
-
 Ventilate=Ràng buộc
 LineId=ID dòng
 Processing=Đang xử lý
@@ -158,22 +151,21 @@ VentilatedinAccount=Liên kết thành công vào tài khoản kế toán
 NotVentilatedinAccount=Không liên kết với tài khoản kế toán
 XLineSuccessfullyBinded=%s sản phẩm/ dịch vụ được liên kết thành công với tài khoản kế toán
 XLineFailedToBeBinded=%s sản phẩm/ dịch vụ không bị ràng buộc với bất kỳ tài khoản kế toán nào
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Số dòng tối đa trên danh sách và trang liên kết (khuyến nghị: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Bắt đầu sắp xếp trang "Liên kết cần làm" theo các yếu tố gần đây nhất
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Bắt đầu sắp xếp trang "Liên kết" theo các yếu tố gần đây nhất
-
 ACCOUNTING_LENGTH_DESCRIPTION=Cắt ngắn mô tả sản phẩm và dịch vụ trong danh sách sau các ký tự x (Tốt nhất = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Cắt ngắn mô tả tài khoản sản phẩm và dịch vụ trong danh sách sau các ký tự x (Tốt nhất = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Độ dài của tài khoản kế toán chung (Nếu bạn đặt giá trị thành 6 tại đây, tài khoản '706' sẽ xuất hiện như '706000' trên màn hình)
 ACCOUNTING_LENGTH_AACCOUNT=Độ dài của tài khoản kế toán bên thứ ba (Nếu bạn đặt giá trị thành 6 tại đây, tài khoản '401' sẽ xuất hiện như '401000' trên màn hình)
 ACCOUNTING_MANAGE_ZERO=Cho phép quản lý các số không khác nhau ở cuối tài khoản kế toán. Nó cần thiết cho một số nước (như Thụy Sĩ). Nếu được đặt thành tắt (mặc định), bạn có thể đặt hai tham số sau để yêu cầu ứng dụng thêm số không ảo.
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Vô hiệu hóa ghi trực tiếp giao dịch trong tài khoản ngân hàng
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Cho phép xuất dữ liệu bản nháp trong nhật ký
 ACCOUNTANCY_COMBO_FOR_AUX=Kích hoạt danh sách combo cho tài khoản phụ (có thể chậm nếu bạn có nhiều bên thứ ba, làm mất khả năng tìm kiếm trên một phần giá trị)
 ACCOUNTING_DATE_START_BINDING=Vô hiệu hóa ràng buộc và chuyển giao trong kế toán khi ngày thấp hơn ngày này (các giao dịch trước ngày này sẽ bị loại trừ theo mặc định)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ở trang chuyển số liệu vào kế toán mặc định chọn khoảng thời gian nào
-
 ACCOUNTING_SELL_JOURNAL=Nhật ký bán hàng - bán hàng và trả lại
 ACCOUNTING_PURCHASE_JOURNAL=Nhật ký mua hàng - mua hàng và trả lại
 ACCOUNTING_BANK_JOURNAL=Nhật ký tiền mặt - thu chi
@@ -182,40 +174,33 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Tạp chí phổ thông
 ACCOUNTING_HAS_NEW_JOURNAL=Có nhật ký mới
 ACCOUNTING_INVENTORY_JOURNAL=Nhật ký tồn kho
 ACCOUNTING_SOCIAL_JOURNAL=Nhật ký chi phí xã hội
-
 ACCOUNTING_RESULT_PROFIT=Tài khoản kế toán kết quả kinh doanh (Lợi nhuận)
 ACCOUNTING_RESULT_LOSS=Tài khoản kế toán kết quả kinh doanh (Lỗ)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Nhật ký đóng
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Các nhóm kế toán sử dụng cho tài khoản bảng cân đối kế toán (phân cách bằng dấu phẩy)
 ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Các nhóm kế toán sử dụng trong báo cáo kết quả hoạt động kinh doanh (cách nhau bằng dấu phẩy)
-
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản chuyển khoản ngân hàng chuyển tiếp
 TransitionalAccount=Tài khoản chuyển khoản ngân hàng chuyển tiếp
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản cho số tiền chưa được phân bổ đã nhận hoặc đã thanh toán, tức là tiền trong "chờ [ing]"
 DONATION_ACCOUNTINGACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng để đăng ký quyên góp (mô-đun quyên góp)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng để đăng ký đăng ký thành viên (Mô-đun thành viên - nếu tư cách thành viên được ghi mà không có hóa đơn)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định để đăng ký tiền gửi của khách hàng
 UseAuxiliaryAccountOnCustomerDeposit=Lưu trữ tài khoản khách hàng dưới dạng tài khoản cá nhân trong sổ cái phụ cho các dòng thanh toán trả trước (nếu bị vô hiệu hóa, tài khoản cá nhân cho các dòng xuống thanh toán sẽ vẫn trống)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm mặc định
 UseAuxiliaryAccountOnSupplierDeposit=Lưu trữ tài khoản nhà cung cấp dưới dạng tài khoản cá nhân trong sổ cái phụ cho các dòng thanh toán trả trước (nếu bị vô hiệu hóa, tài khoản cá nhân cho các dòng xuống thanh toán sẽ vẫn trống)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Tài khoản kế toán mặc định đăng ký bảo hành giữ lại cho khách hàng
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các sản phẩm được mua trong cùng một quốc gia (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các sản phẩm được mua từ EEC đến một quốc gia EEC khác (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các sản phẩm được mua và nhập khẩu từ bất kỳ quốc gia nước ngoài nào khác (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các sản phẩm đã bán (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các sản phẩm được bán từ EEC sang một quốc gia EEC khác (được sử dụng nếu không được xác định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các sản phẩm được bán và xuất khẩu sang bất kỳ quốc gia nước ngoài nào khác (được sử dụng nếu không được xác định trong bảng sản phẩm)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các dịch vụ được mua trong cùng một quốc gia (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các dịch vụ được mua từ EEC đến một quốc gia EEC khác (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) được sử dụng làm tài khoản mặc định cho các dịch vụ được mua và nhập từ nước ngoài khác (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các dịch vụ đã bán (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các dịch vụ được bán từ EEC sang một quốc gia EEC khác (được sử dụng nếu không được xác định trong bảng dịch vụ)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Tài khoản (từ Sơ đồ tài khoản) sẽ được sử dụng làm tài khoản mặc định cho các dịch vụ được bán và xuất khẩu sang bất kỳ quốc gia nước ngoài nào khác (được sử dụng nếu không được xác định trong bảng dịch vụ)
-
 Doctype=Loại chứng từ
 Docdate=Ngày
 Docref=Tham chiếu
@@ -237,7 +222,6 @@ AccountingAccountGroupsDesc=Bạn có thể định nghĩa ở đây một số 
 ByAccounts=Theo tài khoản
 ByPredefinedAccountGroups=Theo nhóm được xác định trước
 ByPersonalizedAccountGroups=Theo nhóm đã cá nhân hóa
-ByYear=Theo năm
 NotMatch=Không được thiết lập
 DeleteMvt=Xóa một số dòng trong kế toán
 DelMonth=Tháng cần xóa
@@ -273,19 +257,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tài khoản sổ cái ph
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Không biết tài khoản bên thứ ba và tài khoản đang chờ không xác định. Lỗi chặn
 PaymentsNotLinkedToProduct=Thanh toán không được liên kết với bất kỳ sản phẩm/ dịch vụ nào
 OpeningBalance=Số dư đầu kỳ
-ShowOpeningBalance=Xem số dư 
+ShowOpeningBalance=Xem số dư
 HideOpeningBalance=Ẩn số dư
 ShowSubtotalByGroup=Hiển thị tổng phụ theo cấp độ
-
 Pcgtype=Nhóm tài khoản
 PcgtypeDesc=Nhóm tài khoản được sử dụng làm tiêu chí 'bộ lọc' và 'nhóm' được xác định trước cho một số báo cáo kế toán. Ví dụ: 'THU NHẬP' hoặc 'CHI PHÍ' được sử dụng làm nhóm cho tài khoản kế toán của các sản phẩm để xây dựng báo cáo chi phí / thu nhập.
 AccountingCategoriesDesc=Nhóm tài khoản tùy chỉnh có thể được sử dụng để nhóm các tài khoản kế toán thành một tên nhằm dễ dàng sử dụng bộ lọc hoặc xây dựng các báo cáo tùy chỉnh.
-
 Reconcilable=Đối soát lại
-
 TotalVente=Tổng doanh thu trước thuế
 TotalMarge=Tổng  lợi nhuận bán hàng
-
 DescVentilCustomer=Tham khảo tại đây danh sách các dòng hóa đơn khách hàng được ràng buộc (hoặc không) với tài khoản sản phẩm từ biểu đồ tài khoản
 DescVentilMore=Trong hầu hết các trường hợp, nếu bạn sử dụng các sản phẩm hoặc dịch vụ được xác định trước và bạn đặt tài khoản (từ biểu đồ tài khoản) trên thẻ sản phẩm/dịch vụ, ứng dụng sẽ có thể thực hiện tất cả các ràng buộc giữa các dòng hóa đơn và tài khoản kế toán trong biểu đồ của bạn của các tài khoản, chỉ bằng một cú nhấp chuột bằng nút <strong>"%s"</strong> >. Nếu tài khoản chưa được đặt trên thẻ sản phẩm/dịch vụ hoặc nếu bạn vẫn còn một số dòng chưa được liên kết với tài khoản, bạn sẽ phải thực hiện liên kết thủ công từ menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Tham khảo tại đây danh sách các dòng hóa đơn khách hàng và tài khoản sản phẩm của họ từ sơ đồ tài khoản
@@ -298,7 +278,6 @@ DescVentilTodoExpenseReport=Ràng buộc dòng báo cáo chi phí chưa được
 DescVentilExpenseReport=Tham khảo tại đây danh sách các dòng báo cáo chi phí ràng buộc (hoặc không) với tài khoản kế toán phí
 DescVentilExpenseReportMore=Nếu bạn thiết lập tài khoản kế toán theo kiểu dòng báo cáo chi phí, ứng dụng sẽ có thể thực hiện tất cả các ràng buộc giữa các dòng báo cáo chi phí và tài khoản kế toán của hệ thống đồ tài khoản của bạn, chỉ bằng một cú nhấp chuột với nút <strong>"%s"</strong> . Nếu tài khoản không được đặt trong từ điển phí hoặc nếu bạn vẫn có một số dòng không bị ràng buộc với bất kỳ tài khoản nào, bạn sẽ phải thực hiện ràng buộc thủ công từ menu " <strong>%s</strong> ".
 DescVentilDoneExpenseReport=Tham khảo tại đây danh sách các dòng báo cáo chi phí và tài khoản kế toán phí của họ
-
 Closure=Đóng cửa hàng năm
 AccountancyClosureStep1Desc=Tham khảo tại đây số lượng chuyển động theo tháng chưa được xác thực & bị khóa
 OverviewOfMovementsNotValidated=Tổng quan về các chuyển động không được xác thực và bị khóa
@@ -306,11 +285,9 @@ AllMovementsWereRecordedAsValidated=Tất cả các chuyển động đã đư�
 NotAllMovementsCouldBeRecordedAsValidated=Không phải tất cả các chuyển động đều có thể được ghi lại là đã xác thực và bị khóa
 ValidateMovements=Xác thực và khóa chuyển động
 DescValidateMovements=Bất kỳ sửa đổi hoặc xóa viết, chữ và xóa sẽ bị cấm. Tất cả các mục cho một thi hành phải được xác nhận nếu không việc đóng sẽ không thể thực hiện được
-
 ValidateHistory=Tự động ràng buộc
 AutomaticBindingDone=Đã thực hiện liên kết tự động (%s) - Không thể liên kết tự động đối với một số bản ghi (%s)
 DoManualBindingForFailedRecord=Bạn phải thực hiện liên kết thủ công cho (các) hàng %s không được liên kết tự động.
-
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa hoặc vô hiệu hóa tài khoản này trong biểu đồ tài khoản vì nó được sử dụng
 MvtNotCorrectlyBalanced=Chuyển động không được cân bằng chính xác. Ghi nợ = %s & Tín dụng = %s
 Balancing=Số dư
@@ -323,12 +300,12 @@ ChangeBinding=Thay đổi ràng buộc
 Accounted=Tài khoản trên Sổ cái
 NotYetAccounted=Chưa chuyển sang kế toán
 ShowTutorial=Chương trình hướng dẫn
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Chưa đối chiếu
 WarningRecordWithoutSubledgerAreExcluded=Cảnh báo, tất cả các dòng không có tài khoản sổ cái phụ được xác định sẽ được lọc và loại trừ khỏi chế độ xem này
 AccountRemovedFromCurrentChartOfAccount=Tài khoản kế toán không tồn tại trong sơ đồ tài khoản hiện tại
-
 ## Admin
-BindingOptions=Tùy chọn ràng buộc
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Áp dụng cho số một lớn các danh mục
 AddAccountFromBookKeepingWithNoCategories=Tài khoản khả dụng chưa có trong nhóm được cá nhân hóa
 CategoryDeleted=Danh mục cho tài khoản kế toán đã bị xóa
@@ -361,7 +338,6 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Một số phần mềm kế toán chỉ ch�
 OptionsAdvanced=Tùy chọn nâng cao
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Kích hoạt quản lý hoàn thuế VAT khi mua nhà cung cấp
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Khi tùy chọn này được bật, bạn có thể xác định rằng một nhà cung cấp hoặc hóa đơn của nhà cung cấp nhất định phải được chuyển vào kế toán theo cách khác: Một khoản ghi nợ bổ sung và hạn mức tín dụng sẽ được tạo vào kế toán trên 2 tài khoản nhất định từ biểu đồ tài khoản được xác định trong "%s" trang thiết lập.
-
 ## Export
 NotExportLettering=Không xuất chữ khi tạo tệp
 NotifiedExportDate=Gắn cờ các dòng chưa được xuất dưới dạng Đã xuất <span class="warning">(để sửa đổi một dòng được gắn cờ là đã xuất, bạn sẽ cần xóa toàn bộ giao dịch và chuyển lại vào kế toán)</span>
@@ -371,7 +347,7 @@ DateValidationAndLock=Xác thực ngày và khóa
 ConfirmExportFile=Xác nhận việc tạo file xuất kế toán?
 ExportDraftJournal=Xuất dữ liệu bản nháp nhật ký
 Modelcsv=Mô hình xuất dữ liệu
-Selectmodelcsv=Chọn một mô hình xuất dữ liệu
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Xuất dữ liệu cổ điển
 Modelcsv_CEGID=Xuất dữ liệu cho CEGID Expert Comptabilité
 Modelcsv_COALA=Xuất dữ liệu cho Sage Coala
@@ -393,7 +369,6 @@ Modelcsv_Gestinumv3=Xuất cho Gestinum (v3)
 Modelcsv_Gestinumv5=Xuất cho Gestinum (v5)
 Modelcsv_charlemagne=Xuất khẩu cho Aplim Charlemagne
 ChartofaccountsId=ID Hệ thống tài khoản
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=Khởi tạo ban đầu Kế toán
 InitAccountancyDesc=Trang này có thể được sử dụng để khởi tạo tài khoản kế toán trên các sản phẩm và dịch vụ không có tài khoản kế toán được xác định cho bán hàng và mua hàng.
@@ -426,14 +401,15 @@ SaleEECWithVAT=Bán trong EEC với VAT không phải là null, vì vậy chúng
 SaleEECWithoutVATNumber=Bán hàng ở EEC không có VAT nhưng ID VAT của bên thứ ba không được xác định. Chúng tôi dựa vào tài khoản để bán hàng tiêu chuẩn. Bạn có thể sửa ID VAT của bên thứ ba hoặc thay đổi tài khoản sản phẩm được đề xuất để ràng buộc nếu cần.
 ForbiddenTransactionAlreadyExported=Bị cấm: Giao dịch đã được xác thực và/hoặc xuất.
 ForbiddenTransactionAlreadyValidated=Bị cấm: Giao dịch đã được xác thực.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
 ## Dictionary
 Range=Phạm vi tài khoản kế toán
 Calculated=Tính toán
 Formula=Công thức
-
 ## Reconcile
 LetteringAuto=Tự động đối chiếu
 LetteringManual=Hướng dẫn đối chiếu
+LetteringPartial=Reconcile partial
 Unlettering=không hòa giải
 UnletteringAuto=Tự động không đối chiếu
 UnletteringManual=Hướng dẫn không đối chiếu
@@ -443,7 +419,6 @@ AccountancyLetteringModifiedSuccessfully=%s đã sửa đổi điều chỉnh th
 AccountancyNoUnletteringModified=Không sửa đổi không đối chiếu
 AccountancyOneUnletteringModifiedSuccessfully=Một điều không hòa giải đã được sửa đổi thành công
 AccountancyUnletteringModifiedSuccessfully=%s đã sửa đổi không đối chiếu thành công
-
 ## Closure
 AccountancyClosureStep1=Bước 1: Xác thực và khóa chuyển động
 AccountancyClosureStep2=Bước 2: Đóng kỳ tài chính
@@ -455,7 +430,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Tạo các mục nhập "Thu
 AccountancyClosureSeparateAuxiliaryAccounts=Khi tạo các mục nhập "Thu nhập giữ lại", hãy nêu chi tiết các tài khoản sổ cái phụ
 AccountancyClosureCloseSuccessfully=Kỳ tài chính đã được đóng thành công
 AccountancyClosureInsertAccountingReversalSuccessfully=Mục ghi sổ kế toán cho "Thu nhập giữ lại" đã được chèn thành công
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Xác nhận không đối chiếu tự động hàng loạt
 ConfirmMassUnletteringManual=Xác nhận không đối chiếu hàng loạt theo cách thủ công
@@ -464,7 +438,6 @@ ConfirmMassDeleteBookkeepingWriting=Xác nhận xóa hàng loạt
 ConfirmMassDeleteBookkeepingWritingQuestion=Thao tác này sẽ xóa giao dịch khỏi kế toán (tất cả các mục nhập dòng liên quan đến cùng một giao dịch sẽ bị xóa). Bạn có chắc chắn muốn xóa các mục nhập %s đã chọn không?
 AccountancyClosureConfirmClose=Bạn có chắc chắn muốn đóng kỳ tài chính hiện tại không? <span class="warning">Bạn hiểu rằng việc đóng kỳ tài chính là một hành động không thể thay đổi được và sẽ chặn vĩnh viễn mọi sửa đổi hoặc xóa các mục nhập trong khoảng thời gian này</span> .
 AccountancyClosureConfirmAccountingReversal=Bạn có chắc chắn muốn ghi lại các mục nhập cho "Thu nhập giữ lại" không?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Một số bước bắt buộc thiết lập không được thực hiện, vui lòng hoàn thành chúng
 ErrorNoAccountingCategoryForThisCountry=Không có nhóm tài khoản kế toán nào có sẵn cho quốc gia %s (Xem %s - %s - %s)
@@ -482,10 +455,9 @@ AccountancyErrorMismatchBalanceAmount=Số dư (%s) không bằng 0
 AccountancyErrorLetteringBookkeeping=Đã xảy ra lỗi liên quan đến các giao dịch: %s
 ErrorAccountNumberAlreadyExists=Số kế toán %s đã tồn tại
 ErrorArchiveAddFile=Không thể đặt tệp "%s" vào kho lưu trữ
-ErrorNoFiscalPeriodActiveFound=Không tìm thấy kỳ tài chính đang hoạt động
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Ngày lập tài liệu kế toán không nằm trong kỳ tài chính đang hoạt động
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Ngày lập tài liệu kế toán nằm trong kỳ tài chính đã đóng
-
 ## Import
 ImportAccountingEntries=Ghi sổ kế toán
 ImportAccountingEntriesFECFormat=Mục kế toán - định dạng FEC
@@ -507,11 +479,9 @@ FECFormatReconcilableDate=Ngày có thể đối chiếu (DateLet)
 FECFormatValidateDate=Ngày mảnh được xác thực (ValidDate)
 FECFormatMulticurrencyAmount=Số tiền đa tiền tệ (Montantdevise)
 FECFormatMulticurrencyCode=Mã đa tiền tệ (Idevise)
-
 DateExport=Ngày xuất
 WarningReportNotReliable=Cảnh báo, báo cáo này không dựa trên Sổ cái nên không chứa các giao dịch được sửa đổi thủ công trong Sổ cái. Nếu nhật ký của bạn được cập nhật, chế độ xem sổ sách kế toán sẽ chính xác hơn.
 ExpenseReportJournal=Nhật ký báo cáo chi phí
 DocsAlreadyExportedAreIncluded=Tài liệu đã xuất được bao gồm
 ClickToShowAlreadyExportedLines=Nhấp để hiển thị các dòng đã xuất
-
 NAccounts=Tài khoản %s

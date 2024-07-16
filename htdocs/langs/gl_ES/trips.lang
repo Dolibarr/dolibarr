@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Rexistrado por
 AUTHORPAIEMENT=Pagado por
 AddTrip=Crear informe de informes de gasto
@@ -13,6 +13,8 @@ byEX_EXP=por liña(limitación a %s)
 byEX_MON=por mes (limitación a %s)
 byEX_YEA=por ano (limitación a %s)
 CANCEL_USER=Eliminado por
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Conta (do Plan Contable) utilizada por defecto para "usuarios" nos informes de gastos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=A conta adicada definida na tarxeta de usuario só se utilizará para a subconta contable. Esta utilizarase para o Libro Maior e tamén como valor predeterminado da contabilidade do sublconta contable se non se define ningunha conta de contable adicada no usuario
 CarCategory=Categoría do vehículo
 ClassifyRefunded=Clasificar 'Reembolsado'
 CompanyVisited=Empresa/organización visitada
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=por ano (sen limitación)
 NoTripsToExportCSV=Sen informe de gasto a exportar para este periodo.
 NOT_AUTHOR=Non é o autor deste informe de gasto. Operación cancelada.
 OnExpense=Liña de gastos
-PDFStandardExpenseReports=Padrón estandar para xerar un documento de informe de gasto
+PDFStandardExpenseReports=Padrón estándar para xerar un documento PDF para un informe de gastos
 PaidTrip=Pagarinforme de  gasto
 REFUSEUR=Denegado por
 RangeIk=Intervalo de quilometraxe
@@ -115,6 +117,10 @@ VALIDOR=Aprobado por
 ValidateAndSubmit=Validar e enviar para aprobar
 ValidatedWaitingApproval=Validado (agardando aprobación)
 ValideTrip=Aprobar informe de gasto
+ExpenseReportPayments=Pagamentos de informes de gastos
+TaxUndefinedForThisCategory = O imposto non está definido para esta categoría
+errorComputeTtcOnMileageExpense=Erro ao calcular o gasto de quilometraxe
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Só se poden eliminar elementos co estado de borrador nunha acción masiva
 
 ## Dictionary
 EX_BRE=Almorzo

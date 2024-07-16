@@ -68,7 +68,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_note');
 
 $form = new Form($db);
 

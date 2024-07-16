@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Usou o asistente de configuración Dolibarr desde un paquet
 KeepDefaultValuesMamp=Usou o asistente de configuración Dolibarr de DoliMamp, polo que os valores aquí propostos xa están optimizados. Cambialos só se sabe o que fai.
 KeepDefaultValuesProxmox=Usou o asistente de configuración Dolibarr desde unha aplicación virtual Proxmox, polo que os valores aquí propostos xa están optimizados. Cambialos só se sabe o que fai.
 UpgradeExternalModule=Executa o proceso adicado de actualización do módulo externo
-SetAtLeastOneOptionAsUrlParameter=Establecer polo menos unha opción como parámetro no URL. Por exemplo: '... repair.php?Standard=confirmado'
+SetAtLeastOneOptionAsUrlParameter=Establece polo menos unha opción como parámetro no URL co valor "proba" ou "confirmado". Por exemplo: '...repair.php?standard=confirmed'
 NothingToDelete=Nada que limpar/eliminar
 NothingToDo=Nothing to do
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=A aplicación intentou actualizarse por si mesma
 YouTryUpgradeDisabledByMissingFileUnLock=A aplicación tentou auto actualizarse, pero o proceso de actualización non está permitido actualmente. <br>
 ClickHereToGoToApp=Fai clic aquí para ir á súa aplicación
 ClickOnLinkOrRemoveManualy=Se hai unha actualización en curso, agarde. Se non, faga clic na seguinte ligazón. Se sempre ve esta mesma páxina, debe eliminar/renomear o ficheiro install.lock no directorio de documentos.
-ClickOnLinkOrCreateUnlockFileManualy=Se hai unha actualización en curso, agarde... Se non, debe crear un ficheiro upgrade.unlock no directorio de documentos de Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=Se hai unha actualización en curso, agarde... Se non, debe eliminar o ficheiro install.lock (ou crear un ficheiro upgrade.unlock para actualizar) no directorio de documentos de Dolibarr.
 Loaded=Cargado
 FunctionTest=Función test
 NodoUpgradeAfterDB=Non se solicita ningunha acción polos módulos externos despois da actualización da base de datos

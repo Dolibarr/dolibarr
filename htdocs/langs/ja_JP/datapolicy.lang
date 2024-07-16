@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = データプライバシーポリシー
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = データのプライバシーを管理するモジュール (GDPR に準拠)
-
-#
 # Administration page
-#
 datapolicySetup = モジュール データのプライバシー ポリシーの設定
 Deletion = データの削除
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = お住まいの国の法律 (GDPR の<a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">第 5 条</a> など) に応じて、個人データは一定期間保管する必要がある。アーカイブ目的を除き、データが収集された目的に必要な期間を超えないこと。<br>削除は自動的に 一定期間後にイベントを伴わず 実施される（期間は以下に指定）。
 NB_MONTHS = %s か月
 ONE_YEAR = 1年
 NB_YEARS = %s年
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 見込客でも顧客でもない
 DATAPOLICY_CONTACT_FOURNISSEUR = サプライヤー
 DATAPOLICY_ADHERENT = 構成員
 DATAPOLICY_Tooltip_SETUP = 連絡先の種類 - 種類ごとに選択肢を示する。
-DATAPOLICYMail = メール設定
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = メールの内容
-DATAPOLICYSUBSITUTION = メールでは次の変数を使用できる (LINKACCEPT を使用すると、その人の同意を記録するリンクを作成できる。LINKREFUSED を使用すると、その人の拒否を記録できる):
-DATAPOLICYACCEPT = 契約後のメッセージ
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = 関連するすべての連絡先 (まだメールを受信しておらず、GDPR 契約について何も登録していない連絡先) に GDPR メールを送信できる。これを行うには、次のボタンを使用する。
 SendAgreement = メールを送る
 AllAgreementSend = すべてのメールが送信された
 TXTLINKDATAPOLICYACCEPT = リンク「同意書」のテキスト
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = リンクのテキスト「意見の相違」
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR : 個人データの処理
 DATAPOLICY_consentement = 個人データの処理について得られた同意
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = 取引先を匿名化
-DATAPOLICY_POPUP_ANONYME_TEXTE = 関連アイテムがあるため、この連絡先を Dolibarr から削除できない。 GDPR に従って、義務を順守するために、このすべてのデータを匿名化する。続行してよいか?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = 移植性GDPR
-DATAPOLICY_PORTABILITE_TITLE = 個人データのエクスポート
-DATAPOLICY_PORTABILITE_CONFIRMATION = この連絡先の個人データをエクスポートする。よいか ？
-
-#
+DATAPOLICY_opposition_traitement = 自分の個人データの処理に反対する
+DATAPOLICY_opposition_prospection = 探求目的での個人データの処理に反対する
 # Notes added during an anonymization
-#
-ANONYMISER_AT = %s を匿名化
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = GDPR メールを送信する
+DATAPOLICY_date = GDPR の同意/不同意の日付
+DATAPOLICY_send = 契約メール送信日
 MailSent = メールが送信された
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = 削除までの月数

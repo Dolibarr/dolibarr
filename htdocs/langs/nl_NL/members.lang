@@ -239,10 +239,11 @@ MemberLastname=Naam lid
 MemberCodeDesc=Ledencode, uniek voor alle leden
 MemberSubscriptionStartFirstDayOf=De ingangsdatum van een lidmaatschap komt overeen met de eerste dag van a
 MemberSubscriptionStartAfter=Minimale periode vóór de inwerkingtreding van de startdatum van een abonnement behalve verlengingen (bijvoorbeeld +3m = +3 maanden, -5d = -5 dagen, +1Y = +1 jaar )
-SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
-ConfirmMassSubsriptionCreation=Confirm subscription creation
-ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
-XSubsriptionCreated=%s subscription(s) created
-XSubsriptionErrors=%s subscription(s) where in error
+SubscriptionLinkedToConciliatedTransaction=Het lidmaatschap is gekoppeld aan een geconcilieerde transactie, dus deze wijziging is niet toegestaan.
+ConfirmMassSubsriptionCreation=Bevestig het maken van abonnement
+ConfirmMassSubsriptionCreationQuestion=Weet u zeker dat u de %s geselecteerde abonnement(s) wilt maken?
+XSubsriptionCreated=%s abonnement(s) gemaakt
+XSubsriptionErrors=%s abonnement(s) waar een fout is opgetreden
 CreateSubscription=Creëer abonnement
-WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+WarningNoComplementaryActionDone=Bij deze massale actie wordt geen aanvullende actie op de opname uitgevoerd
+NewMembership=Nieuw lidmaatschap
