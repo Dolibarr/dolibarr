@@ -470,7 +470,7 @@ ExtrafieldParamHelpPassword=Leaving this field blank means this value will be st
 ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a SQL condition. It can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>To use a SELECT into the filter use the keyword $SEL$ to bypass anti-injection protection.<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a condition. It must use the USF syntax. Example: (active:=:1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>If you want to filter on extrafields use syntax  extra.fieldcode=... (where fieldcode is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Keep empty for a simple separator<br>Set this to 1 for a collapsing separator (open by default for new session, then status is kept for each user session)<br>Set this to 2 for a collapsing separator (collapsed by default for new session, then status is kept fore each user session)
@@ -2267,7 +2267,7 @@ ConfirmDeleteEmailCollector=Are you sure you want to delete this email collector
 RecipientEmailsWillBeReplacedWithThisValue=Recipient emails will be always replaced with this value
 AtLeastOneDefaultBankAccountMandatory=At least 1 default bank account must be defined
 RESTRICT_ON_IP=Allow API access to only certain client IPs (wildcard not allowed, use space between values). Empty means every clients can access.
-StaticIPsOfUsers=If applicable, list of all static IPs of users 
+StaticIPsOfUsers=If applicable, list of all static IPs of users
 IPListExample=127.0.0.1 192.168.0.2 [::1]
 BaseOnSabeDavVersion=Based on the library SabreDAV version
 NotAPublicIp=Not a public IP
@@ -2422,7 +2422,7 @@ CssOnEdit=CSS on edit pages
 CssOnView=CSS on view pages
 CssOnList=CSS on lists
 HelpCssOnEditDesc=The CSS used when editing the field.<br>Example: "minwiwdth100 maxwidth500 widthcentpercentminusx"
-HelpCssOnViewDesc=The CSS used when viewing the field.
+HelpCssOnViewDesc=The CSS used when viewing the field.<br>Example: "longmessagecut"
 HelpCssOnListDesc=The CSS used when field is inside a list table.<br>Example: "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Hide the quantity ordered on the generated documents for receptions
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Show the price on the generated documents for receptions
@@ -2487,7 +2487,7 @@ AI_CONFIGURATIONS_PROMPT=Custom prompt
 TextGeneration=Text generation
 ImageGeneration=Image generation
 VideoGeneration=Video generation
-AudioText=Audio - Text
+AudioGeneration=Audio generation
 AIPromptForFeatures=AI custom prompts for features
 EnterAnIP=Enter an IP address
 ConvertInto=Convert into

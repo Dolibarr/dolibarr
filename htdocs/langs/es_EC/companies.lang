@@ -136,7 +136,6 @@ ProfId4RU=ID Prof. 4 (OKPO)
 VATIntra=ID de IVA
 VATIntraShort=ID de IVA
 VATIntraSyntaxIsValid=La sintaxis es válida
-VATReturn=Devolución del IVA
 ProspectCustomer=Prospecto / Cliente
 CustomerCard=Tarjeta de cliente
 CustomerRelativeDiscount=Descuento relativo del cliente

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=ডেলিভারি
 DeliveryRef=রেফ ডেলিভারি
-DeliveryCard=স্টক রসিদ
+DeliveryCard=Delivery receipt
 DeliveryOrder=প্রসবের প্রাপ্তি
 DeliveryDate=প্রসবের তারিখ
 CreateDeliveryOrder=ডেলিভারি রসিদ তৈরি করুন

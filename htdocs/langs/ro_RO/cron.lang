@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Citeşte Job programat
 Permission23102 = Creare/modificare job programat
 Permission23103 = Şterge job programat
@@ -30,7 +29,8 @@ CronExecute=Lansează acum
 CronConfirmExecute=Sunteți sigur că doriți să executați aceste joburi programate acum?
 CronInfo=Modulul Joburi programate permite programarea lucrărilor de sistem pentru execuţia automată. Joburile pot fi pornite și manual.
 CronTask=Job
-CronNone=Niciunul
+CronNone=Următoarea rulare pentru task-ul programat
+CronNotYetRan=Niciodată executat
 CronDtStart=Dată începere
 CronDtEnd=Data de final
 CronDtNextLaunch=Următoarea execuţie
@@ -49,8 +49,8 @@ CronEach=Fiecare
 JobFinished=Job lansat şi finalizat
 Scheduled=Programat
 #Page card
-CronAdd= Adaugă joburi
-CronEvery=Execută fiecare job
+CronAdd=Adaugă joburi
+CronEvery=Rulare job la fiecare
 CronObject=Instanţă/Obiect de creat
 CronArgs=Parametri
 CronSaveSucess=Salvare cu succes

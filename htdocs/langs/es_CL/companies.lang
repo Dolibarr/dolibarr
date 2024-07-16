@@ -86,7 +86,6 @@ ProfId1US=Id del profesor (FEIN)
 VATIntra=ID de IVA
 VATIntraShort=ID de IVA
 VATIntraSyntaxIsValid=La sintaxis es valida
-VATReturn=Devolución del IVA
 ProspectCustomer=Prospecto/Cliente
 CustomerCard=Tarjeta Cliente
 CustomerRelativeDiscount=Descuento relativo del cliente

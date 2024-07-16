@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Noliktavā nav atrasts neviens produkts, kas pared
 WeightVolShort=Svars / tilp.
 ValidateOrderFirstBeforeShipment=Vispirms jums ir jāapstiprina pasūtījums, lai varētu veikt sūtījumus.
 NoLineGoOnTabToAddSome=Nav rindiņas, atveriet cilni %s, lai pievienotu
+CreateInvoiceForThisCustomerFromSendings=Rēķinu nosūtīšana
+IfValidateInvoiceIsNoSendingStayUnbilled=Ja rēķina apstiprināšana ir “Nē”, nosūtīšanas statuss būs “Bez rēķina”, līdz rēķins tiks apstiprināts.
+OptionToSetSendingBilledNotEnabled=Nav iespējota opcija no moduļa Workflow, lai pēc rēķina apstiprināšanas automātiski iestatītu sūtīšanu uz 'Rēķins', tāpēc pēc rēķina ģenerēšanas jums būs manuāli jāiestata sūtījumu statuss uz 'Rēķins'.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Pilnīgāks dokumentu paraugs piegādes kvīšu un ekstrahēt
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Pastāvīga EXPEDITION_ADDON_NUMBER nav noteikts
 SumOfProductVolumes=Produkta apjomu summa
 SumOfProductWeights=Summēt produkta svaru
-
 # warehouse details
 DetailWarehouseNumber= Noliktavas detaļas
 DetailWarehouseFormat= W: %s (Daudzums: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Parādīt pēdējo noliktavā ienākšanas datumu sūtījuma izveides laikā sērijas numuram vai partijai
 CreationOptions=Pieejamās iespējas sūtījuma izveides laikā
-
 ShipmentDistribution=Sūtījumu sadale
-
 ErrorTooManyCombinationBatchcode=Rindai %s netika nosūtīts, jo tika atrasts pārāk daudz noliktavas, produkta, partijas koda kombināciju (%s).
 ErrorNoCombinationBatchcode=Nevarēja saglabāt rindu %s kā kombināciju warehouse-product-lot/serial (%s, %s, %s) krājumā netika atrasts.
-
 ErrorTooMuchShipped=Nosūtītais daudzums nedrīkst būt lielāks par pasūtīto daudzumu rindā %s.

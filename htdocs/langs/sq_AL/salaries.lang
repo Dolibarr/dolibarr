@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Llogaria (nga Tabela e Llogarive) e përdorur si parazgjedhje për palët e treta "përdorues".
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Llogaria e dedikuar e përcaktuar në kartën e përdoruesit do të përdoret vetëm për kontabilitetin Subledger. Kjo do të përdoret për Librin e Përgjithshëm dhe si vlerë e paracaktuar e kontabilitetit Subledger nëse llogaria e dedikuar e kontabilitetit të përdoruesit për përdoruesin nuk është përcaktuar.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Llogaria (nga Tabela e Llogarive) e përdorur si parazgjedhje për "përdoruesit" në paga
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Llogaria e dedikuar e përcaktuar në kartën e përdoruesit do të përdoret vetëm për kontabilitetin Subledger. Kjo do të përdoret për Librin e Përgjithshëm, por edhe si vlera e paracaktuar e kontabilitetit Subledger nëse përdoruesi nuk ka llogari të dedikuar të kontabilitetit të përdoruesit.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Llogaria e kontabilitetit si parazgjedhje për pagesat e pagave
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Si parazgjedhje, lini bosh opsionin "Krijoni automatikisht një pagesë totale" kur krijoni një pagë
 Salary=Rrogë

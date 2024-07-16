@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Recorded by
 AUTHORPAIEMENT=Paid by
 AddTrip=創建費用報告
@@ -13,6 +13,8 @@ byEX_EXP=by line (limitation to %s)
 byEX_MON=by month (limitation to %s)
 byEX_YEA=by year (limitation to %s)
 CANCEL_USER=Deleted by
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Vehicle category
 ClassifyRefunded=Classify 'Refunded'
 CompanyVisited=參觀公司/組織
@@ -24,7 +26,7 @@ ConfirmPaidTrip=Are you sure you want to change status of this expense report to
 ConfirmRefuseTrip=Are you sure you want to deny this expense report?
 ConfirmSaveTrip=Are you sure you want to validate this expense report?
 ConfirmValideTrip=Are you sure you want to approve this expense report?
-DATE_CANCEL=Cancelation date
+DATE_CANCEL=Cancellation date
 DATE_PAIEMENT=Payment date
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
@@ -39,7 +41,7 @@ expenseReportCoef=Coefficient
 expenseReportCoefUndefined=(value not defined)
 expenseReportOffset=Offset
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionay
+expenseReportRangeDisabled=Range disabled - see the c_exp_tax_range dictionary
 expenseReportRangeFromTo=from %d to %d
 expenseReportRangeMoreThan=more than %d
 expenseReportTotalForFive=Example with <u>d</u> = 5
@@ -91,9 +93,9 @@ nolimitbyEX_EXP=by line (no limitation)
 nolimitbyEX_MON=by month (no limitation)
 nolimitbyEX_YEA=by year (no limitation)
 NoTripsToExportCSV=No expense report to export for this period.
-NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
+NOT_AUTHOR=You are not the author of this expense report. Operation canceled.
 OnExpense=Expense line
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Pay an expense report
 REFUSEUR=Denied by
 RangeIk=Mileage range
@@ -103,10 +105,10 @@ ShowExpenseReport=Show expense report
 ShowTrip=Show expense report
 TripCard=費用報告卡
 TripId=Id expense report
-TripNDF=Informations expense report
+TripNDF=Information expense report
 TripSociete=Information company
 Trips=費用報告
-TripsAndExpenses=費用報告
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=費用報告統計
 TypeFees=Types of fees
 UploadANewFileNow=Upload a new document now
@@ -115,6 +117,10 @@ VALIDOR=Approved by
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Validated (waiting for approval)
 ValideTrip=Approve expense report
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Breakfast
@@ -140,7 +146,7 @@ EX_TAX=Various Taxes
 EX_TOL=Toll CV
 EX_TOL_VP=Toll PV
 TF_BUS=Bus
-TF_CAR=Car
+TF_CAR=汽車
 TF_ESSENCE=Fuel
 TF_HOTEL=Hotel
 TF_LUNCH=午餐
