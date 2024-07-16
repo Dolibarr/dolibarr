@@ -1569,7 +1569,7 @@ if ($step == 5 && $datatoimport) {
 
 	$nboflines = $obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
-	$param = '&leftmenu=import&format='.urlencode($format).'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.urlencode($nboflines).'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
+	$param = '&leftmenu=import&format='.urlencode($format).'&datatoimport='.urlencode($datatoimport).'&filetoimport='.urlencode($filetoimport).'&nboflines='.((int) $nboflines).'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param; // $param2 = $param without excludefirstline and endatlinenb
 	if ($excludefirstline) {
 		$param .= '&excludefirstline='.urlencode($excludefirstline);
