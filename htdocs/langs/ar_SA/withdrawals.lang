@@ -39,7 +39,6 @@ WithdrawalsSetup=إعداد دفع الخصم المباشر
 CreditTransferSetup=إعداد تحويل الرصيد
 WithdrawStatistics=إحصائيات دفع الخصم المباشر
 CreditTransferStatistics=إحصاءات تحويل الائتمان
-Rejects=ترفض
 LastWithdrawalReceipt=أحدث %s إيصالات الخصم المباشر 
 MakeWithdrawRequest=تقديم طلب دفع الخصم المباشر
 MakeWithdrawRequestStripe=قم بإجراء طلب دفع بالخصم المباشر عبر Stripe
@@ -165,10 +164,9 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=يختلف المبلغ ال�
 WarningSomeDirectDebitOrdersAlreadyExists=تحذير: هناك بالفعل بعض أوامر الخصم المباشر المعلقة (%s) المطلوبة لمبلغ %s
 WarningSomeCreditTransferAlreadyExists=تحذير: هناك بالفعل بعض عمليات تحويل الرصيد المعلقة (%s) المطلوبة لمبلغ %s
 UsedFor=تستخدم ل %s
-Societe_ribSigned=تم توقيع تفويض SEPA
+Societe_ribSigned=SEPA mandate signed
 NbOfInvoiceToPayByBankTransferForSalaries=عدد رواتب المؤهلين الذين ينتظرون الدفع عن طريق تحويل الرصيد
 SalaryWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
 RefSalary=الراتب
 NoSalaryInvoiceToWithdraw=لا يوجد راتب في انتظار '%s'. انتقل إلى علامة التبويب '%s' على بطاقة راتب لتقديم طلب.
 SalaryInvoiceWaitingWithdraw=رواتب في انتظار الدفع عن طريق تحويل الرصيد
-

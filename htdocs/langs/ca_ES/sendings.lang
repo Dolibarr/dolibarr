@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=No s'ha trobat cap producte per a enviar al magatz
 WeightVolShort=Pes/Vol.
 ValidateOrderFirstBeforeShipment=S'ha de validar la comanda abans de fer expedicions.
 NoLineGoOnTabToAddSome=Sense línia, aneu a la pestanya "%s" per afegir
+CreateInvoiceForThisCustomerFromSendings=Enviaments de factures
+IfValidateInvoiceIsNoSendingStayUnbilled=Si la validació de la factura és "No", l'enviament es mantindrà en l'estat "No facturat" fins que la factura es validi.
+OptionToSetSendingBilledNotEnabled=L'opció del mòdul Flux de treball, per establir l'enviament a 'Facturat' automàticament quan la factura es valida, no està habilitada, de manera que hauràs de configurar l'estat dels enviaments a 'Facturat' manualment després de generar la factura.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Model de document més complet pels rebuts de lliurament i co
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma del volum dels productes
 SumOfProductWeights=Suma del pes dels productes
-
 # warehouse details
 DetailWarehouseNumber= Detalls del magatzem
 DetailWarehouseFormat= Alm.:%s (Quant. : %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Mostra la darrera data d'entrada a estoc durant la creació de l'enviament per al número de sèrie o lot
 CreationOptions=Opcions disponibles durant la creació de l'enviament
-
 ShipmentDistribution=Distribució de l'enviament
-
 ErrorTooManyCombinationBatchcode=No hi ha enviament per a la línia %s perquè s'han trobat massa combinacions de codi de magatzem, producte i lot (%s).
 ErrorNoCombinationBatchcode=No s'ha pogut desar la línia %s com a combinació de warehouse-product-lot/serial (%s, %s, %s) no s'ha trobat a estoc.
-
 ErrorTooMuchShipped=La quantitat enviada no hauria de ser més gran que la quantitat comandada per a la línia %s

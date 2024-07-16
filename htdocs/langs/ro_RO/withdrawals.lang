@@ -39,7 +39,6 @@ WithdrawalsSetup=Configurare plată prin debit direct
 CreditTransferSetup=Configurare Transfer de credit
 WithdrawStatistics=Rapoarte plăţi prin debit direct
 CreditTransferStatistics=Statistici transferuri de credit
-Rejects=Respingeri
 LastWithdrawalReceipt=Ultimele %s încasări prin debit direct 
 MakeWithdrawRequest=Efectuați o solicitare de plată cu debit direct
 MakeWithdrawRequestStripe=Efectuează o  cerere de plată prin debit direct prin Stripe
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Salariile care așteaptă plata prin transfer de credit
 RefSalary=Salariu
 NoSalaryInvoiceToWithdraw=Niciun salariu în așteptare pentru un '%s'. Accesează fila '%s' de pe cardul de salariu pentru a face o cerere.
 SalaryInvoiceWaitingWithdraw=Salariile care așteaptă plata prin transfer de credit
-

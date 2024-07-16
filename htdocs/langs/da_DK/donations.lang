@@ -35,3 +35,4 @@ DonationPayments=Donationsbetalinger
 DonationValidated=Donation %s bekræftet
 DonationUseThirdparties=Brug adressen på en eksisterende tredjepart som donorens adresse
 DonationsStatistics=Donations statistik
+NbOfDonations=Antal donationer

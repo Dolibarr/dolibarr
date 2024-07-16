@@ -132,5 +132,7 @@ ShowAllPerms=Mostra todas as filas de permisos
 HideAllPerms=Ocultar todas as filas de permisos
 UserPublicPageDesc=Pode activar unha tarxeta virtual para este usuario. Haberá dispoñible un URL co perfil de usuario e un código de barras para que calquera persoa que teña un teléfono intelixente poida escaneala e engadir o seu contacto á súa axenda de enderezos.
 EnablePublicVirtualCard=Active a tarxeta de visita virtual do usuario
+ExcludedByFilter=Non cualificado polos filtros, pero amósase para ver a súa xerarquía
 UserEnabledDisabled=O estado do usuario cambiou: %s
 AlternativeEmailForOAuth2=Correo electrónico alternativo para iniciar sesión en OAuth2
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Erro, a actualización cancelouse porque xa existe un dos datos, que debería ser único

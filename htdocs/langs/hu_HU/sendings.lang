@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Nem található szállítandó termék a(z) <b>%s<
 WeightVolShort=Súly/térfogat.
 ValidateOrderFirstBeforeShipment=Elõször érvényesítenie kell a rendelést, mielõtt kiszállítást végezhet.
 NoLineGoOnTabToAddSome=Nincs sor, lépjen a „%s” lapra a hozzáadáshoz
+CreateInvoiceForThisCustomerFromSendings=Számlaküldések
+IfValidateInvoiceIsNoSendingStayUnbilled=Ha a számla ellenőrzése „Nem”, akkor a küldés „Nem számlázva” állapotú marad mindaddig, amíg a számla nem érvényesül.
+OptionToSetSendingBilledNotEnabled=A Munkafolyamat modul opciója, hogy a küldést automatikusan "Számlázva" értékre állítsa, amikor a számla érvényesítve van, nincs engedélyezve, ezért manuálisan kell a küldések állapotát "Számlázva"-ra állítania. a számla létrejött.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Teljesebb dokumentummodell a kézbesítési elismervényekhez
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Állandó EXPEDITION_ADDON_NUMBER nincs megadva
 SumOfProductVolumes=Termékmennyiségek összege
 SumOfProductWeights=Terméksúlyok összege
-
 # warehouse details
 DetailWarehouseNumber= Raktár adatai
 DetailWarehouseFormat= W:%s (Menny.: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Jelenítse meg a készletezés utolsó dátumát a szállítmány létrehozásakor a sorozatszám vagy a tétel esetében
 CreationOptions=Rendelkezésre álló lehetőségek a szállítmány létrehozása során
-
 ShipmentDistribution=Szállítmány elosztása
-
 ErrorTooManyCombinationBatchcode=Nem történt feladás a %s sorhoz, mivel túl sok raktár, termék és kötegkód kombináció található (%s).
 ErrorNoCombinationBatchcode=Nem sikerült elmenteni a %s sort a warehouse-product-lot/serial kombinációjaként (%s, %s, %s) nem található raktáron.
-
 ErrorTooMuchShipped=A kiszállított mennyiség nem lehet nagyobb, mint a %s sorhoz rendelt mennyiség

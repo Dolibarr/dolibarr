@@ -46,10 +46,16 @@ LineLabel=Etichetă linie
 LineDescription=Descriere linie
 LineUnitPrice=Preţul unitar pentru linie
 LineVATRate=Cota TVA pentru linie
+LineLT1Rate=Procent Taxa 2 pentru linie
+LineLT2Rate=Procent Taxa 3 pentru linie
+LineLT1Type=Tip Taxa 2 pentru linie
+LineLT2Type=Tip Taxa 3 pentru linie
 LineQty=Cantitate pentru linie
 LineTotalHT=Valoarea fără taxe pentru linie
 LineTotalTTC=Valoarea cu taxe pentru linie
 LineTotalVAT=Valoare TVA pentru linie
+LineTotalLT1=Valoare taxa 2 pentru linie
+LineTotalLT2=Valoare taxa 3 pentru linie
 TypeOfLineServiceOrProduct=Tip de linie (0= produs, 1= serviciu)
 FileWithDataToImport=Fişiere cu date de import
 FileToImport=Fişierul sursă de import

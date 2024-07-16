@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Οργάνωση Εκδηλώσεων
 EventOrganizationDescription = Οργάνωση εκδήλωσης μέσω της Ενότητας Έργου
 EventOrganizationDescriptionLong= Διαχειριστείτε τη διοργάνωση μιας εκδήλωσης (παράσταση, συνέδρια, συμμετέχοντες ή ομιλητές, με δημόσιες σελίδες για πρόταση, ψηφοφορία ή εγγραφή)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Οργανωμένες εκδηλώσεις
 EventOrganizationConferenceOrBoothMenuLeft = Συνέδριο ή Περίπτερο
-
 PaymentEvent=Πληρωμή εκδήλωσης
-
-#
+EventFee=Κόστος συμμετοχής εκδήλωσης
 # Admin page
-#
 NewRegistration=Εγγραφή
 EventOrganizationSetup=Ρύθμιση οργάνωσης εκδηλώσεων
 EventOrganization=Οργάνωση εκδήλωσης
@@ -48,10 +38,7 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Πρότυπο email για χρ
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Πρότυπο email για χρήση κατά την αποστολή μηνυμάτων ηλεκτρονικού ταχυδρομείου από τη μαζική αποστολή "Αποστολή email" στη λίστα συμμετεχόντων
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Στη φόρμα δημιουργίας/προσθήκης συμμετέχοντα, περιορίζει τη λίστα τρίτων μόνο σε τρίτα μέρη της κατηγορίας
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Στη φόρμα για τη δημιουργία/προσθήκης ενός συμμετέχοντα, περιορίζει τη λίστα τρίτων σε τρίτα μέρη με τη φύση
-
-#
 # Object
-#
 OrganizedEvent=Οργανωμένη εκδήλωση
 EventOrganizationConfOrBooth= Συνέδριο ή Περίπτερο
 EventOrganizationConfOrBoothes=Συνέδρια ή Περίπτερα
@@ -63,10 +50,7 @@ DateOfRegistration = Ημερομηνία εγγραφής
 ConferenceOrBoothAttendee = Συμμετέχων σε συνέδριο ή περίπτερο
 ApplicantOrVisitor=Αιτών ή επισκέπτης
 Speaker=Ομιλητής
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Το αίτημά σας για συνέδριο ελήφθη
 YourOrganizationEventBoothRequestWasReceived = Το αίτημά σας για περίπτερο ελήφθη
 EventOrganizationEmailAskConf = Αίτημα για συνέδριο
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Εγγραφή για εκδήλωσ
 EventOrganizationMassEmailAttendees = Επικοινωνία με συμμετέχοντες
 EventOrganizationMassEmailSpeakers = Επικοινωνία με ομιλητές
 ToSpeakers=Σε ομιλητές
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Επιτρέψτε σε όλους να προτείνουν συνέδρια
 AllowUnknownPeopleSuggestConfHelp=Επιτρέψτε σε άγνωστα άτομα να προτείνουν ένα συνέδριο που θέλουν να διοργανώσουν
 AllowUnknownPeopleSuggestBooth=Επιτρέψτε σε όλους να κάνουν αίτηση για περίπτερο
@@ -88,29 +69,29 @@ PriceOfRegistration=Τιμή εγγραφής
 PriceOfRegistrationHelp=Τιμή που πρέπει να πληρωθεί για εγγραφή ή συμμετοχή στην εκδήλωση
 PriceOfBooth=Τιμή συνδρομής για να στηθεί ένα περίπτερο
 PriceOfBoothHelp=Τιμή συνδρομής για να στηθεί ένα περίπτερο
+EventOrganizationICSLinkProject=Σύνδεση ICS για την εκδήλωση
 EventOrganizationICSLink=Σύνδεσμος ICS για συνέδρια
 ConferenceOrBoothInformation=Πληροφορίες για το συνέδριο ή το περίπτερο
+ConferenceOrBoothFormat=Λειτουργία συνεδρίου ή περιπτέρου
+ConferenceOrBoothFormatID=Αναγνωριστικό λειτουργίας συνεδρίου ή περιπτέρου
+ConferenceOrBoothFormatCode=Κωδικός λειτουργίας συνεδρίου ή περιπτέρου
+ConferenceOrBoothFormatLabel=Ετικέτα λειτουργίας συνεδρίου ή περιπτέρου
 Attendees=Συμμετέχοντες
-ListOfAttendeesOfEvent=Λίστα συμμετεχόντων της εκδήλωσης
+ListOfAttendeesOfEvent=Λίστα συμμετεχόντων σε έργα εκδηλώσεων
+ListOfConfOrBoothOfEvent=Λίστα συνεδρίων ή περιπτέρων έργων εκδηλώσεων
 DownloadICSLink = Λήψη συνδέσμου ICS
 EVENTORGANIZATION_SECUREKEY = Seed για να εξασφαλίσετε το κλειδί για τη δημόσια σελίδα εγγραφής για την πρόταση συνεδρίου
 SERVICE_BOOTH_LOCATION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη θέση του περιπτέρου
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Υπηρεσία που χρησιμοποιείται για τη γραμμή τιμολογίου σχετικά με τη συνδρομή ενός συμμετέχοντος σε μια εκδήλωση
 NbVotes=Αριθμός ψήφων
-
-#
 # Status
-#
 EvntOrgDraft = Προσχέδιο
 EvntOrgSuggested = Προτεινόμενα
 EvntOrgConfirmed = Επιβεβαιωμένο
 EvntOrgNotQualified = Μη επιλεγμένο
 EvntOrgDone = Ολοκληρωμένες
 EvntOrgCancelled = Ακυρώθηκε
-
-#
 # Other
-#
 SuggestForm = Σελίδα πρότασης
 SuggestOrVoteForConfOrBooth = Σελίδα για πρόταση ή ψήφο
 EvntOrgRegistrationHelpMessage = Εδώ, μπορείτε να ψηφίσετε για ένα συνέδριο ή να προτείνετε ένα νέο για την εκδήλωση. Μπορείτε επίσης να κάνετε αίτηση για την απόκτηση περίπτερου κατά τη διάρκεια της εκδήλωσης.
@@ -133,6 +114,7 @@ EventType = Τύπος εκδήλωσης
 LabelOfBooth=Ταμπέλα περιπτέρου
 LabelOfconference=Ταμπέλα συνεδρίου
 ConferenceIsNotConfirmed=Η εγγραφή δεν είναι διαθέσιμη, το συνέδριο δεν έχει επιβεβαιωθεί ακόμα
+EventRegistrationAreClosed=Οι εγγραφές εκδηλώσεων έχουν κλείσει
 DateMustBeBeforeThan=Το %s πρέπει να είναι πριν από το %s
 DateMustBeAfterThan=Το %s πρέπει να είναι μετά το %s
 MaxNbOfAttendeesReached=Ο μέγιστος αριθμός συμμετεχόντων έχει συμπληρωθεί
@@ -174,6 +156,7 @@ DateEndEvent=Ημερομηνία λήξης εκδήλωσης
 ModifyStatus=Τροποποίηση κατάστασης
 ConfirmModifyStatus=Επιβεβαιώστε την τροποποίηση κατάστασης
 ConfirmModifyStatusQuestion=Είστε σίγουροι ότι θέλετε να τροποποιήσετε τις %s επιλεγμένες εγγραφές;
-RecordsUpdated = Ενημερώθηκαν %s εγγραφές
-RecordUpdated = Η εγγραφή ενημερώθηκε
-NoRecordUpdated = Δεν ενημερώθηκε η εγγραφή
+RecordsUpdated=Ενημερώθηκαν %s εγγραφές
+RecordUpdated=Η εγγραφή ενημερώθηκε
+NoRecordUpdated=Δεν ενημερώθηκε η εγγραφή
+ProfitPerValidatedAttendee=Κέρδος ανά συμμετέχοντα

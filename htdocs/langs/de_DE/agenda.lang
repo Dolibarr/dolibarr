@@ -21,7 +21,6 @@ MenuDoneMyActions=Meine abgeschlossenen Termine
 ListOfEvents=Liste der Ereignisse (Standardkalender)
 ActionsAskedBy=Ereignisse eingetragen von
 ActionsToDoBy=Termin/Aufgabe zugewiesen an
-ActionsDoneBy=Termine erledigt von
 ActionAssignedTo=Ereignis zugewiesen an
 ViewCal=Monatsansicht
 ViewDay=Tagesansicht
@@ -135,12 +134,14 @@ AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginn
 DateActionEnd=Ende
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
-AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer <b>%s</b> nicht als Eigentümer zugewiesene Aktionen.
+AgendaUrlOptions3=<b>logina=%s</b>, um die Ausgabe auf Aktionen zu beschränken, die einem Benutzer <b>%s</b> zugeordnet sind (verwenden Sie <b>logina=!%s</b> für Ereignisse, die dem Benutzer nicht zugeordnet sind).
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um nur Aktionen zum Projekt <b> __PROJECT_ID__</b> auszugeben.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> um automatische Events auszuschliessen.
+AgendaUrlOptionsType=<b>actiontype=%s</b> um entweder automatische oder manuelle Ereignisse zu erhalten
+AgendaUrlOptionsCode=<b>actioncode=%s</b> um nur Ereignisse mit einem bestimmten Code abzurufen
 AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> zur Beschränkung auf Ereignisse in den letzten %s Tagen (Standard ist %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> zur Begrenzung auf die letzten 50 Ereignisse (Standard und Maximum ist %s).
 AgendaShowBirthdayEvents=Geburtstage der Kontakte
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Beschäftigt
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Ihre Buchung wurde gespeichert
 BookingReservationHourAfter=Wir bestätigen die Terminvereinbarung an folgendem Datum: %s
 BookcalBookingTitle=Online-Terminvereinbarung
 Transparency = Transparenz
+ReadMore = Mehr anzeigen
+ReadLess = Weniger anzeigen
