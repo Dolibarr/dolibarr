@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL нысаны жоқ кез келг
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Мүшелік жазылым үшін %s онлайн төлем бетін ұсынатын URL
 ToOfferALinkForOnlinePaymentOnDonation=Қайырымдылық төлемі үшін %s онлайн төлем бетін ұсынатын URL
 YouCanAddTagOnUrl=Сондай -ақ, URL мекенжайының кез келгеніне ur0 параметрін <b> & tag = <i> </i> </b> қосуға болады (тек объектіге байланысы жоқ төлем үшін міндетті). <br> Қолданыстағы объектісі жоқ төлемдердің URL мекенжайы үшін <strong> & noidempotency = 1 </strong> параметрін де қосуға болады, сондықтан сол тегпен бір сілтемені бірнеше рет қолдануға болады (кейбір төлем режимі әр түрлі сілтеме үшін төлемді 1 -ге дейін шектеуі мүмкін) параметр)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe <b> %s </b> url көмегімен Stripe орнатыңыз, Stripe арқылы расталған кезде төлем автоматты түрде жасалады.
 AccountParameter=Есептік жазба параметрлері
 UsageParameter=Қолдану параметрлері
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Жолақты терминалдардың орналасқа
 RequestDirectDebitWithStripe=Stripe арқылы тікелей дебет сұраңыз
 RequesCreditTransferWithStripe=Stripe арқылы несие аударуды сұраңыз
 STRIPE_SEPA_DIRECT_DEBIT=Stripe арқылы тікелей дебеттік төлемдерді қосыңыз
+STRIPE_KLARNA=Klarna көмегімен төлемдерді қосыңыз
+STRIPE_BANCONTACT=BANCONTACT арқылы төлемдерді қосыңыз
+STRIPE_IDEAL=IDEAL көмегімен төлемдерді қосыңыз
+STRIPE_GIROPAY=GIROPAY көмегімен төлемдерді қосыңыз
+STRIPE_SOFORT=SOFORT көмегімен төлемдерді қосыңыз
 StripeConnect_Mode=Жолақты қосылым режимі
+ExampleOnlyForBECustomers=Тек Бельгия тұтынушылары үшін
+ExampleOnlyForDECustomers=Тек неміс тұтынушылары үшін
+ExampleOnlyForNLCustomers=Тек голландиялық тұтынушылар үшін
+ExampleOnlyForATBEDEITNLESCustomers=Тек Австрия, Бельгия, Германия, Италия, Нидерланды, Испания тұтынушылары үшін

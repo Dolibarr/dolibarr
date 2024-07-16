@@ -189,7 +189,7 @@ SuppliersDraftInvoices=Лоиҳаи ҳисобномаҳои фурӯшанда
 Unpaid=Бемузд
 ErrorNoPaymentDefined=Хато Ҳеҷ гуна пардохт муайян карда нашудааст
 ConfirmDeleteBill=Шумо мутмаин ҳастед, ки ин фактураро нест кардан мехоҳед?
-ConfirmValidateBill=Оё мутмаин ҳастед, ки мехоҳед ин ҳисобнома-фактураро бо истинод <b>%s<span class='notranslate'></b> тасдиқ кунед >?
+ConfirmValidateBill=Оё мутмаин ҳастед, ки мехоҳед ин ҳисобнома-фактураро бо истинод <b>%s</b> тасдиқ кунед ?
 ConfirmUnvalidateBill=Шумо мутмаин ҳастед, ки ҳисобнома -фактураро <b> %s </b> тағир додан мехоҳед?
 ConfirmClassifyPaidBill=Шумо мутмаин ҳастед, ки ҳисобнома -фактураро <b> %s </b> тағир додан мехоҳед?
 ConfirmCancelBill=Шумо мутмаин ҳастед, ки фактураро бекор кардан мехоҳед <b> %s </b>?
@@ -211,7 +211,7 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Дар баъзе кишвар
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Интихобро истифода баред, агар ҳама чизи дигар мувофиқат накунад
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=Муштарии бад <b> </b> муштарӣест, ки аз пардохти қарзи худ саркашӣ мекунад.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Ин интихоб ҳангоми пардохт ба охир нарасидааст, зеро баъзе маҳсулот баргардонида шудаанд
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Маблағи пардохтнашуда <b>хироҷҳои бонкии миёнарав</b> буда, мустақиман аз b0aee3836z тарҳ карда мешавад. >маблағи дурусти<span class='notranslate'></b> аз ҷониби Фармоишгар пардохта шудааст.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Маблағи пардохтнашуда ҳеҷ гоҳ пардохт карда намешавад, зеро он андози нигоҳдорӣ мебошад
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Интихобро истифода баред, агар ҳама чизи дигар мувофиқ набошад, масалан дар ҳолати зерин: <br> - пардохт пурра карда нашудааст, зеро баъзе маҳсулот баргардонида шудаанд дар низоми баҳисобгирӣ тавассути эҷоди ёддошти кредитӣ.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>таъминкунандаи бад</b> як молрасонест, ки мо аз пардохт худдорӣ мекунем.
