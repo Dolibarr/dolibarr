@@ -289,6 +289,7 @@ if (isModEnabled('facture')) {
 	}
 	print '</td></tr>';
 
+	/* Keep this option hidden for the moment to avoid options inflation. We'll see later if it is used enough...
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT"), $langs->trans("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACTMore"));
 	print '</td><td>';
@@ -299,7 +300,8 @@ if (isModEnabled('facture')) {
 		print $form->selectarray("SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT", $arrval, $conf->global->SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT);
 	}
 	print '</td></tr>';
-
+	*/
+	
 	print '</table>';
 	print '</div>';
 }
