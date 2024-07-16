@@ -181,7 +181,9 @@ $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
 $title = $langs->trans('CPTitreMenu');
-llxHeader('', $title);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-view_log');
 
 $sqlwhere = '';
 

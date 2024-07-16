@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2013-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,9 +240,9 @@ $holidaystatic = new Holiday($db);
 $result = $object->updateBalance();
 
 $title = $langs->trans('CPTitreMenu');
-$help_url = '';
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-holiday page-list');
 
 $max_year = 5;
 $min_year = 10;
