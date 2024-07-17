@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
 
 
 //load translation files requires by the page
-$langs->trans("admin");
+$langs->loadLangs(array('admin', 'users', 'dict'));
 
 $action = GETPOST('action', 'aZ09');
 
@@ -144,7 +144,7 @@ print dol_get_fiche_head($head, 'divers', $langs->trans('MenuDict'), -1, 'user',
 
 $title = $langs->trans("ConfigImportSocialNetwork");
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'tools', 0, '', '', $listlimit, 1, 0, 1);
+print_barre_liste($title, '', $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'tools', 0, '', '', '', 1, 0, 1);
 
 // Formulaire ajout
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -161,7 +161,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name"></td>';
-print '<td>'.$langs->trans('UrlExample').'</td>';
+print '<td>'.$langs->trans('Example').'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
@@ -175,7 +175,6 @@ print '</div>';
 
 print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
-print '<input type="hidden" name="no_url" value="'.($lastexternalrss + 1).'">';
 
 print '</form>';
 

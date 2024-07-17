@@ -2511,3 +2511,12 @@ EnabledByDefaultAtInstall=Enabled by default at install
 VulnerableToRCEAttack=You are vulnerable to RCE attacks by using the custom dol_json_decode function
 BlackListWords=Black list of words
 AddBlackList=Add to black list
+MenuDict=Dictionary Menu
+FaitDiversSetup=Configuration of Faitdivers section
+ConfigImportSocialNetwork=Configuration import social networks
+FaitDivers=Faits divers
+NewSocialNetwork=New social network
+SocialNetworkUrl= URL
+SocialNetworksNote=Each social network definition provides a widget that you must enable to have it available in dashboard
+ConfirmDeleteSocialNetwork= Are you sure want to delete this record ?
+
