@@ -91,7 +91,9 @@ class Product extends CommonObject
 	);
 
 	/**
-	 * @var string picto
+	 * Label of the pictogram used for this object ('product' or 'service')
+	 * @var string
+	 * @see img_picto()
 	 */
 	public $picto = 'product';
 
@@ -206,7 +208,7 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	/**
-	 * int	French VAT NPR is used (0 or 1)
+	 * @var int	French VAT NPR is used (0 or 1)
 	 */
 	public $tva_npr = 0;
 
@@ -461,12 +463,22 @@ class Product extends CommonObject
 	public $imgWidth;
 	public $imgHeight;
 
-	//! Id du fournisseur
+	/**
+	 * Supplier ID
+	 * @var int
+	 */
 	public $product_fourn_id;
 
-	//! Product ID already linked to a reference supplier
+	/**
+	 * Product ID already linked to a reference supplier
+	 * @var int
+	 */
 	public $product_id_already_linked;
 
+	/**
+	 * Number of pictures
+	 * @var int
+	 */
 	public $nbphoto = 0;
 
 	//! Contains detail of stock of product into each warehouse
@@ -476,14 +488,28 @@ class Product extends CommonObject
 	 * @var int Default warehouse Id
 	 */
 	public $fk_default_warehouse;
+
 	/**
 	 * @var int ID
 	 */
 	public $fk_price_expression;
 
-	/* To store supplier price found */
+	/**
+ 	 * Supplier price found : MOQ (Minimum Order Quantity)
+	 * @var float
+	 */
 	public $fourn_qty;
+
+	/**
+ 	 * Supplier price found : unit price
+	 * @var float
+	 */
 	public $fourn_pu;
+
+	/**
+ 	 * Supplier price found : VAT type
+	 * @var 'HT'|'TTC'
+	 */
 	public $fourn_price_base_type;
 
 	/**
