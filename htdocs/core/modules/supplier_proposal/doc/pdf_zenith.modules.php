@@ -1304,7 +1304,8 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		// Get contact
 		if (getDolGlobalString('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
-			if (count($arrayidcontact) > 0) {
+
+			if (is_array($arrayidcontact) && count($arrayidcontact) > 0) {
 				$usertmp = new User($this->db);
 				$usertmp->fetch($arrayidcontact[0]);
 				$posy += 4;
