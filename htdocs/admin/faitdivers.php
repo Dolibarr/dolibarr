@@ -140,11 +140,11 @@ llxHeader('', $langs->trans("FaitDiversSetup"), '', '', 0, 0, '', '', '', 'mod-a
 $head = socialnetwork_prepare_head();
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
-print dol_get_fiche_head($head, 'divers', $langs->trans('MenuDict'), -1, 'user', '', $linkback);
+print dol_get_fiche_head($head, 'divers', $langs->trans('MenuDict'), -1, 'user', 0, $linkback, '', 0, '', 0);
 
 $title = $langs->trans("ConfigImportSocialNetwork");
 
-print_barre_liste($title, '', $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'tools', 0, '', '', '', 1, 0, 1);
+print_barre_liste($title, '', $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, '');
 
 // Formulaire ajout
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -266,7 +266,6 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Active
-		$active = _isInBoxList((int) $key, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
 		print '<td>'.yn($active);
@@ -289,23 +288,3 @@ if ($resql) {
 
 llxFooter();
 $db->close();
-
-
-
-/**
- * Check if the given RSS feed if inside the list of boxes/widgets
- *
- * @param	int		$idrss		The id of the RSS feed
- * @param	array	$boxlist	A list with boxes/widgets
- * @return	bool				true if the rss feed is inside the box/widget list, otherwise false
- */
-function _isInBoxList($idrss, array $boxlist)
-{
-	foreach ($boxlist as $box) {
-		if ($box->boxcode === "lastrssinfos" && strpos($box->note, (string) $idrss) !== false) {
-			return true;
-		}
-	}
-
-	return false;
-}
