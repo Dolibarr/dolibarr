@@ -415,7 +415,7 @@ class modStock extends DolibarrModules
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode' => 'BarCode'));
 		}
 		$this->export_TypeFields_array[$r] = array(
-			'id.rowid' => 'Numeric', 'sm.value' => 'Numeric', 'sm.datem' => 'Date', 'sm.batch' => 'Text', 'sm.label' => 'Text', 'sm.inventorycode' => 'Text',
+			'id.rowid' => 'Numeric',
 			'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.description' => 'Text', 'e.lieu' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 			'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 			'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date',
@@ -432,9 +432,9 @@ class modStock extends DolibarrModules
 			'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product", 'p.datec' => 'product', 'p.tms' => 'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		if (isModEnabled('productbatch')) {
-			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
-			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';
-			$this->export_entities_array[$r]['sm.batch'] = 'movement';
+			$this->export_fields_array[$r]['id.batch'] = 'Batch';
+			$this->export_TypeFields_array[$r]['id.batch'] = 'Text';
+			$this->export_entities_array[$r]['id.batch'] = 'movement';
 		}
 		if (isModEnabled('barcode')) {
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
