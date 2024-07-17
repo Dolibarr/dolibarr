@@ -1261,13 +1261,8 @@ $form = new Form($db);
 $title = $langs->trans("DictionarySetup");
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
-$object = new modSocialNetworks($db);
 
-if (preg_match('/[?&]id=([0-9]+)/', $object->config_page_url[0], $matches)) {
-	$id = $matches[1];
-}
-
-$head = socialnetwork_prepare_head($id);
+$head = socialnetwork_prepare_head();
 
 print dol_get_fiche_head($head, 'dict', $langs->trans('MenuDict'), -1, 'user');
 

@@ -22,17 +22,16 @@
 
 /**
  * Function for return different onglet of socialnetworks admin page
- * @param   int  $id    id of dictionary
  * @return  array   Tabs for the admin section
  */
-function socialnetwork_prepare_head($id)
+function socialnetwork_prepare_head()
 {
-	global $db, $langs, $conf;
+	global $langs, $conf;
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/dict.php?id='.$id;
+	$head[$h][0] = DOL_URL_ROOT.'/admin/dict.php';
 	$head[$h][1] = $langs->trans("Dictionary");
 	$head[$h][2] = 'dict';
 	$h++;
@@ -40,10 +39,10 @@ function socialnetwork_prepare_head($id)
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/faitdivers.php';
 	$head[$h][1] = $langs->trans("FaitDivers");
-	$head[$h][2] = 'info';
+	$head[$h][2] = 'divers';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $id, $head, $h, 'socialnetwork', 'add', 'external');
-	complete_head_from_modules($conf, $langs, $id, $head, $h, 'socialnetwork', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'socialnetwork', 'add', 'external');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'socialnetwork', 'remove');
 	return $head;
 }
