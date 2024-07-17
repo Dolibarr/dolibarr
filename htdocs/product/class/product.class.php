@@ -495,19 +495,19 @@ class Product extends CommonObject
 	public $fk_price_expression;
 
 	/**
- 	 * Supplier price found : MOQ (Minimum Order Quantity)
+	 * Supplier price found : MOQ (Minimum Order Quantity)
 	 * @var float
 	 */
 	public $fourn_qty;
 
 	/**
- 	 * Supplier price found : unit price
+	 * Supplier price found : unit price
 	 * @var float
 	 */
 	public $fourn_pu;
 
 	/**
- 	 * Supplier price found : VAT type
+	 * Supplier price found : VAT type
 	 * @var 'HT'|'TTC'
 	 */
 	public $fourn_price_base_type;
