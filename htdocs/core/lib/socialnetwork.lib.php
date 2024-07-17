@@ -21,7 +21,7 @@
  */
 
 /**
- * Function for return differents onglet of socialnetworks admin page
+ * Function for return different onglet of socialnetworks admin page
  * @param   int  $id    id of dictionary
  * @return  array   Tabs for the admin section
  */
