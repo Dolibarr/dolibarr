@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=Elfogadva
 SupplierProposalStatusNotSignedShort=Elutasítva
 CopyAskFrom=Ár kérelem létrehozása egy meglévő kérelem másolásával
 CreateEmptyAsk=Üres kérelem létrehozása
-ConfirmCloneAsk=Biztosan klónozni szeretné a(z) <b>%s</b> ár kérelmet?
 ConfirmReOpenAsk=Biztosan újra szeretné nyitni a(z) <b>%s</b> ár kérelmet?
 SendAskByMail=Ár kérelem küldése e-mailben
 SendAskRef=Ár kérelem küldése %s

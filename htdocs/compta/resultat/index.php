@@ -983,7 +983,7 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 $action = "balance";
 $object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
 $parameters["mode"] = $modecompta;
-// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
 $reshook = $hookmanager->executeHooks('addReportInfo', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 

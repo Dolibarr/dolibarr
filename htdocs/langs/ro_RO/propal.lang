@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 săptămână
 AvailabilityTypeAV_2W=2 săptămâni
 AvailabilityTypeAV_3W=3 săptămâni
 AvailabilityTypeAV_1M=1 lună
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Reprezentant urmărire ofertă
 TypeContact_propal_external_BILLING=Contact client pentru facturare ofertă
 TypeContact_propal_external_CUSTOMER=Contact client urmărire ofertă
 TypeContact_propal_external_SHIPPING=Contactul client pentru livrare
-
 # Document models
 CantBeNoSign=nu poate fi semnat
 CaseFollowedBy=Caz urmat de
@@ -122,3 +120,5 @@ SignSociete_rib=Semnare mandat
 SignPropal=Acceptare ofertă
 Signed=semnat
 SignedOnly=Doar semnată
+ExpeditionSigned=Livrare semnată
+SignExpedition=Semnare livrare

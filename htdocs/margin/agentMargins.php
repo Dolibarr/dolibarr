@@ -81,7 +81,7 @@ if (!empty($enddatemonth)) {
 // Security check
 $result = restrictedArea($user, 'margins');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
 $hookmanager->initHooks(array('marginagentlist'));
 

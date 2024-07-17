@@ -391,7 +391,7 @@ if ($refresh === true) {
 		$parameters["month"] = $m;
 		$parameters["type"] = 'vat';
 
-		// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+		// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 

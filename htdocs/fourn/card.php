@@ -73,7 +73,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartysupplier', 'globalcard'));
 
 // Security check
@@ -205,7 +205,7 @@ if ($object->id > 0) {
 		$title = $object->name." - ".$langs->trans('Supplier');
 	}
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fourn page-card');
 
 	/*
 	 * Show tabs
@@ -443,7 +443,7 @@ if ($object->id > 0) {
 	print '<br>';
 
 	// Lien recap
-	$boxstat .= '<div class="box box-halfright">';
+	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
 

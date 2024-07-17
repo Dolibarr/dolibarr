@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=ບັນທຶກໂດຍ
 AUTHORPAIEMENT=ຈ່າຍໂດຍ
 AddTrip=ສ້າງບົດລາຍງານຄ່າໃຊ້ຈ່າຍ
@@ -13,6 +13,8 @@ byEX_EXP=ຕາມແຖວ (ການຈໍາກັດ %s)
 byEX_MON=ຕາມເດືອນ (ການຈໍາກັດ %s)
 byEX_YEA=ຕາມປີ (ການຈໍາກັດ %s)
 CANCEL_USER=ລຶບອອກໂດຍ
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=ປະເພດພາຫະນະ
 ClassifyRefunded=ຈັດປະເພດ 'ຄືນເງິນ'
 CompanyVisited=ໄດ້ໄປຢ້ຽມຢາມບໍລິສັດ/ອົງກອນ
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=ໂດຍປີ (ບໍ່ຈໍາກັດ)
 NoTripsToExportCSV=ບໍ່ມີລາຍງານລາຍຈ່າຍເພື່ອສົ່ງອອກສໍາລັບໄລຍະນີ້.
 NOT_AUTHOR=ທ່ານບໍ່ແມ່ນຜູ້ຂຽນຂອງບົດລາຍງານຄ່າໃຊ້ຈ່າຍນີ້. ຍົກເລີກການດຳເນີນການ.
 OnExpense=ສາຍລາຍຈ່າຍ
-PDFStandardExpenseReports=ແມ່ແບບມາດຕະຖານເພື່ອສ້າງເອກະສານ PDF ສໍາລັບບົດລາຍງານຄ່າໃຊ້ຈ່າຍ
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=ຈ່າຍລາຍງານຄ່າໃຊ້ຈ່າຍ
 REFUSEUR=ປະຕິເສດໂດຍ
 RangeIk=ຂອບເຂດຂອງໄລຍະທາງ
@@ -106,7 +108,7 @@ TripId=ລາຍງານຄ່າໃຊ້ຈ່າຍ Id
 TripNDF=ບົດລາຍງານຄ່າໃຊ້ຈ່າຍຂໍ້ມູນ
 TripSociete=ບໍລິສັດຂໍ້ມູນຂ່າວສານ
 Trips=ລາຍງານລາຍຈ່າຍ
-TripsAndExpenses=ລາຍງານລາຍຈ່າຍ
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=ລາຍງານສະຖິຕິລາຍຈ່າຍ
 TypeFees=ປະເພດຂອງຄ່າທໍານຽມ
 UploadANewFileNow=ອັບໂຫລດເອກະສານໃnow່ດຽວນີ້
@@ -115,6 +117,10 @@ VALIDOR=ອະນຸມັດໂດຍ
 ValidateAndSubmit=ກວດສອບຄວາມຖືກຕ້ອງແລະສົ່ງເພື່ອອະນຸມັດ
 ValidatedWaitingApproval=ກວດສອບແລ້ວ (ລໍຖ້າການອະນຸມັດ)
 ValideTrip=ອະນຸມັດລາຍງານລາຍຈ່າຍ
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=ອາຫານເຊົ້າ

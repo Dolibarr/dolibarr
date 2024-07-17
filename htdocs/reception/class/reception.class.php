@@ -112,11 +112,6 @@ class Reception extends CommonObject
 	public $date_reception;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var integer|string date_validation
 	 */
 	public $date_valid;

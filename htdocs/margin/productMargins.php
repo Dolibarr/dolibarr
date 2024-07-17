@@ -71,7 +71,7 @@ if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOSTINT('enddatemonth'), GETPOSTINT('enddateday'), GETPOST('enddateyear'));
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Product($db);
 $hookmanager->initHooks(array('marginproductlist'));
 
@@ -303,12 +303,24 @@ if ($result) {
 			$pv = $objp->selling_price;
 			$marge = $objp->marge;
 
-			if ($marge < 0) {
-				$marginRate = ($pa != 0) ? -1 * (100 * $marge / $pa) : '';
-				$markRate = ($pv != 0) ? -1 * (100 * $marge / $pv) : '';
+			if ($pa != 0) {
+				$marginRate = (100 * $marge / $pa);
+				// We invert the sign if the margin is negative, regardless of the sign of the purchase price
+				if ($marge < 0) {
+					$marginRate = -$marginRate;
+				}
 			} else {
-				$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
-				$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
+				$marginRate = '';
+			}
+
+			if ($pv != 0) {
+				$markRate = (100 * $marge / $pv);
+				// We invert the sign if the margin is negative, as in the original logic
+				if ($marge < 0) {
+					$markRate = -$markRate;
+				}
+			} else {
+				$markRate = '';
 			}
 
 			print '<tr class="oddeven">';

@@ -185,11 +185,6 @@ class BookKeeping extends CommonObject
 	public $linesexport = array();
 
 	/**
-	 * @var integer|string date of movement validated & lock
-	 */
-	public $date_validation;
-
-	/**
 	 * @var integer|string date of movement who are noticed like exported
 	 */
 	public $date_export;
@@ -3165,24 +3160,9 @@ class BookKeepingLine extends CommonObjectLine
 	public $piece_num;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string $date_modification;
-	 */
-	public $date_modification;
-
-	/**
 	 * @var integer|string $date_export;
 	 */
 	public $date_export;
-
-	/**
-	 * @var integer|string $date_validation;
-	 */
-	public $date_validation;
 
 	/**
 	 * @var integer|string $date_lim_reglement;

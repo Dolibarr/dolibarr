@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=ተጠቃሚ ሊሰረዝ አይችልም። ምናልባት ከዶሊባርር አካላት ጋር የተያያዘ ሊሆን ይችላል.
 ErrorFieldsRequired=አንዳንድ አስፈላጊ መስኮች ባዶ ቀርተዋል።
 ErrorSubjectIsRequired=የኢሜል ርዕሰ ጉዳይ ያስፈልጋል
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=ማውጫ መፍጠር አልተሳካም። የድር አገልጋይ ተጠቃሚ ወደ Dolibarr ሰነዶች ማውጫ ውስጥ የመፃፍ ፍቃድ እንዳለው ያረጋግጡ። ፓራሜትር <b>safe_mode</b> በዚህ ፒኤችፒ ላይ ከነቃ የዶሊባርር php ፋይሎች ባለቤት መሆናቸውን ያረጋግጡ የድር አገልጋይ ተጠቃሚ (ወይም ቡድን)።
 ErrorNoMailDefinedForThisUser=ለዚህ ተጠቃሚ ምንም ደብዳቤ አልተገለጸም።
 ErrorSetupOfEmailsNotComplete=ኢሜይሎችን ማዋቀር አልተጠናቀቀም።
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=ስህተት፣ የሚተካው ሕብረቁምፊ ባ�
 ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
 ErrorProductDoesNotNeedBatchNumber=ስህተት፣ ምርት '<b>%s</b>ዕጣ አይቀበልም ተከታታይ ቁጥር
 ErrorFailedToReadObject=ስህተት፣ የነገር አይነት ማንበብ አልተሳካም <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=ስህተት፣ ይህ መግቢያ ከትክክለኛው የቀን ክልል ውጭ ነው።
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword=<b>%s</b> የሚለው ቃል የተያዘ ቁልፍ ቃል ነው።
@@ -322,16 +324,21 @@ ErrorFixThisHere=<a href="%s">ይህንን እዚህ አስተካክል</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=ስህተት፡ የአሁን ምሳሌህ (%s) በእርስዎ OAuth2 መግቢያ ማዋቀር (%s) ላይ ከተገለጸው ዩአርኤል ጋር አይዛመድም። በእንደዚህ አይነት ውቅር ውስጥ OAuth2 መግባት አይፈቀድም።
 ErrorMenuExistValue=ከዚህ ርዕስ ወይም URL ያለው ምናሌ አስቀድሞ አለ።
 ErrorSVGFilesNotAllowedAsLinksWithout=የኤስቪጂ ፋይሎች ያለ አማራጭ %s እንደ ውጫዊ አገናኞች አይፈቀዱም
-ErrorTypeMenu=በ navbar ላይ ለተመሳሳይ ሞጁል ሌላ ምናሌ ማከል አይቻልም፣ እስካሁን አያያዘም።
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = ነገሩ <b>%s</b> አልተገኘም እባኮትን የእርስዎን url ያረጋግጡ።
 ErrorCountryCodeMustBe2Char=የአገር ኮድ ባለ 2 ቁምፊ ሕብረቁምፊ መሆን አለበት።
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=ሰንጠረዥ <b>%s</b> አስቀድሞ አለ
 ErrorDictionaryNotFound=መዝገበ ቃላት <b>%s</b> አልተገኘም
 ErrorFailedToCreateSymLinkToMedias=ወደ %s ለመጠቆም የ%s ተምሳሌታዊ አገናኝ መፍጠር አልተሳካም
 ErrorCheckTheCommandInsideTheAdvancedOptions=ወደ ውጭ ለመላክ ጥቅም ላይ የዋለውን ትዕዛዝ ወደ ውጭ የላቁ አማራጮች ያረጋግጡ
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Date start must be less than date end
+ErrorEndHourIsNull=End date cannot be zero
+ErrorStartHourIsNull=Start date cannot be zero
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=የእርስዎ ፒኤችፒ መለኪያ upload_max_filesize (%s) ከPHP መለኪያ post_max_size (%s) ከፍ ያለ ነው። ይህ ወጥነት ያለው ማዋቀር አይደለም።
 WarningPasswordSetWithNoAccount=ለዚህ አባል የይለፍ ቃል ተቀናብሯል። ሆኖም የተጠቃሚ መለያ አልተፈጠረም። ስለዚህ ይህ የይለፍ ቃል ተከማችቷል ነገር ግን ወደ ዶሊባርር ለመግባት መጠቀም አይቻልም። በውጫዊ ሞጁል/በይነገጽ ጥቅም ላይ ሊውል ይችላል ነገር ግን ለአባል ምንም አይነት መግቢያም ሆነ የይለፍ ቃል መግለጽ ካላስፈለገዎት ከአባላት ሞጁል ቅንብር "ለእያንዳንዱ አባል መግቢያን ያስተዳድሩ" የሚለውን አማራጭ ማሰናከል ይችላሉ። መግቢያን ማስተዳደር ከፈለጉ ነገር ግን ምንም የይለፍ ቃል የማይፈልጉ ከሆነ ይህንን ማስጠንቀቂያ ለማስወገድ ይህንን መስክ ባዶ ማቆየት ይችላሉ። ማሳሰቢያ፡ አባሉ ከተጠቃሚ ጋር የተገናኘ ከሆነ ኢሜል እንደ መግቢያ መጠቀምም ይችላል።
@@ -344,6 +351,7 @@ WarningConfFileMustBeReadOnly=ማስጠንቀቂያ፣ የእርስዎ የማዋ
 WarningsOnXLines=ማስጠንቀቂያዎች በ<b>%s</b>ምንጭ መዝገቦች(ዎች)
 WarningNoDocumentModelActivated=ለሰነድ ማመንጨት ምንም ሞዴል አልነቃም። የሞጁሉን ማዋቀር እስኪያረጋግጡ ድረስ ሞዴል በነባሪነት ይመረጣል።
 WarningLockFileDoesNotExists=ማስጠንቀቂያ፣ አንዴ ማዋቀሩ እንደጨረሰ፣ ፋይል <b>install.lock</b> ወደ ማውጫ ውስጥ በማከል የመጫኛ/ፍልሰት መሳሪያዎችን ማሰናከል አለቦት። <b>%s</b>። የዚህ ፋይል መፈጠርን መተው ከባድ የደህንነት አደጋ ነው።
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=ይህ የደህንነት ማስጠንቀቂያ ተጋላጭነቱ እስካለ ድረስ ንቁ ሆኖ ይቆያል።
 WarningCloseAlways=ማስጠንቀቂያ፣ መጠኑ በምንጭ እና በዒላማ አካላት መካከል ቢለያይም መዝጋት ይከናወናል። ይህን ባህሪ በጥንቃቄ አንቃው።
 WarningUsingThisBoxSlowDown=ማስጠንቀቂያ፣ ይህን ሳጥን በመጠቀም ሳጥኑን የሚያሳዩ ሁሉንም ገጾች በቁም ነገር ይቀንሱ።
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = ሞጁል <b>%s</b> ተሰናክሏል። እሱን �
 WarningPermissionAlreadyExist=ለዚህ ነገር ነባር ፈቃዶች
 WarningGoOnAccountancySetupToAddAccounts=ይህ ዝርዝር ባዶ ከሆነ ወደ ሜኑ ይሂዱ %s - %s - %s ለመለያ ገበታዎ መለያዎችን ለመጫን ወይም ለመፍጠር።
 WarningCorrectedInvoiceNotFound=የተስተካከለ ደረሰኝ አልተገኘም።
-WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=የአክሲዮን እንቅስቃሴ አስቀድሞ ተቀልብሷል
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = የስዊስQR ደረሰኝ በክሬዲት ማስተላለፍ ክፍያዎች እንዲከፈሉ በተዘጋጁ ደረሰኞች ላይ ብቻ መጨመር ይችላል።
 SwissQrCreditorAddressInvalid = የአበዳሪው አድራሻ ልክ ያልሆነ ነው (ዚፕ እና ከተማ ተቀናብረዋል? (%s)
 SwissQrCreditorInformationInvalid = የአበዳሪው መረጃ ለ IBAN (%s) ልክ ያልሆነ ነው፡ %s
 SwissQrIbanNotImplementedYet = QR-IBAN እስካሁን አልተተገበረም።
 SwissQrPaymentInformationInvalid = የክፍያ መረጃ ለጠቅላላ %s : %s ልክ ያልሆነ ነበር
 SwissQrDebitorAddressInvalid = የተበዳሪው መረጃ ልክ ያልሆነ ነበር (%s)
-
 # Validate
 RequireValidValue = ዋጋ ልክ አይደለም።
 RequireAtLeastXString = ቢያንስ %s ቁምፊ(ዎች) ይፈልጋል
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = ስህተት የመስክ ማዋቀ�
 BadSetupOfFieldFileNotFound = ስህተት የመስክ ማዋቀር ስህተት፡ ፋይሉ ለመካተት አልተገኘም።
 BadSetupOfFieldFetchNotCallable = ስህተት የመስክ ማዋቀር ስህተት፡ በክፍል ውስጥ መጥራት አይቻልም
 ErrorTooManyAttempts= በጣም ብዙ ሙከራዎች፣ እባክዎ ቆይተው እንደገና ይሞክሩ
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed
