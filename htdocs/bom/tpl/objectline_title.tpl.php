@@ -47,7 +47,7 @@ if (empty($filtertype)) {
 	$filtertype = 0;
 }
 
-print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_title.tpl.php -->\n";
 
 
 // Title line
@@ -93,7 +93,7 @@ if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Prod
 if ($filtertype == 1 && isModEnabled('workstation')) {
 	// Workstation
 	if (isModEnabled('workstation')) {
-		print '<td class="linecolworkstation">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+		print '<td class="linecolworkstation">' .img_picto('', 'workstation', 'class="pictofixedwidth"').  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
 	}
 }
 

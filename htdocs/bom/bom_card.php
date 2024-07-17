@@ -310,8 +310,11 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-
-$title = $langs->trans('BOM');
+if ($object->id > 0) {
+	$title = $object->ref;
+} else {
+	$title = $langs->trans('BOM');
+}
 $help_url = 'EN:Module_BOM';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card');
 

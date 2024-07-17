@@ -92,7 +92,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 $objectline = new BOMLine($object->db);
 
 $coldisplay = 0;
-print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_view.tpl.php -->\n";
 print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.' >';
 
 // Line nb
@@ -102,7 +102,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product
-print '<td class="linecoldescription bomline minwidth300imp">';
+print '<td class="linecoldescription bomline minwidth300imp tdoverflowmax300">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
