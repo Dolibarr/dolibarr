@@ -20,6 +20,8 @@ if (!defined('NOREQUIRESOC')) {
 }
 require_once '../../main.inc.php';
 require_once '../lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 top_httphead();
 
@@ -36,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
                                 <p style="margin: 10px 0; color: #555;">' . htmlentities($post['description']) . '</p>
                                 <span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . htmlentities($post['user_fullname']) . '</strong></span>
                                 <br>
-                                <span style="display: block; color: #888;">' . dol_print_date($post['date_creation'], 'daytext', 'tzserver', '') . '</span>
+                                <span style="display: block; color: #888;">' . dol_print_date($post['date_creation'], 'daytext', 'tzserver', $langs) . '</span>
                             </div>
                             <div style="flex-shrink: 0; margin-left: 100px; float: right;">
                                 ' . ($post['image'] ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . htmlentities($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
