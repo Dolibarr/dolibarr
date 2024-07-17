@@ -330,7 +330,7 @@ if (isModEnabled('invoice')) {
 	}
 	print '</td></tr>';
 	*/
-	
+
 	print '</table>';
 	print '</div>';
 }
