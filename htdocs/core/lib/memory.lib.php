@@ -84,7 +84,8 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcached();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $dolmemcache->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -105,7 +106,8 @@ function dol_setcache($memoryid, $data, $expire = 0)
 		if (empty($dolmemcache) || !is_object($dolmemcache)) {
 			$dolmemcache = new Memcache();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $dolmemcache->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $dolmemcache->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -154,7 +156,8 @@ function dol_getcache($memoryid)
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcached();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $m->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
@@ -179,7 +182,8 @@ function dol_getcache($memoryid)
 		if (empty($m) || !is_object($m)) {
 			$m = new Memcache();
 			$tmparray = explode(':', getDolGlobalString('MEMCACHED_SERVER'));
-			$result = $m->addServer($tmparray[0], $tmparray[1] ? $tmparray[1] : 11211);
+			$port = (empty($tmparray[1]) ? 0 : $tmparray[1]);
+			$result = $m->addServer($tmparray[0], ($port || strpos($tmparray[0], '/') !== false) ? $port : 11211);
 			if (!$result) {
 				return -1;
 			}
