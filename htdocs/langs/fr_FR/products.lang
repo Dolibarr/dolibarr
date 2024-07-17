@@ -435,7 +435,3 @@ AllowStockMovementVariantParentHelp=Par défaut, un parent d'une variante est un
 ConfirmSetToDraftInventory=Êtes-vous sûr de vouloir revenir à l'état de brouillon ?<br>Les quantités actuellement définies dans l'inventaire seront réinitialisées.
 WarningLineProductNotToSell=Le produit ou le service "%s" n'est pas à vendre et a été cloné.
 PriceLabel=Étiquette de prix
-StockableProduct=Activer la gestion des stocks
-StockableProductDescription=Si cette option est désactivée, la modification du stock pour cet élément n'est pas prise en compte. Les mouvements de stock ne seront pas pris en compte dans les commandes client, commande fournisseur, expédition, réception, ordre de fabrication.<br /> Dans les faits, cette option se comporte comme une activation/désactivation du module stock mais à l'échelle du produit/service
-StockDisabled=Stock désactivé
-StockEnabled=Stock activé
