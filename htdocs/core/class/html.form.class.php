@@ -5318,7 +5318,7 @@ class Form
 			// TODO Move this into common category feature
 			$cate_arbo = array();
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM " . $this->db->prefix() . "bank_categ as c";
+			$sql .= " FROM " . $this->db->prefix() . "category_bank as c";
 			$sql .= " WHERE entity = " . $conf->entity;
 			$sql .= " ORDER BY c.label";
 			$result = $this->db->query($sql);

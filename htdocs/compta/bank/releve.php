@@ -663,7 +663,7 @@ if (empty($numref)) {
 			// Categories
 			if ($ve) {
 				$sql = "SELECT label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
+				$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as ct";
 				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".((int) $conf->entity);
