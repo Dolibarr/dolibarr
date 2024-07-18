@@ -140,6 +140,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 					$facturestatic->paye = $objp->paye;
 					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
+					$facturestatic->totalpaid = $objp->am;
 
 					$thirdpartystatic->id = $objp->socid;
 					$thirdpartystatic->name = $objp->name;
@@ -203,41 +204,41 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
+						'td' => 'class="center" colspan="3"',
 						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidSupplierBills").'</span>',
 					);
+				} else {
+					$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
+
+					$result = $this->db->query($sql);
+					$objp = $this->db->fetch_object($result);
+					$totalamount = $objp->total_ht;
+
+					// Add the sum à the bottom of the boxes
+					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total_wrap"',
+						'td' => 'class="liste_total"',
+						'text' => $langs->trans("Total"),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right liste_total" ',
+						'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+
+					$this->db->free($result);
 				}
-
-				$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
-
-				$result = $this->db->query($sql);
-				$objp = $this->db->fetch_object($result);
-				$totalamount = $objp->total_ht;
-
-				// Add the sum à the bottom of the boxes
-				$this->info_box_contents[$line][] = array(
-					'tr' => 'class="liste_total_wrap"',
-					'td' => 'class="liste_total"',
-					'text' => $langs->trans("Total"),
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right liste_total" ',
-					'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-
-				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
