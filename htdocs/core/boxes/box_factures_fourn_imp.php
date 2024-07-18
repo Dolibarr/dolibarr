@@ -72,7 +72,11 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		$langs->load("bills");
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills", $this->max));
+		$textHead = $langs->trans("BoxTitleOldestUnpaidSupplierBills");
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleOldestUnpaidSupplierBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status=1&sortfield=f.date_lim_reglement,f.ref&sortorder=ASC,ASC"><span class="badge">...</span></a>',
+			'limit' => dol_strlen($textHead)
+		);
 
 		if ($user->hasRight('fournisseur', 'facture', 'lire')) {
 			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
@@ -105,7 +109,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 			$sql3 = " GROUP BY s.rowid, s.nom, s.name_alias, s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur, s.logo, s.email, s.entity, s.tva_intra, s.siren, s.siret, s.ape, s.idprof4, s.idprof5, s.idprof6,";
 			$sql3 .= " f.rowid, f.ref, f.ref_supplier, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut, f.tms";
-			$sql3 .= " ORDER BY datelimite DESC, f.ref_supplier DESC ";
+			$sql3 .= " ORDER BY datelimite ASC, f.ref_supplier ASC";
 			$sql3 .= $this->db->plimit($this->max + 1, 0);
 
 			$sql = $sql1.$sql2.$sql3;

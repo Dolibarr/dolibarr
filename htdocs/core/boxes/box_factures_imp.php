@@ -77,7 +77,7 @@ class box_factures_imp extends ModeleBoxes
 
 		$textHead = $langs->trans("BoxTitleOldestUnpaidCustomerBills");
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&sortfield=f.date_lim_reglement,f.ref&sortorder=ASC,ASC"><span class="badge">...</span></a>',
 			'limit' => dol_strlen($textHead));
 
 		if ($user->hasRight('facture', 'lire')) {
@@ -124,7 +124,7 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql3 .= " f.rowid, f.ref, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut";
-			$sql3 .= " ORDER BY datelimite ASC, f.ref ASC ";
+			$sql3 .= " ORDER BY datelimite ASC, f.ref ASC";
 			$sql3 .= $this->db->plimit($this->max + 1, 0);
 
 			$sql = $sql1.$sql2.$sql3;
@@ -140,6 +140,9 @@ class box_factures_imp extends ModeleBoxes
 					$objp = $this->db->fetch_object($result);
 
 					$datelimite = $this->db->jdate($objp->datelimite);
+					$date = $this->db->jdate($objp->date);
+					$datem = $this->db->jdate($objp->tms);
+					$datelimit = $this->db->jdate(datelimite);
 
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
@@ -147,13 +150,15 @@ class box_factures_imp extends ModeleBoxes
 					$facturestatic->total_ht = $objp->total_ht;
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
+					$facturestatic->date = $date;
+					$facturestatic->date_lim_reglement = $datelimit;
 					$facturestatic->statut = $objp->status;
 					$facturestatic->status = $objp->status;
-					$facturestatic->date = $this->db->jdate($objp->date);
-					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
 
 					$facturestatic->paye = $objp->paye;
+					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
+					$facturestatic->totalpaid = $objp->am;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
@@ -166,12 +171,13 @@ class box_factures_imp extends ModeleBoxes
 					$societestatic->email = $objp->email;
 					$societestatic->entity = $objp->entity;
 					$societestatic->tva_intra = $objp->tva_intra;
-					$societestatic->idprof1 = $objp->idprof1;
-					$societestatic->idprof2 = $objp->idprof2;
-					$societestatic->idprof3 = $objp->idprof3;
-					$societestatic->idprof4 = $objp->idprof4;
-					$societestatic->idprof5 = $objp->idprof5;
-					$societestatic->idprof6 = $objp->idprof6;
+
+					$societestatic->idprof1 = !empty($objp->idprof1) ? $objp->idprof1 : '';
+					$societestatic->idprof2 = !empty($objp->idprof2) ? $objp->idprof2 : '';
+					$societestatic->idprof3 = !empty($objp->idprof3) ? $objp->idprof3 : '';
+					$societestatic->idprof4 = !empty($objp->idprof4) ? $objp->idprof4 : '';
+					$societestatic->idprof5 = !empty($objp->idprof5) ? $objp->idprof5 : '';
+					$societestatic->idprof6 = !empty($objp->idprof6) ? $objp->idprof6 : '';
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
@@ -204,7 +210,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->am),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->am, $objp->type),
 					);
 
 					$line++;
