@@ -83,9 +83,9 @@ class box_factures_imp extends ModeleBoxes
 		if ($user->hasRight('facture', 'lire')) {
 			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.code_client, s.client";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$sql1 .= ", spe.accountancy_code_customer as code_compta";
+				$sql1 .= ", spe.accountancy_code_customer as code_compta_client";
 			} else {
-				$sql1 .= ", s.code_compta";
+				$sql1 .= ", s.code_compta as code_compta_client";
 			}
 			$sql1 .= ", s.logo, s.email, s.entity";
 			$sql1 .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
@@ -159,7 +159,8 @@ class box_factures_imp extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -215,41 +216,41 @@ class box_factures_imp extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
+						'td' => 'class="center" colspan="3"',
 						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
 					);
+				} else {
+					$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
+
+					$result = $this->db->query($sql);
+					$objp = $this->db->fetch_object($result);
+					$totalamount = $objp->total_ht;
+
+					// Add the sum à the bottom of the boxes
+					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total_wrap"',
+						'td' => 'class="liste_total"',
+						'text' => $langs->trans("Total"),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right liste_total" ',
+						'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+
+					$this->db->free($result);
 				}
-
-				$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
-
-				$result = $this->db->query($sql);
-				$objp = $this->db->fetch_object($result);
-				$totalamount = $objp->total_ht;
-
-				// Add the sum à the bottom of the boxes
-				$this->info_box_contents[$line][] = array(
-					'tr' => 'class="liste_total_wrap"',
-					'td' => 'class="liste_total"',
-					'text' => $langs->trans("Total"),
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right liste_total" ',
-					'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-
-				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
