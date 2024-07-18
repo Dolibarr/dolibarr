@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2007-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
+/* Copyright (C) 2006		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,7 @@ $arrayfields = array(
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('chequelist'));
 $object = new RemiseCheque($db);
 
@@ -141,7 +141,9 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ChequeDeposits"));
+$title = $langs->trans("ChequeDeposits");
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $sql = "SELECT bc.rowid, bc.ref, bc.date_bordereau,";
 $sql .= " bc.nbcheque, bc.amount, bc.statut, bc.type,";

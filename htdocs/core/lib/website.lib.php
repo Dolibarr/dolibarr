@@ -330,10 +330,10 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 		// Warning: we may replace twice if href="..." was inside an include (dolWebsiteOutput called by include and the by final page), that's why
 		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
-		// Replace occurrence like _service_page_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_service_page_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_page_\2\1', $content, -1, $nbrep);
-		// Replace occurrence like _library_page_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_library_page_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_page_\2\1', $content, -1, $nbrep);
+		// Replace occurrence like _service_XXX.php with dolibarr URL
+		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
+		// Replace occurrence like _library_XXX.php with dolibarr URL
+		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 
@@ -631,7 +631,10 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+	// We don't print info messages for pages of type library or service
+	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+	}
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res) {
@@ -1096,6 +1099,56 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	}
 
 	return $image_path;
+}
+
+/**
+ * Return list of public files of a given object.
+ *
+ * @param	Object	$object			Object
+ * @return  array					List of public files of object
+ */
+function getPublicFilesOfObject($object)
+{
+	global $db;
+
+	$files = array();
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '/('.$regexforimg.')$/i';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (!empty($obj->share)) {
+					$files[$obj->rowid]['filename'] = $obj->filename;
+					$files[$obj->rowid]['position'] = $obj->position;
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						if (preg_match($regexforimg, $obj->filename)) {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+						} else {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/document.php?hashp='.urlencode($obj->share);
+						}
+					} else {
+						$files[$obj->rowid]['url'] = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
+				}
+			}
+			$i++;
+		}
+	}
+
+	return $files;
 }
 
 

@@ -30,6 +30,7 @@
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 require_once DOL_DOCUMENT_ROOT . '/core/modules/import/modules_import.php';
 
@@ -302,22 +303,34 @@ class ImportXlsx extends ModeleImports
 	public function import_read_record()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
 		if ($this->record > $rowcount) {
 			return false;
 		}
 		$array = array();
+
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
+
 		for ($col = 1; $col <= $countcolumns; $col++) {
-			$val = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record)->getValue();
+			$tmpcell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record);
+
+			$val = $tmpcell->getValue();
+
+			if (Date::isDateTime($tmpcell)) {
+				// For date field, we use the standard date format string.
+				$dateValue = Date::excelToDateTimeObject($val);
+				$val = $dateValue->format('Y-m-d H:i:s');
+			}
+
 			$array[$col]['val'] = $val;
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;
+
+		unset($xlsx);
+
 		return $array;
 	}
 
@@ -408,7 +421,7 @@ class ImportXlsx extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
+				// Define an array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key);

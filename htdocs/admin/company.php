@@ -7,6 +7,7 @@
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2023       Nick Fragoulis
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ $maxwidthmini = $tmparraysize['maxwidthmini'];
 $maxheightmini = $tmparraysize['maxheightmini'];
 $quality = $tmparraysize['quality'];
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
 
@@ -92,7 +93,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 		activateModulesRequiredByCountry($mysoc->country_code);
 	}
 
-	$tmparray = getState(GETPOSTINT('state_id'), 'all', $db, $langs, 0);
+	$tmparray = getState(GETPOSTINT('state_id'), 'all', $db, 0, $langs, 0);
 	if (!empty($tmparray['id'])) {
 		$mysoc->state_id   = $tmparray['id'];
 		$mysoc->state_code = $tmparray['code'];

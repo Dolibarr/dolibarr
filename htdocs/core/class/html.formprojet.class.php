@@ -877,7 +877,7 @@ class FormProjets extends Form
 				}
 				$out .= '</select>';
 			} else {
-				dol_print_error($this->db->lasterror);
+				dol_print_error($this->db, $this->db->lasterror);
 				return '';
 			}
 		}
@@ -929,7 +929,7 @@ class FormProjets extends Form
 				$out .= '</select>';
 			}
 		} else {
-			dol_print_error($this->db->lasterror);
+			dol_print_error($this->db, $this->db->lasterror);
 			return '';
 		}
 

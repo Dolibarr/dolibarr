@@ -86,7 +86,7 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $user, $action);
 
 $accountingaccount = new AccountingAccount($db);
 
-// Get information of journal
+// Get information of a journal
 $accountingjournalstatic = new AccountingJournal($db);
 $accountingjournalstatic->fetch($id_journal);
 $journal = $accountingjournalstatic->code;
@@ -437,7 +437,7 @@ if ($action == 'writebookkeeping' && !$error) {
 		$totalcredit = 0;
 		$totaldebit = 0;
 
-		$db->begin();		// We accept transaction into loop so if we hang, we can continue transfer from last error
+		$db->begin();		// We accept transaction into loop, so if we hang, we can continue transfer from the last error
 
 		$companystatic->id = $tabcompany[$key]['id'];
 		$companystatic->name = $tabcompany[$key]['name'];
@@ -453,7 +453,7 @@ if ($action == 'writebookkeeping' && !$error) {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -463,7 +463,7 @@ if ($action == 'writebookkeeping' && !$error) {
 			}
 		}
 
-		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating replacement not possible if invoice is accounted)
+		// If not already into bookkeeping, we won't add it. If yes, do nothing (should not happen because creating a replacement is not possible if invoice is accounted)
 		if ($replacedinvoice == 1) {
 			$db->rollback();
 			continue;
@@ -487,7 +487,7 @@ if ($action == 'writebookkeeping' && !$error) {
 					$bookkeeping->date_creation = $now;
 					$bookkeeping->doc_type = 'customer_invoice';
 					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are the source of this record to add
 					$bookkeeping->thirdparty_code = $companystatic->code_client;
 
 					$bookkeeping->subledger_account = $tabcompany[$key]['code_compta'];
@@ -863,7 +863,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;
@@ -1115,7 +1115,7 @@ if (empty($action) || $action == 'view') {
 
 		$date = dol_print_date($val["date"], 'day');
 
-		// Is it a replaced invoice ? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
+		// Is it a replaced invoice? 0=not a replaced invoice, 1=replaced invoice not yet dispatched, 2=replaced invoice dispatched
 		$replacedinvoice = 0;
 		if ($invoicestatic->close_code == Facture::CLOSECODE_REPLACED) {
 			$replacedinvoice = 1;

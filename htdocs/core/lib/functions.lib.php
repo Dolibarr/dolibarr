@@ -45,7 +45,7 @@
  *					This file contains all frequently used functions.
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+//include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
 // Function for better PHP x compatibility
 if (!function_exists('utf8_encode')) {
@@ -1096,6 +1096,38 @@ function GETPOSTFLOAT($paramname, $rounding = '')
 
 
 /**
+ * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
+ * optionally hour, minute, second) fields to return a timestamp.
+ *
+ * @param 	string 		$prefix 	Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param 	string 		$hourTime	'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
+ *                      		    hour, minute, second respectively (for instance '23:59:59')
+ * @param 	string 		$gm 		Passed to dol_mktime
+ * @return 	int|string  			Date as a timestamp, '' or false if error
+ */
+function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
+{
+	$m = array();
+	if ($hourTime === 'getpost') {
+		$hour   = GETPOSTINT($prefix . 'hour');
+		$minute = GETPOSTINT($prefix . 'minute');
+		$second = GETPOSTINT($prefix . 'second');
+	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
+		$hour   = intval($m[1]);
+		$minute = intval($m[2]);
+		$second = intval($m[3]);
+	} else {
+		$hour = $minute = $second = 0;
+	}
+	// normalize out of range values
+	$hour = min($hour, 23);
+	$minute = min($minute, 59);
+	$second = min($second, 59);
+	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
+}
+
+
+/**
  *  Return a sanitized or empty value after checking value against a rule.
  *
  *  @deprecated
@@ -1185,8 +1217,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Remove html tags
 					$out = dol_string_nohtmltag($out, 0);
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -1205,8 +1237,8 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 					$oldstringtoclean = $out;
 					// Decode html entities
 					$out = dol_html_entity_decode($out, ENT_COMPAT | ENT_HTML5, 'UTF-8');
-					// Convert '\' used for windows path into '/' so we can use for path but not for octal syntax \999, hexa syntax \x999 and unicode syntax \u{999}
-					$out = str_ireplace('\\', '/', $out);
+					// Refuse octal syntax \999, hexa syntax \x999 and unicode syntax \u{999} by replacing the \ into / (so if it is a \ for a windows path, it is still ok).
+					$out = preg_replace('/\\\([0-9xu])/', '/\1', $out);
 					// Remove also other dangerous string sequences
 					// '../' or '..\' is dangerous because it allows dir transversals
 					// '&#38', '&#0000038', '&#x26'... is a the char '&' alone but there is no reason to accept such way to encode input char
@@ -2659,7 +2691,7 @@ function dol_get_fiche_end($notab = 0)
  *  @param	CommonObject $object	Object to show
  *  @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
  *  @param	string	$morehtml  		More html content to output just before the nav bar
- *  @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
+ *  @param	int|bool $shownav	  	Show Condition (navigation is shown if value is 1 or true)
  *  @param	string	$fieldid   		Name of the field in DB to use to select next et previous (we make the select max and min on this field). Use 'none' for no prev/next search.
  *  @param	string	$fieldref   	Name of the field (object->ref) to use to select next et previous
  *  @param	string	$morehtmlref  	More html to show after the ref (see $morehtmlleft for before)
@@ -3704,8 +3736,8 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
  * @param 	int			$cid 			Id of contact if known
  * @param 	int			$socid 			Id of third party if known
- * @param 	int			$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on)
- * @param	int			$max			Max number of characters to show
+ * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty
+ * @param	int			$max			Max number of characters to show. Use -1 to hide the mail text and show only the picto.
  * @param	int			$showinvalid	1=Show warning if syntax email is wrong
  * @param	int|string	$withpicto		Show picto
  * @return	string						HTML Link
@@ -3727,7 +3759,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 		return '&nbsp;';
 	}
 
-	if (!empty($addlink)) {
+	if ($addlink == 1) {
 		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="';
 		if (!preg_match('/^mailto:/i', $email)) {
 			$newemail .= 'mailto:';
@@ -3737,7 +3769,9 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 
 		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '');
 
-		$newemail .= dol_trunc($email, $max);
+		if ($max > 0) {
+			$newemail .= dol_trunc($email, $max);
+		}
 		$newemail .= '</a>';
 		if ($showinvalid && !isValidEmail($email)) {
 			$langs->load("errors");
@@ -3754,6 +3788,10 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 				$newemail = '<div>'.$newemail.' '.$linktoaddaction.'</div>';
 			}
 		}
+	} elseif ($addlink == 'thirdparty') {
+		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$socid.'&action=presend&mode=init#formmailbeforetitle">';
+		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
+		$newemail .= '</a>';
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 
@@ -5737,9 +5775,10 @@ function img_searchclear($titlealt = 'default', $other = '')
  *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error', 'warning', 'xxx'=Other
  *  @param	string	$morecss			More CSS ('', 'warning', 'error')
  *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
+ *  @param	string	$picto				'' or 'warning'
  *	@return	string						String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '')
+function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss = 'hideonsmartphone', $textfordropdown = '', $picto = '')
 {
 	global $conf, $langs;
 
@@ -5751,7 +5790,11 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		}
 
 		$class = (empty($admin) ? 'undefined' : ($admin == '1' ? 'info' : $admin));
-		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-info-circle" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
+		$fa = 'info-circle';
+		if ($picto == 'warning') {
+			$fa = 'exclamation-triangle';
+		}
+		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -6211,7 +6254,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  */
 function print_barre_liste($title, $page, $file, $options = '', $sortfield = '', $sortorder = '', $morehtmlcenter = '', $num = -1, $totalnboflines = '', $picto = 'generic', $pictoisfullpath = 0, $morehtmlright = '', $morecss = '', $limit = -1, $hideselectlimit = 0, $hidenavigation = 0, $pagenavastextinput = 0, $morehtmlrightbeforearrow = '')
 {
-	global $conf;
+	global $conf, $langs;
 
 	$savlimit = $limit;
 	$savtotalnboflines = $totalnboflines;
@@ -6252,7 +6295,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 	print '<div class="titre inline-block">';
 	print $title;	// $title may contains HTML
 	if (!empty($title) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') {
-		print '<span class="opacitymedium colorblack paddingleft">('.$totalnboflines.')</span>';
+		print '<span class="opacitymedium colorblack marginleftonly" title="'.$langs->trans("NbRecordQualified").'">('.$totalnboflines.')</span>';
 	}
 	print '</div></td>';
 
@@ -8209,6 +8252,9 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				}
 			}
 
+			// Clear ZERO WIDTH NO-BREAK SPACE, ZERO WIDTH SPACE, ZERO WIDTH JOINER
+			$out = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $out);
+
 			// Clean some html entities that are useless so text is cleaner
 			$out = preg_replace('/&(tab|newline);/i', ' ', $out);
 
@@ -8319,6 +8365,7 @@ function dol_htmlentitiesbr($stringtoencode, $nl2brmode = 0, $pagecodefrom = 'UT
 		if ($removelasteolbr) {
 			$newstring = preg_replace('/<br>$/i', '', $newstring); // Remove last <br> (remove only last one)
 		}
+		$newstring = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $newstring);
 		$newstring = strtr($newstring, array('&' => '__and__', '<' => '__lt__', '>' => '__gt__', '"' => '__dquot__'));
 		$newstring = dol_htmlentities($newstring, ENT_COMPAT, $pagecodefrom); // Make entity encoding
 		$newstring = strtr($newstring, array('__and__' => '&', '__lt__' => '<', '__gt__' => '>', '__dquot__' => '"'));
@@ -10174,8 +10221,8 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 	if (isset($strToEvaluate) && $strToEvaluate !== '') {
 		//var_dump($strToEvaluate);
 		//$rep = dol_eval($strToEvaluate, 1, 0, '1'); // to show the error
-		$rep = (int) dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
-		$rights = $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
+		$rep = dol_eval($strToEvaluate, 1, 1, $onlysimplestring); // The dol_eval() must contains all the "global $xxx;" for all variables $xxx found into the string condition
+		$rights = (bool) $rep && (!is_string($rep) || strpos($rep, 'Bad string syntax to evaluate') === false);
 		//var_dump($rights);
 	}
 	return $rights;
@@ -14337,44 +14384,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 /**
  * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
- * optionally hour, minute, second) fields to return a timestamp.
- *
- * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param string $hourTime  'getpost' to include hour, minute, second values from the HTTP request, 'XX:YY:ZZ' to set
- *                          hour, minute, second respectively (for instance '23:59:59')
- * @param string $gm Passed to dol_mktime
- * @return int|string  Date as a timestamp, '' or false if error
- */
-function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto')
-{
-	if ($hourTime === 'getpost') {
-		$hour   = GETPOSTINT($prefix . 'hour');
-		$minute = GETPOSTINT($prefix . 'minute');
-		$second = GETPOSTINT($prefix . 'second');
-	} elseif (preg_match('/^(\d\d):(\d\d):(\d\d)$/', $hourTime, $m)) {
-		$hour   = intval($m[1]);
-		$minute = intval($m[2]);
-		$second = intval($m[3]);
-	} else {
-		$hour = $minute = $second = 0;
-	}
-	// normalize out of range values
-	$hour = min($hour, 23);
-	$minute = min($minute, 59);
-	$second = min($second, 59);
-	return dol_mktime($hour, $minute, $second, GETPOSTINT($prefix . 'month'), GETPOSTINT($prefix . 'day'), GETPOSTINT($prefix . 'year'), $gm);
-}
-
-/**
- * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
  * optionally hour, minute, second) fields to return a a portion of URL reproducing the values from the current HTTP
  * request.
  *
- * @param string $prefix Prefix used to build the date selector (for instance using Form::selectDate)
- * @param ?int $timestamp If null, the timestamp will be created from request data
- * @param string $hourTime If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @param string $gm If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
- * @return string Portion of URL with query parameters for the specified date
+ * @param 	string $prefix 		Prefix used to build the date selector (for instance using Form::selectDate)
+ * @param 	?int $timestamp 	If null, the timestamp will be created from request data
+ * @param 	string $hourTime 	If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @param 	string $gm 			If timestamp is null, will be passed to GETPOSTDATE to construct the timestamp
+ * @return 	string 				Portion of URL with query parameters for the specified date
  */
 function buildParamDate($prefix, $timestamp = null, $hourTime = '', $gm = 'auto')
 {
@@ -14450,7 +14467,7 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 

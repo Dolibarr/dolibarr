@@ -675,7 +675,7 @@ print '<br>';
 
 
 if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
-	print img_picto('', 'tick.png', 'class="pictofixedwidth"').' MAIN_CACHE_COUNT';
+	print img_picto('', 'tick.png', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }

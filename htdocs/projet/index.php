@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('projectsindex'));
-
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+$hookmanager = new HookManager($db);
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('projectsindex'));
+
 $action = GETPOST('action', 'aZ09');
-$search_project_user = GETPOSTINT('search_project_user');
-$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
+$search_project_user = GETPOST('search_project_user');
+$mine = (GETPOST('mode', 'aZ09') == 'mine' || $search_project_user == $user->id) ? 1 : 0;
 if ($mine == 0 && $search_project_user === '') {
-	$search_project_user = (empty($user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX) ? '' : $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX);
+	$search_project_user = getDolGlobalString('MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX');
 }
 if ($search_project_user == $user->id) {
 	$mine = 1;
@@ -101,7 +101,7 @@ $title = $langs->trans('ProjectsArea');
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-dashboard');
 
 
 //if ($mine) $title=$langs->trans("MyProjectsArea");
@@ -116,9 +116,10 @@ if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 }
 
 $morehtml = '';
-$morehtml .= '<form name="projectform" method="POST">';
+$morehtml .= '<form name="projectform" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 $morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
 $morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
+
 $morehtml .= '<SELECT name="search_project_user" id="search_project_user">';
 $morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
 $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
@@ -187,7 +188,11 @@ if ($resql) {
 //var_dump($listofoppcode);
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
 
 
 // Statistics
@@ -197,7 +202,8 @@ include DOL_DOCUMENT_ROOT.'/projet/graph_opportunities.inc.php';
 print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 0, $listofoppstatus, array('projectlabel', 'plannedworkload', 'declaredprogress', 'prospectionstatus', 'projectstatus'), $max);
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
 
 // Latest modified projects
 $sql = "SELECT p.rowid, p.ref, p.title, p.dateo as date_start, p.datee as date_end, p.fk_statut as status, p.tms as datem";
@@ -342,8 +348,6 @@ if ($resql) {
 	$othernb = 0;
 
 	if ($num) {
-		print '<br>';
-
 		// Open project per thirdparty
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
@@ -425,7 +429,7 @@ if ((!getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') || getDolGlobalInt('PROJECT_S
 	print_projecttasks_array($db, $form, $socid, $projectsListId, 0, 1, $listofoppstatus, array());
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardProjects', $parameters, $projectstatic); // Note that $action and $object may have been modified by hook

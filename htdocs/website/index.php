@@ -447,7 +447,6 @@ if ($action == 'setwebsiteoffline' && $usercanedit) {
 }
 if ($action == 'seteditinline') {	// No need of write permission
 	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
-	setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'warnings');
 	//dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 0); // Force disable of 'Include dynamic content'
 	header("Location: ".$_SERVER["PHP_SELF"].'?website='.urlencode(GETPOST('website')).'&pageid='.GETPOSTINT('pageid'));
 	exit;
@@ -3146,6 +3145,7 @@ if (!GETPOST('hide_websitemenu')) {
 		$linktotestonwebserver = '<a href="'.($virtualurl ? $virtualurl : '#').'" class="valignmiddle">';
 		$linktotestonwebserver .= '<span class="hideonsmartphone paddingrightonly">'.$langs->trans("TestDeployOnWeb", $virtualurl).'</span>'.img_picto('', 'globe');
 		$linktotestonwebserver .= '</a>';
+
 		$htmltext = '';
 		if (empty($object->fk_default_home)) {
 			$htmltext .= '<br><span class="error">'.$langs->trans("YouMustDefineTheHomePage").'</span><br><br>';
@@ -3158,37 +3158,49 @@ if (!GETPOST('hide_websitemenu')) {
 			$htmltext .= '<!-- Message defined translate key set into WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER -->';
 			$htmltext .= '<br>'.$langs->trans(getDolGlobalString('WEBSITE_REPLACE_INFO_ABOUT_USAGE_WITH_WEBSERVER'));
 		} else {
-			$htmltext .= $langs->trans("SetHereVirtualHost", $dataroot);
+			$htmltext .= $langs->trans("ToDeployYourWebsiteOnLiveYouHave3Solutions").'<br><br>';
+			$htmltext .= '<div class="titre inline-block">1</div> - '.$langs->trans("SetHereVirtualHost", $dataroot);
 			$htmltext .= '<br>';
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext .= '<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), '{s1}');
 			$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/website<br>'.DOL_DATA_ROOT.'/medias', $htmltext);
 
-			$examplewithapache = '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
+			$examplewithapache = "<VirtualHost *:80>\n";
+			$examplewithapache .= '#php_admin_value open_basedir /tmp/:'.DOL_DOCUMENT_ROOT.':'.DOL_DATA_ROOT.':/dev/urandom'."\n";
+			$examplewithapache .= "\n";
+			$examplewithapache .= 'DocumentRoot "'.DOL_DOCUMENT_ROOT.'"'."\n";
+			$examplewithapache .= "\n";
 			$examplewithapache .= '<Directory "'.DOL_DOCUMENT_ROOT.'">'."\n";
 			$examplewithapache .= 'AllowOverride FileInfo Options
     		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
     		Require all granted
-    		</Directory>
+    		</Directory>'."\n".'
     		<Directory "'.DOL_DATA_ROOT.'/website">
     		AllowOverride FileInfo Options
     		Options       -Indexes -MultiViews +FollowSymLinks -ExecCGI
     		Require all granted
-    		</Directory>
+    		</Directory>'."\n".'
     		<Directory "'.DOL_DATA_ROOT.'/medias">
     		AllowOverride FileInfo Options
     		Options       -Indexes -MultiViews -FollowSymLinks -ExecCGI
     		Require all granted
-    		</Directory>';
+    		</Directory>'."\n";
+
+			$examplewithapache .= "\n";
+			$examplewithapache .= "#ErrorLog /var/log/apache2/".$websitekey."_error_log\n";
+			$examplewithapache .= "#TransferLog /var/log/apache2/".$websitekey."_access_log\n";
+
+			$examplewithapache .= "</VirtualHost>\n";
 
 			$htmltext .= '<br>'.$langs->trans("ExampleToUseInApacheVirtualHostConfig").':<br>';
-			$htmltext .= '<div class="centpercent exampleapachesetup">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
+			$htmltext .= '<div class="quatrevingtpercent exampleapachesetup wordbreak" spellcheck="false">'.dol_nl2br(dol_escape_htmltag($examplewithapache, 1, 1)).'</div>';
 
 			$htmltext .= '<br>';
-			$htmltext .= $langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
+			$htmltext .= '<div class="titre inline-block">2</div> - '.$langs->trans("YouCanAlsoTestWithPHPS");
+			$htmltext .= '<br><div class="urllink"><input type="text" id="cliphpserver" spellcheck="false" class="quatrevingtpercent" value="php -S 0.0.0.0:8080 -t '.$dataroot.'"></div>';
+			$htmltext .= ajax_autoselect("cliphpserver");
 			$htmltext .= '<br>';
-			$htmltext .= '<br>';
-			$htmltext .= $langs->trans("YouCanAlsoDeployToAnotherWHP");
+			$htmltext .= '<div class="titre inline-block">3</div> - '.$langs->trans("YouCanAlsoDeployToAnotherWHP");
 		}
 		print $form->textwithpicto($linktotestonwebserver, $htmltext, 1, 'none', 'valignmiddle', 0, 3, 'helpvirtualhost');
 		print '</span>';
@@ -3539,6 +3551,26 @@ if (!GETPOST('hide_websitemenu')) {
 														},
 														success: function(response) {
 															console.log(response);
+															var $lastWebsitebar = $(".websitebar").last();
+															var $span = $("<span></span>").html("'.$langs->trans("Saved").'").css({
+																\'display\': \'block\',
+																\'position\': \'absolute\',
+																\'margin-top\': \'6px\',
+																\'right\': \'5px\',
+																\'background-color\': \'#e3f0db\',
+																\'color\': \'#446548\',
+																\'font-size\': \'14px\',
+																\'padding\': \'0px 5px\',
+																\'z-index\': 1000
+															});
+															$lastWebsitebar.after($span);
+
+															// Close message after 2 seconds
+															setTimeout(function() {
+																$span.fadeOut(500, function() {
+																	$(this).remove();
+																});
+															}, 2000);
 														}
 													});
 
@@ -4362,7 +4394,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 						jQuery(".trpublicauthor").hide();
 					}
 					if (jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'service\' || jQuery("#selectWEBSITE_TYPE_CONTAINER").val() == \'library\') {
-						$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+						$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_");
 						jQuery(".spanprefix").show();
 					} else {
 						jQuery(".spanprefix").hide();
@@ -4384,18 +4416,19 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
 	print '<span class="opacitymedium spanprefix hidden"></span> ';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag((string) preg_replace('/^_[a-z]+_page_/', '', (string) $pageurl)).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag((string) preg_replace('/^_[a-z]+_/', '', (string) $pageurl)).'">';
 	print '</td></tr>';
 
 	print '<script type="text/javascript">
 			$(document).ready(function() {
+				console.log("Manage prefix for service or library");
 				if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
-					$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_");
+					$(".spanprefix").html("_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_");
 					$(".spanprefix").show();
 				}
 				$(".websiteformtoolbar").on("submit", function(event) {
 					if ($("#selectWEBSITE_TYPE_CONTAINER").val() == "service" || $("#selectWEBSITE_TYPE_CONTAINER").val() == "library") {
-						var prefix = "_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_page_";
+						var prefix = "_" + $("#selectWEBSITE_TYPE_CONTAINER").val() + "_";
 						var userInput = $("#WEBSITE_PAGENAME").val();
 						var $inputField = $("#WEBSITE_PAGENAME");
 						if (userInput.indexOf(prefix) !== 0) {

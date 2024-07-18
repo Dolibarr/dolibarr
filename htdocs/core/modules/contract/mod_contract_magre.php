@@ -88,12 +88,18 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$contract = new Contrat($db);
+		$contract->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $contract);
+
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');

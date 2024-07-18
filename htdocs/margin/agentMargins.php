@@ -81,7 +81,7 @@ if (!empty($enddatemonth)) {
 // Security check
 $result = restrictedArea($user, 'margins');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
 $hookmanager->initHooks(array('marginagentlist'));
 
@@ -226,7 +226,9 @@ if (!empty($enddateyear)) {
 	$param .= "&amp;enddateyear=".urlencode((string) ($enddateyear));
 }
 
-
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::agentMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {

@@ -153,7 +153,7 @@ if ($sortfield == "") {
 	$sortfield = "t.piece_num,t.rowid";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array('bookkeepingexport'));
 
@@ -1270,7 +1270,6 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$objectstatic = new Facture($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'facture';
 
 			if ($objectstatic->id > 0) {
 				$filename = dol_sanitizeFileName($line->doc_ref);
@@ -1284,13 +1283,12 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$objectstatic = new FactureFournisseur($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'invoice_supplier';
 
 			if ($objectstatic->id > 0) {
 				$modulepart = 'invoice_supplier';
 				$filename = dol_sanitizeFileName($line->doc_ref);
-				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $objectstatic->element).dol_sanitizeFileName($line->doc_ref);
+				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $objectstatic->element).dol_sanitizeFileName($line->doc_ref);
 				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
 			}
 		} elseif ($line->doc_type == 'expense_report') {
@@ -1299,7 +1297,6 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$objectstatic = new ExpenseReport($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'expensereport';
 
 			if ($objectstatic->id > 0) {
 				$filename = dol_sanitizeFileName($line->doc_ref);

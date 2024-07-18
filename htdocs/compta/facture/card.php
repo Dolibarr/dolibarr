@@ -134,7 +134,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicecard', 'globalcard'));
 
 // Permissions
@@ -212,11 +212,11 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
@@ -1530,11 +1530,12 @@ if (empty($reshook)) {
 						$element = $subelement = 'expedition';
 					}
 
-					$object->origin = $origin;
+					$object->origin = $origin;		// deprecated
+					$object->origin_type = $origin;
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
 					// link with order if it is a shipping invoice
 					if ($object->origin == 'shipping') {
 						require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -1903,7 +1904,7 @@ if (empty($reshook)) {
 						}*/
 
 						// Hooks
-						$parameters = array('objFrom' => $srcobject);
+						$parameters = array('origin_type' => $object->origin_type, 'origin_id' => $object->origin_id, 'objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 						// modified by hook
 						if ($reshook < 0) {
@@ -1959,7 +1960,8 @@ if (empty($reshook)) {
 				if (!empty($origin) && !empty($originid)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-					$object->origin = $origin;
+					$object->origin = $origin;		// deprecated
+					$object->origin_type = $origin;
 					$object->origin_id = $originid;
 
 					// retained warranty
@@ -1981,8 +1983,6 @@ if (empty($reshook)) {
 					}
 
 					foreach ($object->lines as $i => &$line) {
-						$line->origin = $object->origin;
-						$line->origin_id = $line->id;
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
@@ -2023,6 +2023,7 @@ if (empty($reshook)) {
 				$object->note = trim(GETPOST('note', 'restricthtml'));
 				$object->note_private = trim(GETPOST('note', 'restricthtml'));
 				$object->ref_client = GETPOST('ref_client', 'alpha');
+				$object->ref_customer = GETPOST('ref_client', 'alpha');
 				$object->model_pdf = GETPOST('model', 'alpha');
 				$object->fk_project = GETPOSTINT('projectid');
 				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
@@ -2035,6 +2036,7 @@ if (empty($reshook)) {
 				// Special properties of replacement invoice
 
 				$object->situation_counter += 1;
+
 				$id = $object->createFromCurrent($user);
 				if ($id <= 0) {
 					$mesg = $object->error;
@@ -2047,6 +2049,15 @@ if (empty($reshook)) {
 					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
 					if ($ret > 0) {
 						$nextSituationInvoice->insertExtraFields();
+					}
+
+					// Hooks
+					$parameters = array('origin_type' => $object->origin_type, 'origin_id' => $object->origin_id);
+					$reshook = $hookmanager->executeHooks('createFrom', $parameters, $nextSituationInvoice, $action); // Note that $action and $object may have been
+					// modified by hook
+					if ($reshook < 0) {
+						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+						$error++;
 					}
 				}
 			}
@@ -3391,9 +3402,6 @@ if ($action == 'create') {
 	if (empty($reshook)) {
 		print '<table class="border centpercent">';
 
-		// Ref
-		//print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
-
 		$exampletemplateinvoice = new FactureRec($db);
 		$invoice_predefined = new FactureRec($db);
 		if (empty($origin) && empty($originid) && GETPOSTINT('fac_rec') > 0) {
@@ -3533,7 +3541,7 @@ if ($action == 'create') {
 		$tmp = '<input type="radio" id="radio_standard" name="type" value="0"'.(GETPOSTINT('type') ? '' : ' checked').'> ';
 		$tmp  = $tmp.'<label for="radio_standard" >'.$langs->trans("InvoiceStandardAsk").'</label>';
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3, 'standardonsmartphone');
+		$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', 'nowraponall', 0, 3, 'standardonsmartphone');
 		print '<table class="nobordernopadding"><tr>';
 		print '<td>';
 		print $desc;
@@ -3720,7 +3728,7 @@ if ($action == 'create') {
 				$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
 				$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
 				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3, 'firstsituationonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>';
 			}
@@ -3729,7 +3737,7 @@ if ($action == 'create') {
 			$tmp = '<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
 			$text = $tmp.'<label for="radio_replacement" class="opacitymedium">'.$langs->trans("InvoiceReplacement").'</label> ';
 			//$text .= '<span class="opacitymedium hideonsmartphone">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', '', 0, 3, 'replacementonsmartphone');
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', 'nowraponall', 0, 3, 'replacementonsmartphone');
 			print $desc;
 			print '</div></div>';
 		}
@@ -3885,12 +3893,12 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Discounts for the known third party
 		if ($socid > 0) {
-			// Discounts for third party
 			print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td><td colspan="2">';
 
-			$thirdparty = $soc;
-			$discount_type = 0;
+			$thirdparty = $soc;	// used by object_discounts.tpl.php
+			$discount_type = 0;	// used by object_discounts.tpl.php
 			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
 			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
 
@@ -3920,7 +3928,7 @@ if ($action == 'create') {
 		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth500 widthcentpercentminusx');
 		print '</td></tr>';
 
-
+		// Warranty
 		if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$rwStyle = 'display:none;';
 			if (in_array(GETPOSTINT('type'), $retainedWarrantyInvoiceAvailableType)) {
@@ -4049,7 +4057,7 @@ if ($action == 'create') {
 			print '<td>'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td colspan="2" class="maxwidthonsmartphone">';
 			print img_picto('', 'currency', 'class="pictofixedwidth"');
-			print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code');
+			print $form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0, '', false, 'maxwidth100 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 

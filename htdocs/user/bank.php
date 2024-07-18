@@ -58,7 +58,7 @@ $bankid = GETPOSTINT('bankid');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercardBank', 'globalcard'));
 
 // Security check

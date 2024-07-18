@@ -158,9 +158,9 @@ function testSqlAndScriptInject($val, $type)
 	// We check string because some hacks try to obfuscate evil strings by inserting non printable chars. Example: 'java(ascci09)scr(ascii00)ipt' is processed like 'javascript' (whatever is place of evil ascii char)
 	// We should use dol_string_nounprintableascii but function is not yet loaded/available
 	// Example of valid UTF8 chars:
-	// utf8=utf8mb3:    '\x09', '\x0A', '\x0D', '\x7E'
-	// utf8=utf8mb3: 	'\xE0\xA0\x80'
-	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (but this may be refused by the database insert if pagecode is utf8=utf8mb3)
+	// utf8 or utf8mb3: '\x09', '\x0A', '\x0D', '\x7E'
+	// utf8 or utf8mb3: '\xE0\xA0\x80'
+	// utf8mb4: 		'\xF0\x9D\x84\x9E'   (so this may be refused by the database insert if pagecode is utf8=utf8mb3)
 	$newval = preg_replace('/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]/u', '', $val); // /u operator makes UTF8 valid characters being ignored so are not included into the replace
 
 	// Note that $newval may also be completely empty '' when non valid UTF8 are found.
@@ -444,23 +444,23 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
 		$ok = 1; // We let working pages if not logged and inside a web browser (login form, to allow login by admin)
-	} elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (isset($_POST["username"]) && in_array($_POST["username"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working pages that is a login submission (login submit, to allow login by admin)
 	} elseif (defined('NOREQUIREDB')) {
 		$ok = 1; // We let working pages that don't need database access (xxx.css.php)
 	} elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 		$ok = 1; // We let working pages that ask to work even if only login enabled (logout.php)
-	} elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (session_id() && isset($_SESSION["dol_login"]) && in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working if user is allowed admin
 	}
 	if (!$ok) {
-		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
-			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
-			print 'Sorry, your application is offline. Only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/';
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}
@@ -1160,7 +1160,7 @@ if (!defined('NOLOGIN')) {
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
 		} else {
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 
 			// Code for search criteria persistence.
@@ -1342,17 +1342,23 @@ if (!defined('NOLOGIN')) {
 	 * Overwrite some configs globals (try to avoid this and have code to use instead $user->conf->xxx)
 	 */
 
-	// Set liste_limit
-	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {
-		$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT; // Can be 0
+	// Set liste_limit from user setup
+	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {	// If a user setup exists
+		$conf->liste_limit = getDolUserInt('MAIN_SIZE_LISTE_LIMIT'); // Can be 0
 	}
-	if (isset($user->conf->PRODUIT_LIMIT_SIZE)) {
-		$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE; // Can be 0
+	if ((int) $conf->liste_limit <= 0) {
+		// Mode automatic.
+		$conf->liste_limit = 15;
+		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+			$conf->liste_limit = 10;
+		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+			$conf->liste_limit = 20;
+		}
 	}
 
 	// Replace conf->css by personalized value if theme not forced
-	if (!getDolGlobalString('MAIN_FORCETHEME') && !empty($user->conf->MAIN_THEME)) {
-		$conf->theme = $user->conf->MAIN_THEME;
+	if (!getDolGlobalString('MAIN_FORCETHEME') && getDolUserString('MAIN_THEME')) {
+		$conf->theme = getDolUserString('MAIN_THEME');
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
 } else {
@@ -1373,14 +1379,14 @@ if (GETPOST('theme', 'aZ09')) {
 if (GETPOSTINT('nojs')) {  // If javascript was not disabled on URL
 	$conf->use_javascript_ajax = 0;
 } else {
-	if (!empty($user->conf->MAIN_DISABLE_JAVASCRIPT)) {
-		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
+	if (getDolUserString('MAIN_DISABLE_JAVASCRIPT')) {
+		$conf->use_javascript_ajax = !getDolUserString('MAIN_DISABLE_JAVASCRIPT');
 	}
 }
 
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
-if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER');
 	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') == 1) {
 		$conf->global->THEME_TOPMENU_DISABLE_IMAGE = 1;
 	}
@@ -1389,7 +1395,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MA
 //var_dump($user->conf->THEME_TOPMENU_DISABLE_IMAGE);
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
-$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = getDolUserString('MAIN_OPTIMIZEFORCOLORBLIND');
 
 // Set terminal output option according to conf->browser.
 if (GETPOSTINT('dol_hide_leftmenu') || !empty($_SESSION['dol_hide_leftmenu'])) {
@@ -1566,8 +1572,8 @@ if (!function_exists("llxHeader")) {
 	 * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
 	 *                                  			For other external page: http://server/url
 	 * @param	string			$target				Target to use on links
-	 * @param 	int    			$disablejs			More content into html header
-	 * @param 	int    			$disablehead		More content into html header
+	 * @param 	int<0,1>		$disablejs			More content into html header
+	 * @param 	int<0,1>		$disablehead		More content into html header
 	 * @param 	array|string  	$arrayofjs			Array of complementary js files
 	 * @param 	array|string  	$arrayofcss			Array of complementary css files
 	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
@@ -1895,6 +1901,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		}
 

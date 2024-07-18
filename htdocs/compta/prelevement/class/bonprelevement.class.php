@@ -395,7 +395,7 @@ class BonPrelevement extends CommonObject
 	 *
 	 *	@param	int		$rowid		Id of object to load
 	 *  @param	string	$ref		Ref of direct debit
-	 *	@return	int					>0 if OK, <0 if KO
+	 *	@return	int					>0 if OK, 0=Not found, <0 if KO
 	 */
 	public function fetch($rowid, $ref = '')
 	{
@@ -448,11 +448,11 @@ class BonPrelevement extends CommonObject
 
 				return 1;
 			} else {
-				dol_syslog(get_class($this) . "::Fetch Erreur aucune ligne retournee");
-				return -1;
+				dol_syslog(get_class($this) . "::Fetch no record found");
+				return 0;
 			}
 		} else {
-			return -2;
+			return -1;
 		}
 	}
 
@@ -1146,7 +1146,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						$verif = checkSwiftForAccount(null, $fac[10]);
-						if ($verif) {
+						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							$verif = checkIbanForAccount(null, $fac[11]);
 						}
 
@@ -2211,11 +2211,13 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '						<AmdmntInd>false</AmdmntInd>' . $CrLf;
 			$XML_DEBITOR .= '					</MndtRltdInf>' . $CrLf;
 			$XML_DEBITOR .= '				</DrctDbtTx>' . $CrLf;
-			$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
-			$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
-			$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
-			$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
-			$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
+			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) {
+				$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
+				$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
+				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+				$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
+				$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
+			}
 			$XML_DEBITOR .= '				<Dbtr>' . $CrLf;
 			$XML_DEBITOR .= '					<Nm>' . dolEscapeXML(strtoupper(dol_string_nospecial(dol_string_unaccent($row_nom), ' '))) . '</Nm>' . $CrLf;
 			$XML_DEBITOR .= '					<PstlAdr>' . $CrLf;
@@ -2342,7 +2344,7 @@ class BonPrelevement extends CommonObject
 
 		fwrite($this->file, substr($this->raison_sociale . "                           ", 0, 24));
 
-		// Reference de la remise creancier D1 sur 7 caracteres
+		// Ref of thirdparty on 7 characters
 
 		fwrite($this->file, substr($this->reference_remise . "                           ", 0, 7));
 

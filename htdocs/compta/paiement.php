@@ -75,7 +75,7 @@ if ($facid > 0) {
 	$ret = $object->fetch($facid);
 }
 
-// Initialize technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of paiements. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('paiementcard', 'globalcard'));
 
 $formquestion = array();

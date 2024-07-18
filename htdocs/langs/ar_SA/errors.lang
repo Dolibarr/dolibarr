@@ -8,7 +8,7 @@ ErrorBadEMail=عنوان البريد الإلكتروني %s غير صحيح
 ErrorBadMXDomain=يبدو البريد الإلكتروني %s غير صحيح (المجال لا يحتوي على سجل MX صالح)
 ErrorBadUrl=عنوان Url %s غير صحيح
 ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
-ErrorRefAlreadyExists=Reference <b>%s</b> used for creation already exists.
+ErrorRefAlreadyExists=المرجع <b>%s</b> موجود بالفعل.
 ErrorTitleAlreadyExists=العنوان <b> %s </b> موجود بالفعل.
 ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
 ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=لا يمكن حذف المستخدم. ربما يرتبط بكيانات Dolibarr.
 ErrorFieldsRequired=تم ترك بعض الحقول المطلوبة فارغة.
 ErrorSubjectIsRequired=موضوع البريد الإلكتروني مطلوب
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=فشل إنشاء دليل. تأكد من أن خادم الويب المستخدم أذونات لكتابة وثائق Dolibarr في الدليل. إذا تم تمكين المعلم <b>safe_mode</b> على هذا PHP ، تحقق من أن ملفات Dolibarr php تملك لخدمة الويب المستخدم (أو مجموعة).
 ErrorNoMailDefinedForThisUser=البريد لا يعرف لهذا المستخدم
 ErrorSetupOfEmailsNotComplete=لم يكتمل إعداد رسائل البريد الإلكتروني
@@ -101,7 +103,7 @@ ErrorFieldRefNotIn=الحقل <b> %s </b>: '<b> %s </b>' ليس a0aee833658377fz
 ErrorMultipleRecordFoundFromRef=تم العثور على عدة سجلات عند البحث من المرجع <b>%s</b>. لا توجد طريقة لمعرفة المعرف الذي يجب استخدامه.
 ErrorsOnXLines=تم العثور على أخطاء %s
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
-ErrorFileIsAnInfectedPDFWithJSInside=The file is a PDF infected by some Javascript inside
+ErrorFileIsAnInfectedPDFWithJSInside=الملف عبارة عن ملف PDF مصاب ببعض جافا سكريبت بداخله
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 ErrorQtyTooLowForThisSupplier=الكمية منخفضة جدًا لهذا البائع أو لم يتم تحديد سعر لهذا المنتج لهذا البائع
 ErrorOrdersNotCreatedQtyTooLow=لم يتم إنشاء بعض الطلبات بسبب الكميات المنخفضة للغاية
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=خطأ ، السلسلة المطلوب استبداله
 ErrorProductNeedBatchNumber=خطأ ، المنتج '<b> %s </b>' بحاجة إلى الكثير / الرقم التسلسلي
 ErrorProductDoesNotNeedBatchNumber=خطأ ، المنتج "<b> %s </b>" لا يقبل الكثير / الرقم التسلسلي
 ErrorFailedToReadObject=خطأ ، فشلت قراءة كائن من النوع <b> %s </b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=خطأ، يجب تمكين المعلمة <b>%s</b> في <b>conf/conf.php<> للسماح باستخدام واجهة سطر الأوامر من خلال جدولة المهام الداخلية
+ErrorParameterMustBeEnabledToAllwoThisFeature=خطأ، يجب تمكين المعلمة <b>%s</b> في <b>conf/conf.php</b> للسماح باستخدام واجهة سطر الأوامر بواسطة برنامج جدولة المهام الداخلي
 ErrorLoginDateValidity=خطأ ، تسجيل الدخول هذا خارج النطاق الزمني للصلاحية
 ErrorValueLength=يجب أن يكون طول الحقل "<b> %s </b>" أعلى من "<b> %s </b>"
 ErrorReservedKeyword=كلمة "<b> %s </b>" هي كلمة أساسية محجوزة
@@ -313,7 +315,7 @@ ErrorTooMuchFileInForm=يوجد عدد كبير جدًا من الملفات ف�
 ErrorSessionInvalidatedAfterPasswordChange=تم إبطال الجلسة بعد تغيير كلمة المرور أو البريد الإلكتروني حالة أو تواريخ الصلاحية. الرجاء إعادة تسجيل الدخول.
 ErrorExistingPermission = الإذن <b>%s</b> للكائن  <b>%s</b> موجود بالفعل
 ErrorFieldExist=قيمة <b>%s</b> موجودة بالفعل
-ErrorEqualModule=نموذج غير صالح في <b>%s</b>
+ErrorEqualModule=نموذج غير صالح في <b>%s</b> 
 ErrorFieldValue=قيمة <b>%s</b> غير صحيحة
 ErrorCoherenceMenu=<b>%s</b> مطلوب عندما  <b>%s</b> هو "يسار"
 ErrorUploadFileDragDrop=حدث خطأ أثناء تحميل الملف (الملفات).
@@ -322,16 +324,21 @@ ErrorFixThisHere=<a href="%s">أصلح هذه المشكلة هنا</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=خطأ: عنوان URL للمثيل الحالي لديك (%s) لا يتطابق مع عنوان URL المحدد في إعداد تسجيل الدخول إلى OAuth2 (%s). لا يُسمح بتسجيل الدخول إلى OAuth2 في مثل هذا التكوين.
 ErrorMenuExistValue=توجد قائمة بالفعل بهذا العنوان أو عنوان URL
 ErrorSVGFilesNotAllowedAsLinksWithout=لا يُسمح بملفات SVG كروابط خارجية بدون الخيار %s
-ErrorTypeMenu=من المستحيل إضافة قائمة أخرى لنفس نموذج على شريط التنقل، ولم يتم التعامل معها بعد
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = لم يتم العثور على الكائن <b>%s</b>، يرجى التحقق من عنوان URL الخاص بك
 ErrorCountryCodeMustBe2Char=يجب أن يكون رمز البلد عبارة عن سلسلة مكونة من حرفين
-ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
+ErrorABatchShouldNotContainsSpaces=يجب ألا تحتوي الكمية أو الرقم التسلسلي على مسافات
 ErrorTableExist=الجدول <b>%s</b> موجود بالفعل
 ErrorDictionaryNotFound=لم يتم العثور على القاموس <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=فشل إنشاء الرابط الرمزي %s للإشارة إلى %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=تحقق من الأمر المستخدم للتصدير في الخيارات المتقدمة للتصدير
-
+ErrorEndTimeMustBeGreaterThanStartTime=يجب أن يكون وقت الانتهاء أكبر من وقت البدء
+ErrorIncoherentDates=يجب أن يكون تاريخ البدء أقل من تاريخ الانتهاء
+ErrorEndHourIsNull=End date cannot be zero
+ErrorStartHourIsNull=Start date cannot be zero
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=معلمة PHP upload_max_filesize (%s) أعلى من معلمة PHP post_max_size (%s). هذا ليس إعداد ثابت.
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.
@@ -344,6 +351,7 @@ WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / �
 WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
 WarningNoDocumentModelActivated=لم يتم تنشيط أي نموذج لإنشاء المستندات. سيتم اختيار نموذج افتراضيًا حتى تتحقق من إعداد الوحدة الخاصة بك.
 WarningLockFileDoesNotExists=تحذير ، بمجرد الانتهاء من الإعداد ، يجب عليك تعطيل أدوات التثبيت / الترحيل عن طريق إضافة ملف <b> install.lock </b> إلى الدليل <b> %s </b>. يعد حذف إنشاء هذا الملف مخاطرة أمنية كبيرة.
+WarningUpgradeHasBeenUnlocked=تحذير، لقد تم فتح عملية الترقية للجميع
 WarningUntilDirRemoved=سيظل هذا التحذير الأمني نشطًا طالما أن الثغرة الأمنية موجودة.
 WarningCloseAlways=تحذير، ويتم إغلاق حتى إذا قدر يختلف بين عناصر المصدر والهدف. تمكين هذه الميزة بحذر.
 WarningUsingThisBoxSlowDown=تحذير، وذلك باستخدام هذا الإطار تبطئ على محمل الجد كل الصفحات التي تظهر مربع.
@@ -373,16 +381,18 @@ WarningModuleNeedRefresh = Module <b>%s</b> has been disabled. Don't forget to e
 WarningPermissionAlreadyExist=الأذونات الموجودة لهذا الكائن
 WarningGoOnAccountancySetupToAddAccounts=إذا كانت هذه القائمة فارغة، فانتقل إلى القائمة %s - %s - %s لتحميل أو إنشاء حسابات لدليل الحساب الخاص بك.
 WarningCorrectedInvoiceNotFound=لم يتم العثور على فاتورة المصحح
-WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningCommentNotFound=تحذير: لا يمكن العثور على بداية و/ أو تعليقات النهاية للقسم <b>%s </b> في الملف <b>%s</b>
 WarningAlreadyReverse=لقد انعكست حركة الأسهم بالفعل
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = لا يمكن إضافة SwissQR فاتورة إلا على الفواتير التي تم تعيينها ليتم دفعها من خلال دفعات تحويل الائتمان.
 SwissQrCreditorAddressInvalid = عنوان الدائن غير صالح (هل تم تعيين مدينة ZIP و؟ (%s)
 SwissQrCreditorInformationInvalid = معلومات الدائن غير صالحة لرقم IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN لم يتم تطبيقه بعد
 SwissQrPaymentInformationInvalid = كانت معلومات الدفع غير صالحة لإجمالي %s : %s
 SwissQrDebitorAddressInvalid = معلومات المدين غير صالحة (%s)
-
 # Validate
 RequireValidValue = القيمة غير صالحة
 RequireAtLeastXString = يتطلب على الأقل %s حرفًا (أحرف)
@@ -404,10 +414,10 @@ BadSetupOfFieldClassNotFoundForValidation = خطأ في إعداد الحقل غ
 BadSetupOfFieldFileNotFound = خطأ في إعداد الحقل غير صحيح: الملف غير موجود للتضمين
 BadSetupOfFieldFetchNotCallable = خطأ في إعداد الحقل غير صحيح: الجلب غير قابل للاستدعاء في الفصل الدراسي
 ErrorTooManyAttempts= محاولات كثيرة. الرجاء معاودة المحاولة في وقت لاحق
-
-TotalAmountEmpty=Total Amount Empty
-FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
-ThisIdNotDefined=Id not defined
-OperNotDefined=Payment method not defined
-ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
-ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+TotalAmountEmpty=المبلغ الإجمالي فارغ
+FailedToFoundTheConversionRateForInvoice=فشل العثور على معدل التحويل لـ فاتورة
+ThisIdNotDefined=لم يتم تعريف معرف
+OperNotDefined=طريقة الدفع غير محددة
+ErrorThisContactXIsAlreadyDefinedAsThisType=تم تعريف %s بالفعل كجهة اتصال لهذا النوع.
+ErrorThisGroupIsAlreadyDefinedAsThisType=تم بالفعل تعريف جهات الاتصال بهذه المجموعة كجهة اتصال لهذا النوع.
+EmptyMessageNotAllowedError=Empty message is not allowed

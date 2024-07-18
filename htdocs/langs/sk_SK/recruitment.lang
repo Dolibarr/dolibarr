@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Nábor
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Spravujte a sledujte náborové kampane na nové pracovné pozície
-
-#
 # Admin page
-#
 RecruitmentSetup = Nastavenie náboru
 RecruitmentSetupPage = Tu zadajte nastavenie hlavných možností pre modul náboru
 RecruitmentArea=Oblasť náboru
 PublicInterfaceRecruitmentDesc=Verejné stránky úloh sú verejné adresy URL na zobrazenie a odpovedanie na otvorené úlohy. Pre každú otvorenú úlohu existuje jeden odlišný odkaz, ktorý sa nachádza v každom zázname o úlohe.
 EnablePublicRecruitmentPages=Povoliť verejné stránky otvorených úloh
 
-#
-# About page
-#
-RecruitmentAbout = O nábore
-RecruitmentAboutPage = Nábor o stránke
 NbOfEmployeesExpected=Očakávaný počet zamestnancov
 JobLabel=Označenie pracovnej pozície
 WorkPlace=Pracovné miesto
@@ -47,7 +34,6 @@ PositionToBeFilled=Poradie úlohy
 PositionsToBeFilled=Pracovné pozície
 ListOfPositionsToBeFilled=Zoznam pracovných pozícií
 NewPositionToBeFilled=Nové pracovné pozície
-
 JobOfferToBeFilled=Pracovná pozícia na obsadenie
 ThisIsInformationOnJobPosition=Informácie o pracovnej pozícii, ktorá sa má obsadiť
 ContactForRecruitment=Kontakt pre nábor
@@ -77,4 +63,4 @@ WeAreRecruiting=Robíme nábor. Toto je zoznam voľných pozícií, ktoré sa ma
 NoPositionOpen=Momentálne nie sú otvorené žiadne pozície
 ConfirmClose=Potvrďte zrušenie
 ConfirmCloseAsk=Naozaj chcete zrušiť túto náborovú kandidatúru?
-recruitment=Nábor
+Recruitment=Recruitment

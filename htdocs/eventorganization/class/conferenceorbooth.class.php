@@ -146,7 +146,7 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -194,17 +194,20 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
-	 * Set Percentage from status
+	 * Set the percentage of actioncomm from the status of the booth or conference
 	 *
 	 * @return void
 	 */
 	protected function setPercentageFromStatus()
 	{
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_SUGGESTED || $this->status == self::STATUS_NOT_QUALIFIED || $this->status == self::STATUS_CANCELED) {
+			$this->percentage = -1;
+		}
+		if ($this->status == self::STATUS_CONFIRMED) {
+			$this->percentage = 0;
+		}
 		if ($this->status == self::STATUS_DONE) {
 			$this->percentage = 100;
-		}
-		if ($this->status == self::STATUS_DRAFT) {
-			$this->percentage = 0;
 		}
 	}
 
@@ -345,7 +348,9 @@ class ConferenceOrBooth extends ActionComm
 	public function update(User $user, $notrigger = 0)
 	{
 		$this->setPercentageFromStatus();
+
 		$this->setActionCommFields($user);
+
 		return parent::update($user, $notrigger);
 	}
 

@@ -24,12 +24,17 @@
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
  */
+
 print "PHP Version: ".phpversion()."\n";
 print "Memory limit: ". ini_get('memory_limit')."\n";
 
 // Workaround for false security issue with main.inc.php on Windows in tests:
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 	$_SERVER['PHP_SELF'] = "phpunit";
+}
+
+if (! defined('NOREQUIREUSER')) {
+	define('PHPUNIT_MODE', 1);
 }
 
 global $conf,$user,$langs,$db;

@@ -135,7 +135,7 @@ if ($id > 0 && $action != 'add') {
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 $parameters = array('socid' => $socid);
@@ -776,6 +776,8 @@ if (empty($reshook) && $action == 'update') {
 			$datep = dol_mktime(GETPOST("aphour", 'int'), GETPOST("apmin", 'int'), GETPOST("apsec", 'int'), GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'), 'tzuserrel');
 			$datef = dol_mktime(GETPOST("p2hour", 'int'), GETPOST("p2min", 'int'), GETPOST("apsec", 'int'), GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'), 'tzuserrel');
 		}
+		//set end date to now if percentage is set to 100 and end date not set
+		$datef = (!$datef && $percentage == 100)?dol_now():$datef;
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
@@ -834,12 +836,6 @@ if (empty($reshook) && $action == 'update') {
 			}
 		}
 
-		if (!$datef && $percentage == 100) {
-			$error++;
-			$donotclearsession = 1;
-			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEnd")), $object->errors, 'errors');
-			$action = 'edit';
-		}
 
 		$transparency = (GETPOST("transparency") == 'on' ? 1 : 0);
 

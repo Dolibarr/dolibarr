@@ -81,13 +81,13 @@ $type = '';
 $texte = '';
 $newcardbutton = '';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new CurrencyRate($db);
 $form = new Form($db);
 $extrafields = new ExtraFields($db);
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('EditorRatelist', 'globallist'));
 
 if (empty($action)) {

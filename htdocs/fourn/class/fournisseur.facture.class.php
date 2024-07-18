@@ -660,7 +660,7 @@ class FactureFournisseur extends CommonInvoice
 							(!empty($this->lines[$i]->info_bits) ? $this->lines[$i]->info_bits : ''),
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->remise_percent,
-							false,
+							0,
 							$this->lines[$i]->date_start,
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
@@ -788,7 +788,7 @@ class FactureFournisseur extends CommonInvoice
 						'HT',
 						0,
 						$_facrec->lines[$i]->rang,
-						false,
+						0,
 						$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->fk_unit,
 						0,
@@ -2785,8 +2785,8 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->status)) {
 			$alreadypaid = -1;
-			if (isset($this->alreadypaid)) {
-				$alreadypaid = $this->alreadypaid;
+			if (isset($this->totalpaid)) {
+				$alreadypaid = $this->totalpaid;
 			}
 
 			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);

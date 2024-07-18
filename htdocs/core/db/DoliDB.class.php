@@ -47,7 +47,7 @@ abstract class DoliDB implements Database
 	public $forcecollate = 'utf8_unicode_ci';
 
 	/** @var resource Resultset of last query */
-	private $_results;
+	private $_results; // @phpstan-ignore-line
 
 	/** @var bool true if connected, else false */
 	public $connected;
@@ -201,8 +201,10 @@ abstract class DoliDB implements Database
 				$this->transaction_opened++;
 				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
+				return 1;
+			} else {
+				return 0;
 			}
-			return (int) $ret;
 		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
