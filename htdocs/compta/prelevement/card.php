@@ -75,14 +75,14 @@ $type = $object->type;
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 
-	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'read');
+	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'create');
 	$permissiontosend = $user->hasRight('paymentbybanktransfer', 'send');
 	$permissiontocreditdebit = $user->hasRight('paymentbybanktransfer', 'debit');
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'read');
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'read');
+	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'creer');
 	$permissiontosend = $user->hasRight('prelevement', 'bons', 'send');
 	$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
 	$permissiontodelete = $user->hasRight('prelevement', 'bons', 'read');
@@ -108,7 +108,7 @@ if (empty($reshook)) {
 	}
 
 	// date of upload
-	if ($action == 'setdate_trans' && $permissiontoadd) {
+	if ($action == 'setdate_trans' && $permissiontosend) {
 		$result = $object->setValueFrom('date_trans', $date_trans, '', null, 'date');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -218,12 +218,12 @@ if ($id > 0 || $ref) {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('TransData');
 		print '</td>';
-		if ($action != 'editdate_trans') {
+		if ($action != 'editdate_trans' && $permissiontosend) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_trans&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetTransDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editdate_trans') {
+		if ($action == 'editdate_trans' && $permissiontosend) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';

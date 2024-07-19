@@ -112,21 +112,21 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Lire les receptions';
+		$this->rights[$r][1] = 'Read receptions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Creer modifier les receptions';
+		$this->rights[$r][1] = 'Create receptions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Valider les receptions';
+		$this->rights[$r][1] = 'Validate receptions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'reception_advance';
@@ -134,15 +134,15 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les receptions aux clients'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][1] = 'Send receptions to customers'; // libelle de la permission
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'reception_advance';
 		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Exporter les receptions';
+		$this->rights[$r][1] = 'Export receptions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'reception';
@@ -150,7 +150,7 @@ class modReception extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero.$r;
-		$this->rights[$r][1] = 'Supprimer les receptions';
+		$this->rights[$r][1] = 'Delete receptions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
