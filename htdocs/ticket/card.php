@@ -599,8 +599,27 @@ if (empty($reshook)) {
 		// Reopen ticket
 		if ($object->fetch(GETPOSTINT('id'), GETPOST('track_id', 'alpha')) >= 0) {
 			$new_status = GETPOSTINT('new_status');
+
+			// add support event in trigger 
+			if($new_status == 0) 
+				$trig = '_NOT_READ';
+			elseif($new_status == 1) 
+				$trig = '_READ';
+			elseif($new_status == 2) 
+				$trig = '_ASSIGNED';
+			elseif($new_status == 3) 
+				$trig = '_IN_PROGRESS';
+			elseif($new_status == 5) 
+				$trig = '_NEED_MORE_INFO';
+			elseif($new_status == 7) 
+				$trig = '_WAITING';
+			elseif($new_status == 8) 
+				$trig = '_CLOSED';
+			elseif($new_status == 9) 
+				$trig = '_CANCELED';
+			
 			//$old_status = $object->status;
-			$res = $object->setStatut($new_status);
+			$res = $object->setStatut($new_status, null, '', 'TICKET'.$trig);
 			if ($res) {
 				$url = 'card.php?track_id=' . $object->track_id;
 				header("Location: " . $url);
