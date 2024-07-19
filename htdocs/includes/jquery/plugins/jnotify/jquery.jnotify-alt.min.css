@@ -11,6 +11,11 @@
     overflow-y: auto;
 }
 
+.jnotify-container-login {
+    left: 40% !important;
+    right: auto !important;
+}
+
 .jnotify-container .jnotify-notification {
     position: relative; 
     margin-top: 4px;

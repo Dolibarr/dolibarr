@@ -408,6 +408,11 @@ if (!empty($_SESSION['dol_loginmesg'])) {
 		} else {
 			dol_htmloutput_mesg($message, array(), 'error');
 		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
 	} else {
 		?>
 		<div class="center login_main_message">
