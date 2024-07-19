@@ -1554,7 +1554,7 @@ class Form
 			$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
 		}
 		if (isModEnabled('category')) {
-			$sql .= " LEFT JOIN ".$this->db->prefix()."categorie_societe as cats ON cats.fk_soc = s.rowid";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "categorie_societe as cats ON cats.fk_soc = s.rowid";
 			if (isModEnabled('fournisseur')) {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "categorie_fournisseur as catf ON catf.fk_soc = s.rowid";
 			}
