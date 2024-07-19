@@ -1553,6 +1553,12 @@ class Form
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
 		}
+		if (isModEnabled('category')) {
+			$sql .= " LEFT JOIN ".$this->db->prefix()."categorie_societe as cats ON cats.fk_soc = s.rowid";
+			if (isModEnabled('fournisseur')) {
+				$sql .= " LEFT JOIN " . $this->db->prefix() . "categorie_fournisseur as catf ON catf.fk_soc = s.rowid";
+			}
+		}
 		$sql .= " WHERE s.entity IN (" . getEntity('societe') . ")";
 		if (!empty($user->socid)) {
 			$sql .= " AND s.rowid = " . ((int) $user->socid);
