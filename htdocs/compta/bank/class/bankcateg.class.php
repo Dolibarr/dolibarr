@@ -245,7 +245,7 @@ class BankCateg // extends CommonObject
 
 		// Delete link between tag and bank lines
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline ";
 			$sql .= " WHERE fk_categ = ".((int) $this->id);
 
 			$resql = $this->db->query($sql);

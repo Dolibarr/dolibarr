@@ -78,3 +78,4 @@ ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(e
 
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
+ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;

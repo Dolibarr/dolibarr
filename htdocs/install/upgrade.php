@@ -259,7 +259,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			// Les contraintes indesirables ont un nom qui commence par 0_ ou se determine par ibfk_999
 			$listtables = array(
 								MAIN_DB_PREFIX.'adherent_options',
-								MAIN_DB_PREFIX.'bank_class',
+								MAIN_DB_PREFIX.'category_bankline ',
 								MAIN_DB_PREFIX.'c_ecotaxe',
 								MAIN_DB_PREFIX.'c_methode_commande_fournisseur', // table renamed
 								MAIN_DB_PREFIX.'c_input_method'
