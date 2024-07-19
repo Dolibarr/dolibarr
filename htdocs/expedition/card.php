@@ -344,30 +344,6 @@ if (empty($reshook)) {
 					$qty = "qtyl".$i.'_'.$j;
 				}
 			} else {
-				$p = new Product($db);
-				$res = $p->fetch($objectsrc->lines[$i]->fk_product);
-				if ($res > 0) {
-					if (GETPOST('entrepot_id', 'int') == -1) {
-						$qty .= '_'.$j;
-					}
-
-					if ($p->stockable_product == Product::DISABLED_STOCK) {
-						$w = new Entrepot($db);
-						$Tw = $w->list_array();
-						if (count($Tw) > 0) {
-							$w_Id = array_keys($Tw);
-							$stockLine[$i][$j]['qty'] = GETPOST($qty, 'int');
-
-							// lorsque que l'on a le stock désactivé sur un produit/service
-							// on force l'entrepot pour passer le test  d'ajout de ligne dans expedition.class.php
-							//
-							$stockLine[$i][$j]['warehouse_id'] = $w_Id[0];
-							$stockLine[$i][$j]['ix_l'] = GETPOST($idl, 'int');
-						} else {
-							setEventMessage($langs->trans('NoWarehouseInBase'));
-						}
-					}
-				}
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOSTINT($qty) > 0) {
 					$totalqty += price2num(GETPOST($qty, 'alpha'), 'MS');
@@ -405,7 +381,7 @@ if (empty($reshook)) {
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
 							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
-								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
+								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i], (bool) $product->stockable_product);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
@@ -424,7 +400,7 @@ if (empty($reshook)) {
 								$entrepot_id = 0;
 							}
 
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTINT($qty), 'MS'), $array_options[$i]);
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTINT($qty), 'MS'), $array_options[$i], (bool) $product->stockable_product);
 							if ($ret < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;

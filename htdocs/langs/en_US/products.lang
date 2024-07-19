@@ -439,3 +439,4 @@ StockableProduct=Stock management
 StockableProductDescription=If this option is enabled, the stock modification for this element is retained. If disabled, the stock modification for this element is not retained.
 StockDisabled=Stock disabled
 StockEnabled=Stock enabled
+ProductWithBatchMustBeManagedInStock=A product with batch numbers must be managed in stocks.

@@ -1058,6 +1058,13 @@ class Product extends CommonObject
 			$result = -3;
 		}
 
+		// batch products must be managed in stocks
+		if (!empty($this->status_batch) && empty($this->stockable_product)) {
+			$this->error = $langs->trans("ProductWithBatchMustBeManagedInStock");
+			$this->errors[] = $this->error;
+			$result = -5;
+		}
+
 		return $result;
 	}
 

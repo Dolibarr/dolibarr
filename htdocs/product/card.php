@@ -817,7 +817,7 @@ if (empty($reshook)) {
 				}
 
 				// managed_in_stock
-				$object->stockable_product   = GETPOSTISSET('stockable_product');
+				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -2198,7 +2198,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
 					$checked = $object->stockable_product == 1 ? "checked" : "";
-					print '<td><input type="checkbox" id="stockable_product" name="stockable_product" '. $checked . ' /></td></tr>';
+					$disabled = (!empty($object->stockable_product) && !empty($object->status_batch)) ? 'disabled title="'.$langs->trans('ProductWithBatchMustBeManagedInStock').'"' : '';
+					print '<td><input type="checkbox" id="stockable_product'.$disabled.'" name="stockable_product'.$disabled.'" '. $checked . ' '.$disabled.'/>';
+					if ($disabled) print '<input type="hidden" id="stockable_product" name="stockable_product" '. $checked .'/>';
+					print '</td></tr>';
 				}
 
 				if ($object->isService() && isModEnabled('workstation')) {

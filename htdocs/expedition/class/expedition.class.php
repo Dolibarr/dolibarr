@@ -923,9 +923,10 @@ class Expedition extends CommonObject
 	 * @param 	int		$id					Id of source line (order line)
 	 * @param 	float	$qty				Quantity
 	 * @param	array	$array_options		extrafields array
+	 * @param	bool		$stock_managed		should we manage stock ?
 	 * @return	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function addline($entrepot_id, $id, $qty, $array_options = [])
+	public function addline($entrepot_id, $id, $qty, $array_options = [], $stock_managed = true)
 	{
 		global $conf, $langs;
 
@@ -948,13 +949,13 @@ class Expedition extends CommonObject
 		if (isModEnabled('stock') && !empty($orderline->fk_product)) {
 			$fk_product = $orderline->fk_product;
 
-			if (!($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE)) {
+			if ($stock_managed && !($entrepot_id > 0) && !getDolGlobalString('STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS') && !(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') && $line->product_type == Product::TYPE_SERVICE)) {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
 			}
 
-			if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT')) {
+			if ($stock_managed && getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT')) {
 				$product = new Product($this->db);
 				$product->fetch($fk_product);
 
