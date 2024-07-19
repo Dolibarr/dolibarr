@@ -29,8 +29,8 @@
  */
 class BankCateg // extends CommonObject
 {
-	//public $element='bank_categ';			//!< Id that identify managed objects
-	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
+	//public $element='category_bank';			//!< Id that identify managed objects
+	//public $table_element='category_bank';	//!< Name of table without prefix where object is stored
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -97,7 +97,7 @@ class BankCateg // extends CommonObject
 		}
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bank (";
 		$sql .= "label";
 		$sql .= ", entity";
 		$sql .= ") VALUES (";
@@ -115,7 +115,7 @@ class BankCateg // extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_categ");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."category_bank");
 		}
 
 		// Commit or rollback
@@ -146,7 +146,7 @@ class BankCateg // extends CommonObject
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.label";
-		$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 		$sql .= " AND t.entity = ".$conf->entity;
 
@@ -189,7 +189,7 @@ class BankCateg // extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."category_bank SET";
 		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 		$sql .= " AND entity = ".$conf->entity;
@@ -257,7 +257,7 @@ class BankCateg // extends CommonObject
 
 		// Delete bank categ
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bank";
 			$sql .= " WHERE rowid=".((int) $this->id);
 
 			$resql = $this->db->query($sql);
@@ -334,7 +334,7 @@ class BankCateg // extends CommonObject
 
 		$return = array();
 
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ WHERE entity = ".$conf->entity." ORDER BY label";
+		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."category_bank WHERE entity = ".$conf->entity." ORDER BY label";
 		$resql = $this->db->query($sql);
 
 		if ($resql) {

@@ -553,7 +553,7 @@ class FormProduct
 	 *  @param	string		$morecss			 More CSS
 	 *  @return string|-1
 	 */
-	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'maxwidth125')
+	public function selectMeasuringUnits($name = 'measuring_units', $measuring_style = '', $selected = '0', $adddefault = 0, $mode = 0, $morecss = 'minwidth75 maxwidth125')
 	{
 		global $langs, $db;
 

@@ -100,8 +100,8 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = GETPOSTINT("search_sale");
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
-$searchCategoryCustomerOperator = 0;
-$searchCategorySupplierOperator = 0;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator');
 	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator');
@@ -206,7 +206,7 @@ if ($type == 'f') {
 // Initialize a technical objects to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
-$hookmanager->initHooks(array($contextpage));
+$hookmanager->initHooks(array($contextpage, 'thirdpartylist'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -883,7 +883,7 @@ foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$paramsCat .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 
-llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat);
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();

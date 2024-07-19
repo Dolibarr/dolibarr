@@ -175,8 +175,10 @@ if (empty($reshook)) {
 /*
  * View
  */
+$title = $langs->trans('ListPayment');
+$help_url = '';
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $form = new Form($db);
 $formother = new FormOther($db);

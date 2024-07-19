@@ -26,6 +26,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -182,6 +183,7 @@ if (empty($reshook)) {
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			// Clear cache of widgets (because we may have modified the length of cached widget lists)
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
 			dol_delete_dir_recursive($cachedir);
 
@@ -281,6 +283,7 @@ if ($reshook < 0) {
 foreach ($tmparray as $key => $val) {
 	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), empty($val['picto']) ? 'generic' : $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
+	$tmparray[$key]['picto'] = empty($val['picto']) ? 'generic' : $val['picto'];
 }
 
 $head = user_prepare_head($object);

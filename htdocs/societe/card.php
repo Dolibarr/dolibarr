@@ -6,17 +6,17 @@
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2020  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
- * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es.com>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2022-2023  George Gkantinas	    <info@geowv.eu>
+ * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -441,6 +441,11 @@ if (empty($reshook)) {
 				$current_logo = $object->logo;
 				$object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 			}
+			if (GETPOST('deletephoto')) {
+				$current_logo = $object->logo;
+				$object->logo = '';
+			}
+
 
 			// Check parameters
 			if (!GETPOST('cancel', 'alpha')) {
@@ -1380,22 +1385,52 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
 			$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
-			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
-			print '<td class="maxwidthonsmartphone" colspan="3">';
-			print '<span class="customer-back opacitymedium">'.$langs->trans("Prospect").'</span><input id="prospect" class="flat checkforselect marginleftonly" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'>';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<tr class="marginbottomlarge height50">';
+			if ($conf->browser->layout != 'phone') {
+				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+			}
+			print '<td class="maxwidthonsmartphone"'.($conf->browser->layout != 'phone' ? 'colspan="3"' : 'colspan="2"').'>';
+			print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 
-			print '<span class="customer-back">'.$langs->trans("Customer").'</span><input id="customer" class="flat checkforselect marginleftonly" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'>';
-			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+			print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
 
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
 				$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-				print '<span class="vendor-back">'.$langs->trans("Vendor").'</span><input id="supplier" class="flat checkforselect marginleftonly" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
+			}
+			// Add js to manage the background of nature
+			if ($conf->use_javascript_ajax) {
+				print '<script>
+				function refreshNatureCss() {
+					jQuery(".spannature").each(function( index ) {
+						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
+						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
+							if (index+1 == 1) {
+								jQuery("#spannature"+(index+1)).addClass("prospect-back").removeClass("nonature-back");
+							}
+							if (index+1 == 2) {
+								jQuery("#spannature"+(index+1)).addClass("customer-back").removeClass("nonature-back");
+							}
+							if (index+1 == 3) {
+								jQuery("#spannature"+(index+1)).addClass("vendor-back").removeClass("nonature-back");
+							}
+						} else {
+							jQuery("#spannature"+(index+1)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+						}
+					});
+				}
+				jQuery(".spannature").click(function(){
+					console.log("We click on a nature");
+					refreshNatureCss();
+				});
+				refreshNatureCss();
+				</script>';
 			}
 			print '</td>';
 			print '</tr>';
+
 			print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 			print '<table class="nobordernopadding"><tr><td>';
 			$tmpcode = $object->code_client;
@@ -1407,6 +1442,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$s = $modCodeClient->getToolTip($langs, $object, 0);
 			print $form->textwithpicto('', $s, 1);
 			print '</td></tr></table>';
+			print '</td>';
+
+			if ($conf->browser->layout == 'phone') {
+				print '</tr><tr>';
+			}
 
 			print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 
@@ -1426,7 +1466,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Status
 			print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
-			print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
+			print $form->selectarray('status', array('1' => $langs->trans('InActivity'), '0' => $langs->trans('ActivityCeased')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 			print '</td></tr>';
 
 			// Barcode
@@ -1434,9 +1474,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				print img_picto('', 'barcode', 'class="pictofixedwidth"');
-				print '<input type="text" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+				print '<input type="text" class="minwidth200 maxwidth300 widthcentpercentminusx" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
 				print '</td></tr>';
 			}
+
+			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'>&nbsp;</td></tr>';
 
 			// Address
 			print '<tr><td class="tdtop">';
@@ -1464,7 +1507,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
 			print img_picto('', 'country', 'class="pictofixedwidth"');
-			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth300 maxwidth500 widthcentpercentminusx');
+			print $form->select_country((GETPOSTISSET('country_id') ? GETPOST('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth200 maxwidth300 widthcentpercentminusx');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -1480,7 +1523,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($object->country_id) {
 					print img_picto('', 'state', 'class="pictofixedwidth"');
-					print $formcompany->select_state($object->state_id, $object->country_code);
+					print $formcompany->select_state($object->state_id, $object->country_code, 'state_id', 'minwidth200 maxwidth300 widthcentpercentminusx');
 				} else {
 					print $countrynotdefined;
 				}
@@ -1504,26 +1547,24 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 			print '<td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>'.img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"').' <input type="text" name="fax" id="fax" class="maxwidth200 widthcentpercentminusx" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td></tr>';
 
-			// Email / Web
-			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', !getDolGlobalString('SOCIETE_EMAIL_MANDATORY') ? '' : $conf->global->SOCIETE_EMAIL_MANDATORY).'</td>';
-			print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td>';
-			if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
-				if ($conf->browser->layout == 'phone') {
-					print '</tr><tr>';
-				}
-				print '<td class="individualline noemail">'.$form->editfieldkey($langs->trans('No_Email') .' ('.$langs->trans('Contact').')', 'contact_no_email', '', $object, 0).'</td>';
-				print '<td class="individualline" '.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.$form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($object->no_email) ? 0 : 1)), 1, false, 1).'</td>';
-			}
-			print '</tr>';
+			// URL
 			print '<tr><td>'.$form->editfieldkey('Web', 'url', '', $object, 0).'</td>';
 			print '<td colspan="3">'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="url" id="url" value="'.$object->url.'"></td></tr>';
 
+			// Email
+			print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '', getDolGlobalString('SOCIETE_EMAIL_MANDATORY')).'</td>';
+			print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" class="maxwidth200 widthcentpercentminusx" name="email" id="email" value="'.$object->email.'"></td>';
+
 			// Unsubscribe
 			if (isModEnabled('mailing')) {
+				if ($conf->browser->layout == 'phone') {
+					print '</tr><tr>';
+				}
 				if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 					print "\n".'<script type="text/javascript">'."\n";
 					print '$(document).ready(function () {
 								$("#email").keyup(function() {
+									console.log("We change email content");
 									if ($(this).val()!="") {
 										$(".noemail").addClass("fieldrequired");
 									} else {
@@ -1539,17 +1580,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
-				print '<tr>';
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
 				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 				print '</td>';
+			}
+			print '</tr>';
+
+			// Refuse emailing of all contacts
+			if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
+				print '<tr>';
+				if ($conf->browser->layout != 'phone') {
+					print '<td></td>';
+					print '<td></td>';
+				}
+				print '<td class="individualline noemail">'.$form->editfieldkey($langs->trans('No_Email') .' ('.$langs->trans('Contact').')', 'contact_no_email', '', $object, 0).'</td>';
+				print '<td class="individualline" '.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>'.$form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($object->no_email) ? 0 : 1)), 1, false, 1).'</td>';
 				print '</tr>';
 			}
 
 			// Social networks
 			if (isModEnabled('socialnetworks')) {
-				$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
+				$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+
+				$object->showSocialNetwork($socialnetworks, $colspan);
+
+				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 			}
 
 			// Prof ids
@@ -1584,7 +1640,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Vat is used
-			print '<tr><td>'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</td>';
+			print '<tr><td><label for="assujtva_value">'.$form->editfieldkey('VATIsUsed', 'assujtva_value', '', $object, 0).'</label></td>';
 			print '<td>';
 			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? (GETPOST('assujtva', 'alpha') != '' ? ' checked="checked"' : '') : 'checked="checked"') . ' value="1">'; // Assujeti par default en creation
 			print '</td>';
@@ -1627,8 +1683,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// VAT reverse charge by default
 			if (getDolGlobalString('ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE')) {
-				print '<tr><td>' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</td><td colspan="3">';
-				print '<input type="checkbox" name="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
+				print '<tr><td><label for="vat_reverse_charge">' . $form->editfieldkey('VATReverseChargeByDefault', 'vat_reverse_charge', '', $object, 0) . '</label></td><td colspan="3">';
+				print '<input type="checkbox" name="vat_reverse_charge" id="vat_reverse_charge" '.($object->vat_reverse_charge == '1' ? ' checked' : '').'>';
 				print '</td></tr>';
 			}
 
@@ -2122,21 +2178,49 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						break;
 				}
 
+				// Nature of thirdparty
 				$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
 				$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
-				print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('NatureOfThirdParty', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
+				print '<tr class="marginbottomlarge height50"><td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
-				print '<span class="customer-back opacitymedium">'.$langs->trans("Prospect").'</span><input id="prospect" class="flat checkforselect marginleftonly" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'>';
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<span id="spannature1" class="spannature prospect-back paddinglarge marginrightonly"><label for="prospectinput" class="valignmiddle">'.$langs->trans("Prospect").'<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="2"'.($selectedprospect ? ' checked="checked"' : '').'></label></span>';
 
-				print '<span class="customer-back">'.$langs->trans("Customer").'</span><input id="customer" class="flat checkforselect marginleftonly" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'>';
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print '<span id="spannature2" class="spannature customer-back paddinglarge marginrightonly"><label for="customerinput" class="valignmiddle">'.$langs->trans("Customer").'<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1"'.($selectedcustomer ? ' checked="checked"' : '').'></label></span>';
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 					|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 					// Supplier
 					$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-					print '<span class="vendor-back">'.$langs->trans("Vendor").'</span><input id="supplier" class="flat checkforselect marginleftonly" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'>';
+					print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
+				}
+
+				// Add js to manage the background of nature
+				if ($conf->use_javascript_ajax) {
+					print '<script>
+						function refreshNatureCss() {
+							jQuery(".spannature").each(function( index ) {
+								console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
+								if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
+									if (index+1 == 1) {
+										jQuery("#spannature"+(index+1)).addClass("prospect-back").removeClass("nonature-back");
+									}
+									if (index+1 == 2) {
+										jQuery("#spannature"+(index+1)).addClass("customer-back").removeClass("nonature-back");
+									}
+									if (index+1 == 3) {
+										jQuery("#spannature"+(index+1)).addClass("vendor-back").removeClass("nonature-back");
+									}
+								} else {
+									jQuery("#spannature"+(index+1)).removeClass("prospect-back").removeClass("customer-back").removeClass("vendor-back").addClass("nonature-back");
+								}
+							});
+						}
+						jQuery(".spannature").click(function(){
+							console.log("We click on a nature");
+							refreshNatureCss();
+						});
+						refreshNatureCss();
+						</script>';
 				}
 				print '</td>';
 				print '</tr>';
@@ -2182,6 +2266,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr><td>'.$form->editfieldkey('Status', 'status', '', $object, 0).'</td><td colspan="3">';
 				print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100', 1);
 				print '</td></tr>';
+
+				$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+				print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'>&nbsp;</td></tr>';
 
 				// Address
 				print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -2244,13 +2331,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// EMail
 				print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (getDolGlobalString('SOCIETE_EMAIL_MANDATORY'))).'</td>';
-				print '<td colspan="3">';
+				print '<td'.(($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '').'>';
 				print img_picto('', 'object_email', 'class="pictofixedwidth"');
 				print '<input type="text" name="email" id="email" class="maxwidth500 widthcentpercentminusx" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'">';
-				print '</td></tr>';
+				print '</td>';
 
 				// Unsubscribe
 				if (isModEnabled('mailing')) {
+					if ($conf->browser->layout == 'phone') {
+						print '</tr><tr>';
+					}
 					if ($conf->use_javascript_ajax && getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2) {
 						print "\n".'<script type="text/javascript">'."\n";
 
@@ -2276,18 +2366,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					}
-					print '<tr>';
 					print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 					print '<td>';
 					$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
 					print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : $object->no_email), 1, false, $useempty);
 					print '</td>';
-					print '</tr>';
 				}
+				print '</tr>';
 
 				// Social network
 				if (isModEnabled('socialnetworks')) {
-					$object->showSocialNetwork($socialnetworks, ($conf->browser->layout == 'phone' ? 2 : 4));
+					$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
+
+					$object->showSocialNetwork($socialnetworks, $colspan);
+
+					print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 				}
 
 				// Prof ids
@@ -2528,7 +2621,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<td>'.$form->editfieldkey('Logo', 'photoinput', '', $object, 0).'</td>';
 				print '<td colspan="3">';
 				if ($object->logo) {
-					print $form->showphoto('societe', $object);
+					print $form->showphoto('societe', $object, 100, 0, 0, 'inline-block');
 				}
 				$caneditfield = 1;
 				if ($caneditfield) {
@@ -2537,7 +2630,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					}
 					print '<table class="nobordernopadding">';
 					if ($object->logo) {
-						print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br><br></td></tr>';
+						print '<tr><td><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> <label for="photodelete">'.$langs->trans("Delete").'</photo><br></td></tr>';
 					}
 					//print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
 					print '<tr><td>';
@@ -2619,7 +2712,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		$head = societe_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company');
+		print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), -1, 'company', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
@@ -2671,7 +2764,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<table class="border tableforfield centpercent">';
 
 			// Type Prospect/Customer/Supplier
-			print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 			print $object->getTypeUrl(1);
 			print '</td></tr>';
 
@@ -2724,6 +2817,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$NBPROFIDMAX = getDolGlobalInt('THIRDPARTY_MAX_NB_PROF_ID', 6);
 			while ($i <= $NBPROFIDMAX) {
 				$idprof = $langs->transcountry('ProfId'.$i, $object->country_code);
+				if (!empty($conf->dol_optimize_smallscreen)) {
+					$idprof = $langs->transcountry('ProfId'.$i.'Short', $object->country_code);
+				}
 				if ($idprof != '-' && ($i <= $NBPROFIDMIN || !empty($langs->tab_translate['ProfId'.$i.$object->country_code]))) {
 					print '<tr>';
 					print '<td>'.$idprof.'</td><td>';
@@ -2874,7 +2970,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print "}\n";
 						print '</script>';
 						print "\n";
-						$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
+						$s .= '<a href="#" class="hideonsmartphone" onclick="CheckVAT(jQuery(\'#tva_intra\').val());">'.$langs->trans("VATIntraCheck").'</a>';
 						$s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					} else {
 						$s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank" rel="noopener noreferrer">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';

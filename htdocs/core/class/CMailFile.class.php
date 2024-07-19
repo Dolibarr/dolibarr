@@ -1035,10 +1035,10 @@ class CMailFile
 				// If we use SSL/TLS
 				$server = getDolGlobalString($keyforsmtpserver);
 				$secure = '';
-				if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
+				if (getDolGlobalString($keyfortls) && function_exists('openssl_open')) {
 					$secure = 'ssl';
 				}
-				if (!empty($conf->global->$keyforstarttls) && function_exists('openssl_open')) {
+				if (getDolGlobalString($keyforstarttls) && function_exists('openssl_open')) {
 					$secure = 'tls';
 				}
 				$server = ($secure ? $secure.'://' : '').$server;
@@ -1050,11 +1050,11 @@ class CMailFile
 
 				$loginid = '';
 				$loginpass = '';
-				if (!empty($conf->global->$keyforsmtpid)) {
+				if (getDolGlobalString($keyforsmtpid)) {
 					$loginid = getDolGlobalString($keyforsmtpid);
 					$this->smtps->setID($loginid);
 				}
-				if (!empty($conf->global->$keyforsmtppw)) {
+				if (getDolGlobalString($keyforsmtppw)) {
 					$loginpass = getDolGlobalString($keyforsmtppw);
 					$this->smtps->setPW($loginpass);
 				}
@@ -1199,19 +1199,19 @@ class CMailFile
 				// If we use SSL/TLS
 				$server = getDolGlobalString($keyforsmtpserver);
 				$secure = '';
-				if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
+				if (getDolGlobalString($keyfortls) && function_exists('openssl_open')) {
 					$secure = 'ssl';
 				}
-				if (!empty($conf->global->$keyforstarttls) && function_exists('openssl_open')) {
+				if (getDolGlobalString($keyforstarttls) && function_exists('openssl_open')) {
 					$secure = 'tls';
 				}
 
 				$this->transport = new Swift_SmtpTransport($server, getDolGlobalString($keyforsmtpport), $secure);
 
-				if (!empty($conf->global->$keyforsmtpid)) {
+				if (getDolGlobalString($keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
 				}
-				if (!empty($conf->global->$keyforsmtppw) && getDolGlobalString($keyforsmtpauthtype) != "XOAUTH2") {
+				if (getDolGlobalString($keyforsmtppw) && getDolGlobalString($keyforsmtpauthtype) != "XOAUTH2") {
 					$this->transport->setPassword($conf->global->$keyforsmtppw);
 				}
 				if (getDolGlobalString($keyforsmtpauthtype) === "XOAUTH2") {
@@ -1864,7 +1864,7 @@ class CMailFile
 			}
 
 			// If we use SSL/TLS
-			if (!empty($conf->global->$keyfortls) && function_exists('openssl_open')) {
+			if (getDolGlobalString($keyfortls) && function_exists('openssl_open')) {
 				$host = 'ssl://'.$host;
 			}
 			// tls smtp start with no encryption

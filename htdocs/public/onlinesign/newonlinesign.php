@@ -268,7 +268,7 @@ print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');

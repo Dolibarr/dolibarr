@@ -1,17 +1,18 @@
 <?php
-/* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2020  Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
- * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
- * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+/* Copyright (C) 2002-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2020	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2018	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
+ * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2020-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
+ * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $permissionnote = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->rights->ficheinter->supprimer);
+$permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->hasRight('ficheinter', 'supprimer'));
 
 $usercancreate = $user->hasRight('ficheinter', 'creer');
 
@@ -825,7 +826,7 @@ if (isModEnabled('project')) {
 
 $help_url = 'EN:Module_Interventions';
 
-llxHeader('', $langs->trans("Intervention"), $help_url);
+llxHeader('', $langs->trans("Intervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
 
 if ($action == 'create') {
 	// Create new intervention
@@ -1654,7 +1655,7 @@ if ($action == 'create') {
 
 				// Modify
 				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
+					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
 					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 						print $langs->trans("Modify");
 					} else {

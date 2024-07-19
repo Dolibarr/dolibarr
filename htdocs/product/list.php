@@ -16,6 +16,7 @@
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,7 +299,7 @@ if (! empty($conf->stock->enabled)) {
 		$arrayfields['p.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position']
 		);
 	}
@@ -755,7 +756,7 @@ foreach ($searchCategoryProductList as $searchCategoryProduct) {
 }
 
 //llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'classforhorizontalscrolloftabs');
-llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'mod-product page-list');
+llxHeader('', $title, $helpurl, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist mod-product page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -2193,7 +2194,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.fk_state']['checked'])) {
 			print '<td>';
 			if (!empty($obj->fk_state)) {
-				print  getState($obj->fk_state, 0, $db);
+				print  getState($obj->fk_state, '0', $db);
 			}
 			print '</td>';
 			if (!$i) {

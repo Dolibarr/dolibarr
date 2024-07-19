@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
+ * Copyright (C) 2016      Bahfir abbes         <bafbes@gmail.com>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
@@ -2864,7 +2864,7 @@ abstract class CommonObject
 									'HT',
 									$line->info_bits,
 									$line->product_type,
-									false,
+									0,
 									$line->date_start,
 									$line->date_end,
 									$line->array_options,
@@ -2889,7 +2889,7 @@ abstract class CommonObject
 									$line->info_bits,
 									$line->product_type,
 									$line->remise_percent,
-									false,
+									0,
 									$line->date_start,
 									$line->date_end,
 									$line->array_options,
@@ -6542,7 +6542,7 @@ abstract class CommonObject
 			foreach ($new_array_options as $key => $value) {
 				$attributeKey      = substr($key, 8); // Remove 'options_' prefix
 				$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
-				$attributeLabel    = $extrafields->attributes[$this->table_element]['label'][$attributeKey];
+				$attributeLabel    = $langs->transnoentities($extrafields->attributes[$this->table_element]['label'][$attributeKey]);
 				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
 				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
@@ -8242,7 +8242,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+			if (count($InfoFieldList) > 2 && !empty($InfoFieldList[2])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -8459,6 +8459,17 @@ abstract class CommonObject
 
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
+
+					if ($classname && !class_exists($classname)) {
+						// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
+						// TODO use newObjectByElement() introduce in V20 by PR #30036 for better errors management
+						$element_prop = getElementProperties($classname);
+						if ($element_prop) {
+							$classname = $element_prop['classname'];
+						}
+					}
+
+
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
 						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
@@ -8581,7 +8592,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
+		if (!isset($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}

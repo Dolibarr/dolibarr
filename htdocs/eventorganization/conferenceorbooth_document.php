@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+/* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +94,7 @@ if ($id > 0 || !empty($ref)) {
 // Permissions
 $permissiontoread = $user->hasRight('eventorganization', 'read');
 $permissiontoadd = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->eventorganization->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('eventorganization', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('eventorganization', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->eventorganization->multidir_output[isset($object->entity) ? $object->entity : 1];
@@ -130,8 +131,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $form = new Form($db);
 
 $title = $langs->trans("ConferenceOrBooth").' - '.$langs->trans("Files");
-$help_url = '';
-llxHeader('', $title, $help_url);
+$help_url='EN:Module_Event_Organization';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-card_documents');
 
 $result = $projectstatic->fetch($object->fk_project);
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {

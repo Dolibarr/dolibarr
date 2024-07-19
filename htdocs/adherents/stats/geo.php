@@ -1,6 +1,7 @@
 <?php
-/* Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (c) 2004-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       MDW                         <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,9 @@ if ($mode == 'memberbyregion') {
 	$title = $langs->trans("MembersStatisticsByRegion");
 }
 
-llxHeader('', $title, '', '', 0, 0, $arrayjs);
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, $arrayjs, '', '', 'mod-member page-stats_geo');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 

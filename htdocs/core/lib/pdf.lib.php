@@ -1029,7 +1029,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 	$dims = $pdf->getPageDimensions();
 
 	// Line of free text
-	if (empty($hidefreetext) && !empty($conf->global->$paramfreetext)) {
+	if (empty($hidefreetext) && getDolGlobalString($paramfreetext)) {
 		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 		// More substitution keys
 		$substitutionarray['__FROM_NAME__'] = $fromcompany->name;
@@ -1380,14 +1380,14 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 /**
  *	Show linked objects for PDF generation
  *
- *	@param	TCPDF			$pdf				Object PDF
+ *	@param	TCPDF		$pdf				Object PDF
  *	@param	object		$object				Object
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
  *	@param  int			$posy				Y
  *	@param	float		$w					Width of cells. If 0, they extend up to the right margin of the page.
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
- *	@param	int			$align				Align
+ *	@param	string		$align				Align
  *	@param	string		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
@@ -1633,7 +1633,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				// Check if description must be output
 				if (!empty($object->element)) {
 					$tmpkey = 'MAIN_DOCUMENTS_HIDE_DESCRIPTION_FOR_'.strtoupper($object->element);
-					if (!empty($conf->global->$tmpkey)) {
+					if (getDolGlobalString($tmpkey)) {
 						$hidedesc = 1;
 					}
 				}
@@ -2500,13 +2500,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
-				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
-				}
-			} elseif (count($objects) == 1) {
+			if (count($objects) == 1) {
 				$elementobject = array_shift($objects);
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref).(!empty($elementobject->ref_client) ? ' ('.$elementobject->ref_client.')' : '').(!empty($elementobject->ref_supplier) ? ' ('.$elementobject->ref_supplier.')' : '');

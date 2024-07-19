@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -201,7 +202,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['cf.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -383,7 +384,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$default_ref_supplier = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
-
+		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -392,6 +393,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created supplier invoice.
 			} else {
 				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
@@ -428,6 +430,10 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
+				if (empty($objecttmp->note_public)) {
+					$objecttmp->note_public =  $langs->transnoentities("Orders");
+				}
+
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 				$sql .= "fk_source";
 				$sql .= ", sourcetype";
@@ -546,6 +552,11 @@ if (empty($reshook)) {
 						}
 					}
 				}
+			}
+
+			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
+				$objecttmp->update($user);
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -1021,7 +1032,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-list');
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {

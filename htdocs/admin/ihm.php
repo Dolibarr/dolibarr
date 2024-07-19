@@ -434,7 +434,15 @@ if ($mode == 'other') {
 	print '</tr>';
 
 	// Max size of lists
-	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="' . getDolGlobalString('MAIN_SIZE_LISTE_LIMIT') . '"></td>';
+	print '<tr class="oddeven"><td>' . $langs->trans("DefaultMaxSizeList") . '</td><td><input class="flat width50" name="MAIN_SIZE_LISTE_LIMIT" value="';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') > 0) {
+		print getDolGlobalString('MAIN_SIZE_LISTE_LIMIT');
+	}
+	print '">';
+	if (getDolGlobalInt('MAIN_SIZE_LISTE_LIMIT') <= 0) {
+		print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Automatic").')</span>';
+	}
+	print '</td>';
 	print '</tr>';
 
 	// Max size of short lists on customer card
@@ -443,7 +451,7 @@ if ($mode == 'other') {
 
 	// Display checkboxes and fields menu left / right
 	print '<tr class="oddeven"><td>' . $langs->trans("MAIN_CHECKBOX_LEFT_COLUMN") . '</td><td>';
-	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 0, '', 'other');
+	print ajax_constantonoff("MAIN_CHECKBOX_LEFT_COLUMN", array(), $conf->entity, 0, 0, 1, 0, 0, 1, '', 'other');
 	print '</td>';
 	print '</tr>';
 

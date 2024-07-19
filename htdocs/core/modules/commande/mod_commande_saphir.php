@@ -99,19 +99,22 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, null);
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$order = new Commande($db);
+		$order->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $order);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 

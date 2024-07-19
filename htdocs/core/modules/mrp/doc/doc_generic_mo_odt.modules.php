@@ -316,7 +316,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'MRP_MO_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 

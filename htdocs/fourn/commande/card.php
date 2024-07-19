@@ -2672,7 +2672,7 @@ if ($action == 'create') {
 
 				if ($object->statut == CommandeFournisseur::STATUS_ACCEPTED) {
 					if ($usercanorder) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=createorder#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=createorder&token='.newToken().'#makeorder">'.$langs->trans("MakeOrder").'</a></div>';
 					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("MakeOrder").'</a></div>';
 					}

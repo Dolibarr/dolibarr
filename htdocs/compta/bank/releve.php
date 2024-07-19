@@ -6,6 +6,7 @@
  * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -312,7 +313,7 @@ if (empty($numref)) {
 
 			// If not cash account and can be reconciliate
 			if ($user->hasRight('banque', 'consolidate')) {
-				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
+				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&token='.newToken().'&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
 			} else {
 				$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
 			}
@@ -323,7 +324,7 @@ if (empty($numref)) {
 				if ($user->hasRight('banque', 'consolidate')) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&token='.newToken().'&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
 				} else {
 					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
 				}
@@ -662,7 +663,7 @@ if (empty($numref)) {
 			// Categories
 			if ($ve) {
 				$sql = "SELECT label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
+				$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as ct";
 				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".((int) $conf->entity);

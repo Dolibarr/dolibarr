@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1066,7 +1067,7 @@ function listOfSessions()
 /**
  * 	Purge existing sessions
  *
- * 	@param		int		$mysessionid		To avoid to try to delete my own session
+ * 	@param		string	$mysessionid		To avoid to try to delete my own session
  * 	@return		int							>0 if OK, <0 if KO
  */
 function purgeSessions($mysessionid)

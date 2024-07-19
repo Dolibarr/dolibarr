@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
@@ -453,7 +453,7 @@ if (empty($reshook) && $action == 'add') {
 						// It is not so important because a test is done on return of payment validation.
 					}
 
-					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
+					$urlback = getOnlinePaymentUrl(0, 'member', $adh->ref, (float) price2num(GETPOST('amount', 'alpha'), 'MT'), '', 0);
 
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));

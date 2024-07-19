@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,7 +232,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';

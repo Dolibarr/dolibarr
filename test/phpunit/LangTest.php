@@ -94,6 +94,9 @@ class LangTest extends CommonClassTest
 			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) {
 				continue;
 			}
+			if (in_array($code, array('mk_MK'))) {	// We exclude some language not yet ready
+				continue;
+			}
 			$langCodes[$code] = [$code];
 		}
 		return $langCodes;

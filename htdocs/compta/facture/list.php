@@ -13,12 +13,13 @@
  * Copyright (C) 2015-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2019-2021	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2019-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2023		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2021-2024 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,8 +148,8 @@ $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 
-$search_late = GETPOST('search_late');
-if ($search_late == 'late') {
+$search_option = GETPOST('search_option');
+if ($search_option == 'late') {
 	$search_status = '1';
 }
 
@@ -287,7 +288,7 @@ foreach ($object->fields as $key => $val) {
 			$arrayfields[$newkey] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
-				'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+				'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 				'position' => $val['position'],
 				'help' => empty($val['help']) ? '' : $val['help'],
 			);
@@ -398,8 +399,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
-	$search_late = '';
-	$socid = 0;
+	$search_option = '';
 }
 
 if (empty($reshook)) {
@@ -859,7 +859,7 @@ if ($search_datelimit_start) {
 if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
-if ($search_late == 'late') {
+if ($search_option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 /*if ($search_sale > 0) {
@@ -1010,7 +1010,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $param = '&socid='.urlencode((string) ($socid));
 if (!empty($mode)) {
@@ -1181,8 +1181,8 @@ if ($search_pos_source) {
 if ($show_files) {
 	$param .= '&show_files='.urlencode((string) ($show_files));
 }
-if ($search_late) {
-	$param .= "&search_late=".urlencode($search_late);
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -1322,7 +1322,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= '<label for="search_late">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_late" id="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').' </label><input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();

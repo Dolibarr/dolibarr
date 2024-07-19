@@ -3,7 +3,8 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,6 +120,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		$object->date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		$object->progress = price2num(GETPOST('progress', 'alphanohtml'));
 		$object->budget_amount = GETPOSTFLOAT('budget_amount');
+		$object->billable = (GETPOST('billable', 'aZ') == 'yes' ? 1 : 0);
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -262,7 +264,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task');
 
 
 if ($id > 0 || !empty($ref)) {
@@ -509,6 +511,11 @@ if ($id > 0 || !empty($ref)) {
 		print $formother->select_percent($object->progress, 'progress', 0, 5, 0, 100, 1);
 		print '</td></tr>';
 
+		// Billable
+		print '<tr><td>'.$langs->trans("Billable").'</td><td>';
+		print $form->selectyesno('billable', $object->billable);
+		print '</td></tr>';
+
 		// Description
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
@@ -680,6 +687,11 @@ if ($id > 0 || !empty($ref)) {
 		if (!is_null($object->budget_amount) && strcmp((string) $object->budget_amount, '')) {
 			print '<span class="amount">'.price($object->budget_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		}
+		print '</td></tr>';
+
+		// Billable
+		print '<tr><td>'.$langs->trans("Billable").'</td><td>';
+		print '<span>'.($object->billable ? $langs->trans('Yes') : $langs->trans('No')).'</span>';
 		print '</td></tr>';
 
 		// Other attributes

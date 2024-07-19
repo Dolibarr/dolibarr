@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021  Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021  Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021  Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+/* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021		Greg Rastklan				<greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021		Jean-Pascal BOUDET			<jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021		Grégory BLEMAND				<gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +26,11 @@
  * \brief       This file compares skills of user groups
  *
  * Displays a table in three parts.
- * 1-  the left part displays the list of users of the selected group 1.
+ * 1- the left part displays the list of users for the selected group 1.
  *
- * 2- the central part displays the skills. display of the maximum score for this group and the number of occurrences.
+ * 2- the central part displays the skills. Display of the maximum score for this group and the number of occurrences.
  *
- * 3-  the right part displays the members of group 2 or the job to be compared
+ * 3- the right part displays the members of group 2 or the job to be compared
  */
 
 
@@ -50,7 +51,7 @@ $langs->load('hrm');
 $job = new Job($db);
 
 // Permissions
-$permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read;
+$permissiontoread = $user->hasRight('hrm', 'evaluation', 'read') || $user->hasRight('hrm', 'compare_advance', 'read');
 $permissiontoadd = 0;
 
 if (empty($conf->hrm->enabled)) {

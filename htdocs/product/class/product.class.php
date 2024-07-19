@@ -91,7 +91,9 @@ class Product extends CommonObject
 	);
 
 	/**
-	 * @var string picto
+	 * Label of the pictogram used for this object ('product' or 'service')
+	 * @var string
+	 * @see img_picto()
 	 */
 	public $picto = 'product';
 
@@ -206,7 +208,7 @@ class Product extends CommonObject
 	public $tva_tx;
 
 	/**
-	 * int	French VAT NPR is used (0 or 1)
+	 * @var int	French VAT NPR is used (0 or 1)
 	 */
 	public $tva_npr = 0;
 
@@ -461,12 +463,22 @@ class Product extends CommonObject
 	public $imgWidth;
 	public $imgHeight;
 
-	//! Id du fournisseur
+	/**
+	 * Supplier ID
+	 * @var int
+	 */
 	public $product_fourn_id;
 
-	//! Product ID already linked to a reference supplier
+	/**
+	 * Product ID already linked to a reference supplier
+	 * @var int
+	 */
 	public $product_id_already_linked;
 
+	/**
+	 * Number of pictures
+	 * @var int
+	 */
 	public $nbphoto = 0;
 
 	//! Contains detail of stock of product into each warehouse
@@ -476,14 +488,28 @@ class Product extends CommonObject
 	 * @var int Default warehouse Id
 	 */
 	public $fk_default_warehouse;
+
 	/**
 	 * @var int ID
 	 */
 	public $fk_price_expression;
 
-	/* To store supplier price found */
+	/**
+	 * Supplier price found : MOQ (Minimum Order Quantity)
+	 * @var float
+	 */
 	public $fourn_qty;
+
+	/**
+	 * Supplier price found : unit price
+	 * @var float
+	 */
 	public $fourn_pu;
+
+	/**
+	 * Supplier price found : VAT type
+	 * @var 'HT'|'TTC'
+	 */
 	public $fourn_price_base_type;
 
 	/**
@@ -933,7 +959,7 @@ class Product extends CommonObject
 
 							$result = $this->_log_price($user);
 							if ($result > 0) {
-								if ($this->update($id, $user, true, 'add') <= 0) {
+								if ($this->update($id, $user, 1, 'add') <= 0) {
 									$error++;
 								}
 							} else {
@@ -1478,14 +1504,19 @@ class Product extends CommonObject
 						$olddir = $conf->product->dir_output."/".dol_sanitizeFileName($this->oldcopy->ref);
 						$newdir = $conf->product->dir_output."/".dol_sanitizeFileName($this->ref);
 						if (file_exists($olddir)) {
-							//include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							//$res = dol_move($olddir, $newdir);
+							// include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							// $res = dol_move($olddir, $newdir);
 							// do not use dol_move with directory
 							$res = @rename($olddir, $newdir);
 							if (!$res) {
 								$langs->load("errors");
 								$this->error = $langs->trans('ErrorFailToRenameDir', $olddir, $newdir);
 								$error++;
+							} else {
+								// to keep old entries with the new dir
+								require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+								$ecmfiles = new EcmFiles($this->db);
+								$ecmfiles->updateAfterRename("produit/".dol_sanitizeFileName($this->oldcopy->ref), "produit/".dol_sanitizeFileName($this->ref));
 							}
 						}
 					}
@@ -1552,7 +1583,7 @@ class Product extends CommonObject
 			$this->error = "Object must be fetched before calling delete";
 			return -1;
 		}
-		if (($this->type == Product::TYPE_PRODUCT && !$user->hasRight('produit', 'supprimer')) || ($this->type == Product::TYPE_SERVICE && !$user->hasRight('service', 'supprimer'))) {
+		if (($this->isProduct() && !$user->hasRight('produit', 'supprimer')) || ($this->isService() && !$user->hasRight('service', 'supprimer'))) {
 			$this->error = "ErrorForbidden";
 			return 0;
 		}
@@ -2412,7 +2443,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		if ($newprice !== '' || $newprice === 0) {
+		if ($newprice === 0 || $newprice !== '') {
 			if ($newpricebase == 'TTC') {
 				$price_ttc = price2num($newprice, 'MU');
 				$price = (float) price2num($newprice) / (1 + ((float) $newvat / 100));
@@ -5363,9 +5394,9 @@ class Product extends CommonObject
 			}
 		}
 
-		if ($this->type == Product::TYPE_PRODUCT) {
+		if ($this->isProduct()) {
 			$datas['picto'] = img_picto('', 'product').' <u class="paddingrightonly">'.$langs->trans("Product").'</u>';
-		} elseif ($this->type == Product::TYPE_SERVICE) {
+		} elseif ($this->isService()) {
 			$datas['picto'] = img_picto('', 'service').' <u class="paddingrightonly">'.$langs->trans("Service").'</u>';
 		}
 		if (isset($this->status) && isset($this->status_buy)) {
@@ -5381,7 +5412,7 @@ class Product extends CommonObject
 		if (!empty($this->description)) {
 			$datas['description'] = '<br><b>'.$langs->trans('ProductDescription').':</b> '.dolGetFirstLineOfText($this->description, 5);
 		}
-		if ($this->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+		if ($this->isStockManaged()) {
 			if (isModEnabled('productbatch')) {
 				$langs->load("productbatch");
 				$datas['batchstatus'] = "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
@@ -5391,7 +5422,7 @@ class Product extends CommonObject
 			$datas['barcode'] = '<br><b>'.$langs->trans('BarCode').':</b> '.$this->barcode;
 		}
 
-		if ($this->type == Product::TYPE_PRODUCT) {
+		if ($this->isProduct()) {
 			if ($this->weight) {
 				$datas['weight'] = "<br><b>".$langs->trans("Weight").'</b>: '.$this->weight.' '.measuringUnitString(0, "weight", $this->weight_units);
 			}
@@ -5420,7 +5451,7 @@ class Product extends CommonObject
 				$datas['surface'] = "<br>" . $labelsurfacevolume;
 			}
 		}
-		if ($this->type == Product::TYPE_SERVICE && !empty($this->duration_value)) {
+		if ($this->isService() && !empty($this->duration_value)) {
 			// Duration
 			$datas['duration'] = '<br><b>'.$langs->trans("Duration").':</b> '.$this->duration_value;
 			if ($this->duration_value > 1) {
@@ -5546,10 +5577,10 @@ class Product extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			if ($this->type == Product::TYPE_PRODUCT) {
+			if ($this->isProduct()) {
 				$result .= (img_object(($notooltip ? '' : $label), 'product', 'class="paddingright"', 0, 0, $notooltip ? 0 : 1));
 			}
-			if ($this->type == Product::TYPE_SERVICE) {
+			if ($this->isService()) {
 				$result .= (img_object(($notooltip ? '' : $label), 'service', 'class="paddingright"', 0, 0, $notooltip ? 0 : 1));
 			}
 		}
@@ -6346,29 +6377,29 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Return if object is a product.
+	 * Return if the object is a product.
 	 *
-	 * @return boolean     True if it's a product
+	 * @return boolean     True if the object is a product, false otherwise.
 	 */
 	public function isProduct()
 	{
-		return ($this->type == Product::TYPE_PRODUCT ? true : false);
+		return $this->type == Product::TYPE_PRODUCT;
 	}
 
 	/**
-	 * Return if object is a product
+	 * Return if the object is a service.
 	 *
-	 * @return boolean     True if it's a service
+	 * @return boolean     True if the object is a service, false otherwise.
 	 */
 	public function isService()
 	{
-		return ($this->type == Product::TYPE_SERVICE ? true : false);
+		return $this->type == Product::TYPE_SERVICE;
 	}
 
 	/**
-	 * Return if object need to have its stock managed
+	 * Return if the object is managed in stock.
 	 *
-	 * @return boolean     True if it's a service
+	 * @return boolean     True if the object is managed in stock, false otherwise.
 	 */
 	public function isStockManaged()
 	{
@@ -6376,23 +6407,23 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Return if  object have a constraint on mandatory_period
+	 * Return if the object has a constraint on mandatory_period
 	 *
-	 * @return boolean     True if mandatory_period set to 1
+	 * @return boolean     True if mandatory_period is set to 1, false otherwise.
 	 */
 	public function isMandatoryPeriod()
 	{
-		return ($this->mandatory_period == 1 ? true : false);
+		return $this->mandatory_period == 1;
 	}
 
 	/**
-	 * Return if object has a sell-by date or eat-by date
+	 * Return if the object has a sell-by or eat-by date.
 	 *
-	 * @return boolean     True if it's has
+	 * @return boolean     True if the object has a sell-by or eat-by date, false otherwise.
 	 */
 	public function hasbatch()
 	{
-		return ($this->status_batch > 0 ? true : false);
+		return $this->status_batch > 0;
 	}
 
 
@@ -6636,7 +6667,7 @@ class Product extends CommonObject
 				continue;
 			}
 
-			if ($this->updatePrice($price, $price_type, $user, $price_vat, $price_min, $i, $npr, $psq, true) < 0) {
+			if ($this->updatePrice($price, $price_type, $user, $price_vat, $price_min, $i, $npr, $psq, 1) < 0) {
 				return -1;
 			}
 		}
@@ -6754,9 +6785,9 @@ class Product extends CommonObject
 			$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 120, 160, 0, 0, 0, '', 'photoref photokanban');
 			$return .= $label;
 		} else {
-			if ($this->type == Product::TYPE_PRODUCT) {
+			if ($this->isProduct()) {
 				$label .= img_picto('', 'product');
-			} elseif ($this->type == Product::TYPE_SERVICE) {
+			} elseif ($this->isService()) {
 				$label .= img_picto('', 'service');
 			}
 			$return .= $label;

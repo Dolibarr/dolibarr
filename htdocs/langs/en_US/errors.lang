@@ -334,9 +334,9 @@ ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Check the command used for the export into the Advanced options of the export
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date 
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
