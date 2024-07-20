@@ -77,15 +77,15 @@ class box_factures_imp extends ModeleBoxes
 
 		$textHead = $langs->trans("BoxTitleOldestUnpaidCustomerBills");
 		$this->info_box_head = array(
-			'text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&sortfield=f.date_lim_reglement,f.ref&sortorder=ASC,ASC"><span class="badge">...</span></a>',
 			'limit' => dol_strlen($textHead));
 
 		if ($user->hasRight('facture', 'lire')) {
 			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.code_client, s.client";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$sql1 .= ", spe.accountancy_code_customer as code_compta";
+				$sql1 .= ", spe.accountancy_code_customer as code_compta_client";
 			} else {
-				$sql1 .= ", s.code_compta";
+				$sql1 .= ", s.code_compta as code_compta_client";
 			}
 			$sql1 .= ", s.logo, s.email, s.entity";
 			$sql1 .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
@@ -124,7 +124,7 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql3 .= " f.rowid, f.ref, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut";
-			$sql3 .= " ORDER BY datelimite ASC, f.ref ASC ";
+			$sql3 .= " ORDER BY datelimite ASC, f.ref ASC";
 			$sql3 .= $this->db->plimit($this->max + 1, 0);
 
 			$sql = $sql1.$sql2.$sql3;
@@ -139,7 +139,9 @@ class box_factures_imp extends ModeleBoxes
 				while ($line < min($num, $this->max)) {
 					$objp = $this->db->fetch_object($result);
 
-					$datelimite = $this->db->jdate($objp->datelimite);
+					$date = $this->db->jdate($objp->date);
+					$datem = $this->db->jdate($objp->tms);
+					$datelimit = $this->db->jdate($objp->datelimite);
 
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
@@ -147,35 +149,39 @@ class box_factures_imp extends ModeleBoxes
 					$facturestatic->total_ht = $objp->total_ht;
 					$facturestatic->total_tva = $objp->total_tva;
 					$facturestatic->total_ttc = $objp->total_ttc;
+					$facturestatic->date = $date;
+					$facturestatic->date_lim_reglement = $datelimit;
 					$facturestatic->statut = $objp->status;
 					$facturestatic->status = $objp->status;
-					$facturestatic->date = $this->db->jdate($objp->date);
-					$facturestatic->date_lim_reglement = $this->db->jdate($objp->datelimite);
 
 					$facturestatic->paye = $objp->paye;
+					$facturestatic->paid = $objp->paye;
 					$facturestatic->alreadypaid = $objp->am;
+					$facturestatic->totalpaid = $objp->am;
 
 					$societestatic->id = $objp->socid;
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
 					$societestatic->entity = $objp->entity;
 					$societestatic->tva_intra = $objp->tva_intra;
-					$societestatic->idprof1 = $objp->idprof1;
-					$societestatic->idprof2 = $objp->idprof2;
-					$societestatic->idprof3 = $objp->idprof3;
-					$societestatic->idprof4 = $objp->idprof4;
-					$societestatic->idprof5 = $objp->idprof5;
-					$societestatic->idprof6 = $objp->idprof6;
+
+					$societestatic->idprof1 = !empty($objp->idprof1) ? $objp->idprof1 : '';
+					$societestatic->idprof2 = !empty($objp->idprof2) ? $objp->idprof2 : '';
+					$societestatic->idprof3 = !empty($objp->idprof3) ? $objp->idprof3 : '';
+					$societestatic->idprof4 = !empty($objp->idprof4) ? $objp->idprof4 : '';
+					$societestatic->idprof5 = !empty($objp->idprof5) ? $objp->idprof5 : '';
+					$societestatic->idprof6 = !empty($objp->idprof6) ? $objp->idprof6 : '';
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
 						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimit, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -197,13 +203,13 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimite, 'day', 'tzuserrel')).'"',
-						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimit, 'day', 'tzuserrel')).'"',
+						'text' => dol_print_date($datelimit, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="right" width="18"',
-						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->am),
+						'text' => $facturestatic->LibStatut($objp->paye, $objp->status, 3, $objp->am, $objp->type),
 					);
 
 					$line++;
@@ -215,41 +221,41 @@ class box_factures_imp extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
+						'td' => 'class="center" colspan="3"',
 						'text' => '<span class="opacitymedium">'.$langs->trans("NoUnpaidCustomerBills").'</span>'
 					);
+				} else {
+					$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
+
+					$result = $this->db->query($sql);
+					$objp = $this->db->fetch_object($result);
+					$totalamount = $objp->total_ht;
+
+					// Add the sum à the bottom of the boxes
+					$this->info_box_contents[$line][] = array(
+						'tr' => 'class="liste_total_wrap"',
+						'td' => 'class="liste_total"',
+						'text' => $langs->trans("Total"),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="right liste_total" ',
+						'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+					$this->info_box_contents[$line][] = array(
+						'td' => 'class="liste_total"',
+						'text' => "&nbsp;",
+					);
+
+					$this->db->free($result);
 				}
-
-				$sql = "SELECT SUM(f.total_ht) as total_ht ".$sql2;
-
-				$result = $this->db->query($sql);
-				$objp = $this->db->fetch_object($result);
-				$totalamount = $objp->total_ht;
-
-				// Add the sum à the bottom of the boxes
-				$this->info_box_contents[$line][] = array(
-					'tr' => 'class="liste_total_wrap"',
-					'td' => 'class="liste_total"',
-					'text' => $langs->trans("Total"),
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="right liste_total" ',
-					'text' => price($totalamount, 0, $langs, 0, -1, -1, $conf->currency),
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-				$this->info_box_contents[$line][] = array(
-					'td' => 'class="liste_total"',
-					'text' => "&nbsp;",
-				);
-
-				$this->db->free($result);
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',

@@ -6487,6 +6487,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	padding-top: 10px !important;
 	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
@@ -6501,9 +6502,10 @@ div#ecm-layout-center {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-	-webkit-box-shadow: 2px 2px 4px #888 !important;
-	box-shadow: 2px 2px 4px #888 !important;
+	-webkit-box-shadow: 2px 2px 4px #8888 !important;
+	box-shadow: 2px 2px 4px #8888 !important;
 }
+
 
 /* ============================================================================== */
 /*  blockUI                                                                      */
