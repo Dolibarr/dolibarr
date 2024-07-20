@@ -672,8 +672,9 @@ if ($ispaymentok) {
 				}
 
 				if (!$error) {
+					// If payment using Strip, save the Stripe payment info into societe_account
 					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice') {
-						$thirdparty_id = $object->fk_soc;
+						$thirdparty_id = ($object->socid ? $object->socid : $object->fk_soc);
 
 						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
@@ -722,7 +723,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".((int) $object->fk_soc).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".$thirdparty_id.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -756,6 +757,42 @@ if ($ispaymentok) {
 					$db->rollback();
 				}
 
+				// Set string to use to send email info
+				$infouserlogin = '';
+
+				// Create external user
+				if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
+					$nuser = new User($db);
+					$tmpuser = dol_clone($object, 0);		// $object is type Adherent
+
+					// Check if a user login already exists for this member or not
+					$found = 0;
+					$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE fk_member = ".((int) $object->id);
+					$resqlcount = $db->query($sql);
+					if ($resqlcount) {
+						$objcount = $db->fetch_object($resqlcount);
+						if ($objcount) {
+							$found = $objcount->nb;
+						}
+					}
+
+					if (!$found) {
+						$result = $nuser->create_from_member($tmpuser, $object->login);
+						$newpassword = $nuser->setPassword($user, '');
+
+						if ($result < 0) {
+							$outputlangs->load("errors");
+							$postactionmessages[] = 'Error in create external user : '.$nuser->error;
+						} else {
+							$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
+							$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
+						}
+					} else {
+						$outputlangs->load("errors");
+						$postactionmessages[] = 'No user created because a user linked to member already exists';
+					}
+				}
+
 				// Send email to member
 				if (!$error) {
 					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
@@ -785,22 +822,7 @@ if ($ispaymentok) {
 
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 
-						// Create external user
-						if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
-							$infouserlogin = '';
-							$nuser = new User($db);
-							$tmpuser = dol_clone($object, 0);
-
-							$result = $nuser->create_from_member($tmpuser, $object->login);
-							$newpassword = $nuser->setPassword($user, '');
-
-							if ($result < 0) {
-								$outputlangs->load("errors");
-								$postactionmessages[] = 'Error in create external user : '.$nuser->error;
-							} else {
-								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
-								$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
-							}
+						if ($infouserlogin) {
 							$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = $infouserlogin;
 						}
 
