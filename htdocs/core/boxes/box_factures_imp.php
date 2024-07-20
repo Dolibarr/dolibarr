@@ -141,7 +141,7 @@ class box_factures_imp extends ModeleBoxes
 
 					$date = $this->db->jdate($objp->date);
 					$datem = $this->db->jdate($objp->tms);
-					$datelimit = $this->db->jdate($obj->datelimite);
+					$datelimit = $this->db->jdate($objp->datelimite);
 
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
