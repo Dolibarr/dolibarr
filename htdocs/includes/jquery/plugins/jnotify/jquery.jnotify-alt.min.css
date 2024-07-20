@@ -1,40 +1,34 @@
 .jnotify-container {
-    position: fixed; 
-    top: 0; 
-    right: 0; 
-    width: 70%; 
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 70%;
     z-index: 100000;
-    
+
     /* set maximum number of notes to show */
     max-height: 270px;
     overflow-x: hidden;
     overflow-y: auto;
 }
 
-.jnotify-container-login {
-    left: 40% !important;
-    right: auto !important;
-    top: 20%;
-}
-
 .jnotify-container .jnotify-notification {
-    position: relative; 
+    position: relative;
     margin-top: 4px;
     margin-bottom: 10px;
     margin-right: 4px;
 }
 
 .jnotify-container .jnotify-notification .jnotify-background {
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    background-color: #e3f0db; 
-    filter: alpha(opacity=90); 
-    -moz-opacity: 0.90; 
-    opacity: 0.90; 
-    z-index: 1; 
+    background-color: #e3f0db;
+    filter: alpha(opacity=90);
+    -moz-opacity: 0.90;
+    opacity: 0.90;
+    z-index: 1;
 
     /* round the corners */
     -moz-border-radius: 10px;
@@ -60,13 +54,13 @@
 }
 
 .jnotify-container .jnotify-notification .jnotify-message {
-    position: relative; 
-    z-index: 2; 
+    position: relative;
+    z-index: 2;
     padding: 20px;
     text-align: left;
-    color: #446548;    
+    color: #446548;
     font: bold 1.2em verdana, arial, helvetica;
-    line-height: 1.2em; 
+    line-height: 1.2em;
 }
 
 .jnotify-container .jnotify-notification .jnotify-message * {
@@ -75,7 +69,7 @@
 
 /* notification type == "error" */
 .jnotify-container .jnotify-notification-error .jnotify-background {
-    background-color: #d79eac !important; 
+    background-color: #d79eac !important;
 }
 
 .jnotify-container .jnotify-notification-error .jnotify-close,
@@ -85,7 +79,7 @@
 
 /* notification type == "warning" */
 .jnotify-container .jnotify-notification-warning .jnotify-background {
-    background-color: #fff7d1 !important; 
+    background-color: #fff7d1 !important;
 }
 
 .jnotify-container .jnotify-notification-warning .jnotify-close,
