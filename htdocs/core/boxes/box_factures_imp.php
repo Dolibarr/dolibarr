@@ -139,10 +139,9 @@ class box_factures_imp extends ModeleBoxes
 				while ($line < min($num, $this->max)) {
 					$objp = $this->db->fetch_object($result);
 
-					$datelimite = $this->db->jdate($objp->datelimite);
 					$date = $this->db->jdate($objp->date);
 					$datem = $this->db->jdate($objp->tms);
-					$datelimit = $this->db->jdate(datelimite);
+					$datelimit = $this->db->jdate($objp->datelimite);
 
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
@@ -182,7 +181,7 @@ class box_factures_imp extends ModeleBoxes
 					$late = '';
 					if ($facturestatic->hasDelay()) {
 						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimit, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -204,8 +203,8 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimite, 'day', 'tzuserrel')).'"',
-						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimit, 'day', 'tzuserrel')).'"',
+						'text' => dol_print_date($datelimit, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(
