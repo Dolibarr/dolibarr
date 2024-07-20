@@ -145,6 +145,7 @@ WithoutDiscount=Without discount
 VATRateForSupplierProduct=Tax Rate (for this vendor/product)
 DiscountQtyMin=Discount for this qty.
 NoPriceDefinedForThisSupplier=No price/qty defined for this vendor/product
+NoProductPriceDefinedForThisSupplier=No product price/qty defined for this vendor
 NoSupplierPriceDefinedForThisProduct=No vendor price/qty defined for this product
 PredefinedItem=Predefined item
 PredefinedProducts=Predefined Product
