@@ -439,7 +439,7 @@ ConfirmMassDeleteBookkeepingWritingQuestion=Ciò cancella la transazione da Cont
 AccountancyClosureConfirmClose=Sei sicuro che vuoi per chiudere il periodo fiscale corrente? <span class="warning">Comprendi che la chiusura del periodo fiscale è un'azione irreversibile e bloccherà permanentemente qualsiasi modifica o eliminazione di voci durante questo periodo</span>.
 AccountancyClosureConfirmAccountingReversal=Sei sicuro che vuoi per registrare le voci per gli "Utili non distribuiti" ?
 ## Error
-SomeMandatoryStepsOfSetupWereNotDone=Alcuni step obbligatori della configurazione non sono stati completati. Si prega di completarli 
+SomeMandatoryStepsOfSetupWereNotDone=Alcuni step obbligatori della configurazione non sono stati completati. Si prega di completarli
 ErrorNoAccountingCategoryForThisCountry=Nessun Contabilità conto gruppo disponibile per il paese %s (Vedi %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Alcune righe della fattura non sono collegato a un piano dei conti.

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
- * Copyright (C) 2018-2023 Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+/* Copyright (C) 2017		Franck Moreau				<franck.moreau@theobald.com>
+ * Copyright (C) 2018-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 $loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
@@ -138,10 +142,13 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 /*
  * View
  */
+$form = new Form($db);
+$formproject = new FormProjets($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
-llxHeader("", $title, $help_url);
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_schedule');
 
 $head = loan_prepare_head($object);
 print dol_get_fiche_head($head, 'FinancialCommitment', $langs->trans("Loan"), -1, 'money-bill-alt');

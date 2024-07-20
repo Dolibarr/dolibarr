@@ -49,11 +49,6 @@ $type = 'myobject';
 $error = 0;
 $setupnotempty = 0;
 
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
-
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -68,6 +63,7 @@ $formSetup = new FormSetup($db);
 $arrayofia = array(
 	'chatgpt' => 'ChatGPT',
 	'groq' => 'Groq',
+	'custom' => 'Custom'
 	//'gemini' => 'Gemini'
 );
 
@@ -85,13 +81,28 @@ foreach ($arrayofia as $ia => $ialabel) {
 	$item->nameText = $langs->trans("AI_API_KEY").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
 	$item->fieldParams['hideGenerateButton'] = 1;
+	$item->fieldParams['trClass'] = $ia;
 	$item->cssClass = 'minwidth500 text-security';
+
+	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
+	$item->defaultFieldValue = '';
+	$item->fieldParams['trClass'] = $ia;
+	$item->cssClass = 'minwidth500';
 }
 
 $setupnotempty = + count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not activated.');
+}
 
 
 /*

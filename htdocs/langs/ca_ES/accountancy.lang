@@ -409,7 +409,7 @@ Formula=Fórmula
 ## Reconcile
 LetteringAuto=Reconciliació automàtica
 LetteringManual=Reconciliació manual
-LetteringPartial=Reconcile partial
+LetteringPartial=Reconciliació parcial
 Unlettering=No reconciliar
 UnletteringAuto=Desconciliar automàticament
 UnletteringManual=Desconciliar manual

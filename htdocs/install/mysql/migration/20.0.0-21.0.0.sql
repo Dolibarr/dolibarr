@@ -65,6 +65,9 @@ ALTER TABLE llx_expedition_package MODIFY COLUMN dangerous_goods varchar(60) DEF
 
 ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER model_pdf;
 
+ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER total_ttc;
+
+
 -- a dictionary can not have entity = 0
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
 ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday2;
@@ -74,6 +77,6 @@ ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(en
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
 
 
-ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
-
+-- Rename of bank table
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
+ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;

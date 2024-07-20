@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=ការត្រលប់មកវិញត
 ValidationOfPaymentFailed=សុពលភាពនៃការទូទាត់បានបរាជ័យ
 CardOwner=អ្នកកាន់កាត
 PayPalBalance=ឥណទាន Paypal
-OnlineSubscriptionPaymentLine=ការជាវអនឡាញបានកត់ត្រានៅលើ %s<br>បង់តាមរយៈ %s<br>អាសយដ្ឋាន IP ប្រភពដើម៖ %s<br>លេខសម្គាល់ប្រតិបត្តិការ៖  
+OnlineSubscriptionPaymentLine=ការជាវអនឡាញបានកត់ត្រានៅលើ %s<br>បង់តាមរយៈ %s<br>អាសយដ្ឋាន IP ប្រភពដើម៖ %s<br>លេខសម្គាល់ប្រតិបត្តិការ៖

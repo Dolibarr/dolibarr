@@ -75,4 +75,4 @@ TypeContact_fichinter_internal_INTERREPFOLL=Responsable del seguiment de la inte
 TypeContact_fichinter_internal_INTERVENING=Intervenció
 TypeContact_fichinter_external_BILLING=Contacte del client de la facturació de la intervenció
 TypeContact_fichinter_external_CUSTOMER=Contacte del client de seguiment de la intervenció
-NotARecurringInterventionalTemplate=Not a recurring intervention template
+NotARecurringInterventionalTemplate=No és una plantilla d'intervenció recurrent

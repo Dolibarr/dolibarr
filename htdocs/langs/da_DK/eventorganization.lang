@@ -59,7 +59,7 @@ EventOrganizationEmailBoothPayment = Betaling af din bod
 EventOrganizationEmailRegistrationPayment = Tilmelding til et arrangement
 EventOrganizationMassEmailAttendees = Kommunikation til deltagere
 EventOrganizationMassEmailSpeakers = Kommunikation til taler
-ToSpeakers=Til talere 
+ToSpeakers=Til talere
 # Event
 AllowUnknownPeopleSuggestConf=Tillad folk at foreslå konferencer
 AllowUnknownPeopleSuggestConfHelp=Tillad ukendte mennesker at foreslå en konference, de vil lave

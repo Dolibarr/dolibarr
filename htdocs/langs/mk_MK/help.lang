@@ -20,4 +20,4 @@ BackToHelpCenter=Во спротивно, <a href="%s">вратете се на 
 LinkToGoldMember=Можете да повикате еден од обучувачите претходно избрани од Dolibarr за вашиот јазик (%s) со кликнување на нивниот виџет (статусот и максималната цена автоматски се ажурираат):
 PossibleLanguages=Поддржани јазици
 SubscribeToFoundation=Помогнете му на проектот Dolibarr, претплатете се на фондацијата
-SeeOfficalSupport=За официјална поддршка на Dolibarr на вашиот јазик: <br><b><a href="%s" target="_blank" rel="noopener noreferrer"></span ='notranslate'>%s</a></b>
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>
