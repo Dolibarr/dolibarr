@@ -485,19 +485,25 @@ if ($ispaymentok) {
 				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
 						$typeid = $object->typeid;
+						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
-						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
 						// - If not found, take the default amount
 						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 						}
+						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
+						//if (empty($amount)) {
+						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+						//}
+						// - If a min is set, we take it into account
+						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
 
 						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
 							$error++;
-							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') differs from value expected for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
+							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') propagated by payment page differs from the expected value for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
 							dol_syslog("Failed to validate member (bad amount check): ".$errmsg, LOG_ERR, 0, '_payment');
@@ -506,13 +512,13 @@ if ($ispaymentok) {
 				}
 
 				// Security protection:
-				if (getDolGlobalString('MEMBER_MIN_AMOUNT')) {
-					if ($FinalPaymentAmt < $conf->global->MEMBER_MIN_AMOUNT) {
+				if (getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
+					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
 						$error++;
 						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . getDolGlobalString('MEMBER_MIN_AMOUNT').'). May be a hack to try to pay a different amount ?';
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
-						dol_syslog("Failed to validate member (amount lower than minimum): ".$errmsg, LOG_ERR, 0, '_payment');
+						dol_syslog("Failed to validate member (amount propagated from payment page is lower than allowed minimum): ".$errmsg, LOG_ERR, 0, '_payment');
 					}
 				}
 

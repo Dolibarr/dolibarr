@@ -283,7 +283,8 @@ if (empty($reshook) && $action == 'add') {
 		$adh->lastname    = GETPOST('lastname');
 		$adh->gender      = GETPOST('gender');
 		$adh->civility_id = GETPOST('civility_id');
-		$adh->societe     = GETPOST('societe');
+		$adh->company     = GETPOST('societe');
+		$adh->societe     = $adh->company;
 		$adh->address     = GETPOST('address');
 		$adh->zip         = GETPOST('zipcode');
 		$adh->town        = GETPOST('town');
@@ -595,7 +596,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print $form->selectarray("typeid", $adht->liste_array(1), GETPOST('typeid') ? GETPOST('typeid') : $defaulttype, $isempty);
 		print '</td></tr>'."\n";
 	} else {
-		$adht->fetch(getDolGlobalString('MEMBER_NEWFORM_FORCETYPE'));
+		$adht->fetch(getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE'));
 		print '<input type="hidden" id="typeid" name="typeid" value="' . getDolGlobalString('MEMBER_NEWFORM_FORCETYPE').'">';
 	}
 
@@ -680,6 +681,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	$country_code = getCountry($country_id, 2, $db, $langs);
 	print $form->select_country($country_id, 'country_id');
 	print '</td></tr>';
+
 	// State
 	if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 		print '<tr><td>'.$langs->trans('State').'</td><td>';
@@ -761,23 +763,25 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	if (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE')) {
-		$typeid = $conf->global->MEMBER_NEWFORM_FORCETYPE ? $conf->global->MEMBER_NEWFORM_FORCETYPE : GETPOSTINT('typeid');
+		$typeid = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', GETPOSTINT('typeid'));
 		$adht = new AdherentType($db);
 		$adht->fetch($typeid);
 		$caneditamount = $adht->caneditamount;
-
-		// Set amount for the subscription:
-		// - First check the amount of the member type.
 		$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
-		$amount = empty($amountbytype[$typeid]) ? (isset($amount) ? $amount : 0) : $amountbytype[$typeid];
-		// - If not found, take the default amount only of the user is authorized to edit it
-		if ($caneditamount && empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
+
+		// Set amount for the subscription from the the type and options:
+		// - First check the amount of the member type.
+		$amount = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
+		// - If not found, take the default amount only if the user is authorized to edit it
+		if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 			$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 		}
 		// - If not set, we accept to have amount defined as parameter (for backward compatibility).
 		if (empty($amount)) {
 			$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 		}
+		// - If a min is set, we take it into account
+		$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
 
 		// Clean the amount
 		$amount = price2num($amount);
@@ -883,6 +887,9 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		while ($i < $num) {
 			$objp = $db->fetch_object($result);	// Load the member type and information on it
 
+			$caneditamount = $objp->caneditamount;
+			$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
+
 			print '<tr class="oddeven">';
 			// Label
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
@@ -893,8 +900,23 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 			print '</td>';
 			// Amount
 			print '<td class="center"><span class="amount nowrap">';
-			$displayedamount = max(intval($objp->amount), intval(getDolGlobalInt("MEMBER_MIN_AMOUNT")));
-			$caneditamount = $objp->caneditamount;
+
+			// Set amount for the subscription from the the type and options:
+			// - First check the amount of the member type.
+			$amount = empty($amountbytype[$objp->rowid]) ? 0 : $amountbytype[$objp->rowid];
+			// - If not found, take the default amount only if the user is authorized to edit it
+			if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
+				$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
+			}
+			// - If not set, we accept to have amount defined as parameter (for backward compatibility).
+			if (empty($amount)) {
+				$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+			}
+			// - If a min is set, we take it into account
+			$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+
+			$displayedamount = $amount;
+
 			if ($objp->subscription) {
 				if ($displayedamount > 0 || !$caneditamount) {
 					print price($displayedamount, 1, $langs, 1, 0, -1, $conf->currency);
