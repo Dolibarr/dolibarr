@@ -18,16 +18,21 @@
  * $conf
  * $formmail
  * $formwebsite (optional)
- * $showlinktolayout
- * $showlinktolayoutlabel
+ * $showlinktolayout=0|1
+ * $showlinktolayoutlabel='...'
  * $showlinktoai ('' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...)
- * $showlinktoailabel
+ * $showlinktoailabel='...'
  * $htmlname
  */
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
+	exit(1);
+}
+
+if (empty($htmlname)) {
+	print 'Parameter htmlname not defined.';
 	exit(1);
 }
 
@@ -57,19 +62,19 @@ if ($showlinktolayout) {
 }
 // Add link to add AI content
 if ($showlinktoai) {
-	$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="reposition notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
 	$out .= $showlinktoailabel.'...';
 	$out .= '</a>';
 
 	$out .= '<script>
 						$(document).ready(function() {
-  							$("#linkforaiprompt").click(function() {
-								console.log("We click on linkforaiprompt");
+  							$("#linkforaiprompt'.$showlinktoai.'").click(function() {
+								console.log("formlayoutai.tpl: We click on linkforaiprompt'.$showlinktoai.', we toggle #ai_input'.$showlinktoai.'");
 								event.preventDefault();
-								jQuery("#ai_input").toggle();
+								jQuery("#ai_input'.$htmlname.'").toggle();
 								jQuery("#template-selector").hide();
-								if (!jQuery("ai_input").is(":hidden")) {
+								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
 									console.log("Set focus on input field");
 									jQuery("#ai_instructions").focus();
 									if (!jQuery("pageContent").is(":hidden")) {		// May exists for website page only
