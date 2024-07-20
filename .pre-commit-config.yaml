@@ -241,7 +241,7 @@ repos:
       - id: sqlfluff-lint
         stages: [pre-commit, manual]  # manual needed for ci
         exclude: (?x)^
-          (dev/inidemo/mysqldump_.*\.sql
+          (dev/initdemo/mysqldump_.*\.sql
           |htdocs/core/menus/init_menu_auguria\.sql
           |htdocs/includes/.*
           |htdocs/install/doctemplates/websites/.*_template
