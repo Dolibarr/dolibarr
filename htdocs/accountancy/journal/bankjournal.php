@@ -358,7 +358,8 @@ if ($result) {
 
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
+				// Skip user link when processing social charge to avoid unbalanced entry
+				if ($links[$key]['type'] == 'user' && $is_sc) {
 					// We must avoid as much as possible this "continue". If we want to jump to next loop, it means we don't want to process
 					// the case the link is user (often because managed by hard coded code into another link), and we must avoid this.
 					continue;
