@@ -1878,8 +1878,8 @@ function dol_escape_xml($stringtoescape)
 }
 
 /**
- * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page
- * To use text that is not HTML content inside an attribute, use can simply only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
+ * Return a string label (so on 1 line only and that should not contains any HTML) ready to be output on HTML page.
+ * To use text that is not HTML content inside an attribute, you can simply use only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
@@ -1887,6 +1887,18 @@ function dol_escape_xml($stringtoescape)
 function dolPrintLabel($s)
 {
 	return dol_escape_htmltag(dol_string_nohtmltag($s, 1, 'UTF-8', 0, 0), 0, 0, '', 0, 1);
+}
+
+/**
+ * Return a string label (possible on several lines and that should not contains any HTML) ready to be output on HTML page.
+ * To use text that is not HTML content inside an attribute, you can simply use only dol_escape_htmltag(). In doubt, use dolPrintHTMLForAttribute().
+ *
+ * @param	string	$s		String to print
+ * @return	string			String ready for HTML output
+ */
+function dolPrintText($s)
+{
+	return dol_escape_htmltag(dol_string_nohtmltag($s, 2, 'UTF-8', 0, 0), 0, 1, '', 0, 1);
 }
 
 /**
@@ -1918,7 +1930,8 @@ function dolPrintHTMLForAttribute($s)
 }
 
 /**
- * Return a string ready to be output on input textarea
+ * Return a string ready to be output on input textarea.
+ * Differs from dolPrintHTML because all tags are escape. With dolPrintHTML, all tags except common one are escaped.
  *
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
@@ -1951,7 +1964,7 @@ function dolPrintPassword($s)
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
- *  @param		string		$noescapetags			'' or 'common' or list of tags to not escape.
+ *  @param		string		$noescapetags			''= or 'common' or list of tags to not escape.
  *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string

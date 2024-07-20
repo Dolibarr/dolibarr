@@ -46,6 +46,10 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not enabled');
+}
+
 
 /*
  * View
@@ -63,7 +67,7 @@ if (is_null($jsonData)) {
 $ai = new Ai($db);
 
 // Get parameters
-$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgenerationemail', 'textgenerationwebpage', ...
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
 $format = empty($jsonData['format']) ? '' : $jsonData['format'];
 
@@ -80,5 +84,16 @@ if (is_array($generatedContent) && $generatedContent['error']) {
 		print "Error returned by API call: " . $generatedContent['message'];
 	}
 } else {
-	print $generatedContent;
+	if ($function == 'textgenerationemail' || $function == 'textgenerationwebpage') {
+		print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+	} elseif ($function == 'imagegeneration') {
+		// TODO
+	} elseif ($function == 'videogeneration') {
+		// TODO
+	} elseif ($function == 'audiogeneration') {
+		// TODO
+	} else {
+		// Default case 'textgeneration'
+		print dolPrintText($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+	}
 }
