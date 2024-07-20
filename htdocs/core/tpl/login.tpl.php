@@ -400,20 +400,34 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 <?php
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
-	?>
-	<div class="center login_main_message">
-	<?php
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
-	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
-		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning" role="alert">';
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
 	} else {
-		print '<div class="error" role="alert">';
+		?>
+		<div class="center login_main_message">
+		<?php
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			print '<div class="warning" role="alert">';
+		} else {
+			print '<div class="error" role="alert">';
+		}
+		print dol_escape_htmltag($message);
+		print '</div>'; ?>
+		</div>
+		<?php
 	}
-	print dol_escape_htmltag($message);
-	print '</div>'; ?>
-	</div>
-	<?php
 }
 
 // Add commit strip
