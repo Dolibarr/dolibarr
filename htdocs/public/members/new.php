@@ -728,7 +728,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<script type="text/javascript">
 		jQuery(document).ready(function () {
 			initturnover();
-			jQuery("#morphy").click(function() {
+			jQuery("#morphy").change(function() {
 				initturnover();
 			});
 			jQuery("#budget").change(function() {
@@ -743,6 +743,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 				initturnover();
 			});*/
 			function initturnover() {
+				console.log("Switch mor/phy");
 				if (jQuery("#morphy").val()==\'phy\') {
 					jQuery(".amount").val(20);
 					jQuery("#trbudget").hide();
