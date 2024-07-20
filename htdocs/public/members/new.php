@@ -753,6 +753,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 					jQuery("#trcompany").show();
 					jQuery("#trbirth").hide();
 					jQuery("#trbudget").show();
+					jQuery(".hideifautoturnover").hide();
 					if (jQuery("#budget").val() > 0) { jQuery(".amount").val(jQuery("#budget").val()); }
 					else { jQuery("#budget").val(\'\'); }
 				}
@@ -799,7 +800,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 
 		if ($caneditamount) {
 			print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
-			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium"> – ';
+			print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover"> - ';
 			print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
 			print '</span>';
 		} else {
