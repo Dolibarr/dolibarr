@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 uke
 AvailabilityTypeAV_2W=2 uker
 AvailabilityTypeAV_3W=3 uker
 AvailabilityTypeAV_1M=En måned
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representant for oppfølging av tilbud
 TypeContact_propal_external_BILLING=Kundekontakt faktura
 TypeContact_propal_external_CUSTOMER=Kundens tilbudsoppfølger
 TypeContact_propal_external_SHIPPING=Kundekontakt for levering
-
 # Document models
 CantBeNoSign=kan ikke settes til ikke signert
 CaseFollowedBy=Sak fulgt av
@@ -122,3 +120,5 @@ SignSociete_rib=Signer mandat
 SignPropal=Godta tilbudet
 Signed=signert
 SignedOnly=Kun signert
+ExpeditionSigned=Forsendelse signert
+SignExpedition=Signer forsendelse

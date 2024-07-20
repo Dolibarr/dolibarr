@@ -200,7 +200,7 @@ MembersStatisticsDesc=Vælg statistikker, du ønsker at læse ...
 MenuMembersStats=Statistik
 LastMemberDate=Seneste medlemskabsdato
 LatestSubscriptionDate=Seneste bidragsdato
-MemberNature=Medlemmets art
+MemberNature=Medlemmernes art
 MembersNature=Medlemmernes art
 Public=%s kan offentliggøre mit medlemskab i <a target="_blank" href="%s"> det offentlige register </a>
 MembershipPublic=Offentligt medlemskab
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s abonnement(er) oprettet
 XSubsriptionErrors=%s abonnement(er) var fejlagtigt
 CreateSubscription=Opret abonnement
 WarningNoComplementaryActionDone=Ingen supplerende handling på optagelsen vil blive udført med denne massaktion
+NewMembership=Nyt medlemskab

@@ -1990,13 +1990,12 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		// Actions on extra fields
 		if (!$error) {
-			// Actions on extra fields
-			if (!$error) {
-				$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
@@ -2068,7 +2067,7 @@ if ($action == 'create') {
 	$title = $langs->trans("NewSupplierInvoice");
 }
 $help_url = 'EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores|DE:Modul_Lieferantenrechnungen';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fourn-facture page-card');
 
 // Mode creation
 if ($action == 'create') {

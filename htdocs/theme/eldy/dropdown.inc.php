@@ -578,13 +578,13 @@ dropdown-holder {
 	}
 
 	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
-		margin-left: 5px;
+		margin-left: 8px;
 		right: 0;
 	}
 
 	#topmenu-quickadd-dropdown .dropdown-menu {
 		min-width: 220px;
-		max-width: 235px;
+		max-width: 270px;
 	}
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		min-width: 220px;

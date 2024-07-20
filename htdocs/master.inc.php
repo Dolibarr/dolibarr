@@ -158,10 +158,10 @@ if (!defined('NOREQUIREDB')) {
 				print "SorryWebsiteIsCurrentlyOffLine";
 			}
 			print '</div>';
-			exit;
+			exit(1);
 		}
 		dol_print_error($db, "host=".$conf->db->host.", port=".$conf->db->port.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-		exit;
+		exit(1);
 	}
 }
 

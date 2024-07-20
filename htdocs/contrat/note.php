@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *      \file       htdocs/contrat/note.php
  *      \ingroup    contrat
- *      \brief      Fiche de notes sur un contrat
+ *      \brief      Card with notes on contract
  */
 
 // Load Dolibarr environment
@@ -77,9 +78,9 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans("Contract");
-$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_note');
 
 $form = new Form($db);
 

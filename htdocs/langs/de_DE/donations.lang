@@ -35,3 +35,4 @@ DonationPayments=Spendenzahlungen
 DonationValidated=Spende %s freigegeben
 DonationUseThirdparties=Die Adresse eines bestehenden Geschäftspartners als Adresse des Spenders verwenden
 DonationsStatistics=Statistik zu Spenden 
+NbOfDonations=Zahl der Spenden

@@ -684,9 +684,9 @@ if ($action == 'edit') {
 		}
 		print $text;
 
-		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && getDolGlobalString('MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP')) {
 			$textwarning = $langs->trans("WarningPHPMail").'<br>'.$langs->trans("WarningPHPMailA").'<br>'.$langs->trans("WarningPHPMailB").'<br>'.$langs->trans("WarningPHPMailC").'<br><br>'.$langs->trans("WarningPHPMailD");
-			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'warning', 'nomargintop');
+			print $form->textwithpicto('', '<span class="small">'.$textwarning.'</span>', 1, 'help', 'nomargintop');
 		}
 
 		print '</td></tr>';
@@ -831,7 +831,7 @@ if ($action == 'edit') {
 			$messagetoshow = str_replace('{s1}', $linktosetvar1, $messagetoshow);
 			$messagetoshow = str_replace('{s2}', $linktosetvar2, $messagetoshow);
 			//print $messagetoshow;
-			print info_admin($messagetoshow, 0, 0, 'warning nomargintop');
+			print info_admin($messagetoshow, 0, 0, 'warning', 'nomargintop', '', 'warning');
 		}
 
 		print '<br>';
@@ -1113,7 +1113,7 @@ if ($action == 'edit') {
 
 		print dol_get_fiche_head(array(), '', '', -1);
 
-		// Cree l'objet formulaire mail
+		// Create form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
@@ -1132,7 +1132,7 @@ if ($action == 'edit') {
 		$formmail->withtopic = (GETPOSTISSET('subject') ? GETPOST('subject') : $langs->trans("Test"));
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
-		$formmail->withlayout = 1;
+		$formmail->withlayout = 1;		// Not MAIN_EMAIL_USE_LAYOUT must be set
 		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');
 		$formmail->withbody = (GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : ($action == 'testhtml' ? $langs->transnoentities("PredefinedMailTestHtml") : $langs->transnoentities("PredefinedMailTest")));
 		$formmail->withbodyreadonly = 0;

@@ -1436,7 +1436,7 @@ if ($object->id > 0) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.total_ht, f.total_tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.ref_client, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.entity, f.datef, f.date_lim_reglement, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";

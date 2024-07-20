@@ -456,7 +456,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			$db->commit();
 
-			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&id='.$result);
+			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&token='.newToken().'&id='.$result);
 			exit;
 		} else {
 			$db->rollback();
@@ -893,7 +893,7 @@ if ($action == 'create2') {
 }
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card');
 
 if (empty($action)) {
 	$action = 'view';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -971,6 +971,9 @@ td.wordbreak img, td.wordbreakimp img {
 .uppercase {
 	text-transform: uppercase;
 }
+.marginpopup {
+	margin: 20px;
+}
 .nounderline {
 	text-decoration: none;
 }
@@ -1073,6 +1076,12 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .text-warning{
 	color : <?php print $textWarning; ?>
+}
+/* CSS used for extrafield text */
+.shortmessagecut {
+	max-height: 125px;
+	max-width: 100%;
+	overflow-y: auto;
 }
 .longmessagecut {
 	max-height: 250px;
@@ -2475,7 +2484,9 @@ div.fichehalfright {
 div.secondcolumn div.box {
 	padding-left: 10px;
 }*/
-
+div.firstcolumn > table.noborder, div.secondcolumn > table.noborder, div.firstcolumn > div > table.noborder, div.secondcolumn > div > table.noborder {
+	margin-bottom: 14px;
+}
 
 /* Force values on one column for small screen */
 @media only screen and (max-width: 1024px)
@@ -4739,7 +4750,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	min-height: 40px;
 	padding-right: 0px;
 	padding-left: 0px;
-	padding-bottom: 10px;
+	/* padding-bottom: 10px; */
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -4979,6 +4990,9 @@ a.valignmiddle.dashboardlineindicator {
 .height30 {
 	height: 30px !important;
 }
+.height50 {
+	height: 50px !important;
+}
 
 tr.box_titre {
 	height: 26px;
@@ -5054,8 +5068,10 @@ div.info {
 }
 
 /* Warning message */
-div.warning {
+div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
+}
+div.warning {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
@@ -6131,6 +6147,10 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
+}
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
@@ -8296,15 +8316,15 @@ table.jPicker {
 		height: 50px;
 
 		z-index: 202;
-		min-width: 200px;      /* must be width of menu + padding + padding of sidenav */
-		max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
-		width: 200px;          /* must be width of menu + padding + padding of sidenav */
+		min-width: 245px;      /* must be width of menu + padding + padding of sidenav */
+		max-width: 245px;      /* must be width of menu + padding + padding of sidenav */
+		width: 245px;          /* must be width of menu + padding + padding of sidenav */
 	}
 	.loginbuttonexternal {
 		width: 260px;
 	}
 	.side-nav-vert .user-menu .dropdown-menu {
-		width: 234px !important;
+		width: 278px !important;	/* must be width of menu + padding + padding of sidenav */
 	}
 	div.login_block_other {
 		margin-right: unset;

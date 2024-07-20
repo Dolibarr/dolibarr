@@ -1155,6 +1155,9 @@ td.wordbreak img, td.wordbreakimp img {
 .uppercase {
 	text-transform: uppercase;
 }
+.marginpopup {
+	margin: 20px;
+}
 .nounderline {
 	text-decoration: none;
 }
@@ -1255,6 +1258,12 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .text-warning{
 	color : <?php print $textWarning; ?>
+}
+/* CSS used for extrafield text */
+.shortmessagecut {
+	max-height: 125px;
+	max-width: 100%;
+	overflow-y: auto;
 }
 .longmessagecut {
 	max-height: 250px;
@@ -5000,6 +5009,9 @@ a.valignmiddle.dashboardlineindicator {
 .height30 {
 	height: 30px !important;
 }
+.height50 {
+	height: 50px !important;
+}
 
 tr.box_titre {
 	height: 26px !important;
@@ -5075,8 +5087,10 @@ div.info {
 }
 
 /* Warning message */
-div.warning {
+div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
+}
+div.warning {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
@@ -6120,6 +6134,9 @@ a.cke_dialog_ui_button_ok span {
 }
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
+}
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
 }
 
 

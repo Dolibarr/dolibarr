@@ -21,7 +21,7 @@ WARNING:
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Prepare your module for deprecation of triggers code XXX_INSERT to support also XXX_CREATE.
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
-
+* The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
 
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
@@ -276,7 +276,6 @@ QUAL: professional identifiers - remove TODO by adding profid.lib.php
 QUAL: Properties ->date_update and ->date_modification were merged
 QUAL: removed duplicate language file
 QUAL: Remove the external js library jstimezonedetect
-QUAL: Remove use of customurl filter. Must use the USF syntax.
 QUAL: Rename all input fields "tel" into "phone"
 QUAL: Rename column fk_origin_line on shipment lines into fk_elementdet to match a generic use. (#28989)
 QUAL: replace $conf->global with getDolGlobalString()
@@ -301,6 +300,7 @@ The following changes may create regressions for some external modules, but were
 * All CLI tools (into /scripts) return a positive value to the shell if error (0 remains success) for a better
   cross platform compatibility. On linux the exit(-1) was caught as 255, it may be now exit(1) so will be caught as 1.
 * The parameter $filter of method fetchAll does not accept array of SQL but must be a string of an Universal Search Filter syntax.
+* Remove use of customurl into $filter. Must use the USF syntax.
 * Use of dol_eval with parameter $returnvalue=0 is deprecated.
 * The signature for all ->delete() method has been modified to match the modulebuilder template (so first param is now always $user), except
   the delete for thirdparty (still accept the id of thirdparty to delete as first parameter). Will probably be modified into another version.
@@ -314,7 +314,6 @@ The following changes may create regressions for some external modules, but were
   into table llx_c_action_trigger.
 * Renamings in expedition line table and class, fk_origin_line is now fk_elementdet in table and class.
 * The signature of method fetch() of class CompanyBankAccount has been modified to match the signature of method Account->fetch()
-
 
 
 ***** ChangeLog for 19.0.2 compared to 19.0.1 *****

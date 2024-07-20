@@ -3,7 +3,6 @@ Mailing=Mailing
 MailCard=Ficha de Mailing
 MailRecipients=Dsetinatarios
 MailRecipient=Destinatário
-MailTitle=Descrição
 MailErrorsTo=Erros para
 MailTo=Para
 MailToUsers=Para usuário (s)

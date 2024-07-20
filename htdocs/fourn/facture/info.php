@@ -65,7 +65,7 @@ $alreadypaid = $object->getSommePaiement();
 
 $title = $object->ref." - ".$langs->trans('Info');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_info');
 
 $head = facturefourn_prepare_head($object);
 $titre = $langs->trans('SupplierInvoice');

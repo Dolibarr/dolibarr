@@ -1,67 +1,144 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-Assets = Дороиҳо
-NewAsset = Янги актив
-AccountancyCodeAsset = Рамзи баҳисобгирӣ (дороиҳо)
-AccountancyCodeDepreciationAsset = Рамзи баҳисобгирӣ (ҳисоби амортизатсияи дороиҳо)
-AccountancyCodeDepreciationExpense = Рамзи баҳисобгирӣ (ҳисоби хароҷоти амортизатсионӣ)
-NewAssetType=Навъи дороиҳо
-AssetsTypeSetup=Танзими намуди дороиҳо
-AssetTypeModified=Навъи дороиҳо тағир дода шуд
-AssetType=Навъи дороиҳо
+NewAsset=Янги актив
+AccountancyCodeAsset=Рамзи баҳисобгирӣ (дороиҳо)
+AccountancyCodeDepreciationAsset=Рамзи баҳисобгирӣ (ҳисоби амортизатсияи дороиҳо)
+AccountancyCodeDepreciationExpense=Рамзи баҳисобгирӣ (ҳисоби хароҷоти амортизатсионӣ)
 AssetsLines=Дороиҳо
 DeleteType=Нест кардан
-DeleteAnAssetType=Навъи дороиҳоро нест кунед
-ConfirmDeleteAssetType=Шумо мутмаин ҳастед, ки мехоҳед ин намуди дороиҳоро нест кунед?
-ShowTypeCard=Намуди '%s' -ро нишон диҳед
-
+DeleteAnAssetType=Модели дороиҳоро нест кунед
+ConfirmDeleteAssetType=Шумо мутмаин ҳастед, ки мехоҳед ин модели дороиҳоро нест кунед?
+ShowTypeCard=Намоиши модели '%s'
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Дороиҳо
+ModuleAssetsName=Дороиҳо
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Тавсифи дороиҳо
-
-#
+ModuleAssetsDesc=Тавсифи дороиҳо
 # Admin page
-#
-AssetsSetup = Танзими дороиҳо
-Settings = Танзимот
-AssetsSetupPage = Саҳифаи танзими дороиҳо
-ExtraFieldsAssetsType = Хусусиятҳои иловагӣ (намуди дороиҳо)
-AssetsType=Навъи дороиҳо
-AssetsTypeId=Шиносаи намуди дороиҳо
-AssetsTypeLabel=Нишонаи намуди дороиҳо
-AssetsTypes=Навъҳои дороиҳо
-
-#
+AssetSetup=Танзими дороиҳо
+AssetSetupPage=Саҳифаи танзимоти дороиҳо
+ExtraFieldsAssetModel=Хусусиятҳои иловагӣ (модели дороиҳо)
+AssetsType=Модели дороиҳо
+AssetsTypeId=ID модели дороиҳо
+AssetsTypeLabel=Нишони модели дороиҳо
+AssetsTypes=Моделҳои дороиҳо
+ASSET_ACCOUNTANCY_CATEGORY=Гурӯҳи баҳисобгирии воситаҳои асосӣ
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
-MenuAssets = Дороиҳо
-MenuNewAsset = Янги актив
-MenuTypeAssets = Намуди дороиҳо
-MenuListAssets = Рӯйхат
-MenuNewTypeAssets = Нав
-MenuListTypeAssets = Рӯйхат
-
-#
+MenuAssets=Дороиҳо
+MenuNewAsset=Янги актив
+MenuAssetModels=Моделҳои дороиҳо
+MenuListAssets=Рӯйхат
+MenuNewAssetModel=Модели нави дороиҳо
+MenuListAssetModels=Рӯйхат
 # Module
-#
+ConfirmDeleteAsset=Оё шумо дар ҳақиқат мехоҳед ин дороиро нест кунед?
+# Tab
+AssetDepreciationOptions=Вариантҳои амортизатсия
+AssetAccountancyCodes=Ҳисобҳои ҳисобдорӣ
+AssetDepreciation=Амортизатсия
+# Asset
 Asset=Дороӣ
-NewAssetType=Навъи дороиҳо
-NewAsset=Янги актив
-ConfirmDeleteAsset=Шумо мутмаин ҳастед, ки ин активро нест кардан мехоҳед?
+Assets=Дороиҳо
+AssetReversalAmountHT=Маблағи баргардонидан (бе андоз)
+AssetAcquisitionValueHT=Маблағи харид (бе андоз)
+AssetRecoveredVAT=ААИ ситонидашуда
+AssetReversalDate=Санаи баргардонидан
+AssetDateAcquisition=Санаи харид
+AssetDateStart=Санаи оғози кор
+AssetAcquisitionType=Навъи харид
+AssetAcquisitionTypeNew=Нав
+AssetAcquisitionTypeOccasion=Истифода бурда мешавад
+AssetType=Навъи дороиҳо
+AssetTypeIntangible=ғайримоддӣ
+AssetTypeTangible=Модӣ
+AssetTypeInProgress=Дар ҷараён
+AssetTypeFinancial=молиявӣ
+AssetNotDepreciated=Амортизатсия карда нашудааст
+AssetDisposal=Бартараф кардан
+AssetConfirmDisposalAsk=Оё мутмаин ҳастед, ки мехоҳед дороии <b> %s</b>-ро ихтиёрдорӣ кунед?
+AssetConfirmReOpenAsk=Оё мутмаин ҳастед, ки мехоҳед дороии <b> %s</b> -ро боз кунед?
+# Asset status
+AssetInProgress=Дар ҷараён
+AssetDisposed=Бартараф карда шудааст
+AssetRecorded=Ҳисоб карда шуд
+# Asset disposal
+AssetDisposalDate=Санаи ихтиёрдорӣ
+AssetDisposalAmount=Арзиши ихтиёрдорӣ
+AssetDisposalType=Навъи ихтиёрдорӣ
+AssetDisposalDepreciated=Амортизатсияи соли интиқол
+AssetDisposalSubjectToVat=Ихтиёрдорӣ бо назардошти ААИ
+# Asset model
+AssetModel=Модели дороиҳо
+AssetModels=Моделҳои дороиҳо
+# Asset depreciation options
+AssetDepreciationOptionEconomic=Амортизатсияи иқтисодӣ
+AssetDepreciationOptionAcceleratedDepreciation=Амортизатсияи тезонидашуда (андоз)
+AssetDepreciationOptionDepreciationType=Навъи амортизатсия
+AssetDepreciationOptionDepreciationTypeLinear=Хатӣ
+AssetDepreciationOptionDepreciationTypeDegressive=Дегрессивӣ
+AssetDepreciationOptionDepreciationTypeExceptional=Истисноӣ
+AssetDepreciationOptionDegressiveRate=Меъёри дегрессивӣ
+AssetDepreciationOptionDuration=Давомнокӣ
+AssetDepreciationOptionDurationType=Давомнокии намуди
+AssetDepreciationOptionDurationTypeAnnual=солона
+AssetDepreciationOptionDurationTypeMonthly=Ҳармоҳа
+AssetDepreciationOptionDurationTypeDaily=Ҳар рӯз
+AssetDepreciationOptionRate=Нарх (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Асоси амортизатсия (ба истиснои ААИ)
+AssetDepreciationOptionAmountBaseDeductibleHT=Асоси тарҳшаванда (ба истиснои ААИ)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Маблағи умумии амортизатсияи охирин (ба истиснои ААИ)
+# Asset accountancy codes
+AssetAccountancyCodeDepreciationEconomic=Амортизатсияи иқтисодӣ
+AssetAccountancyCodeAsset=Сарват
+AssetAccountancyCodeDepreciationAsset=Амортизатсия
+AssetAccountancyCodeDepreciationExpense=Хароҷоти амортизатсия
+AssetAccountancyCodeValueAssetSold=Арзиши дороии барҳам додашуда
+AssetAccountancyCodeReceivableOnAssignment=Қарзи дебиторӣ дар ихтиёрдорӣ
+AssetAccountancyCodeProceedsFromSales=Даромад аз ихтиёрдорӣ
+AssetAccountancyCodeVatCollected=ААИ ситонидашуда
+AssetAccountancyCodeVatDeductible=ААИ ситонидашуда аз дороиҳо
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Амортизатсияи тезонидашуда (андоз)
+AssetAccountancyCodeAcceleratedDepreciation=Ҳисоб
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Хароҷоти амортизатсия
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Бозпас гирифтан/Таъмин
+# Asset depreciation
+AssetBaseDepreciationHT=Асоси амортизатсия (ба истиснои ААИ)
+AssetDepreciationBeginDate=Оғози амортизатсия дар
+AssetDepreciationDuration=Давомнокӣ
+AssetDepreciationRate=Нарх (%%)
+AssetDepreciationDate=Санаи амортизатсия
+AssetDepreciationHT=Амортизатсия (ба истиснои ААИ)
+AssetCumulativeDepreciationHT=Амортизатсияи ҷамъӣ (ба истиснои ААИ)
+AssetResidualHT=Арзиши боқимонда (ба истиснои ААИ)
+AssetDispatchedInBookkeeping=Амортизатсия ба қайд гирифта шудааст
+AssetFutureDepreciationLine=Амортизатсияи оянда
+AssetDepreciationReversal=Бозгашт
+# Errors
+AssetErrorAssetOrAssetModelIDNotProvide=Идентификатсияи дороиҳо ё модели ёфтшуда пешниҳод карда нашудааст
+AssetErrorFetchAccountancyCodesForMode=Хатогӣ ҳангоми дарёфти ҳисобҳои муҳосибӣ барои ҳолати амортизатсияи '%s
+AssetErrorDeleteAccountancyCodesForMode=Хатогӣ ҳангоми нест кардани ҳисобҳои муҳосибӣ аз ҳолати амортизатсияи '%s'
+AssetErrorInsertAccountancyCodesForMode=Хатогӣ ҳангоми ворид кардани ҳисобҳои баҳисобгирии ҳолати амортизатсия '%s'
+AssetErrorFetchDepreciationOptionsForMode=Хатогӣ ҳангоми дарёфти имконоти ҳолати амортизатсияи '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Хатогӣ ҳангоми нест кардани имконоти ҳолати амортизатсияи '%s
+AssetErrorInsertDepreciationOptionsForMode=Хатогӣ ҳангоми ворид кардани имконоти ҳолати амортизатсияи '%s
+AssetErrorFetchDepreciationLines=Хатогӣ ҳангоми дарёфти хатҳои амортизатсияи сабтшуда
+AssetErrorClearDepreciationLines=Хатогӣ ҳангоми тоза кардани хатҳои амортизатсияи сабтшуда (бозгашт ва оянда)
+AssetErrorAddDepreciationLine=Хатогӣ ҳангоми илова кардани хати амортизатсия
+AssetErrorCalculationDepreciationLines=Хатогӣ ҳангоми ҳисоб кардани хатҳои амортизатсия (барқароршавӣ ва оянда)
+AssetErrorReversalDateNotProvidedForMode=Санаи баргардонидан барои усули амортизатсияи "%s" пешбинӣ нашудааст
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Санаи баргардонидан бояд аз оғози соли молиявии ҷорӣ барои усули амортизатсияи '%s' зиёдтар ё баробар бошад
+AssetErrorReversalAmountNotProvidedForMode=Маблағи баргардонидан барои ҳолати амортизатсияи '%s' пешбинӣ нашудааст.
+AssetErrorFetchCumulativeDepreciation=Хатогӣ ҳангоми гирифтани маблағи ҷамъшуда аз хатти амортизатсия
+AssetErrorSetLastCumulativeDepreciation=Хатогӣ ҳангоми бақайдгирии маблағи охирини амортизатсияи ҷамъшуда

@@ -200,8 +200,8 @@ MembersStatisticsDesc=Vali soovitud statistika...
 MenuMembersStats=Statistika
 LastMemberDate=Viimane liikmelisuse kuupäev
 LatestSubscriptionDate=Viimane panuse kuupäev
-MemberNature=Nature of the member
-MembersNature=Nature of the members
+MemberNature=Nature of member
+MembersNature=Nature of members
 Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
 MembershipPublic=Public membership
 NewMemberbyWeb=Uus liige lisatud, ootab heaks kiitmist
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Create subscription
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

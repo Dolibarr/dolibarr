@@ -295,7 +295,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			} else {
 				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
 				if ($is_dispo != 0) {
-					$result = -3;
+					$result = -3;	// Code $code duplicate
 				}
 			}
 		}
@@ -334,6 +334,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			if ($db->num_rows($resql) == 0) {
 				return 0;
 			} else {
+				// Code $code duplicate
 				return -1;
 			}
 		} else {

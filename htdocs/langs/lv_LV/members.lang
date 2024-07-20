@@ -201,7 +201,7 @@ MenuMembersStats=Statistika
 LastMemberDate=Jaunākais dalības datums
 LatestSubscriptionDate=Pēdējais ieguldījuma datums
 MemberNature=Dalībnieka raksturs
-MembersNature=Locekļu raksturs
+MembersNature=Dalībnieku raksturs
 Public=%s var publicēt manu dalību <a target="_blank" href="%s"> publiskajā reģistrā </a>
 MembershipPublic=Publiskā dalība
 NewMemberbyWeb=Jauns dalībnieks pievienots. Gaida apstiprinājumu
@@ -246,3 +246,4 @@ XSubsriptionCreated=Izveidots(-i) %s abonements
 XSubsriptionErrors=%s abonementa(-u) kļūda
 CreateSubscription=Izveidot abonementu
 WarningNoComplementaryActionDone=Ar šo masāžu netiks veiktas nekādas papildu darbības ar ierakstīšanu
+NewMembership=Jauna dalība
