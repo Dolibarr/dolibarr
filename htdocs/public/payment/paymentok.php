@@ -538,14 +538,14 @@ if ($ispaymentok) {
 					}
 				}
 
-				// Subscription information
+				// Guess the subscription start date
 				$datesubscription = $object->datevalid; // By default, the subscription start date is the payment date
 				if ($object->datefin > 0) {
 					$datesubscription = dol_time_plus_duree($object->datefin, 1, 'd');
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 					$datesubscription = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 				}
-
+				// Now do a correction of the suggested date
 				if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
 					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"), dol_print_date($datesubscription, "%m"));
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {

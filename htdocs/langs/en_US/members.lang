@@ -237,8 +237,11 @@ CreateDolibarrThirdPartyDesc=A third party is the legal entity that will be used
 MemberFirstname=Member firstname
 MemberLastname=Member lastname
 MemberCodeDesc=Member Code, unique for all members
-MemberSubscriptionStartFirstDayOf=The start date of a membership corresponds to the first day of a
-MemberSubscriptionStartAfter=Minimum period before the entry into force of the start date of a subscription except renewals (example +3m = +3 months, -5d = -5 days, +1Y = +1 year)
+MemberSubscriptionStartFirstDayOf=Force the suggested date of a membership to corresponds to the first day of a
+MemberSubscriptionStartAfter=Minimum period before the entry into force of the start date of a first membership subscription (excluding renewals)
+NoCorrection=No correction
+MemberSubscriptionStartAfterDesc=Example: +3m = +3 months, -5d = -5 days, +1Y = +1 year
+MemberSubscriptionStartAfterDesc2=This is the suggested date when creating a first membership subscription compared to the current date. For renewal, the date suggested by default will remain the end of the previous membership.
 SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
 ConfirmMassSubsriptionCreation=Confirm subscription creation
 ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
