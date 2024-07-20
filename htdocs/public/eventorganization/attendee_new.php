@@ -276,7 +276,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 		}
 
 		// Check if there is already an attendee into table eventorganization_conferenceorboothattendee for same event (or conference/booth)
-		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, $filter);
+		$resultfetchconfattendee = $confattendee->fetchAll('', '', 0, 0, ['uss' => $filter]);
 
 		if (is_array($resultfetchconfattendee) && count($resultfetchconfattendee) > 0) {
 			// Found confattendee

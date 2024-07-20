@@ -240,14 +240,23 @@ class DefaultValues extends CommonObject
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array	$filter       	Filter as an Universal Search string or Array (array use is deprecated)
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  array		$filter       	Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] = '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		//some part of dolibarr main code use $filter as array like 't.page' => 'comm/action/card.php'
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 		$records = array();
 
@@ -258,6 +267,7 @@ class DefaultValues extends CommonObject
 
 		// Deprecated. For compatibility.
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {

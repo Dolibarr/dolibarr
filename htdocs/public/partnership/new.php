@@ -598,7 +598,7 @@ jQuery(document).ready(function () {
 
 // Type
 $partnershiptype = new PartnershipType($db);
-$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, '(active:=:1)');
+$listofpartnershipobj = $partnershiptype->fetchAll('', '', 1000, 0, ['uss' => '(active:=:1)']);
 $listofpartnership = array();
 foreach ($listofpartnershipobj as $partnershipobj) {
 	$listofpartnership[$partnershipobj->id] = $partnershipobj->label;

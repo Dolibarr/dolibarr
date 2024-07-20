@@ -605,11 +605,22 @@ class Dolresource extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset page
-	 * @param	string|array	$filter			Filter USF.
+	 * @param	array			$filter       	Filter as an Universal Search string.
+	 * 											Example: $filter['uss'] =
 	 * @return	int								If KO: <0 || if OK number of lines loaded
 	 */
-	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, $filter = '')
+	public function fetchAll(string $sortorder, string $sortfield, int $limit, int $offset, array $filter = array())
 	{
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		//some part of dolibarr main code use $filter as array like $filter['t.xxxx'] =
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
+
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
@@ -644,6 +655,7 @@ class Dolresource extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) {
 					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->idate($value)."'";

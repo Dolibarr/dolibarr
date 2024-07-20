@@ -359,14 +359,19 @@ class Position extends CommonObject
 	 * @param 	string 		$sortfield 		Sort field
 	 * @param 	int 		$limit 			limit
 	 * @param 	int 		$offset 		Offset
-	 * @param  	string		$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  array		$filter       	Filter as an Universal Search string.
+	 * 										Example: $filter['uss'] = '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  	string      $filtermode   	No more used
 	 * @return 	array|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		$filter = $filter['uss'] ?? "";
 
 		$records = array();
 
@@ -956,7 +961,7 @@ class Position extends CommonObject
 		$this->lines = array();
 
 		$objectline = new PositionLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_position:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_position:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->setErrorsFromObject($objectline);
@@ -1032,7 +1037,7 @@ class Position extends CommonObject
 	{
 		$TPosition = array();
 
-		$TPosition = $this->fetchAll('ASC', 't.rowid', 0, 0, '(fk_user:=:'.((int) $userid).')');
+		$TPosition = $this->fetchAll('ASC', 't.rowid', 0, 0, ['uss' => '(fk_user:=:'.((int) $userid).')']);
 
 		return $TPosition;
 	}

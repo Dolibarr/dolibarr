@@ -113,7 +113,7 @@ function displayRankInfos($selected_rank, $fk_skill, $inputname = 'TNote', $mode
 
 	// On charge les différentes notes possibles pour la compétence $fk_skill
 	$skilldet = new Skilldet($db);
-	$Lines = $skilldet->fetchAll('ASC', 'rankorder', 0, 0, '(fk_skill:=:'.((int) $fk_skill).')');
+	$Lines = $skilldet->fetchAll('ASC', 'rankorder', 0, 0, ['uss' => '(fk_skill:=:'.((int) $fk_skill).')']);
 
 	if (!is_array($Lines) && $Lines<0) {
 		setEventMessages($skilldet->error, $skilldet->errors, 'errors');

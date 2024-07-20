@@ -161,7 +161,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'saveSkill') {
 		if (!empty($TNote)) {
 			foreach ($TNote as $skillId => $rank) {
-				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')');
+				$TSkills = $skill->fetchAll('ASC', 't.rowid', 0, 0, ['uss' => '(fk_object:=:'.((int) $id).") AND (objecttype:=:'".$db->escape($objecttype)."') AND (fk_skill:=:".((int) $skillId).')']);
 				if (is_array($TSkills) && !empty($TSkills)) {
 					foreach ($TSkills as $tmpObj) {
 						$tmpObj->rankorder = $rank;

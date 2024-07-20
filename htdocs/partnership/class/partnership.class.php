@@ -421,13 +421,23 @@ class Partnership extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int         		$limit        	Limit
 	 * @param  int         		$offset       	Offset page
-	 * @param  string|array     $filter       	Filter USF.
+	 * @param  array			$filter       	Filter as an Universal Search string.
+	 * 											Example: $filter['uss'] =
 	 * @param  string      		$filtermode   	Filter mode (AND or OR)
 	 * @return array|int                 		int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		//some part of dolibarr main code use $filter as array like $filter['t.xxxx'] =
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 		$records = array();
 
@@ -442,6 +452,8 @@ class Partnership extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
+
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
@@ -1184,7 +1196,7 @@ class Partnership extends CommonObject
 		$this->lines = array();
 
 		$objectline = new PartnershipLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, '(fk_partnership:=:'.((int) $this->id).')');
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, ['uss' => '(fk_partnership:=:'.((int) $this->id).')']);
 
 		if (is_numeric($result)) {
 			$this->error = $objectline->error;

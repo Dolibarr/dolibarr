@@ -798,12 +798,22 @@ class Ticket extends CommonObject
 	 * @param  int    		$limit     	Limit
 	 * @param  int    		$offset    	Offset page
 	 * @param  int    		$arch      	Archive or not (not used)
-	 * @param  string|array $filter    	Filter for query
+	 * @param  array		$filter    	Filter as an Universal Search string.
+	 * 									Example: $filter['uss'] =
 	 * @return int 						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, $filter = '')
+	public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = 0, $offset = 0, $arch = 0, array $filter = array())
 	{
 		global $langs, $extrafields;
+
+		if (isset($filter['customsql'])) {
+			trigger_error(__CLASS__ .'::'.__FUNCTION__.' customsql in filter is now forbidden, please use $filter["uss"]="xx:yy:zz" with Universal Search String instead', E_USER_ERROR);
+		}
+		//some part of dolibarr main code use $filter as array like 't.fk_contract' => $this->id
+		//then we use "universal search string only if exists"
+		if (isset($filter['uss'])) {
+			$filter = $filter['uss'];
+		}
 
 		// fetch optionals attributes and labels
 		$extrafields->fetch_name_optionals_label($this->table_element);
@@ -857,6 +867,7 @@ class Ticket extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {
+			dol_syslog(__METHOD__ . "Using deprecated filter with old array data, please update to Universal Search string syntax", LOG_NOTICE);
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
 					$sql .= " AND ".$this->db->sanitize($key)." = '".$this->db->escape($value)."'";

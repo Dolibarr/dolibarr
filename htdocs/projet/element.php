@@ -993,7 +993,7 @@ print '</tr>';
 if ($object->usage_organize_event) {
 	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 	$conforboothattendee = new ConferenceOrBoothAttendee($db);
-	$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')');
+	$result = $conforboothattendee->fetchAll('', '', 0, 0, ['uss' => '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')']);
 
 	if (!is_array($result) && $result < 0) {
 		setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
