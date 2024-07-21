@@ -3719,8 +3719,12 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
+	background: var(--colorbackbody);
+}
+table.noborder {
 	background: var(--colorbacktabcard1);
 }
+
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
