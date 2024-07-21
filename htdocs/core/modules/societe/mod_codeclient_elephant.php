@@ -5,7 +5,8 @@
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Eric Seigne 		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +94,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ELEPHANT_MASK_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
+		$texte .= '<input type="hidden" name="param3" value="COMPANY_ELEPHANT_DATE_START">';
+		$texte .= '<input type="hidden" name="param4" value="COMPANY_ELEPHANT_DATE_START_ENABLE">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
@@ -112,6 +115,33 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		// Parametrage du prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '</tr>';
+
+		// Date of switch to that numbering model
+		$datedb = getDolGlobalString('COMPANY_ELEPHANT_DATE_START');
+		// After save, default dolibarr store data like displayed : 20/05/2024 and we need a timestamp -> override data
+		if (!empty($datedb)) {
+			if (!is_numeric($datedb) && GETPOSTISSET('value3')) {
+				if (GETPOST('value4') == 1) {
+					$dateinput = GETPOSTDATE('value3');
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START', $dateinput, 'chaine', 0, '', $conf->entity);
+				} else {
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START', '', 'chaine', 0, '', $conf->entity);
+				}
+			} else {
+				$dateinput = $datedb;
+			}
+		}
+		if (empty($dateinput)) {
+			$dateinput = dol_now();
+		}
+		$texte .= '<tr><td>'.$langs->trans("DateStartThatModel").' ('.$langs->trans("DateStartThatModelHelp").'):</td>';
+		$texte .= '<td class="" style="flex-direction: row;display: flex;">';
+		$texte .= '<input type="checkbox" onclick="let d=document.getElementById(\'elephantchoosedate\'); if(this.checked){d.style.cssText = \'display: block;\'}else{{d.style.cssText = \'display: none;\'}}" name="value4" value="1" style="float: left;"/>';
+		$texte .= '<div style="display: none;" id="elephantchoosedate" class="right">';
+		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 1, $disabled ? 1 : 0);
+		$texte .= '</div>';
+		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -271,6 +301,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
+		if (getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE') == 1 && $soc->date_creation < getDolGlobalString('COMPANY_ELEPHANT_DATE_START')) {
+			return -5;
+		}
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
