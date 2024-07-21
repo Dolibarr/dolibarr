@@ -873,7 +873,7 @@ if (!defined('NOLOGIN')) {
 		}
 		// TODO Remove use of $_COOKIE['login_dolibarr'] ? Replace $usertotest = with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername);
 		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
-		$passwordtotest = GETPOST('password', 'none', $allowedmethodtopostusername);
+		$passwordtotest = GETPOST('password', 'password', $allowedmethodtopostusername);
 		$entitytotest = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		// Define if we received the correct data to go into the test of the login with the checkLoginPassEntity().

@@ -729,8 +729,8 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *
  *  @param  string  $paramname   Name of parameter to found
  *  @param  string  $check	     Type of check
- *                               ''=no check (deprecated)
- *                               'none'=no check (only for param that should have very rich content like passwords)
+ *                               '' or 'none'=no check (deprecated)
+ *                               'password'=allow characters for a password
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
@@ -1157,6 +1157,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 	// Check is done after replacement
 	switch ($check) {
 		case 'none':
+		case 'password':
 			break;
 		case 'int':    // Check param is a numeric value (integer but also float or hexadecimal)
 			if (!is_numeric($out)) {
