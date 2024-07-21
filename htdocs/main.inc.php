@@ -1521,10 +1521,10 @@ $heightforframes = 50;
 // Init menu manager
 if (!defined('NOREQUIREMENU')) {
 	if (empty($user->socid)) {    // If internal user or not defined
-		$conf->standard_menu = (!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENU_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
+		$conf->standard_menu = getDolGlobalString('MAIN_MENU_STANDARD_FORCED', getDolGlobalString('MAIN_MENU_STANDARD', 'eldy_menu.php'));
 	} else {
 		// If external user
-		$conf->standard_menu = (!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENUFRONT_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+		$conf->standard_menu = getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED', getDolGlobalString('MAIN_MENUFRONT_STANDARD', 'eldy_menu.php'));
 	}
 
 	// Load the menu manager (only if not already done)
@@ -1633,7 +1633,7 @@ if (!function_exists("llxHeader")) {
 		}
 
 		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
-			left_menu(array(), $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
+			left_menu(array(), $help_url, '', array(), 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
 		// main area
@@ -1641,6 +1641,7 @@ if (!function_exists("llxHeader")) {
 			print $replacemainareaby;
 			return;
 		}
+
 		main_area($title);
 	}
 }
@@ -3104,7 +3105,7 @@ function top_menu_bookmark()
  */
 function top_menu_search()
 {
-	global $langs, $conf, $db, $user, $hookmanager;
+	global $langs, $conf, $db, $user, $hookmanager;	// used by htdocs/core/ajax/selectsearchbox.php
 
 	$html = '';
 
@@ -3385,7 +3386,11 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		// Show left menu with other forms
 		$menumanager->menu_array = $menu_array_before;
 		$menumanager->menu_array_after = $menu_array_after;
-		$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
+		if (getDolGlobalInt('MAIN_MENU_LEFT_DROPDOWN')) {
+			$menumanager->showmenu('leftdropdown', array('searchform' => $searchform)); // output menu_array and menu found in database
+		} else {
+			$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
+		}
 
 		// Dolibarr version + help + bug report link
 		print "\n";
