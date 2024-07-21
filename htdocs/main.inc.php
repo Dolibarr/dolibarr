@@ -887,7 +887,7 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST("username", "alpha", $allowedmethodtopostusername)) {	// For posting the login form
 			$goontestloop = true;
 		}
-		if (GETPOST('openid_mode', 'alpha', 1)) {	// For openid_connect ?
+		if (GETPOST('openid_mode', 'alpha')) {	// For openid_connect ?
 			$goontestloop = true;
 		}
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
