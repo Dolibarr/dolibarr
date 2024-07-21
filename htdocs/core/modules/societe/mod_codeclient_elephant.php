@@ -139,7 +139,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= '<td class="" style="flex-direction: row;display: flex;">';
 		$texte .= '<input type="checkbox" onclick="let d=document.getElementById(\'elephantchoosedate\'); if(this.checked){d.style.cssText = \'display: block;\'}else{{d.style.cssText = \'display: none;\'}}" name="value4" value="1" style="float: left;"/>';
 		$texte .= '<div style="display: none;" id="elephantchoosedate" class="right">';
-		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 1, $disabled);
+		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 1, $disabled ? 1 : 0);
 		$texte .= '</div>';
 		$texte .= '</td>';
 		$texte .= '</tr>';
