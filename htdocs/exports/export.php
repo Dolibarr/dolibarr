@@ -130,7 +130,8 @@ $entitytolang = array(
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
-	'conferenceorboothattendee' => 'Attendee'
+	'conferenceorboothattendee' => 'Attendee',
+	'inventory'   => 'Inventory'
 );
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();

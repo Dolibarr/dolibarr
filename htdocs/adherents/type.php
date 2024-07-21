@@ -363,16 +363,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 			} else {
 				print '<tr class="oddeven">';
+
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
+
 				print '<td class="nowraponall">';
 				print $membertype->getNomUrl(1);
 				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 				print '</td>';
+
 				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+
 				print '<td class="center">';
 				if ($objp->morphy == 'phy') {
 					print $langs->trans("Physical");
@@ -382,6 +386,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print $langs->trans("MorAndPhy");
 				}
 				print '</td>';
+
 				print '<td class="center nowrap">';
 				if ($objp->duration) {
 					$duration_value = intval($objp->duration);
@@ -394,11 +399,17 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print max(1, $duration_value).' '.$dur[$unit];
 				}
 				print '</td>';
+
 				print '<td class="center">'.yn($objp->subscription).'</td>';
+
 				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+
 				print '<td class="center">'.yn($objp->caneditamount).'</td>';
+
 				print '<td class="center">'.yn($objp->vote).'</td>';
+
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
@@ -564,7 +575,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public));
 		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';

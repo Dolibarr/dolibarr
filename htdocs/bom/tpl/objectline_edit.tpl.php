@@ -63,7 +63,7 @@ $colspan = 3; // Columns: total ht + col edit + col delete
 // Lines for extrafield
 $objectline = new BOMLine($this->db);
 
-print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_edit.tpl.php -->\n";
 
 $coldisplay = 0;
 print '<tr class="oddeven tredited">';

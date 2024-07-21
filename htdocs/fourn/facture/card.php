@@ -1990,13 +1990,12 @@ if (empty($reshook)) {
 			$error++;
 		}
 
+		// Actions on extra fields
 		if (!$error) {
-			// Actions on extra fields
-			if (!$error) {
-				$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
+			if ($result < 0) {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 
