@@ -106,7 +106,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
@@ -114,7 +114,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
 		// Date of switch to that numbering model
@@ -135,10 +135,11 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if (empty($dateinput)) {
 			$dateinput = dol_now();
 		}
-		$texte .= '<tr><td>'.$langs->trans("DateStartThatModel").' ('.$langs->trans("DateStartThatModelHelp").'):</td>';
-		$texte .= '<td class="" style="flex-direction: row;display: flex;">';
+		$texte .= '<tr><td>';
+		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp")).'</td>';
+		$texte .= '<td class="nowraponall right">';
 		$texte .= '<input type="checkbox" onclick="let d=document.getElementById(\'elephantchoosedate\'); if(this.checked){d.style.cssText = \'display: block;\'}else{{d.style.cssText = \'display: none;\'}}" name="value4" value="1" style="float: left;"/>';
-		$texte .= '<div style="display: none;" id="elephantchoosedate" class="right">';
+		$texte .= '<div style="display: none;" id="elephantchoosedate">';
 		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 1, $disabled ? 1 : 0);
 		$texte .= '</div>';
 		$texte .= '</td>';
@@ -301,7 +302,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE') == 1 && $soc->date_creation < getDolGlobalString('COMPANY_ELEPHANT_DATE_START')) {
+		if (getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE') && $soc->date_creation < getDolGlobalString('COMPANY_ELEPHANT_DATE_START')) {
 			return -5;
 		}
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
@@ -358,7 +359,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			$sql .= " WHERE code_client = '".$db->escape($code)."'";
 		}
 		if ($soc->id > 0) {
-			$sql .= " AND rowid <> ".$soc->id;
+			$sql .= " AND rowid <> ".((int) $soc->id);
 		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
 
