@@ -243,10 +243,10 @@ if (empty($reshook) && $action == 'add') {
 	if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && empty(GETPOST('email'))) {
 		$error++;
 		$errmsg .= $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Email'))."<br>\n";
-	} elseif (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+	} elseif (GETPOST("email", "aZ09arobase") && !isValidEmail(GETPOST("email", "aZ09arobase"))) {
 		$langs->load('errors');
 		$error++;
-		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email", "aZ09arobase"))."<br>\n";
 	}
 	$birthday = dol_mktime(GETPOSTINT("birthhour"), GETPOSTINT("birthmin"), GETPOSTINT("birthsec"), GETPOSTINT("birthmonth"), GETPOSTINT("birthday"), GETPOSTINT("birthyear"));
 	if (GETPOST("birthmonth") && empty($birthday)) {
@@ -278,6 +278,7 @@ if (empty($reshook) && $action == 'add') {
 		// E-mail looks OK and login does not exist
 		$adh = new Adherent($db);
 		$adh->statut      = -1;
+		$adh->status      = -1;
 		$adh->public      = $public;
 		$adh->firstname   = GETPOST('firstname');
 		$adh->lastname    = GETPOST('lastname');
@@ -287,10 +288,10 @@ if (empty($reshook) && $action == 'add') {
 		$adh->address     = GETPOST('address');
 		$adh->zip         = GETPOST('zipcode');
 		$adh->town        = GETPOST('town');
-		$adh->email       = GETPOST('email');
+		$adh->email       = GETPOST('email', 'aZ09arobase');
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			$adh->login       = GETPOST('login');
-			$adh->pass        = GETPOST('pass1');
+			$adh->pass        = GETPOST('pass1', 'password');
 		}
 		$adh->photo       = GETPOST('photo');
 		$adh->country_id  = getDolGlobalInt("MEMBER_NEWFORM_FORCECOUNTRYCODE", GETPOSTINT('country_id'));
@@ -632,7 +633,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	// EMail
 	print '<tr><td class="'.(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? 'classfortooltip' : '').'" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans("Email").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? ' <span class="star">*</span>' : '').'</td><td>';
 	//print img_picto('', 'email', 'class="pictofixedwidth"');
-	print '<input type="text" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email')).'"></td></tr>'."\n";
+	print '<input type="email" name="email" maxlength="255" class="minwidth200" value="'.dol_escape_htmltag(GETPOST('email', "aZ09arobase")).'"></td></tr>'."\n";
 
 	// Login
 	if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
@@ -809,7 +810,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	// Display Captcha code if is enabled
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-		print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
+		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 		print '<span class="span-icon-security inline-block">';
 		print '<input id="securitycode" placeholder="'.$langs->trans("SecurityCode").'" class="flat input-icon-security width150" type="text" maxlength="5" name="code" tabindex="3" />';
 		print '</span>';

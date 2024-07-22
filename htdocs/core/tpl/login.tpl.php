@@ -103,6 +103,29 @@ if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$disablenofollow = 0;
 }
 
+// If OpenID Connect is set as an authentication
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
+	// Set a cookie to transfer rollback page information
+	$prefix = dol_getprefix('');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
+		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+	}
+
+	// Auto redirect if OpenID Connect is the only authentication
+	if ($conf->file->main_authentication === 'openid_connect') {
+		// Avoid redirection hell
+		if (empty(GETPOST('openid_mode'))) {
+			dol_include_once('/core/lib/openid_connect.lib.php');
+			header("Location: " . openid_connect_get_url(), true, 302);
+		} elseif (!empty($_SESSION['dol_loginmesg'])) {
+			// Show login error without the login form
+			print '<div class="center login_main_message"><div class="error">' . dol_escape_htmltag($_SESSION['dol_loginmesg']) . '</div></div>';
+		}
+		// We shouldn't continue executing this page
+		exit();
+	}
+}
+
 top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
@@ -335,15 +358,19 @@ if ($forgetpasslink || $helpcenterlink) {
 	echo '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+	dol_include_once('/core/lib/openid_connect.lib.php');
 	$langs->load("users");
 
 	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$state = hash('sha256', session_id());
-	$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state='.$state;
+	if (!getDolGlobalString("MAIN_AUTHENTICATION_OPENID_URL")) {
+		$url = openid_connect_get_url();
+	} else {
+		$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state=' . openid_connect_get_state();
+	}
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
@@ -400,20 +427,34 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 <?php
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
-	?>
-	<div class="center login_main_message">
-	<?php
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
-	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
-		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning" role="alert">';
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
 	} else {
-		print '<div class="error" role="alert">';
+		?>
+		<div class="center login_main_message">
+		<?php
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			print '<div class="warning" role="alert">';
+		} else {
+			print '<div class="error" role="alert">';
+		}
+		print dol_escape_htmltag($message);
+		print '</div>'; ?>
+		</div>
+		<?php
 	}
-	print dol_escape_htmltag($message);
-	print '</div>'; ?>
-	</div>
-	<?php
 }
 
 // Add commit strip
