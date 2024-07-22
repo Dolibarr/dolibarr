@@ -1139,20 +1139,18 @@ if ($action == 'create' || $action == 'presend') {
 		print '</div><div class="fichehalfright">';
 
 
+
+
+
 		print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
-		//print '<div class="underbanner clearboth"></div>';
-
-		// View Original message
-		$actionobject->viewTicketOriginalMessage($user, $action, $object);
-
 		// Classification of ticket
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border tableforfield centpercent margintable">';
+		print '<table class="border tableforfield centpercent margintable bordertopimp">';
 		print '<tr class="liste_titre">';
 		print '<td>';
 		print $langs->trans('TicketProperties');
@@ -1265,10 +1263,13 @@ if ($action == 'create' || $action == 'presend') {
 			print '</table>';
 		}
 
+		// View Original message
+		$actionobject->viewTicketOriginalMessage($user, $action, $object);
+
 
 		// Display navbar with links to change ticket status
 		print '<!-- navbar with status -->';
-		if (!$user->socid && $user->hasRight('ticket', 'write') && isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set') !== 'properties') {
+		if (!$user->socid && $user->hasRight('ticket', 'write') && isset($object->status) && $object->status < $object::STATUS_CLOSED) {
 			$actionobject->viewStatusActions($object);
 		}
 
