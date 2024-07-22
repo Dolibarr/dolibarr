@@ -499,7 +499,7 @@ class FormMail extends Form
 
 			$modelmail_array = array();
 			if ($this->param['models'] != 'none') {
-				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);	// Fill $this->lines_model
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
@@ -1604,7 +1604,7 @@ class FormMail extends Form
 			$languagetosearchmain = '';
 		}
 
-		$sql = "SELECT rowid, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
+		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
 		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1627,6 +1627,7 @@ class FormMail extends Form
 		if ($id == -1) {
 			$sql .= " AND position = 0";
 		}
+		$sql .= " AND entity IN(".getEntity('c_email_templates', 1).")";
 		if ($languagetosearch) {
 			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		} else {
@@ -1753,7 +1754,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Find if template exists and are available for current user, then set them into $this->lines_module.
+	 *      Find if template exists and are available for current user, then set them into $this->lines_model.
 	 *      Search into table c_email_templates
 	 *
 	 * 		@param	string		$type_template		Get message for key module

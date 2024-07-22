@@ -252,6 +252,8 @@ if ($reshook == 0) {
 	}
 }
 
+$error = 0;
+
 $id = 25;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
@@ -436,81 +438,93 @@ if (empty($reshook)) {
 		if ($ok && GETPOST('actionmodify')) {
 			$rowidcol = "rowid";
 
-			// Modify entry
-			$sql = "UPDATE ".$tabname[$id]." SET ";
-			// Modify value of fields
-			$i = 0;
-			foreach ($listfieldmodify as $field) {
-				if ($field == 'entity') {
-					// entity not present on listfieldmodify array
-					$keycode = $field;
-					$_POST[$keycode] = $conf->entity;
-				} else {
-					$keycode = $listfieldvalue[$i];
-				}
-
-				if ($field == 'lang') {
-					$keycode = 'langcode';
-				}
-				if (empty($keycode)) {
-					$keycode = $field;
-				}
-
-				// Rename some POST variables into a generic name
-				if ($field == 'fk_user' && !(GETPOSTINT('fk_user') > 0)) {
-					$_POST['fk_user'] = '';
-				}
-				if ($field == 'topic') {
-					$_POST['topic'] = GETPOST('topic-'.$rowid);
-				}
-				if ($field == 'joinfiles') {
-					$_POST['joinfiles'] = GETPOST('joinfiles-'.$rowid);
-				}
-				if ($field == 'content') {
-					$_POST['content'] = GETPOST('content-'.$rowid, 'restricthtml');
-				}
-				if ($field == 'content_lines') {
-					$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
-				}
-
-				if ($i) {
-					$sql .= ", ";
-				}
-				$sql .= $field."=";
-
-				if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
-					$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
-				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
-					$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
-				} elseif ($keycode == 'fk_user') {
-					if (!$user->admin) {	// A non admin user can only edit its own template
-						$sql .= " ".((int) $user->id);
-					} else {
-						$sql .= " ".(GETPOSTINT($keycode));
-					}
-				} elseif ($keycode == 'content') {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position'))) {
-					$sql .= GETPOSTINT($keycode);
-				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
-				}
-				$i++;
-			}
-
-			$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
-			if (!$user->admin) {	// A non admin user can only edit its own template
-				$sql .= " AND fk_user  = ".((int) $user->id);
-			}
-			//print $sql;exit;
-			dol_syslog("actionmodify", LOG_DEBUG);
-			//print $sql;
-			$resql = $db->query($sql);
-			if ($resql) {
-				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			} else {
-				setEventMessages($db->error(), null, 'errors');
+			if (GETPOSTINT('fk_user') <= 0 && GETPOST('private')) {
+				setEventMessages($langs->trans("AnOwnerMustBeSetIfEmailTemplateIsPrivate"), null, 'errors');
+				$error++;
 				$action = 'edit';
+			}
+
+			if (!$error) {
+				// Modify entry
+				$sql = "UPDATE ".$tabname[$id]." SET ";
+				// Modify value of fields
+				$i = 0;
+				foreach ($listfieldmodify as $field) {
+					if ($field == 'entity') {
+						// entity not present on listfieldmodify array
+						$keycode = $field;
+						$_POST[$keycode] = $conf->entity;
+					} else {
+						$keycode = $listfieldvalue[$i];
+					}
+
+					if ($field == 'lang') {
+						$keycode = 'langcode';
+					}
+					if (empty($keycode)) {
+						$keycode = $field;
+					}
+
+					// Rename some POST variables into a generic name
+					if ($field == 'fk_user' && !(GETPOSTINT('fk_user') > 0)) {
+						$_POST['fk_user'] = '';
+					}
+					if ($field == 'topic') {
+						$_POST['topic'] = GETPOST('topic-'.$rowid);
+					}
+					if ($field == 'joinfiles') {
+						$_POST['joinfiles'] = GETPOST('joinfiles-'.$rowid);
+					}
+					if ($field == 'content') {
+						$_POST['content'] = GETPOST('content-'.$rowid, 'restricthtml');
+					}
+					if ($field == 'content_lines') {
+						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
+					}
+
+					if ($i) {
+						$sql .= ", ";
+					}
+					$sql .= $field."=";
+
+					if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
+					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
+						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
+					} elseif ($keycode == 'fk_user') {
+						if (!$user->admin) {	// A non admin user can only edit its own template
+							$sql .= " ".((int) $user->id);
+						} else {
+							$sql .= " ".(GETPOSTINT($keycode));
+						}
+					} elseif ($keycode == 'content') {
+						$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+					} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position'))) {
+						$sql .= GETPOSTINT($keycode);
+					} else {
+						$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
+					}
+					$i++;
+				}
+
+				$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
+				if (!$user->admin) {	// A non admin user can only edit its own template
+					$sql .= " AND fk_user  = ".((int) $user->id);
+				}
+				//print $sql;exit;
+				dol_syslog("actionmodify", LOG_DEBUG);
+
+				//print $sql;
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+					setEventMessages($db->error(), null, 'errors');
+					$action = 'edit';
+				}
+			}
+
+			if (!$error) {
+				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			}
 		}
 	}
@@ -1380,7 +1394,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin && $context != 'preview') {
-				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
+				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(-1); // Me
@@ -1467,10 +1481,10 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			if ($value == 'private' && $context != 'preview') {
 				if (empty($user->admin)) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					print $form->selectyesno($value, '1', 1);
+					print $form->selectyesno($value, '1', 1, false, 0, 1);
 				} else {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					print $form->selectyesno($value, (isset($obj->$value) ? $obj->$value : ''), 1);
+					print $form->selectyesno($value, (isset($obj->$value) ? $obj->$value : ''), 1, false, 0, 1);
 				}
 			} else {
 				print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->$value) ? $obj->$value : '').'" name="'. $value .'"'.($context == 'preview' ? ' disabled' : '').'>';
