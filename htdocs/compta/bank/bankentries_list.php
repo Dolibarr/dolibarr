@@ -607,7 +607,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ";
 if ($search_bid > 0) {
-	$sql .= MAIN_DB_PREFIX."category_bankline  as l,";
+	$sql .= MAIN_DB_PREFIX."category_bankline as l,";
 }
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
