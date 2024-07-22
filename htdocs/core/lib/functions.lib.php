@@ -14201,11 +14201,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($truncateLines > 0 && strlen($histo[$key]['message']) > strlen($truncatedText)) {
 					$out .= '<div class="readmore-block --closed" >';
 					$out .= '	<div class="readmore-block__excerpt">';
-					var_dump($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML);
-					var_dump($conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY);
-					var_dump($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES);
-					$truncatedText = 'aaa &egrave; bbb &#39; ccc';
-					var_dump(dolPrintHTML($truncatedText));
 					$out .= 	dolPrintHTML($truncatedText);
 					$out .= ' 	<br><a class="read-more-link" data-read-more-action="open" href="'.DOL_MAIN_URL_ROOT.'/comm/action/card.php?id='.$actionstatic->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'" >'.$langs->trans("ReadMore").' <span class="fa fa-chevron-right" aria-hidden="true"></span></a>';
 					$out .= '	</div>';
