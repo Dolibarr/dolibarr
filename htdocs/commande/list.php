@@ -1364,7 +1364,7 @@ if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
 if ($permissiontoclose) {
-	$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
+	$arrayofmassactions['preshipped'] = img_picto('', 'dolly', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
 }
 if (isModEnabled('invoice') && $user->hasRight("facture", "creer")) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
