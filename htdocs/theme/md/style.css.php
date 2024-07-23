@@ -552,7 +552,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input {
-	line-height: 17px;
+	line-height: 1.3em;
 	padding: 5px;
 	padding-left: 5px;
 }
@@ -762,14 +762,18 @@ span.amount {
 td.actionbuttons a {
 	padding-left: 6px;
 }
-select.flat, form.flat select, .pageplusone, .divadvancedsearchfieldcompinput, {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
+}
+select.flat, form.flat select, .divadvancedsearchfieldcompinput {
 	height: 2em;
 }
-input.pageplusone, .divadvancedsearchfieldcompinput, {
+input.pageplusone, .divadvancedsearchfieldcompinput {
 	padding-bottom: 4px;
 	padding-top: 4px;
+	margin-right: 4px;
+	margin-left: 3px;
 }
 
 .saturatemedium {
@@ -1601,9 +1605,9 @@ input > ul.attendees {
 	vertical-align: middle;
 }
 select.flat.selectlimit {
-	max-width: 62px;
+	max-width: 75px;
 }
-.selectlimit, .marginrightonly {
+.marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
@@ -6617,7 +6621,8 @@ input.select2-input {
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-	border: 1px solid #e4e4e4;
+	/* border: 1px solid #e4e4e4; */
+	border: none;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
@@ -6695,6 +6700,13 @@ input.select2-input {
 	border-left: none;
 	border-right: none;
 	border-radius: 0 !important;
+	line-height: normal;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	line-height: 1.4em;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
 	border-bottom: none !important;
