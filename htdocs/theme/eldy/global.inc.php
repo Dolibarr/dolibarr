@@ -296,7 +296,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	/* padding: 5px; */
 }
-.pageplusone, .divadvancedsearchfieldcompinput,
+.divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
@@ -576,6 +576,7 @@ input.pageplusone {
 	padding-bottom: 4px;
 	padding-top: 4px;
 	margin-right: 4px;
+	margin-left: 3px;
 }
 .paginationlastpage a {
 	padding-left: 8px;
@@ -4299,7 +4300,10 @@ div.pagination li {
   padding-right: 0px;
   /* padding-top: 10px; */
   /* padding-bottom: 5px; */
-  font-size: 1.1em;
+  /* font-size: 1.1em; */
+}
+li.pagination.paginationpage.paginationpageleft, li.pagination.paginationpage.paginationpageright {
+	font-size: 1.1em;
 }
 .pagination {
   display: inline-block;
@@ -4409,7 +4413,9 @@ table.hidepaginationnext .paginationnext {
 	max-width: calc(30%);
 }
 .paginationafterarrows a.btnTitlePlus, .titre_right  a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
+	/* border: 1px solid var(--btncolorborder); */
+	border: unset;
+	background-color: unset;
 }
 .paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
 	/* text-shadow: 0px 0px 5px #ccc; */
@@ -6648,7 +6654,6 @@ input.select2-input {
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-	margin-top: 5px !important;
 	border: none;
 }
 .select2-container--focus span.select2-selection.select2-selection--single {
