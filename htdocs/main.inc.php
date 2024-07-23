@@ -1355,6 +1355,10 @@ if (!defined('NOLOGIN')) {
 			$conf->liste_limit = 20;
 		}
 	}
+	// Set main_checkbox_left_column from user setup
+	if (isset($user->conf->MAIN_CHECKBOX_LEFT_COLUMN)) {	// If a user setup exists
+		$conf->main_checkbox_left_column = getDolUserInt('MAIN_CHECKBOX_LEFT_COLUMN'); // Can be 0
+	}
 
 	// Replace conf->css by personalized value if theme not forced
 	if (!getDolGlobalString('MAIN_FORCETHEME') && getDolUserString('MAIN_THEME')) {
