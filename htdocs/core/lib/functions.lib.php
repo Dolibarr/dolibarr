@@ -2016,8 +2016,9 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 			$result = str_ireplace('__SRCHTTPIMG', 'src="http:', $result);
 			$result = str_ireplace('__SRCHTTPSIMG', 'src="https:', $result);
 			$result = str_ireplace('__DOUBLEQUOTE', '"', $result);
-			$result = str_ireplace('__SIMPLEQUOTE', '&#39;', $result);
 		}
+
+		$result = str_ireplace('__SIMPLEQUOTE', '&#39;', $result);
 
 		//$result="\n\n\n".var_export($tmp, true)."\n\n\n".var_export($result, true);
 
