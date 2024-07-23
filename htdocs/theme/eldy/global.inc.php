@@ -3482,7 +3482,7 @@ a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
 	color: var(--colortextbackvmenu);
