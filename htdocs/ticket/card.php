@@ -885,7 +885,23 @@ if ($action == 'create' || $action == 'presend') {
 		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
 
 		$morehtmlref = '<div class="refidno">';
-		$morehtmlref .= $object->subject;
+
+		if ($user->hasRight('ticket', 'write') && !$user->socid) {
+			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetSubject'), 0).'</a> ';
+		}
+		if ($action != 'editsubject') {
+			$morehtmlref .= $object->subject;
+		} else {
+			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
+			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$morehtmlref .= '<input type="hidden" name="id" value="20">';
+			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
+			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
+			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel vlignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$morehtmlref .= '</form>';
+		}
+
 		// Author
 		$createdbyshown = 0;
 		if ($object->fk_user_create > 0) {
@@ -1010,11 +1026,13 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td></tr>';
 
 		// Subject
+		/*
 		print '<tr><td>';
 		print $form->editfieldkey("Subject", 'subject', $object->subject, $object, $user->hasRight('ticket', 'write') && !$user->socid, 'string');
 		print '</td><td>';
 		print $form->editfieldval("Subject", 'subject', $object->subject, $object, $user->hasRight('ticket', 'write') && !$user->socid, 'string');
 		print '</td></tr>';
+		*/
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
