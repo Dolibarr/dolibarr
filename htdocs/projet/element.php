@@ -1139,7 +1139,7 @@ foreach ($listofreferent as $key => $value) {
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
-			print ''; // if $key == 'payment_various', we don't have any thirdparty
+			print $langs->trans("Label"); // complementary info about the payment
 		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'salary'))) {
 			print $langs->trans("User");
 		} else {
@@ -1390,6 +1390,8 @@ foreach ($listofreferent as $key => $value) {
 					}
 				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
+				} elseif ($tablename == 'payment_various') {	// payment label
+					print $element->label;
 				}
 				print '</td>';
 
