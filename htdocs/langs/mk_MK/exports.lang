@@ -119,8 +119,8 @@ Separator=Сепаратор на поле
 Enclosure=Разграничувач на жици
 SpecialCode=Специјален код
 ExportStringFilter=%% овозможува замена на еден или повеќе знаци во текстот
-ExportDateFilter=ГГГГ, ГГГГММ, ГГГГММДД: се филтрира по една година/месец/ден<br>ГГГГ+ГГГГ, ГГГГММ+ГГГГММ, ГГГММДД+ГГГММДД+ГГГГММДД+ГГГГММД филтри во текот на филтрите на ден/дневни опсези на дена/дена: span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMDD: филтри на сите следни години/месеци/денови<br> <YYYYMM YYYYMMDD: филтри за сите претходни години/месеци/денови
-ExportNumericFilter=NNNNN филтрира по една вредност<br>NNNNN+NNNNN филтри во опсег на вредности<br><span class='notranslate'>b27ede2ez /span>> NNNNN филтрира по повисоки вредности
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Увезете почнувајќи од бројот на линијата
 EndAtLineNb=Заврши на бројот на линијата
 ImportFromToLine=Ограничен опсег (Од - До). На пр. да се изостават линиите за заглавие.

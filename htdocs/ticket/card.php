@@ -885,7 +885,23 @@ if ($action == 'create' || $action == 'presend') {
 		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
 
 		$morehtmlref = '<div class="refidno">';
-		$morehtmlref .= $object->subject;
+
+		if ($user->hasRight('ticket', 'write') && !$user->socid) {
+			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetSubject'), 0).'</a> ';
+		}
+		if ($action != 'editsubject') {
+			$morehtmlref .= $object->subject;
+		} else {
+			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
+			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$morehtmlref .= '<input type="hidden" name="id" value="20">';
+			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
+			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
+			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel vlignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
+			$morehtmlref .= '</form>';
+		}
+
 		// Author
 		$createdbyshown = 0;
 		if ($object->fk_user_create > 0) {
@@ -1010,11 +1026,13 @@ if ($action == 'create' || $action == 'presend') {
 		print '</td></tr>';
 
 		// Subject
+		/*
 		print '<tr><td>';
 		print $form->editfieldkey("Subject", 'subject', $object->subject, $object, $user->hasRight('ticket', 'write') && !$user->socid, 'string');
 		print '</td><td>';
 		print $form->editfieldval("Subject", 'subject', $object->subject, $object, $user->hasRight('ticket', 'write') && !$user->socid, 'string');
 		print '</td></tr>';
+		*/
 
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
@@ -1077,7 +1095,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="track_id" value="'.$object->track_id.'">';
 			//print '<label for="fk_user_assign">'.$langs->trans("AssignUser").'</label> ';
 			print $form->select_dolusers(empty($object->fk_user_assign) ? $user->id : $object->fk_user_assign, 'fk_user_assign', 1);
-			print ' <input type="submit" class="button small" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
+			print ' <input type="submit" class="button smallpaddingimp" name="btn_assign_user" value="'.$langs->trans("Validate").'" />';
 			print '</form>';
 		}
 		print '</td></tr>';
@@ -1098,7 +1116,7 @@ if ($action == 'create' || $action == 'presend') {
 			print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 			print '<input type="hidden" name="action" value="set_progression">';
 			print '<input type="text" class="flat width75" name="progress" value="'.$object->progress.'">';
-			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
 			print($object->progress > 0 ? $object->progress : '0').'%';
@@ -1139,20 +1157,18 @@ if ($action == 'create' || $action == 'presend') {
 		print '</div><div class="fichehalfright">';
 
 
+
+
+
 		print '<form method="post" name="formticketproperties" action="'.$url_page_current.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="change_property">';
 		print '<input type="hidden" name="track_id" value="'.$track_id.'">';
 		print '<input type="hidden" name="trackid" value="'.$trackid.'">';
 
-		//print '<div class="underbanner clearboth"></div>';
-
-		// View Original message
-		$actionobject->viewTicketOriginalMessage($user, $action, $object);
-
 		// Classification of ticket
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border tableforfield centpercent margintable">';
+		print '<table class="border tableforfield centpercent margintable bordertopimp">';
 		print '<tr class="liste_titre">';
 		print '<td>';
 		print $langs->trans('TicketProperties');
@@ -1265,10 +1281,13 @@ if ($action == 'create' || $action == 'presend') {
 			print '</table>';
 		}
 
+		// View Original message
+		$actionobject->viewTicketOriginalMessage($user, $action, $object);
+
 
 		// Display navbar with links to change ticket status
 		print '<!-- navbar with status -->';
-		if (!$user->socid && $user->hasRight('ticket', 'write') && isset($object->status) && $object->status < $object::STATUS_CLOSED && GETPOST('set') !== 'properties') {
+		if (!$user->socid && $user->hasRight('ticket', 'write') && isset($object->status) && $object->status < $object::STATUS_CLOSED) {
 			$actionobject->viewStatusActions($object);
 		}
 

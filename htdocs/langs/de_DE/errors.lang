@@ -55,7 +55,7 @@ ErrorFoundBadEmailInFile=Ungültige E-Mail-Adresse in %s Zeilen der Datei gefund
 ErrorUserCannotBeDelete=Dieser Benutzer kann nicht gelöscht werden. Eventuell ist er noch mit einem Partner verknüpft.
 ErrorFieldsRequired=Einige erforderliche Felder wurden leer gelassen.
 ErrorSubjectIsRequired=Der Betreff der E-Mail ist erforderlich
-ErrorInAddAttachmentsImageBaseOnMedia=Fehler beim Erstellen der Bilddateien für Anhänge im Medien-Verzeichnis 
+ErrorInAddAttachmentsImageBaseOnMedia=Fehler beim Erstellen der Bilddateien für Anhänge im Medien-Verzeichnis
 ErrorInAddAttachmentsImageBaseIsSrcData=Fehler beim Erstellen von Bilddateien (gefunden als Daten:) für Anhänge im temporären Verzeichnis
 ErrorFailedToCreateDir=Fehler beim Erstellen eines Verzeichnisses. Vergewissern Sie sich, dass der Webserver-Benutzer Schreibberechtigungen für das Dokumentverzeichnis des Systems besitzt. Bei aktiviertem <b>safe_mode</b> sollten die Systemdateien den Webserver-Benutzer oder die -Gruppe als Besitzer haben.
 ErrorNoMailDefinedForThisUser=Für diesen Benutzer ist keine E-Mail-Adresse eingetragen.
@@ -336,7 +336,7 @@ ErrorCheckTheCommandInsideTheAdvancedOptions=Überprüfen Sie den für den Expor
 ErrorEndTimeMustBeGreaterThanStartTime=Endzeitpunkt muss nach dem Startzeitpunkt liegen
 ErrorIncoherentDates=Startzeitpunkt muss vor dem Endzeitpunkt liegen
 ErrorEndHourIsNull=Enddatum kann nicht Null sein
-ErrorStartHourIsNull=Startdatum kann nicht Null sein 
+ErrorStartHourIsNull=Startdatum kann nicht Null sein
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Zu viele Zeilen zum Verarbeiten. Bitte verwenden Sie einen selektiveren Filter.
 ErrorEmptyValueForQty=Die Menge darf nicht Null sein.
 # Warnings

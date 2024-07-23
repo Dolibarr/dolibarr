@@ -3587,7 +3587,11 @@ a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
+	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal;
+	color: var(--colortextbackvmenu);
+	margin: 1px 1px 1px 8px;
+}
 span.vsmenudisabled:not(.spanlilevel0), font.vsmenudisabled:not(.spanlilevel0) {
 	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 }
@@ -3824,8 +3828,8 @@ a.fmdirlia {
 /* ============================================================================== */
 div.tabs {
 	text-align: <?php print $left; ?>;
-	margin-left: 6px !important;
-	margin-right: 6px !important;
+	/*margin-left: 6px !important;
+	margin-right: 6px !important;*/
 	clear:both;
 	height:100%;
 }
@@ -6465,6 +6469,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	padding-top: 10px !important;
 	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
@@ -6479,9 +6484,10 @@ div#ecm-layout-center {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-	-webkit-box-shadow: 2px 2px 4px #888 !important;
-	box-shadow: 2px 2px 4px #888 !important;
+	-webkit-box-shadow: 2px 2px 4px #8888 !important;
+	box-shadow: 2px 2px 4px #8888 !important;
 }
+
 
 /* ============================================================================== */
 /*  blockUI                                                                      */

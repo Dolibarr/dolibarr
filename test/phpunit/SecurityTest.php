@@ -1138,7 +1138,6 @@ class SecurityTest extends CommonClassTest
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
 
 
-
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
 		$stringtotest = "&quot;&gt;";
 		$stringfixed = "&quot;&gt;";
@@ -1180,11 +1179,54 @@ class SecurityTest extends CommonClassTest
 
 
 		// For a string with no HTML tags
-		$stringtotest = "testC\ntest";
-		$stringfixed = "testC<br>\ntest";
+		$stringtotest = "testwithnewline\nsecond line";
+		$stringfixed = "testwithnewline<br>\nsecond line";
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');
+
+
+		// For a string with ' and &#39;
+		// With no clean option
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+
+		$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
+		/*
+		var_dump($stringtotest);
+		var_dump(dol_htmlentitiesbr($stringtotest));
+		var_dump(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		var_dump(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)));
+		var_dump(dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1));
+		*/
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringtotest, $result, 'Error');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		}
+
+		// For a string with ' and &#39;
+		// With cleaning options of HTML TIDY
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
+			$stringexpected = "Message<br>\nwith ' and &egrave; and ' !";		// The &#39; is modified into ' because html tidy fix it.
+			/*
+			var_dump($stringtotest);
+			var_dump(dol_htmlentitiesbr($stringtotest));
+			var_dump(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+			var_dump(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)));
+			var_dump(dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1));
+			*/
+			$result = dolPrintHTML($stringtotest);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals($stringexpected, $result, 'Error');
+		}
 
 		return 0;
 	}

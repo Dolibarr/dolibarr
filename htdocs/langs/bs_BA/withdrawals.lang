@@ -151,7 +151,7 @@ ADDDAYS=Dodajte dane datumu izvršenja
 NoDefaultIBANFound=Za ovu treću stranu nije pronađen zadani IBAN
 ### Notifications
 InfoCreditSubject=Plaćanje naloga za plaćanje direktnog zaduženja %s od strane banke
-InfoCreditMessage=Nalog za plaćanje direktnog zaduženja %s je platila banka<br>Podaci plaćanja: %s 
+InfoCreditMessage=Nalog za plaćanje direktnog zaduženja %s je platila banka<br>Podaci plaćanja: %s
 InfoTransSubject=Prijenos naloga za plaćanje direktnog zaduženja %s banci
 InfoTransMessage=Nalog za plaćanje direktnog zaduženja %s je poslao banci %s %s .<br><br>
 InfoTransData=Iznos: %s<br>Metoda: %s<br>Datum: %s

@@ -14,7 +14,7 @@ BOMsSetup=Configuración do módulo BOM
 ListOfBOMs=Listas de materiais - BOM
 ListOfManufacturingOrders=Pedimentos de fabricación
 NewBOM=Nova listaxe de materiais
-ProductBOMHelp=Produto para crear (ou desmontar) con esta Lista de Materiais <br> Nota: Os produtos coa propiedade 'Natureza do produto' = 'Materia prima' non están visibles nesta listaxe. 
+ProductBOMHelp=Produto para crear (ou desmontar) con esta Lista de Materiais <br> Nota: Os produtos coa propiedade 'Natureza do produto' = 'Materia prima' non están visibles nesta listaxe.
 CloneDefBomProduct=Clonar a lista de materiais predeterminada para usar na fabricación dun produto
 CloneOtherBomsProduct=Clonar todas as listas de materiais que se poidan utilizar para fabricar o produto
 BOMofRef=BOM de %s
@@ -77,7 +77,7 @@ ConsumeAndProduceAll=Consumir e producir todo
 Manufactured=Fabricado
 TheProductXIsAlreadyTheProductToProduce=O produto a engadir xa é o produto a fabricar.
 ForAQuantityOf=Para producir unha cantidade de %s
-ForAQuantityToConsumeOf=Para desmontar unha cantidade de %s 
+ForAQuantityToConsumeOf=Para desmontar unha cantidade de %s
 ConfirmValidateMo=Está certo de que desexa validar este pedimento de fabricación?
 ConfirmProductionDesc=Ao facer clic en '%s', validará o consumo e/ou a produción para as cantidades establecidas. Isto tamén actualizará o stock e rexistrará os movementos de stock.
 ProductionForRef=Produción de %s
@@ -88,7 +88,7 @@ NoStockChangeOnServices=Non hai cambio de stock nos servizos
 ProductQtyToConsumeByMO=Cantidade de produto aínda por consumir por PF aberto
 ProductQtyToProduceByMO=Cantidade de produto aínda por producir en OF aberta
 AddNewConsumeLines=Engadir nova liña para consumir
-AddNewProduceLines=Engada nova liña para produción 
+AddNewProduceLines=Engada nova liña para produción
 ProductsToConsume=Produtos para consumir
 ProductsToProduce=Produtos para fabricar
 UnitCost=Custo unitario

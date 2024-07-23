@@ -310,4 +310,4 @@ MergeTasks=Combina les tasques
 TaskMergeSuccess=S'han fusionat les tasques
 ErrorTaskIdIsMandatory=Error: l'identificador de la tasca és obligatori
 ErrorsTaskMerge=S'ha produït un error en combinar les tasques
-Billable = Billable
+Billable = Facturable

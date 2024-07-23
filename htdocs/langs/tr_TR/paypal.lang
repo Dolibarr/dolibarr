@@ -34,4 +34,4 @@ ARollbackWasPerformedOnPostActions=Tüm Gönderme işlemlerinde geri alma işlem
 ValidationOfPaymentFailed=Ödemenin doğrulanması başarısız oldu
 CardOwner=kart sahibi
 PayPalBalance=Paypal kredisi
-OnlineSubscriptionPaymentLine=Çevrimiçi abonelik %s<br>üzerine kaydedildi %s<br>Kaynak IP adresi: %s<br>İşlem Kimliği: %s 
+OnlineSubscriptionPaymentLine=Çevrimiçi abonelik %s<br>üzerine kaydedildi %s<br>Kaynak IP adresi: %s<br>İşlem Kimliği: %s

@@ -34,7 +34,14 @@ $langs->loadLangs(array("admin", "website", "other"));
 // Parameters
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$cancel = GETPOST('cancel');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
+
+$functioncode = GETPOST('functioncode', 'alpha');
+$pre_prompt = GETPOST('prePrompt');
+$post_prompt = GETPOST('postPrompt');
+$blacklists = GETPOST('blacklists');
+$test = GETPOST('test');
 
 if (empty($action)) {
 	$action = 'edit';
@@ -83,20 +90,16 @@ $arrayofaifeatures = array(
  * Actions
  */
 
-$functioncode = GETPOST('functioncode', 'alpha');
-$pre_prompt = GETPOST('prePrompt');
-$post_prompt = GETPOST('postPrompt');
-$blacklists = GETPOST('blacklists');
 // get all configs in const AI
 
 $currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
 
-if ($action == 'update' && GETPOST('cancel')) {
+if ($action == 'update' && $cancel) {
 	$action = 'edit';
 }
 
-if ($action == 'update' && !GETPOST('cancel')) {
+if ($action == 'update' && !$cancel && !$test) {
 	$error = 0;
 	if (empty($functioncode)) {
 		$error++;
@@ -135,7 +138,8 @@ if ($action == 'update' && !GETPOST('cancel')) {
 	$action = 'edit';
 }
 
-if ($action == 'updatePrompts') {
+// Update entry
+if ($action == 'updatePrompts' && !$test) {
 	$key = GETPOST('key', 'alpha');
 
 	$blacklistArray = array_filter(array_map('trim', explode(',', $blacklists)));
@@ -149,17 +153,21 @@ if ($action == 'updatePrompts') {
 	$newConfigurationsJson = json_encode($currentConfigurations, JSON_UNESCAPED_UNICODE);
 	$result = dolibarr_set_const($db, 'AI_CONFIGURATIONS_PROMPT', $newConfigurationsJson, 'chaine', 0, '', $conf->entity);
 	if (!$error) {
-		$action = '';
+		$action = 'edit';
 		if ($result) {
-			header("Location: ".$_SERVER['PHP_SELF']);
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-			exit;
 		} else {
 			setEventMessages($langs->trans("ErrorUpdating"), null, 'errors');
 		}
 	}
 }
 
+// Test entry
+if ($action == 'updatePrompts' && $test) {
+	$action = 'edit';
+}
+
+// Delete entry
 if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
 	$key = GETPOST('key', 'alpha');
 
@@ -311,12 +319,12 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= '<input type="hidden" name="key" value="'.$key.'" />';
 			$out .= '<input type="hidden" name="action" value="updatePrompts">';
+			$out .= '<input type="hidden" name="page_y" value="">';
 
 			$out .= '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
 			$out .= '<td class="titlefield">'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
-			$out .= '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="#" data-index="'.$key.'" data-state="edit" data-icon-edit="'.dol_escape_htmltag(img_edit()).'" data-icon-cancel="'.dol_escape_htmltag(img_view()).'">'.img_edit().'</a>';
 			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
@@ -329,7 +337,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500" id="prePromptInput_'.$key.'" name="prePrompt" rows="2" disabled>'.$config['prePrompt'].'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput_'.$key.'" name="prePrompt" rows="2">'.$config['prePrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
@@ -338,21 +346,34 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500" id="postPromptInput_'.$key.'" name="postPrompt" rows="2" disabled>'.$config['postPrompt'].'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput_'.$key.'" name="postPrompt" rows="2">'.$config['postPrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
 			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven">';
 			$out .= '<td>'.$langs->trans("BlackListWords").'</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500" id="blacklist_'.$key.'" name="blacklists" rows="6" disabled>'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" rows="3">'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
 			$out .= '<tr>';
 			$out .= '<td></td>';
 			$out .= '<td>';
-			$out .= '<input type="submit" class="button small submitBtn" name="modify" data-index="'.$key.'" style="display: none;" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+			$out .= ' &nbsp; ';
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
+			$showlinktoailabel = $langs->trans("ToTest");
+			$formmail = new FormMail($db);
+			$htmlname = $key;
+
+			// Fill $out
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+			$out .= '<div id="'.$htmlname.'"></div>';
+
 			$out .= '</td>';
 			$out .= '</tr>';
 
@@ -362,51 +383,6 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</form>';
 		}
 	}
-
-
-	$out .= "<script>
-    var configurations =  ".$currentConfigurationsJson.";
-    $(document).ready(function() {
-        $('#module_select').change(function() {
-            var selectedModule = $(this).val();
-            var moduleConfig = configurations[selectedModule];
-
-            if (moduleConfig) {
-                $('#prePromptInput').val(moduleConfig.prePrompt || '');
-                $('#postPromptInput').val(moduleConfig.postPrompt || '');
-                $('#blacklistsInput').val(moduleConfig.blacklists ? moduleConfig.blacklists.join(', ') : '');
-            } else {
-                $('#prePromptInput').val('');
-                $('#postPromptInput').val('');
-                $('#blacklistsInput').val('');
-            }
-        });
-
-		$('.showInputBtn').click(function() {
-			event.preventDefault();
-			var index = $(this).data('index');
-			var state = $(this).data('state');
-
-			if(state === 'edit') {
-				$('#prePromptInput_'+index).removeAttr('disabled').focus();
-				$('#postPromptInput_'+index).removeAttr('disabled');
-				$('#blacklist_'+index).removeAttr('disabled');
-				$('.submitBtn[data-index=' + index + ']').show();
-				$(this).html($(this).data('icon-cancel'));
-				$(this).data('state', 'cancel');
-
-			} else {
-
-				$('#prePromptInput_'+index).attr('disabled', 'disabled');
-				$('#postPromptInput_'+index).attr('disabled', 'disabled');
-				$('#blacklist_'+index).attr('disabled', 'disabled');
-				$('.submitBtn[data-index=' + index + ']').hide();
-				$(this).html($(this).data('icon-edit'));
-				$(this).data('state', 'edit');
-			}
-		});
-	});
-    </script>";
 
 	print $out;
 

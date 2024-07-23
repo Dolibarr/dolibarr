@@ -873,7 +873,7 @@ if (!defined('NOLOGIN')) {
 		}
 		// TODO Remove use of $_COOKIE['login_dolibarr'] ? Replace $usertotest = with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername);
 		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
-		$passwordtotest = GETPOST('password', 'none', $allowedmethodtopostusername);
+		$passwordtotest = GETPOST('password', 'password', $allowedmethodtopostusername);
 		$entitytotest = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		// Define if we received the correct data to go into the test of the login with the checkLoginPassEntity().
@@ -887,7 +887,7 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST("username", "alpha", $allowedmethodtopostusername)) {	// For posting the login form
 			$goontestloop = true;
 		}
-		if (GETPOST('openid_mode', 'alpha', 1)) {	// For openid_connect ?
+		if (GETPOST('openid_mode', 'alpha')) {	// For openid_connect ?
 			$goontestloop = true;
 		}
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
@@ -1521,10 +1521,10 @@ $heightforframes = 50;
 // Init menu manager
 if (!defined('NOREQUIREMENU')) {
 	if (empty($user->socid)) {    // If internal user or not defined
-		$conf->standard_menu = (!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENU_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
+		$conf->standard_menu = getDolGlobalString('MAIN_MENU_STANDARD_FORCED', getDolGlobalString('MAIN_MENU_STANDARD', 'eldy_menu.php'));
 	} else {
 		// If external user
-		$conf->standard_menu = (!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENUFRONT_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+		$conf->standard_menu = getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED', getDolGlobalString('MAIN_MENUFRONT_STANDARD', 'eldy_menu.php'));
 	}
 
 	// Load the menu manager (only if not already done)
@@ -1633,7 +1633,7 @@ if (!function_exists("llxHeader")) {
 		}
 
 		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
-			left_menu(array(), $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
+			left_menu(array(), $help_url, '', array(), 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
 		// main area
@@ -1641,6 +1641,7 @@ if (!function_exists("llxHeader")) {
 			print $replacemainareaby;
 			return;
 		}
+
 		main_area($title);
 	}
 }
@@ -1901,6 +1902,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		}
 		// Refresh value of MAIN_IHM_PARAMS_REV before forging the parameter line.
 		if (GETPOST('dol_resetcache')) {
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 			dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1, 'chaine', 0, '', $conf->entity);
 		}
 
@@ -3103,7 +3105,7 @@ function top_menu_bookmark()
  */
 function top_menu_search()
 {
-	global $langs, $conf, $db, $user, $hookmanager;
+	global $langs, $conf, $db, $user, $hookmanager;	// used by htdocs/core/ajax/selectsearchbox.php
 
 	$html = '';
 
@@ -3384,7 +3386,11 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		// Show left menu with other forms
 		$menumanager->menu_array = $menu_array_before;
 		$menumanager->menu_array_after = $menu_array_after;
-		$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
+		if (getDolGlobalInt('MAIN_MENU_LEFT_DROPDOWN')) {
+			$menumanager->showmenu('leftdropdown', array('searchform' => $searchform)); // output menu_array and menu found in database
+		} else {
+			$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
+		}
 
 		// Dolibarr version + help + bug report link
 		print "\n";

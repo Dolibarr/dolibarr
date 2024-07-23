@@ -135,7 +135,7 @@ DateActionStart=Start date
 DateActionEnd=End date
 AgendaUrlOptions1=Можете исто така да ги додадете следните параметри за да го филтрирате излезот:
 AgendaUrlOptions3=<b>logina=%s</b> за ограничување на дејствијата од страна на корисникот <b>%s</b> (користете го <spane58f49fz0' </span>logina=!%s</b> за настани кои не се во сопственост на корисникот).
-AgendaUrlOptions4=<b>logint=%s</b> доделени дејства на корисникот span class='notranslate'><b></span>%s</b> (сопственик и други).
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> за да се ограничи излезот на дејства поврзани со проектот <span class='0apanslate</0338> __PROJECT_ID__</b>.
 AgendaUrlOptionsType=<b>actiontype=%s</b> или автоматски или рачни настани
 AgendaUrlOptionsCode=<b>actioncode=%s</b> само настани со даден код

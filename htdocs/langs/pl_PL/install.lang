@@ -172,7 +172,7 @@ MigrationContractsInvalidDateFix=Korekta kontraktu %s (Data kontraktu=%s, Minima
 MigrationContractsInvalidDatesNumber=%s kontraktów zmodyfikowano
 MigrationContractsInvalidDatesNothingToUpdate=Brak dat z nieprawidłową wartością do korekty
 MigrationContractsIncoherentCreationDateUpdate=Nieprawidłowa wartość daty początkowej kontraktu do korekty
-MigrationContractsIncoherentCreationDateUpdateSuccess=Poprawa złej wartości w tworzeniu kontraktu przeprowadzona pomyślnie 
+MigrationContractsIncoherentCreationDateUpdateSuccess=Poprawa złej wartości w tworzeniu kontraktu przeprowadzona pomyślnie
 MigrationContractsIncoherentCreationDateNothingToUpdate=Brak nieprawidłowych wartości początkowej daty kontraktu do korekty
 MigrationReopeningContracts=Otwarte kontrakty zamknięte z przyczyny błędu
 MigrationReopenThisContract=Ponownie otwórz kontrakt %s
