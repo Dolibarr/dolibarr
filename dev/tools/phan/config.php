@@ -11,6 +11,7 @@ $sanitizeRegex
 		array(
 			// Documented:
 			'none',
+			'password',
 			'array',
 			'int',
 			'intcomma',
@@ -22,24 +23,15 @@ $sanitizeRegex
 			'aZ09',
 			'aZ09arobase',
 			'aZ09comma',
+			'email',
 			'san_alpha',
 			'restricthtml',
 			'nohtml',
 			'custom',
 			// Not documented:
-			'email',
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
-			'restricthtmlnolink',
-			//'ascii',
-			//'categ_id',
-			//'chaine',
-
-			//'html',
-			//'boolean',
-			//'double',
-			//'float',
-			//'string',
+			'restricthtmlnolink'
 		)
 	).')*$/';
 
