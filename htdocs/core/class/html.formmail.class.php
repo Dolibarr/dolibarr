@@ -1594,7 +1594,7 @@ class FormMail extends Form
 			return -1;
 		}
 
-		$ret = new ModelMail();
+		$ret = new ModelMail($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1792,7 +1792,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail();
+				$line = new ModelMail($dbs);
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;
 				$line->lang = $obj->lang;
