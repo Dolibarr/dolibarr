@@ -10244,6 +10244,8 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			// We must accept with 1: '1 && getDolGlobalInt("doesnotexist1") && getDolGlobalString("MAIN_FEATURES_LEVEL")'
 			// We must accept with 1: '$user->hasRight("cabinetmed", "read") && !$object->canvas=="patient@cabinetmed"'
 			// We must accept with 2: (($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"
+
+			// Check if there is dynamic call (first we check chars are all into use a whitelist chars)
 			$specialcharsallowed = '^$_+-.*>&|=!?():"\',/@';
 			if ($onlysimplestring == '2') {
 				$specialcharsallowed .= '[]';
@@ -10255,17 +10257,29 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (found chars that are not chars for a simple clean eval string): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for a simple clean eval string): '.$s);
+					dol_syslog('Bad string syntax to evaluate (found chars that are not chars for a simple clean eval string): '.$s, LOG_WARNING);
 					return '';
 				}
 			}
+
+			// Check if there is dynamic call (first we use black list patterns)
+			if (preg_match('/\$[\w]*\s*\(/', $s)) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (mode '.$onlysimplestring.', found a call using of "$abc(" or "$abc (" instead of using the direct name of the function): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (mode '.$onlysimplestring.', found a call using of "$abc(" or "$abc (" instead of using the direct name of the function): '.$s, LOG_WARNING);
+					return '';
+				}
+			}
+
+			// Now we check if we try dynamic call (by removing white list pattern of using parenthesis then testing if a parenthesis exists)
 			$savescheck = '';
 			$scheck = $s;
 			while ($scheck && $savescheck != $scheck) {
 				$savescheck = $scheck;
 				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
 				$scheck = preg_replace('/^\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
-				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... ('. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
+				$scheck = preg_replace('/\s\(/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '... (' like in 'if ($a == 1)'. Must replace with __PARENTHESIS__ with a space after to allow following substitutions
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 				$scheck = preg_replace('/(\^|\')\(/', '__REGEXSTART__', $scheck);	// To allow preg_match('/^(aaa|bbb)/'...  or  isStringVarMatching('leftmenu', '(aaa|bbb)')
@@ -10275,22 +10289,28 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s;
 				} else {
-					dol_syslog('Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s);
+					dol_syslog('Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s, LOG_WARNING);
 					return '';
 				}
 			}
+
 			// TODO
 			// We can exclude $ char that are not:
 			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
 		}
 		if (is_array($s) || $s === 'Array') {
-			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
+			if ($returnvalue) {
+				return 'Bad string syntax to evaluate (value is Array): '.var_export($s, true);
+			} else {
+				dol_syslog('Bad string syntax to evaluate (value is Array): '.var_export($s, true), LOG_WARNING);
+				return '';
+			}
 		}
 		if (strpos($s, '::') !== false) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
+				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s, LOG_WARNING);
 				return '';
 			}
 		}
@@ -10298,7 +10318,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s);
+				dol_syslog('Bad string syntax to evaluate (backtick char is forbidden): '.$s, LOG_WARNING);
 				return '';
 			}
 		}
@@ -10306,7 +10326,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
+				dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s, LOG_WARNING);
 				return '';
 			}
 		}
