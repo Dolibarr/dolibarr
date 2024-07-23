@@ -3824,8 +3824,8 @@ a.fmdirlia {
 /* ============================================================================== */
 div.tabs {
 	text-align: <?php print $left; ?>;
-	margin-left: 6px !important;
-	margin-right: 6px !important;
+	/*margin-left: 6px !important;
+	margin-right: 6px !important;*/
 	clear:both;
 	height:100%;
 }
