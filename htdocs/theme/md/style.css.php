@@ -1258,12 +1258,12 @@ td.wordbreak img, td.wordbreakimp img {
 }
 /* CSS used for extrafield text */
 .shortmessagecut {
-	max-height: 125px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
 .longmessagecut {
-	max-height: 250px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
