@@ -72,3 +72,5 @@ ALTER TABLE llx_c_hrm_public_holiday MODIFY COLUMN entity integer DEFAULT 1 NOT 
 UPDATE llx_c_hrm_public_holiday SET entity = 1 WHERE entity = 0;
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(entity, code);
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
+
+ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime after date_previous_login;
