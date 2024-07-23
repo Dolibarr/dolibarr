@@ -3482,7 +3482,7 @@ a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
 	color: var(--colortextbackvmenu);
@@ -3694,8 +3694,8 @@ a.fmdirlia {
 div.tabs {
 	text-align: <?php print $left; ?>;
 	margin-top: 10px;
-	padding-left: 6px;
-	padding-right: 6px;
+	/*padding-left: 6px;
+	padding-right: 6px;*/
 	clear:both;
 	height:100%;
 }

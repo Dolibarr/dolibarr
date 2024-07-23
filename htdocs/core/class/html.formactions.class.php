@@ -275,10 +275,10 @@ class FormActions
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
+					print '<td class="nowraponall nopaddingrightimp">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhourreduceformat', 'tzuserrel');
 					if ($actioncomm->datef) {
 						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);
@@ -287,13 +287,13 @@ class FormActions
 								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
 							}
 						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+							print '-'.dol_print_date($actioncomm->datef, 'dayhourreduceformat', 'tzuserrel');
 						}
 					}
 					print '</td>';
 
 					// Owner
-					print '<td class="nowraponall tdoverflowmax125">';
+					print '<td class="nowraponall tdoverflowmax100">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {
 							$tmpuser = $cacheusers[$actioncomm->userownerid];
@@ -335,7 +335,7 @@ class FormActions
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200">';
+					print '<td class="tdoverflowmax250">';
 					print $actioncomm->getNomUrl(0);
 					print '</td>';
 

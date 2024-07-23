@@ -1586,7 +1586,7 @@ class ActionComm extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs;
 		$langs->load('agenda');
 
 		$datas = array();
@@ -1635,7 +1635,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b><br>';
+			$datas['description'] = '<br><hr>';
 			// Try to limit length of content
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
 			// Restrict height of content into the tooltip
@@ -1736,7 +1736,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$tooltip .= '<br><hr>';
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
 			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
@@ -1849,8 +1849,6 @@ class ActionComm extends CommonObject
 	 */
 	public function getTypePicto($morecss = 'pictofixedwidth paddingright valignmiddle', $titlealt = '')
 	{
-		global $conf;
-
 		$imgpicto = '';
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			$color = '';
