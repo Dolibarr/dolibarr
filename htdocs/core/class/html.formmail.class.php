@@ -1765,7 +1765,7 @@ class FormMail extends Form
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
-		global $conf;
+		global $db, $conf;
 
 		$sql = "SELECT rowid, module, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
@@ -1792,7 +1792,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail($dbs);
+				$line = new ModelMail($db);
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;
 				$line->lang = $obj->lang;
