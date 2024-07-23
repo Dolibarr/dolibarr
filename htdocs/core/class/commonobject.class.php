@@ -3682,11 +3682,7 @@ abstract class CommonObject
 			$origin = 'order_supplier';
 		}
 
-		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
-		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
-		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization');
-		// Add module part to target type if object has $module property and isn't in core modules.
-		$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+		$targettype = $this->getTargetType();
 
 		$parameters = array('targettype'=>$targettype);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
@@ -3796,7 +3792,7 @@ abstract class CommonObject
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
 		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$targettype = $this->getTargetType($targettype);
 
 		/*if (empty($sourceid) && empty($targetid))
 		 {
@@ -3965,6 +3961,25 @@ abstract class CommonObject
 	}
 
 	/**
+	 * Get target type for current object.
+	 * If param $targettype is empty, computes the target type.
+	 * Else returns $targettype
+	 * @param string	$targettype
+	 * @return		string	target type
+	 */
+	private function getTargetType($targettype = '')
+	{
+		// Elements of the core modules which have `$module` property but may to which we don't want to prefix module part to the element name for finding the linked object in llx_element_element.
+		// It's because an entry for this element may be exist in llx_element_element before this modification (version <=14.2) and ave named only with their element name in fk_source or fk_target.
+		$coremodule = array('knowledgemanagement', 'partnership', 'workstation', 'ticket', 'recruitment', 'eventorganization', 'asset');
+		if (empty($targettype))  {
+			$targettype = ((!empty($this->module) && ! in_array($this->module, $coremodule)) ? $this->module.'_' : '').$this->element;
+		}
+
+		return $targettype;
+	}
+
+	/**
 	 *	Update object linked of a current object
 	 *
 	 *	@param	int		$sourceid		Object source id
@@ -4062,7 +4077,7 @@ abstract class CommonObject
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
 		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$targettype = $this->getTargetType($targettype);
 		$this->db->begin();
 		$error = 0;
 
@@ -4214,6 +4229,7 @@ abstract class CommonObject
 		if (is_array($this->fields) && array_key_exists('status', $this->fields)) {
 			$fieldstatus = 'status';
 		}
+
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$elementTable;
 		$sql .= " SET ".$fieldstatus." = ".((int) $status);
