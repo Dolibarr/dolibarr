@@ -552,7 +552,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input {
-	line-height: 17px;
+	line-height: 1.3em;
 	padding: 5px;
 	padding-left: 5px;
 }
@@ -762,14 +762,18 @@ span.amount {
 td.actionbuttons a {
 	padding-left: 6px;
 }
-select.flat, form.flat select, .pageplusone, .divadvancedsearchfieldcompinput, {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
+}
+select.flat, form.flat select, .divadvancedsearchfieldcompinput {
 	height: 2em;
 }
-input.pageplusone, .divadvancedsearchfieldcompinput, {
+input.pageplusone, .divadvancedsearchfieldcompinput {
 	padding-bottom: 4px;
 	padding-top: 4px;
+	margin-right: 4px;
+	margin-left: 3px;
 }
 
 .saturatemedium {
@@ -802,6 +806,10 @@ input.pageplusone, .divadvancedsearchfieldcompinput, {
 }
 .colorblack {
 	color: var(--colorblack);
+}
+.colorblack.totalnboflines {
+	font-size: 95%;
+	opacity: 0.5;
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -1261,12 +1269,12 @@ td.wordbreak img, td.wordbreakimp img {
 }
 /* CSS used for extrafield text */
 .shortmessagecut {
-	max-height: 125px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
 .longmessagecut {
-	max-height: 250px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
@@ -1601,9 +1609,9 @@ input > ul.attendees {
 	vertical-align: middle;
 }
 select.flat.selectlimit {
-	max-width: 62px;
+	max-width: 75px;
 }
-.selectlimit, .marginrightonly {
+.marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
@@ -5944,6 +5952,10 @@ div.jPicker table.jPicker {
 	padding-right: 20px;
 	padding-left: 20px;
 }
+table.jPicker tr:first-of-type td {
+	height: 2px !important;
+	line-height: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -5970,6 +5982,12 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
+}
+.jPicker td.Text input {
+	height: 1em !important;
+}
+.jPicker .Preview div {
+	height: 36px !important;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -6617,7 +6635,8 @@ input.select2-input {
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-	border: 1px solid #e4e4e4;
+	/* border: 1px solid #e4e4e4; */
+	border: none;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
@@ -6695,6 +6714,13 @@ input.select2-input {
 	border-left: none;
 	border-right: none;
 	border-radius: 0 !important;
+	line-height: normal;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	line-height: 1.4em;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
 	border-bottom: none !important;
