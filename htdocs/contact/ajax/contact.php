@@ -128,18 +128,30 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$prefix = getDolGlobalString('CONTACT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if CONTACT_DONOTSEARCH_ANYWHERE is on
 
-	$filter = "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
-	if ($showsoc) {
-		$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
+	$nbchar = 0;
+	$filter = '';
+	$listofsearchkey = preg_split('/\s+/', $searchkey);
+	foreach ($listofsearchkey as $searchkey) {
+		$nbchar += strlen($searchkey);
+
+		$filter .= ($filter ? ' AND ' : '');
+		$filter .= '(';
+		$filter .= "(lastname:like:'".$prefix.$searchkey."%') OR (firstname:like:'".$prefix.$searchkey."%')";
+		if ($showsoc) {
+			$filter .= " OR (s.nom:like:'".$prefix.$searchkey."%')";
+		}
+		$filter .= ')';
 	}
 
-	// FIXME
 	// If CONTACT_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
+	if (getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT') && $nbchar < getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT')) {
+		print json_encode(array());
+	} else {
+		$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
 
-	$arrayresult = $form->selectcontacts($socid, array(), $htmlname, 1, $exclude, $limitto, $showfunction, $morecss, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid, $multiple, $disableifempty, $filter);
-
-	if ($outjson) {
-		print json_encode($arrayresult);
+		if ($outjson) {
+			print json_encode($arrayresult);
+		}
 	}
 }
 

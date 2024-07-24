@@ -613,6 +613,10 @@ input.pageplusone {
 .colorblack {
 	color: var(--colorblack);
 }
+.colorblack.totalnboflines {
+	font-size: 90%;
+	opacity: 0.5;
+}
 .fontsizeunset {
 	font-size: unset !important;
 }
@@ -1078,14 +1082,14 @@ td.wordbreak img, td.wordbreakimp img {
 .text-warning{
 	color : <?php print $textWarning; ?>
 }
-/* CSS used for extrafield text */
+/* CSS used for long description and extrafield text */
 .shortmessagecut {
-	max-height: 125px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
 .longmessagecut {
-	max-height: 250px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
@@ -5964,6 +5968,10 @@ div.jPicker table.jPicker {
 	padding-right: 20px;
 	padding-left: 20px;
 }
+table.jPicker tr:first-of-type td {
+	height: 2px !important;
+	line-height: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -5991,6 +5999,13 @@ table.jPicker {
 .jPicker td.Text {
 	white-space: nowrap;
 }
+.jPicker td.Text input {
+	height: 1em !important;
+}
+.jPicker .Preview div {
+	height: 36px !important;
+}
+
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
