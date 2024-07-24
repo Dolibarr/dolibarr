@@ -2121,7 +2121,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Description (used in invoice, propal...)
 				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
-				// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+				// We use dolibarr_details as type of DolEditor here, because we must not accept images, as description is included into PDF and external links are not accepted by TCPDF.
 				$doleditor = new DolEditor('desc', GETPOSTISSET('desc') ? GETPOST('desc', 'restricthtml') : $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
 				$doleditor->Create();
 
@@ -2643,7 +2643,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Description
-				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreakimp wrapimp">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+				print '<td class="wordbreakimp wrapimp"><div class="longmessagecut">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</div></td></tr>';
 
 				// Public URL
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
