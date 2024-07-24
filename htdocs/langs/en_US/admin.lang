@@ -2536,3 +2536,4 @@ MainAuthenticationOidcLoginClaimName=Login claim
 MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr user login. If not set or empty, defaults to email
 BlackListWords=Black list of words
 AddBlackList=Add to black list
+AnOwnerMustBeSetIfEmailTemplateIsPrivate=An owner must be set if the email template is set as private
