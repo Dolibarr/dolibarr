@@ -220,7 +220,7 @@ body {
 	<?php
 	//print getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? (getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER') > 100 ? 'zoom: '.getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER').'%;' : 'zoom: 150%;') : '';
 	?>
-	/* zoom: 110%; */
+	zoom: 105%;	/* not supported by al browsers */
 }
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
@@ -4221,7 +4221,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
-	height: 28px;
+	height: 30px;
 }
 table.liste tr.trkanban td {
 	padding: 12px 15px 12px 15px;			/* t r b l */
