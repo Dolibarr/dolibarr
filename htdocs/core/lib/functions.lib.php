@@ -207,9 +207,9 @@ function getMultidirVersion($object, $module = '', $forobject = 0)
 /**
  * Return dolibarr global constant string value
  *
- * @param string $key 		key to return value, return $default if not set
- * @param string $default 	value to return
- * @return string
+ * @param 	string 				$key 		Key to return value, return $default if not set
+ * @param 	string|int|float 	$default 	Value to return if not defined
+ * @return 	string							Value returned
  * @see getDolUserString()
  */
 function getDolGlobalString($key, $default = '')
@@ -236,10 +236,11 @@ function getDolGlobalInt($key, $default = 0)
 /**
  * Return Dolibarr user constant string value
  *
- * @param string $key 		key to return value, return '' if not set
- * @param string $default 	value to return
- * @param User   $tmpuser   To get another user than current user
+ * @param string 			$key 		Key to return value, return '' if not set
+ * @param string|int|float 	$default 	Value to return
+ * @param User   			$tmpuser	To get another user than current user
  * @return string
+ * @see getDolGlobalString()
  */
 function getDolUserString($key, $default = '', $tmpuser = null)
 {
@@ -254,8 +255,8 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 /**
  * Return Dolibarr user constant int value
  *
- * @param string 	$key 			key to return value, return 0 if not set
- * @param int 		$default 		value to return
+ * @param string 	$key 			Key to return value, return 0 if not set
+ * @param int 		$default 		Value to return
  * @param User   	$tmpuser   		To get another user than current user
  * @return int
  */
@@ -3779,13 +3780,14 @@ function dol_print_url($url, $target = '_blank', $max = 32, $withpicto = 0, $mor
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
  * @param 	int			$cid 			Id of contact if known
  * @param 	int			$socid 			Id of third party if known
- * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty
+ * @param 	int|string	$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on), 'thirdparty'=link to the thirdparty presend email
  * @param	int			$max			Max number of characters to show. Use -1 to hide the mail text and show only the picto.
  * @param	int			$showinvalid	1=Show warning if syntax email is wrong
- * @param	int|string	$withpicto		Show picto
+ * @param	int|string	$withpicto		0=Show email, 1=Show picto of email + email, 2=Show only picto
+ * @param	string		$morecss		More CSS
  * @return	string						HTML Link
  */
-function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0)
+function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, $showinvalid = 1, $withpicto = 0, $morecss = 'paddingrightonly')
 {
 	global $user, $langs, $hookmanager;
 
@@ -3803,7 +3805,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	if ($addlink == 1) {
-		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="';
+		$newemail = '<a class="'.($morecss ? $morecss : '').'" style="text-overflow: ellipsis;" href="';
 		if (!preg_match('/^mailto:/i', $email)) {
 			$newemail .= 'mailto:';
 		}
@@ -3834,9 +3836,14 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 			}
 		}
 	} elseif ($addlink === 'thirdparty') {
-		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$socid.'&action=presend&mode=init#formmailbeforetitle">';
-		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
-		$newemail .= '</a>';
+		$tmpnewemail = '<a class="'.($morecss ? $morecss : '').'" style="text-overflow: ellipsis;" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$socid.'&action=presend&mode=init#formmailbeforetitle">';
+		$tmpnewemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '');
+		if ($withpicto == 1) {
+			$tmpnewemail .= $newemail;
+		}
+		$tmpnewemail .= '</a>';
+
+		$newemail = $tmpnewemail;
 	} else {
 		$newemail = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 
@@ -4054,7 +4061,7 @@ function dol_print_profids($profID, $profIDtype, $countrycode = '', $addcpButton
  *  @param	string	$morecss		Add more css
  * 	@return string 				    Formatted phone number
  */
-function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = '')
+function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addlink = '', $separ = "&nbsp;", $withpicto = '', $titlealt = '', $adddivfloat = 0, $morecss = 'paddingright')
 {
 	global $conf, $user, $langs, $mysoc, $hookmanager;
 
@@ -4357,9 +4364,9 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
 			}
 		}
 		if ($adddivfloat == 1) {
-			$rep .= '<div class="nospan float'.($morecss ? ' '.$morecss : '').'" style="margin-right: 10px">';
+			$rep .= '<div class="nospan float'.($morecss ? ' '.$morecss : '').'">';
 		} elseif (empty($adddivfloat)) {
-			$rep .= '<span'.($morecss ? ' class="'.$morecss.'"' : '').' style="margin-right: 10px;">';
+			$rep .= '<span'.($morecss ? ' class="'.$morecss.'"' : '').'>';
 		}
 
 		$rep .= $newphoneastart;

@@ -9462,7 +9462,7 @@ class Form
 			}
 
 			if (!$nboftypesoutput) {
-				print '<tr><td class="impair" colspan="7"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
+				print '<tr><td colspan="7"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
 			}
 
 			print '</table>';
