@@ -1896,7 +1896,7 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return label of type of event
 	 *
-	 *  @param	string	$mode			0=Mode short, 1=Mode long
+	 *  @param	int		$mode			0=Mode short, 1=Mode long
 	 *  @return	string					HTML String
 	 */
 	public function getTypeLabel($mode = 0)
