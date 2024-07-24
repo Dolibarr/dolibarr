@@ -112,7 +112,7 @@ print '<br>';
 print '<strong>'.$langs->trans("ApplicativeCache").'</strong>: ';
 $test = isModEnabled('memcached');
 if ($test) {
-	if (!empty($conf->global->MEMCACHED_SERVER)) {
+	if (getDolGlobalString('MEMCACHED_SERVER')) {
 		print $langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	} else {
@@ -492,7 +492,7 @@ if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
-		if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) {
+		if (!getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT');
 		} else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUIT_USE_SEARCH_TO_SELECT', $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
@@ -513,7 +513,7 @@ if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
-		if (empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
+		if (!getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT');
 		} else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_USE_SEARCH_TO_SELECT', $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
@@ -534,7 +534,7 @@ if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
-		if (empty($conf->global->CONTACT_USE_SEARCH_TO_SELECT)) {
+		if (!getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT');
 		} else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Contacts"), 'CONTACT_USE_SEARCH_TO_SELECT', $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
@@ -555,7 +555,7 @@ if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
-		if (empty($conf->global->PROJECT_USE_SEARCH_TO_SELECT)) {
+		if (!getDolGlobalString('PROJECT_USE_SEARCH_TO_SELECT')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseComboOptim", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT');
 		} else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("Projects"), 'PROJECT_USE_SEARCH_TO_SELECT', $conf->global->PROJECT_USE_SEARCH_TO_SELECT);
@@ -581,7 +581,7 @@ if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
-		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE)) {
+		if (!getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
 			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
 		} else {
@@ -604,7 +604,7 @@ if ($resql) {
 	$obj = $db->fetch_object($resql);
 	$nb = $obj->nb;
 	if ($nb > $limitforoptim) {
-		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE)) {
+		if (!getDolGlobalString('COMPANY_DONOTSEARCH_ANYWHERE')) {
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
 			print $langs->trans("YouHaveXObjectUseSearchOptimDesc");
 		} else {
@@ -642,6 +642,15 @@ if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP').' '.img_picto('', 'tick.png');
 } else {
 	print 'MAIN_ENABLE_AJAX_TOOLTIP = '.getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP', 0);
+	//.' '.img_picto('', 'warning.png');
+}
+print '<br>';
+
+
+if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
+	print 'MAIN_CACHE_COUNT = '.getDolGlobalInt('MAIN_CACHE_COUNT').' '.img_picto('', 'tick.png');
+} else {
+	print 'MAIN_CACHE_COUNT = '.getDolGlobalInt('MAIN_CACHE_COUNT', 0);
 	//.' '.img_picto('', 'warning.png');
 }
 print '<br>';

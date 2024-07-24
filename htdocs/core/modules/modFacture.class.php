@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modFacture extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -44,7 +44,7 @@ class modFacture extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 30;
@@ -246,9 +246,6 @@ class modFacture extends DolibarrModules
 			'f.datef' => 'DateInvoice',
 			'f.date_valid' => 'Validation Date',
 			'f.paye' => 'InvoicePaid',
-			'f.remise_percent' => 'RemisePercent',
-			'f.remise_absolue' => 'RemiseAbsolue',
-			'f.remise' => 'Remise',
 			'f.total_tva' => 'TotalVAT',
 			'f.total_ht' => 'TotalHT',
 			'f.total_ttc' => 'TotalTTC',
@@ -260,8 +257,8 @@ class modFacture extends DolibarrModules
 			'f.fk_projet' => 'Project Id',
 			'f.fk_account' => 'Bank Account',
 			'f.fk_currency' => 'Currency*',
-			'f.fk_cond_reglement' => 'Payment Condition',
-			'f.fk_mode_reglement' => 'Payment Mode',
+			'f.fk_cond_reglement' => 'PaymentTerm',
+			'f.fk_mode_reglement' => 'PaymentMode',
 			'f.date_lim_reglement' => 'DateMaxPayment',
 			'f.note_public' => 'InvoiceNote',
 			'f.note_private' => 'NotePrivate',
@@ -299,9 +296,6 @@ class modFacture extends DolibarrModules
 			'f.datef' => '2021-11-24',
 			'f.date_valid' => '2021-11-24',
 			'f.paye' => '1',
-			'f.remise_percent' => '0',
-			'f.remise_absolue' => '0',
-			'f.remise' => '0',
 			'f.total_tva' => '21',
 			'f.total_ht' => '100',
 			'f.total_ttc' => '121',
@@ -374,7 +368,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => 'Reduc. (%)',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => 'UnitPriceHT',
 			// price
 			'fd.total_ht' => 'LineTotalHT',
 			'fd.total_tva' => 'LineTotalVAT',
@@ -439,7 +433,7 @@ class modFacture extends DolibarrModules
 			'fd.remise_percent' => '0',
 			// remise
 			// fk_remise_except
-			// subprice
+			'fd.subprice' => '100',
 			// price
 			'fd.total_ht' => '100',
 			'fd.total_tva' => '21',
@@ -493,10 +487,14 @@ class modFacture extends DolibarrModules
 
 		// Exports
 		//--------
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
+
 		$r = 1;
 
-		$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
+		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 
+		// Invoices and lines
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'CustomersInvoicesAndInvoiceLines'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'invoice';
@@ -510,12 +508,22 @@ class modFacture extends DolibarrModules
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode',
 			's.tva_intra'=>'VATIntra',
 			't.libelle'=>"ThirdPartyType", // 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus",
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
+			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue",
+			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT",
+			'f.localtax1'=>"TotalLT1", 'f.localtax2'=>"TotalLT2",
+			'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic"
 		);
+		if (!$uselocaltax1) {
+			unset($this->export_fields_array[$r]['f.localtax1']);
+		}
+		if (!$uselocaltax2) {
+			unset($this->export_fields_array[$r]['f.localtax2']);
+		}
+
 		// Add multicurrency fields
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
@@ -525,7 +533,7 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
 		// Add POS fields
-		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('INVOICE_SHOW_POS')) {
 			$this->export_fields_array[$r]['f.module_source'] = 'Module';
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
@@ -535,7 +543,7 @@ class modFacture extends DolibarrModules
 			'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel'
 		);
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('invoice')));
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['f.entity'] = 'Entity';
@@ -543,17 +551,33 @@ class modFacture extends DolibarrModules
 		}
 		$this->export_fields_array[$r] = $this->export_fields_array[$r] + array(
 			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription",
-			'fd.subprice'=>"LineUnitPrice", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT",
-			'fd.total_ttc'=>"LineTotalTTC", 'fd.buy_price_ht'=>'BuyingPrice', 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
+			'fd.subprice'=>"LineUnitPrice", 'fd.qty'=>"LineQty",
+			'fd.tva_tx'=>"LineVATRate",
+			'fd.total_ht'=>"LineTotalHT", 'fd.total_tva'=>"LineTotalVAT", 'fd.total_ttc'=>"LineTotalTTC",
+			'fd.localtax1_tx'=>"LineLT1Rate", 'fd.localtax1_type'=>"LineLT1Type", 'fd.total_localtax1'=>"LineTotalLT1",
+			'fd.localtax2_tx'=>"LineLT2Rate", 'fd.localtax2_type'=>"LineLT2Type", 'fd.total_localtax2'=>"LineTotalLT2",
+			'fd.buy_price_ht'=>'BuyingPrice', 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
 			'fd.product_type'=>"TypeOfLineServiceOrProduct", 'fd.fk_product'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
 			$alias_product_perentity . '.accountancy_code_sell'=>'ProductAccountancySellCode',
 			'aa.account_number' => 'AccountingAffectation'
 		);
+		if (!$uselocaltax1) {
+			unset($this->export_fields_array[$r]['fd.localtax1_tx']);
+			unset($this->export_fields_array[$r]['fd.localtax1_type']);
+			unset($this->export_fields_array[$r]['fd.total_localtax1']);
+		}
+		if (!$uselocaltax2) {
+			unset($this->export_fields_array[$r]['fd.localtax2_tx']);
+			unset($this->export_fields_array[$r]['fd.localtax2_type']);
+			unset($this->export_fields_array[$r]['fd.total_localtax2']);
+		}
+
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
 			't.libelle'=>"Text", // 'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text",
-			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date", 'f.fk_mode_reglement'=>'Numeric',
+			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Numeric', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>"NumericCompute",
 			'f.note_private'=>"Text", 'f.note_public'=>"Text",
@@ -562,17 +586,23 @@ class modFacture extends DolibarrModules
 			'f.entity'=>'List:entity:label:rowid',
 			'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'fd.rowid'=>'Numeric', 'fd.description'=>"Text", 'fd.subprice'=>"Numeric", 'fd.tva_tx'=>"Numeric",
-			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.buy_price_ht'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
+			'fd.qty'=>"Numeric", 'fd.buy_price_ht'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date",
+			'fd.total_ht'=>"Numeric", 'fd.total_tva'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.total_localtax1'=>"Numeric", 'fd.total_localtax2'=>"Numeric",
+			'fd.localtax1_tx'=>'Numeric', 'fd.localtax2_tx'=>'Numeric', 'fd.localtax1_type'=>'Numeric', 'fd.localtax2_type'=>'Numeric',
 			'fd.special_code'=>'Numeric', 'fd.product_type'=>"Numeric", 'fd.fk_product'=>'List:product:label', 'p.ref'=>'Text', 'p.label'=>'Text',
 			$alias_product_perentity . '.accountancy_code_sell'=>'Text',
-			'aa.account_number' => 'Text'
+			'aa.account_number' => 'Text',
+			'f.multicurrency_code' => 'Text',
+			'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.code_client'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 'cd.nom'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
 			't.libelle'=>'company', // 'ce.code'=>'company', 'cfj.libelle'=>'company'
 			'pj.ref'=>'project', 'pj.title'=>'project', 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line",
-			'fd.subprice'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.buy_price_ht'=>'invoice_line', 'fd.tva_tx'=>"invoice_line",
+			'fd.subprice'=>"invoice_line", 'fd.buy_price_ht'=>'invoice_line',
+			'fd.total_ht'=>"invoice_line", 'fd.total_tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.total_localtax1'=>"invoice_line", 'fd.total_localtax2'=>"invoice_line",
+			'fd.tva_tx'=>"invoice_line", 'fd.localtax1_tx'=>"invoice_line", 'fd.localtax2_tx'=>"invoice_line", 'fd.localtax1_type'=>"invoice_line", 'fd.localtax2_type'=>"invoice_line",
 			'fd.qty'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>'invoice_line',
 			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product', 'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity . '.accountancy_code_sell'=>'product',
 			'f.fk_user_author'=>'user', 'uc.login'=>'user', 'f.fk_user_valid'=>'user', 'uv.login'=>'user',
@@ -602,7 +632,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
@@ -615,19 +645,19 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' , '.MAIN_DB_PREFIX.'facturedet as fd';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet_extrafields as extra2 on fd.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
-		if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+		if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 			$this->export_sql_end[$r] .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_account as aa on fd.fk_code_ventilation = aa.rowid';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 		$r++;
 
-
+		// Invoices and payments
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'CustomersInvoicesAndPayments'; // Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r] = 'invoice';
@@ -637,15 +667,23 @@ class modFacture extends DolibarrModules
 			's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.code_compta'=>'CustomerAccountancyCode',
 			's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer',
-			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue", 'f.total_ht'=>"TotalHT",
-			'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_client'=>'RefCustomer', 'f.fk_facture_source'=>'SourceInvoiceId',
+			'f.type'=>"Type", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateDue",
+			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.localtax1'=>'LT1', 'f.localtax2'=>'LT2', 'f.paye'=>"InvoicePaidCompletely", 'f.fk_statut'=>'InvoiceStatus', 'f.close_code'=>'EarlyClosingReason', 'f.close_note'=>'EarlyClosingComment',
 			'none.rest'=>'Rest',
 			'f.note_private'=>"NotePrivate", 'f.note_public'=>"NotePublic", 'f.fk_user_author'=>'CreatedById', 'uc.login'=>'CreatedByLogin',
 			'f.fk_user_valid'=>'ValidatedById', 'uv.login'=>'ValidatedByLogin', 'pj.ref'=>'ProjectRef', 'pj.title'=>'ProjectLabel', 'p.rowid'=>'PaymentId', 'p.ref'=>'PaymentRef',
 			'p.amount'=>'AmountPayment', 'pf.amount'=>'AmountPaymentDistributedOnInvoice', 'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber',
 			'pt.code'=>'CodePaymentMode', 'pt.libelle'=>'LabelPaymentMode', 'p.note'=>'PaymentNote', 'p.fk_bank'=>'IdTransaction', 'ba.ref'=>'AccountRef'
 		);
+		if (!$uselocaltax1) {
+			unset($this->export_fields_array[$r]['f.localtax1']);
+		}
+		if (!$uselocaltax2) {
+			unset($this->export_fields_array[$r]['f.localtax2']);
+		}
+
 		$this->export_help_array[$r] = array('f.paye'=>'InvoicePaidCompletelyHelp');
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
@@ -655,21 +693,22 @@ class modFacture extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 			$this->export_examplevalues_array[$r]['f.multicurrency_code'] = 'EUR';
 		}
-		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('INVOICE_SHOW_POS')) {
 			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
 		$this->export_TypeFields_array[$r] = array(
 			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.code_client'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 'cd.nom'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text',
 			's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
-			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.rowid'=>"Numeric", 'f.ref'=>"Text", 'f.ref_client'=>'Text', 'f.fk_facture_source'=>'Numeric', 'f.type'=>"Numeric", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>"Date",
+			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
 			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>'Numeric', 'f.localtax2'=>'Numeric', 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.close_code'=>'Text', 'f.close_note'=>'Text',
 			'none.rest'=>'NumericCompute',
 			'f.note_private'=>"Text", 'f.note_public'=>"Text", 'f.fk_user_author'=>'Numeric', 'uc.login'=>'Text', 'f.fk_user_valid'=>'Numeric', 'uv.login'=>'Text',
 			'pj.ref'=>'Text', 'pj.title'=>'Text', 'p.amount'=>'Numeric', 'pf.amount'=>'Numeric', 'p.rowid'=>'Numeric', 'p.ref'=>'Text', 'p.title'=>'Text', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric',
 			'p.fk_bank'=>'Numeric', 'p.note'=>'Text', 'pt.code'=>'Text', 'pt.libelle'=>'text', 'ba.ref'=>'Text'
 		);
-		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || !empty($conf->global->INVOICE_SHOW_POS)) {
+		if (!empty($conf->cashdesk->enabled) || !empty($conf->takepos->enabled) || getDolGlobalString('INVOICE_SHOW_POS')) {
 			$this->export_fields_array[$r]['f.module_source'] = 'POSModule';
 			$this->export_fields_array[$r]['f.pos_source'] = 'POSTerminal';
 		}
@@ -688,7 +727,7 @@ class modFacture extends DolibarrModules
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c on s.fk_pays = c.rowid';
@@ -705,7 +744,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('invoice').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 		$r++;

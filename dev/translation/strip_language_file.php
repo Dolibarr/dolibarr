@@ -58,10 +58,10 @@ $rc = 0;
 
 // Get and check arguments
 
-$lPrimary = isset($argv[1])?$argv[1]:'';
-$lSecondary = isset($argv[2])?$argv[2]:'';
+$lPrimary = isset($argv[1]) ? $argv[1] : '';
+$lSecondary = isset($argv[2]) ? $argv[2] : '';
 $lEnglish = 'en_US';
-$filesToProcess = isset($argv[3])?$argv[3]:'';
+$filesToProcess = isset($argv[3]) ? $argv[3] : '';
 
 if (empty($lPrimary) || empty($lSecondary) || empty($filesToProcess)) {
 	$rc = 1;
@@ -272,7 +272,16 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// key is redundant
 			if (array_key_exists($key, $aPrimary)) {
-				print "Key $key is redundant in file $lPrimaryFile (line: $cnt) - Already found into ".$fileFirstFound[$key]." (line: ".$lineFirstFound[$key].").\n";
+				print "Key $key is redundant in file $lPrimaryFile (line: $cnt)";
+				if (!empty($fileFirstFound[$key])) {
+					print " - Already found into ".$fileFirstFound[$key];
+					print " (line: ".$lineFirstFound[$key].").\n";
+				} else {
+					$fileFirstFound[$key] = $fileToProcess;
+					$lineFirstFound[$key] = $cnt;
+
+					print " - Already found into main file.\n";
+				}
 				continue;
 			} else {
 				$fileFirstFound[$key] = $fileToProcess;
@@ -308,7 +317,7 @@ foreach ($filesToProcess as $fileToProcess) {
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
 				) {
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";
-				fwrite($oh, $key."=".(empty($aSecondary[$key])?$aPrimary[$key]:$aSecondary[$key])."\n");
+				fwrite($oh, $key."=".(empty($aSecondary[$key]) ? $aPrimary[$key] : $aSecondary[$key])."\n");
 			}
 		}
 		if (! feof($handle)) {

@@ -62,9 +62,10 @@ class mod_member_advanced extends ModeleNumRefMembers
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("AdvancedNumRefModelDesc", $this->prefix);
@@ -86,9 +87,10 @@ class mod_member_advanced extends ModeleNumRefMembers
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *   @return     boolean     false if conflict, true if ok
+	 *  @param  Object		$object		Object we need next value for
+	 *  @return boolean     			false if conflict, true if ok
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 

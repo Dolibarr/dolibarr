@@ -134,77 +134,9 @@ class Adherent extends CommonObject
 	public $socid;
 
 	/**
-	 * @var string Address
-	 */
-	public $address;
-
-	/**
-	 * @var string zipcode
-	 */
-	public $zip;
-
-	/**
-	 * @var string town
-	 */
-	public $town;
-
-	/**
-	 * @var int Id of state
-	 */
-	public $state_id;
-
-	/**
-	 * @var string Code of state
-	 */
-	public $state_code;
-
-	/**
-	 * @var string Label of state
-	 */
-	public $state;
-
-	/**
-	 * @var string email
-	 */
-	public $email;
-
-	/**
-	 * @var string url
-	 */
-	public $url;
-
-	/**
 	 * @var array array of socialnetworks
 	 */
 	public $socialnetworks;
-
-	/**
-	 * @var string skype account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $skype;
-
-	/**
-	 * @var string twitter account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $twitter;
-
-	/**
-	 * @var string facebook account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $facebook;
-
-	/**
-	 * @var string linkedin account
-	 * @deprecated
-	 * @see $socialnetworks
-	 */
-	public $linkedin;
 
 	/**
 	 * @var string Phone number
@@ -337,51 +269,46 @@ class Adherent extends CommonObject
 
 	public $partnerships = array();
 
-
 	/**
-	 * @var Adherent To contains a clone of this when we need to save old properties of object
+	 * @var Facture		To store the created invoice into subscriptionComplementaryActions()
 	 */
-	public $oldcopy;
+	public $invoice;
 
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var array fields
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
-		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => 1, 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 12, 'index' => 1),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'default' => 1, 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 12, 'index' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => 1, 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(128)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => -1, 'position' => 25),
-		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => -1, 'position' => 30, 'showoncombobox'=>1),
-		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox'=>1),
-		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => -1, 'position' => 40),
-		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 250),
+		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'showoncombobox'=>1),
+		'firstname' => array('type' => 'varchar(50)', 'label' => 'Firstname', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'showoncombobox'=>1),
+		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 1, 'position' => 40),
 		'pass' => array('type' => 'varchar(50)', 'label' => 'Pass', 'enabled' => 1, 'visible' => -1, 'position' => 45),
 		'pass_crypted' => array('type' => 'varchar(128)', 'label' => 'Pass crypted', 'enabled' => 1, 'visible' => -1, 'position' => 50),
-		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 55),
-		'morphy' => array('type' => 'varchar(3)', 'label' => 'MorPhy', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 60),
-		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'showoncombobox'=>2),
-		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => -1, 'position' => 70),
+		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 55),
+		'fk_adherent_type' => array('type' => 'integer', 'label' => 'Fk adherent type', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 60),
+		'societe' => array('type' => 'varchar(128)', 'label' => 'Societe', 'enabled' => 1, 'visible' => 1, 'position' => 65, 'showoncombobox'=>2),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 70),
 		'address' => array('type' => 'text', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 75),
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'state_id' => array('type' => 'integer', 'label' => 'State id', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 100),
-		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => 1, 'position' => 95),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'phone_mobile' => array('type' => 'varchar(30)', 'label' => 'Phone mobile', 'enabled' => 1, 'visible' => -1, 'position' => 125),
+		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => 1, 'position' => 126),
+		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>127),
+		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 128),
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => -1, 'position' => 130),
+		'gender' => array('type' => 'varchar(10)', 'label' => 'Gender', 'enabled' => 1, 'visible' => -1, 'position' => 132),
 		'photo' => array('type' => 'varchar(255)', 'label' => 'Photo', 'enabled' => 1, 'visible' => -1, 'position' => 135),
 		'public' => array('type' => 'smallint(6)', 'label' => 'Public', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 145),
-		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 150),
+		'datefin' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => 1, 'position' => 150),
 		'default_lang' =>array('type'=>'varchar(6)', 'label'=>'Default lang', 'enabled'=>1, 'visible'=>-1, 'position'=> 153),
 		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
@@ -392,8 +319,7 @@ class Adherent extends CommonObject
 		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user mod', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => -1, 'position' => 195),
-		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500,
-		'arrayofkeyval' => array(-1 => 'Draft', 1 => 'Validated', 0 => 'MemberStatusResiliatedShort', -2 => 'MemberStatusExcludedShort')),
+		'statut' => array('type' => 'smallint(6)', 'label' => 'Statut', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => array(-1 => 'Draft', 1 => 'Validated', 0 => 'MemberStatusResiliatedShort', -2 => 'MemberStatusExcludedShort')),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 800),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 805)
 	);
@@ -425,7 +351,7 @@ class Adherent extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = self::STATUS_DRAFT;
-		$this->status = $this->statut;
+		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par defaut
 		$this->public = 0;
 		// les champs optionnels sont vides
@@ -450,7 +376,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$moreinheader		Add more html headers
 	 *  @deprecated since V18
 	 *  @see sendEmail()
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function send_an_email($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
@@ -475,7 +401,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @param	string	$moreinheader		Add more html headers
 	 * 	@since V18
-	 *  @return	int							<0 if KO, >0 if OK
+	 *  @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
@@ -489,7 +415,7 @@ class Adherent extends CommonObject
 			}
 		}
 
-		dol_syslog('send_an_email msgishtml='.$msgishtml);
+		dol_syslog('sendEmail msgishtml='.$msgishtml);
 
 		$texttosend = $this->makeSubstitution($text);
 		$subjecttosend = $this->makeSubstitution($subject);
@@ -551,7 +477,7 @@ class Adherent extends CommonObject
 		$infos .= $langs->transnoentities("PhonePro").": ".$this->phone."\n";
 		$infos .= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
 		$infos .= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			$infos .= $langs->transnoentities("Login").": ".$this->login."\n";
 			$infos .= $langs->transnoentities("Password").": ".$this->pass."\n";
 		}
@@ -646,7 +572,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@param	User	$user        	Objet user qui demande la creation
 	 *	@param  int		$notrigger		1 ne declenche pas les triggers, 0 sinon
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -660,7 +586,7 @@ class Adherent extends CommonObject
 		$this->import_key = trim($this->import_key);
 
 		// Check parameters
-		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -668,7 +594,7 @@ class Adherent extends CommonObject
 		if (!$this->datec) {
 			$this->datec = $now;
 		}
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			if (empty($this->login)) {
 				$this->error = $langs->trans("ErrorWrongValueForParameterX", "Login");
 				return -1;
@@ -707,7 +633,7 @@ class Adherent extends CommonObject
 					try {
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
-						$modCodeMember = new $modname;
+						$modCodeMember = new $modname();
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -777,11 +703,11 @@ class Adherent extends CommonObject
 	 *	@param	int		$nosyncuserpass		0=Synchronize linked user (password), 1=Do not synchronize linked user
 	 *	@param	int		$nosyncthirdparty	0=Synchronize linked thirdparty (standard info), 1=Do not synchronize linked thirdparty
 	 * 	@param	string	$action				Current action for hookmanager
-	 * 	@return	int							<0 if KO, >0 if OK
+	 * 	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0, $nosyncuser = 0, $nosyncuserpass = 0, $nosyncthirdparty = 0, $action = 'update')
 	{
-		global $conf, $langs, $hookmanager;
+		global $langs, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -801,10 +727,10 @@ class Adherent extends CommonObject
 		$this->state_id = ($this->state_id > 0 ? $this->state_id : $this->state_id);
 		$this->note_public = ($this->note_public ? $this->note_public : $this->note_public);
 		$this->note_private = ($this->note_private ? $this->note_private : $this->note_private);
-		$this->url = $this->url ?clean_url($this->url, 0) : '';
+		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
-		if (!empty($conf->global->ADHERENT_MAIL_REQUIRED) && !isValidEMail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEMail($this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -890,7 +816,7 @@ class Adherent extends CommonObject
 			if (!$error && $this->pass) {
 				dol_syslog(get_class($this)."::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					$isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED) ? 0 : 1;
+					$isencrypted = !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1;
 
 					// If password to set differs from the one found into database
 					$result = $this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
@@ -939,7 +865,7 @@ class Adherent extends CommonObject
 						//var_dump($this->login);exit;
 
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
-						if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
 						}
 
@@ -1048,7 +974,7 @@ class Adherent extends CommonObject
 	 * 	This function is called when we delete a subscription for example.
 	 *
 	 *	@param	User	$user			User making change
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update_end_date($user)
 	{
@@ -1099,12 +1025,10 @@ class Adherent extends CommonObject
 	 *  @param	int		$rowid		Id of member to delete
 	 *	@param	User	$user		User object
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *  @return	int					<0 if KO, 0=nothing to do, >0 if OK
+	 *  @return	int					Return integer <0 if KO, 0=nothing to do, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
-		global $conf, $langs;
-
 		$result = 0;
 		$error = 0;
 		$errorflag = 0;
@@ -1226,7 +1150,6 @@ class Adherent extends CommonObject
 		// Mise a jour
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
 		$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
-		//if (!empty($conf->global->DATABASE_PWD_ENCRYPTED))
 		if ($isencrypted) {
 			$sql .= ", pass = null";
 		} else {
@@ -1437,7 +1360,7 @@ class Adherent extends CommonObject
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($rowid, $ref = '', $fk_soc = '', $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+	public function fetch($rowid, $ref = '', $fk_soc = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
 	{
 		global $langs;
 
@@ -1489,7 +1412,7 @@ class Adherent extends CommonObject
 
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
 				$this->civility_code = $obj->civility_code;
-				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != ("Civility".$obj->civility_code) ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->firstname = $obj->firstname;
 				$this->lastname = $obj->lastname;
@@ -1585,7 +1508,7 @@ class Adherent extends CommonObject
 	 *	first_subscription_date, first_subscription_date_start, first_subscription_date_end, first_subscription_amount
 	 *	last_subscription_date, last_subscription_date_start, last_subscription_date_end, last_subscription_amount
 	 *
-	 *	@return		int			<0 if KO, >0 if OK
+	 *	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_subscriptions()
 	{
@@ -1650,7 +1573,7 @@ class Adherent extends CommonObject
 	 *	Function to get partnerships array
 	 *
 	 *  @param		string		$mode		'member' or 'thirdparty'
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchPartnerships($mode)
 	{
@@ -1755,10 +1678,10 @@ class Adherent extends CommonObject
 	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
+	 *  @param	int			$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
 	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
-	 *	@return int									<0 if KO, >0 if OK
+	 *	@return int									Return integer <0 if KO, >0 if OK
 	 */
 	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0, $ext_payment_id = '', $ext_payment_site = '')
 	{
@@ -1893,12 +1816,12 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// Add line to draft invoice
 				$idprodsubscription = 0;
-				if (!empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (isModEnabled("product") || isModEnabled("service"))) {
+				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled("product") || isModEnabled("service"))) {
 					$idprodsubscription = $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS;
 				}
 
 				$vattouse = 0;
-				if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry') {
+				if (getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS') == 'defaultforfoundationcountry') {
 					$vattouse = get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
@@ -1996,7 +1919,7 @@ class Adherent extends CommonObject
 					$outputlangs->setDefaultLang($newlang);
 				}
 				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				//if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE'))
 
 				$invoice->generateDocument($invoice->model_pdf, $outputlangs);
 			}
@@ -2014,7 +1937,7 @@ class Adherent extends CommonObject
 	 *		Function that validate a member
 	 *
 	 *		@param	User	$user		user adherent qui valide
-	 *		@return	int					<0 if KO, 0 if nothing done, >0 if OK
+	 *		@return	int					Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function validate($user)
 	{
@@ -2067,7 +1990,7 @@ class Adherent extends CommonObject
 	 *		Fonction qui resilie un adherent
 	 *
 	 *		@param	User	$user		User making change
-	 *		@return	int					<0 if KO, >0 if OK
+	 *		@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function resiliate($user)
 	{
@@ -2117,12 +2040,10 @@ class Adherent extends CommonObject
 	 *		For historical purpose it add an "extra-subscription" type excluded
 	 *
 	 *		@param	User	$user		User making change
-	 *		@return	int					<0 if KO, >0 if OK
+	 *		@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function exclude($user)
 	{
-		global $langs, $conf;
-
 		$error = 0;
 
 		// Check parameters
@@ -2164,12 +2085,12 @@ class Adherent extends CommonObject
 	/**
 	 *  Function to add member into external tools mailing-list, spip, etc.
 	 *
-	 *  @return		int		<0 if KO, >0 if OK
+	 *  @return		int		Return integer <0 if KO, >0 if OK
 	 */
 	public function add_to_abo()
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
 		$mailmanspip = new MailmanSpip($this->db);
@@ -2177,7 +2098,7 @@ class Adherent extends CommonObject
 		$err = 0;
 
 		// mailman
-		if (!empty($conf->global->ADHERENT_USE_MAILMAN) && isModEnabled('mailmanspip')) {
+		if (getDolGlobalString('ADHERENT_USE_MAILMAN') && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_mailman($this);
 
 			if ($result < 0) {
@@ -2197,7 +2118,7 @@ class Adherent extends CommonObject
 		}
 
 		// spip
-		if (!empty($conf->global->ADHERENT_USE_SPIP) && isModEnabled('mailmanspip')) {
+		if (getDolGlobalString('ADHERENT_USE_SPIP') && isModEnabled('mailmanspip')) {
 			$result = $mailmanspip->add_to_spip($this);
 			if ($result < 0) {
 				$this->errors[] = $mailmanspip->error;
@@ -2216,7 +2137,7 @@ class Adherent extends CommonObject
 	/**
 	 *  Function to delete a member from external tools like mailing-list, spip, etc.
 	 *
-	 *  @return     int     <0 if KO, >0 if OK
+	 *  @return     int     Return integer <0 if KO, >0 if OK
 	 */
 	public function del_to_abo()
 	{
@@ -2229,7 +2150,7 @@ class Adherent extends CommonObject
 		$err = 0;
 
 		// mailman
-		if (!empty($conf->global->ADHERENT_USE_MAILMAN)) {
+		if (getDolGlobalString('ADHERENT_USE_MAILMAN')) {
 			$result = $mailmanspip->del_to_mailman($this);
 			if ($result < 0) {
 				if (!empty($mailmanspip->error)) {
@@ -2289,14 +2210,14 @@ class Adherent extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->loadLangs(['members', 'companies']);
 		$nofetch = !empty($params['nofetch']);
 
 		$datas = array();
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			$langs->load("users");
 			return ['optimize' => $langs->trans("ShowUser")];
 		}
@@ -2356,7 +2277,7 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpictoimg) {
 			$withpictoimg = 0;
 		}
 
@@ -2387,7 +2308,7 @@ class Adherent extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -2398,12 +2319,12 @@ class Adherent extends CommonObject
 		$linkstart .= '<a href="'.$url.'"';
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
@@ -2431,7 +2352,7 @@ class Adherent extends CommonObject
 			$result .= $picto;
 		}
 		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
 			}
@@ -2442,7 +2363,7 @@ class Adherent extends CommonObject
 			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';
 			}
 		}
@@ -2544,7 +2465,7 @@ class Adherent extends CommonObject
 	/**
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *
-	 *      @return     int         <0 if KO, >0 if OK
+	 *      @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function load_state_board()
 	{
@@ -2578,7 +2499,7 @@ class Adherent extends CommonObject
 	 *
 	 *      @param	User	$user   		Objet user
 	 *      @param  string	$mode           "expired" for membership to renew, "shift" for member to validate
-	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
 	{
@@ -2676,7 +2597,7 @@ class Adherent extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->ADHERENT_ADDON_PDF)) {
+			} elseif (getDolGlobalString('ADHERENT_ADDON_PDF')) {
 				$modele = $conf->global->ADHERENT_ADDON_PDF;
 			}
 		}
@@ -2773,13 +2694,13 @@ class Adherent extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS].",".$conf->global->LDAP_MEMBER_DN;
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')]."," . getDolGlobalString('LDAP_MEMBER_DN');
 		}
 		if ($mode == 1) {
 			$dn = $conf->global->LDAP_MEMBER_DN;
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS];
+			$dn = getDolGlobalString('LDAP_KEY_MEMBERS') . "=".$info[getDolGlobalString('LDAP_KEY_MEMBERS')];
 		}
 		return $dn;
 	}
@@ -2802,7 +2723,7 @@ class Adherent extends CommonObject
 		$keymodified = false;
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_MEMBER_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_MEMBER_OBJECT_CLASS'));
 
 		$this->fullname = $this->getFullName($langs);
 
@@ -2823,114 +2744,114 @@ class Adherent extends CommonObject
 
 		// Member
 		foreach ($ldapkey as $constname => $varname) {
-			if (!empty($this->$varname) && !empty($conf->global->$constname)) {
-				$info[$conf->global->$constname] = $this->$varname;
+			if (!empty($this->$varname) && getDolGlobalString($constname)) {
+				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (!empty($conf->global->LDAP_KEY_MEMBERS) && $conf->global->LDAP_KEY_MEMBERS == $conf->global->$constname) {
+				if (getDolGlobalString('LDAP_KEY_MEMBERS') && getDolGlobalString('LDAP_KEY_MEMBERS') == getDolGlobalString($constname)) {
 					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
 			}
 		}
-		if ($this->firstname && !empty($conf->global->LDAP_MEMBER_FIELD_FIRSTNAME)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->firstname && getDolGlobalString('LDAP_MEMBER_FIELD_FIRSTNAME')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_FIRSTNAME')] = $this->firstname;
 		}
-		if ($this->poste && !empty($conf->global->LDAP_MEMBER_FIELD_TITLE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_TITLE] = $this->poste;
+		if ($this->poste && getDolGlobalString('LDAP_MEMBER_FIELD_TITLE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_TITLE')] = $this->poste;
 		}
-		if ($this->company && !empty($conf->global->LDAP_MEMBER_FIELD_COMPANY)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->company;
+		if ($this->company && getDolGlobalString('LDAP_MEMBER_FIELD_COMPANY')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_COMPANY')] = $this->company;
 		}
-		if ($this->address && !empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
+		if ($this->address && getDolGlobalString('LDAP_MEMBER_FIELD_ADDRESS')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_ADDRESS')] = $this->address;
 		}
-		if ($this->zip && !empty($conf->global->LDAP_MEMBER_FIELD_ZIP)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
+		if ($this->zip && getDolGlobalString('LDAP_MEMBER_FIELD_ZIP')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_ZIP')] = $this->zip;
 		}
-		if ($this->town && !empty($conf->global->LDAP_MEMBER_FIELD_TOWN)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+		if ($this->town && getDolGlobalString('LDAP_MEMBER_FIELD_TOWN')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_TOWN')] = $this->town;
 		}
-		if ($this->country_code && !empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
+		if ($this->country_code && getDolGlobalString('LDAP_MEMBER_FIELD_COUNTRY')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_COUNTRY')] = $this->country_code;
 		}
 		foreach ($socialnetworks as $key => $value) {
-			if ($this->socialnetworks[$value['label']] && !empty($conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])})) {
-				$info[$conf->global->{'LDAP_MEMBER_FIELD_'.strtoupper($value['label'])}] = $this->socialnetworks[$value['label']];
+			if ($this->socialnetworks[$value['label']] && getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_'.strtoupper($value['label']))] = $this->socialnetworks[$value['label']];
 			}
 		}
-		if ($this->phone && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
+		if ($this->phone && getDolGlobalString('LDAP_MEMBER_FIELD_PHONE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_PHONE')] = $this->phone;
 		}
-		if ($this->phone_perso && !empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
+		if ($this->phone_perso && getDolGlobalString('LDAP_MEMBER_FIELD_PHONE_PERSO')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_PHONE_PERSO')] = $this->phone_perso;
 		}
-		if ($this->phone_mobile && !empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
+		if ($this->phone_mobile && getDolGlobalString('LDAP_MEMBER_FIELD_MOBILE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_MOBILE')] = $this->phone_mobile;
 		}
-		if ($this->fax && !empty($conf->global->LDAP_MEMBER_FIELD_FAX)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
+		if ($this->fax && getDolGlobalString('LDAP_MEMBER_FIELD_FAX')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_FAX')] = $this->fax;
 		}
-		if ($this->note_private && !empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+		if ($this->note_private && getDolGlobalString('LDAP_MEMBER_FIELD_DESCRIPTION')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_private, 2);
 		}
-		if ($this->note_public && !empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = dol_string_nohtmltag($this->note_public, 2);
+		if ($this->note_public && getDolGlobalString('LDAP_MEMBER_FIELD_NOTE_PUBLIC')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_NOTE_PUBLIC')] = dol_string_nohtmltag($this->note_public, 2);
 		}
-		if ($this->birth && !empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE)) {
-			$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth, 'dayhourldap');
+		if ($this->birth && getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')) {
+			$info[getDolGlobalString('LDAP_MEMBER_FIELD_BIRTHDATE')] = dol_print_date($this->birth, 'dayhourldap');
 		}
-		if (isset($this->statut) && !empty($conf->global->LDAP_FIELD_MEMBER_STATUS)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
+		if (isset($this->statut) && getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_STATUS')] = $this->statut;
 		}
-		if ($this->datefin && !empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin, 'dayhourldap');
+		if ($this->datefin && getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION')] = dol_print_date($this->datefin, 'dayhourldap');
 		}
 
 		// When password is modified
 		if (!empty($this->pass)) {
-			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
-				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
+			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass; // this->pass = mot de passe non crypte
 			}
-			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
-				$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+			if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
+				$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 			}
-		} elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') {
+		} elseif (getDolGlobalString('LDAP_SERVER_PROTOCOLVERSION') !== '3') {
 			// Set LDAP password if possible
 			// If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
-				// Just for the default MD5 !
-				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
-					if ($this->pass_indatabase_crypted && !empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
+			if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {	// This should be on on default installation
+				// Just for the case we use old md5 encryption (deprecated, no more used, kept for compatibility)
+				if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO') || getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'md5') {
+					if ($this->pass_indatabase_crypted && getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
 						// Create OpenLDAP MD5 password from Dolibarr MD5 password
-						// Note: This suppose that "pass_indatabase_crypted" is a md5 (guaranted by the previous test if "(empty($conf->global->MAIN_SECURITY_HASH_ALGO))"
-						$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
+						// Note: This suppose that "pass_indatabase_crypted" is a md5 (this should not happen anymore)"
+						$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dolGetLdapPasswordHash($this->pass_indatabase_crypted, 'md5frommd5');
 					}
 				}
 			} elseif (!empty($this->pass_indatabase)) {
 				// Use $this->pass_indatabase value if exists
-				if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) {
-					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')) {
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 				}
-				if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) {
-					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
+				if (getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')) {
+					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD_CRYPTED')] = dol_hash($this->pass_indatabase, 'openldap'); // Create OpenLDAP password (see LDAP_PASSWORD_HASH_TYPE)
 				}
 			}
 		}
 
 		// Subscriptions
-		if ($this->first_subscription_date && !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE] = dol_print_date($this->first_subscription_date, 'dayhourldap');
+		if ($this->first_subscription_date && getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE')] = dol_print_date($this->first_subscription_date, 'dayhourldap');
 		}
-		if (isset($this->first_subscription_amount) && !empty($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->first_subscription_amount;
+		if (isset($this->first_subscription_amount) && getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT')] = $this->first_subscription_amount;
 		}
-		if ($this->last_subscription_date && !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE] = dol_print_date($this->last_subscription_date, 'dayhourldap');
+		if ($this->last_subscription_date && getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE')] = dol_print_date($this->last_subscription_date, 'dayhourldap');
 		}
-		if (isset($this->last_subscription_amount) && !empty($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)) {
-			$info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->last_subscription_amount;
+		if (isset($this->last_subscription_amount) && getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')) {
+			$info[getDolGlobalString('LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT')] = $this->last_subscription_amount;
 		}
 
 		return $info;
@@ -2957,6 +2878,7 @@ class Adherent extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -3006,7 +2928,7 @@ class Adherent extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	int[]|int 	$categories 	Category or categories IDs
-	 * @return 	int							<0 if KO, >0 if OK
+	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -3074,7 +2996,7 @@ class Adherent extends CommonObject
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
 		}
-		if (empty($conf->global->MEMBER_REMINDER_EMAIL)) {
+		if (!getDolGlobalString('MEMBER_REMINDER_EMAIL')) {
 			$langs->load("agenda");
 			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -3102,6 +3024,7 @@ class Adherent extends CommonObject
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
+			$sql .= " AND statut = 1";
 			$sql .= " AND datefin = '".$this->db->idate($datetosearchfor)."'";
 			//$sql .= " LIMIT 10000";
 
@@ -3303,7 +3226,7 @@ class Adherent extends CommonObject
 		return $nbko;
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -3325,7 +3248,9 @@ class Adherent extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'type')) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->type.'</span>';
 		}
@@ -3333,7 +3258,7 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

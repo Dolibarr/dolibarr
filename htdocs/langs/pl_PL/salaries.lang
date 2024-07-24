@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (z Planu Kont) używane domyślnie dla „użytkowników” osób trzecich
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Dedykowane konto zdefiniowane na karcie użytkownika będzie wykorzystywane wyłącznie do prowadzenia księgowości w Księdze Podrzędnej. Ta wartość będzie używana dla Księgi Głównej i jako wartość domyślna księgowości Księgi Podrzędnej, jeżeli nie zdefiniowano dedykowanego konta księgowego użytkownika.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Domyślne konto księgowe dla płatności wynagrodzenia
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Domyślnie pozostaw pustą opcję „Automatycznie utwórz całkowitą płatność” podczas tworzenia wynagrodzenia
 Salary=Wypłata
@@ -23,5 +23,11 @@ AllSalaries=Wszystkie wynagrodzenia
 SalariesStatistics=Statystyki wynagrodzeń
 SalariesAndPayments=Wynagrodzenia i płatności
 ConfirmDeleteSalaryPayment=Czy chcesz usunąć tę wypłatę wynagrodzenia?
-FillFieldFirst=Fill employee field first
-UpdateAmountWithLastSalary=Set amount of last salary
+FillFieldFirst=Najpierw wypełnij pole pracownika
+UpdateAmountWithLastSalary=Ustaw kwotę ostatniego wynagrodzenia
+MakeTransferRequest=Złóż wniosek o przeniesienie
+VirementOrder=Żądanie przelewu kredytowego
+BankTransferAmount=Kwota przelewu
+WithdrawalReceipt=Polecenie przelewu
+OrderWaiting=Oczekujące zamówienie
+FillEndOfMonth=Wypełnij końcem miesiąca

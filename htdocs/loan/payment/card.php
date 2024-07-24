@@ -56,7 +56,7 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->delete) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('loan', 'delete')) {
 	$db->begin();
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."loan_schedule SET fk_bank = 0 WHERE fk_bank = ".((int) $payment->fk_bank);
@@ -221,7 +221,7 @@ print '</div>';
 
 print '<div class="tabsAction">';
 
-if (empty($action) && !empty($user->rights->loan->delete)) {
+if (empty($action) && $user->hasRight('loan', 'delete')) {
 	if (!$disable_delete) {
 		print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&token='.newToken(), 'delete', 1);
 	} else {

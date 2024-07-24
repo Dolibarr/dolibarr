@@ -233,20 +233,20 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.'/'.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -367,7 +367,7 @@ foreach ($dirmodels as $reldir) {
 
 					print "<tr class=\"oddeven\">\n";
 					print "<td>";
-					print (empty($module->name) ? $name : $module->name);
+					print(empty($module->name) ? $name : $module->name);
 					print "</td>\n";
 					print "<td>\n";
 					require_once $dir.'/'.$file;
@@ -385,10 +385,10 @@ foreach ($dirmodels as $reldir) {
 						print '<td class="center">'."\n";
 						//if ($conf->global->INVOICE_SUPPLIER_ADDON_PDF != "$name")
 						//{
-							// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
-							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=invoice_supplier">';
-							print img_picto($langs->trans("Enabled"), 'switch_on');
-							print '</a>';
+						// Even if choice is the default value, we allow to disable it: For supplier invoice, we accept to have no doc generation at all
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=invoice_supplier">';
+						print img_picto($langs->trans("Enabled"), 'switch_on');
+						print '</a>';
 						/*}
 						else
 						{
@@ -469,7 +469,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'SUPPLIER_INVOICE_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

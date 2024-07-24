@@ -10,8 +10,8 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016-2021  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
- * Copyright (C) 2021-2022 	Anthony Berton			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2018-2023  Charlene Benke	        <charlene@patas-monkey.com>
+ * Copyright (C) 2021-2023 	Anthony Berton			<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
@@ -56,7 +61,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'orderlistdet';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlistdet';
 $productobuy = GETPOST('productobuy', 'alpha');
 $productonly = GETPOST('productonly', 'alpha');
 $disablelinefree = GETPOST('disablelinefree', 'alpha');
@@ -73,13 +78,23 @@ $search_dateorder_start = dol_mktime(0, 0, 0, GETPOST('search_dateorder_start_mo
 $search_dateorder_end = dol_mktime(23, 59, 59, GETPOST('search_dateorder_end_month', 'int'), GETPOST('search_dateorder_end_day', 'int'), GETPOST('search_dateorder_end_year', 'int'));
 $search_datedelivery_start = dol_mktime(0, 0, 0, GETPOST('search_datedelivery_start_month', 'int'), GETPOST('search_datedelivery_start_day', 'int'), GETPOST('search_datedelivery_start_year', 'int'));
 $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOST('search_datedelivery_end_month', 'int'), GETPOST('search_datedelivery_end_day', 'int'), GETPOST('search_datedelivery_end_year', 'int'));
-$search_product_category = GETPOST('search_product_category', 'int');
+
+if (isModEnabled('categorie')) {
+	$search_product_category_array = GETPOST("search_category_".Categorie::TYPE_PRODUCT."_list", "array");
+	$searchCategoryProductOperator = 0;
+	if (GETPOSTISSET('formfilteraction')) {
+		$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
+	} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+		$searchCategoryProductOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+	}
+}
 
 // Détail commande
+$search_id = GETPOST('search_id', 'alpha');
 $search_refProduct = GETPOST('search_refProduct', 'alpha');
 $search_descProduct = GETPOST('search_descProduct', 'alpha');
 
-$search_ref = GETPOST('search_ref', 'alpha') != '' ?GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -116,17 +131,10 @@ $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'int');
 $search_fk_mode_reglement = GETPOST("search_fk_mode_reglement", 'int');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'int');
 
-// Security check
-$id = (GETPOST('orderid') ?GETPOST('orderid', 'int') : GETPOST('id', 'int'));
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'commande', $id, '');
-
 $diroutputmassaction = $conf->commande->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -158,7 +166,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 $fieldstosearchall = array(
 	'c.ref'=>'Ref',
 	'c.ref_client'=>'RefCustomerOrder',
-	'pd.description'=>'Description',
+	'cdet.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
 	's.zip'=>"Zip",
@@ -172,6 +180,7 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	// Détail commande
+	'rowid'=> array('label'=>'TechnicalID', 'checked'=>1, 'position'=>1, 'enabled'=>(getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? 1 : 0)),
 	'pr.ref'=> array('label'=>'ProductRef', 'checked'=>1, 'position'=>1),
 	'pr.desc'=> array('label'=>'ProductDescription', 'checked'=>-1, 'position'=>1),
 	'cdet.qty'=> array('label'=>'QtyOrdered', 'checked'=>1, 'position'=>1),
@@ -187,7 +196,7 @@ $arrayfields = array(
 	'country.code_iso'=>array('label'=>"Country", 'checked'=>0, 'position'=>50),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers, 'position'=>55),
 	'c.date_commande'=>array('label'=>"OrderDateShort", 'checked'=>1, 'position'=>60),
-	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE), 'position'=>65),
+	'c.date_delivery'=>array('label'=>"DateDeliveryPlanned", 'checked'=>1, 'enabled'=>!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position'=>65),
 	'c.fk_shipping_method'=>array('label'=>"SendingMethod", 'checked'=>-1, 'position'=>66 , 'enabled'=>isModEnabled('expedition')),
 	'c.fk_cond_reglement'=>array('label'=>"PaymentConditionsShort", 'checked'=>-1, 'position'=>67),
 	'c.fk_mode_reglement'=>array('label'=>"PaymentMode", 'checked'=>-1, 'position'=>68),
@@ -200,20 +209,20 @@ $arrayfields = array(
 	'c.multicurrency_total_ht'=>array('label'=>'MulticurrencyAmountHT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>100),
 	'c.multicurrency_total_vat'=>array('label'=>'MulticurrencyAmountVAT', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>105),
 	'c.multicurrency_total_ttc'=>array('label'=>'MulticurrencyAmountTTC', 'checked'=>0, 'enabled'=>(empty($conf->multicurrency->enabled) ? 0 : 1), 'position'=>110),
-	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(!isModEnabled('stock') && empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER) ? 0 : 1), 'position'=>110),
+	'c.fk_warehouse'=>array('label'=>'Warehouse', 'checked'=>0, 'enabled'=>(!isModEnabled('stock') && !getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER') ? 0 : 1), 'position'=>110),
 	'u.login'=>array('label'=>"Author", 'checked'=>1, 'position'=>115),
 	'sale_representative'=>array('label'=>"SaleRepresentativesOfThirdParty", 'checked'=>0, 'position'=>116),
 	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
 	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARGIN_RATES) ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || empty($conf->global->DISPLAY_MARK_RATES) ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->rights->margins->liretous || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
 	'c.datec'=>array('label'=>"DateCreation", 'checked'=>0, 'position'=>120),
 	'c.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>125),
 	'c.date_cloture'=>array('label'=>"DateClosing", 'checked'=>0, 'position'=>130),
-	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position'=>135),
-	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position'=>140),
+	'c.note_public'=>array('label'=>'NotePublic', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MAIN_LIST_ALLOW_PUBLIC_NOTES')), 'position'=>135),
+	'c.note_private'=>array('label'=>'NotePrivate', 'checked'=>0, 'enabled'=>(!getDolGlobalString('MAIN_LIST_ALLOW_PRIVATE_NOTES')), 'position'=>140),
 	'shippable'=>array('label'=>"Shippable", 'checked'=>1,'enabled'=>(isModEnabled('expedition')), 'position'=>990),
-	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)), 'position'=>995),
+	'c.facture'=>array('label'=>"Billed", 'checked'=>1, 'enabled'=>(!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position'=>995),
 	'c.import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>999),
 	'c.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
@@ -224,6 +233,16 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
+// Security check
+$id = (GETPOST('orderid') ? GETPOST('orderid', 'int') : GETPOST('id', 'int'));
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'commande', $id, '');
 
 
 /*
@@ -231,7 +250,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') {
 	$massaction = '';
@@ -255,7 +275,9 @@ if (empty($reshook)) {
 		$search_categ = '';
 		$search_user = '';
 		$search_sale = '';
-		$search_product_category = '';
+		$search_product_category_array = array();
+		$searchCategoryProductOperator = 0;
+		$search_id = '';
 		$search_refProduct = '';
 		$search_descProduct = '';
 		$search_ref = '';
@@ -304,19 +326,20 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Commande';
 	$objectlabel = 'Orders';
-	$permissiontoread = $user->rights->commande->lire;
-	$permissiontoadd = $user->rights->commande->creer;
-	$permissiontodelete = $user->rights->commande->supprimer;
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-		$permissiontovalidate = $user->rights->commande->order_advance->validate;
-		$permissiontoclose = $user->rights->commande->order_advance->close;
-		$permissiontocancel = $user->rights->commande->order_advance->annuler;
-		$permissiontosendbymail = $user->rights->commande->order_advance->send;
+	$permissiontoread = $user->hasRight("commande", "lire");
+	$permissiontoadd = $user->hasRight("commande", "creer");
+	$permissiontodelete = $user->hasRight("commande", "supprimer");
+	$permissiontoexport = $user->hasRight("commande", "commande", "export");
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+		$permissiontovalidate = $user->hasRight("commande", "order_advance", "validate");
+		$permissiontoclose = $user->hasRight("commande", "order_advance", "close");
+		$permissiontocancel = $user->hasRight("commande", "order_advance", "annuler");
+		$permissiontosendbymail = $user->hasRight("commande", "order_advance", "send");
 	} else {
-		$permissiontovalidate = $user->rights->commande->creer;
-		$permissiontoclose = $user->rights->commande->creer;
-		$permissiontocancel = $user->rights->commande->creer;
-		$permissiontosendbymail = $user->rights->commande->creer;
+		$permissiontovalidate = $user->hasRight("commande", "creer");
+		$permissiontoclose = $user->hasRight("commande", "creer");
+		$permissiontocancel = $user->hasRight("commande", "creer");
+		$permissiontosendbymail = $user->hasRight("commande", "creer");
 	}
 	$uploaddir = $conf->commande->multidir_output[$conf->entity];
 	$triggersendname = 'ORDER_SENTBYMAIL';
@@ -350,7 +373,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 // llxHeader('',$title,$help_url);
 
 $sql = 'SELECT';
-if ($sall || $search_product_category > 0 || $search_user > 0) {
+if ($sall || $search_product_category_array > 0 || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax, s.address, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
@@ -365,10 +388,9 @@ $sql .= ' c.date_creation as date_creation, c.tms as date_update, c.date_cloture
 $sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
-$sql .= ' c.fk_input_reason, c.import_key';
-
-// Détail commande
-$sql .= ', cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc, ';
+$sql .= ' c.fk_input_reason, c.import_key,';
+// Lines or order
+$sql .= ' cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc,';
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
 
 if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
@@ -400,24 +422,12 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product'
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
-if ($sall || $search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commandedet as pd ON c.rowid=pd.fk_commande';
-}
-if ($search_product_category > 0) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=pd.fk_product';
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
-
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -436,21 +446,17 @@ if (!empty($productonly)) {
 if (!empty($disablelinefree)) {
 	$sql .= " AND cdet.fk_product IS NOT NULL";
 }
-if ($search_product_category > 0) {
-	$sql .= " AND cp.fk_categorie = ".((int) $search_product_category);
-}
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+if ($search_id) {
+	$sql .= natural_search('cdet.rowid', $search_id);
 }
 if ($search_refProduct) {
 	$sql .= natural_search('pr.ref', $search_refProduct);
 }
 if ($search_descProduct) {
-	$sql .= natural_search('pr.label', $search_descProduct);
-	$sql .= natural_search('cdet.description', $search_descProduct);
+	$sql .= natural_search(array('pr.label','cdet.description'), $search_descProduct);
 }
 if ($search_ref) {
 	$sql .= natural_search('c.ref', $search_ref);
@@ -464,7 +470,7 @@ if ($sall) {
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
 }
-if ($search_status <> '') {
+if ($search_status != '') {
 	if ($search_status <= 3 && $search_status >= -1) {	// status from -1 to 3 are real status (other are virtual combination)
 		if ($search_status == 1 && !isModEnabled('expedition')) {
 			$sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
@@ -525,9 +531,6 @@ if ($search_company) {
 if ($search_company_alias) {
 	$sql .= natural_search('s.name_alias', $search_company_alias);
 }
-if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
@@ -585,9 +588,47 @@ if ($search_fk_mode_reglement > 0) {
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryProductList is an array of ID)
+$searchCategoryProductList = $search_product_category_array;
+if (!empty($searchCategoryProductList)) {
+	$searchCategoryProjectSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryProductList as $searchCategoryProject) {
+		if (intval($searchCategoryProject) == -2) {
+			$searchCategoryProjectSqlList[] = "NOT EXISTS (SELECT cp.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as cp WHERE cdet.fk_product = cp.fk_product)";
+		} elseif (intval($searchCategoryProject) > 0) {
+			if ($searchCategoryProductOperator == 0) {
+				$searchCategoryProjectSqlList[] = " EXISTS (SELECT cp.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as cp WHERE cdet.fk_product = cp.fk_product AND cp.fk_categorie = ".((int) $searchCategoryProject).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProject);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryProjectSqlList[] = " EXISTS (SELECT cp.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as cp WHERE cdet.fk_product = cp.fk_product AND cp.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryProductOperator == 1) {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryProjectSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryProjectSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryProjectSqlList).")";
+		}
+	}
+}
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -656,7 +697,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/commande/card.php?id='.$id);
@@ -678,6 +719,16 @@ if ($resql) {
 	}
 	if ($socid > 0) {
 		$param .= '&socid='.urlencode($socid);
+	}
+	if ($search_id) {
+		$param .= '&search_id='.urlencode($search_id);
+	}
+	// Détail commande
+	if ($search_refProduct) {
+		$param .= '&search_refProduct='.urlencode($search_refProduct);
+	}
+	if ($search_descProduct) {
+		$param .= '&search_descProduct='.urlencode($search_descProduct);
 	}
 	if ($search_status != '') {
 		$param .= '&search_status='.urlencode($search_status);
@@ -766,8 +817,10 @@ if ($resql) {
 	if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 		$param .= '&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	}
-	if ($search_product_category != '') {
-		$param .= '&search_product_category='.urlencode($search_product_category);
+	if (!empty($search_product_category_array)) {
+		foreach ($search_product_category_array as $tmpval) {
+			$param .= '&search_categegory_product_list[]='.urlencode($tmpval);
+		}
 	}
 	if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
 		$param .= '&search_categ_cus='.urlencode($search_categ_cus);
@@ -807,14 +860,18 @@ if ($resql) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 	// Add $param from hooks
-	$parameters = array();
+	$parameters = array('param' => &$param);
 	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$param .= $hookmanager->resPrint;
 
 	// List of mass actions available
 	$arrayofmassactions = array(
 		// TODO add mass action here
+		// 'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
+	// if ($permissiontovalidate) {
+	// 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
+	// }
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$url = DOL_URL_ROOT.'/commande/card.php?action=create';
@@ -854,13 +911,18 @@ if ($resql) {
 
 	$moreforfilter = '';
 
-	$moreforfilter .= '<input type="checkbox" name="productobuy"'.(!empty($productobuy)?'value="productobuychecked" checked':'' ).'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
-	$moreforfilter .= '<input type="checkbox" name="productonly"'.(!empty($productonly)?'value="productonlychecked" checked':'' ).'><label for="productonly">'.$langs->trans("productonly").'</label>';
-	$moreforfilter .= '<input type="checkbox" name="disablelinefree"'.(!empty($disablelinefree)?'value="disablelinefreechecked" checked':'' ).'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
-	$moreforfilter .= '<br>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<input type="checkbox" id="productobuy" name="productobuy"'.(!empty($productobuy) ? 'value="productobuychecked" checked' : '').'><label for="productobuy">'.$langs->trans("productobuy").'</label>';
+	$moreforfilter .= '</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<input type="checkbox" id="productonly" name="productonly"'.(!empty($productonly) ? 'value="productonlychecked" checked' : '').'><label for="productonly">'.$langs->trans("productonly").'</label>';
+	$moreforfilter .= '</div>';
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<input type="checkbox" id="disablelinefree" name="disablelinefree"'.(!empty($disablelinefree) ? 'value="disablelinefreechecked" checked' : '').'><label for="disablelinefree">'.$langs->trans("disablelinefree").'</label>';
+	$moreforfilter .= '</div><br>';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -868,20 +930,16 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view other users
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	// If the user can view prospects other than his'
+	// Filter on categories
 	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
-		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$moreforfilter .= '<div class="divsearchfield">';
-		$tmptitle = $langs->trans('IncludingProductWithTag');
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
-		$moreforfilter .= '</div>';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $search_product_category_array, 'minwidth300imp minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
 	}
 	if (isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -890,7 +948,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
-	if (isModEnabled('stock') && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
+	if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -934,13 +992,18 @@ if ($resql) {
 	print '<tr class="liste_titre_filter">';
 
 	// Action column
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
 	}
-
+	// ID
+	if (!empty($arrayfields['rowid']['checked'])) {
+		print '<td class="liste_titre" data-key="id">';
+		print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+		print '</td>';
+	}
 	// Détail commande
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1013,26 +1076,26 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Date order
 	if (!empty($arrayfields['c.date_commande']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_dateorder_start ? $search_dateorder_start : -1, 'search_dateorder_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_dateorder_end ? $search_dateorder_end : -1, 'search_dateorder_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
 	}
 	if (!empty($arrayfields['c.date_delivery']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_datedelivery_start ? $search_datedelivery_start : -1, 'search_datedelivery_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_datedelivery_end ? $search_datedelivery_end : -1, 'search_datedelivery_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1157,10 +1220,10 @@ if ($resql) {
 	// Date cloture
 	if (!empty($arrayfields['c.date_cloture']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_datecloture_start ? $search_datecloture_start : -1, 'search_datecloture_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_datecloture_end ? $search_datecloture_end : -1, 'search_datecloture_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1179,7 +1242,7 @@ if ($resql) {
 	if (!empty($arrayfields['shippable']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 		//print $form->selectyesno('search_shippable', $search_shippable, 1, 0, 1, 1);
-		if (!empty($conf->global->ORDER_SHIPABLE_STATUS_DISABLED_BY_DEFAULT)) {
+		if (getDolGlobalString('ORDER_SHIPABLE_STATUS_DISABLED_BY_DEFAULT')) {
 			print '<input type="checkbox" name="show_shippable_command" value="1"'.($show_shippable_command ? ' checked' : '').'>';
 			print $langs->trans('ShowShippableStatus');
 		} else {
@@ -1202,19 +1265,19 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
 		$liststatus = array(
-			Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraftShort"),
-			Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-			Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSentShort"),
-			Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
-			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
-			-2=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
-			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
+			Commande::STATUS_DRAFT => $langs->trans("StatusOrderDraftShort"),
+			Commande::STATUS_VALIDATED => $langs->trans("StatusOrderValidated"),
+			Commande::STATUS_SHIPMENTONPROCESS => $langs->trans("StatusOrderSentShort"),
+			-2 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort"),
+			-3 => $langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
+			Commande::STATUS_CLOSED => $langs->trans("StatusOrderDelivered"),
+			Commande::STATUS_CANCELED => $langs->trans("StatusOrderCanceledShort")
 		);
 		print $form->selectarray('search_status', $liststatus, $search_status, -5, 0, 0, '', 0, 0, 0, '', 'maxwidth125', 1);
 		print '</td>';
 	}
 	// Action column
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre" align="middle">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
@@ -1225,11 +1288,14 @@ if ($resql) {
 	// Fields title
 	print '<tr class="liste_titre">';
 
-	if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
 	// Détail commande
+	if (!empty($arrayfields['rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1385,7 +1451,7 @@ if ($resql) {
 	if (!empty($arrayfields['c.fk_statut']['checked'])) {
 		print_liste_field_titre($arrayfields['c.fk_statut']['label'], $_SERVER["PHP_SELF"], "c.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+	if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 	print '</tr>'."\n";
@@ -1403,11 +1469,11 @@ if ($resql) {
 
 	$with_margin_info = false;
 	if (isModEnabled('margin') && (
-			!empty($arrayfields['total_pa']['checked'])
+		!empty($arrayfields['total_pa']['checked'])
 			|| !empty($arrayfields['total_margin']['checked'])
 			|| !empty($arrayfields['total_margin_rate']['checked'])
 			|| !empty($arrayfields['total_mark_rate']['checked'])
-		)
+	)
 	) {
 		$with_margin_info = true;
 	}
@@ -1420,6 +1486,7 @@ if ($resql) {
 
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
+	$subtotalarray['nbfield'] = 0;
 	$totalarray['val']['cdet.total_tva'] = 0;
 	$totalarray['val']['cdet.total_ttc'] = 0;
 	$imaxinloop = ($limit ? min($num, $limit) : $num);
@@ -1437,8 +1504,7 @@ if ($resql) {
 			$oldref = $obj->product_ref;
 		}
 		if ($oldref != $obj->product_ref && $sortfield == 'pr.ref') {
-			// TODO make new /core/tpl/list_print_sub_total.php
-			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+			include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
 			$oldref = $obj->product_ref;
 		}
 
@@ -1462,7 +1528,6 @@ if ($resql) {
 		$generic_commande->statut = $obj->fk_statut;
 		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
-		$generic_commande->date_livraison = $db->jdate($obj->date_delivery); // deprecated
 		$generic_commande->delivery_date = $db->jdate($obj->date_delivery);
 		$generic_commande->ref_client = $obj->ref_client;
 		$generic_commande->total_ht = $obj->c_total_ht;
@@ -1486,7 +1551,7 @@ if ($resql) {
 		print '<tr class="oddeven">';
 
 		// Action column
-		if (!empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -1502,6 +1567,14 @@ if ($resql) {
 		}
 
 		// Détail commande
+		// ID
+		if (!empty($arrayfields['rowid']['checked'])) {
+			print '<td class="nowrap right">'.$obj->rowid.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Product Ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
 			if (!empty($obj->product_rowid)) {
@@ -1524,7 +1597,7 @@ if ($resql) {
 		if (!empty($arrayfields['pr.desc']['checked'])) {
 			// print '<td class="nowrap tdoverflowmax200">'.$obj->description.'</td>';
 			!empty($obj->product_label) ? $labelproduct = $obj->product_label : $labelproduct = $obj->description;
-			print '<td class="nowrap tdoverflowmax200">aa';
+			print '<td class="nowrap tdoverflowmax200">';
 			print dolGetFirstLineOfText(dolPrintHTML($labelproduct), 5);
 			print '</td>';
 
@@ -1535,16 +1608,19 @@ if ($resql) {
 		// Product QtyOrdered
 		if (!empty($arrayfields['cdet.qty']['checked'])) {
 			print '<td class="nowrap right">'.$obj->qty.'</td>';
-			if (isset($totalarray['val']['cdet.qty'])) {
+			if (isset($totalarray['val']['cdet.qty']) || isset($subtotalarray['val']['cdet.qty'])) {
 				$totalarray['val']['cdet.qty'] += $obj->qty;
+				$subtotalarray['val']['cdet.qty'] += $obj->qty;
 			} else {
 				$totalarray['val']['cdet.qty'] = $obj->qty;
+				$subtotalarray['val']['cdet.qty'] = $obj->qty;
 			}
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.qty';
 			}
 		}
 
@@ -1602,7 +1678,7 @@ if ($resql) {
 			print $getNomUrl_cache[$obj->socid];
 
 			// If module invoices enabled and user with invoice creation permissions
-			if (isModEnabled('facture') && !empty($conf->global->ORDER_BILLING_ALL_CUSTOMER)) {
+			if (isModEnabled('facture') && getDolGlobalString('ORDER_BILLING_ALL_CUSTOMER')) {
 				if ($user->hasRight('facture', 'creer')) {
 					if (($obj->fk_statut > 0 && $obj->fk_statut < 3) || ($obj->fk_statut == 3 && $obj->billed == 0)) {
 						print '&nbsp;<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$companystatic->id.'&search_billed=0&autoselectall=1">';
@@ -1732,17 +1808,20 @@ if ($resql) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['cdet.total_ht']['checked'])) {
-			  print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ht';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.total_ht';
 			}
-			if (isset($totalarray['val']['cdet.total_ht'])) {
+			if (isset($totalarray['val']['cdet.total_ht']) || isset($subtotalarray['val']['cdet.total_ht'])) {
 				$totalarray['val']['cdet.total_ht'] += $obj->total_ht;
+				$subtotalarray['val']['cdet.total_ht'] += $obj->total_ht;
 			} else {
 				$totalarray['val']['cdet.total_ht'] = $obj->total_ht;
+				$subtotalarray['val']['cdet.total_ht'] = $obj->total_ht;
 			}
 		}
 		// Amount VAT
@@ -1753,8 +1832,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_tva';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.total_tva';
 			}
 			$totalarray['val']['cdet.total_tva'] += $obj->total_tva;
+			$subtotalarray['val']['cdet.total_tva'] += $obj->total_tva;
 		}
 		// Amount TTC
 		if (!empty($arrayfields['cdet.total_ttc']['checked'])) {
@@ -1764,8 +1845,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
+				$subtotalarray['pos'][$totalarray['nbfield']] = 'cdet.total_ttc';
 			}
 			$totalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
+			$subtotalarray['val']['cdet.total_ttc'] += $obj->total_ttc;
 		}
 		// Warehouse
 		if (!empty($arrayfields['c.fk_warehouse']['checked'])) {
@@ -1781,7 +1864,7 @@ if ($resql) {
 		}
 		// Currency
 		if (!empty($arrayfields['c.multicurrency_code']['checked'])) {
-			  print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
+			print '<td class="nowrap">'.$obj->multicurrency_code.' - '.$langs->trans('Currency'.$obj->multicurrency_code)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1789,16 +1872,16 @@ if ($resql) {
 
 		// Currency rate
 		if (!empty($arrayfields['c.multicurrency_tx']['checked'])) {
-			  print '<td class="nowrap">';
-			  $form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
-			  print "</td>\n";
+			print '<td class="nowrap">';
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'].'?id='.$obj->rowid, $obj->multicurrency_tx, 'none', $obj->multicurrency_code);
+			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Amount HT
 		if (!empty($arrayfields['c.multicurrency_total_ht']['checked'])) {
-			  print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
+			print '<td class="right nowrap"><span class="amount">'.price($obj->multicurrency_total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1908,8 +1991,10 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_margin';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'total_margin';
 			}
 			$totalarray['val']['total_margin'] += $marginInfo['total_margin'];
+			$subtotalarray['val']['total_margin'] += $marginInfo['total_margin'];
 		}
 		// Total margin rate
 		if (!empty($arrayfields['total_margin_rate']['checked'])) {
@@ -1926,12 +2011,15 @@ if ($resql) {
 			}
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'total_mark_rate';
+				$totalarray['pos'][$subtotalarray['nbfield']] = 'total_mark_rate';
 			}
 			if ($i >= $imaxinloop - 1) {
 				if (!empty($total_ht)) {
 					$totalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
+					$subtotalarray['val']['total_mark_rate'] = price2num($total_margin * 100 / $total_ht, 'MT');
 				} else {
 					$totalarray['val']['total_mark_rate'] = '';
+					$subtotalarray['val']['total_mark_rate'] = '';
 				}
 			}
 		}
@@ -2022,7 +2110,7 @@ if ($resql) {
 						if ($reliquat > $generic_product->stock_reel) {
 							$notshippable++;
 						}
-						if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {  // Default code. Default should be this case.
+						if (!getDolGlobalString('SHIPPABLE_ORDER_ICON_IN_LIST')) {  // Default code. Default should be this case.
 							$text_info .= $reliquat.' x '.$obj->product_ref.'&nbsp;'.dol_trunc($obj->product_label, 20);
 							$text_info .= ' - '.$langs->trans("Stock").': <span class="'.($generic_product->stock_reel > 0 ? 'ok' : 'error').'">'.$generic_product->stock_reel.'</span>';
 							$text_info .= ' - '.$langs->trans("VirtualStock").': <span class="'.($generic_product->stock_theorique > 0 ? 'ok' : 'error').'">'.$generic_product->stock_theorique.'</span>';
@@ -2035,7 +2123,7 @@ if ($resql) {
 							// stock order and stock order_supplier
 							$stock_order = 0;
 							$stock_order_supplier = 0;
-							if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {    // What about other options ?
+							if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {    // What about other options ?
 								if (isModEnabled('commande')) {
 									if (empty($productstat_cache[$obj->fk_product]['stats_order_customer'])) {
 										$generic_product->load_stats_commande(0, '1,2');
@@ -2118,7 +2206,7 @@ if ($resql) {
 		}
 
 		// Action column
-		if (empty($conf->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
+		if (!getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
@@ -2132,15 +2220,16 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// $totalarray['nbfield']--;
-		// $totalarray['nbfield']--;
+
 		print "</tr>\n";
 
 		$total += $obj->total_ht;
 		$subtotal += $obj->total_ht;
 		$i++;
 	}
-
+	if ($sortfield == 'pr.ref') {
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_subtotal.tpl.php';
+	}
 	// Show total line
 	include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 

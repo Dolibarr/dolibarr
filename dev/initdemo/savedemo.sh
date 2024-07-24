@@ -245,6 +245,16 @@ export list="
 	--ignore-table=$base.llx_c_ticketsup_category
 	--ignore-table=$base.llx_c_ticketsup_severity
 	--ignore-table=$base.llx_c_ticketsup_type
+	--ignore-table=$base.llx_cabinetmed_c_banques
+	--ignore-table=$base.llx_cabinetmed_c_examconclusion
+	--ignore-table=$base.llx_cabinetmed_cons_extrafields
+	--ignore-table=$base.llx_cabinetmed_diaglec
+	--ignore-table=$base.llx_cabinetmed_examaut
+	--ignore-table=$base.llx_cabinetmed_exambio
+	--ignore-table=$base.llx_cabinetmed_examenprescrit
+	--ignore-table=$base.llx_cabinetmed_motifcons
+	--ignore-table=$base.llx_cabinetmed_patient
+	--ignore-table=$base.llx_cabinetmed_societe
 	--ignore-table=$base.llx_congespayes
 	--ignore-table=$base.llx_congespayes_config
 	--ignore-table=$base.llx_congespayes_events
@@ -328,6 +338,8 @@ export list="
     --ignore-table=$base.tmp_llx_accouting_account
     --ignore-table=$base.tmp_llx_product_batch
     --ignore-table=$base.tmp_llx_product_batch2
+    --ignore-table=$base.tmp_tmp
+    --ignore-table=$base.tmp_user
 	" 
 echo "mysqldump -P$port -u$admin -p***** $list $base > $mydir/$dumpfile"
 mysqldump -P$port -u$admin $passwd $list $base > $mydir/$dumpfile

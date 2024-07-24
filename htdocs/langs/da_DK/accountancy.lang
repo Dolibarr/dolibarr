@@ -38,7 +38,7 @@ DeleteCptCategory=Fjern regnskabskonto fra gruppe
 ConfirmDeleteCptCategory=Er du sikker på, du vil fjerne denne regnskabskonto fra gruppen?
 JournalizationInLedgerStatus=Status for bogføring
 AlreadyInGeneralLedger=Allerede overført til regnskabstidsskrifter og regnskab
-NotYetInGeneralLedger=Endnu ikke overført til regnskabsblade og regnskaber
+NotYetInGeneralLedger=Endnu ikke overført til regnskabskladder og finans
 GroupIsEmptyCheckSetup=Gruppen er tom, kontroller opsætningen af ​​den brugerdefinerede regnskabsgruppe
 DetailByAccount=Vis detaljer efter konto
 DetailBy=Detalje af
@@ -53,15 +53,13 @@ ExportAccountingSourceDocHelp=Med dette værktøj kan du søge og eksportere de 
 ExportAccountingSourceDocHelp2=For at eksportere dine tidsskrifter skal du bruge menuindgangen %s - %s.
 ExportAccountingProjectHelp=Angiv et projekt, hvis du kun har brug for en regnskabsrapport for et specifikt projekt. Udgiftsrapporter og lånebetalinger indgår ikke i projektrapporter.
 ExportAccountancy=Eksportregnskab
-WarningDataDisappearsWhenDataIsExported=Advarsel, denne liste indeholder kun de regnskabsposter, der ikke allerede er eksporteret (eksportdatoen er tom). Hvis du vil inkludere de allerede eksporterede regnskabsposter for at gen-eksportere dem, skal du klikke på knappen ovenfor.
+WarningDataDisappearsWhenDataIsExported=Advarsel, denne List indeholder kun konto-posterne, der ikke allerede er eksporteret (Eksporter dato er tom). Hvis du vil inkludere de konto-poster, der allerede er eksporteret, skal du klikke på knappen ovenfor.
 VueByAccountAccounting=Vis efter regnskabskonto
 VueBySubAccountAccounting=Vis efter regnskabsmæssig underkonto
 
 MainAccountForCustomersNotDefined=Hovedkonto (fra kontoplanen) for kunder, der ikke er defineret i opsætning
 MainAccountForSuppliersNotDefined=Hovedkonto (fra kontoplanen) for leverandører, der ikke er defineret i opsætning
 MainAccountForUsersNotDefined=Hovedkonto (fra kontoplanen) for brugere, der ikke er defineret i opsætning
-MainAccountForRevenueStampSaleNotDefined=Konto (fra kontoplanen) for indtægtsstemplet (salg), der ikke er defineret i opsætning
-MainAccountForRevenueStampPurchaseNotDefined=Konto (fra kontoplanen) for indtægtsstemplet (køb), der ikke er defineret i opsætning
 MainAccountForVatPaymentNotDefined=Konto (fra kontoplanen) til momsbetaling ikke defineret i opsætning
 MainAccountForSubscriptionPaymentNotDefined=Konto (fra kontoplanen) til medlemsbetaling ikke defineret i opsætning
 MainAccountForRetainedWarrantyNotDefined=Konto (fra kontoplanen) for den bibeholdte garanti, der ikke er defineret i opsætningen
@@ -70,13 +68,14 @@ UserAccountNotDefined=Regnskabskonto for bruger er ikke defineret i opsætning
 AccountancyArea=Bogførings område
 AccountancyAreaDescIntro=Brugen af regnskabsmodulet sker i følgende trin:
 AccountancyAreaDescActionOnce=Følgende handlinger udføres normalt kun én gang eller en gang om året ...
-AccountancyAreaDescActionOnceBis=Næste trin bør gøres for at spare dig tid i fremtiden ved at foreslå, at du automatisk den korrekte standardkonto konto, når du overfører data til regnskabet
+AccountancyAreaDescActionOnceBis=Næste trin bør gøres for at spare dig tid i fremtiden ved automatisk at foreslå dig den korrekte standardkontokonto, når du overfører data til regnskabet
 AccountancyAreaDescActionFreq=Følgende handlinger udføres normalt hver måned, uge ​​eller dag for meget store virksomheder ...
 
 AccountancyAreaDescJournalSetup=TRIN %s: Tjek indholdet af din journalliste fra menuen %s
 AccountancyAreaDescChartModel=Trin %s: Kontroller, at der findes en skabelon til en kontoplan eller opret en fra menuen %s
 AccountancyAreaDescChart=TRIN %s:Vælg og/eller udfyld dit kontoplan fra menuen %s
 
+AccountancyAreaDescFiscalPeriod=TRIN %s: Definer som standard et regnskabsår, som dine regnskabsposter skal integreres på. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescVat=Trin %s: Definer regnskabskonto for hver momssats. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescDefault=TRIN %s: Definer standard regnskabskonti. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescExpenseReport=TRIN %s: Definer standardkonti for hver type udgiftsrapport. Til dette skal du bruge menupunktet %s.
@@ -84,19 +83,20 @@ AccountancyAreaDescSal=Trin %s: Definer standardkonto for betaling af lønninger
 AccountancyAreaDescContrib=TRIN %s: Definer standardregnskabskonti for Skatter (særlige udgifter). Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescDonation=Trin %s: Definer standkonto for donationer. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescSubscription=Trin %s: Definer standardregnskabskonti for medlemsabonnement. Brug dette til menupunktet %s.
-AccountancyAreaDescMisc=Trin %s: Definer obligatorisk standardkonto og standardkonti for diverse transaktioner. Til dette skal du bruge menupunktet %s.
+AccountancyAreaDescMisc=TRIN %s: Definer obligatoriske standardkonti og standardregnskabskonti for diverse transaktioner. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescLoan=Trin %s: Definer standardkonti for lån. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescBank=Trin %s: Definer regnskabskonto og regnskabskode for hver bank og finanskonto. Til dette skal du bruge menupunktet %s.
 AccountancyAreaDescProd=TRIN %s: Definer regnskabskonti på dine produkter/tjenester. Til dette skal du bruge menupunktet %s.
 
 AccountancyAreaDescBind=Trin %s: Tjek Bogføringer mellem eksisterende linjer for %s og regnskabskonto er udført, så systemet kan bogføre transaktionerne med et enkelt klik. Færdiggør manglende bogføringer. Dette gøres via menuen %s.
 AccountancyAreaDescWriteRecords=Trin %s: Bogfør transaktioner. Dette gøres via menuen <strong>%s</strong>, ved at klikke på knapen <strong>%s</strong>.
-AccountancyAreaDescAnalyze=Trin %s: Tilføj eller rediger eksisterende transaktioner og generer rapporter og eksport af data.
+AccountancyAreaDescAnalyze=TRIN %s: Læs rapporter eller generer eksportfiler til andre bogholdere.
+AccountancyAreaDescClosePeriod=TRIN %s: Luk periode, så vi ikke kan overføre flere data i samme periode i fremtiden.
 
-AccountancyAreaDescClosePeriod=Trin %s: Luk periode, så vi kan ikke foretage ændringer i fremtiden.
-
+TheFiscalPeriodIsNotDefined=Et obligatorisk trin i opsætningen er ikke blevet gennemført (regnskabsperiode er ikke defineret)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Et obligatorisk trin i opsætningen er ikke afsluttet (regnskabskodejournal ikke defineret for alle bankkonti)
 Selectchartofaccounts=Vælg aktiv kontoplan
+CurrentChartOfAccount=Aktuel aktiv kontoplan
 ChangeAndLoad=Ret og indlæs
 Addanaccount=Tilføj en regnskabskonto
 AccountAccounting=Regnskabskonto
@@ -171,8 +171,8 @@ ACCOUNTING_MANAGE_ZERO=Tillad at administrere forskellige antal nuller i slutnin
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkte registrering af transaktionen på bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivér udkast til eksport på Journal
 ACCOUNTANCY_COMBO_FOR_AUX=Aktivér kombinationsliste for datterselskabskonto (kan være langsom, hvis du har mange tredjeparter, bryder evnen til at søge på en del af værdien)
-ACCOUNTING_DATE_START_BINDING=Definer en dato for start af binding og overførsel i regnskab. Under denne dato overføres transaktionerne ikke til regnskab.
-ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Ved regnskabsoverførsel, hvilken periode er valgt som standard
+ACCOUNTING_DATE_START_BINDING=Deaktiver binding og overførsel i bogføring, når datoen er under denne dato (transaktionerne før denne dato vil som standard blive udelukket)
+ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=På siden for at overføre data til bogføring, hvad er den periode, der er valgt som standard
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal - salg og returnering
 ACCOUNTING_PURCHASE_JOURNAL=Købsjournal - køb og returnering
@@ -186,6 +186,8 @@ ACCOUNTING_SOCIAL_JOURNAL=Kladde for skat/afgift
 ACCOUNTING_RESULT_PROFIT=Resultatregnskabskonto (fortjeneste)
 ACCOUNTING_RESULT_LOSS=Resultatregnskabskonto (tab)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Luknings journal
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Regnskabsgrupper brugt til balancekontoen (adskilt med komma)
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Regnskabsgrupper brugt til resultatopgørelsen (adskilt med komma)
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto (fra kontoplanen), der skal bruges som konto for overgangsbankoverførsler
 TransitionalAccount=Overgangs bankoverførsels konto
@@ -298,7 +300,7 @@ DescVentilExpenseReportMore=Hvis du opsætter regnskabskonto på typen af ​​
 DescVentilDoneExpenseReport=Her vises listen over linjerne for udgiftsrapporter og deres gebyrkonto
 
 Closure=Årlig lukning
-DescClosure=Se her antallet af bevægelser pr. måned, der endnu ikke er valideret og låst
+AccountancyClosureStep1Desc=Se her antallet af bevægelser pr. måned, der endnu ikke er valideret og låst
 OverviewOfMovementsNotValidated=Oversigt over bevægelser, der ikke er valideret og låst
 AllMovementsWereRecordedAsValidated=Alle bevægelser blev registreret som validerede og låste
 NotAllMovementsCouldBeRecordedAsValidated=Ikke alle bevægelser kunne registreres som validerede og låste
@@ -341,7 +343,7 @@ AccountingJournalType3=Køb
 AccountingJournalType4=Bank
 AccountingJournalType5=Udgiftsrapporter
 AccountingJournalType8=Beholdning
-AccountingJournalType9=Har nyt
+AccountingJournalType9=Overført overskud
 GenerationOfAccountingEntries=Generering af regnskabsposteringer
 ErrorAccountingJournalIsAlreadyUse=Denne kladde er allerede i brug
 AccountingAccountForSalesTaxAreDefinedInto=Bemærk: Regnskabskonto for salgsmoms er defineret i menuen <b> %s </b> - <b> %s </b>
@@ -354,10 +356,12 @@ ACCOUNTING_ENABLE_LETTERING=Aktiver bogstavfunktionen i regnskabet
 ACCOUNTING_ENABLE_LETTERING_DESC=Når denne indstilling er aktiveret, kan du på hver regnskabspost definere en kode, så du kan gruppere forskellige regnskabsbevægelser sammen. Tidligere, hvor forskellige tidsskrifter blev administreret uafhængigt, var denne funktion nødvendig for at gruppere bevægelseslinjer i forskellige tidsskrifter sammen. Men med Dolibarr-regnskab er en sådan sporingskode, kaldet " <b> %s </b> " allerede gemt automatisk, så en automatisk skrift er allerede udført uden risiko for fejl, så denne funktion er blevet ubrugelig til almindelig brug. Manuel bogstavfunktion er tilvejebragt for slutbrugere, der virkelig ikke har tillid til computermotoren, der foretager overførsel af data i bogføring.
 EnablingThisFeatureIsNotNecessary=Aktivering af denne funktion er ikke længere nødvendig for en stringent regnskabsstyring.
 ACCOUNTING_ENABLE_AUTOLETTERING=Aktiver den automatiske bogstaver ved overførsel til regnskab
-ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Koden til bogstaverne genereres og øges automatisk og vælges ikke af slutbrugeren
+ACCOUNTING_ENABLE_AUTOLETTERING_DESC=Koden til bogstaverne genereres automatisk og øges og vælges ikke af slutbrugeren
+ACCOUNTING_LETTERING_NBLETTERS=Antal bogstaver ved generering af bogstavkode (standard 3)
+ACCOUNTING_LETTERING_NBLETTERS_DESC=Nogle regnskabssoftware accepterer kun en kode på to bogstaver. Denne parameter giver dig mulighed for at indstille dette aspekt. Standardantallet af bogstaver er tre.
 OptionsAdvanced=Avancerede indstillinger
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktiver styringen af omvendt momspligt på leverandørkøb
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Når denne mulighed er aktiveret, kan du definere, at en leverandør eller en given leverandørfaktura skal overføres til bogføring anderledes: En ekstra debitering og en kreditgrænse vil genereres i regnskabet på 2 givne konti fra kontoplanen defineret i "%s " opsætningsside.
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Når denne mulighed er aktiveret, kan du definere, at en leverandør eller en given leverandørfaktura skal overføres til bogføring anderledes: En ekstra debet- og en kreditgrænse vil genereres i regnskabet på 2 givne konti fra kontoplanen defineret i "%s" opsætningsside.
 
 ## Export
 NotExportLettering=Eksporter ikke bogstaverne, når du genererer filen
@@ -441,16 +445,30 @@ AccountancyNoUnletteringModified=Ingen uafstemt ændret
 AccountancyOneUnletteringModifiedSuccessfully=Én afstemning blev ændret med succes
 AccountancyUnletteringModifiedSuccessfully=%s afstemning blev ændret med succes
 
+## Closure
+AccountancyClosureStep1=Trin 1: Valider og lås bevægelserne
+AccountancyClosureStep2=Trin 2: Luk regnskabsperioden
+AccountancyClosureStep3=Trin 3: Udpak poster (valgfrit)
+AccountancyClosureClose=Luk regnskabsperiode
+AccountancyClosureAccountingReversal=Udtræk og registrer "Overført indtjening"-poster
+AccountancyClosureStep3NewFiscalPeriod=Næste regnskabsperiode
+AccountancyClosureGenerateClosureBookkeepingRecords=Generer "Overført indtjening"-poster i den næste regnskabsperiode
+AccountancyClosureSeparateAuxiliaryAccounts=Når du genererer "Overført indtjening"-posteringer, skal du detaljere underreskonti
+AccountancyClosureCloseSuccessfully=Regnskabsperioden er afsluttet med succes
+AccountancyClosureInsertAccountingReversalSuccessfully=Bogføringsposter for "Overført indtjening" er blevet indsat
+
 ## Confirm box
 ConfirmMassUnletteringAuto=Bekræftelse af automatisk afstemning af bulk
 ConfirmMassUnletteringManual=Bekræftelse af manuel afstemning af bulk
 ConfirmMassUnletteringQuestion=Er du sikker på, at du vil afstemme de valgte %s-poster()?
 ConfirmMassDeleteBookkeepingWriting=Bekræftelse på massesletning
 ConfirmMassDeleteBookkeepingWritingQuestion=Dette vil slette transaktionen fra regnskabet (alle linjeposter relateret til den samme transaktion slettes). Er du sikker på, at du vil slette de %s valgte poster?
+AccountancyClosureConfirmClose=Er du sikker på, at du vil lukke den nuværende regnskabsperiode? <span class="warning">Du forstår, at lukning af regnskabsperioden er en irreversibel handling og vil permanent blokere enhver ændring eller sletning af poster i denne periode</span> .
+AccountancyClosureConfirmAccountingReversal=Er du sikker på, at du vil registrere poster for "Overført indtjening"?
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Visse obligatoriske trin i opsætningen blev ikke udført. Gør venligst dette
-ErrorNoAccountingCategoryForThisCountry=Ingen regnskabskontogruppe tilgængelig for land %s (Se Hjem - Opsætning - Ordbøger)
+ErrorNoAccountingCategoryForThisCountry=Ingen regnskabskontogruppe tilgængelig for landet %s (Se %s - %s - %s)
 ErrorInvoiceContainsLinesNotYetBounded=Du forsøger at bogføre nogle linjer i fakturaen <strong> %s </strong>, men nogle andre linjer er endnu ikke forbundet til en regnskabskonto. Bogføring af alle varelinjer for denne faktura nægtes.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Nogle linjer på fakturaen er ikke forbundet til en regnskabskonto.
 ExportNotSupported=Det valgte eksportformat understøttes ikke på denne side
@@ -465,6 +483,9 @@ AccountancyErrorMismatchBalanceAmount=Saldoen (%s) er ikke lig med 0
 AccountancyErrorLetteringBookkeeping=Der er opstået fejl vedrørende transaktionerne: %s
 ErrorAccountNumberAlreadyExists=Kontonummeret %s findes allerede
 ErrorArchiveAddFile=Kan ikke lægge "%s" fil i arkivet
+ErrorNoFiscalPeriodActiveFound=Der blev ikke fundet nogen aktiv regnskabsperiode
+ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Datoen for bogføringsdokumentet er ikke inden for den aktive regnskabsperiode
+ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Datoen for bogføringsdokumentet er inden for en lukket regnskabsperiode
 
 ## Import
 ImportAccountingEntries=Regnskabsposter

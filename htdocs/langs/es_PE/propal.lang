@@ -1,3 +1,6 @@
 # Dolibarr language file - Source file is en_US - propal
 ProposalShort=Cotización
+PdfCommercialProposalTitle=Cotización
+CancelPropal=Cancelar
 PropalsOpened=Abrir
+PropalStatusValidatedShort=Abrir

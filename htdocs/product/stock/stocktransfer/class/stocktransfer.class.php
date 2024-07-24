@@ -47,6 +47,11 @@ class StockTransfer extends CommonObject
 	public $table_element = 'stocktransfer_stocktransfer';
 
 	/**
+	 * @var string    Name of subtable line
+	 */
+	public $table_element_line = 'stocktransfer_stocktransferline';
+
+	/**
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
@@ -57,6 +62,10 @@ class StockTransfer extends CommonObject
 	 */
 	public $isextrafieldmanaged = 1;
 
+	/**
+	 * @var string    Field with ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_stocktransfer';
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
@@ -87,6 +96,7 @@ class StockTransfer extends CommonObject
 	public $date_prevue_arrivee;
 	public $date_reelle_depart;
 	public $date_reelle_arrivee;
+	public $origin_type;
 
 
 	const STATUS_DRAFT      = 0;
@@ -128,12 +138,12 @@ class StockTransfer extends CommonObject
 		'rowid'                    => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'entity'                   => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>'1', 'position'=>1, 'default'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref'                      => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label'                    => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200'/*, 'help'=>"Help text"*/, 'showoncombobox'=>'1',),
+		'label'                    => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'css'=>'minwidth100', 'csslist'=>'tdoverflowmax125', 'autofocusoncreate'=>1),
 		'description'              => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>31, 'notnull'=>0, 'visible'=>3,),
-		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/,),
-		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource',),
-		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination'),
+		'fk_project'               => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'$conf->project->enabled', 'position'=>32, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'picto'=>'project', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax125'),
+		'fk_soc'                   => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1/*, 'help'=>"LinkToThirdparty"*/, 'picto'=>'company', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax125'),
+		'fk_warehouse_source'      => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt source', 'enabled'=>'1', 'position'=>50, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferSource', 'picto'=>'stock', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_warehouse_destination' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Entrepôt de destination', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'help'=>'HelpWarehouseStockTransferDestination', 'picto'=>'stock', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 		'note_public'              => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private'             => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation'            => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -154,7 +164,8 @@ class StockTransfer extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
-	public $fk_soc;
+	public $socid;
+	public $fk_soc;	// deprecated
 	public $fk_project;
 	public $description;
 	public $note_public;
@@ -167,6 +178,14 @@ class StockTransfer extends CommonObject
 	public $import_key;
 	public $model_pdf;
 	public $status;
+
+	/**
+	 * @var StockTransferLine[] stock transfer line
+	 */
+	public $lines;
+
+	public $fk_warehouse_source;
+	public $fk_warehouse_destination;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -182,8 +201,12 @@ class StockTransfer extends CommonObject
 		$this->db = $db;
 		$this->origin_type = 'StockTransfer@product/stock/stocktransfer';
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
-		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
 
 		// Example to show how to set values of fields definition dynamically
 		/*if ($user->rights->stocktransfer->stocktransfer->read) {
@@ -215,15 +238,21 @@ class StockTransfer extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
 		$model_pdf = GETPOST('model');
-		if (!empty($model_pdf)) $this->model_pdf = $model_pdf;
+		if (!empty($model_pdf)) {
+			$this->model_pdf = $model_pdf;
+		}
 		$this->status = (int) $this->status;
-		if ($this->fk_warehouse_source <= 0) $this->fk_warehouse_source = 0;
-		if ($this->fk_warehouse_destination <= 0) $this->fk_warehouse_destination = 0;
+		if ($this->fk_warehouse_source <= 0) {
+			$this->fk_warehouse_source = 0;
+		}
+		if ($this->fk_warehouse_destination <= 0) {
+			$this->fk_warehouse_destination = 0;
+		}
 		return $this->createCommon($user, $notrigger);
 	}
 
@@ -247,7 +276,9 @@ class StockTransfer extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
+		if ($result > 0 && !empty($object->table_element_line)) {
+			$object->fetchLines();
+		}
 
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
@@ -299,8 +330,9 @@ class StockTransfer extends CommonObject
 		if (!$error) {
 			// copy external contacts if same company
 			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
-				if ($this->copy_linked_contact($object, 'external') < 0)
+				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
+				}
 			}
 		}
 
@@ -321,19 +353,24 @@ class StockTransfer extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+
+		$this->socid = $this->fk_soc;
+
+		if ($result > 0 && !empty($this->table_element_line)) {
+			$this->fetchLines();
+		}
 		return $result;
 	}
 
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -341,7 +378,7 @@ class StockTransfer extends CommonObject
 		$this->lines = array();
 
 		$result = $this->fetchLinesCommon();
-		usort($this->lines, array('stocktransfer', 'cmp'));
+		usort($this->lines, array('StockTransfer', 'stocktransferCmpRank'));
 		return $result;
 	}
 
@@ -352,7 +389,7 @@ class StockTransfer extends CommonObject
 	 * @param	Object	$b		2nd element to test
 	 * @return int
 	 */
-	public function cmp($a, $b)
+	public static function stocktransferCmpRank($a, $b)
 	{
 		if ($a->rang == $b->rang) {
 			return 0;
@@ -367,12 +404,15 @@ class StockTransfer extends CommonObject
 	 */
 	public function getValorisationTotale()
 	{
-
 		$total_pmp = 0;
 
-		if (empty($this->lines)) $this->fetchLines();
+		if (empty($this->lines)) {
+			$this->fetchLines();
+		}
 		if (!empty($this->lines)) {
-			foreach ($this->lines as $l) $total_pmp+= ($l->pmp * $l->qty);
+			foreach ($this->lines as $l) {
+				$total_pmp+= ($l->pmp * $l->qty);
+			}
 		}
 
 		return $total_pmp;
@@ -400,8 +440,11 @@ class StockTransfer extends CommonObject
 		$sql = 'SELECT ';
 		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
-		else $sql .= ' WHERE 1 = 1';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -458,14 +501,18 @@ class StockTransfer extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
 		$this->tms = ''; // Will be done automatically because tms field is on update cascade
 		$res = $this->updateCommon($user, $notrigger);
-		if ($this->socid > 0 || $this->fk_soc > 0 && empty($this->thirdparty)) $this->fetch_thirdparty();
-		if (empty($this->socid) && empty($this->fk_soc)) unset($this->thirdparty);
+		if (($this->socid > 0 || $this->fk_soc > 0) && empty($this->thirdparty)) {
+			$this->fetch_thirdparty();
+		}
+		if (empty($this->socid) && empty($this->fk_soc)) {
+			unset($this->thirdparty);
+		}
 		return $res;
 	}
 
@@ -474,7 +521,7 @@ class StockTransfer extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -511,7 +558,7 @@ class StockTransfer extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -552,8 +599,12 @@ class StockTransfer extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
-			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".((int) $user->id);
+			if (!empty($this->fields['date_validation'])) {
+				$sql .= ", date_validation = '".$this->db->idate($now)."',";
+			}
+			if (!empty($this->fields['fk_user_valid'])) {
+				$sql .= ", fk_user_valid = ".((int) $user->id);
+			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -567,7 +618,9 @@ class StockTransfer extends CommonObject
 			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('STOCKTRANSFER_VALIDATE', $user);
-				if ($result < 0) $error++;
+				if ($result < 0) {
+					$error++;
+				}
 				// End call triggers
 			}
 		}
@@ -582,13 +635,15 @@ class StockTransfer extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'stocktransfer/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'stocktransfer/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'stocktransfer/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -636,7 +691,7 @@ class StockTransfer extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -660,7 +715,7 @@ class StockTransfer extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -684,7 +739,7 @@ class StockTransfer extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -717,7 +772,9 @@ class StockTransfer extends CommonObject
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
+		if (!empty($conf->dol_no_mouse_hover)) {
+			$notooltip = 1;
+		} // Force disable tooltips
 
 		$result = '';
 
@@ -733,19 +790,25 @@ class StockTransfer extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
-			if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowStockTransfer");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else {
+			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -754,7 +817,9 @@ class StockTransfer extends CommonObject
 		$result .= $linkstart;
 
 		if (empty($this->showphoto_on_popup)) {
-			if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			if ($withpicto) {
+				$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			}
 		} else {
 			if ($withpicto) {
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -767,7 +832,7 @@ class StockTransfer extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -780,7 +845,9 @@ class StockTransfer extends CommonObject
 			}
 		}
 
-		if ($withpicto != 2) $result .= $this->ref;
+		if ($withpicto != 2) {
+			$result .= $this->ref;
+		}
 
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -789,8 +856,11 @@ class StockTransfer extends CommonObject
 		$hookmanager->initHooks(array('stocktransferdao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $result = $hookmanager->resPrint;
-		else $result .= $hookmanager->resPrint;
+		if ($reshook > 0) {
+			$result = $hookmanager->resPrint;
+		} else {
+			$result .= $hookmanager->resPrint;
+		}
 
 		return $result;
 	}
@@ -832,7 +902,9 @@ class StockTransfer extends CommonObject
 
 		$statusType = 'status'.$status;
 		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
+		if ($status == self::STATUS_CLOSED) {
+			$statusType = 'status6';
+		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -910,14 +982,14 @@ class StockTransfer extends CommonObject
 		global $langs, $conf;
 		$langs->load("stocks");
 
-		if (empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
+		if (!getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON')) {
 			$conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON = 'mod_stocktransfer_standard';
 		}
 
-		if (!empty($conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON)) {
+		if (getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON.".php";
+			$file = getDolGlobalString('STOCKTRANSFER_STOCKTRANSFER_ADDON') . ".php";
 			$classname = $conf->global->STOCKTRANSFER_STOCKTRANSFER_ADDON;
 
 			// Include file with class
@@ -978,9 +1050,9 @@ class StockTransfer extends CommonObject
 		if (!dol_strlen($modele)) {
 			$modele = 'eagle';
 
-			if ($this->modelpdf) {
-				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->STOCKTRANSFER_ADDON_PDF)) {
+			if ($this->model_pdf) {
+				$modele = $this->model_pdf;
+			} elseif (getDolGlobalString('STOCKTRANSFER_ADDON_PDF')) {
 				$modele = $conf->global->STOCKTRANSFER_ADDON_PDF;
 			}
 		}

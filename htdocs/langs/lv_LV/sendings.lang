@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Apstiprināts
 StatusSendingProcessedShort=Apstrādāti
 SendingSheet=Sūtījuma lapa
 ConfirmDeleteSending=Vai tiešām vēlaties dzēst šo sūtījumu?
-ConfirmValidateSending=Vai jūs tiešām vēlaties apstiprināt šo sūtījumu ar atsauci <b>%s</b>?
+ConfirmValidateSending=Vai tiešām vēlaties apstiprināt šo sūtījumu ar atsauci <b>%s</b> >?
 ConfirmCancelSending=Vai esat pārliecināts, ka vēlaties atcelt šo sūtījumu?
 DocumentModelMerou=Merou A5 modelis
 WarningNoQtyLeftToSend=Uzmanību, nav produktu kuri gaida nosūtīšanu.
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Produkta daudzums no jau saņemtiem
 NoProductToShipFoundIntoStock=Noliktavā nav atrasts neviens produkts, kas paredzēts piegādei <b> %s </ b>. Pareizu krājumu vai doties atpakaļ, lai izvēlētos citu noliktavu.
 WeightVolShort=Svars / tilp.
 ValidateOrderFirstBeforeShipment=Vispirms jums ir jāapstiprina pasūtījums, lai varētu veikt sūtījumus.
+NoLineGoOnTabToAddSome=Nav rindiņas, atveriet cilni %s, lai pievienotu
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Summēt produkta svaru
 # warehouse details
 DetailWarehouseNumber= Noliktavas detaļas
 DetailWarehouseFormat= W: %s (Daudzums: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Parādīt pēdējo noliktavā ienākšanas datumu sūtījuma izveides laikā sērijas numuram vai partijai
+CreationOptions=Pieejamās iespējas sūtījuma izveides laikā
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Sūtījumu sadale
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Rindai %s netika nosūtīts, jo tika atrasts pārāk daudz noliktavas, produkta, partijas koda kombināciju (%s).
+ErrorNoCombinationBatchcode=Nevarēja saglabāt rindu %s kā kombināciju warehouse-product-lot/serial (%s, %s, %s) krājumā netika atrasts.
+
+ErrorTooMuchShipped=Nosūtītais daudzums nedrīkst būt lielāks par pasūtīto daudzumu rindā %s.

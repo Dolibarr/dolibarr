@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016       Jamal Elbaz         <jamelbaz@gmail.pro>
- * Copyright (C) 2017-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -113,7 +113,9 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxheader('', $langs->trans('AccountingCategory'));
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $langs->trans('AccountingCategory'), $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $titlepicto = 'setup';
@@ -135,6 +137,7 @@ $s = $formaccounting->select_accounting_category($cat_id, 'account_category', 1,
 if ($formaccounting->nbaccounts_category <= 0) {
 	print '<span class="opacitymedium">'.$s.'</span>';
 } else {
+	print $s;
 	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 }
 print '</td></tr>';

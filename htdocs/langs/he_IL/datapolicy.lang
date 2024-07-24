@@ -14,79 +14,75 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = מדיניות פרטיות נתונים
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
+Module4100Desc = מודול לניהול פרטיות נתונים (תאימות ל-GDPR)
 
 #
 # Administration page
 #
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
+datapolicySetup = הגדרת מדיניות פרטיות של נתוני מודול
+Deletion = מחיקת נתונים
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+NB_MONTHS = %s חודשים
+ONE_YEAR = 1 שנה
+NB_YEARS = %s שנים
 DATAPOLICY_TIERS_CLIENT = לקוח
 DATAPOLICY_TIERS_PROSPECT = לקוח פוטנציאל
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_TIERS_FOURNISSEUR = Supplier
+DATAPOLICY_TIERS_PROSPECT_CLIENT = פרוספקט/לקוח
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = גם לא לקוח פוטנציאלי/לא לקוח
+DATAPOLICY_TIERS_FOURNISSEUR = ספק
 DATAPOLICY_CONTACT_CLIENT = לקוח
 DATAPOLICY_CONTACT_PROSPECT = לקוח פוטנציאל
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_CONTACT_FOURNISSEUR = Supplier
-DATAPOLICY_ADHERENT = Member
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = פרוספקט/לקוח
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = גם לא לקוח פוטנציאלי/לא לקוח
+DATAPOLICY_CONTACT_FOURNISSEUR = ספק
+DATAPOLICY_ADHERENT = חבר
+DATAPOLICY_Tooltip_SETUP = סוג איש קשר - ציין את הבחירות שלך עבור כל סוג.
+DATAPOLICYMail = הגדרת מיילים
+DATAPOLICYSUBJECTMAIL = Subject of the email
+DATAPOLICYCONTENTMAIL = תוכן המייל
+DATAPOLICYSUBSITUTION = אתה יכול להשתמש במשתנים הבאים במייל שלך (LINKACCEPT מאפשר ליצור קישור המתעד את הסכמת האדם, LINKREFUSED מאפשר לרשום את הסירוב של האדם):
+DATAPOLICYACCEPT = הודעה לאחר הסכם
+DATAPOLICYREFUSE = Message after disagreement
+SendAgreementText = אתה יכול לשלוח דוא"ל GDPR לכל אנשי הקשר הרלוונטיים שלך (שעדיין לא קיבלו דוא"ל ועבורם לא רשמת שום דבר על הסכם ה-GDPR שלהם). לשם כך, השתמש בכפתור הבא.
+SendAgreement = לשלוח מיילים
+AllAgreementSend = כל המיילים נשלחו
+TXTLINKDATAPOLICYACCEPT = טקסט לקישור "הסכם"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
 # Extrafields
 #
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
+DATAPOLICY_BLOCKCHECKBOX = GDPR: עיבוד נתונים אישיים
+DATAPOLICY_consentement = הסכמה שהתקבלה לעיבוד נתונים אישיים
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
+DATAPOLICY_POPUP_ANONYME_TITLE = הפוך צד שלישי לאנונימי
+DATAPOLICY_POPUP_ANONYME_TEXTE = אינך יכול למחוק איש קשר זה מ-Dolibarr מכיוון שיש פריטים קשורים. בהתאם ל-GDPR, אתה תהפוך את כל הנתונים הללו לאנונימיים כדי לכבד את ההתחייבויות שלך. תרצה להמשיך ?
 
 #
 # Button for portability
 #
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
+DATAPOLICY_PORTABILITE = ניידות GDPR
+DATAPOLICY_PORTABILITE_TITLE = ייצוא נתונים אישיים
+DATAPOLICY_PORTABILITE_CONFIRMATION = אתה רוצה לייצא את הנתונים האישיים של איש קשר זה. האם אתה בטוח ?
 
 #
 # Notes added during an anonymization
 #
-ANONYMISER_AT = Anonymised the %s
+ANONYMISER_AT = עשה אנונימי את %s
 
-# V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+DATAPOLICY_SEND = שלח דוא"ל GDPR
+MailSent = דוא"ל נשלח
 
 # ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

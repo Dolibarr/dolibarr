@@ -175,8 +175,8 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
+		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
@@ -253,14 +253,15 @@ function dpChangeDay(dateFieldID, format)
 
 /*
  * =================================================================
- * Function:
- * formatDate (javascript object Date(), format) Purpose: Returns a date in the
- * output format specified. The format string can use the following tags: Field |
- * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
- * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
- * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
- * (2 digits) Author: Laurent Destailleur Author: Matelli (see
- * http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+ * Function: formatDate(javascript object Date(), format)
+ * Purpose: Returns a date in the output format specified. The format string can use the following tags:
+ * Year | yyyy (4 digits), yy (2 digits)
+ * Month | MM (2 digits)
+ * Day of Month | dd (2 digits)
+ * Hour (1-12) | hh (2 digits) Hour (0-23) | HH (2 digits)
+ * Minute | mm (2 digits)
+ * Second | ss (2 digits)
+ * Author: Laurent Destailleur Author: Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
  * Licence: GPL
  * ==================================================================
  */
@@ -996,7 +997,7 @@ function document_preview(file, type, title)
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/webp"];
 	var showOriginalSizeButton = false;
 
-	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
+	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
@@ -1049,8 +1050,10 @@ function document_preview(file, type, title)
 		optionsbuttons = {}
 		if (mode == 'image' && showOriginalSizeButton)
 		{
+			var curRot = 0;
 			optionsbuttons = {
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
@@ -1274,7 +1277,7 @@ function price2numjs(amount) {
 
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
+if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
@@ -1297,7 +1300,9 @@ $(document).ready(function() {
 		});
 	}
 });
-<?php } ?>
+	<?php
+} ?>
+
 
 
 jQuery(document).ready(function() {
@@ -1334,17 +1339,17 @@ jQuery(document).ready(function() {
 });
 
 
+<?php
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-
-<?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component");
 	const target = $(e.target);

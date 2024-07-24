@@ -112,7 +112,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public $ref_fourn;
 
-	public $brouillon;
 	/**
 	 * @var int
 	 */
@@ -125,12 +124,12 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * @var array List of status
 	 */
-	public $statuts;
+	public $labelStatus;
 
 	/**
 	 * @var array List of status short
 	 */
-	public $statuts_short;
+	public $labelStatusShort;
 
 	public $billed;
 
@@ -143,11 +142,10 @@ class CommandeFournisseur extends CommonOrder
 	public $date_approve2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 	public $date_commande;
 
-	/**
-	 * @var int	Date expected for delivery
-	 * @deprecated		See delivery_date
-	 */
-	public $date_livraison;
+	//For backward compatibility
+	public $remise_percent;
+	public $methode_commande_id;
+	public $methode_commande;
 
 	/**
 	 *  @var int Date expected for delivery
@@ -190,8 +188,8 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string paymnet choice label
 	 */
 	public $mode_reglement;
+
 	public $user_author_id;
-	public $user_valid_id;
 	public $user_approve_id;
 	public $user_approve_id2; // Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 
@@ -214,6 +212,9 @@ class CommandeFournisseur extends CommonOrder
 	public $origin_id;
 	public $linked_objects = array();
 
+	public $date_lim_reglement;
+	public $receptions = array();
+
 	// Multicurrency
 	/**
 	 * @var int ID
@@ -225,7 +226,6 @@ class CommandeFournisseur extends CommonOrder
 	public $multicurrency_total_ht;
 	public $multicurrency_total_tva;
 	public $multicurrency_total_ttc;
-
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -354,8 +354,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	const SOURCE_ID_REPLENISHMENT = 42;
 
-
-
 	/**
 	 * 	Constructor
 	 *
@@ -376,17 +374,15 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function fetch($id, $ref = '')
 	{
-		global $conf;
-
 		// Check parameters
 		if (empty($id) && empty($ref)) {
 			return -1;
 		}
 
-		$sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
+		$sql = "SELECT c.rowid, c.entity, c.ref, ref_supplier, c.fk_soc, c.fk_statut as status, c.amount_ht, c.total_ht, c.total_ttc, c.total_tva,";
 		$sql .= " c.localtax1, c.localtax2, ";
 		$sql .= " c.date_creation, c.date_valid, c.date_approve, c.date_approve2,";
-		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve, c.fk_user_approve2,";
+		$sql .= " c.fk_user_author as user_author_id, c.fk_user_valid as user_validation_id, c.fk_user_approve as user_approve_id, c.fk_user_approve2 as user_approve_id2,";
 		$sql .= " c.date_commande as date_commande, c.date_livraison as delivery_date, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
 		$sql .= " c.fk_account,";
 		$sql .= " c.note_private, c.note_public, c.model_pdf, c.extraparams, c.billed,";
@@ -396,11 +392,11 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
+		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as c";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."c_paiement as p ON c.fk_mode_reglement = p.id";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."c_input_method as cm ON cm.rowid = c.fk_input_method";
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_incoterms as i ON c.fk_incoterms = i.rowid';
 
 		if (empty($id)) {
 			$sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
@@ -429,13 +425,13 @@ class CommandeFournisseur extends CommonOrder
 			$this->ref_supplier = $obj->ref_supplier;
 			$this->socid = $obj->fk_soc;
 			$this->fourn_id = $obj->fk_soc;
-			$this->statut = $obj->fk_statut;
-			$this->status = $obj->fk_statut;
+			$this->statut = $obj->status;	// deprecated
+			$this->status = $obj->status;
 			$this->billed = $obj->billed;
-			$this->user_author_id = $obj->fk_user_author;
-			$this->user_valid_id = $obj->fk_user_valid;
-			$this->user_approve_id = $obj->fk_user_approve;
-			$this->user_approve_id2 = $obj->fk_user_approve2;
+			$this->user_author_id = $obj->user_author_id;
+			$this->user_validation_id = $obj->user_validation_id;
+			$this->user_approve_id = $obj->user_approve_id;
+			$this->user_approve_id2 = $obj->user_approve_id2;
 			$this->total_ht				= $obj->total_ht;
 			$this->total_tva			= $obj->total_tva;
 			$this->total_localtax1		= $obj->localtax1;
@@ -451,7 +447,6 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				$this->date = $this->date_creation;
 			}
-			$this->date_livraison = $this->db->jdate($obj->delivery_date); // deprecated
 			$this->delivery_date = $this->db->jdate($obj->delivery_date);
 			$this->remise_percent = $obj->remise_percent;
 			$this->methode_commande_id = $obj->fk_input_method;
@@ -472,7 +467,6 @@ class CommandeFournisseur extends CommonOrder
 			$this->note_private = $obj->note_private;
 			$this->note_public = $obj->note_public;
 			$this->model_pdf = $obj->model_pdf;
-			$this->modelpdf = $obj->model_pdf; // deprecated
 
 			//Incoterms
 			$this->fk_incoterms = $obj->fk_incoterms;
@@ -495,13 +489,7 @@ class CommandeFournisseur extends CommonOrder
 			// fetch optionals attributes and labels
 			$this->fetch_optionals();
 
-			if ($this->statut == 0) {
-				$this->brouillon = 1;
-			}
-
-			/*
-			 * Lines
-			 */
+			// Lines
 			$result = $this->fetch_lines();
 
 			if ($result < 0) {
@@ -520,7 +508,7 @@ class CommandeFournisseur extends CommonOrder
 	 * Load array lines
 	 *
 	 * @param		int		$only_product	Return only physical products
-	 * @return		int						<0 if KO, >0 if OK
+	 * @return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($only_product = 0)
 	{
@@ -532,13 +520,13 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+		$sql .= " FROM ".$this->db->prefix()."commande_fournisseurdet as l";
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON l.fk_product = p.rowid';
 		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
@@ -593,12 +581,12 @@ class CommandeFournisseur extends CommonOrder
 				$line->ref_fourn           = $objp->ref_supplier; // The supplier ref of price when product was added. May have change since
 				$line->ref_supplier        = $objp->ref_supplier; // The supplier ref of price when product was added. May have change since
 
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					// TODO We should not fetch this properties into the fetch_lines. This is NOT properties of a line.
 					// Move this into another method and call it when required.
 
 					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
-					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.MAIN_DB_PREFIX."product_fournisseur_price";
+					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.$this->db->prefix()."product_fournisseur_price";
 					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
@@ -633,6 +621,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
+				$line->info_bits      	   = $objp->info_bits;
 				$line->special_code        = $objp->special_code;
 				$line->fk_parent_line      = $objp->fk_parent_line;
 
@@ -661,7 +650,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	User	$user			Validator User
 	 *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -672,31 +661,31 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::valid");
 		$result = 0;
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer")))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight("fournisseur", "supplier_order_advance", "validate"))) {
-				$this->db->begin();
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer")))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_order_advance", "validate"))) {
+			$this->db->begin();
 
-				// Definition of supplier order numbering model name
-				$soc = new Societe($this->db);
-				$soc->fetch($this->fourn_id);
+			// Definition of supplier order numbering model name
+			$soc = new Societe($this->db);
+			$soc->fetch($this->fourn_id);
 
-				// Check if object has a temporary ref
+			// Check if object has a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
 				$num = $this->ref;
 			}
-				$this->newref = dol_sanitizeFileName($num);
+			$this->newref = dol_sanitizeFileName($num);
 
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande_fournisseur";
-				$sql .= " SET ref='".$this->db->escape($num)."',";
-				$sql .= " fk_statut = ".self::STATUS_VALIDATED.",";
-				$sql .= " date_valid='".$this->db->idate(dol_now())."',";
-				$sql .= " fk_user_valid = ".((int) $user->id);
-				$sql .= " WHERE rowid = ".((int) $this->id);
-				$sql .= " AND fk_statut = ".self::STATUS_DRAFT;
+			$sql = 'UPDATE '.$this->db->prefix()."commande_fournisseur";
+			$sql .= " SET ref='".$this->db->escape($num)."',";
+			$sql .= " fk_statut = ".((int) self::STATUS_VALIDATED).",";
+			$sql .= " date_valid='".$this->db->idate(dol_now())."',";
+			$sql .= " fk_user_valid = ".((int) $user->id);
+			$sql .= " WHERE rowid = ".((int) $this->id);
+			$sql .= " AND fk_statut = ".((int) self::STATUS_DRAFT);
 
-				$resql = $this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if (!$resql) {
 				dol_print_error($this->db);
 				$error++;
@@ -717,17 +706,19 @@ class CommandeFournisseur extends CommonOrder
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+					$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
-					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
+					$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'fournisseur/commande/".$this->db->escape($this->newref)."'";
 					$sql .= " WHERE filepath = 'fournisseur/commande/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
-						$error++; $this->error = $this->db->lasterror();
+						$error++;
+						$this->error = $this->db->lasterror();
 					}
 
 					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -756,7 +747,8 @@ class CommandeFournisseur extends CommonOrder
 
 			if (!$error) {
 				$result = 1;
-				$this->statut = self::STATUS_VALIDATED;
+				$this->status = self::STATUS_VALIDATED;
+				$this->statut = self::STATUS_VALIDATED;	// deprecated
 				$this->ref = $num;
 			}
 
@@ -799,33 +791,33 @@ class CommandeFournisseur extends CommonOrder
 		// phpcs:enable
 		global $conf, $langs, $hookmanager;
 
-		if (empty($this->statuts) || empty($this->statuts_short)) {
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			$langs->load('orders');
 
-			$this->statuts[0] = 'StatusSupplierOrderDraft';
-			$this->statuts[1] = 'StatusSupplierOrderValidated';
-			$this->statuts[2] = 'StatusSupplierOrderApproved';
-			if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
-				$this->statuts[3] = 'StatusSupplierOrderOnProcess';
+			$this->labelStatus[0] = 'StatusSupplierOrderDraft';
+			$this->labelStatus[1] = 'StatusSupplierOrderValidated';
+			$this->labelStatus[2] = 'StatusSupplierOrderApproved';
+			if (!getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
+				$this->labelStatus[3] = 'StatusSupplierOrderOnProcess';
 			} else {
-				$this->statuts[3] = 'StatusSupplierOrderOnProcessWithValidation';
+				$this->labelStatus[3] = 'StatusSupplierOrderOnProcessWithValidation';
 			}
-			$this->statuts[4] = 'StatusSupplierOrderReceivedPartially';
-			$this->statuts[5] = 'StatusSupplierOrderReceivedAll';
-			$this->statuts[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
-			$this->statuts[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
-			$this->statuts[9] = 'StatusSupplierOrderRefused';
+			$this->labelStatus[4] = 'StatusSupplierOrderReceivedPartially';
+			$this->labelStatus[5] = 'StatusSupplierOrderReceivedAll';
+			$this->labelStatus[6] = 'StatusSupplierOrderCanceled'; // Approved->Canceled
+			$this->labelStatus[7] = 'StatusSupplierOrderCanceled'; // Process running->canceled
+			$this->labelStatus[9] = 'StatusSupplierOrderRefused';
 
 			// List of language codes for status
-			$this->statuts_short[0] = 'StatusSupplierOrderDraftShort';
-			$this->statuts_short[1] = 'StatusSupplierOrderValidatedShort';
-			$this->statuts_short[2] = 'StatusSupplierOrderApprovedShort';
-			$this->statuts_short[3] = 'StatusSupplierOrderOnProcessShort';
-			$this->statuts_short[4] = 'StatusSupplierOrderReceivedPartiallyShort';
-			$this->statuts_short[5] = 'StatusSupplierOrderReceivedAllShort';
-			$this->statuts_short[6] = 'StatusSupplierOrderCanceledShort';
-			$this->statuts_short[7] = 'StatusSupplierOrderCanceledShort';
-			$this->statuts_short[9] = 'StatusSupplierOrderRefusedShort';
+			$this->labelStatusShort[0] = 'StatusSupplierOrderDraftShort';
+			$this->labelStatusShort[1] = 'StatusSupplierOrderValidatedShort';
+			$this->labelStatusShort[2] = 'StatusSupplierOrderApprovedShort';
+			$this->labelStatusShort[3] = 'StatusSupplierOrderOnProcessShort';
+			$this->labelStatusShort[4] = 'StatusSupplierOrderReceivedPartiallyShort';
+			$this->labelStatusShort[5] = 'StatusSupplierOrderReceivedAllShort';
+			$this->labelStatusShort[6] = 'StatusSupplierOrderCanceledShort';
+			$this->labelStatusShort[7] = 'StatusSupplierOrderCanceledShort';
+			$this->labelStatusShort[9] = 'StatusSupplierOrderRefusedShort';
 		}
 
 		$statustrans = array(
@@ -853,8 +845,8 @@ class CommandeFournisseur extends CommonOrder
 			$statusClass = 'status6';
 		}
 
-		$statusLong = $langs->transnoentitiesnoconv($this->statuts[$status]).$billedtext;
-		$statusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
+		$statusLong = $langs->transnoentitiesnoconv($this->labelStatus[$status]).$billedtext;
+		$statusShort = $langs->transnoentitiesnoconv($this->labelStatusShort[$status]);
 
 		$parameters = array('status' => $status, 'mode' => $mode, 'billed' => $billed);
 		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
@@ -954,7 +946,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -964,11 +956,11 @@ class CommandeFournisseur extends CommonOrder
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowOrder");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -1024,7 +1016,7 @@ class CommandeFournisseur extends CommonOrder
 		global $db, $langs, $conf;
 		$langs->load("orders");
 
-		if (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER)) {
+		if (getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER')) {
 			$mybool = false;
 
 			$file = getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER').'.php';
@@ -1063,7 +1055,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	Class invoiced the supplier order
 	 *
 	 *  @param      User        $user       Object user making the change
-	 *	@return     int     	            <0 if KO, 0 if already billed,  >0 if OK
+	 *	@return     int     	            Return integer <0 if KO, 0 if already billed,  >0 if OK
 	 */
 	public function classifyBilled(User $user)
 	{
@@ -1075,7 +1067,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
+		$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur SET billed = 1';
 		$sql .= " WHERE rowid = ".((int) $this->id).' AND fk_statut > '.self::STATUS_DRAFT;
 
 		if ($this->db->query($sql)) {
@@ -1111,7 +1103,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	User	$user			Object user
 	 *	@param	int		$idwarehouse	Id of warhouse for stock change
 	 *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user, $idwarehouse = 0, $secondlevel = 0)
 	{
@@ -1143,19 +1135,18 @@ class CommandeFournisseur extends CommonOrder
 			$movetoapprovestatus = true;
 			$comment = '';
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 			$sql .= " SET ref='".$this->db->escape($num)."',";
 			if (empty($secondlevel)) {	// standard or first level approval
 				$sql .= " date_approve='".$this->db->idate($now)."',";
 				$sql .= " fk_user_approve = ".$user->id;
-				if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
+				if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED') && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) {
 					if (empty($this->user_approve_id2)) {
 						$movetoapprovestatus = false; // second level approval not done
 						$comment = ' (first level)';
 					}
 				}
-			} else // request a second level approval
-			{
+			} else { // request a second level approval
 				$sql .= " date_approve2='".$this->db->idate($now)."',";
 				$sql .= " fk_user_approve2 = ".((int) $user->id);
 				if (empty($this->user_approve_id)) {
@@ -1173,7 +1164,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " AND fk_statut = ".self::STATUS_VALIDATED;
 
 			if ($this->db->query($sql)) {
-				if (!empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT)) {
+				if (getDolGlobalString('SUPPLIER_ORDER_AUTOADD_USER_CONTACT')) {
 					$result = $this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
 					if ($result < 0 && $result != -2) {	// -2 means already exists
 						$error++;
@@ -1181,7 +1172,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				// If stock is incremented on validate order, we must increment it
-				if (!$error && $movetoapprovestatus && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)) {
+				if (!$error && $movetoapprovestatus && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {
 					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 
@@ -1195,7 +1186,7 @@ class CommandeFournisseur extends CommonOrder
 							$mouvP->setOrigin($this->element, $this->id);
 							// We decrement stock of product (and sub-products)
 							$up_ht_disc = $this->lines[$i]->subprice;
-							if (!empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) {
+							if (!empty($this->lines[$i]->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
 								$up_ht_disc = price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
 							}
 							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr", $this->ref));
@@ -1227,8 +1218,7 @@ class CommandeFournisseur extends CommonOrder
 					if (empty($secondlevel)) {	// standard or first level approval
 						$this->date_approve = $now;
 						$this->user_approve_id = $user->id;
-					} else // request a second level approval
-					{
+					} else { // request a second level approval
 						$this->date_approve2 = $now;
 						$this->user_approve_id2 = $user->id;
 					}
@@ -1267,7 +1257,7 @@ class CommandeFournisseur extends CommonOrder
 		if ($user->hasRight("fournisseur", "commande", "approuver")) {
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".self::STATUS_REFUSED;
+			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur SET fk_statut = ".self::STATUS_REFUSED;
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -1319,7 +1309,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".((int) $statut);
+			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur SET fk_statut = ".((int) $statut);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
@@ -1358,7 +1348,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param		integer	$date		Date
 	 * 	@param		int		$methode	Method
 	 * 	@param		string	$comment	Comment
-	 * 	@return		int			        <0 if KO, >0 if OK
+	 * 	@return		int			        Return integer <0 if KO, >0 if OK
 	 */
 	public function commande($user, $date, $methode, $comment = '')
 	{
@@ -1373,7 +1363,7 @@ class CommandeFournisseur extends CommonOrder
 				$newnoteprivate = dol_concatdesc($newnoteprivate, $langs->trans("Comment").': '.$comment);
 			}
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 			$sql .= " SET fk_statut=".self::STATUS_ORDERSENT.", fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."', ";
 			$sql .= " note_private='".$this->db->escape($newnoteprivate)."'";
 			$sql .= " WHERE rowid=".((int) $this->id);
@@ -1417,7 +1407,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param      User	$user       User making creation
 	 *	@param		int		$notrigger	Disable all triggers
-	 *  @return     int         		<0 if KO, Id of supplier order if OK
+	 *  @return     int         		Return integer <0 if KO, Id of supplier order if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -1433,7 +1423,7 @@ class CommandeFournisseur extends CommonOrder
 		if (empty($date)) {
 			$date = $now;
 		}
-		$delivery_date = empty($this->delivery_date) ? $this->date_livraison : $this->delivery_date;
+		$delivery_date = $this->delivery_date;
 
 		// Clean parameters
 		if (empty($this->source)) {
@@ -1452,10 +1442,10 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_tx = 1;
 		}
 
-		// We set order into draft status
-		$this->brouillon = 1;
+		$this->statut = self::STATUS_DRAFT;	// deprecated
+		$this->status = self::STATUS_DRAFT;
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
+		$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseur (";
 		$sql .= "ref";
 		$sql .= ", ref_supplier";
 		$sql .= ", note_private";
@@ -1479,7 +1469,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ") ";
 		$sql .= " VALUES (";
 		$sql .= "'(PROV)'";
-		$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
+		$sql .= ", ".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
 		$sql .= ", ".setEntity($this);
@@ -1498,23 +1488,22 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".(double) $this->multicurrency_tx;
+		$sql .= ", ".(float) $this->multicurrency_tx;
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
+			$this->id = $this->db->last_insert_id($this->db->prefix()."commande_fournisseur");
 
 			if ($this->id) {
 				$num = count($this->lines);
 
 				// insert products details into database
 				for ($i = 0; $i < $num; $i++) {
-										$line = $this->lines[$i];
+					$line = $this->lines[$i];
 					if (!is_object($line)) {
 						$line = (object) $line;
 					}
-
 
 					//$this->special_code = $line->special_code; // TODO : remove this in 9.0 and add special_code param to addline()
 
@@ -1552,9 +1541,10 @@ class CommandeFournisseur extends CommonOrder
 					}
 				}
 
-				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+				$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 				$sql .= " SET ref='(PROV".$this->id.")'";
 				$sql .= " WHERE rowid=".((int) $this->id);
+
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				if ($this->db->query($sql)) {
 					// Add link with price request and supplier order
@@ -1576,8 +1566,7 @@ class CommandeFournisseur extends CommonOrder
 											$error++;
 										}
 									}
-								} else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
-								{
+								} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 									$origin_id = $tmp_origin_id;
 									$ret = $this->add_object_linked($origin, $origin_id);
 									if (!$ret) {
@@ -1633,7 +1622,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param      User	$user        	User that modify
 	 *	@param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	@return     int      			   	<0 if KO, >0 if OK
+	 *	@return     int      			   	Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -1662,7 +1651,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
@@ -1677,7 +1666,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_valid) && $this->user_valid > 0 ? $this->user_valid : "null").",";
+		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
@@ -1775,10 +1764,12 @@ class CommandeFournisseur extends CommonOrder
 
 		// Clear fields
 		$this->user_author_id     = $user->id;
-		$this->user_valid         = 0;
+		$this->user_validation_id = 0;
+		$this->date 			  = '';
 		$this->date_creation      = '';
+		$this->date_commande 	  = '';
 		$this->date_validation    = '';
-		$this->ref_supplier       = '';
+		$this->ref_supplier       = null;
 		$this->user_approve_id    = '';
 		$this->user_approve_id2   = '';
 		$this->date_approve       = '';
@@ -1819,31 +1810,31 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Add order line
 	 *
-	 *	@param	string	$desc            		Description
-	 *	@param	float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
-	 *	@param	float	$qty             		Quantity
-	 *	@param	float	$txtva           		VAT Rate
-	 *	@param	float	$txlocaltax1        	Localtax1 tax
-	 *	@param	float	$txlocaltax2        	Localtax2 tax
-	 *	@param	int		$fk_product      		Id product
-	 *	@param	int		$fk_prod_fourn_price	Id supplier price
-	 *	@param	string	$ref_supplier			Supplier reference price
-	 *	@param	float	$remise_percent  		Remise
-	 *	@param	string	$price_base_type		HT or TTC
-	 *	@param	float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
-	 *	@param	int		$type					Type of line (0=product, 1=service)
-	 *	@param	int		$info_bits				More information
-	 *	@param	bool	$notrigger				Disable triggers
-	 *	@param	int		$date_start				Date start of service
-	 *	@param	int		$date_end				Date end of service
-	 *	@param	array	$array_options			extrafields array
-	 *	@param 	string	$fk_unit 				Code of the unit to use. Null to use the default one
-	 *	@param 	string	$pu_ht_devise			Amount in currency
-	 *	@param	string	$origin					'order', ...
-	 *	@param	int		$origin_id				Id of origin object
-	 *	@param	int		$rang					Rank
-	 *	@param	int		$special_code			Special code
-	 *	@return	int								Return integer <=0 if KO, >0 if OK
+	 *	@param      string	$desc            		Description
+	 *	@param      float	$pu_ht              	Unit price (used if $price_base_type is 'HT')
+	 *	@param      float	$qty             		Quantity
+	 *	@param      float	$txtva           		VAT Rate
+	 *	@param      float	$txlocaltax1        	Localtax1 tax
+	 *  @param      float	$txlocaltax2        	Localtax2 tax
+	 *	@param      int		$fk_product      		Id product
+	 *  @param      int		$fk_prod_fourn_price	Id supplier price
+	 *  @param      string	$ref_supplier			Supplier reference price
+	 *	@param      float	$remise_percent  		Remise
+	 *	@param      string	$price_base_type		HT or TTC
+	 *	@param		float	$pu_ttc					Unit price TTC (used if $price_base_type is 'TTC')
+	 *	@param		int		$type					Type of line (0=product, 1=service)
+	 *	@param		int		$info_bits				More information
+	 *  @param		bool	$notrigger				Disable triggers
+	 *  @param		int		$date_start				Date start of service
+	 *  @param		int		$date_end				Date end of service
+	 *  @param		array	$array_options			extrafields array
+	 *  @param 		string	$fk_unit 				Code of the unit to use. Null to use the default one
+	 *  @param 		string	$pu_ht_devise			Amount in currency
+	 *  @param		string	$origin					'order', ...
+	 *  @param		int		$origin_id				Id of origin object
+	 *  @param		int		$rang					Rank
+	 * 	@param		int		$special_code			Special code
+	 *	@return     int             				Return integer <=0 if KO, >0 if OK
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $fk_prod_fourn_price = 0, $ref_supplier = '', $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $type = 0, $info_bits = 0, $notrigger = false, $date_start = null, $date_end = null, $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $origin = '', $origin_id = 0, $rang = -1, $special_code = 0)
 	{
@@ -1916,7 +1907,7 @@ class CommandeFournisseur extends CommonOrder
 			$label = '';	// deprecated
 
 			if ($fk_product > 0) {
-				if (!empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) {	// Not the common case
+				if (getDolGlobalString('SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY')) {	// Not the common case
 					// Check quantity is enough
 					dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
 					$prod = new ProductFournisseur($this->db);
@@ -1968,7 +1959,7 @@ class CommandeFournisseur extends CommonOrder
 				}
 
 				// Predefine quantity according to packaging
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					$prod = new Product($this->db);
 					$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', (empty($this->fk_soc) ? $this->socid : $this->fk_soc));
 
@@ -2056,7 +2047,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->total_localtax2 = $total_localtax2;
 			$this->line->total_ttc = $total_ttc;
 			$this->line->product_type = $type;
-			$this->line->special_code   = (!empty($this->special_code) ? $this->special_code : 0);
+			$this->line->special_code   = (!empty($special_code) ? $special_code : 0);
 			$this->line->origin = $origin;
 			$this->line->origin_id = $origin_id;
 			$this->line->fk_unit = $fk_unit;
@@ -2084,7 +2075,7 @@ class CommandeFournisseur extends CommonOrder
 			$result = $this->line->insert($notrigger);
 			if ($result > 0) {
 				// Reorder if child line
-				if (!empty($fk_parent_line)) {
+				if (!empty($this->line->fk_parent_line)) {
 					$this->line_order(true, 'DESC');
 				} elseif ($rang > 0 && $rang <= count($this->lines)) { // Update all rank of all other lines
 					$linecount = count($this->lines);
@@ -2129,7 +2120,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param	int			$fk_commandefourndet	Id of supplier order line
 	 * @param	int			$notrigger          	1 = notrigger
 	 * @param	int			$fk_reception          	Id of reception to link
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @return 	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function dispatchProduct($user, $product, $qty, $entrepot, $price = 0, $comment = '', $eatby = '', $sellby = '', $batch = '', $fk_commandefourndet = 0, $notrigger = 0, $fk_reception = 0)
 	{
@@ -2149,7 +2140,7 @@ class CommandeFournisseur extends CommonOrder
 		}
 
 		$dispatchstatus = 1;
-		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 			$dispatchstatus = 0; // Setting dispatch status (a validation step after receiving products) will be done manually to 1 or 2 if this option is on
 		}
 
@@ -2160,7 +2151,7 @@ class CommandeFournisseur extends CommonOrder
 		if (($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY || $this->statut == self::STATUS_RECEIVED_COMPLETELY)) {
 			$this->db->begin();
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
+			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseur_dispatch";
 			$sql .= " (fk_commande, fk_product, qty, fk_entrepot, fk_user, datec, fk_commandefourndet, status, comment, eatby, sellby, batch, fk_reception) VALUES";
 			$sql .= " ('".$this->id."','".$product."','".$qty."',".($entrepot > 0 ? "'".$entrepot."'" : "null").",'".$user->id."','".$this->db->idate($now)."','".$fk_commandefourndet."', ".$dispatchstatus.", '".$this->db->escape($comment)."', ";
 			$sql .= ($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ".($batch ? "'".$this->db->escape($batch)."'" : "null").", ".($fk_reception > 0 ? "'".$this->db->escape($fk_reception)."'" : "null");
@@ -2184,7 +2175,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			// If module stock is enabled and the stock increase is done on purchase order dispatching
-			if (!$error && $entrepot > 0 && isModEnabled('stock') && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+			if (!$error && $entrepot > 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER')) {
 				$mouv = new MouvementStock($this->db);
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
@@ -2192,7 +2183,7 @@ class CommandeFournisseur extends CommonOrder
 					$mouv->setOrigin($this->element, $this->id);
 
 					// Method change if qty < 0
-					if (!empty($conf->global->SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN) && $qty < 0) {
+					if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN') && $qty < 0) {
 						$result = $mouv->livraison($user, $product, $entrepot, $qty*(-1), $price, $comment, $now, $eatby, $sellby, $batch, 0, $inventorycode);
 					} else {
 						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, '', 0, $inventorycode);
@@ -2225,7 +2216,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param	int		$idline		Id of line to delete
 	 *	@param	int		$notrigger	1=Disable call to triggers
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteline($idline, $notrigger = 0)
 	{
@@ -2264,7 +2255,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param	User	$user		Object user
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -2299,7 +2290,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
-		$main = MAIN_DB_PREFIX.'commande_fournisseurdet';
+		$main = $this->db->prefix().'commande_fournisseurdet';
 		$ef = $main."_extrafields";
 		$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".((int) $this->id).")";
 		dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
@@ -2309,7 +2300,7 @@ class CommandeFournisseur extends CommonOrder
 			$error++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseurdet WHERE fk_commande =".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
 			$this->error = $this->db->lasterror();
@@ -2317,7 +2308,7 @@ class CommandeFournisseur extends CommonOrder
 			$error++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".((int) $this->id);
+		$sql = "DELETE FROM ".$this->db->prefix()."commande_fournisseur WHERE rowid =".((int) $this->id);
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if ($resql = $this->db->query($sql)) {
 			if ($this->db->affected_rows($resql) < 1) {
@@ -2352,7 +2343,8 @@ class CommandeFournisseur extends CommonOrder
 
 		if (!$error) {
 			// Delete record into ECM index (Note that delete is also done when deleting files with the dol_delete_dir_recursive
-			$this->deleteEcmFiles();
+			$this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			$this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
 
 			// We remove directory
 			$ref = dol_sanitizeFileName($this->ref);
@@ -2388,36 +2380,6 @@ class CommandeFournisseur extends CommonOrder
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Get list of order methods
-	 *
-	 *	@return int 0 if OK, <0 if KO
-	 */
-	public function get_methodes_commande()
-	{
-		// phpcs:enable
-		$sql = "SELECT rowid, libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method";
-		$sql .= " WHERE active = 1";
-
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			$this->methodes_commande = array();
-			while ($i < $num) {
-				$row = $this->db->fetch_row($resql);
-
-				$this->methodes_commande[$row[0]] = $row[1];
-
-				$i++;
-			}
-			return 0;
-		} else {
-			return -1;
-		}
-	}
 
 	/**
 	 * Return array of dispatched lines waiting to be approved for this order
@@ -2435,9 +2397,9 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT p.ref, p.label,";
 		$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 		$sql .= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.fk_commandefourndet";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
-		$sql .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
+		$sql .= " FROM ".$this->db->prefix()."product as p,";
+		$sql .= " ".$this->db->prefix()."commande_fournisseur_dispatch as cfd";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e ON cfd.fk_entrepot = e.rowid";
 		$sql .= " WHERE cfd.fk_commande = ".((int) $this->id);
 		$sql .= " AND cfd.fk_product = p.rowid";
 		if ($status >= 0) {
@@ -2479,7 +2441,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param	integer	$date		Date of reception
 	 *	@param	string	$type		Type of receipt ('tot' = total/done, 'par' = partial, 'nev' = never, 'can' = cancel)
 	 *	@param	string	$comment	Comment
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function Livraison($user, $date, $type, $comment)
 	{
@@ -2515,7 +2477,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			// Some checks to accept the record
-			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				// If option SUPPLIER_ORDER_USE_DISPATCH_STATUS is on, we check all reception are approved to allow status "total/done"
 				if (!$error && ($type == 'tot')) {
 					$dispatchedlinearray = $this->getDispachedLines(0);
@@ -2526,7 +2488,7 @@ class CommandeFournisseur extends CommonOrder
 						dol_syslog('ErrorCantSetReceptionToTotalDoneWithReceptionToApprove', LOG_DEBUG);
 					}
 				}
-				if (!$error && !empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE) && ($type == 'tot')) {	// Accept to move to reception done, only if status of all line are ok (refuse denied)
+				if (!$error && getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS_NEED_APPROVE') && ($type == 'tot')) {	// Accept to move to reception done, only if status of all line are ok (refuse denied)
 					$dispatcheddenied = $this->getDispachedLines(2);
 					if (count($dispatchedlinearray) > 0) {
 						$result = -1;
@@ -2542,7 +2504,7 @@ class CommandeFournisseur extends CommonOrder
 			if (empty($error)) {
 				$this->db->begin();
 
-				$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+				$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 				$sql .= " SET fk_statut = ".((int) $statut);
 				$sql .= " WHERE rowid = ".((int) $this->id);
 				$sql .= " AND fk_statut IN (".self::STATUS_ORDERSENT.",".self::STATUS_RECEIVED_PARTIALLY.")"; // Process running or Partially received
@@ -2553,7 +2515,7 @@ class CommandeFournisseur extends CommonOrder
 					$result = 1;
 					$old_statut = $this->statut;
 					$this->statut = $statut;
-					$this->actionmsg2 = $comment;
+					$this->context['actionmsg2'] = $comment;
 
 					// Call trigger
 					$result_trigger = $this->call_trigger('ORDER_SUPPLIER_RECEIVE', $user);
@@ -2592,7 +2554,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      User 	$user        		Object user that modify
 	 *	@param      int		$delivery_date		Delivery date
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         				<0 if ko, >0 if ok
+	 *	@return     int         				Return integer <0 if ko, >0 if ok
 	 *	@deprecated Use  setDeliveryDate
 	 */
 	public function set_date_livraison($user, $delivery_date, $notrigger = 0)
@@ -2607,7 +2569,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      User			$user        		Objet user making change
 	 *	@param      integer  		$delivery_date     Planned delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         						<0 if KO, >0 if OK
+	 *	@return     int         						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDeliveryDate($user, $delivery_date, $notrigger = 0)
 	{
@@ -2616,7 +2578,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 			$sql .= " SET date_livraison = ".($delivery_date ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2629,7 +2591,6 @@ class CommandeFournisseur extends CommonOrder
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->date_livraison = $delivery_date;
 				$this->delivery_date = $delivery_date;
 			}
 
@@ -2665,7 +2626,7 @@ class CommandeFournisseur extends CommonOrder
 	 *	@param      User			$user        		Objet utilisateur qui modifie
 	 *	@param      int				$id_projet    	 	Delivery date
 	 *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
-	 *	@return     int         						<0 si ko, >0 si ok
+	 *	@return     int         						Return integer <0 si ko, >0 si ok
 	 */
 	public function set_id_projet($user, $id_projet, $notrigger = 0)
 	{
@@ -2675,7 +2636,7 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+			$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 			$sql .= " SET fk_projet = ".($id_projet > 0 ? (int) $id_projet : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2723,7 +2684,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param  User	$user           User that create
 	 *  @param  int		$idc			Id of purchase order to update
 	 *  @param	int		$comclientid	Id of sale order to use as template
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateFromCommandeClient($user, $idc, $comclientid)
 	{
@@ -2744,7 +2705,7 @@ class CommandeFournisseur extends CommonOrder
 				$ref    = $prod->ref;
 			}
 
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
+			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseurdet";
 			$sql .= " (fk_commande, label, description, fk_product, price, qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, remise, ref)";
 			$sql .= " VALUES (".((int) $idc).", '".$this->db->escape($label)."', '".$this->db->escape($comclient->lines[$i]->desc)."'";
 			$sql .= ",".$comclient->lines[$i]->fk_product.", ".price2num($comclient->lines[$i]->price, 'MU');
@@ -2763,7 +2724,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *  @param      User	$user       Object user that change status
 	 *  @param      int		$status		New status
-	 *  @return     int         		<0 if KO, >0 if OK
+	 *  @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function setStatus($user, $status)
 	{
@@ -2772,7 +2733,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
+		$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur';
 		$sql .= " SET fk_statut = ".$status;
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -2834,7 +2795,7 @@ class CommandeFournisseur extends CommonOrder
 	 * 	@param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 *  @param		string		$ref_supplier		Supplier ref
-	 *	@return    	int         	    			< 0 if error, > 0 if ok
+	 *	@return    	int         	    			Return integer < 0 if error, > 0 if ok
 	 */
 	public function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $info_bits = 0, $type = 0, $notrigger = 0, $date_start = '', $date_end = '', $array_options = 0, $fk_unit = null, $pu_ht_devise = 0, $ref_supplier = '')
 	{
@@ -2844,7 +2805,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$error = 0;
 
-		if ($this->brouillon) {
+		if ($this->statut == self::STATUS_DRAFT) {
 			// Clean parameters
 			if (empty($qty)) {
 				$qty = 0;
@@ -2860,9 +2821,6 @@ class CommandeFournisseur extends CommonOrder
 			}
 			if (empty($txlocaltax2)) {
 				$txlocaltax2 = 0;
-			}
-			if (empty($remise)) {
-				$remise = 0;
 			}
 			if (empty($remise_percent)) {
 				$remise_percent = 0;
@@ -2941,7 +2899,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->line->desc = $desc;
 
 			// redefine quantity according to packaging
-			if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
@@ -3041,7 +2999,7 @@ class CommandeFournisseur extends CommonOrder
 		$prodid = 0;
 		$product = new ProductFournisseur($this->db);
 		$sql = "SELECT rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product";
+		$sql .= " FROM ".$this->db->prefix()."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$sql .= $this->db->order("rowid", "ASC");
 		$sql .= $this->db->plimit(1);
@@ -3078,7 +3036,6 @@ class CommandeFournisseur extends CommonOrder
 			$line->desc = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->price = 100;
 			$line->tva_tx = 19.6;
 			$line->localtax1_tx = 0;
 			$line->localtax2_tx = 0;
@@ -3115,29 +3072,21 @@ class CommandeFournisseur extends CommonOrder
 	{
 		$sql = 'SELECT c.rowid, date_creation as datec, tms as datem, date_valid as date_validation, date_approve as datea, date_approve2 as datea2,';
 		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid, fk_user_approve, fk_user_approve2';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur as c';
+		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
-				if ($obj->fk_user_author) {
-					$this->user_creation_id = $obj->fk_user_author;
-				}
-				if ($obj->fk_user_valid) {
-					$this->user_validation_id = $obj->fk_user_valid;
-				}
-				if ($obj->fk_user_modif) {
-					$this->user_modification_id = $obj->fk_user_modif;
-				}
-				if ($obj->fk_user_approve) {
-					$this->user_approve_id = $obj->fk_user_approve;
-				}
-				if ($obj->fk_user_approve2) {
-					$this->user_approve_id2 = $obj->fk_user_approve2;
-				}
+
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_validation_id = $obj->fk_user_valid;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_approve_id = $obj->fk_user_approve;
+				$this->user_approve_id2 = $obj->fk_user_approve2;
 
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
@@ -3155,7 +3104,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 *	Charge indicateurs this->nb de tableau de bord
 	 *
-	 *	@return     int         <0 si ko, >0 si ok
+	 *	@return     int         Return integer <0 si ko, >0 si ok
 	 */
 	public function load_state_board()
 	{
@@ -3166,10 +3115,10 @@ class CommandeFournisseur extends CommonOrder
 		$clause = "WHERE";
 
 		$sql = "SELECT count(co.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as co";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
+		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as co";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."societe as s ON co.fk_soc = s.rowid";
 		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
 		}
@@ -3195,7 +3144,7 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 *	@param          User	$user   Objet user
 	 *  @param          int		$mode   "opened", "awaiting" for orders awaiting reception
-	 *	@return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
+	 *	@return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode = 'opened')
 	{
@@ -3203,9 +3152,9 @@ class CommandeFournisseur extends CommonOrder
 		global $conf, $langs;
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.fk_statut, c.date_livraison as delivery_date, c.total_ht";
-		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as c";
 		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
-			$sql .= " JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+			$sql .= " JOIN ".$this->db->prefix()."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		if ($mode === 'awaiting') {
@@ -3266,7 +3215,7 @@ class CommandeFournisseur extends CommonOrder
 
 		if ($this->methode_commande_id > 0) {
 			$sql = "SELECT rowid, code, libelle as label";
-			$sql .= " FROM ".MAIN_DB_PREFIX.'c_input_method';
+			$sql .= " FROM ".$this->db->prefix().'c_input_method';
 			$sql .= " WHERE active=1 AND rowid = ".((int) $this->methode_commande_id);
 
 			$resql = $this->db->query($sql);
@@ -3297,7 +3246,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int          				< 0 if KO, 0 = no doc generated, > 0 if OK
+	 *  @return     int          				Return integer < 0 if KO, 0 = no doc generated, > 0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -3308,7 +3257,7 @@ class CommandeFournisseur extends CommonOrder
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->COMMANDE_SUPPLIER_ADDON_PDF)) {
+			} elseif (getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF')) {
 				$modele = getDolGlobalString('COMMANDE_SUPPLIER_ADDON_PDF');
 			}
 		}
@@ -3416,10 +3365,6 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf;
 
-		if (empty($this->delivery_date) && !empty($this->date_livraison)) {
-			$this->delivery_date = $this->date_livraison; // For backward compatibility
-		}
-
 		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
 			$now = dol_now();
 			if (!empty($this->delivery_date)) {
@@ -3449,10 +3394,6 @@ class CommandeFournisseur extends CommonOrder
 	{
 		global $conf, $langs;
 
-		if (empty($this->delivery_date) && !empty($this->date_livraison)) {
-			$this->delivery_date = $this->date_livraison; // For backward compatibility
-		}
-
 		$text = '';
 
 		if ($this->statut == self::STATUS_ORDERSENT || $this->statut == self::STATUS_RECEIVED_PARTIALLY) {
@@ -3478,7 +3419,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @param 		User 	$user                   User action
 	 * @param       int     $closeopenorder         Close if received
 	 * @param		string	$comment				Comment
-	 * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
+	 * @return		int		                        Return integer <0 if KO, 0 if not applicable, >0 if OK
 	 */
 	public function calcAndSetStatusDispatch(User $user, $closeopenorder = 1, $comment = '')
 	{
@@ -3492,13 +3433,14 @@ class CommandeFournisseur extends CommonOrder
 
 			$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
 			$filter = array('t.fk_commande'=>$this->id);
-			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS')) {
 				$filter['t.status'] = 1; // Restrict to lines with status validated
 			}
 
 			$ret = $supplierorderdispatch->fetchAll('', '', 0, 0, $filter);
 			if ($ret < 0) {
-				$this->error = $supplierorderdispatch->error; $this->errors = $supplierorderdispatch->errors;
+				$this->error = $supplierorderdispatch->error;
+				$this->errors = $supplierorderdispatch->errors;
 				return $ret;
 			} else {
 				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
@@ -3511,7 +3453,7 @@ class CommandeFournisseur extends CommonOrder
 					}
 					foreach ($this->lines as $line) {
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
-						if (empty($conf->global->STOCK_SUPPORTS_SERVICES) && $line->product_type > 0) {
+						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
 							continue;
 						}
 						$qtywished[$line->fk_product] += $line->qty;
@@ -3545,7 +3487,7 @@ class CommandeFournisseur extends CommonOrder
 							}
 							return 4;
 						}
-					} elseif (!empty($conf->global->SUPPLIER_ORDER_MORE_THAN_WISHED)) {
+					} elseif (getDolGlobalString('SUPPLIER_ORDER_MORE_THAN_WISHED')) {
 						//set livraison to 'tot' if more products received than wished. (and if $closeopenorder is set to 1 of course...)
 
 						$close = 0;
@@ -3607,7 +3549,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
 	 *
 	 *	@param      int		$filtre_statut      Filter on shipment status
-	 * 	@return     int                			<0 if KO, Nb of lines found if OK
+	 * 	@return     int                			Return integer <0 if KO, Nb of lines found if OK
 	 */
 	public function loadReceptions($filtre_statut = -1)
 	{
@@ -3617,11 +3559,11 @@ class CommandeFournisseur extends CommonOrder
 
 		$sql = 'SELECT cd.rowid, cd.fk_product,';
 		$sql .= ' sum(cfd.qty) as qty';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch as cfd,';
+		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur_dispatch as cfd,';
 		if ($filtre_statut >= 0) {
-			$sql .= ' '.MAIN_DB_PREFIX.'reception as e,';
+			$sql .= ' '.$this->db->prefix().'reception as e,';
 		}
-		$sql .= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
+		$sql .= ' '.$this->db->prefix().'commande_fournisseurdet as cd';
 		$sql .= ' WHERE';
 		if ($filtre_statut >= 0) {
 			$sql .= ' cfd.fk_reception = e.rowid AND';
@@ -3674,7 +3616,9 @@ class CommandeFournisseur extends CommonOrder
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'socid') || property_exists($this, 'total_tva')) {
 			$return .='<br><span class="info-box-label amount">'.$this->socid.'</span>';
 		}
@@ -3682,7 +3626,7 @@ class CommandeFournisseur extends CommonOrder
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Billed").' : </span><span class="info-box-label">'.yn($this->billed).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -3738,6 +3682,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 	public $date_start;
 	public $date_end;
+	public $fk_fournprice;
+	public $packaging;
+	public $pa_ht;
 
 	// From llx_product_fournisseur_price
 
@@ -3771,7 +3718,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *  Load line order
 	 *
 	 *  @param  int		$rowid      Id line order
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -3786,8 +3733,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' c.fk_soc as socid';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur as c, '.MAIN_DB_PREFIX.'commande_fournisseurdet as cd';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur as c, '.$this->db->prefix().'commande_fournisseurdet as cd';
+		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON cd.fk_product = p.rowid';
 		$sql .= ' WHERE cd.fk_commande = c.rowid AND cd.rowid = '.((int) $rowid);
 
 		$result = $this->db->query($sql);
@@ -3826,12 +3773,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->product_label    = $objp->product_label;
 				$this->product_desc     = $objp->product_desc;
 
-				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) {
+				if (getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 					// TODO We should not fetch this properties into the fetch_lines. This is NOT properties of a line.
 					// Move this into another method and call it when required.
 
 					// Take better packaging for $objp->qty (first supplier ref quantity <= $objp->qty)
-					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.MAIN_DB_PREFIX."product_fournisseur_price";
+					$sqlsearchpackage = 'SELECT rowid, packaging FROM '.$this->db->prefix()."product_fournisseur_price";
 					$sqlsearchpackage .= ' WHERE entity IN ('.getEntity('product_fournisseur_price').")";
 					$sqlsearchpackage .= " AND fk_product = ".((int) $objp->fk_product);
 					$sqlsearchpackage .= " AND ref_fourn = '".$this->db->escape($objp->ref_supplier)."'";
@@ -3882,7 +3829,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *	Insert line into database
 	 *
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0)
 	{
@@ -3951,13 +3898,13 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$this->db->begin();
 
 		// Insertion dans base de la ligne
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element;
+		$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element;
 		$sql .= " (fk_commande, label, description, date_start, date_end,";
 		$sql .= " fk_product, product_type, special_code, rang,";
 		$sql .= " qty, vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
 		$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_unit,";
-		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc";
-		$sql .= ")";
+		$sql .= " fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc,";
+		$sql .= " fk_parent_line)";
 		$sql .= " VALUES (".$this->fk_commande.", '".$this->db->escape($this->label)."','".$this->db->escape($this->desc)."',";
 		$sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
@@ -3989,12 +3936,13 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');
 		$sql .= ", ".($this->multicurrency_total_tva ? price2num($this->multicurrency_total_tva) : '0');
 		$sql .= ", ".($this->multicurrency_total_ttc ? price2num($this->multicurrency_total_ttc) : '0');
+		$sql .= ", ".((!empty($this->fk_parent_line) && $this->fk_parent_line > 0) ? $this->fk_parent_line : 'null');
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+			$this->id = $this->db->last_insert_id($this->db->prefix().$this->table_element);
 			$this->rowid = $this->id;
 
 			if (!$error) {
@@ -4034,18 +3982,17 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 *	Update the line object into db
 	 *
 	 *	@param      int		$notrigger		1 = disable triggers
-	 *	@return		int		<0 si ko, >0 si ok
+	 *	@return		int		Return integer <0 si ko, >0 si ok
 	 */
 	public function update($notrigger = 0)
 	{
-		global $conf, $user;
+		global $user;
 
 		$error = 0;
 
 		$this->db->begin();
 
-		// Mise a jour ligne en base
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element." SET";
 		$sql .= "  description='".$this->db->escape($this->desc)."'";
 		$sql .= ", ref='".$this->db->escape($this->ref_supplier)."'";
 		$sql .= ", subprice='".price2num($this->subprice)."'";
@@ -4117,7 +4064,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 * 	Delete line in database
 	 *
 	 *	@param      int     $notrigger  1=Disable call to triggers
-	 *	@return     int                 <0 if KO, >0 if OK
+	 *	@return     int                 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = 0)
 	{
@@ -4134,14 +4081,14 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			return -1;
 		}
 
-		$sql1 = 'UPDATE '.MAIN_DB_PREFIX."commandedet SET fk_commandefourndet = NULL WHERE rowid=".((int) $this->id);
+		$sql1 = 'UPDATE '.$this->db->prefix()."commandedet SET fk_commandefourndet = NULL WHERE rowid=".((int) $this->id);
 		$resql = $this->db->query($sql1);
 		if (!$resql) {
 			$this->db->rollback();
 			return -1;
 		}
 
-		$sql2 = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".((int) $this->id);
+		$sql2 = 'DELETE FROM '.$this->db->prefix()."commande_fournisseurdet WHERE rowid=".((int) $this->id);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql2);

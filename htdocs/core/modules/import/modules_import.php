@@ -43,6 +43,16 @@ class ModeleImports
 	public $error = '';
 
 	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string[] warnings codes (or messages)
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var string Code of driver
 	 */
 	public $id;
@@ -75,8 +85,35 @@ class ModeleImports
 
 	public $libversion = array();
 
+	/**
+	 * @var string charset
+	 */
 	public $charset;
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
+
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var Societe thirdparty
+	 */
+	public $thirdpartyobject;
 
 	/**
 	 * @var	array	Element mapping from table name

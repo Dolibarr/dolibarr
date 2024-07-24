@@ -78,7 +78,7 @@ class UserBankAccount extends Account
 
 		$this->userid = 0;
 		$this->solde = 0;
-		$this->error_number = 0;
+		$this->balance = 0;
 	}
 
 
@@ -87,7 +87,7 @@ class UserBankAccount extends Account
 	 *
 	 * @param	User|null	$user		User
 	 * @param	int			$notrigger	1=Disable triggers
-	 * @return	int						<0 if KO, >= 0 if OK
+	 * @return	int						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function create(User $user = null, $notrigger = 0)
 	{
@@ -115,7 +115,7 @@ class UserBankAccount extends Account
 	 *
 	 *	@param	User|null	$user		Object user
 	 *	@param	int			$notrigger	1=Disable triggers
-	 *	@return	int						<=0 if KO, >0 if OK
+	 *	@return	int						Return integer <=0 if KO, >0 if OK
 	 */
 	public function update(User $user = null, $notrigger = 0)
 	{
@@ -160,7 +160,7 @@ class UserBankAccount extends Account
 	 *	@param	int		$id			Id of record
 	 *	@param	string	$ref		Ref of record
 	 *  @param  int     $userid     User id
-	 * 	@return	int					<0 if KO, >0 if OK
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $userid = 0)
 	{
@@ -230,7 +230,7 @@ class UserBankAccount extends Account
 	 *  Delete user bank account from database
 	 *
 	 *  @param	User|null	$user	User deleting
-	 *  @return int             	<0 if KO, >0 if OK
+	 *  @return int             	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user = null)
 	{
@@ -302,5 +302,20 @@ class UserBankAccount extends Account
 		}
 
 		return $rib;
+	}
+
+	/**
+	 * Return if a country of userBank is inside the EEC (European Economic Community)
+	 * @return     boolean    true = country inside EEC, false = country outside EEC
+	 */
+	public function checkCountryBankAccount()
+	{
+		if (!empty($this->country_code)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+			$country_code_in_EEC = getCountriesInEEC();
+			return in_array($this->country_code, $country_code_in_EEC);
+		} else {
+			return false;
+		}
 	}
 }

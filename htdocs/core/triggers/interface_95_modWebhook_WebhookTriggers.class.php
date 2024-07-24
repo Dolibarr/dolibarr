@@ -86,7 +86,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 * @param User 			$user 		Object user
 	 * @param Translate 	$langs 		Object langs
 	 * @param Conf 			$conf 		Object conf
-	 * @return int              		<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{

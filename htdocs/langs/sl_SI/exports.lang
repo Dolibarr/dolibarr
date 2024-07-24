@@ -62,7 +62,6 @@ ChooseFileToImport=Naložite datoteko in kliknite ikono %s, da izberete datoteko
 SourceFileFormat=Format izvorne datoteke
 FieldsInSourceFile=Polja v izvorni datoteki
 FieldsInTargetDatabase=Ciljna polja v Dolibarr bazi podatkov (krepko=obvezno)
-Field=Polje
 NoFields=Ni polj
 MoveField=Premaknite kolono s polji številka %s
 ExampleOfImportFile=Primer uvozne datoteke
@@ -145,3 +144,4 @@ SelectImportFieldsSource = Izberite polja izvorne datoteke, ki jih želite uvozi
 MandatoryTargetFieldsNotMapped=Nekatera obvezna ciljna polja niso preslikana
 AllTargetMandatoryFieldsAreMapped=Vsa ciljna polja, ki potrebujejo obvezno vrednost, so preslikana
 ResultOfSimulationNoError=Rezultat simulacije: Ni napake
+NumberOfLinesLimited=Število vrstic je omejeno

@@ -191,7 +191,7 @@ class FormWebsite
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
 		if ($useempty == 1 || $useempty == 2) {
 			$out .= '<option value="-1">&nbsp;</option>';
@@ -282,7 +282,7 @@ class FormWebsite
 				}
 				if ($website->fk_default_home && $key == $website->fk_default_home) {
 					//$valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
-					$valueforoption .= ' <span class="opacitymedium fa fa-home"></span>';
+					$valueforoption .= ' <span class="opacitymedium fas fa-home"></span>';
 				}
 
 				$out .= '<option value="'.$key.'"';

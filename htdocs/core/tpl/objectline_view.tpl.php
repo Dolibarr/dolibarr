@@ -76,7 +76,7 @@ $domData .= ' data-qty="'.$line->qty.'"';
 $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $sign = 1;
-if (!empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE_SCREEN) && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
+if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && in_array($object->element, array('facture', 'invoice_supplier')) && $object->type == $object::TYPE_CREDIT_NOTE) {
 	$sign = -1;
 }
 
@@ -85,8 +85,8 @@ $coldisplay = 0;
 ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
-<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
+<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecoldescription minwidth300imp"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
@@ -109,35 +109,42 @@ if (($line->info_bits & 2) == 2) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
-			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
-		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)	{
+			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
+		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
-			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
+			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 			// Add date of deposit
-			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+			if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 				print ' ('.dol_print_date($discount->datec).')';
 			}
-		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)	{
+		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
-			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
+			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 		} elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
-			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
+			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 		} else {
-			print ($txt ? ' - ' : '').dol_htmlentitiesbr($line->description);
+			print($txt ? ' - ' : '').dol_htmlentitiesbr($line->description);
 		}
 	}
 } else {
-	$format = (!empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 'dayhour' : 'day');
+	$format = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? 'dayhour' : 'day');
 
 	if ($line->fk_product > 0) {
-		print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+			if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
+				print $form->textwithpicto('', $description);
+			}
+		} else {
+			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) {
@@ -148,7 +155,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -193,7 +200,7 @@ if (($line->info_bits & 2) == 2) {
 			// we need to fetch product associated to line for some test
 			if ($object->element == 'propal' || $object->element == 'order' || $object->element == 'facture' || $object->element == 'propal_supplier' || $object->element == 'supplier_proposal' || $object->element == 'commande') {
 				$res = $line->fetch_product();
-				if ($res  > 0  ) {
+				if ($res  > 0) {
 					if ($line->product->isService() && $line->product->isMandatoryPeriod()) {
 						print '<div><span class="clearboth nowraponall warning">'.$langs->trans("mandatoryPeriodNeedTobeSet").'</span></div>';
 					}
@@ -235,7 +242,7 @@ if (($line->info_bits & 2) == 2) {
 	}
 }
 
-if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && empty($conf->global->SUPPLIER_HIDE_SUPPLIER_OBJECTLINES)) {
+if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && !getDolGlobalString('SUPPLIER_HIDE_SUPPLIER_OBJECTLINES')) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 	$productfourn = new ProductFournisseur($this->db);
 	$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
@@ -259,13 +266,13 @@ print '</td>';
 // Vendor price ref
 if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 	print '<td class="linecolrefsupplier">';
-	print ($line->ref_fourn ? $line->ref_fourn : $line->ref_supplier);
+	print($line->ref_fourn ? $line->ref_fourn : $line->ref_supplier);
 	print '</td>';
 }
 
 $tooltiponprice = '';
 $tooltiponpriceend = '';
-if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
 	$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
 	if (is_object($object->thirdparty)) {
@@ -285,7 +292,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 			}
 		}
 		if ($mysoc->useLocalTax(2)) {
-			if (( isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
+			if ((isset($seller->country_code) && isset($buyer->thirdparty->country_code) && $seller->country_code == $buyer->thirdparty->country_code) || $line->total_localtax2 || $seller->useLocalTax(2)) {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'='.price($line->total_localtax2);
 			} else {
 				$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", $seller->country_code).'=<span class="opacitymedium">'.$langs->trans($senderissupplier ? "NotUsedForThisVendor" : "NotUsedForThisCustomer").'</span>';
@@ -331,14 +338,14 @@ if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH
 	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
 		$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
 	}
-	print (isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
+	print(isset($upinctax) ? price($sign * $upinctax) : price($sign * $line->subprice));
 	?></td>
 <?php } ?>
 
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
 <?php
 if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
-	// I comment this because it shows info even when not required
+		// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)
 	//if($line->qty > $line->stock) print img_picto($langs->trans("StockTooLow"),"warning", 'style="vertical-align: bottom;"')." ";
@@ -348,7 +355,7 @@ if ((($line->info_bits & 2) != 2) && $line->special_code != 3) {
 }
 print '</td>';
 
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
 	$label = $line->getLabelOfUnit('short');
 	if ($label !== '') {
@@ -379,13 +386,13 @@ if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 }
 
 if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
-	if (!empty($user->rights->margins->creer)) { ?>
+	if ($user->hasRight('margins', 'creer')) { ?>
 		<td class="linecolmargin1 nowrap margininfos right"><?php $coldisplay++; ?><?php print price($line->pa_ht); ?></td>
 	<?php }
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) { ?>
-		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print (($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) { ?>
+		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print(($line->pa_ht == 0) ? 'n/a' : price(price2num($line->marge_tx, 'MT')).'%'); ?></td>
 	<?php }
-	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {?>
+	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {?>
 		<td class="linecolmargin2 nowrap margininfos right"><?php $coldisplay++; ?><?php print price(price2num($line->marque_tx, 'MT')).'%'; ?></td>
 	<?php }
 }
@@ -431,9 +438,15 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		) {
 			$accountancy_category_asset = $conf->global->ASSET_ACCOUNTANCY_CATEGORY;
 			$filters = array();
-			if (!empty($product_static->accountancy_code_buy)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
-			if (!empty($product_static->accountancy_code_buy_intra)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
-			if (!empty($product_static->accountancy_code_buy_export)) $filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			if (!empty($product_static->accountancy_code_buy)) {
+				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy) . "'";
+			}
+			if (!empty($product_static->accountancy_code_buy_intra)) {
+				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_intra) . "'";
+			}
+			if (!empty($product_static->accountancy_code_buy_export)) {
+				$filters[] = "account_number = '" . $this->db->escape($product_static->accountancy_code_buy_export) . "'";
+			}
 			$sql = "SELECT COUNT(*) AS found";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account";
 			$sql .= " WHERE pcg_type = '" . $this->db->escape($conf->global->ASSET_ACCOUNTANCY_CATEGORY) . "'";
@@ -491,8 +504,12 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$coldisplay++;
 	}
 } else {
-	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$colspan = 3;
+	if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
+		$colspan++;
+	}
+	print '<td colspan="'.$colspan.'"></td>';
+	$coldisplay = $coldisplay + $colspan;
 }
 
 if ($action == 'selectlines') { ?>

@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modMailmanSpip extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -82,7 +81,7 @@ class modMailmanSpip extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'clicktodial';
+		$this->rights_class = 'mailmanspip';
 
 		// Menus
 		//-------

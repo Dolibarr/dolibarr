@@ -59,11 +59,12 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 * 	@return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $db, $conf, $langs;
+		global $db, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("bills", "admin"));
@@ -87,7 +88,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK").'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

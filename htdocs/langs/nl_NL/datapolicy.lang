@@ -23,7 +23,7 @@ Module4100Desc = Module om gegevensprivacy te beheren (conformiteit met de AVG)
 #
 datapolicySetup = Module Gegevensprivacybeleid instellen
 Deletion = Verwijderen van gegevens
-datapolicySetupPage = Afhankelijk van de wetten van uw land (voorbeeld <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> artikel 5 </a> van de AVG), moeten persoonlijke gegevens worden bewaard voor een periode die niet langer is dan nodig is voor de doeleinden waarvoor ze zijn verzameld, behalve voor archiveringsdoeleinden. <br> De verwijdering wordt automatisch uitgevoerd na een bepaalde duur zonder gebeurtenis (de duur die u hieronder hebt aangegeven).
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
 NB_MONTHS = %s maanden
 ONE_YEAR = 1 jaar
 NB_YEARS = %s jaar
@@ -40,16 +40,16 @@ DATAPOLICY_CONTACT_FOURNISSEUR = Leverancier
 DATAPOLICY_ADHERENT = Lid
 DATAPOLICY_Tooltip_SETUP = Type contact - Geef uw keuzes aan voor elk type.
 DATAPOLICYMail = E-mail instellen
-DATAPOLICYSUBJECTMAIL = Onderwerp van e-mail
+DATAPOLICYSUBJECTMAIL = Subject of the email
 DATAPOLICYCONTENTMAIL = Inhoud van de e-mail
 DATAPOLICYSUBSITUTION = U kunt de volgende variabelen in uw e-mail gebruiken (LINKACCEPT maakt het mogelijk om een link te maken die de instemming van de persoon vastlegt, LINKREFUSED maakt het mogelijk om de weigering van de persoon vast te leggen):
 DATAPOLICYACCEPT = Bericht na akkoord
-DATAPOLICYREFUSE = Bericht na overeenkomst
+DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = U kunt een AVG-e-mail sturen naar al uw relevante contacten (die nog geen e-mail hebben ontvangen en waarvoor u niets hebt geregistreerd over hun AVG-overeenkomst). Gebruik hiervoor de volgende knop.
 SendAgreement = Stuur emails
 AllAgreementSend = Alle e-mails zijn verzonden
 TXTLINKDATAPOLICYACCEPT = Tekst voor de link "overeenkomst"
-TXTLINKDATAPOLICYREFUSE = Tekst voor de link "onenigheid"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
@@ -57,8 +57,8 @@ TXTLINKDATAPOLICYREFUSE = Tekst voor de link "onenigheid"
 #
 DATAPOLICY_BLOCKCHECKBOX = AVG: Verwerking van persoonsgegevens
 DATAPOLICY_consentement = Toestemming verkregen voor de verwerking van persoonsgegevens
-DATAPOLICY_opposition_traitement = Verzet zich tegen de verwerking van zijn persoonsgegevens
-DATAPOLICY_opposition_prospection = Verzet zich tegen de verwerking van zijn persoonsgegevens met het oog op prospectie
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
@@ -78,15 +78,11 @@ DATAPOLICY_PORTABILITE_CONFIRMATION = U wilt de persoonsgegevens van dit contact
 #
 ANONYMISER_AT = De %s geanonimiseerd
 
-# V2
-DATAPOLICYReturn = AVG-validatie
-DATAPOLICY_date = Datum overeenkomst/ontbinding AVG
-DATAPOLICY_send = Datum verzending overeenkomst e-mail
-DATAPOLICYReturn = AVG-validatie
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
 DATAPOLICY_SEND = Stuur AVG-e-mail
 MailSent = De email is verzonden
 
 # ERROR
-ErrorSubjectIsRequired = Fout: het onderwerp van e-mail is vereist. Geef het aan in de module-instellingen
-=Door een technisch probleem konden we uw keuze niet registreren. Onze excuses daarvoor. Neem contact met ons op om uw keuze door te geven.
-NUMBER_MONTH_BEFORE_DELETION = Aantal maanden vóór verwijdering
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

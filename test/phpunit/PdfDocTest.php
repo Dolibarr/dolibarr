@@ -145,11 +145,13 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 		$localproduct=new Product($db);
 		$result = $localproduct->fetch(0, 'PINKDRESS');
 		if ($result < 0) {
-			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error; die(1);
+			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error;
+			die(1);
 		}
 		$product_id = $localproduct->id;
 		if ($product_id <= 0) {
-			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test"; die(1);
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test";
+			die(1);
 		}
 
 		$localobject=new Facture($db);

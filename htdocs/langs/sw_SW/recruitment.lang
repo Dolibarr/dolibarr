@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Simamia na ufuate kampeni za kuajiri nafasi mpya za kazi
 # Admin page
 #
 RecruitmentSetup = Mpangilio wa kuajiri
-Settings = Mipangilio
 RecruitmentSetupPage = Ingiza hapa usanidi wa chaguo kuu za moduli ya kuajiri
 RecruitmentArea=Eneo la kuajiri
 PublicInterfaceRecruitmentDesc=Kurasa za umma za kazi ni URL za umma za kuonyesha na kujibu ili kufungua kazi. Kuna kiungo kimoja tofauti kwa kila kazi iliyo wazi, inayopatikana kwenye kila rekodi ya kazi.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Washa kurasa za umma za kazi zilizo wazi
 #
 # About page
 #
-About = Kuhusu
 RecruitmentAbout = Kuhusu Kuajiri
 RecruitmentAboutPage = Kuajiri kuhusu ukurasa
 NbOfEmployeesExpected=Nb inayotarajiwa ya wafanyikazi
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Sifa za ziada (maombi ya kazi)
 MakeOffer=Toa ofa
 WeAreRecruiting=Tunaajiri. Hii ni orodha ya nafasi zilizo wazi zitakazojazwa...
 NoPositionOpen=Hakuna nafasi zilizofunguliwa kwa sasa
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+recruitment=Recruitment

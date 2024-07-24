@@ -165,7 +165,7 @@ class Establishment extends CommonObject
 	 *	Create object in database
 	 *
 	 *	@param		User	$user   User making creation
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *	@return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -243,7 +243,7 @@ class Establishment extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -285,7 +285,7 @@ class Establishment extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >=0 if OK
+	 * @return	int				Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -327,7 +327,7 @@ class Establishment extends CommonObject
 	 *	Delete record
 	 *
 	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($id)
 	{
@@ -408,6 +408,7 @@ class Establishment extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -456,7 +457,7 @@ class Establishment extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -466,7 +467,7 @@ class Establishment extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Establishment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -103,7 +103,7 @@ if ($cancel) {
 if ($action == "confirm_update") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = 'update';
@@ -130,12 +130,12 @@ if ($action == "confirm_update") {
 			$object->debit = $debit;
 			$object->credit = $credit;
 
-			if (floatval($debit) != 0.0) {
+			if ((float) $debit != 0.0) {
 				$object->montant = $debit; // deprecated
 				$object->amount = $debit;
 				$object->sens = 'D';
 			}
-			if (floatval($credit) != 0.0) {
+			if ((float) $credit != 0.0) {
 				$object->montant = $credit; // deprecated
 				$object->amount = $credit;
 				$object->sens = 'C';
@@ -159,7 +159,7 @@ if ($action == "confirm_update") {
 } elseif ($action == "add") {
 	$error = 0;
 
-	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0)) {
+	if (((float) $debit != 0.0) && ((float) $credit != 0.0)) {
 		$error++;
 		setEventMessages($langs->trans('ErrorDebitCredit'), null, 'errors');
 		$action = '';
@@ -189,13 +189,13 @@ if ($action == "confirm_update") {
 		$object->fk_doc = GETPOSTINT('fk_doc');
 		$object->fk_docdet = GETPOSTINT('fk_docdet');
 
-		if (floatval($debit) != 0.0) {
+		if ((float) $debit != 0.0) {
 			$object->montant = $debit; // deprecated
 			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
-		if (floatval($credit) != 0.0) {
+		if ((float) $credit != 0.0) {
 			$object->montant = $credit; // deprecated
 			$object->amount = $credit;
 			$object->sens = 'C';
@@ -204,6 +204,8 @@ if ($action == "confirm_update") {
 		$result = $object->createStd($user, false, $mode);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+
+			$action = 'create';
 		} else {
 			if ($mode != '_tmp') {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -334,8 +336,8 @@ $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
-
-llxHeader('', $title);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+llxHeader('', $title, $help_url);
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -404,6 +406,7 @@ if ($action == 'create') {
 	print '</form>';
 } else {
 	$object = new BookKeeping($db);
+
 	$result = $object->fetchPerMvt($piece_num, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -683,7 +686,7 @@ if ($action == 'create') {
 						// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
 						// Also, it is not possible to use a value that is not in the list.
 						// Also, the label is not automatically filled when a value is selected.
-						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+						if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'" placeholder="'.dol_escape_htmltag($langs->trans("SubledgerAccount")).'">';
@@ -709,7 +712,7 @@ if ($action == 'create') {
 							// It does not use the setup of "key pressed" to select a thirdparty and this hang browser on large databases.
 							// Also, it is not possible to use a value that is not in the list.
 							// Also, the label is not automatically filled when a value is selected.
-							if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+							if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 								print $formaccounting->select_auxaccount('', 'subledger_account', 1, 'maxwidth250', '', 'subledger_label');
 							} else {
 								print '<input type="text" class="maxwidth150" name="subledger_account" value="" placeholder="' . dol_escape_htmltag($langs->trans("SubledgerAccount")) . '">';

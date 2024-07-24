@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modCollab extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -66,7 +65,7 @@ class modCollab extends DolibarrModules
 
 		// Dependancies
 		//-------------
-		$this->hidden = !empty($conf->global->MODULE_COLLAB_DISABLED); // A condition to disable module
+		$this->hidden = getDolGlobalString('MODULE_COLLAB_DISABLED'); // A condition to disable module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
@@ -74,7 +73,7 @@ class modCollab extends DolibarrModules
 
 		// Constants
 		//-----------
-		   $this->const = array();
+		$this->const = array();
 
 		// New pages on tabs
 		// -----------------

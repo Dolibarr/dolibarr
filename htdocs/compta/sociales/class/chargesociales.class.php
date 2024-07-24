@@ -66,7 +66,11 @@ class ChargeSociales extends CommonObject
 	public $type_label;
 	public $amount;
 	public $paye;
+	/**
+	 * @deprecated
+	 */
 	public $periode;
+	public $period;
 
 	/**
 	 * @var integer|string date_creation
@@ -103,6 +107,10 @@ class ChargeSociales extends CommonObject
 	 */
 	public $paiementtype;
 
+	public $mode_reglement_id;
+	public $mode_reglement_code;
+	public $mode_reglement;
+
 	/**
 	 * @var int ID
 	 */
@@ -119,6 +127,7 @@ class ChargeSociales extends CommonObject
 	public $total;
 
 	public $totalpaid;
+
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
@@ -139,12 +148,12 @@ class ChargeSociales extends CommonObject
 	 *
 	 *  @param	int     $id		Id
 	 *  @param	string  $ref	Ref
-	 *  @return	int <0 KO >0 OK
+	 *  @return	int Return integer <0 KO >0 OK
 	 */
 	public function fetch($id, $ref = '')
 	{
 		$sql = "SELECT cs.rowid, cs.date_ech";
-		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
+		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
 		$sql .= ", cs.fk_account, cs.fk_mode_reglement, cs.fk_user, note_public, note_private";
 		$sql .= ", c.libelle as type_label";
 		$sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
@@ -181,7 +190,8 @@ class ChargeSociales extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 				$this->paye = $obj->paye;
-				$this->periode = $this->db->jdate($obj->periode);
+				$this->periode = $this->db->jdate($obj->period);
+				$this->period = $this->db->jdate($obj->period);
 				$this->import_key = $this->import_key;
 
 				$this->db->free($resql);
@@ -206,7 +216,7 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		// Validation of parameters
-		if ($newamount == 0 || empty($this->date_ech) || empty($this->periode)) {
+		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
 			return false;
 		}
 
@@ -217,7 +227,7 @@ class ChargeSociales extends CommonObject
 	 *      Create a social contribution into database
 	 *
 	 *      @param	User	$user   User making creation
-	 *      @return int     		<0 if KO, id if OK
+	 *      @return int     		Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{
@@ -230,8 +240,8 @@ class ChargeSociales extends CommonObject
 		$newamount = price2num($this->amount, 'MT');
 
 		if (!$this->check()) {
-			 $this->error = "ErrorBadParameter";
-			 return -2;
+			$this->error = "ErrorBadParameter";
+			return -2;
 		}
 
 		$this->db->begin();
@@ -281,7 +291,7 @@ class ChargeSociales extends CommonObject
 	 *      Delete a social contribution
 	 *
 	 *      @param		User    $user   Object user making delete
-	 *      @return     		int 	<0 if KO, >0 if OK
+	 *      @return     		int 	Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -342,7 +352,7 @@ class ChargeSociales extends CommonObject
 	 *
 	 *      @param	User	$user           User that modify
 	 *      @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return int     		        <0 if KO, >0 if OK
+	 *      @return int     		        Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -428,12 +438,12 @@ class ChargeSociales extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Tag social contribution as paid completely
+	 *  Tag social contribution as paid completely
 	 *
 	 *	@deprecated
 	 *  @see setPaid()
 	 *  @param    User    $user       Object user making change
-	 *  @return   int					<0 if KO, >0 if OK
+	 *  @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_paid($user)
 	{
@@ -446,7 +456,7 @@ class ChargeSociales extends CommonObject
 	 *    Tag social contribution as paid completely
 	 *
 	 *    @param    User    $user       Object user making change
-	 *    @return   int					<0 if KO, >0 if OK
+	 *    @return   int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -472,7 +482,7 @@ class ChargeSociales extends CommonObject
 	 *	@deprecated
 	 *  @see setUnpaid()
 	 *  @param	User	$user       Object user making change
-	 *  @return	int					<0 if KO, >0 if OK
+	 *  @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function set_unpaid($user)
 	{
@@ -485,7 +495,7 @@ class ChargeSociales extends CommonObject
 	 *    Remove tag paid on social contribution
 	 *
 	 *    @param	User	$user       Object user making change
-	 *    @return	int					<0 if KO, >0 if OK
+	 *    @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -593,7 +603,7 @@ class ChargeSociales extends CommonObject
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -621,7 +631,7 @@ class ChargeSociales extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip) && $user->hasRight("facture", "read")) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SocialContribution");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -688,7 +698,7 @@ class ChargeSociales extends CommonObject
 	 * 	Charge les informations d'ordre info dans l'objet entrepot
 	 *
 	 *  @param	int		$id     Id of social contribution
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function info($id)
 	{
@@ -705,24 +715,9 @@ class ChargeSociales extends CommonObject
 
 				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_author) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_author);
-					$this->user_creation = $cuser;
-				}
-
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
-
-				if ($obj->fk_user_valid) {
-					$vuser = new User($this->db);
-					$vuser->fetch($obj->fk_user_valid);
-					$this->user_validation = $vuser;
-				}
-
+				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
+				$this->user_validation_id = $obj->fk_user_valid;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
 				$this->date_validation   = $this->db->jdate($obj->datev);
@@ -751,16 +746,17 @@ class ChargeSociales extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->paye = 0;
-		$this->date = dol_now();
-		$this->date_ech = $this->date + 3600 * 24 * 30;
-		$this->periode = $this->date + 3600 * 24 * 30;
+		$this->date_creation = dol_now();
+		$this->date_ech = $this->date_creation + 3600 * 24 * 30;
+		$this->periode = $this->date_creation + 3600 * 24 * 30;
+		$this->period = $this->date_creation + 3600 * 24 * 30;
 		$this->amount = 100;
 		$this->label = 'Social contribution label';
 		$this->type = 1;
 		$this->type_label = 'Type of social contribution';
 	}
 
-		/**
+	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -780,7 +776,9 @@ class ChargeSociales extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'label')) {
 			$return .= ' &nbsp; <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
 		}

@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Ποσότητα προϊόντος
 NoProductToShipFoundIntoStock=Δεν βρέθηκε προϊόν προς αποστολή στην αποθήκη <b> %s </b>. Διορθώστε το απόθεμα ή επιλέξτε άλλη αποθήκη.
 WeightVolShort=Βάρος/Όγκος
 ValidateOrderFirstBeforeShipment=Θα πρέπει πρώτα να επικυρώσετε την παραγγελία πριν να μπορέσετε να πραγματοποιήσετε αποστολές.
+NoLineGoOnTabToAddSome=Χωρίς γραμμή, μεταβείτε στην καρτέλα "%s" για προσθήκη
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Άθροισμα βάρους προϊόντων
 # warehouse details
 DetailWarehouseNumber= Λεπτομέρειες Αποθήκης
 DetailWarehouseFormat= Α: %s (Ποσότητα: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Εμφάνιση της τελευταίας ημερομηνίας εισαγωγής εγγραφής στο απόθεμα κατά τη δημιουργία αποστολής για σειριακό αριθμό ή παρτίδα
+CreationOptions=Διαθέσιμες επιλογές κατά τη δημιουργία αποστολής
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Διανομή αποστολής
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=Δεν έγινε αποστολή της γραμμής %s καθώς βρέθηκαν πάρα πολλοί συνδυασμοί αποθήκης, προϊόντος, κωδικών παρτίδας (%s).
+ErrorNoCombinationBatchcode=Δεν έγινε αποθήκευση της γραμμής %s καθώς δεν βρέθηκε συνδυασμός αποθήκης, προϊόντος, κωδικού παρτίδας(%s,%s,%s).
+
+ErrorTooMuchShipped=Η ποσότητα προς αποστολή δεν πρέπει να είναι μεγαλύτερη από την ποσότητα που παραγγέλθηκε για τη γραμμή %s

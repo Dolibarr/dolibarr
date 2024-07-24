@@ -85,7 +85,7 @@ class FactureStats extends Stats
 
 		$this->where = " f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($mode == 'customer') {
@@ -98,14 +98,14 @@ class FactureStats extends Stats
 			$this->where .= ' AND f.fk_user_author = '.((int) $this->userid);
 		}
 		if ($mode == 'customer') {
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$this->where .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$this->where .= " AND f.type IN (0,1,2,3,5)";
 			}
 		}
 		if ($mode == 'supplier') {
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$this->where .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$this->where .= " AND f.type IN (0,1,2,3,5)";
@@ -136,7 +136,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(f.datef,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -162,7 +162,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(f.datef,'%Y') as dm, COUNT(*), SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -187,7 +187,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, SUM(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -213,7 +213,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%m') as dm, AVG(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -236,7 +236,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT date_format(datef,'%Y') as year, COUNT(*) as nb, SUM(f.".$this->field.") as total, AVG(f.".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -260,7 +260,7 @@ class FactureStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;
@@ -288,7 +288,7 @@ class FactureStats extends Stats
 		$startYear = $endYear - $numberYears;
 		$sql = "SELECT date_format(datef,'%Y') as dm, SUM(f.".$this->field.")";
 		$sql .= " FROM ".$this->from;
-		if (empty($user->rights->societe->client->voir) && !$this->socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$this->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= $this->join;

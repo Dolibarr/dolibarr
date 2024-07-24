@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->loadLangs(array("members", "companies"));
+$langs->loadLangs(array("members", "companies", "banks"));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -43,7 +43,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
-$statut = (GETPOSTISSET("statut") ?GETPOST("statut", "alpha") : 1);
+$statut = (GETPOSTISSET("statut") ? GETPOST("statut", "alpha") : 1);
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_type = GETPOST('search_type', 'alpha');
 $search_lastname = GETPOST('search_lastname', 'alpha');
@@ -172,7 +172,7 @@ $accountstatic = new Account($db);
 $now = dol_now();
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut as status,";
 $sql .= " d.gender, d.email, d.morphy,";
 $sql .= " c.rowid as crowid, c.fk_type, c.subscription,";
 $sql .= " c.dateadh, c.datef, c.datec as date_creation, c.tms as date_update,";
@@ -276,7 +276,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/adherents/subscription/card.php?id='.$id);
@@ -333,7 +333,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -431,7 +431,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 // Line numbering
-if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 
@@ -611,7 +611,8 @@ while ($i < $imaxinloop) {
 	$adherent->firstname = $obj->firstname;
 	$adherent->ref = $obj->rowid;
 	$adherent->id = $obj->rowid;
-	$adherent->statut = $obj->statut;
+	$adherent->statut = $obj->status;
+	$adherent->status = $obj->status;
 	$adherent->login = $obj->login;
 	$adherent->photo = $obj->photo;
 	$adherent->gender = $obj->gender;
@@ -672,14 +673,14 @@ while ($i < $imaxinloop) {
 		}
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
-			print '<td>'.$subscription->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">'.$subscription->getNomUrl(1).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Type
 		if (!empty($arrayfields['d.fk_type']['checked'])) {
-			print '<td class="nowraponall">';
+			print '<td class="tdoverflowmax100">';
 			if ($typeid > 0) {
 				print $adht->getNomUrl(1);
 			}
@@ -739,14 +740,14 @@ while ($i < $imaxinloop) {
 
 		// Date start
 		if (!empty($arrayfields['c.dateadh']['checked'])) {
-			print '<td class="center">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->dateadh), 'day')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Date end
 		if (!empty($arrayfields['c.datef']['checked'])) {
-			print '<td class="center">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->datef), 'day')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -70,12 +70,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	 */
 	public $version = 'dolibarr';
 
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
 	public $posxdate;
 	public $posxreffacturefourn;
 	public $posxreffacture;
@@ -170,7 +164,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -240,7 +234,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
@@ -251,8 +245,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -337,14 +331,13 @@ class pdf_standard extends ModelePDFSuppliersPayments
 						} else {
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 								$showpricebeforepagebreak = 1;
 							} else {
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 
@@ -388,7 +381,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 
 					// Add line
-					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -531,7 +524,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// To
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
-		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
+		$pdf->MultiCell(150, 4, $object->thirdparty->name, 0, 'L', 1);
 
 		$LENGTHAMOUNT = 35;
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - $LENGTHAMOUNT, $posy);
@@ -721,7 +714,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			// Show payer
 			$posy = 42;
 			$posx = $this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 			$hautcadre = 40;
@@ -763,7 +756,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 			}
 			$posy = 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 

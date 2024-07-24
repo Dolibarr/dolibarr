@@ -80,7 +80,7 @@ if ($socid > 0) { // Special for thirdparty
 	$element = 'societe';
 }
 
-if (!$user->rights->resource->read) {
+if (!$user->hasRight('resource', 'read')) {
 	accessforbidden();
 }
 
@@ -124,7 +124,7 @@ if (empty($reshook)) {
 
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -193,13 +193,13 @@ if (empty($reshook)) {
 	}
 
 	// Update ressource
-	if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
 		$res = $object->fetch_element_resource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (!empty($conf->global->RESOURCE_USED_IN_EVENT_CHECK) && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -272,7 +272,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a resource linked to an element
-	if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$result = $object->delete_resource($lineid, $element);
 
 		if ($result >= 0) {
@@ -333,19 +333,33 @@ if (!$ret) {
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
-			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+			$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
+			$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
+			$linkback .= '</a>';
 
 			// Link to other agenda views
 			$out = '';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
-			$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewCal").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewWeek").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewDay").'</span>';
+			$out .= '</a>';
+			$out .= '</li><li class="noborder litext">';
+			$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($act->datep, '%Y').'&month='.dol_print_date($act->datep, '%m').'&day='.dol_print_date($act->datep, '%d').'">';
+			$out .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictofixedwidth pictoactionview"');
+			$out .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
+			$out .= '</a>';
 
 			// Add more views from hooks
 			$parameters = array();
@@ -396,7 +410,7 @@ if (!$ret) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Type
-			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 				print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
 				print $act->getTypePicto();
 				print $langs->trans("Action".$act->type_code);
@@ -434,7 +448,7 @@ if (!$ret) {
 			print '</td></tr>';
 
 			// Location
-			if (empty($conf->global->AGENDA_DISABLE_LOCATION)) {
+			if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 				print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
 			}
 
@@ -447,7 +461,8 @@ if (!$ret) {
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
-					$tmplist1 = $act->userassigned; $tmplist2 = array();
+					$tmplist1 = $act->userassigned;
+					$tmplist2 = array();
 					foreach ($tmplist1 as $key => $val) {
 						if ($val['id'] && $val['id'] != $act->userownerid) {
 							$listofuserid[$val['id']] = $val;
@@ -585,7 +600,7 @@ if (!$ret) {
 			print dol_get_fiche_head($head, 'resources', $titre, -1, $picto);
 
 			$shownav = 1;
-			if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 			dol_banner_tab($product, 'ref', '', $shownav, 'ref', 'ref', '', '&element='.$element);

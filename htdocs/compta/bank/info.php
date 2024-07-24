@@ -48,7 +48,7 @@ if ($user->socid) {
 }
 
 $result = restrictedArea($user, 'banque', $accountid, 'bank_account');
-if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
+if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidate')) {
 	accessforbidden();
 }
 

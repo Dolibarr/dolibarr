@@ -47,7 +47,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '<tr class="'.$trclass.'" >';
 	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("CustomerOrder");
-	if (!empty($showImportButton) && !empty($conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)) {
+	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	echo '</td>';

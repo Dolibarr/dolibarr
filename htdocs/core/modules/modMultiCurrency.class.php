@@ -143,6 +143,30 @@ class modMultiCurrency extends DolibarrModules
 		//    2=>array('file'=>'myboxc.php@multicurrency','note'=>'')
 		//);
 
+		// Cronjobs (List of cron jobs entries to add when module is enabled)
+		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
+		$statusatinstall=1;
+		$arraydate=dol_getdate(dol_now());
+		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
+
+		$this->cronjobs = array(
+			0 => array(
+				'priority'=>61,
+				'label'=>'MutltiCurrencyAutoUpdateCurrencies',
+				'jobtype'=>'method',
+				'class'=>'multicurrency/class/multicurrency.class.php',
+				'objectname'=>'MultiCurrency',
+				'method'=>'syncRates',
+				'parameters'=>'0,0,cron',
+				'comment'=>'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page',
+				'frequency'=>1,
+				'unitfrequency'=>2678400,
+				'status'=>$statusatinstall,
+				'test'=>'isModEnabled("cron")',
+				'datestart'=>$datestart
+			),
+		);
+
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;

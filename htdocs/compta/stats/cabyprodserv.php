@@ -106,7 +106,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 	$q = GETPOST("q", "int");
 	if (empty($q)) {
 		// We define date_start and date_end
-		$month_start = GETPOST("month") ?GETPOST("month") : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month") ? GETPOST("month") : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_end = $year_start;
 		$month_end = $month_start;
 		if (!GETPOST("month")) {	// If month not forced
@@ -242,7 +242,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
 	$description = $langs->trans("RulesCADue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
@@ -311,7 +311,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " WHERE l.fk_facture = f.rowid";
 	$sql .= " AND f.fk_statut in (1,2)";
 	$sql .= " AND l.product_type in (0,1)";
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$sql .= " AND f.type IN (0,1,2,5)";
 	} else {
 		$sql .= " AND f.type IN (0,1,2,3,5)";

@@ -44,7 +44,7 @@ $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 $object = new User($db);
 $result = $object->fetch($id);
 if ($result <= 0) {
-	dol_print_error($object->error);
+	dol_print_error($db, $object->error);
 	exit;
 }
 

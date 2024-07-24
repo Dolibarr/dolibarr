@@ -23,14 +23,12 @@ llxHeader();
 
 ?>
 
-<h2>
 This page is a sample of page using Dolibarr HTML widget methods. It is designed to make test with<br>
 - css (add parameter &amp;theme=newtheme to test another theme or edit css of current theme)<br>
 - jmobile (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?dol_use_jmobile=1&dol_optimize_smallscreen=1'; ?>">dol_use_jmobile=1&amp;dol_optimize_smallscreen=1</a> and switch to small screen < 570 to enable with emulated jmobile)<br>
 - no javascript / usage for bind people (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?nojs=1'; ?>">nojs=1</a> to force disable javascript)<br>
 - use with a text browser (add parameter <a class="wordbreak" href="<?php echo $_SERVER["PHP_SELF"].'?textbrowser=1'; ?>">textbrowser=1</a> to force detection of a text browser)<br>
-</h2>
-<br>
+<br><br>
 
 <!--  Output to test html.form.class.php -->
 <?php
@@ -42,7 +40,7 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print "Test 1a: We must have here current date and hour for user (must match hour on browser). Note: Check your are logged so user TZ and DST are known.";
 $offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 $offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
-print " (dol_tz=".$offsettz." dol_dst=".$dol_dst.")<br>\n";
+print " (dol_tz=".$offsettz." dol_dst=".$offsetdst.")<br>\n";
 print $form->selectDate(dol_now(), 'test1a', 1, 1, 0);
 
 print '<br><br>'."\n";
@@ -53,7 +51,7 @@ print $form->selectDate('', 'test1b', 1, 1, 0);
 print '<br><br>'."\n";
 
 // Test2: form->selectDate using tzuser date
-print "Test 2: We must have here 1970-01-01 00:00:00 selected (fields can be empty)<br>\n";
+print "Test 2: We must have here 1970-01-01 selected (fields can be empty)<br>\n";
 print $form->selectDate(dol_get_first_day(1970, 1, false), 'test2', 1, 1, 1);
 
 print '<br><br>'."\n";
@@ -120,12 +118,12 @@ if (is_file(DOL_DOCUMENT_ROOT.'/includes/flowjs/flow.js')) {
 	print '<script>
 	jQuery(document).ready(function() {
 		var flow = new Flow({
-			target:"'.DOL_URL_ROOT.'/core/ajax/flowjs-server.php", 
+			target:"'.DOL_URL_ROOT.'/core/ajax/flowjs-server.php",
 			query:{module:"test", token:"'.newToken().'"},
 			testChunks:false
 		});
 		';
-		print 'if(flow.support){
+	print 'if(flow.support){
 			flow.assignBrowse(document.getElementById("buttonbigupload"));
 			flow.on("fileAdded", function(file, event){
 				console.log("Trigger event file added", file, event);

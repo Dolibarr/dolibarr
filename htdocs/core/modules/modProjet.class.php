@@ -233,13 +233,13 @@ class modProjet extends DolibarrModules
 			'p.datec'=>"DateCreation", 'p.dateo'=>"DateStart", 'p.datee'=>"DateEnd", 'p.fk_statut'=>'ProjectStatus', 'cls.code'=>'OpportunityStatus', 'p.opp_percent'=>'OpportunityProbability', 'p.opp_amount'=>'OpportunityAmount', 'p.budget_amount'=>'Budget', 'p.description'=>"Description"
 		);
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('project'))); // If project are shared, nb will be > 1
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r] += array('p.entity'=>'Entity');
 			}
 		}
-		if (empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			unset($this->export_fields_array[$r]['p.opp_percent']);
 			unset($this->export_fields_array[$r]['p.opp_amount']);
 			unset($this->export_fields_array[$r]['cls.code']);
@@ -261,9 +261,9 @@ class modProjet extends DolibarrModules
 		$keyforaliasextra = 'extra2';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		// End add extra fields
-		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimesSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
+		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ptt.rowid'=>'IdTaskTime', 'ptt.element_date'=>'TaskTimeDate', 'ptt.element_duration'=>"TimeSpent", 'ptt.fk_user'=>"TaskTimeUser", 'ptt.note'=>"TaskTimeNote"));
 		$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('ptt.rowid'=>'task_time', 'ptt.element_date'=>'task_time', 'ptt.element_duration'=>"task_time", 'ptt.fk_user'=>"task_time", 'ptt.note'=>"task_time"));
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('f.ref'=>"Billed"));
 			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('f.ref'=>"task_time"));
 		}
@@ -275,7 +275,7 @@ class modProjet extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_extrafields as extra2 ON pt.rowid = extra2.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX."element_time as ptt ON (pt.rowid = ptt.fk_element AND ptt.elementtype = 'task')";
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON p.fk_soc = s.rowid';
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON ptt.invoice_id = f.rowid';
 		}
 		$this->export_sql_end[$r] .= " WHERE p.entity IN (".getEntity('project').")";
@@ -302,7 +302,7 @@ class modProjet extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
-			't.ref'=>array('rule'=>'getrefifauto', 'class'=>(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON), 'path'=>"/core/modules/project/".(empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php'),
+			't.ref'=>array('rule'=>'getrefifauto', 'class'=>(!getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON), 'path'=>"/core/modules/project/".(!getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php'),
 			't.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',
@@ -316,7 +316,7 @@ class modProjet extends DolibarrModules
 		$this->import_examplevalues_array[$r] = array('t.fk_soc'=>'ThirdParty', 't.ref'=>"auto or PJ2010-1234", 't.title'=>"My project", 't.fk_statut'=>'0,1 or 2', 't.datec'=>'1972-10-10', 't.note_private'=>"My private note", 't.note_public'=>"My public note");
 
 		// Import list of tasks
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$r++;
 			$this->import_code[$r] = 'tasksofprojects';
 			$this->import_label[$r] = 'ImportDatasetTasks';
@@ -338,7 +338,7 @@ class modProjet extends DolibarrModules
 			$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet_task'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 			$this->import_convertvalue_array[$r] = array(
 				't.fk_projet'=>array('rule'=>'fetchidfromref', 'classfile'=>'/projet/class/project.class.php', 'class'=>'Project', 'method'=>'fetch', 'element'=>'Project'),
-				't.ref'=>array('rule'=>'getrefifauto', 'class'=>(empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON), 'path'=>"/core/modules/project/task/".(empty($conf->global->PROJECT_TASK_ADDON) ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON).'.php')
+				't.ref'=>array('rule'=>'getrefifauto', 'class'=>(!getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON), 'path'=>"/core/modules/project/task/".(!getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON).'.php')
 			);
 			//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 			$this->import_regex_array[$r] = array('t.dateo'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datee'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$', 't.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');

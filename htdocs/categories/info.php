@@ -49,7 +49,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;

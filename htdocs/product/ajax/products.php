@@ -59,7 +59,7 @@ $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
 
 // Security check
-restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
 
 
 /*
@@ -134,7 +134,7 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by qty
-		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price related to qty
+		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) { // If we need a particular price related to qty
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $price_by_qty_rowid);
@@ -159,7 +159,7 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Multiprice (1 price per level)
-		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price level (from 1 to 6)
+		if (!$found && isset($price_level) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) { // If we need a particular price level (from 1 to 6)
 			$sql = "SELECT price, price_ttc, price_base_type,";
 			$sql .= " tva_tx, default_vat_code";	// Vat rate and code will be used if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on.
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
@@ -177,7 +177,7 @@ if ($action == 'fetch' && !empty($id)) {
 					$outprice_ht = price($objp->price);			// formated for langage user because is inserted into input field
 					$outprice_ttc = price($objp->price_ttc);	// formated for langage user because is inserted into input field
 					$outpricebasetype = $objp->price_base_type;
-					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
+					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 						$outtva_tx_formated = price($objp->tva_tx);	// formated for langage user because is inserted into input field
 						$outtva_tx = price2num($objp->tva_tx);		// international numeric
 						$outdefault_vat_code = $objp->default_vat_code;
@@ -195,7 +195,7 @@ if ($action == 'fetch' && !empty($id)) {
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-			$prodcustprice = new Productcustomerprice($db);
+			$prodcustprice = new ProductCustomerPrice($db);
 
 			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
 

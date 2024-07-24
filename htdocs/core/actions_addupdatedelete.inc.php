@@ -95,7 +95,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'datetime') {
 			$value = dol_mktime(GETPOST($key.'hour', 'int'), GETPOST($key.'min', 'int'), GETPOST($key.'sec', 'int'), GETPOST($key.'month', 'int'), GETPOST($key.'day', 'int'), GETPOST($key.'year', 'int'), 'tzuserrel');
 		} elseif ($object->fields[$key]['type'] == 'duration') {
-			$value = 60 * 60 * GETPOST($key.'hour', 'int') + 60 * GETPOST($key.'min', 'int');
+			$value = 60 * 60 * GETPOSTINT($key.'hour') + 60 * GETPOSTINT($key.'min');
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
 			$value = price2num(GETPOST($key, 'alphanohtml')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
@@ -103,7 +103,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$tmparraykey = array_keys($object->param_list);
 			$value = $tmparraykey[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:(.*)/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -111,7 +111,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			}
 		} else {
 			if ($key == 'lang') {
-				$value = GETPOST($key, 'aZ09') ?GETPOST($key, 'aZ09') : "";
+				$value = GETPOST($key, 'aZ09') ? GETPOST($key, 'aZ09') : "";
 			} else {
 				$value = GETPOST($key, 'alphanohtml');
 			}
@@ -123,18 +123,24 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 			$value = ''; // This is an explicit foreign key field
 		}
 
-		//var_dump($key.' '.$value.' '.$object->fields[$key]['type']);
+		//var_dump($key.' '.$value.' '.$object->fields[$key]['type'].' '.$object->fields[$key]['notnull']);
+
 		$object->$key = $value;
 		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && isset($val['default']) && $val['default'] == '(PROV)') {
 			$object->$key = '(PROV)';
 		}
-		if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
-			$error++;
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+		if ($key == 'pass_crypted') {
+			$object->pass = GETPOST("pass", "none");
+			// TODO Manadatory for password not yet managed
+		} else {
+			if (!empty($val['notnull']) && $val['notnull'] > 0 && $object->$key == '' && !isset($val['default'])) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
+			}
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -202,7 +208,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 				continue;
 			}
 		} else {
-			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+			if (!GETPOSTISSET($key) && !preg_match('/^chkbxlst:/', $object->fields[$key]['type']) && $object->fields[$key]['type']!=='checkbox') {
 				continue; // The field was not submited to be saved
 			}
 		}
@@ -247,7 +253,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} elseif ($object->fields[$key]['type'] == 'reference') {
 			$value = array_keys($object->param_list)[GETPOST($key)].','.GETPOST($key.'2');
-		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type'])) {
+		} elseif (preg_match('/^chkbxlst:/', $object->fields[$key]['type']) || $object->fields[$key]['type'] == 'checkbox') {
 			$value = '';
 			$values_arr = GETPOST($key, 'array');
 			if (!empty($values_arr)) {
@@ -268,13 +274,13 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 		}
 
 		$object->$key = $value;
-		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default'])) {
+		if ($val['notnull'] > 0 && $object->$key == '' && (!isset($val['default']) || is_null($val['default']))) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv($val['label'])), null, 'errors');
 		}
 
 		// Validation of fields values
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->MAIN_ACTIVATE_VALIDATION_RESULT)) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString('MAIN_ACTIVATE_VALIDATION_RESULT')) {
 			if (!$error && !empty($val['validate']) && is_callable(array($object, 'validateField'))) {
 				if (!$object->validateField($object->fields, $key, $value)) {
 					$error++;
@@ -289,6 +295,7 @@ if ($action == 'update' && !empty($permissiontoadd)) {
 			}
 		}
 	}
+
 
 	// Fill array 'array_options' with data from add form
 	if (!$error) {
@@ -349,15 +356,20 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOST('id', 'int') > 0 && !em
 if ($action == "update_extras" && GETPOST('id', 'int') > 0 && !empty($permissiontoadd)) {
 	$object->fetch(GETPOST('id', 'int'));
 
+	$object->oldcopy = dol_clone($object, 2);
+
+	$attribute = GETPOST('attribute', 'alphanohtml');
+
 	$error = 0;
 
-	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
 	if ($ret < 0) {
 		$error++;
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';
@@ -376,17 +388,27 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete)) {
 		exit;
 	}
 
+	$db->begin();
+
 	$result = $object->delete($user);
 
 	if ($result > 0) {
+		$db->commit();
+
 		// Delete OK
 		setEventMessages("RecordDeleted", null, 'mesgs');
 
 		if (empty($noback)) {
+			if (empty($backurlforlist)) {
+				print 'Error backurlforlist is not defined';
+				exit;
+			}
 			header("Location: " . $backurlforlist);
 			exit;
 		}
 	} else {
+		$db->rollback();
+
 		$error++;
 		if (!empty($object->errors)) {
 			setEventMessages(null, $object->errors, 'errors');
@@ -419,7 +441,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
 		}
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -441,10 +463,16 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 
 // Action validate object
 if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd) {
-	$result = $object->validate($user);
+	if ($object->element == 'inventory' && !empty($include_sub_warehouse)) {
+		// Can happen when the conf INVENTORY_INCLUDE_SUB_WAREHOUSE is set
+		$result = $object->validate($user, false, $include_sub_warehouse);
+	} else {
+		$result = $object->validate($user);
+	}
+
 	if ($result >= 0) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -481,7 +509,7 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd) {
 	$result = $object->cancel($user);
 	if ($result >= 0) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -525,7 +553,7 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd) {
 	$result = $object->reopen($user);
 	if ($result >= 0) {
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -557,7 +585,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && !empty($permissiontoadd))
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		// We clone object to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object.
+		$objectutil = dol_clone($object, 1);
+		// We used native clone to keep this->db valid and allow to use later all the methods of object.
 		//$objectutil->date = dol_mktime(12, 0, 0, GETPOST('newdatemonth', 'int'), GETPOST('newdateday', 'int'), GETPOST('newdateyear', 'int'));
 		// ...
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));

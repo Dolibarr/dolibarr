@@ -253,8 +253,36 @@ class modPartnership extends DolibarrModules
 		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 
 		$this->cronjobs = array(
-			0	=> array('priority'=>60, 'label'=>'CancelPartnershipForExpiredMembers', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doCancelStatusOfMemberPartnership', 'parameters'=>'',      'comment'=>'Cancel status of partnership when subscription is expired + x days.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>1, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
-			1	=> array('priority'=>61, 'label'=>'PartnershipCheckBacklink', 'jobtype'=>'method', 'class'=>'/partnership/class/partnershiputils.class.php', 'objectname'=>'PartnershipUtils', 'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound', 'parameters'=>'',      'comment'=>'Warning of partnership if Dolibarr backlink not found on partner website.', 'frequency'=>1, 'unitfrequency'=>86400, 'status'=>0, 'test'=>'$conf->partnership->enabled', 'datestart'=>$datestart),
+			0 => array(
+				'priority'=>60,
+				'label'=>'CancelPartnershipForExpiredMembers',
+				'jobtype'=>'method',
+				'class'=>'/partnership/class/partnershiputils.class.php',
+				'objectname'=>'PartnershipUtils',
+				'method'=>'doCancelStatusOfMemberPartnership',
+				'parameters'=>'',
+				'comment'=>'Cancel status of partnership when subscription is expired + x days.',
+				'frequency'=>1,
+				'unitfrequency'=>86400,
+				'status'=>1,
+				'test'=>'isModEnabled("partnership")',
+				'datestart'=>$datestart
+			),
+			1 => array(
+				'priority'=>61,
+				'label'=>'PartnershipCheckBacklink',
+				'jobtype'=>'method',
+				'class'=>'/partnership/class/partnershiputils.class.php',
+				'objectname'=>'PartnershipUtils',
+				'method'=>'doWarningOfPartnershipIfDolibarrBacklinkNotfound',
+				'parameters'=>'',
+				'comment'=>'Add a warning on partnership record if the backlink keyword is not found on the partner website.',
+				'frequency'=>1,
+				'unitfrequency'=>86400,
+				'status'=>0,
+				'test'=>'isModEnabled("partnership")',
+				'datestart'=>$datestart
+			),
 		);
 
 		// Permissions provided by this module

@@ -38,11 +38,11 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
 
 $id = GETPOST('id', 'int');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -53,15 +53,15 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 't.status,t.priority';
+	$sortfield = 't.priority,t.status';
 }
 if (!$sortorder) {
-	$sortorder = 'DESC,ASC';
+	$sortorder = 'ASC,DESC';
 }
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ09');
 //Search criteria
-$search_status = (GETPOSTISSET('search_status') ?GETPOST('search_status', 'int') : GETPOST('status', 'int'));
+$search_status = (GETPOSTISSET('search_status') ? GETPOST('search_status', 'int') : GETPOST('status', 'int'));
 $search_label = GETPOST("search_label", 'alpha');
 $search_module_name = GETPOST("search_module_name", 'alpha');
 $search_lastresult = GETPOST("search_lastresult", "alphawithlgt");
@@ -86,7 +86,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Security
-if (!$user->rights->cron->read) {
+if (!$user->hasRight('cron', 'read')) {
 	accessforbidden();
 }
 
@@ -101,7 +101,8 @@ $permissiontoexecute = $user->rights->cron->execute;
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -149,7 +150,7 @@ if (empty($reshook)) {
 
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-		if (!empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey) {
+		if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
 		} else {
@@ -381,7 +382,7 @@ $arrayofmassactions = array(
 	'enable'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("CronStatusActiveBtn"),
 	'disable'=>img_picto('', 'uncheck', 'class="pictofixedwidth"').$langs->trans("CronStatusInactiveBtn"),
 );
-if ($user->rights->cron->delete) {
+if ($user->hasRight('cron', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) {
@@ -410,7 +411,8 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Line with explanation and button new
-$newcardbutton = dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->rights->cron->create);
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), $langs->trans('CronCreateJob'), 'fa fa-plus-circle', DOL_URL_ROOT.'/cron/card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?mode=modulesetup'), '', $user->hasRight('cron', 'create'));
 
 
 if ($mode == 'modulesetup') {
@@ -430,7 +432,7 @@ $trackid = 'cron'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $text = $langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
-if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) {
+if (getDolGlobalString('CRON_WARNING_DELAY_HOURS')) {
 	$text .= $langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
 }
 print info_admin($text);
@@ -681,8 +683,8 @@ if ($num > 0) {
 		}
 		print '</td>';
 
-		// Next run
-		print '<td class="center minwidth100">';
+		// Next run date
+		print '<td class="center nowraponall">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {
@@ -710,22 +712,22 @@ if ($num > 0) {
 		print '<td class="nowraponall right">';
 
 		$backtopage = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
-		if ($user->rights->cron->create) {
+		if ($user->hasRight('cron', 'create')) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid.'&action=edit&token='.newToken().($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "&backtopage=".$backtopage."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
-		if ($user->rights->cron->delete) {
+		if ($user->hasRight('cron', 'delete')) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid.'&action=delete&token='.newToken().($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
 		}
-		if ($user->rights->cron->execute) {
+		if ($user->hasRight('cron', 'execute')) {
 			if (!empty($obj->status)) {
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
-				print (empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY);
-				print ($sortfield ? '&sortfield='.$sortfield : '');
-				print ($sortorder ? '&sortorder='.$sortorder : '');
+				print(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
+				print($sortfield ? '&sortfield='.$sortfield : '');
+				print($sortorder ? '&sortorder='.$sortorder : '');
 				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play", '', false, 0, 0, '', 'marginleftonly').'</a>';
 			} else {
 				print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled", '', false, 0, 0, '', 'marginleftonly').'</a>';
@@ -754,7 +756,7 @@ if ($num > 0) {
 		$i++;
 	}
 } else {
-	print '<tr><td colspan="16" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
+	print '<tr><td colspan="16"><span class="opacitymedium">'.$langs->trans('CronNoJobs').'</span></td></tr>';
 }
 
 print '</table>';

@@ -160,7 +160,7 @@ print '<span class="opacitymedium">'.$langs->trans("BlankSubscriptionFormDesc").
 $param = '';
 
 $enabledisablehtml = $langs->trans("EnablePublicSubscriptionForm").' ';
-if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	// Button off, click to enable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMEMBER_ENABLE_PUBLIC&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
@@ -172,12 +172,12 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(empty($conf->global->MEMBER_ENABLE_PUBLIC) ? 0 : 1).'">';
+print '<input type="hidden" id="MEMBER_ENABLE_PUBLIC" name="MEMBER_ENABLE_PUBLIC" value="'.(!getDolGlobalString('MEMBER_ENABLE_PUBLIC') ? 0 : 1).'">';
 
 print '<br><br>';
 
 
-if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
+if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<br>';
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
@@ -215,7 +215,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '</td><td>';
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
-	$forcetype = empty($conf->global->MEMBER_NEWFORM_FORCETYPE) ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
+	$forcetype = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', -1);
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
 	print "</td></tr>\n";
 
@@ -225,7 +225,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
 	print '</td><td>';
-	$forcenature = empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY) ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;
+	$forcenature = getDolGlobalInt('MEMBER_NEWFORM_FORCEMORPHY', 0);
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
 
@@ -233,25 +233,25 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
 	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(!empty($conf->global->MEMBER_NEWFORM_AMOUNT) ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
+	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.getDolGlobalString('MEMBER_NEWFORM_AMOUNT').'">';
 	print "</td></tr>\n";
 
 	// Min amount
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MinimumAmount");
 	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.(!empty($conf->global->MEMBER_MIN_AMOUNT) ? $conf->global->MEMBER_MIN_AMOUNT : '').'">';
+	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.getDolGlobalString('MEMBER_MIN_AMOUNT').'">';
 	print "</td></tr>\n";
 
 	// SHow counter of validated members publicly
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", (!empty($conf->global->MEMBER_COUNTERS_ARE_PUBLIC) ? $conf->global->MEMBER_COUNTERS_ARE_PUBLIC : 0), 1);
+	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1);
 	print "</td></tr>\n";
 
 	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
-	$skiptable = (!empty($conf->global->MEMBER_SKIP_TABLE) ? $conf->global->MEMBER_SKIP_TABLE : 0);
+	$skiptable = getDolGlobalInt('MEMBER_SKIP_TABLE');
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowMembershipTypesTable");
 	print '</td><td>';
@@ -259,7 +259,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	print "</td></tr>\n";
 
 	// Show "vote allowed" setting for membership types
-	$hidevoteallowed = (!empty($conf->global->MEMBER_HIDE_VOTE_ALLOWED) ? $conf->global->MEMBER_HIDE_VOTE_ALLOWED : 0);
+	$hidevoteallowed = getDolGlobalInt('MEMBER_HIDE_VOTE_ALLOWED');
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowVotesAllowed");
 	print '</td><td>';
@@ -282,7 +282,7 @@ if (!empty($conf->global->MEMBER_ENABLE_PUBLIC)) {
 	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (!empty($conf->global->MEMBER_NEWFORM_PAYONLINE) ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
+	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'), 0);
 	print "</td></tr>\n";
 
 	print '</table>';

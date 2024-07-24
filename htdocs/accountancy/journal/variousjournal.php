@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021-2022  Open-DSI            <support@open-dsi.fr>
+/* Copyright (C) 2021-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,10 +61,16 @@ $parameters = array();
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
@@ -76,8 +82,12 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 }
 
 $data_type = 'view';
-if ($action == 'writebookkeeping') $data_type = 'bookkeeping';
-if ($action == 'exportcsv') $data_type = 'csv';
+if ($action == 'writebookkeeping') {
+	$data_type = 'bookkeeping';
+}
+if ($action == 'exportcsv') {
+	$data_type = 'csv';
+}
 $journal_data = $object->getData($user, $data_type, $date_start, $date_end, $in_bookkeeping);
 if (!is_array($journal_data)) {
 	setEventMessages($object->error, $object->errors, 'errors');
@@ -165,20 +175,20 @@ if ($reload) {
 $form = new Form($db);
 
 if ($object->nature == 2) {
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1';
 } elseif ($object->nature == 3) {
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
 } elseif ($object->nature == 4) {
-	$some_mandatory_steps_of_setup_were_not_done = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1'
-		|| empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == "" || $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER == '-1'
-		|| $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "" || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
+		|| !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
+	$account_accounting_not_defined = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == "" || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1';
 } elseif ($object->nature == 5) {
-	$some_mandatory_steps_of_setup_were_not_done = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
-	$account_accounting_not_defined = empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) || $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT == '-1';
+	$some_mandatory_steps_of_setup_were_not_done = !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
+	$account_accounting_not_defined = !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1';
 } else {
 	$title = $object->getLibType();
 	$some_mandatory_steps_of_setup_were_not_done = false;
@@ -196,12 +206,12 @@ $exportlink = '';
 $builddate = dol_now();
 $description = $langs->trans("DescJournalOnlyBindedVisible") . '<br>';
 if ($object->nature == 2 || $object->nature == 3) {
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 }
@@ -213,6 +223,25 @@ $period .= ' -  ' . $langs->trans("JournalizationInLedgerStatus") . ' ' . $form-
 $varlink = 'id_journal=' . $id_journal;
 
 journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+
+if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') != 'blockedonclosed') {
+	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
+	// Fiscal period test
+	$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE entity = ".((int) $conf->entity);
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb == 0) {
+			print '<br><div class="warning">'.img_warning().' '.$langs->trans("TheFiscalPeriodIsNotDefined");
+			$desc = ' : '.$langs->trans("AccountancyAreaDescFiscalPeriod", 4, '{link}');
+			$desc = str_replace('{link}', '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("FiscalPeriod").'</strong>', $desc);
+			print $desc;
+			print '</div>';
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
 
 if ($object->nature == 4) { // Bank journal
 	// Test that setup is complete (we are in accounting, so test on entity is always on $conf->entity only, no sharing allowed)
@@ -228,7 +257,9 @@ if ($object->nature == 4) { // Bank journal
 			print '<br>' . img_warning() . ' ' . $langs->trans("TheJournalCodeIsNotDefinedOnSomeBankAccount");
 			print ' : ' . $langs->trans("AccountancyAreaDescBank", 9, '<strong>' . $langs->transnoentitiesnoconv("MenuAccountancy") . '-' . $langs->transnoentitiesnoconv("Setup") . "-" . $langs->transnoentitiesnoconv("BankAccounts") . '</strong>');
 		}
-	} else dol_print_error($db);
+	} else {
+		dol_print_error($db);
+	}
 }
 
 // Button to write into Ledger
@@ -237,8 +268,8 @@ if ($some_mandatory_steps_of_setup_were_not_done) {
 	print ' : ' . $langs->trans("AccountancyAreaDescMisc", 4, '<strong>' . $langs->transnoentitiesnoconv("MenuAccountancy") . '-' . $langs->transnoentitiesnoconv("Setup") . "-" . $langs->transnoentitiesnoconv("MenuDefaultAccounts") . '</strong>');
 	print '</div>';
 }
-print '<div class="tabsAction tabsActionNoBottom centerimp">';
-if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') {
+print '<br><div class="tabsAction tabsActionNoBottom centerimp">';
+if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL') && $in_bookkeeping == 'notyet') {
 	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 }
 if ($account_accounting_not_defined) {
@@ -269,8 +300,12 @@ print '
 	</script>';
 
 $object_label = $langs->trans("ObjectsRef");
-if ($object->nature == 2 || $object->nature == 3) $object_label = $langs->trans("InvoiceRef");
-if ($object->nature == 5) $object_label = $langs->trans("ExpenseReportRef");
+if ($object->nature == 2 || $object->nature == 3) {
+	$object_label = $langs->trans("InvoiceRef");
+}
+if ($object->nature == 5) {
+	$object_label = $langs->trans("ExpenseReportRef");
+}
 
 
 // Show result array
@@ -286,7 +321,9 @@ print '<td>' . $langs->trans("Piece") . ' (' . $object_label . ')</td>';
 print '<td>' . $langs->trans("AccountAccounting") . '</td>';
 print '<td>' . $langs->trans("SubledgerAccount") . '</td>';
 print '<td>' . $langs->trans("LabelOperation") . '</td>';
-if ($object->nature == 4) print '<td class="center">' . $langs->trans("PaymentMode") . '</td>'; // bank
+if ($object->nature == 4) {
+	print '<td class="center">' . $langs->trans("PaymentMode") . '</td>';
+} // bank
 print '<td class="right">' . $langs->trans("AccountingDebit") . '</td>';
 print '<td class="right">' . $langs->trans("AccountingCredit") . '</td>';
 print "</tr>\n";
@@ -301,7 +338,9 @@ if (is_array($journal_data) && !empty($journal_data)) {
 				print '<td>' . $line['account_accounting'] . '</td>';
 				print '<td>' . $line['subledger_account'] . '</td>';
 				print '<td>' . $line['label_operation'] . '</td>';
-				if ($object->nature == 4) print '<td class="center">' . $line['payment_mode'] . '</td>';
+				if ($object->nature == 4) {
+					print '<td class="center">' . $line['payment_mode'] . '</td>';
+				}
 				print '<td class="right nowraponall">' . $line['debit'] . '</td>';
 				print '<td class="right nowraponall">' . $line['credit'] . '</td>';
 				print '</tr>';

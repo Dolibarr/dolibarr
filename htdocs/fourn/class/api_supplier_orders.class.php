@@ -56,10 +56,10 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with supplier order information
 	 *
-	 * @param 	int 	$id ID of supplier order
-	 * @return 	array|mixed data without useless information
+	 * @param	int		$id ID of supplier order
+	 * @return	array|mixed data without useless information
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -85,23 +85,22 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Get a list of supplier orders
 	 *
-	 * @param string	$sortfield	      Sort field
-	 * @param string	$sortorder	      Sort order
-	 * @param int		$limit		      Limit for list
-	 * @param int		$page		      Page number
-	 * @param string   	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string   	$product_ids	  Product ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$status		      Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
+	 * @param string	$sortfield		  Sort field
+	 * @param string	$sortorder		  Sort order
+	 * @param int		$limit			  Limit for list
+	 * @param int		$page			  Page number
+	 * @param string	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$product_ids	  Product ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$status			  Filter by order status : draft | validated | approved | running | received_start | received_end | cancelled | refused
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $sqlfilterlines   Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
+	 * @param string    $properties		  Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                      Array of order objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
 			throw new RestException(401);
 		}
@@ -113,17 +112,17 @@ class SupplierOrders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) {
+		if (!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !empty($socids)) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
-		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) || $search_sale > 0) {
 			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur AS t LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 
-		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) || $search_sale > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		}
 
@@ -132,7 +131,7 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
-		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir") && !$socids) || $search_sale > 0) {
+		if ((!DolibarrApiAccess::$user->hasRight("societe", "client", "voir")) || $search_sale > 0) {
 			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if (!empty($product_ids)) {
@@ -140,9 +139,6 @@ class SupplierOrders extends DolibarrApi
 		}
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
-		}
-		if ($search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 		}
 
 		// Filter by status
@@ -212,16 +208,14 @@ class SupplierOrders extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$order_static = new CommandeFournisseur($this->db);
 				if ($order_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($order_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($order_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve supplier order list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No supplier order found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -242,7 +236,13 @@ class SupplierOrders extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->order->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->order->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 		if (!array_keys($request_data, 'date')) {
 			$this->order->date = dol_now();
@@ -288,7 +288,13 @@ class SupplierOrders extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
-			$this->order->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->order->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
+			$this->order->$field = $this->_checkValForAPI($field, $value, $this->order);
 		}
 
 		if ($this->order->update(DolibarrApiAccess::$user)) {
@@ -303,14 +309,14 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Return an array with contact informations
 	 *
-	 * @param 	int    	$id   		ID of supplier order
-	 * @param 	string 	$source 	Source of the contact (internal, external, all).
-	 * @param 	string 	$type 		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @param	int		$id			ID of supplier order
+	 * @param	string	$source		Source of the contact (internal, external, all).
+	 * @param	string	$type		Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
 	 * @return	Object				Object with cleaned properties
 	 *
 	 * @url	GET {id}/contacts
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function getContacts($id, $source, $type = '')
 	{
@@ -344,10 +350,10 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Add a contact type of given supplier order
 	 *
-	 * @param int    	$id				Id of supplier order to update
-	 * @param int    	$contactid		Id of contact/user to add
-	 * @param string 	$type			Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
-	 * @param string 	$source			Source of the contact (external, internal)
+	 * @param int		$id				Id of supplier order to update
+	 * @param int		$contactid		Id of contact/user to add
+	 * @param string	$type			Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
+	 * @param string	$source			Source of the contact (external, internal)
 	 * @return array
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
@@ -391,10 +397,10 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Unlink a contact type of given supplier order
 	 *
-	 * @param 	int    	$id             Id of supplier order to update
-	 * @param 	int    	$contactid      Id of contact/user to add
-	 * @param 	string 	$type           Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...).
-	 * @param 	string 	$source 		Source of the contact (internal, external).
+	 * @param	int		$id             Id of supplier order to update
+	 * @param	int		$contactid      Id of contact/user to add
+	 * @param	string	$type           Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...).
+	 * @param	string	$source			Source of the contact (internal, external).
 	 *
 	 * @url	DELETE {id}/contact/{contactid}/{type}/{source}
 	 *
@@ -450,7 +456,7 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Delete supplier order
 	 *
-	 * @param int   	$id 	Supplier order ID
+	 * @param int		$id		Supplier order ID
 	 * @return array			Array of result
 	 */
 	public function delete($id)
@@ -627,27 +633,27 @@ class SupplierOrders extends DolibarrApi
 		);
 	}
 
-		/**
+	/**
 	 * Receives the order, dispatches products.
-		 *
+	 *
 	 * Example:
 	 * <code> {
 	 *   "closeopenorder": 1,
 	 *   "comment": "",
-		 *   "lines": [{
-		 *      "id": 14,
-		 *      "fk_product": 112,
-		 *      "qty": 18,
-		 *      "warehouse": 1,
-		 *      "price": 114,
-		 *      "comment": "",
-		 *      "eatby": 0,
-		 *      "sellby": 0,
-		 *      "batch": 0,
-		 *      "notrigger": 0
-		 *   }]
+	 *   "lines": [{
+	 *      "id": 14,
+	 *      "fk_product": 112,
+	 *      "qty": 18,
+	 *      "warehouse": 1,
+	 *      "price": 114,
+	 *      "comment": "",
+	 *      "eatby": 0,
+	 *      "sellby": 0,
+	 *      "batch": 0,
+	 *      "notrigger": 0
+	 *   }]
 	 * }</code>
-		 *
+	 *
 	 * @param   int		$id             Order ID
 	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}
 	 * @param   string	$comment	Comment {@required false}
@@ -677,17 +683,19 @@ class SupplierOrders extends DolibarrApi
 		foreach ($lines as $line) {
 			$lineObj =(object) $line;
 
-			$result=$this->order->dispatchProduct(DolibarrApiAccess::$user,
-				  $lineObj->fk_product,
-				  $lineObj->qty,
-				  $lineObj->warehouse,
-				  $lineObj->price,
-				  $lineObj->comment,
-				  $lineObj->eatby,
-				  $lineObj->sellby,
-				  $lineObj->batch,
-				  $lineObj->id,
-				  $lineObj->notrigger);
+			$result=$this->order->dispatchProduct(
+				DolibarrApiAccess::$user,
+				$lineObj->fk_product,
+				$lineObj->qty,
+				$lineObj->warehouse,
+				$lineObj->price,
+				$lineObj->comment,
+				$lineObj->eatby,
+				$lineObj->sellby,
+				$lineObj->batch,
+				$lineObj->id,
+				$lineObj->notrigger
+			);
 
 			if ($result < 0) {
 				throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);

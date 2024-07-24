@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 ActionsOwnedBy=Evento propiedad de
-Event=Evento
 ListOfActions=Lista de eventos
 EventReports=Informes de evento
 ToUserOfGroup=Evento Asignado a cualquier usuario del grupo
@@ -32,6 +31,7 @@ OrderApprovedInDolibarr=Orden %s aprovada
 OrderRefusedInDolibarr=Orden %s rechazada
 OrderBackToDraftInDolibarr=Regresar orden %s al estado de borrador
 ShippingValidated=Envío %s validado
+CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha de finalización
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.

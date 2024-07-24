@@ -63,7 +63,7 @@ print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
 	print '<form method="post" action="list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -88,7 +88,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 	$sql .= $clause." sc.fk_user = ".((int) $user->id);
 	$clause = " AND ";
@@ -152,11 +152,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('order_supplier') AND el.targettype = 'reception'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 }
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND e.fk_statut = 1";
@@ -213,7 +213,7 @@ if ($resql) {
 $sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE c.fk_soc = s.rowid";
@@ -222,7 +222,7 @@ $sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".Comma
 if ($socid > 0) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " ORDER BY c.rowid ASC";

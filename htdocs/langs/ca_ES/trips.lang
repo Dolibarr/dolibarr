@@ -39,7 +39,7 @@ expenseReportCoef=Coeficient
 expenseReportCoefUndefined=(valor no definit)
 expenseReportOffset=Decàleg
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=S'ha desactivat el rang: consulteu el diccionari c_exp_tax_range
+expenseReportRangeDisabled=Interval desactivat: consulteu el diccionari c_exp_tax_range
 expenseReportRangeFromTo=de %d a %d
 expenseReportRangeMoreThan=més de %d
 expenseReportTotalForFive=Exemple amb <u>d</u> = 5
@@ -91,7 +91,7 @@ nolimitbyEX_EXP=per línia (sense límits)
 nolimitbyEX_MON=per mes (sense límits)
 nolimitbyEX_YEA=per any (sense límits)
 NoTripsToExportCSV=No hi ha cap informe de despeses per a exportar en aquest període.
-NOT_AUTHOR=No sou l’autor d’aquest informe de despeses. Operació cancel·lada.
+NOT_AUTHOR=No sou l'autor d'aquest informe de despeses. Operació cancel·lada.
 OnExpense=Línia de despesa
 PDFStandardExpenseReports=Plantilla estàndard per a generar un document PDF per a l'informe de despeses
 PaidTrip=Pagar un informe de despeses
@@ -103,7 +103,7 @@ ShowExpenseReport=Mostra l'informe de despeses
 ShowTrip=Mostra l'informe de despeses
 TripCard=Informe de despesa de targeta
 TripId=Id d'informe de despeses
-TripNDF=Informacions de l'informe de despeses
+TripNDF=Informe de despeses d'informació
 TripSociete=Informació de l'empresa
 Trips=Informes de despeses
 TripsAndExpenses=Informes de despeses

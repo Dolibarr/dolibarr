@@ -115,7 +115,7 @@ print '<td colspan="2">TakePOS Support</td>';
 print '<td>'.$langs->trans("URL").'</td>';
 print '</tr>';
 
-$url = 'http://www.takepos.com';
+$url = 'https://www.takepos.com';
 
 print '<tr class="oddeven">'."\n";
 print '<td class="left"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="../img/takepos.png"></a></td>';

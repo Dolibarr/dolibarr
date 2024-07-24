@@ -3,8 +3,10 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
-*
+ * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2024	     MDW					        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -122,11 +124,11 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
 	global $conf;
+	if (empty($duration_value)) {
+		return $time;
+	}
 	if ($duration_unit == 's') {
 		return $time + ($duration_value);
-	}
-	if ($duration_value == 0) {
-		return $time;
 	}
 	if ($duration_unit == 'i') {
 		return $time + (60 * $duration_value);
@@ -159,7 +161,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	}
 
 	$date = new DateTime();
-	if (!empty($conf->global->MAIN_DATE_IN_MEMORY_ARE_GMT)) {
+	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
 	$date->setTimestamp($time);
@@ -333,13 +335,27 @@ function convertDurationtoHour($duration_value, $duration_unit)
 {
 	$result = 0;
 
-	if ($duration_unit == 's') $result = $duration_value / 3600;
-	if ($duration_unit == 'i') $result = $duration_value / 60;
-	if ($duration_unit == 'h') $result = $duration_value;
-	if ($duration_unit == 'd') $result = $duration_value * 24;
-	if ($duration_unit == 'w') $result = $duration_value * 24 * 7;
-	if ($duration_unit == 'm') $result = $duration_value * 730.484;
-	if ($duration_unit == 'y') $result = $duration_value * 365 * 24;
+	if ($duration_unit == 's') {
+		$result = $duration_value / 3600;
+	}
+	if ($duration_unit == 'i') {
+		$result = $duration_value / 60;
+	}
+	if ($duration_unit == 'h') {
+		$result = $duration_value;
+	}
+	if ($duration_unit == 'd') {
+		$result = $duration_value * 24;
+	}
+	if ($duration_unit == 'w') {
+		$result = $duration_value * 24 * 7;
+	}
+	if ($duration_unit == 'm') {
+		$result = $duration_value * 730.484;
+	}
+	if ($duration_unit == 'y') {
+		$result = $duration_value * 365 * 24;
+	}
 
 	return $result;
 }
@@ -750,7 +766,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 	$nbFerie = 0;
 
 	// Check to ensure we use correct parameters
-	if ((($timestampEnd - $timestampStart) % 86400) != 0) {
+	if (($timestampEnd - $timestampStart) % 86400 != 0) {
 		return 'Error Dates must use same hours and must be GMT dates';
 	}
 
@@ -880,7 +896,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Ascension (thursday)
 			}
 
-			if (in_array('pentecote', $specialdayrule)) {
+			if (in_array('pentecost', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_pentecote = $date_paques + (3600 * 24 * 49);
@@ -932,7 +948,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$date_1sunsept = strtotime('next thursday', strtotime('next sunday', mktime(0, 0, 0, 9, 1, $annee)));
 				$jour_1sunsept = date("d", $date_1sunsept);
 				$mois_1sunsept = date("m", $date_1sunsept);
-				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) $ferie=true;
+				if ($jour_1sunsept == $jour && $mois_1sunsept == $mois) {
+					$ferie=true;
+				}
 				// Geneva fast in Switzerland
 			}
 		}
@@ -945,7 +963,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				$jour_semaine = jddayofweek($jour_julien, 0);
 				if ($includefriday) {					//Friday (5), Saturday (6) and Sunday (0)
 					if ($jour_semaine == 5) {
-							$ferie = true;
+						$ferie = true;
 					}
 				}
 				if ($includesaturday) {					//Friday (5), Saturday (6) and Sunday (0)

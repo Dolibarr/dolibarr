@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Управление системой управл
 # Admin page
 #
 KnowledgeManagementSetup = Настройка системы управления знаниями
-Settings = Настройки
 KnowledgeManagementSetupPage = Страница настройки системы управления знаниями
 
 
 #
 # About page
 #
-About = О системе
 KnowledgeManagementAbout = Об управлении знаниями
 KnowledgeManagementAboutPage = Страница управления знаниями
 
 KnowledgeManagementArea = Управление знаниями
 MenuKnowledgeRecord = База знаний
+MenuKnowledgeRecordShort = База знаний
 ListKnowledgeRecord = Список записей
 NewKnowledgeRecord = Новая запись
 ValidateReply = Проверить решение
@@ -46,9 +45,15 @@ KnowledgeRecords = Записи
 KnowledgeRecord = Запись
 KnowledgeRecordExtraFields = Дополнительные поля для записи
 GroupOfTicket=Группа тикетов
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Предлагается для тикетов, когда группа
+YouCanLinkArticleToATicketCategory=Вы можете ссылка добавить статью в группу талон (так что статья будет выделена в любом  талоны в этой группе)
+SuggestedForTicketsInGroup=Предлагается при создании талон.
 
 SetObsolete=Сделать устаревшим
 ConfirmCloseKM=Вы подтверждаете закрытие этой статьи как устаревшей?
 ConfirmReopenKM=Вы хотите вернуть этой статье статус "Проверено"?
+BoxLastKnowledgerecordDescription=Последние статьи %s
+BoxLastKnowledgerecord=Последние статьи
+BoxLastKnowledgerecordContent=Последние статьи
+BoxLastKnowledgerecordModifiedContent=Последние измененные статьи
+BoxLastModifiedKnowledgerecordDescription=Последние %s измененные статьи
+BoxLastModifiedKnowledgerecord=Последние измененные статьи

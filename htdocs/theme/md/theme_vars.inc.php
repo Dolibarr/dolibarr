@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021       Anthony Berton          <bertonanthony@gmail.com>
+ * Copyright (C) 2021-2023 Anthony Berton       <anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcolorongle
 $theme_bordercolor = array(235, 235, 224);
 $theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(191, 75, 57), array(80, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 if (!defined('ISLOADEDBYSTEELSHEET')) {	// File is run after an include of a php page, not by the style sheet, if the constant is not defined.
-	if (!empty($conf->global->MAIN_OPTIMIZEFORCOLORBLIND)) { // user is loaded by dolgraph.class.php
-		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy') {
+	if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) { // user is loaded by dolgraph.class.php
+		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND') == 'flashy') {
 			$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250, 190, 30), array(221, 75, 57), array(0, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 		} else {
 			// for now we use the same configuration for all types of color blind
@@ -54,7 +54,7 @@ $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
 $colorbacklinepair1 = '251,251,251'; // line pair
-$colorbacklinepair2 = '248,248,248'; // line pair
+$colorbacklinepair2 = '251,251,251'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '250,246,251';

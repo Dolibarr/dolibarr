@@ -17,12 +17,12 @@
 
 // variable $listofopplabel and $listofoppstatus should be defined
 
-if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls ON p.fk_opp_status = cls.rowid"; // If lead status has been removed, we must show it in stats as unknown
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
 	$sql .= " AND p.fk_statut = 1"; // Opend projects only
-	if ($mine || empty($user->rights->projet->all->lire)) {
+	if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")";
 	}
 	if ($socid > 0) {

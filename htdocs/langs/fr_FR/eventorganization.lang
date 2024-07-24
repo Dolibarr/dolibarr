@@ -34,7 +34,6 @@ PaymentEvent=Paiement de l'événement
 NewRegistration=Inscription
 EventOrganizationSetup=Configuration de l’Organisation d’événements
 EventOrganization=Organisation d'événements
-Settings=Paramètres
 EventOrganizationSetupPage = Page de configuration de l’Organisation d’événements
 EVENTORGANIZATION_TASK_LABEL = Libellé des tâches à créer automatiquement lors de la validation du projet
 EVENTORGANIZATION_TASK_LABELTooltip = Lorsque vous validez un événement à organiser, certaines tâches peuvent être créées automatiquement dans le projet <br><br> Par exemple: <br> Envoyer Appel à conférences <br> Envoyer Appel à Kiosques <br> Valider les suggestions des conférences <br> Valider les demandes de stand <br> Ouvrir les inscriptions aux participants <br> Envoyer un rappel de l'événement aux conférenciers <br> Envoyer un rappel de l'événement aux hôtes de stands<br> Envoyer un rappel de l'événement aux participants
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Montant à payer pour l'enregistrement d'un participant 
 PriceOfBooth=Prix d’inscription pour un stand
 PriceOfBoothHelp=Prix d’inscription pour un stand
 EventOrganizationICSLink=Lien ICS pour les conférences
-ConferenceOrBoothInformation=Renseignements sur la conférence ou le stand
+ConferenceOrBoothInformation=Informations sur la conférence ou sur le stand
 Attendees=Participants
 ListOfAttendeesOfEvent=Liste des participant à l'événement
 DownloadICSLink = Télécharger le lien ICS
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Graine pour sécuriser la clé de la page d'inscri
 SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service utilisé pour la ligne de facture relative à l'abonnement d'un participant à un événement
 NbVotes=Nombre de votes
+
 #
 # Status
 #
@@ -107,8 +107,9 @@ EvntOrgConfirmed = Confirmé
 EvntOrgNotQualified = Non qualifié
 EvntOrgDone = Effectuées
 EvntOrgCancelled = Annulé
+
 #
-# Public page
+# Other
 #
 SuggestForm = Page de suggestions
 SuggestOrVoteForConfOrBooth = Page de suggestion ou de vote
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Ceci est une rappel de votre participation 
 OrganizationEventBulkMailToSpeakers=Ceci est un rappel de votre participation à l'événement en tant que conférencier
 OrganizationEventLinkToThirdParty=Lier à un tiers (client, fournisseur ou partenaire)
 OrganizationEvenLabelName=Nom public de la conférence ou du stand
-
 NewSuggestionOfBooth=Proposition de stand
 NewSuggestionOfConference=Postuler pour réaliser une conférence
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Bienvenue sur la page de suggestion de conférence ou de stand.
 EvntOrgRegistrationConfWelcomeMessage = Bienvenue sur la page de suggestions de conférences.
 EvntOrgRegistrationBoothWelcomeMessage = Bienvenue sur la page de suggestion de stand.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Ici, vous pouvez voir et voter pour les événements su
 VoteOk = Votre vote a été accepté.
 AlreadyVoted = Vous avez déjà voté pour cet événement.
 VoteError = Une erreur s'est produite lors du vote, veuillez réessayer.
-
 SubscriptionOk=Votre inscription a été enregistrée
+AmountOfRegistrationPaid=Montant de l'inscription payée
 ConfAttendeeSubscriptionConfirmation = Confirmation de votre inscription à un événement
 Attendee = Participant
 PaymentConferenceAttendee = Paiement de participation à la conférence

@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_kno
 // Load translation files required by the page
 $langs->loadLangs(array("knowledgemanagement", "companies", "other", "mails"));
 
-$id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');

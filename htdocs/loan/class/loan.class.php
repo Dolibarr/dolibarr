@@ -131,7 +131,7 @@ class Loan extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id		 id object
-	 *  @return int				 <0 error , >=0 no error
+	 *  @return int				 Return integer <0 error , >=0 no error
 	 */
 	public function fetch($id)
 	{
@@ -182,7 +182,7 @@ class Loan extends CommonObject
 	 *  Create a loan into database
 	 *
 	 *  @param	User	$user	User making creation
-	 *  @return int				<0 if KO, id if OK
+	 *  @return int				Return integer <0 if KO, id if OK
 	 */
 	public function create($user)
 	{
@@ -288,7 +288,7 @@ class Loan extends CommonObject
 	 *  Delete a loan
 	 *
 	 *  @param	User	$user	Object user making delete
-	 *  @return int 			<0 if KO, >0 if OK
+	 *  @return int 			Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -348,7 +348,7 @@ class Loan extends CommonObject
 	 *  Update loan
 	 *
 	 *  @param	User	$user	User who modified
-	 *  @return int				<0 if error, >0 if ok
+	 *  @return int				Return integer <0 if error, >0 if ok
 	 */
 	public function update($user)
 	{
@@ -390,7 +390,7 @@ class Loan extends CommonObject
 	 *  Tag loan as paid completely
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setPaid($user)
 	{
@@ -416,7 +416,7 @@ class Loan extends CommonObject
 	 *	@deprecated
 	 *  @see setStarted()
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function set_started($user)
 	{
@@ -429,7 +429,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment started
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setStarted($user)
 	{
@@ -452,7 +452,7 @@ class Loan extends CommonObject
 	 *  Tag loan as payment as unpaid
 	 *
 	 *  @param	User	$user	Object user making change
-	 *  @return	int				<0 if KO, >0 if OK
+	 *  @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setUnpaid($user)
 	{
@@ -510,7 +510,7 @@ class Loan extends CommonObject
 				$this->labelStatus[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			}
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv('Unpaid');
-			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
 			$this->labelStatusShort[self::STATUS_STARTED] = $langs->transnoentitiesnoconv("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) {
 				$this->labelStatusShort[self::STATUS_UNPAID] = $langs->transnoentitiesnoconv("BillStatusStarted");
@@ -559,7 +559,7 @@ class Loan extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -569,7 +569,7 @@ class Loan extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -588,7 +588,7 @@ class Loan extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
+			$result .= ($maxlen ? dol_trunc($this->ref, $maxlen) : $this->ref);
 		}
 		$result .= $linkend;
 
@@ -683,6 +683,7 @@ class Loan extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -722,7 +723,9 @@ class Loan extends CommonObject
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
-		$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
 		if (property_exists($this, 'capital')) {
 			$return .= ' | <span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->capital).'</span>';
 		}

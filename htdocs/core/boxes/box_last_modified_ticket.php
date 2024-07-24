@@ -26,13 +26,12 @@
 require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box
+ * Class to manage the box to show last modified tickets
  */
 class box_last_modified_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_last_modified_ticket";
-	public $boximg = "ticket";
+	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -85,7 +84,7 @@ class box_last_modified_ticket extends ModeleBoxes
 		);
 
 		if ($user->hasRight('ticket', 'read')) {
-			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut, t.type_code, t.category_code, t.severity_code, t.datec, t.tms as datem, t.date_read, t.date_close, t.origin_email ";
+			$sql = "SELECT t.rowid as id, t.ref, t.track_id, t.fk_soc, t.fk_user_create, t.fk_user_assign, t.subject, t.message, t.fk_statut as status, t.type_code, t.category_code, t.severity_code, t.datec, t.tms as datem, t.date_read, t.date_close, t.origin_email ";
 			$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
 			$sql .= ", s.nom as company_name, s.email as socemail, s.client, s.fournisseur";
 			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
@@ -119,12 +118,13 @@ class box_last_modified_ticket extends ModeleBoxes
 					$ticket->id = $objp->id;
 					$ticket->track_id = $objp->track_id;
 					$ticket->ref = $objp->ref;
-					$ticket->fk_statut = $objp->fk_statut;
 					$ticket->subject = $objp->subject;
 					$ticket->date_creation = $datec;
 					$ticket->date_modification = $datem;
-					$ticket->fk_statut = $objp->fk_statut;
-					$ticket->fk_statut = $objp->fk_statut;
+					//$ticket->fk_statut = $objp->status;
+					//$ticket->fk_statut = $objp->status;
+					$ticket->status = $objp->status;
+					$ticket->statut = $objp->status;
 					if ($objp->fk_soc > 0) {
 						$thirdparty = new Societe($this->db);
 						$thirdparty->id = $objp->fk_soc;
@@ -182,7 +182,10 @@ class box_last_modified_ticket extends ModeleBoxes
 				}
 
 				if ($num == 0) {
-					$this->info_box_contents[$i][0] = array('td' => '', 'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>');
+					$this->info_box_contents[$i][0] = array(
+						'td' => '',
+						'text'=>'<span class="opacitymedium">'.$langs->trans("BoxLastModifiedTicketNoRecordedTickets").'</span>'
+					);
 				}
 			} else {
 				dol_print_error($this->db);

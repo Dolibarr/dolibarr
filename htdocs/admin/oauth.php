@@ -29,7 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 
-// $supportedoauth2array is defined into oauth.lib.php
+$supportedoauth2array = getSupportedOauth2Array();
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -234,6 +234,8 @@ print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProvider
 
 print '<select name="provider" id="provider" class="minwidth150">';
 print '<option name="-1" value="-1">'.$langs->trans("OAuthProvider").'</option>';
+$list = getAllOauth2Array();
+// TODO Make a loop directly on getSupportedOauth2Array() and remove getAllOauth2Array()
 foreach ($list as $key) {
 	$supported = 0;
 	$keyforsupportedoauth2array = $key[0];
@@ -245,7 +247,6 @@ foreach ($list as $key) {
 		continue; // show only supported
 	}
 
-	$i++;
 	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">'.$supportedoauth2array[$keyforsupportedoauth2array]['name'].'</option>'."\n";
 }
 print '</select>';
@@ -354,7 +355,7 @@ if (count($listinsetup) > 0) {
 		if ($supported) {
 			$redirect_uri = $urlwithroot.'/core/modules/oauth/'.$supportedoauth2array[$keyforsupportedoauth2array]['callbackfile'].'_oauthcallback.php';
 			print '<tr class="oddeven value">';
-			print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
+			print '<td>'.$form->textwithpicto($langs->trans("RedirectURL"), $langs->trans("UseTheFollowingUrlAsRedirectURI")).'</td>';
 			print '<td><input style="width: 80%" type="text" name="uri'.$keyforsupportedoauth2array.'" id="uri'.$keyforsupportedoauth2array.$keyforprovider.'" value="'.$redirect_uri.'" disabled>';
 			print ajax_autoselect('uri'.$keyforsupportedoauth2array.$keyforprovider);
 			print '</td>';

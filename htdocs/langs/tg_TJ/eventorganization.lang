@@ -34,7 +34,6 @@ PaymentEvent=Payment of event
 NewRegistration=Registration
 EventOrganizationSetup=Танзими ташкили чорабинӣ
 EventOrganization=Event organization
-Settings=Танзимот
 EventOrganizationSetupPage = Саҳифаи танзими ташкили чорабинӣ
 EVENTORGANIZATION_TASK_LABEL = Нишони вазифаҳо барои ба таври худкор эҷод кардани лоиҳа ҳангоми тасдиқи лоиҳа
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
@@ -53,6 +52,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 #
 # Object
 #
+OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Конфронс ё Бут
 EventOrganizationConfOrBoothes=Conferences or Boothes
 ManageOrganizeEvent = Manage the organization of an event
@@ -89,7 +89,7 @@ PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Нархи обуна барои стенд
 PriceOfBoothHelp=Нархи обуна барои стенд
 EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Маълумот дар бораи конфронс ё Бут
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Иштирокчиён
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Истиноди ICS -ро зеркашӣ кунед
@@ -97,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration
 SERVICE_BOOTH_LOCATION = Хидмате, ки барои сатри ҳисобнома -фактура дар бораи макони дӯкон истифода мешавад
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
 NbVotes=Шумораи овозҳо
+
 #
 # Status
 #
@@ -105,9 +106,10 @@ EvntOrgSuggested = Тавсия дода мешавад
 EvntOrgConfirmed = Тасдиқ шудааст
 EvntOrgNotQualified = Беихтисос
 EvntOrgDone = Иҷро шуд
-EvntOrgCancelled = Бекор карда шуд
+EvntOrgCancelled = Canceled
+
 #
-# Public page
+# Other
 #
 SuggestForm = Саҳифаи пешниҳод
 SuggestOrVoteForConfOrBooth = Page for suggestion or vote
@@ -143,13 +145,8 @@ OrganizationEventBulkMailToAttendees=This is a remind about your participation i
 OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
 OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
 OrganizationEvenLabelName=Public name of the conference or booth
-
 NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Application to hold a conference
 EvntOrgRegistrationWelcomeMessage = Хуш омадед ба саҳифаи пешниҳоди конфронс ё стенд.
 EvntOrgRegistrationConfWelcomeMessage = Хуш омадед ба саҳифаи пешниҳоди конфронс.
 EvntOrgRegistrationBoothWelcomeMessage = Хуш омадед ба саҳифаи пешниҳоди стенд.
@@ -157,8 +154,8 @@ EvntOrgVoteHelpMessage = Дар ин ҷо шумо метавонед рӯйдо
 VoteOk = Овози шумо қабул шуд.
 AlreadyVoted = Шумо аллакай ба ин чорабинӣ овоз додед.
 VoteError = Ҳангоми овоздиҳӣ хато рух дод, лутфан бори дигар кӯшиш кунед.
-
 SubscriptionOk=Your registration has been recorded
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Иштирокчӣ
 PaymentConferenceAttendee = Пардохти иштирокчиёни конфронс
@@ -168,7 +165,15 @@ RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were alre
 EmailAttendee=Attendee email
 EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
 MaxNbOfAttendees=Max number of attendees
+DateStartEvent=Event start date
+DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

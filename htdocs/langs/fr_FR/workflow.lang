@@ -11,26 +11,28 @@ descWORKFLOW_TICKET_CREATE_INTERVENTION=Crée une intervention automatiquement �
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source(s) facturée(s) au classement facturé de la commande (et si le montant de la commande est le même que le total des propositions liées)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classer la/les proposition(s) commerciale(s) source facturée(s) à la validation d'une facture client (et si le montant de la facture est le même que la somme des propositions liées)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) facturée(s) à la validation de la facture client (et si le montant de la facture est le même que le montant total des commandes liées)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) à Facturée quand une facture client est passée à Payé (et si le montant de la facture est identique à la somme des commandes sources)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer la commande source à expédiée à la validation d'une expédition (et si les quantités expédiées dans le bon d'expédition sont les même que dans la commande mise à jour)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) liées à facturée(s) quand une facture client est validée (et si le montant de la facture est le même que le montant total des commandes liées). Si vous avez une facture validée pour n commandes, cela peut également classer toutes les commandes sur Facturée.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classer la/les commande(s) client(s) source(s) à Facturée quand une facture client est passée à Payé (et si le montant de la facture est identique à la somme des commandes sources). Si vous avez une facture définie facturée pour n commandes, cela peut aussi classer toutes les commandes sur Facturée.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classer les commandes client source liées comme expédiées lorsqu'une expédition est validée (et si la quantité expédiée par toutes les expéditions est la même que dans le commande à mettre à jour)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classer la commande client source liée à expédiée lorsqu'une expédition est fermée (et si la quantité expédiée par toutes les expéditions est la même que dans la commande à mettre à jour)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classer la ou les proposition(s) commerciale(s) fournisseur sources facturées quand une facture fournisseur est validée (et si le montant de la facture est le même que le total des propositions sources liées)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classer la/les proposition(s) commerciale(s) fournisseur sources liées à Facturées quand une facture fournisseur est validée (et si le montant de la facture est le même que le total des propositions liées)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la ou les commande(s) fournisseur(s) de source(s) à facturée(s) lorsque la facture fournisseur est validée (et si le montant de la facture est le même que le montant total des commandes liées)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classer la/les commande(s) fournisseur(s) source(s) à Facturée(s) lorsque la facture fournisseur est validée (et si le montant de la facture est le même que le montant total des commandes liées)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classer le bon de commande source liée comme reçu lorsqu'une réception est validée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classer le bon de commande source lié comme reçu lorsqu'une réception est clôturée (et si la quantité reçue par toutes les réceptions est la même que dans le bon de commande à mettre à jour)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classer les réceptions en "facturées" lorsqu'une facture d'achat liée est validée (et si le montant de la facture est égal au montant total des réceptions liées)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classer le bon d'epédition source lié comme fermé lorsqu'une facture client est validée (et si le montant de la facture est le même que le montant total des expéditions liées)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classer l'expédition source liée comme facturée lorsqu'une facture client est validée (et si le montant de la facture est le même que le montant total des expéditions liées)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classer les réceptions sources liées comme facturées lorsqu'une facture d'achat est validée (et si le montant de la facture est le même que le montant total des réceptions liées)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classer les réceptions sources liées comme facturé lorsqu'un facture d'achat est validée (et si le montant de la facture est le même que le montant total des réceptions liées)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=A la création d'un ticket, les contacts liés à au tiers sont liés au ticket.
+descWORKFLOW_TICKET_LINK_CONTRACT=Lors de la création d'un ticket, associez tous les contrats disponibles des tiers correspondants.
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Les contacts liés au tiers du ticket sont utilisés pour le ticket
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Fermer toutes les interventions liées au ticket lorsqu'un ticket est fermé
 AutomaticCreation=Création automatique
 AutomaticClassification=Classification automatique
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classer l'expédition source liée comme fermée lorsque la facture client est validée (et si le montant de la facture est le même que le montant total des expéditions liées)
 AutomaticClosing=Fermeture automatique
 AutomaticLinking=Liaison automatique

@@ -102,7 +102,7 @@ $arrayfields = array(
 	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
 	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
 	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enable'=>(isModEnabled('project'))),
+	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled('project'))),
 	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
 	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
 	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
@@ -119,13 +119,15 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $hookmanager->initHooks(array('sclist'));
 $object = new ChargeSociales($db);
 
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+$permissiontodelete = $user->hasRight('tax', 'charges', 'supprimer');
+
 // Security check
 $socid = GETPOST("socid", 'int');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
-$permissiontodelete = $user->rights->tax->charges->supprimer;
 
 
 /*
@@ -173,11 +175,11 @@ if (empty($reshook)) {
 		$toselect = array();
 	}
 
-		// Mass actions
-		$objectclass = 'ChargeSociales';
-		$objectlabel = 'ChargeSociales';
-		$uploaddir = $conf->tax->dir_output;
-		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	// Mass actions
+	$objectclass = 'ChargeSociales';
+	$objectlabel = 'ChargeSociales';
+	$uploaddir = $conf->tax->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 /*
@@ -379,13 +381,13 @@ if ($search_date_limit_endyear) {
 	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
 }
 
+$url = DOL_URL_ROOT.'/compta/sociales/card.php?action=create';
+
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-if ($user->rights->tax->charges->creer) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
-}
-
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 // List of mass actions available
 $arrayofmassactions = array();
@@ -447,7 +449,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 // Filters: Line number (placeholder)
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -455,7 +457,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 // Filter: Ref
 if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 
@@ -476,10 +478,10 @@ if (!empty($arrayfields['cs.fk_type']['checked'])) {
 // Filter: Date (placeholder)
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -488,10 +490,10 @@ if (!empty($arrayfields['cs.date_ech']['checked'])) {
 // Filter: Period end date
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_limit_start ? $search_date_limit_start : -1, 'search_date_limit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_limit_end ? $search_date_limit_end : -1, 'search_date_limit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -566,7 +568,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -632,7 +634,7 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array();
+$totalarray['val'] = array('totalttcfield'=>0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -683,7 +685,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Line number
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -798,7 +800,9 @@ while ($i < $imaxinloop) {
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Amount
@@ -806,8 +810,6 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			}
 			$totalarray['val']['totalttcfield'] += $obj->amount;

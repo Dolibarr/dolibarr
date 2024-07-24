@@ -93,7 +93,7 @@ if ($module != "test" && !isModEnabled($module)) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	$chunk_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
 	if (file_exists($chunk_file)) {
-		 header("HTTP/1.0 200 Ok");
+		header("HTTP/1.0 200 Ok");
 	} else {
 		header("HTTP/1.0 404 Not Found");
 	}
@@ -103,28 +103,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 		echo json_encode('File '.$flowIdentifier.' was already uploaded');
 		header("HTTP/1.0 200 Ok");
 		die();
-	} elseif (!empty($_FILES)) foreach ($_FILES as $file) {
-		// check the error status
-		if ($file['error'] != 0) {
-			dol_syslog('error '.$file['error'].' in file '.$flowFilename);
-			continue;
-		}
+	} elseif (!empty($_FILES)) {
+		foreach ($_FILES as $file) {
+			// check the error status
+			if ($file['error'] != 0) {
+				dol_syslog('error '.$file['error'].' in file '.$flowFilename);
+				continue;
+			}
 
-		// init the destination file (format <filename.ext>.part<#chunk>
-		// the file is stored in a temporary directory
-		$dest_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
+			// init the destination file (format <filename.ext>.part<#chunk>
+			// the file is stored in a temporary directory
+			$dest_file = $temp_dir.'/'.$flowFilename.'.part'.$flowChunkNumber;
 
-		// create the temporary directory
-		if (!dol_is_dir($temp_dir)) {
-			dol_mkdir($temp_dir);
-		}
+			// create the temporary directory
+			if (!dol_is_dir($temp_dir)) {
+				dol_mkdir($temp_dir);
+			}
 
-		// move the temporary file
-		if (!dol_move_uploaded_file($file['tmp_name'], $dest_file, 0)) {
-			dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
-		} else {
-			// check if all the parts present, and create the final destination file
-			$result = createFileFromChunks($temp_dir, $upload_dir, $flowFilename, $flowChunkSize, $flowTotalSize);
+			// move the temporary file
+			if (!dol_move_uploaded_file($file['tmp_name'], $dest_file, 0)) {
+				dol_syslog('Error saving (move_uploaded_file) chunk '.$flowChunkNumber.' for file '.$flowFilename);
+			} else {
+				// check if all the parts present, and create the final destination file
+				$result = createFileFromChunks($temp_dir, $upload_dir, $flowFilename, $flowChunkSize, $flowTotalSize);
+			}
 		}
 	}
 }
@@ -147,7 +149,7 @@ if ($result) {
  */
 function createFileFromChunks($temp_dir, $upload_dir, $fileName, $chunkSize, $totalSize)
 {
-	dol_syslog(__METHOD__, LOG_DEBUG);
+	dol_syslog(__FUNCTION__, LOG_DEBUG);
 
 	// count all the parts of this file
 	$total_files = 0;

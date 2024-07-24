@@ -150,7 +150,7 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.' '.constant('DOL_VERSION');
-		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 			$title = $conf->global->MAIN_APPLICATION_TITLE;
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
@@ -192,7 +192,7 @@ if (!function_exists('dol_loginfunction')) {
 		$prefix = dol_getprefix('');
 		$sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 
-		if (!empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 			if (session_status() != PHP_SESSION_ACTIVE) {
 				if (PHP_VERSION_ID < 70300) {
 					session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
@@ -270,7 +270,7 @@ if (!function_exists('dol_loginfunction')) {
 		// Security graphical code
 		$captcha = 0;
 		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && !empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 			$captcha = 1;
 			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
 		}
@@ -278,28 +278,28 @@ if (!function_exists('dol_loginfunction')) {
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK) || empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) {
-			if (empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (empty($conf->global->MAIN_HELPCENTER_DISABLELINK)) {
+			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
 				$helpcenterlink = 1;
 			}
 		}
 
 		// Home message
 		$main_home = '';
-		if (!empty($conf->global->MAIN_HOME)) {
+		if (getDolGlobalString('MAIN_HOME')) {
 			$substitutionarray = getCommonSubstitutionArray($langs);
 			complete_substitutions_array($substitutionarray, $langs);
-			$texttoshow = make_substitutions($conf->global->MAIN_HOME, $substitutionarray, $langs);
+			$texttoshow = make_substitutions(getDolGlobalString('MAIN_HOME'), $substitutionarray, $langs);
 
 			$main_home = dol_htmlcleanlastbr($texttoshow);
 		}
 
 		// Google AD
-		$main_google_ad_client = ((!empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) ? 1 : 0);
+		$main_google_ad_client = ((getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) ? 1 : 0);
 
 		// Set jquery theme
 		$dol_loginmesg = (!empty($_SESSION["dol_loginmesg"]) ? $_SESSION["dol_loginmesg"] : '');
@@ -308,12 +308,12 @@ if (!function_exists('dol_loginfunction')) {
 		if (!empty($mysoc->logo_squarred_mini)) {
 			$favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		}
-		if (!empty($conf->global->MAIN_FAVICON_URL)) {
+		if (getDolGlobalString('MAIN_FAVICON_URL')) {
 			$favicon = $conf->global->MAIN_FAVICON_URL;
 		}
 
 		$jquerytheme = 'base';
-		if (!empty($conf->global->MAIN_USE_JQUERY_THEME)) {
+		if (getDolGlobalString('MAIN_USE_JQUERY_THEME')) {
 			$jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 		}
 
@@ -377,7 +377,7 @@ function makesalt($type = CRYPT_SALT_LENGTH)
  *  Encode or decode database password in config file
  *
  *  @param   	int		$level   	Encode level: 0 no encoding, 1 encoding
- *	@return		int					<0 if KO, >0 if OK
+ *	@return		int					Return integer <0 if KO, >0 if OK
  */
 function encodedecode_dbpassconf($level = 0)
 {
@@ -535,7 +535,7 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 
 			$generated_password = str_shuffle($randomCode);
 		}
-	} elseif (!empty($conf->global->USER_PASSWORD_GENERATED)) {
+	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
 		$nomfichier = $nomclass.".class.php";
 		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;

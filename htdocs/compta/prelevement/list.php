@@ -48,7 +48,7 @@ $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hier
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -63,7 +63,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "p.datec";
+	$sortfield = ($type == 'bank-transfer' ? "datec" : "p.datec");
 }
 
 $search_line = GETPOST('search_line', 'alpha');
@@ -75,6 +75,7 @@ $statut = GETPOST('statut', 'int');
 $bon = new BonPrelevement($db);
 $line = new LignePrelevement($db);
 $company = new Societe($db);
+$userstatic = new User($db);
 
 $hookmanager->initHooks(array('withdrawalsreceiptslineslist'));
 
@@ -115,7 +116,7 @@ if ($type == 'bank-transfer') {
 }
 $help_url = '';
 
-$sql = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
+$sql  = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
 $sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
 $sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.code_fournisseur, s.email";
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
@@ -143,11 +144,11 @@ $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
-if ($search_line) {
-	$sql .= " AND pl.rowid = '".$db->escape($search_line)."'";
-}
 if ($search_bon) {
-	$sql .= natural_search("p.ref", $search_bon);
+	$sql .= " AND pl.rowid = '".$db->escape($search_bon)."'";
+}
+if ($search_line) {
+	$sql .= natural_search("p.ref", $search_line);
 }
 if ($type == 'bank-transfer') {
 	if ($search_code) {
@@ -161,13 +162,59 @@ if ($type == 'bank-transfer') {
 if ($search_company) {
 	$sql .= natural_search("s.nom", $search_company);
 }
+//get salary invoices
+if ($type == 'bank-transfer') {
+	$sql .= " UNION";
 
+	$sql .= " SELECT p.rowid, p.ref, p.statut as status, p.datec";
+	$sql .= ", sl.rowid as facid, sl.ref as invoiceref, sl.amount";
+	$sql .= ", u.rowid as socid, CONCAT(u.firstname, ' ', u.lastname) as name, u.ref_employee as code_client, NULL as code_fournisseur, u.email";
+	$sql .= ", pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
+
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."salary as sl";
+	$sql .= " , ".MAIN_DB_PREFIX."user as u";
+
+	$sql .= " WHERE pl.fk_prelevement_bons = p.rowid";
+	$sql .= " AND pf.fk_prelevement_lignes = pl.rowid";
+	$sql .= " AND pf.fk_salary = sl.rowid";
+	$sql .= " AND sl.fk_user = u.rowid";
+	$sql .= " AND sl.entity IN (".getEntity('invoice').")";
+	if ($socid) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+	if ($search_bon) {
+		$sql .= " AND pl.rowid = '".$db->escape($search_bon)."'";
+	}
+	if ($search_line) {
+		$sql .= natural_search("p.ref", $search_line);
+	}
+	if ($type == 'bank-transfer') {
+		if ($search_code) {
+			$sql .= natural_search("NULL", $search_code);
+		}
+	} else {
+		if ($search_code) {
+			$sql .= natural_search("s.code_client", $search_code);
+		}
+	}
+	if ($search_company) {
+		$sql .= natural_search(array("u.firstname","u.lastname"), $search_company);
+	}
+}
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
-	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	if ($type == 'bank-transfer') {
+		$sqlforcount = "SELECT COUNT(*) as nbtotalofrecords FROM (" . $sql . ") AS combined_results";
+	} else {
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	}
+
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -332,9 +379,9 @@ print_liste_field_titre($columntitle, $_SERVER["PHP_SELF"], "p.ref", '', $param,
 $totalarray['nbfield']++;
 print_liste_field_titre("Line", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre(($type == 'bank-transfer' ? "BillsAndSalaries" : "Bills"), $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
-print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
 $totalarray['nbfield']++;
 print_liste_field_titre($columntitlethirdparty, $_SERVER["PHP_SELF"], $columncodethirdparty, '', $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
@@ -367,7 +414,14 @@ while ($i < $imaxinloop) {
 	$bon->total = $obj->amount;
 
 	$object = $bon;
+	if ($object->checkIfSalaryBonPrelevement()) {
+		$userstatic->id = $obj->socid;
+		$userstatic->email = $obj->email;
 
+		$fullname = explode(' ', $obj->name);
+		$userstatic->firstname = $fullname[0];
+		$userstatic->lastname = isset($fullname[1]) ? $fullname[1] : '';
+	}
 	$company->id = $obj->socid;
 	$company->name = $obj->name;
 	$company->email = $obj->email;
@@ -379,13 +433,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($bon->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -426,18 +481,29 @@ while ($i < $imaxinloop) {
 		$link_title = 'Invoice';
 		$link_picto = 'bill';
 		if ($type == 'bank-transfer') {
-			$link_to_bill = '/fourn/facture/card.php?facid=';
-			$link_title = 'SupplierInvoice';
-			$link_picto = 'supplier_invoice';
+			if ($bon->checkIfSalaryBonPrelevement()) {
+				$link_to_bill = '/salaries/card.php?id=';
+				$link_title = 'SalaryInvoice';
+				$link_picto = 'salary';
+			} else {
+				$link_to_bill = '/fourn/facture/card.php?facid=';
+				$link_title = 'SupplierInvoice';
+				$link_picto = 'supplier_invoice';
+			}
 		}
 		print '<a href="'.DOL_URL_ROOT.$link_to_bill.$obj->facid.'">';
 		print img_object($langs->trans($link_title), $link_picto);
-		print '&nbsp;'.$obj->invoiceref."</td>\n";
+		if (!$bon->checkIfSalaryBonPrelevement()) {
+			print '&nbsp;'.$obj->invoiceref."</td>\n";
+		} else {
+			print '&nbsp;'.(!empty($obj->invoiceref) ? $obj->invoiceref : $obj->facid)."</td>\n";
+		}
 		print '</a>';
 		print '</td>';
 
 		print '<td>';
-		print $company->getNomUrl(1);
+
+		print(!$bon->checkIfSalaryBonPrelevement() ? $company->getNomUrl(1) : $userstatic->getNomUrl(1));
 		print "</td>\n";
 
 
@@ -479,7 +545,7 @@ if ($num == 0) {
 	print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 }
 
-$db->free($result);
+$db->free($resql);
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

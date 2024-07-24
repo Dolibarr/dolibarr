@@ -32,10 +32,11 @@ StatusReceptionDraftShort=مسودہ
 StatusReceptionValidatedShort=تصدیق شدہ
 StatusReceptionProcessedShort=پروسیس شدہ
 ReceptionSheet=استقبالیہ شیٹ
+ValidateReception=Validate reception
 ConfirmDeleteReception=کیا آپ واقعی اس استقبالیہ کو حذف کرنا چاہتے ہیں؟
-ConfirmValidateReception=کیا آپ واقعی <b> %s </b> حوالہ کے ساتھ اس استقبالیہ کی توثیق کرنا چاہتے ہیں؟
+ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=کیا آپ واقعی اس استقبالیہ کو منسوخ کرنا چاہتے ہیں؟
-StatsOnReceptionsOnlyValidated=صرف استقبالیہ پر کئے گئے اعدادوشمار کی توثیق کی گئی۔ استعمال ہونے والی تاریخ استقبالیہ کی توثیق کی تاریخ ہے (منصوبہ بندی کی ترسیل کی تاریخ ہمیشہ معلوم نہیں ہوتی ہے)۔
+StatsOnReceptionsOnlyValidated=Statistics conducted on validated only receptions. Date used is date of validation of reception (planned delivery date is not always known).
 SendReceptionByEMail=ای میل کے ذریعے استقبالیہ بھیجیں۔
 SendReceptionRef=استقبالیہ %s جمع کروانا
 ActionsOnReception=استقبالیہ پر تقریبات
@@ -48,7 +49,10 @@ ReceptionsNumberingModules=استقبالیہ کے لیے نمبرنگ ماڈی�
 ReceptionsReceiptModel=استقبالیہ کے لیے دستاویز کے سانچے
 NoMorePredefinedProductToDispatch=بھیجنے کے لیے مزید پہلے سے طے شدہ مصنوعات نہیں۔
 ReceptionExist=ایک استقبالیہ موجود ہے۔
-ByingPrice=قیمت کے حساب سے
 ReceptionBackToDraftInDolibarr=استقبالیہ %s ڈرافٹ پر واپس
 ReceptionClassifyClosedInDolibarr=استقبالیہ %s کلاسیفائیڈ بند
 ReceptionUnClassifyCloseddInDolibarr=استقبالیہ %s دوبارہ کھولیں۔
+RestoreWithCurrentQtySaved=Fill quantities with latest saved values
+ReceptionsRecorded=Receptions recorded
+ReceptionUpdated=Reception successfully updated
+ReceptionDistribution=Reception distribution

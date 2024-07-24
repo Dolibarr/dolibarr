@@ -41,7 +41,7 @@ PartnershipAboutPage=Page d'informations du module Partenariat
 partnershipforthirdpartyormember=Le statut Partenaire doit être défini sur un 'tiers' ou un 'adhérent'
 PARTNERSHIP_IS_MANAGED_FOR=Partenariat géré pour
 PARTNERSHIP_BACKLINKS_TO_CHECK=Liens de retour à vérifier
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de jours avant l'annulation de l'état d'un partenariat lorsque la cotisation a expiré
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb de jours avant l'annulation d'un partenariat lorsque la cotisation a expiré.
 ReferingWebsiteCheck=Vérification du site référent
 ReferingWebsiteCheckDesc=Vous pouvez activer une fonctionnalité pour vérifier que vos partenaires ont ajouté un rétrolien vers les domaines de votre site Web sur leur propre site Web.
 PublicFormRegistrationPartnerDesc=Dolibarr peut vous fournir une URL/un site Web public pour permettre aux visiteurs externes de demander à faire partie du programme de partenariat.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partenariat dédié à cet adhérent
 DatePartnershipStart=Date de début
 DatePartnershipEnd=Date de fin
 ReasonDecline=Raison du refus
-ReasonDeclineOrCancel=Raison du refus
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partenariat déjà existant
 ManagePartnership=Gestion de partenariat
 BacklinkNotFoundOnPartnerWebsite=Lien de retour non trouvé sur le site web partenaire
@@ -82,16 +82,17 @@ YourPartnershipRefusedTopic=Partenariat refusé
 YourPartnershipAcceptedTopic=Partenariat accepté
 YourPartnershipCanceledTopic=Partenariat annulé
 
-YourPartnershipWillSoonBeCanceledContent=Nous vous informons que votre demande de partenariat va bientôt être annulée (lien de retour non trouvé)
-YourPartnershipRefusedContent=Nous vous informons que votre demande de partenariat a été refusée.
+YourPartnershipWillSoonBeCanceledContent=Nous vous informons que notre partenariat sera bientôt annulé (nous n'avons pas obtenu le renouvellement ou une condition préalable à notre partenariat n'a pas été remplie). Veuillez nous contacter si vous avez reçu ce message par erreur.
+YourPartnershipRefusedContent=Nous vous informons que votre demande de partenariat a été refusée. Les conditions préalables ne sont pas remplies. Veuillez nous contacter si vous avez besoin de plus d'informations.
 YourPartnershipAcceptedContent=Nous vous informons que votre demande de partenariat a été acceptée.
-YourPartnershipCanceledContent=Nous vous informons que votre demande de partenariat a été annulée.
+YourPartnershipCanceledContent=Nous vous informons que votre partenariat a été annulé. Contactez-nous si vous avez besoin de plus d'informations.
 
 CountLastUrlCheckError=Nombre d'erreurs lors de la dernière vérification d'URL
 LastCheckBacklink=Date de la dernière vérification d'URL
-ReasonDeclineOrCancel=Raison du refus
 
 NewPartnershipRequest=Nouvelle demande de partenariat
 NewPartnershipRequestDesc=Ce formulaire vous permet de demander à faire partie de l'un de nos programmes de partenariat. Si vous avez besoin d'aide pour remplir ce formulaire, veuillez contacter par email <b>%s</b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Cette page doit contenir au moins un lien vers l'un des domaines suivants: %s
+
+IPOfApplicant=IP du demandeur
 

@@ -44,7 +44,7 @@ $selectcpt = GETPOST('cpt_bk');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel', 'alpha');
-$showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ?GETPOST('showaccountdetail', 'aZ09') : 'no';
+$showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'no';
 
 
 $date_startmonth = GETPOST('date_startmonth', 'int');
@@ -75,11 +75,11 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q") ?GETPOST("q", 'int') : 0;
+	$q = GETPOST("q") ? GETPOST("q", 'int') : 0;
 	if ($q == 0) {
 		// We define date_start and date_end
 		$year_end = $year_start + ($nbofyear - 1);
-		$month_start = GETPOST("month", 'int') ?GETPOST("month", 'int') : ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = GETPOST("month", 'int') ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$date_startmonth = $month_start;
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
@@ -203,12 +203,12 @@ if ($modecompta == "CREANCES-DETTES") {
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description = $langs->trans("RulesResultDue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 	$builddate = dol_now();
@@ -240,7 +240,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 }
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
+report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta'=>$modecompta, 'action' => ''), $calcmode);
 
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -259,7 +259,7 @@ print '<th class="liste_titre"></th>';
 print '<th class="liste_titre right">'.$langs->trans("PreviousPeriod").'</th>';
 print '<th class="liste_titre right">'.$langs->trans("SelectedPeriod").'</th>';
 foreach ($months as $k => $v) {
-	if (($k + 1) >= $date_startmonth) {
+	if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 		print '<th class="liste_titre right width50">'.$langs->trans('MonthShort'.sprintf("%02s", ($k + 1))).'</th>';
 	}
 }
@@ -392,7 +392,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Detail by month
 				foreach ($months as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
+					if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 						foreach ($sommes as $code => $det) {
 							$vars[$code] = empty($det['M'][$k]) ? 0 : $det['M'][$k];
 						}
@@ -591,7 +591,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 				// Each month
 				foreach ($totCat['M'] as $k => $v) {
-					if (($k + 1) >= $date_startmonth) {
+					if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 						print '<td class="right nowraponall"><span class="amount">'.price($v).'</span></td>';
 					}
 				}
@@ -632,7 +632,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 							// Make one call for each month
 							foreach ($months as $k => $v) {
-								if (($k + 1) >= $date_startmonth) {
+								if (($k + 1) >= $date_startmonth && $k < $date_endmonth) {
 									if (isset($cpt['account_number'])) {
 										$resultM = $totPerAccount[$cpt['account_number']]['M'][$k];
 									} else {

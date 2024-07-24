@@ -192,7 +192,7 @@ if ($type == 'directory') {
 
 	$maxlengthname = 40;
 	$excludefiles = array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$');
-	$sorting = (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC);
+	$sorting = (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC);
 
 	// Right area. If module is defined here, we are in automatic ecm.
 	$automodules = array(
@@ -310,7 +310,7 @@ if ($type == 'directory') {
 			  'max_file_size' => string '2097152' (length=7)
 			  'sendit' => string 'Envoyer fichier' (length=15)
 			 */
-			$relativepath = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+			$relativepath = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 			if ($relativepath && $relativepath != '/') {
 				$relativepath .= '/';
 			}
@@ -402,7 +402,7 @@ if (!empty($conf->dol_use_jmobile)) {
 if (empty($conf->use_javascript_ajax)) {
 	$useajax = 0;
 }
-if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$useajax = 0;
 }
 

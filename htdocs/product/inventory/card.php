@@ -38,10 +38,11 @@ $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'inventorycard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$include_sub_warehouse = !empty(GETPOST('include_sub_warehouse')) ? GETPOST('include_sub_warehouse') : 0;
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
@@ -82,7 +83,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'mymodule', $id);
 
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoread = $user->rights->stock->lire;
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
@@ -261,6 +262,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	$formconfirm = '';
 
+
+	// Confirmation of action xxxx
+	if ($action == 'setdraft') {
+		$text = $langs->trans('ConfirmSetToDraftInventory', $object->ref);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', '', 0, 1, 220);
+	}
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteInventory'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
@@ -287,6 +294,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		 );
 		 */
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+	}
+
+
+	if ($action == 'validate') {
+		$form = new Form($db);
+		$formquestion = '';
+		if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+			$formquestion = array(
+				array('type' => 'checkbox', 'name' => 'include_sub_warehouse', 'label' => $langs->trans("IncludeSubWarehouse"), 'value' => 1, 'size' => '10'),
+			);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateInventory'), $langs->trans('IncludeSubWarehouseExplanation'), 'confirm_validate', $formquestion, '', 1);
+		}
 	}
 
 	// Call Hook formConfirm
@@ -390,7 +409,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft&confirm=yes&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
 			// Back to validate
@@ -412,7 +431,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT || $object->status == $object::STATUS_CANCELED) {
 				if ($permissiontoadd) {
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
+					if (getDolGlobalInt('INVENTORY_INCLUDE_SUB_WAREHOUSE') && !empty($object->fk_warehouse)) {
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
+					} else {
+						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken().'">'.$langs->trans("Validate").' ('.$langs->trans("ToStart").')</a>';
+					}
 				}
 			}
 

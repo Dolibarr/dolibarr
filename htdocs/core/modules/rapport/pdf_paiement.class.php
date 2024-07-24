@@ -53,6 +53,15 @@ class pdf_paiement extends CommonDocGenerator
 
 	public $doc_type;
 
+	/**
+	 * @var int
+	 */
+	public $year;
+
+	/**
+	 * @var int
+	 */
+	public $month;
 
 	/**
 	 *  Constructor
@@ -112,7 +121,7 @@ class pdf_paiement extends CommonDocGenerator
 	 *	@param	int		$month			mois du rapport
 	 *	@param	int		$year			annee du rapport
 	 *	@param	string	$outputlangs	Lang output object
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function write_file($_dir, $month, $year, $outputlangs)
 	{
@@ -130,7 +139,7 @@ class pdf_paiement extends CommonDocGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -166,9 +175,9 @@ class pdf_paiement extends CommonDocGenerator
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'outputlangs'=>$outputlangs);
+		$parameters = array('file'=>$file, 'object'=>$this, 'outputlangs'=>$outputlangs);
 		global $action;
-		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $this, $action); // Note that $action and $this may have been modified by some hooks
 
 		$pdf = pdf_getInstance($this->format);
 		$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
@@ -217,7 +226,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
@@ -226,14 +235,14 @@ class pdf_paiement extends CommonDocGenerator
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 				// If global param PAYMENTS_REPORT_GROUP_BY_MOD is set, payment are ordered by paiement_code
-				if (!empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) {
+				if (getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) {
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiement ASC";
 				} else {
 					$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
@@ -255,7 +264,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 				}
 				$sql .= " ".MAIN_DB_PREFIX."societe as s";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				}
 				$sql .= " WHERE f.fk_soc = s.rowid AND pf.fk_facturefourn = f.rowid AND pf.fk_paiementfourn = p.rowid";
@@ -264,14 +273,14 @@ class pdf_paiement extends CommonDocGenerator
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
 				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
-				if (empty($user->rights->societe->client->voir) && !$socid) {
+				if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
 				if (!empty($socid)) {
 					$sql .= " AND s.rowid = ".((int) $socid);
 				}
 				// If global param PAYMENTS_FOURN_REPORT_GROUP_BY_MOD is set, payment fourn are ordered by paiement_code
-				if (!empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD)) {
+				if (getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD')) {
 					$sql .= " ORDER BY paiement_code ASC, p.datep ASC, pf.fk_paiementfourn ASC";
 				} else {
 					$sql .= " ORDER BY p.datep ASC, pf.fk_paiementfourn ASC";
@@ -356,7 +365,7 @@ class pdf_paiement extends CommonDocGenerator
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('pdfgeneration'));
-		$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+		$parameters = array('file'=>$file, 'object'=>$this, 'outputlangs'=>$outputlangs);
 		global $action;
 		$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -468,7 +477,7 @@ class pdf_paiement extends CommonDocGenerator
 		$pdf->SetFillColor(220, 220, 220);
 		$yp = 0;
 		$numlines = count($lines);
-		if (($this->doc_type == 'client' && !empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) || ($this->doc_type == 'fourn' && !empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))) {
+		if (($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) {
 			$mod = $lines[0][2];
 			$total_mod = 0;
 		}
@@ -481,7 +490,7 @@ class pdf_paiement extends CommonDocGenerator
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$yp = 0;
 			}
-			if ($oldprowid <> $lines[$j][7]) {
+			if ($oldprowid != $lines[$j][7]) {
 				if ($yp > $this->tab_height - 15) {
 					$pdf->SetFillColor(255, 255, 255);
 					$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
@@ -516,7 +525,7 @@ class pdf_paiement extends CommonDocGenerator
 				$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][4], 0, 'R', 1);
 				$yp = $yp + 5;
 				$total_page += $lines[$j][9];
-				if (($this->doc_type == 'client' && !empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) || ($this->doc_type == 'fourn' && !empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))) {
+				if (($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) {
 					$total_mod += $lines[$j][9];
 				}
 			}
@@ -538,12 +547,12 @@ class pdf_paiement extends CommonDocGenerator
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][6], 0, 'R', 0);
 			$yp = $yp + 5;
 
-			if ($oldprowid <> $lines[$j][7]) {
+			if ($oldprowid != $lines[$j][7]) {
 				$oldprowid = $lines[$j][7];
 			}
 
 			// Add line to add total by payment mode if mode reglement for nex line change
-			if ((($this->doc_type == 'client' && !empty($conf->global->PAYMENTS_REPORT_GROUP_BY_MOD)) || ($this->doc_type == 'fourn' && !empty($conf->global->PAYMENTS_FOURN_REPORT_GROUP_BY_MOD))) && ($mod != $lines[$j + 1][2])) {
+			if ((($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) && ($mod != $lines[$j + 1][2])) {
 				$pdf->SetFillColor(245, 245, 245);
 				$pdf->Rect($this->marge_gauche + 1, $this->tab_top + 10 + $yp, $this->posxpaymentamount - $this->marge_droite - 3, $this->line_height, 'F', array(), array());
 				$pdf->line($this->marge_gauche, $this->tab_top + 10 + $yp, $this->page_largeur - $this->marge_droite, $this->tab_top + 10 + $yp, array('dash'=>1));

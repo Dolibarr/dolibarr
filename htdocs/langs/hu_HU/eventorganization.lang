@@ -34,7 +34,6 @@ PaymentEvent=Esemény fizetése
 NewRegistration=Regisztráció
 EventOrganizationSetup=Eseményszervezés beállítása
 EventOrganization=Rendezvényszervezés
-Settings=Beállítások
 EventOrganizationSetupPage = Eseményszervezés beállítási oldal
 EVENTORGANIZATION_TASK_LABEL = A projekt érvényesítésekor automatikusan létrehozandó feladatok címkéje
 EVENTORGANIZATION_TASK_LABELTooltip = Amikor érvényesít egy eseményt megszervezésre, bizonyos feladatok automatikusan létrehozhatók a projektben <br> <br> Például: <br> Konferencia felhívás küldése <br> Stand felhívás küldése <br> Érvényesítse a konferenciák javaslatait <br> Érvényesítse a jelentkezést a Standra <br> Nyitott jelentkezés az eseményre a résztvevők számára <br> Emlékeztető küldése az eseményről az előadóknak <br> Emlékeztető küldése az eseményről a Stand házigazdáinak <br> Emlékeztető küldése az eseményről a résztvevőknek
@@ -53,9 +52,9 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = A résztvevő létrehozására/hozzáad
 #
 # Object
 #
-OrganizedEvent=Organized event
+OrganizedEvent=Szervezett rendezvény
 EventOrganizationConfOrBooth= Konferencia vagy stand
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Konferenciák vagy standok
 ManageOrganizeEvent = Egy esemény szervezésének kezelése
 ConferenceOrBooth = Konferencia vagy stand
 ConferenceOrBoothTab = Konferencia vagy stand
@@ -90,7 +89,7 @@ PriceOfRegistrationHelp=Az eseményen való részvételért vagy regisztráció�
 PriceOfBooth=Előfizetési ár, hogy megállja a helyét
 PriceOfBoothHelp=Előfizetési ár, hogy megállja a helyét
 EventOrganizationICSLink=ICS összekapcsolása konferenciákhoz
-ConferenceOrBoothInformation=Konferencia vagy fülke információk
+ConferenceOrBoothInformation=Konferencia vagy stand információ
 Attendees=Részvevők
 ListOfAttendeesOfEvent=Az eseményprojekt résztvevőinek listája
 DownloadICSLink = ICS hivatkozás letöltése
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Magvető a nyilvános regisztrációs oldal kulcs�
 SERVICE_BOOTH_LOCATION = A standhellyel kapcsolatos számlasorhoz használt szolgáltatás
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Az esemény résztvevőinek előfizetéséről szóló számlasorhoz használt szolgáltatás
 NbVotes=Szavazatok száma
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Javasolt
 EvntOrgConfirmed = Megerősítve
 EvntOrgNotQualified = Nem minősített
 EvntOrgDone = Kész
-EvntOrgCancelled = Törölve
+EvntOrgCancelled = Megszakítva
+
 #
-# Public page
+# Other
 #
 SuggestForm = Javaslat oldal
 SuggestOrVoteForConfOrBooth = Javaslat vagy szavazás oldala
@@ -116,15 +117,15 @@ EvntOrgRegistrationHelpMessage = Itt szavazhat egy konferenciára, vagy javasolh
 EvntOrgRegistrationConfHelpMessage = Itt javasolhat egy új konferenciát, amelyet animálhat az esemény alatt.
 EvntOrgRegistrationBoothHelpMessage = Itt jelentkezhet, hogy standot tarthasson az esemény alatt.
 ListOfSuggestedConferences = A javasolt konferenciák listája
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Javasolt fülkék
+ListOfConferencesOrBooths=Konferenciák vagy rendezvényprojektek standjai
 SuggestConference = Új konferencia javaslata
 SuggestBooth = Javasolj egy fülkét
 ViewAndVote = A javasolt események megtekintése és szavazás
 PublicAttendeeSubscriptionGlobalPage = Nyilvános link az eseményre való regisztrációhoz
 PublicAttendeeSubscriptionPage = Nyilvános hivatkozás csak erre az eseményre való regisztrációhoz
 MissingOrBadSecureKey = A biztonsági kulcs érvénytelen vagy hiányzik
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Ezen az űrlapon új résztvevőként regisztrálhat az eseményre
 EvntOrgDuration = Ez a konferencia %s-kor kezdődik és %s-kor ér véget.
 ConferenceAttendeeFee = Konferencia résztvevői díja az eseményhez: '%s', %s és %s között.
 BoothLocationFee = A stand helye az eseményhez: '%s', %s és %s között
@@ -134,7 +135,7 @@ LabelOfconference=Konferencia címke
 ConferenceIsNotConfirmed=A regisztráció nem érhető el, a konferencia még nincs megerősítve
 DateMustBeBeforeThan=az %s előtt az %s előtt kell lennie
 DateMustBeAfterThan=%s %s után kell lennie
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
+MaxNbOfAttendeesReached=Elérte a résztvevők maximális számát
 NewSubscription=Regisztráció
 OrganizationEventConfRequestWasReceived=A konferenciára vonatkozó javaslatát megkaptuk
 OrganizationEventBoothRequestWasReceived=A standra vonatkozó kérése megérkezett
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Ez egy emlékeztető arról, hogy résztvev
 OrganizationEventBulkMailToSpeakers=Emlékeztető arra, hogy előadóként vesz részt az eseményen
 OrganizationEventLinkToThirdParty=Harmadik félhez (ügyfélhez, szállítóhoz vagy partnerhez) mutató hivatkozás
 OrganizationEvenLabelName=A konferencia vagy stand nyilvános neve
-
 NewSuggestionOfBooth=Jelentkezés egy standra
-NewSuggestionOfConference=Application to hold a conference
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Jelentkezés konferencia megtartására
 EvntOrgRegistrationWelcomeMessage = Üdvözöljük a konferencia- vagy standjavaslat-oldalon.
 EvntOrgRegistrationConfWelcomeMessage = Üdvözöljük a konferencia javaslati oldalán.
 EvntOrgRegistrationBoothWelcomeMessage = Üdvözöljük a standjavaslat oldalon.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Itt megtekintheti a projekthez javasolt eseményeket é
 VoteOk = Szavazatát elfogadták.
 AlreadyVoted = Már szavazott erre az eseményre.
 VoteError = Hiba történt a szavazás során, próbálja újra.
-
-SubscriptionOk=Your registration has been recorded
+SubscriptionOk=Regisztrációját rögzítettük
+AmountOfRegistrationPaid=Befizetett regisztrációs összeg
 ConfAttendeeSubscriptionConfirmation = Egy eseményre való feliratkozás megerősítése
 Attendee = Résztvevő
 PaymentConferenceAttendee = Konferencia résztvevőinek kifizetése
@@ -167,11 +163,17 @@ PaymentBoothLocation = Fizetés a fülkében
 DeleteConferenceOrBoothAttendee=Részvevő eltávolítása
 RegistrationAndPaymentWereAlreadyRecorder=A <b>%s</b> e-mailhez már rögzítésre került egy regisztráció és egy fizetés
 EmailAttendee=Részvevő e-mail
-EmailCompany=Company email
+EmailCompany=Vállalati e-mail
 EmailCompanyForInvoice=Vállalati e-mail-cím (a számlához, ha eltér a résztvevő e-mail-címétől)
-ErrorSeveralCompaniesWithEmailContactUs=Több ilyen e-mail-címmel rendelkező céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
-ErrorSeveralCompaniesWithNameContactUs=Több ilyen nevű céget találtunk, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, vegye fel velünk a kapcsolatot a %s címen kézi ellenőrzésért
+ErrorSeveralCompaniesWithEmailContactUs=Számos céget találtunk ezzel az e-mail-címmel, így nem tudjuk automatikusan ellenőrizni regisztrációját. Kérjük, lépjen kapcsolatba velünk a %s címen kézi ellenőrzésért
+ErrorSeveralCompaniesWithNameContactUs=Számos ilyen nevű céget találtunk, így nem tudjuk automatikusan érvényesíteni a regisztrációját. Kérjük, lépjen kapcsolatba velünk a %s címen kézi ellenőrzésért
 NoPublicActionsAllowedForThisEvent=Ennél az eseménynél nincs nyilvános művelet
 MaxNbOfAttendees=A résztvevők maximális száma
-DateStartEvent=Event start date
-DateEndEvent=Event end date
+DateStartEvent=Az esemény kezdési dátuma
+DateEndEvent=Az esemény befejezési dátuma
+ModifyStatus=Állapot módosítása
+ConfirmModifyStatus=Állapotmódosítás megerősítése
+ConfirmModifyStatusQuestion=Biztosan módosítani szeretné a %s kiválasztott rekordot?
+RecordsUpdated = %s A rekordok frissítve
+RecordUpdated = A rekord frissítve
+NoRecordUpdated = Nincs rekord frissítve

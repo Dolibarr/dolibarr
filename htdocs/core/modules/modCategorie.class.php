@@ -474,7 +474,7 @@ class modCategorie extends DolibarrModules
 			'ca.label'=>"My Category Label", 'ca.type'=>$typeexample, 'ca.description'=>"My Category description", // $typeexample built above in exports
 			'ca.fk_parent' => 'rowid or label'
 		);
-		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label');
+		$this->import_updatekeys_array[$r] = array('ca.label'=>'Label', 'ca.type' => 'Type');
 
 		// 0 Products
 		if (isModEnabled("product")) {

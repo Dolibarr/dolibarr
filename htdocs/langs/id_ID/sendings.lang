@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Divalidasi
 StatusSendingProcessedShort=Diproses
 SendingSheet=Lembar pengiriman
 ConfirmDeleteSending=Anda yakin ingin menghapus kiriman ini?
-ConfirmValidateSending=Apakah Anda yakin ingin memvalidasi pengiriman ini dengan referensi<b>%s </b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Anda yakin ingin membatalkan pengiriman ini?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Peringatan, tidak ada produk yang menunggu untuk dikirim.
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Kuantitas produk dari pesanan pembe
 NoProductToShipFoundIntoStock=Tidak ada produk untuk dikirim ditemukan di gudang<b>%s </b>. Perbaiki stok atau kembali untuk memilih gudang lain.
 WeightVolShort=Berat / Vol.
 ValidateOrderFirstBeforeShipment=Anda harus terlebih dahulu memvalidasi pesanan sebelum dapat melakukan pengiriman.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Jumlah bobot produk
 # warehouse details
 DetailWarehouseNumber= Detail gudang
 DetailWarehouseFormat= W: %s (Jumlah: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 
 ShipmentDistribution=Shipment distribution
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

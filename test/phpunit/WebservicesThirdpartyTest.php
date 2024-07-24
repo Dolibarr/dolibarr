@@ -171,7 +171,7 @@ class WebservicesThirdpartyTest extends PHPUnit\Framework\TestCase
 				'password'=>'admin',
 				'entity'=>'');
 
-		$body = array (
+		$body = array(
 				"id" => null,
 				"ref" => "name",
 				"ref_ext" => "12",

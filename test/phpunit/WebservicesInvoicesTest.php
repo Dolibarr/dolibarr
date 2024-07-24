@@ -203,7 +203,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 
 		$WS_METHOD  = 'createInvoice';
 
-		$body = array (
+		$body = array(
 				"id" => null,
 				"ref" => null,
 				"ref_ext" => "ref-phpunit-2",
@@ -354,7 +354,7 @@ class WebservicesInvoicesTest extends PHPUnit\Framework\TestCase
 		$WS_METHOD  = 'updateInvoice';
 
 		// update status to 2
-		$body = array (
+		$body = array(
 			"id" => null,
 			"ref" => null,
 			"ref_ext" => "ref-phpunit-2",

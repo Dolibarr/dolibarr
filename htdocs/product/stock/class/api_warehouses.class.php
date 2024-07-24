@@ -55,10 +55,10 @@ class Warehouses extends DolibarrApi
 	 *
 	 * Return an array with warehouse informations
 	 *
-	 * @param 	int 	$id 			ID of warehouse
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of warehouse
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -71,7 +71,7 @@ class Warehouses extends DolibarrApi
 			throw new RestException(404, 'warehouse not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('warehouse', $this->warehouse->id)) {
+		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -89,11 +89,12 @@ class Warehouses extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -106,7 +107,7 @@ class Warehouses extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot AS t LEFT JOIN ".MAIN_DB_PREFIX."entrepot_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		if ($category > 0) {
-			$sql .= ", ".$this->db->prefix()."categorie_societe as c";
+			$sql .= ", ".$this->db->prefix()."categorie_warehouse as c";
 		}
 		$sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
 		// Select warehouses of given category
@@ -142,16 +143,14 @@ class Warehouses extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$warehouse_static = new Entrepot($this->db);
 				if ($warehouse_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($warehouse_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($warehouse_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve warehouse list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No warehouse found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -172,6 +171,12 @@ class Warehouses extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->warehouse->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->warehouse->$field = $value;
 		}
 		if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
@@ -206,6 +211,12 @@ class Warehouses extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->warehouse->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->warehouse->$field = $value;
 		}
 

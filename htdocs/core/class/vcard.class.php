@@ -454,9 +454,12 @@ class vCard
 
 		$country = $object->country_code ? $object->country : '';
 
-		if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
-			$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
-			//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+		// User address
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
+			if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
+				$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
+				//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+			}
 		}
 
 		if ($object->email) {
@@ -533,8 +536,10 @@ class vCard
 		}
 
 		// Birthday
-		if ($object->birth) {
-			$this->setBirthday($object->birth);
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+			if ($object->birth) {
+				$this->setBirthday($object->birth);
+			}
 		}
 
 		// Return VCard string

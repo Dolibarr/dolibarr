@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modBanque extends DolibarrModules
 {
-
 	/**
 	 *	Constructor.
 	 *

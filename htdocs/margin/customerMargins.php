@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -52,7 +52,7 @@ if (!$sortorder) {
 
 $startdate = $enddate = '';
 if (GETPOST('startdatemonth')) {
-	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'),  GETPOST('startdateday', 'int'),  GETPOST('startdateyear', 'int'));
+	$startdate = dol_mktime(0, 0, 0, GETPOST('startdatemonth', 'int'), GETPOST('startdateday', 'int'), GETPOST('startdateyear', 'int'));
 }
 if (GETPOST('enddatemonth')) {
 	$enddate = dol_mktime(23, 59, 59, GETPOST('enddatemonth', 'int'), GETPOST('enddateday', 'int'), GETPOST('enddateyear'));
@@ -192,14 +192,14 @@ print '<span id="totalMargin" class="amount"></span> <span class="amount">'.$lan
 print '</td></tr>';
 
 // Margin Rate
-if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 	print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="4">';
 	print '<span id="marginRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 // Mark Rate
-if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 	print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="4">';
 	print '<span id="markRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
@@ -231,14 +231,14 @@ if (!empty($TSelectedCats)) {
 	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_product as cp ON cp.fk_product=d.fk_product';
 }
 
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= " WHERE f.fk_soc = s.rowid";
 if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
@@ -261,7 +261,7 @@ if (!empty($enddate)) {
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 // We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 // We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
 if ($client) {
@@ -297,6 +297,9 @@ if (is_array($listofcateg)) {
 	}
 }
 
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 dol_syslog('margin::customerMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
@@ -305,7 +308,7 @@ if ($result) {
 	print '<br>';
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
-	if ($conf->global->MARGIN_TYPE == "1") {
+	if (getDolGlobalString('MARGIN_TYPE') == "1") {
 		$labelcostprice = 'BuyingPrice';
 	} else { // value is 'costprice' or 'pmp'
 		$labelcostprice = 'CostPrice';
@@ -327,10 +330,10 @@ if ($result) {
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", $param, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, 'align="right"', $sortfield, $sortorder);
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, 'align="right"', $sortfield, $sortorder);
 	}
 	print "</tr>\n";
@@ -347,8 +350,8 @@ if ($result) {
 			$marge = $objp->marge;
 
 			if ($marge < 0) {
-				$marginRate = ($pa != 0) ?-1 * (100 * $marge / $pa) : '';
-				$markRate = ($pv != 0) ?-1 * (100 * $marge / $pv) : '';
+				$marginRate = ($pa != 0) ? -1 * (100 * $marge / $pa) : '';
+				$markRate = ($pv != 0) ? -1 * (100 * $marge / $pv) : '';
 			} else {
 				$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
 				$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
@@ -377,10 +380,10 @@ if ($result) {
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($pv, 'MT')).'</span></td>';
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($pa, 'MT')).'</span></td>';
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($marge, 'MT')).'</span></td>';
-			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 			}
-			if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 			}
 			print "</tr>\n";
@@ -401,8 +404,8 @@ if ($result) {
 	}
 	else
 	{*/
-		$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
-		$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
+	$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
+	$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
 	//}
 
 	print '<tr class="liste_total">';
@@ -415,10 +418,10 @@ if ($result) {
 	print '<td class="nowrap right">'.price(price2num($cumul_vente, 'MT')).'</td>';
 	print '<td class="nowrap right">'.price(price2num($cumul_achat, 'MT')).'</td>';
 	print '<td class="nowrap right">'.price(price2num($totalMargin, 'MT')).'</td>';
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		print '<td class="nowrap right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%").'</td>';
 	}
 	print '</tr>';

@@ -125,6 +125,7 @@ class SkillRank extends CommonObject
 	public $fk_user_modif;
 	public $objecttype;
 	// END MODULEBUILDER PROPERTIES
+	public $rankorder;
 
 
 	// If this object has a subtable with lines
@@ -174,7 +175,7 @@ class SkillRank extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -211,7 +212,7 @@ class SkillRank extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -234,9 +235,10 @@ class SkillRank extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
+	 * @param   int     $fk_object  id of Job object (if new job object)
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid)
+	public function createFromClone(User $user, $fromid, $fk_object = 0)
 	{
 		global $langs, $extrafields;
 		$error = 0;
@@ -261,6 +263,10 @@ class SkillRank extends CommonObject
 		unset($object->id);
 		unset($object->fk_user_creat);
 		unset($object->import_key);
+		if (!empty($fk_object) && $fk_object > 0) {
+			unset($object->fk_object);
+		}
+
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
@@ -277,6 +283,11 @@ class SkillRank extends CommonObject
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
+		}
+		if (!empty($fk_object) && $fk_object > 0) {
+			if (property_exists($object, 'fk_object')) {
+				$object->fk_object = ($fk_object = 0 ? $this->fk_object : $fk_object);
+			}
 		}
 		// ...
 		// Clear extrafields that are unique
@@ -333,7 +344,7 @@ class SkillRank extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -347,7 +358,7 @@ class SkillRank extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -367,7 +378,6 @@ class SkillRank extends CommonObject
 	 */
 	public function cloneFromCurrentSkill($currentSkill, $fk_user)
 	{
-
 		global $user;
 
 		$this->fk_skill 		= $currentSkill->fk_skill;
@@ -415,7 +425,7 @@ class SkillRank extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif ($key != 'customsql' && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && $key != 'customsql' && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -467,7 +477,7 @@ class SkillRank extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -479,7 +489,7 @@ class SkillRank extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -511,7 +521,7 @@ class SkillRank extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -588,13 +598,15 @@ class SkillRank extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'skillrank/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'skillrank/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -642,7 +654,7 @@ class SkillRank extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -666,7 +678,7 @@ class SkillRank extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -690,7 +702,7 @@ class SkillRank extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -741,7 +753,7 @@ class SkillRank extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -751,7 +763,7 @@ class SkillRank extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowSkillRank");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -791,7 +803,7 @@ class SkillRank extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -882,6 +894,7 @@ class SkillRank extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -947,14 +960,14 @@ class SkillRank extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_SKILLRANK_ADDON)) {
+		if (!getDolGlobalString('hrm_SKILLRANK_ADDON')) {
 			$conf->global->hrm_SKILLRANK_ADDON = 'mod_skillrank_standard';
 		}
 
-		if (!empty($conf->global->hrm_SKILLRANK_ADDON)) {
+		if (getDolGlobalString('hrm_SKILLRANK_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_SKILLRANK_ADDON.".php";
+			$file = getDolGlobalString('hrm_SKILLRANK_ADDON') . ".php";
 			$classname = $conf->global->hrm_SKILLRANK_ADDON;
 
 			// Include file with class
@@ -1017,7 +1030,7 @@ class SkillRank extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->SKILLRANK_ADDON_PDF)) {
+			} elseif (getDolGlobalString('SKILLRANK_ADDON_PDF')) {
 				$modele = $conf->global->SKILLRANK_ADDON_PDF;
 			}
 		}

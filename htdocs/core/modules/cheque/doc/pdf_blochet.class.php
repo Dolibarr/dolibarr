@@ -35,10 +35,41 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php'
 class BordereauChequeBlochet extends ModeleChequeReceipts
 {
 	/**
-	 * Issuer
-	 * @var Societe
+	 * @var int tab_top
 	 */
-	public $emetteur;
+	public $tab_top;
+
+	/**
+	 * @var int tab_height
+	 */
+	public $tab_height;
+
+	/**
+	 * @var int line_height
+	 */
+	public $line_height;
+
+	/**
+	 * @var int line per page
+	 */
+	public $line_per_page;
+
+	/**
+	 * @var Account bank account
+	 */
+	public $account;
+
+	public $amount;
+	public $date;
+	public $nbcheque;
+	public $ref;
+	public $ref_ext;
+
+
+	/**
+	 * @var array lines
+	 */
+	public $lines;
 
 	/**
 	 *	Constructor
@@ -47,7 +78,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("main", "bills"));
@@ -100,7 +131,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		$sav_charset_output = $outputlangs->charset_output;
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -135,7 +166,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$heightforinfotot = 50; // Height reserved to output the info and total part
 		$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 		$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 			$heightforfooter += 6;
 		}
 		$pdf->SetAutoPageBreak(1, 0);
@@ -413,7 +444,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 		if (!empty($conf->global->$paramfreetext)) {
-			$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+			$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 		}
 
 		return pdf_pagefoot($pdf, $outputlangs, $newfreetext, $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);

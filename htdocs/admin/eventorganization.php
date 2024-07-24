@@ -109,7 +109,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/eventorganization/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -152,7 +154,7 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -267,7 +269,7 @@ if ($action == 'edit') {
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', 1);
 			} elseif ($val['type'] == 'securekey') {
-				print '<input type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
+				print '<input type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
 				if (!empty($conf->use_javascript_ajax)) {
 					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 				}
@@ -277,7 +279,7 @@ if ($action == 'edit') {
 				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
 				if (isModEnabled("product") || isModEnabled("service")) {
-					$selected = (empty($conf->global->$constname) ? '' : $conf->global->$constname);
+					$selected = getDolGlobalString($constname);
 					$form->select_produits($selected, $constname, '', 0);
 				}
 			} else {
@@ -437,7 +439,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model

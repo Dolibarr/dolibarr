@@ -49,7 +49,7 @@ $show_files  = GETPOST('show_files', 'int');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect    = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'expensereportlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'expensereportlist';
 $mode        = GETPOST('mode', 'alpha');
 
 $childids = $user->getAllChildIds(1);
@@ -67,10 +67,10 @@ if ($id > 0) {
 	if ($id == $user->id) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->readall)) {
+	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->lire) && in_array($id, $childids)) {
+	if ($user->hasRight('expensereport', 'lire') && in_array($id, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -82,7 +82,7 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 
 
 // Load variable for pagination
-$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
 $page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -100,14 +100,14 @@ if (!$sortfield) {
 }
 
 
-$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall			= trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $search_ref			= GETPOST('search_ref', 'alpha');
 $search_user		= GETPOST('search_user', 'int');
 $search_amount_ht	= GETPOST('search_amount_ht', 'alpha');
 $search_amount_vat	= GETPOST('search_amount_vat', 'alpha');
 $search_amount_ttc	= GETPOST('search_amount_ttc', 'alpha');
-$search_status		= (GETPOST('search_status', 'intcomma') != '' ?GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+$search_status		= (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 
 $search_date_startday		= GETPOST('search_date_startday', 'int');
 $search_date_startmonth		= GETPOST('search_date_startmonth', 'int');
@@ -186,7 +186,8 @@ $objectuser = new User($db);
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -275,7 +276,7 @@ if ($id > 0) {
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql .= " d.date_debut, d.date_fin, d.date_create, d.tms as date_modif, d.date_valid, d.date_approve, d.note_private, d.note_public,";
-$sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut, u.photo";
+$sql .= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.email, u.statut as user_status, u.photo";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -333,8 +334,8 @@ if ($search_status != '' && $search_status >= 0) {
 	$sql .= " AND d.fk_statut IN (".$db->sanitize($search_status).")";
 }
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
 }
 // Add where from extra fields
@@ -456,7 +457,7 @@ if ($resql) {
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-	if ($user->rights->expensereport->supprimer) {
+	if ($user->hasRight('expensereport', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
@@ -487,7 +488,7 @@ if ($resql) {
 
 		print dol_get_fiche_head($head, 'expensereport', $title, -1, 'user');
 
-		dol_banner_tab($fuser, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+		dol_banner_tab($fuser, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin);
 
 		print dol_get_fiche_end();
 
@@ -520,9 +521,10 @@ if ($resql) {
 		$newcardbutton = '';
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->rights->expensereport->creer);
+		$newcardbutton .= dolGetButtonTitleSeparator();
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewTrip'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('expensereport', 'creer'));
 
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'trip', 0, $newcardbutton, '', $limit, 0, 0, 1);
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'expensereport', 0, $newcardbutton, '', $limit, 0, 0, 1);
 	}
 
 	$topicmail = "SendExpenseReport";
@@ -559,7 +561,7 @@ if ($resql) {
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// Filters
 	print '<tr class="liste_titre_filter">';
@@ -577,7 +579,7 @@ if ($resql) {
 	}
 	// User
 	if (!empty($arrayfields['user']['checked'])) {
-		if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous) {
+		if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
 			print '<td class="liste_titre maxwidthonspartphone" align="left">';
 			print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 			print '</td>';
@@ -588,10 +590,10 @@ if ($resql) {
 	// Date start
 	if (!empty($arrayfields['d.date_debut']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_startend ? $search_date_startend : -1, 'search_date_startend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -599,10 +601,10 @@ if ($resql) {
 	// Date end
 	if (!empty($arrayfields['d.date_fin']['checked'])) {
 		print '<td class="liste_titre" align="center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_endend ? $search_date_endend : -1, 'search_date_endend', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -651,7 +653,7 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['d.fk_statut']['checked'])) {
-		print '<td class="liste_titre right">';
+		print '<td class="liste_titre center parentonrightofpage">';
 		$formexpensereport->selectExpensereportStatus($search_status, 'search_status', 1, 1);
 		print '</td>';
 	}
@@ -670,7 +672,7 @@ if ($resql) {
 
 	print '<tr class="liste_titre">';
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.ref']['checked'])) {
@@ -682,31 +684,31 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_debut']['checked'])) {
-		print_liste_field_titre($arrayfields['d.date_debut']['label'], $_SERVER["PHP_SELF"], "d.date_debut", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.date_debut']['label'], $_SERVER["PHP_SELF"], "d.date_debut", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_fin']['checked'])) {
-		print_liste_field_titre($arrayfields['d.date_fin']['label'], $_SERVER["PHP_SELF"], "d.date_fin", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.date_fin']['label'], $_SERVER["PHP_SELF"], "d.date_fin", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_valid']['checked'])) {
-		print_liste_field_titre($arrayfields['d.date_valid']['label'], $_SERVER["PHP_SELF"], "d.date_valid", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.date_valid']['label'], $_SERVER["PHP_SELF"], "d.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.date_approve']['checked'])) {
-		print_liste_field_titre($arrayfields['d.date_approve']['label'], $_SERVER["PHP_SELF"], "d.date_approve", "", $param, 'align="center"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.date_approve']['label'], $_SERVER["PHP_SELF"], "d.date_approve", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_ht']['checked'])) {
-		print_liste_field_titre($arrayfields['d.total_ht']['label'], $_SERVER["PHP_SELF"], "d.total_ht", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.total_ht']['label'], $_SERVER["PHP_SELF"], "d.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_vat']['checked'])) {
-		print_liste_field_titre($arrayfields['d.total_vat']['label'], $_SERVER["PHP_SELF"], "d.total_tva", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.total_vat']['label'], $_SERVER["PHP_SELF"], "d.total_tva", "", $param, '', $sortfield, $sortorder, 'right ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.total_ttc']['checked'])) {
-		print_liste_field_titre($arrayfields['d.total_ttc']['label'], $_SERVER["PHP_SELF"], "d.total_ttc", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.total_ttc']['label'], $_SERVER["PHP_SELF"], "d.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
 		$totalarray['nbfield']++;
 	}
 	// Extra fields
@@ -716,19 +718,19 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['d.date_create']['checked'])) {
-		print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.tms']['checked'])) {
-		print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.tms']['label'], $_SERVER["PHP_SELF"], "d.tms", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['d.fk_statut']['checked'])) {
-		print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, 'align="right"', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['d.fk_statut']['label'], $_SERVER["PHP_SELF"], "d.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
 		$totalarray['nbfield']++;
 	}
 	print "</tr>\n";
@@ -766,6 +768,16 @@ if ($resql) {
 			$expensereportstatic->date_approve = $db->jdate($obj->date_approve);
 			$expensereportstatic->note_private = $obj->note_private;
 			$expensereportstatic->note_public = $obj->note_public;
+			$expensereportstatic->fk_user = $obj->id_user;
+
+			$usertmp->id = $obj->id_user;
+			$usertmp->lastname = $obj->lastname;
+			$usertmp->firstname = $obj->firstname;
+			$usertmp->login = $obj->login;
+			$usertmp->statut = $obj->user_status;
+			$usertmp->status = $obj->user_status;
+			$usertmp->photo = $obj->photo;
+			$usertmp->email = $obj->email;
 
 			if ($mode == 'kanban') {
 				if ($i == 0) {
@@ -779,7 +791,7 @@ if ($resql) {
 				if ($massactionbutton || $massaction) {
 					$selected = 0;
 
-					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp->getNomUrl(1), 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
+					print $expensereportstatic->getKanbanView('', array('userauthor' => $usertmp, 'selected' => in_array($expensereportstatic->id, $arrayofselected)));
 				}
 				if ($i == ($imaxinloop - 1)) {
 					print '</div>';
@@ -838,13 +850,6 @@ if ($resql) {
 				// User
 				if (!empty($arrayfields['user']['checked'])) {
 					print '<td class="left">';
-					$usertmp->id = $obj->id_user;
-					$usertmp->lastname = $obj->lastname;
-					$usertmp->firstname = $obj->firstname;
-					$usertmp->login = $obj->login;
-					$usertmp->statut = $obj->statut;
-					$usertmp->photo = $obj->photo;
-					$usertmp->email = $obj->email;
 					print $usertmp->getNomUrl(-1);
 					print '</td>';
 					if (!$i) {
@@ -940,7 +945,7 @@ if ($resql) {
 				}
 				// Status
 				if (!empty($arrayfields['d.fk_statut']['checked'])) {
-					print '<td class="nowrap right">'.$expensereportstatic->getLibStatut(5).'</td>';
+					print '<td class="nowrap center">'.$expensereportstatic->getLibStatut(5).'</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
@@ -977,7 +982,7 @@ if ($resql) {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	// Show total line

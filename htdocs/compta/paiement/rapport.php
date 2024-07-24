@@ -40,7 +40,7 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (empty($user->rights->societe->client->voir) || $socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
@@ -98,8 +98,8 @@ print load_fiche_titre($titre, '', 'bill');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = GETPOST("remonth") ?GETPOST("remonth") : date("n", time());
-$syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
+$cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
+$syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
@@ -119,7 +119,9 @@ foreach ($year_dirs as $d) {
 
 if ($year) {
 	if (is_dir($dir.'/'.$year)) {
-		if (!empty($year_dirs)) print '<br>';
+		if (!empty($year_dirs)) {
+			print '<br>';
+		}
 		print '<br>';
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';

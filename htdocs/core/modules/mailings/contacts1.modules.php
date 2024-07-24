@@ -45,11 +45,6 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *  Constructor
@@ -98,6 +93,8 @@ class mailing_contacts1 extends MailingTargets
 	 */
 	public function getNbOfRecipients($sql = '')
 	{
+		global $conf;
+
 		$sql = "SELECT count(distinct(c.email)) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
@@ -336,7 +333,7 @@ class mailing_contacts1 extends MailingTargets
 	 *  Add some recipients into target table
 	 *
 	 *  @param  int		$mailing_id    	Id of emailing
-	 *  @return int           			<0 si erreur, nb ajout si ok
+	 *  @return int           			Return integer <0 si erreur, nb ajout si ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -457,7 +454,7 @@ class mailing_contacts1 extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
 						'fk_contact' => $obj->fk_contact,
@@ -483,6 +480,6 @@ class mailing_contacts1 extends MailingTargets
 			return -1;
 		}
 
-			return parent::addTargetsToDatabase($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 }

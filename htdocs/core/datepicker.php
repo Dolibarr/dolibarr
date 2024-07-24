@@ -172,15 +172,13 @@ function displayBox($selectedDate, $month, $year)
 	} else {
 		$selDate = 0;
 		$xyz = 0;
-	}
-	?>
+	} ?>
 <table class="dp">
 	<tr>
 		<td colspan="6" class="dpHead"><?php
 		$selectMonth = dol_print_date($thedate, '%m');
 		$selectYear = dol_print_date($thedate, '%Y');
-		echo $langs->trans("Month".$selectMonth).", ".$selectYear;
-		?></td>
+		echo $langs->trans("Month".$selectMonth).", ".$selectYear; ?></td>
 		<td class="dpHead">
 		<button type="button" class="dpInvisibleButtons" id="DPCancel"
 			onClick="closeDPBox();">X</button>
@@ -194,11 +192,11 @@ function displayBox($selectedDate, $month, $year)
 				echo "12";
 								} else {
 									echo $month - 1;
-								}?>','<?php if ($month == 1) {
-								echo $year - 1;
+								} ?>','<?php if ($month == 1) {
+	echo $year - 1;
 								} else {
 									echo $year;
-								}?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&lt;</td>
+								} ?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&lt;</td>
 		<td colspan="3" class="dpButtons"
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php echo (int) dol_print_date($today, '%m')?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')"><?php echo '-' ?></td>
 		<td class="dpButtons"
@@ -206,8 +204,8 @@ function displayBox($selectedDate, $month, $year)
 				echo "1";
 								} else {
 									echo $month + 1;
-								}?>','<?php if ($month == 12) {
-								echo $year + 1;
+								} ?>','<?php if ($month == 12) {
+	echo $year + 1;
 								} else {
 									echo $year;
 								} ?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;</td>
@@ -294,8 +292,7 @@ function displayBox($selectedDate, $month, $year)
 			echo "<td>&nbsp;</td>";
 		}
 		echo "</tr>\n";
-	}
-	?>
+	} ?>
 	<tr>
 		<td id="dpExp" class="dpExplanation" colspan="7"><?php
 		if ($selDate) {
@@ -305,8 +302,7 @@ function displayBox($selectedDate, $month, $year)
 			print ", ".$selectYear;
 		} else {
 			print "Click a Date";
-		}
-		?></td>
+		} ?></td>
 	</tr>
 </table>
 		<?php

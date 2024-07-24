@@ -54,16 +54,16 @@ if ($user->socid > 0) {
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers', 'supplier_proposal'));
 
-if ($mode == 'customer' && !$user->rights->propal->lire) {
+if ($mode == 'customer' && !$user->hasRight('propal', 'lire')) {
 	accessforbidden();
 }
-if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) {
+if ($mode == 'supplier' && !$user->hasRight('supplier_proposal', 'lire')) {
 	accessforbidden();
 }
 
@@ -112,7 +112,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenamenb = $dir.'/proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -148,7 +148,7 @@ if (!$mesg) {
 $data = $stats->getAmountByMonthWithPrevYear($endyear, $startyear, 0);
 // $data = array(array('Lib',val1,val2,val3),...)
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenameamount = $dir.'/proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 	$fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=proposalsamountinyear-'.$user->id.'-'.$year.'.png';
 } else {
@@ -183,7 +183,7 @@ if (!$mesg) {
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg = '';
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -269,7 +269,7 @@ print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, 'widt
 print '</td></tr>';
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-$sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+$sortparam_typent = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam_typent, '', 1);
 if ($user->admin) {
 	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -336,7 +336,7 @@ foreach ($data as $val) {
 	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid > 0 ? '&socid='.$socid : '').($userid > 0 ? '&userid='.$userid : '').'">'.$year.'</a></td>';
 	print '<td class="right">'.$val['nb'].'</td>';
-	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']): "0").'%</td>';
+	print '<td class="right opacitylow" style="'.((!isset($val['nb_diff']) || $val['nb_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['nb_diff']) ? round($val['nb_diff']) : "0").'%</td>';
 	print '<td class="right">'.price(price2num($val['total'], 'MT'), 1).'</td>';
 	print '<td class="right opacitylow" style="'.((!isset($val['total_diff']) || $val['total_diff'] >= 0) ? 'color: green;' : 'color: red;').'">'.(isset($val['total_diff']) ? round($val['total_diff']) : "0").'%</td>';
 	print '<td class="right">'.price(price2num($val['avg'], 'MT'), 1).'</td>';

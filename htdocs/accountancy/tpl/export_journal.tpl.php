@@ -53,7 +53,7 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	}
 	$datetouseforfilename = $search_date_end;
 	$tmparray = dol_getdate($datetouseforfilename);
-	$fiscalmonth = empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START;
+	$fiscalmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 	// Define end of month to use
 	if ($tmparray['mon'] < $fiscalmonth || $fiscalmonth == 1) {
 		$tmparray['mon'] = $fiscalmonth == 1 ? 12 : $fiscalmonth - 1;
@@ -63,9 +63,9 @@ if (($accountancyexport->getFormatCode($formatexportset) == 'fec' || $accountanc
 	}
 
 	$endaccountingperiod = dol_print_date(dol_get_last_day($tmparray['year'], $tmparray['mon']), 'dayxcard');
-
+	$siren = str_replace(" ", "", $siren);
 	$completefilename = $siren."FEC".$endaccountingperiod.".txt";
-} elseif ($accountancyexport->getFormatCode($formatexportset) == 'ciel' && $type_export == "general_ledger" && !empty($conf->global->ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME)) {
+} elseif ($accountancyexport->getFormatCode($formatexportset) == 'ciel' && $type_export == "general_ledger" && getDolGlobalString('ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME')) {
 	$completefilename = "XIMPORT.TXT";
 } else {
 	$completefilename = ($code ? $code."_" : "").($prefix ? $prefix."_" : "").$filename.($nodateexport ? "" : $date_export).".".$format;

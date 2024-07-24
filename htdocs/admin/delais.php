@@ -182,7 +182,7 @@ if ($action == 'update') {
 
 	// For update value with percentage
 	$plus = '';
-	if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+	if (getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE')) {
 		$plus = '_PERCENTAGE';
 	}
 	// Update values
@@ -224,7 +224,7 @@ if ($action == 'edit') {
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
 				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
 				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td><td class="nowraponall right">';
@@ -243,7 +243,7 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="right">';
-	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (empty($conf->global->MAIN_DISABLE_METEO) ? 0 : $conf->global->MAIN_DISABLE_METEO));
+	print $form->selectarray('MAIN_DISABLE_METEO', $labelmeteo, (!getDolGlobalString('MAIN_DISABLE_METEO') ? 0 : $conf->global->MAIN_DISABLE_METEO));
 	print '</td></tr>';
 
 	print '</table>';
@@ -258,7 +258,7 @@ if ($action == 'edit') {
 	foreach ($modules as $module => $delays) {
 		if (isModEnabled($module)) {
 			foreach ($delays as $delay) {
-				$value = (!empty($conf->global->{$delay['code']}) ? $conf->global->{$delay['code']} : 0);
+				$value = getDolGlobalInt($delay['code']);
 				print '<tr class="oddeven">';
 				print '<td width="20px">' . img_object('', $delay['img']) . '</td>';
 				print '<td>' . $langs->trans('Delays_' . $delay['code']) . '</td>';
@@ -277,7 +277,7 @@ if ($action == 'edit') {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">';
-	print $labelmeteo[$conf->global->MAIN_DISABLE_METEO];
+	print $labelmeteo[getDolGlobalString('MAIN_DISABLE_METEO')];
 	print '</td></tr>';
 
 	print '</table>';
@@ -286,24 +286,24 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO != 1) {
+if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
 	if ($action == 'edit') {
 		$str_mode_std = $langs->trans('MeteoStdModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoPercentageMod'));
 		$str_mode_percentage = $langs->trans('MeteoPercentageModEnabled').' : '.$langs->trans('MeteoUseMod', $langs->transnoentitiesnoconv('MeteoStdMod'));
-		if (empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+		if (!getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE')) {
 			$str_mode_enabled = $str_mode_std;
 		} else {
 			$str_mode_enabled = $str_mode_percentage;
 		}
 		print '<br><a href="#" onclick="return false;" id="change_mode">'.$str_mode_enabled.'</a>';
-		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
+		print '<input type="hidden" id="MAIN_USE_METEO_WITH_PERCENTAGE" name="MAIN_USE_METEO_WITH_PERCENTAGE" value="'.(getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? $conf->global->MAIN_USE_METEO_WITH_PERCENTAGE : '').'" />';
 
 		print '<br><br>';
 	} else {
-		if (empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+		if (!getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE')) {
 			print $langs->trans('MeteoStdModEnabled');
 		} else {
 			print $langs->trans('MeteoPercentageModEnabled');
@@ -316,26 +316,27 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 	//if (!empty($conf->global->MAIN_METEO_OFFSET)) $offset=$conf->global->MAIN_METEO_OFFSET;
 	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
 	$level0 = $offset;
-	if (!empty($conf->global->MAIN_METEO_LEVEL0)) {
+	if (getDolGlobalString('MAIN_METEO_LEVEL0')) {
 		$level0 = $conf->global->MAIN_METEO_LEVEL0;
 	}
 	$level1 = $offset + $cursor;
-	if (!empty($conf->global->MAIN_METEO_LEVEL1)) {
+	if (getDolGlobalString('MAIN_METEO_LEVEL1')) {
 		$level1 = $conf->global->MAIN_METEO_LEVEL1;
 	}
 	$level2 = $offset + 2 * $cursor;
-	if (!empty($conf->global->MAIN_METEO_LEVEL2)) {
+	if (getDolGlobalString('MAIN_METEO_LEVEL2')) {
 		$level2 = $conf->global->MAIN_METEO_LEVEL2;
 	}
 	$level3 = $offset + 3 * $cursor;
-	if (!empty($conf->global->MAIN_METEO_LEVEL3)) {
+	if (getDolGlobalString('MAIN_METEO_LEVEL3')) {
 		$level3 = $conf->global->MAIN_METEO_LEVEL3;
 	}
-	$text = ''; $options = 'class="valignmiddle" height="60px"';
+	$text = '';
+	$options = 'class="valignmiddle" height="60px"';
 
 
 	if ($action == 'edit') {
-		print '<div id="standard" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '' : 'style="display:none;"').'>';
+		print '<div id="standard" '.(!getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? '' : 'style="display:none;"').'>';
 
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
@@ -355,7 +356,7 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 		print '</div>';
 
-		print '<div id="percentage" '.(empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'style="display:none;"' : '').'>';
+		print '<div id="percentage" '.(!getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? 'style="display:none;"' : '').'>';
 
 		print '<div>';
 		print '<div class="inline-block" style="padding-right: 20px">';
@@ -373,9 +374,7 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 		print '</div>';
 		print '</div>';
 
-		print '</div>';
-
-		?>
+		print '</div>'; ?>
 
 		<script type="text/javascript">
 
@@ -405,23 +404,23 @@ if (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METE
 
 		<?php
 	} else {
-		if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+		if (getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE')) {
 			print '<div>';
 			print '<div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 0, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL0.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL0').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 1, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL1.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL1').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 2, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL2.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL2').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 3, $options);
-			print ' &lt;= '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
+			print ' &lt;= ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'&nbsp;%</td>';
 			print '</div><div class="inline-block" style="padding-right: 20px">';
 			print img_weather($text, 4, $options);
-			print ' &gt; '.$conf->global->MAIN_METEO_PERCENTAGE_LEVEL3.'&nbsp;%</td>';
+			print ' &gt; ' . getDolGlobalString('MAIN_METEO_PERCENTAGE_LEVEL3').'&nbsp;%</td>';
 			print '</div>';
 			print '</div>';
 		} else {

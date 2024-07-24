@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2022	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
@@ -59,7 +59,7 @@ $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_s
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -73,7 +73,7 @@ if (!$sortfield) {
 	$sortfield = "erd.date, erd.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_DONE') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";
@@ -165,7 +165,9 @@ if (GETPOST('sortfield') == 'erd.date, erd.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"), $help_url);
 
 print '<script type="text/javascript">
 			$(function () {
@@ -211,7 +213,7 @@ if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= natural_search("er.comments", $search_desc);
+	$sql .= natural_search("erd.comments", $search_desc);
 }
 if (strlen(trim($search_amount))) {
 	$sql .= natural_search("erd.total_ht", $search_amount, 1);
@@ -322,14 +324,14 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
-	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print '<td class="liste_titre"></td>';
 	}
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -348,7 +350,7 @@ if ($result) {
 	print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -402,7 +404,7 @@ if ($result) {
 		print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 
 		// Date validation
-		if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
 		}
 
@@ -414,7 +416,7 @@ if ($result) {
 		// Fees description -- Can be null
 		print '<td>';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments, 1));
-		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+		$trunclength = getDolGlobalString('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 
@@ -437,7 +439,7 @@ if ($result) {
 	}
 	if ($num_lines == 0) {
 		$colspan=10;
-		if (!empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 			$colspan++;
 		}
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';

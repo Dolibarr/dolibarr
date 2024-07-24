@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Aquesta pestanya està dedicada als ganxos (hooks)
 ModuleBuilderDescwidgets=Aquesta pestanya està dedicada a gestionar/crear ginys.
 ModuleBuilderDescbuildpackage=Aquí podeu generar un fitxer de paquet "a punt per a distribuir" (un fitxer .zip normalitzat) del vostre mòdul i un fitxer de documentació "a punt per a distribuir". Simplement feu clic al botó per a crear el paquet o el fitxer de documentació.
 EnterNameOfModuleToDeleteDesc=Podeu suprimir el vostre mòdul. AVÍS: se suprimiran tots els fitxers de codificació del mòdul (generats o creats manualment) I la documentació estructurada i la documentació.
-EnterNameOfObjectToDeleteDesc=Podeu suprimir un objecte. AVÍS: Tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte s'eliminaran.
-EnterNameOfObjectToDeleteDesc=Podeu suprimir un objecte. AVÍS: Tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte s'eliminaran.
+EnterNameOfObjectToDeleteDesc=Podeu esborrar un objecte. ADVERTÈNCIA: S'eliminaran tots els fitxers de codificació (generats o creats manualment) relacionats amb l'objecte!
 DangerZone=Zona perillosa
 BuildPackage=Construeix el paquet
 BuildPackageDesc=Pots generar un paquet zip de la teva aplicació perquè puguis distribuir-lo a qualsevol Dolibarr. També podeu distribuir-lo o vendre'l a <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -40,7 +39,7 @@ EditorName=Nom de l'editor
 EditorUrl=URL de l'editor
 DescriptorFile=Fitxer descriptor del mòdul
 ClassFile=Fitxer per a la classe CRUD DAO PHP
-ApiClassFile=Fitxer per la classe PHP API
+ApiClassFile=Fitxer API del mòdul
 PageForList=Pàgina PHP per a la llista de registres
 PageForCreateEditView=Pàgina PHP per a crear/editar/visualitzar un registre
 PageForAgendaTab=Pàgina de PHP per a la pestanya d'esdeveniments
@@ -71,7 +70,7 @@ ArrayOfKeyValues=Matriu de clau-valor
 ArrayOfKeyValuesDesc=Matriu de claus i valors si el camp és una llista desplegable amb valors fixos
 WidgetFile=Fitxer del giny
 CSSFile=Fitxer CSS
-JSFile=Fitxer Javascript
+JSFile=Fitxer JavaScript
 ReadmeFile=Fitxer Readme
 ChangeLog=Fitxer ChangeLog
 TestClassFile=Fitxer per a la classe de proves Unit amb PHP
@@ -92,8 +91,8 @@ ListOfMenusEntries=Llista d'entrades de menú
 ListOfDictionariesEntries=Llista d'entrades de diccionaris
 ListOfPermissionsDefined=Llista de permisos definits
 SeeExamples=Mira exemples aquí
-EnabledDesc=Condició per tenir aquest camp actiu. <br> <br> Exemples: <br> 1 <br> isModEnabled('MAIN_MODULE_MYMODULE') a0342fccfda19bzLE_Get ='GCCFda19bz0'
-VisibleDesc=El camp és visible? (Exemples: 0=Mai visible, 1=Visible a la llista i formularis de creació/actualització/visualització, 2=Visible només a la llista, 3=Visible només al formulari de creació/actualització/visualització (no a la llista), 4=Visible a la llista i actualització/visualització només del formulari (no crear), 5=Visible només al formulari de visualització final de la llista (no crear, no actualitzar). <br><br> L'ús d'un valor negatiu significa que el camp no es mostra per defecte a la llista, però es pot seleccionar per a veure'l).
+EnabledDesc=Condició per tenir aquest camp actiu.<br><br>Exemples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=El camp és visible? (Exemples: 0=Mai visible, 1=Visible a la llista i crear/actualitzar/visualitzar formularis, 2=Visible només a la llista, 3=Visible només al formulari de crear/actualitzar/visualitzar (no a les llistes), 4=Visible a les llistes i només el formulari d'actualització/visualització (no creat), 5=Visible a la llista i només el formulari de visualització (no crear, no actualitzar).<br><br> L'ús d'un valor negatiu significa que el camp no es mostra de manera predeterminada a la llista, però es pot seleccionar per veure'l).
 ItCanBeAnExpression=Pot ser una expressió. Exemple:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user->hasRight('holiday', 'define_holiday')?1:5
 DisplayOnPdfDesc=Mostra aquest camp en documents PDF compatibles, pots gestionar la posició amb el camp «Posició».<br><strong>Per document:</strong><br>0 = no es mostra<br>1 = es mostra<br>2 = es mostra només si no està buit<br><br><strong>Per linies de document:</strong><br>0 = no es mostra<br>1 = es mostra en una columna<br>3 = es mostra en la línia de la columna de descripció després de la descripció<br>4 = es mostra a la columna de descripció després de la descripció només si no està buida
 DisplayOnPdf=En PDF
@@ -107,7 +106,7 @@ PermissionsDefDesc=Definiu aquí els nous permisos proporcionats pel vostre mòd
 MenusDefDescTooltip=Els menús proporcionats pel vostre mòdul/aplicació es defineixen a la matriu <strong> $this->menus </strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l'editor incrustat. <br> <br> Nota: un cop definits (i el mòdul reactivat), els menús també són visibles a l'editor de menús disponible per als usuaris administradors a %s.
 DictionariesDefDescTooltip=Els diccionaris subministrats pel vostre mòdul/aplicació es defineixen a la matriu <strong>$this->dictionaries</strong> del fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definit (i reactivat el mòdul), els diccionaris també són visibles a la zona de configuració per als usuaris administradors a %s.
 PermissionsDefDescTooltip=Els permisos proporcionats pel vostre mòdul / aplicació es defineixen a la matriu <strong>$ this-> rights</strong> al fitxer descriptor del mòdul. Podeu editar manualment aquest fitxer o utilitzar l’editor incrustat. <br><br> Nota: un cop definits (i el mòdul reactivat), els permisos es visualitzen a la configuració de permisos per defecte %s.
-HooksDefDesc=Definiu a la propietat <b> module_parts['hooks'] </b>, al descriptor del mòdul, el context dels "hooks" que voleu gestionar (la llista de contextos es pot trobar mitjançant una cerca a '<b> initHooks(</b>' en el codi del nucli).<br>Edita el fitxer "hook" per a afegir codi de les vostres funcions enganxades (les funcions enganxables es poden trobar mitjançant una cerca a '<b> executeHooks </b>' al codi del nucli).
+HooksDefDesc=Definiu a la propietat <b>module_parts['hooks']</b>, al fitxer descriptor del mòdul, la llista de contextos quan el vostre ganxo s'ha d'executar (la llista de possibles contextos es pot trobar mitjançant una cerca a '<b>initHooks(</b>' al codi central) .<br>A continuació, editeu el fitxer amb codi de ganxos amb el codi de les vostres funcions enganxades (la llista de funcions enganxables es pot trobar mitjançant una cerca a ' <b>executeHooks</b>' al codi principal).
 TriggerDefDesc=Definiu al fitxer disparador el codi que voleu executar quan s'executi un esdeveniment empresarial extern al vostre mòdul (esdeveniments desencadenats per altres mòduls).
 SeeIDsInUse=Consulteu els identificadors que s’utilitzen a la instal·lació
 SeeReservedIDsRangeHere=Consultar l'interval d'identificadors reservats
@@ -128,7 +127,7 @@ RealPathOfModule=Camí real del mòdul
 ContentCantBeEmpty=El contingut del fitxer no pot estar buit
 WidgetDesc=Podeu generar i editar aquí els ginys que s'incorporaran al vostre mòdul.
 CSSDesc=Pots generar i editar aquí un fitxer amb CSS personalitzat incrustat amb el teu mòdul.
-JSDesc=Pots generar i editar aquí un fitxer amb Javascript personalitzat incrustat amb el teu mòdul.
+JSDesc=Podeu generar i editar aquí un fitxer amb JavaScript personalitzat incrustat amb el vostre mòdul.
 CLIDesc=Podeu generar aquí alguns scripts de línia d’ordres que voleu proporcionar amb el vostre mòdul.
 CLIFile=Fitxer CLI
 NoCLIFile=Sense fitxers CLI
@@ -148,8 +147,8 @@ CSSViewClass=CSS per al formulari de lectura
 CSSListClass=CSS per a llistats
 NotEditable=No editable
 ForeignKey=Clau forana
-ForeignKeyDesc=Si el valor d'aquest camp s'ha de garantir que existeix en una altra taula. Introduïu aquí un valor que coincideixi amb la sintaxi: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Exemple:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br>'1' significa que afegim un botó + després de la combinació per a crear el registre<br>«filter» és una condició sql, exemple: «status=1 AND fk_user=__USER_ID__ AND entity IN (__SHARED_ENTITIES__)»
+ForeignKeyDesc=Si s'ha de garantir que el valor d'aquest camp existeix en una altra taula. Introduïu aquí un valor que coincideixi amb la sintaxi: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>correu electrònic<br>telèfon<br>ip<br>url<br>contrasenyab0392bzcc span>double(24,8)<br>real<br>text<br>html <br>date<br>datetime<br>timestamp <br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0342fccfda<1 /span><span class='notranslate'><br>'1' significa que afegim un botó + després de la combinació per crear el registre<br>'filtre' és un Condició de sintaxi del filtre universal, exemple: '((estat:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Aquest és el tipus de camp/atribut.
 AsciiToHtmlConverter=Convertidor Ascii a HTML
 AsciiToPdfConverter=Convertidor Ascii a PDF
@@ -181,3 +180,9 @@ FailedToAddCodeIntoDescriptor=No s'ha pogut afegir el codi al descriptor. Compro
 DictionariesCreated=Diccionari <b>%s</b> creat correctament
 DictionaryDeleted=El diccionari <b>%s</b> s'ha eliminat correctament
 PropertyModuleUpdated=La propietat <b>%s</b> s'ha actualitzat correctament
+InfoForApiFile=* Quan genereu un fitxer per primera vegada, es crearan tots els mètodes <strong>per a cada objecte.</strong><br>* Quan feu clic a <strong>remove</strong> només elimineu tots els mètodes de la classe <span ='notranslate'><strong></span>objecte seleccionat</strong>.
+SetupFile=Pàgina per a la configuració del mòdul
+EmailingSelectors=Selectors de correus electrònics
+EmailingSelectorDesc=Podeu generar i editar aquí els fitxers de classe per proporcionar nous selectors de destinació de correu electrònic per al mòdul d'enviament massiu de correu electrònic
+EmailingSelectorFile=Fitxer selector de correus electrònics
+NoEmailingSelector=No hi ha cap fitxer de selecció de correus electrònics

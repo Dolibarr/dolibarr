@@ -56,6 +56,8 @@ if (!defined('NOREQUIREAJAX')) {
 // Note that only directory logo is free to access without login.
 $needlogin = 1;
 if (isset($_GET["modulepart"])) {
+	// Some value of modulepart can be used to get resources that are public so no login are required.
+
 	// For logo of company
 	if ($_GET["modulepart"] == 'mycompany' && preg_match('/^\/?logos\//', $_GET['file'])) {
 		$needlogin = 0;
@@ -64,10 +66,11 @@ if (isset($_GET["modulepart"])) {
 	if ($_GET["modulepart"] == 'barcode') {
 		$needlogin = 0;
 	}
-	// Some value of modulepart can be used to get resources that are public so no login are required.
+	// Medias files
 	if ($_GET["modulepart"] == 'medias') {
 		$needlogin = 0;
 	}
+	// User photo when user has made its profile public (for virtual credi card)
 	if ($_GET["modulepart"] == 'userphotopublic') {
 		$needlogin = 0;
 	}
@@ -251,9 +254,9 @@ $fullpath_original_file     = $check_access['original_file']; // $fullpath_origi
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-} elseif (isset($_GET["publictakepos"])) {
-	if (!empty($conf->global->TAKEPOS_AUTO_ORDER)) {
-		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+} elseif (GETPOSTINT("publictakepos")) {
+	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
+		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories
 	}
 } else {
 	// Basic protection (against external users only)

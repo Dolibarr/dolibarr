@@ -36,7 +36,7 @@ $langs->load("categories");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alphanohtml');
-$action = (GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'edit');
+$action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -59,7 +59,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -98,8 +99,9 @@ if (empty($reshook)) {
 	}
 
 	// Action mise a jour d'une categorie
-	if ($action == 'update' && $user->rights->categorie->creer) {
-		$object->oldcopy = dol_clone($object);
+	if ($action == 'update' && $user->hasRight('categorie', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
+
 		$object->label = $label;
 		$object->description    = dol_htmlcleanlastbr($description);
 		$object->color          = $color;
@@ -134,7 +136,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 /*

@@ -21,7 +21,7 @@ QtyShipped=Wysłana ilość
 QtyShippedShort=Ilość statków.
 QtyPreparedOrShipped=Ilość przygotowana lub wysłana
 QtyToShip=Ilość do wysłania
-QtyToReceive=Ilość do odbioru
+QtyToReceive=Ilość do przyjęcia
 QtyReceived=Ilość otrzymanych
 QtyInOtherShipments=Ilość w innych przesyłkach
 KeepToShip=Pozostają do wysyłki
@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Zatwierdzony
 StatusSendingProcessedShort=Przetwarzany
 SendingSheet=Arkusz wysyłki
 ConfirmDeleteSending=Czy na pewno usunąć tą wysyłkę?
-ConfirmValidateSending=Czy potwierdzić tą wysyłkę z numerem referencyjnym <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Czy anulować tą wysyłkę?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Ostrzeżenie nie produktów oczekujących na wysłanie.
@@ -48,12 +48,12 @@ DateDeliveryPlanned=Planowana data dostawy
 RefDeliveryReceipt=Zwróć potwierdzenie dostawy
 StatusReceipt=Potwierdzenie statusu dostawy
 DateReceived=Data otrzymania dostawy
-ClassifyReception=Classify Received
+ClassifyReception=Sklasyfikuj jako odebrane
 SendShippingByEMail=Wyślij przesyłkę e-mailem
 SendShippingRef=Złożenie przesyłki% s
 ActionsOnShipping=Zdarzenia na wysyłce
 LinkToTrackYourPackage=Link do strony śledzenia twojej paczki
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=Na chwilę obecną rejestracja nowych wysyłek dokonywana jest z poziomu Zamówienia sprzedażowego.
 ShipmentLine=Linia Przesyłka
 ProductQtyInCustomersOrdersRunning=Ilość produktów z otwartych zamówień sprzedaży
 ProductQtyInSuppliersOrdersRunning=Ilość produktów z otwartych zamówień zakupu
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Ilość produktów z otwartych zam�
 NoProductToShipFoundIntoStock=W magazynie nie znaleziono produktu do wysłania <b> %s </b>. Popraw zapasy lub wróć, aby wybrać inny magazyn.
 WeightVolShort=Waga/Volumen
 ValidateOrderFirstBeforeShipment=W pierwszej kolejności musisz zatwierdzić zamówienie, aby mieć możliwość utworzenia wysyłki.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Suma wag produktów
 # warehouse details
 DetailWarehouseNumber= Szczegóły magazynu
 DetailWarehouseFormat= W: %s (ilość: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 
 ShipmentDistribution=Shipment distribution
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

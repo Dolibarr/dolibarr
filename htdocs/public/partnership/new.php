@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -74,7 +74,7 @@ if (empty($conf->partnership->enabled)) {
 	httponly_accessforbidden('Module Partnership not enabled');
 }
 
-if (empty($conf->global->PARTNERSHIP_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
@@ -99,7 +99,7 @@ $user->loadDefaultValues();
  * @param 	array  		$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '')
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
 	global $user, $conf, $langs, $mysoc;
 
@@ -126,15 +126,15 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<div class="logopublicpayment">';
 		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION)) {
+	if (getDolGlobalString('PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION')) {
 		print '<div class="backimagepublicregistration">';
-		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="'.$conf->global->PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION.'">';
+		print '<img id="idPARTNERSHIP_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PARTNERSHIP_IMAGE_PUBLIC_REGISTRATION').'">';
 		print '</div>';
 	}
 
@@ -150,7 +150,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  */
 function llxFooterVierge()
 {
-	global $conf;
+	global $conf, $langs;
 
 	print '</div>';
 
@@ -421,7 +421,7 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
-				} elseif (!empty($conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION)) {
+				} elseif (getDolGlobalString('PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION')) {
 					$urlback = $conf->global->PARTNERSHIP_URL_REDIRECT_SUBSCRIPTION;
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
@@ -557,7 +557,7 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-if (!empty($conf->global->PARTNERSHIP_NEWFORM_TEXT)) {
+if (getDolGlobalString('PARTNERSHIP_NEWFORM_TEXT')) {
 	print $langs->trans($conf->global->PARTNERSHIP_NEWFORM_TEXT)."<br>\n";
 } else {
 	print $langs->trans("NewPartnershipRequestDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
@@ -601,8 +601,8 @@ foreach ($listofpartnershipobj as $partnershipobj) {
 }
 
 if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print $listofpartnership[$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE];
-	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="'.$conf->global->PARTNERSHIP_NEWFORM_FORCETYPE.'">';
+	print $listofpartnership[getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')];
+	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="' . getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE').'">';
 }
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
@@ -650,7 +650,7 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 print img_picto('', 'country', 'class="pictofixedwidth"');
 $country_id = GETPOST('country_id', 'int');
-if (!$country_id && !empty($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE)) {
+if (!$country_id && getDolGlobalString('PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE')) {
 	$country_id = getCountry($conf->global->PARTNERSHIP_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
@@ -668,7 +668,7 @@ $country_code = getCountry($country_id, 2, $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State
-if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td class="wordbreak">'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
 		print $formcompany->select_state(GETPOST("state_id"), $country_code);

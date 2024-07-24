@@ -166,12 +166,14 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
 	}*/
 	$content = dolStripPhpCode($content, $replacewith);
-	//var_dump($content);
 
 	// Protect the link styles.css.php to any replacement that we make after.
 	$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+	$content = str_replace('src="javascript.js.php', 'src="!~!~!~javascript.js.php', $content);
 	$content = str_replace('href="http', 'href="!~!~!~http', $content);
+	$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 	$content = str_replace('href="//', 'href="!~!~!~//', $content);
+	$content = str_replace('src="//', 'src="!~!~!~//', $content);
 	$content = str_replace('src="viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="/viewimage.php', 'src="!~!~!~/viewimage.php', $content);
 	$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
@@ -304,11 +306,15 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		}
 	} elseif (defined('USEDOLIBARRSERVER')) {	// REPLACEMENT OF LINKS When page called from Dolibarr server
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
+		$content = str_replace(' async src="/javascript.js', ' async src="javascript.js', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
 		$content = str_replace('href="styles.css.php', 'href="!~!~!~styles.css.php', $content);
+		$content = str_replace('src="javascript.css.php', 'src="!~!~!~javascript.css.php', $content);
 		$content = str_replace('href="http', 'href="!~!~!~http', $content);
+		$content = str_replace('xlink:href="', 'xlink:href="!~!~!~', $content);
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
+		$content = str_replace('src="//', 'src="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace(array('href="document.php', 'href="/document.php'), 'href="!~!~!~/document.php', $content);
@@ -357,8 +363,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	} else // REPLACEMENT OF LINKS When page called from virtual host web server
-	{
+	} else { // REPLACEMENT OF LINKS When page called from virtual host web server
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
 			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
@@ -419,8 +424,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
 	}
 
-	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
-		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+	if (getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY')) {
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite ' . getDolGlobalString('WEBSITE_ADD_CSS_TO_BODY'), $content);
 	}
 
 	$content = dolReplaceSmileyCodeWithUTF8($content);
@@ -436,7 +441,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
  * @param   int		$websiteid			ID of website
  * @param	string	$websitepagetype	Type of page ('blogpost', 'page', ...)
  * @param	int		$websitepageid		ID of page
- * @return  int							<0 if KO, >0 if OK
+ * @return  int							Return integer <0 if KO, >0 if OK
  */
 function dolWebsiteIncrementCounter($websiteid, $websitepagetype, $websitepageid)
 {
@@ -539,7 +544,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 			unset($tmpwebsitepage);
 		}
 		if ($result > 0) {
-			$currenturi = $_SERVER["REQUEST_URI"];
+			$currenturi = $_SERVER["REQUEST_URI"];	// Example: /public/website/index.php?website=mywebsite.com&pageref=mywebsite-home&nocache=1708177483
 			$regtmp = array();
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp)) {
 				if ($regtmp[0] == $containerref) {
@@ -552,16 +557,16 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	} else // When page called from virtual host server
-	{
+	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
+		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
 		if ($permanent) {
 			header("Status: 301 Moved Permanently", false, 301);
 		}
-		header("Location: ".$newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]));
+		header("Location: ".$newurl);
 		exit;
 	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
@@ -671,13 +676,13 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "Organization",
-			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
-			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"name": "'.dol_escape_json(!empty($data['name']) ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json(!empty($data['url']) ? $data['url'] : $url).'",
 			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
 			"contactPoint": {
 				"@type": "ContactPoint",
 				"contactType": "Contact",
-				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+				"email": "'.dol_escape_json(!empty($data['email']) ? $data['email'] : $mysoc->email).'"
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";

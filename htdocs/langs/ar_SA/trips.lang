@@ -39,7 +39,7 @@ expenseReportCoef=معامل في الرياضيات او درجة
 expenseReportCoefUndefined=(القيمة غير محددة)
 expenseReportOffset=ويقابل
 expenseReportPrintExample=الإزاحة + (d x coef) = %s
-expenseReportRangeDisabled=النطاق معطل - راجع c_exp_tax_range dictionay
+expenseReportRangeDisabled=تم تعطيل النطاق - راجع قاموس c_exp_tax_range
 expenseReportRangeFromTo=من %d إلى %d
 expenseReportRangeMoreThan=أكثر من %d
 expenseReportTotalForFive=مثال مع <u> d </u> = 5
@@ -91,7 +91,7 @@ nolimitbyEX_EXP=عن طريق السطر (بلا حدود)
 nolimitbyEX_MON=حسب الشهر (بلا حدود)
 nolimitbyEX_YEA=حسب السنة (بلا قيود)
 NoTripsToExportCSV=أي تقرير نفقة لتصدير لهذه الفترة.
-NOT_AUTHOR=أنت لست صاحب هذا التقرير حساب. إلغاء العملية.
+NOT_AUTHOR=أنت لست مؤلف هذا تقرير المصروفات. تم إلغاء العملية.
 OnExpense=خط المصاريف
 PDFStandardExpenseReports=قالب قياسي لتوليد وثيقة PDF لتقرير حساب
 PaidTrip=دفع تقرير مصروفات
@@ -103,7 +103,7 @@ ShowExpenseReport=عرض تقرير حساب
 ShowTrip=عرض تقرير حساب
 TripCard=حساب بطاقة تقرير
 TripId=تقرير حساب الهوية
-TripNDF=المعلومات تقرير حساب
+TripNDF=المعلومات تقرير المصروفات
 TripSociete=شركة المعلومات
 Trips=تقارير المصاريف
 TripsAndExpenses=تقارير النفقات

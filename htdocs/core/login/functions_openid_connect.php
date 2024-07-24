@@ -40,7 +40,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 	// Force master entity in transversal mode
 	$entity = $entitytotest;
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 		$entity = 1;
 	}
 
@@ -81,7 +81,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 
 			// Get the user attribute (claim) matching the Dolibarr login
 			$login_claim = 'email'; // default
-			if (!empty($conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM)) {
+			if (getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM')) {
 				$login_claim = $conf->global->MAIN_AUTHENTICATION_OIDC_LOGIN_CLAIM;
 			}
 
@@ -98,20 +98,7 @@ function check_user_password_openid_connect($usertotest, $passwordtotest, $entit
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
-						// Note: Test on validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
-						/* $now = dol_now();
-						if ($obj->datestartvalidity && $db->jdate($obj->datestartvalidity) > $now) {
-							// Load translation files required by the page
-							$langs->loadLangs(array('main', 'errors'));
-							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-							return '--bad-login-validity--';
-						}
-						if ($obj->dateendvalidity && $db->jdate($obj->dateendvalidity) < dol_get_first_hour($now)) {
-							// Load translation files required by the page
-							$langs->loadLangs(array('main', 'errors'));
-							$_SESSION["dol_loginmesg"] = $langs->transnoentitiesnoconv("ErrorLoginDateValidity");
-							return '--bad-login-validity--';
-						} */
+						// Note: Test on date validity is done later natively with isNotIntoValidityDateRange() by core after calling checkLoginPassEntity() that call this method
 						$login = $obj->login;
 					}
 				}

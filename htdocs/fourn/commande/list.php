@@ -55,7 +55,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'supplierorderlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 $mode = GETPOST('mode', 'alpha');
 
 // Search Criteria
@@ -95,7 +95,7 @@ $search_date_approve_endyear = GETPOST('search_date_approve_endyear', 'int');
 $search_date_approve_start = dol_mktime(0, 0, 0, $search_date_approve_startmonth, $search_date_approve_startday, $search_date_approve_startyear);	// Use tzserver
 $search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth, $search_date_approve_endday, $search_date_approve_endyear);
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $search_product_category = GETPOST('search_product_category', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -134,16 +134,9 @@ if (GETPOSTISARRAY('search_status')) {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
 }
 
-// Security check
-$orderid = GETPOST('orderid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
-
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -223,6 +216,17 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
 
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+
+// Security check
+$orderid = GETPOST('orderid', 'int');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
+
 $permissiontoread = ($user->hasRight("fournisseur", "commande", "lire") || $user->hasRight("supplier_order", "lire"));
 $permissiontoadd = ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontodelete = ($user->hasRight("fournisseur", "commande", "supprimer") || $user->hasRight("supplier_order", "supprimer"));
@@ -235,13 +239,14 @@ $permissiontoapprove = ($user->hasRight("fournisseur", "commande", "approuver") 
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createsupplierbills') {
 	$massaction = '';
 }
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid'=>$socid, 'arrayfields'=>&$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -339,7 +344,7 @@ if (empty($reshook)) {
 						$result = $objecttmp->valid($user);
 						if ($result >= 0) {
 							// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-							if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $permissiontoapprove && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $objecttmp->hasProductsOrServices(1))) {
+							if (!getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE') && $permissiontoapprove && !(getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') && $objecttmp->hasProductsOrServices(1))) {
 								$result = $objecttmp->approve($user);
 								setEventMessages($langs->trans("SupplierOrderValidatedAndApproved"), array($objecttmp->ref));
 							} else {
@@ -353,8 +358,11 @@ if (empty($reshook)) {
 				}
 			}
 
-			if (!$error) $db->commit();
-			else $db->rollback();
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
 		}
 	}
 
@@ -776,7 +784,7 @@ if ($sall) {
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.email,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as date_livraison,cf.date_valid, cf.date_approve,";
+$sql .= " cf.rowid, cf.ref, cf.ref_supplier, cf.fk_statut, cf.billed, cf.total_ht, cf.total_tva, cf.total_ttc, cf.fk_user_author, cf.date_commande as date_commande, cf.date_livraison as delivery_date, cf.date_valid, cf.date_approve,";
 $sql .= ' cf.localtax1 as total_localtax1, cf.localtax2 as total_localtax2,';
 $sql .= ' cf.fk_multicurrency, cf.multicurrency_code, cf.multicurrency_tx, cf.multicurrency_total_ht, cf.multicurrency_total_tva, cf.multicurrency_total_ttc,';
 $sql .= ' cf.date_creation as date_creation, cf.tms as date_update,';
@@ -809,10 +817,6 @@ if ($sall) {
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = cf.fk_projet";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (!$user->hasRight("societe", "client", "voir") && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
@@ -820,9 +824,6 @@ $sql .= ' WHERE cf.fk_soc = s.rowid';
 $sql .= ' AND cf.entity IN ('.getEntity('supplier_order').')';
 if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
-}
-if (!$user->hasRight("societe", "client", "voir") && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 if ($search_ref) {
 	$sql .= natural_search('cf.ref', $search_ref);
@@ -895,9 +896,9 @@ if ($search_country) {
 if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 	$sql .= " AND s.fk_typent IN (".$db->sanitize($db->escape($search_type_thirdparty)).')';
 }
-if ($search_sale > 0) {
+/*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
+}*/
 if ($search_user > 0) {
 	$sql .= " AND EXISTS (";
 	$sql .= " SELECT ec.rowid ";
@@ -933,6 +934,14 @@ if ($search_multicurrency_montant_ttc != '') {
 }
 if ($search_project_ref != '') {
 	$sql .= natural_search("p.ref", $search_project_ref);
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
@@ -1004,7 +1013,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
 		$obj = $db->fetch_object($resql);
 		$id = $obj->rowid;
 		header("Location: ".DOL_URL_ROOT.'/fourn/commande/card.php?id='.$id);
@@ -1168,7 +1177,7 @@ if ($resql) {
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$parameters = array();
+	$parameters = array('param' => &$param);
 	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$param .= $hookmanager->resPrint;
 
@@ -1180,7 +1189,7 @@ if ($resql) {
 	);
 
 	if ($permissiontovalidate) {
-		if ($permissiontoapprove && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE)) {
+		if ($permissiontoapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
 		} else {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
@@ -1206,6 +1215,7 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewSupplierOrderShort'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 	// Lines of title fields
@@ -1394,16 +1404,16 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Date order
 	if (!empty($arrayfields['cf.date_commande']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_order_start ? $search_date_order_start : -1, 'search_date_order_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_order_end ? $search_date_order_end : -1, 'search_date_order_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1411,10 +1421,10 @@ if ($resql) {
 	// Date delivery
 	if (!empty($arrayfields['cf.date_livraison']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_delivery_start ? $search_date_delivery_start : -1, 'search_date_delivery_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_delivery_end ? $search_date_delivery_end : -1, 'search_date_delivery_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1484,25 +1494,25 @@ if ($resql) {
 		print '<td class="liste_titre">';
 		print '</td>';
 	}
-	// Status
-	if (!empty($arrayfields['cf.fk_statut']['checked'])) {
-		print '<td class="liste_titre right">';
-		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
-		print '</td>';
-	}
-	// Status billed
+	// Billed
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print '<td class="liste_titre center parentonrightofpage">';
 		print $form->selectyesno('search_billed', $search_billed, 1, false, 1, 1, 'search_status width100 onrightofpage');
 		print '</td>';
 	}
+	// Status
+	if (!empty($arrayfields['cf.fk_statut']['checked'])) {
+		print '<td class="liste_titre center parentonrightofpage">';
+		$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status', 'search_status width100 onrightofpage');
+		print '</td>';
+	}
 	// Date valid
 	if (!empty($arrayfields['cf.date_valid']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1510,10 +1520,10 @@ if ($resql) {
 	// Date approve
 	if (!empty($arrayfields['cf.date_approve']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_approve_start ? $search_date_approve_start : -1, 'search_date_approve_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_approve_end ? $search_date_approve_end : -1, 'search_date_approve_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -1530,7 +1540,7 @@ if ($resql) {
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre middle">';
+		print '<td class="liste_titre center">';
 		$searchpicto = $form->showFilterButtons();
 		print $searchpicto;
 		print '</td>';
@@ -1642,19 +1652,19 @@ if ($resql) {
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (!empty($arrayfields['cf.date_creation']['checked'])) {
-		print_liste_field_titre($arrayfields['cf.date_creation']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+		print_liste_field_titre($arrayfields['cf.date_creation']['label'], $_SERVER["PHP_SELF"], "cf.date_creation", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.tms']['checked'])) {
-		print_liste_field_titre($arrayfields['cf.tms']['label'], $_SERVER["PHP_SELF"], "cf.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['cf.fk_statut']['checked'])) {
-		print_liste_field_titre($arrayfields['cf.fk_statut']['label'], $_SERVER["PHP_SELF"], "cf.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['cf.tms']['label'], $_SERVER["PHP_SELF"], "cf.tms", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.billed']['checked'])) {
 		print_liste_field_titre($arrayfields['cf.billed']['label'], $_SERVER["PHP_SELF"], 'cf.billed', '', $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['cf.fk_statut']['checked'])) {
+		print_liste_field_titre($arrayfields['cf.fk_statut']['label'], $_SERVER["PHP_SELF"], "cf.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['cf.date_valid']['checked'])) {
@@ -1706,14 +1716,13 @@ if ($resql) {
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-		$objectstatic->socid = $obj->socid;
 		$objectstatic->ref_supplier = $obj->ref_supplier;
 		$objectstatic->socid = $obj->socid;
 		$objectstatic->total_ht = $obj->total_ht;
 		$objectstatic->total_tva = $obj->total_tva;
 		$objectstatic->total_ttc = $obj->total_ttc;
 		$objectstatic->date_commande = $db->jdate($obj->date_commande);
-		$objectstatic->delivery_date = $db->jdate($obj->date_livraison);
+		$objectstatic->delivery_date = $db->jdate($obj->delivery_date);
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
@@ -1730,9 +1739,8 @@ if ($resql) {
 			$thirdpartytmp->name_alias = $obj->alias;
 			$thirdpartytmp->client = $obj->client;
 			$thirdpartytmp->fournisseur = $obj->fournisseur;
-			$objectstatic->socid = $thirdpartytmp->getNomUrl('supplier', 0, 0, -1);
 			// Output Kanban
-			print $objectstatic->getKanbanView('', array('selected' => in_array($objectstatic->id, $arrayofselected)));
+			print $objectstatic->getKanbanView('', array('thirdparty'=>$thirdpartytmp->getNomUrl('supplier', 0, 0, -1), 'selected' => in_array($objectstatic->id, $arrayofselected)));
 			if ($i == ($imaxinloop - 1)) {
 				print '</div>';
 				print '</td></tr>';
@@ -1895,7 +1903,7 @@ if ($resql) {
 			// Plannned date of delivery
 			if (!empty($arrayfields['cf.date_livraison']['checked'])) {
 				print '<td class="center">';
-				print dol_print_date($db->jdate($obj->date_livraison), 'day');
+				print dol_print_date($db->jdate($obj->delivery_date), 'day');
 				if ($objectstatic->statut == $objectstatic::STATUS_ORDERSENT || $objectstatic->statut == $objectstatic::STATUS_RECEIVED_PARTIALLY) {
 					if ($objectstatic->hasDelay()) {
 						print ' '.img_picto($langs->trans("Late").' : '.$objectstatic->showDelay(), "warning");
@@ -1987,7 +1995,7 @@ if ($resql) {
 			print $hookmanager->resPrint;
 			// Date creation
 			if (!empty($arrayfields['cf.date_creation']['checked'])) {
-				print '<td class="center nowrap">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -1996,16 +2004,9 @@ if ($resql) {
 			}
 			// Date modification
 			if (!empty($arrayfields['cf.tms']['checked'])) {
-				print '<td class="center nowrap">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Status
-			if (!empty($arrayfields['cf.fk_statut']['checked'])) {
-				print '<td class="right nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2013,6 +2014,13 @@ if ($resql) {
 			// Billed
 			if (!empty($arrayfields['cf.billed']['checked'])) {
 				print '<td class="center">'.yn($obj->billed).'</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+			// Status
+			if (!empty($arrayfields['cf.fk_statut']['checked'])) {
+				print '<td class="center nowrap">'.$objectstatic->LibStatut($obj->fk_statut, 5, $obj->billed).'</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

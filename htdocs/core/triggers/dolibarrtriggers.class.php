@@ -92,7 +92,6 @@ abstract class DolibarrTriggers
 	 */
 	public function __construct(DoliDB $db)
 	{
-
 		$this->db = $db;
 
 		if (empty($this->name)) {
@@ -144,6 +143,22 @@ abstract class DolibarrTriggers
 	}
 
 	/**
+	 * setErrorsFromObject
+	 *
+	 * @param CommonObject $object commonobject
+	 * @return void
+	 */
+	public function setErrorsFromObject($object)
+	{
+		if (!empty($object->error)) {
+			$this->errors = array_merge($this->errors, array($object->error));
+		}
+		if (!empty($object->errors)) {
+			$this->errors = array_merge($this->errors, $object->errors);
+		}
+	}
+
+	/**
 	 *  Function called when a Dolibarrr business event is done.
 	 *  All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
@@ -152,7 +167,7 @@ abstract class DolibarrTriggers
 	 *  @param User         $user       Object user
 	 *  @param Translate    $langs      Object langs
 	 *  @param conf         $conf       Object conf
-	 *  @return int                     <0 if KO, 0 if no triggered ran, >0 if OK
+	 *  @return int                     Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	abstract public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf);
 }

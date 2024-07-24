@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_20_all_Logevents.class.php';
 
 if (!$user->admin) {
 	accessforbidden();
@@ -46,7 +47,7 @@ if ($user->socid > 0) {
 $langs->loadLangs(array("companies", "admin", "users", "other","withdrawals"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -123,8 +124,8 @@ if ($date_end !== '') {
 $arrayfields = array(
 	'e.prefix_session' => array(
 		'label'=>'UserAgent',
-		'checked'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
-		'enabled'=>(empty($conf->global->AUDIT_ENABLE_PREFIX_SESSION) ? 0 : 1),
+		'checked'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
+		'enabled'=>(!getDolGlobalString('AUDIT_ENABLE_PREFIX_SESSION') ? 0 : 1),
 		'position'=>110
 	)
 );
@@ -213,29 +214,36 @@ $sql .= " WHERE e.entity IN (".getEntity('event').")";
 if ($date_start !== '') {
 	$sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
 }
-if ($date_end !== '' ) {
+if ($date_end !== '') {
 	$sql .= " AND e.dateevent <= '".$db->idate($date_end)."'";
 }
 if ($search_rowid) {
-	$usefilter++; $sql .= natural_search("e.rowid", $search_rowid, 1);
+	$usefilter++;
+	$sql .= natural_search("e.rowid", $search_rowid, 1);
 }
 if ($search_code) {
-	$usefilter++; $sql .= natural_search("e.type", $search_code, 0);
+	$usefilter++;
+	$sql .= natural_search("e.type", $search_code, 0);
 }
 if ($search_ip) {
-	$usefilter++; $sql .= natural_search("e.ip", $search_ip, 0);
+	$usefilter++;
+	$sql .= natural_search("e.ip", $search_ip, 0);
 }
 if ($search_user) {
-	$usefilter++; $sql .= natural_search("u.login", $search_user, 0);
+	$usefilter++;
+	$sql .= natural_search("u.login", $search_user, 0);
 }
 if ($search_desc) {
-	$usefilter++; $sql .= natural_search("e.description", $search_desc, 0);
+	$usefilter++;
+	$sql .= natural_search("e.description", $search_desc, 0);
 }
 if ($search_ua) {
-	$usefilter++; $sql .= natural_search("e.user_agent", $search_ua, 0);
+	$usefilter++;
+	$sql .= natural_search("e.user_agent", $search_ua, 0);
 }
 if ($search_prefix_session) {
-	$usefilter++; $sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
+	$usefilter++;
+	$sql .= natural_search("e.prefix_session", $search_prefix_session, 0);
 }
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -380,11 +388,9 @@ if ($result) {
 	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print '<td class="liste_titre left">';
-		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
-		print '</td>';
-	}
+	print '<td class="liste_titre left">';
+	print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.dol_escape_htmltag($search_ua).'">';
+	print '</td>';
 
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print '<td class="liste_titre left">';
@@ -414,9 +420,7 @@ if ($result) {
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['e.user_agent']['checked'])) {
-		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
-	}
+	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['e.prefix_session']['checked'])) {
 		print_liste_field_titre("SuffixSessionName", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
@@ -465,9 +469,9 @@ if ($result) {
 
 			print $userstatic->getLoginUrl(1);
 			if (isModEnabled('multicompany') && $userstatic->admin && !$userstatic->entity) {
-				print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingleft"');
 			} elseif ($userstatic->admin) {
-				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
+				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingleft"');
 			}
 		} else {
 			print '&nbsp;';
@@ -477,6 +481,10 @@ if ($result) {
 		// Description
 		$text = $langs->trans($obj->description);
 		$reg = array();
+		if (InterfaceLogevents::isEventActionTextKey($obj->description)) {
+			$val = explode(' : ', $obj->description);
+			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
+		}
 		if (preg_match('/\((.*)\)(.*)/i', $obj->description, $reg)) {
 			$val = explode(',', $reg[1]);
 			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
@@ -488,15 +496,13 @@ if ($result) {
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-		if (!empty($arrayfields['e.user_agent']['checked'])) {
-			// User agent
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
-			print dol_escape_htmltag($obj->user_agent);
-			print '</td>';
-		}
+		// User agent
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->user_agent).'">';
+		print dol_escape_htmltag($obj->user_agent);
+		print '</td>';
 
+		// Prefix
 		if (!empty($arrayfields['e.prefix_session']['checked'])) {
-			// User agent
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->prefix_session).'">';
 			print dol_escape_htmltag($obj->prefix_session);
 			print '</td>';

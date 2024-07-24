@@ -60,13 +60,13 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 		$out = '';
 
 		if ($action == 'view') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contact") : $langs->trans("ContactAddress"));
 		}
 		if ($action == 'edit') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("EditContact") : $langs->trans("EditContactAddress"));
 		}
 		if ($action == 'create') {
-			$out .= (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+			$out .= (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
 		}
 
 		return $out;

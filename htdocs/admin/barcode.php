@@ -51,7 +51,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'setbarcodeproducton') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
-	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) {
+	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
 		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodeproductoff') {
@@ -61,7 +61,7 @@ if ($action == 'setbarcodeproducton') {
 if ($action == 'setbarcodethirdpartyon') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
-	if ($barcodenumberingmodule == 'mod_barcode_thirdparty_standard' && empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
+	if ($barcodenumberingmodule == 'mod_barcode_thirdparty_standard' && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
 		$res = dolibarr_set_const($db, "BARCODE_STANDARD_THIRDPARTY_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodethirdpartyoff') {
@@ -162,7 +162,7 @@ foreach ($dirbarcode as $reldir) {
 	$handle = @opendir($newdir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+			if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 				if (is_readable($newdir.$file)) {
 					if (preg_match('/(.*)\.modules\.php$/i', $file, $reg)) {
 						$filebis = $reg[1];
@@ -173,15 +173,15 @@ foreach ($dirbarcode as $reldir) {
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
 						if ($module->isEnabled()) {
-							$barcodelist[$filebis] = $module->info();
+							$barcodelist[$filebis] = $module->info($langs);
 						}
 					}
 				}
@@ -231,7 +231,7 @@ if (isModEnabled('product')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM) && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -292,7 +292,7 @@ if (isModEnabled('societe')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (!empty($conf->global->BARCODE_THIRDPARTY_ADDON_NUM) && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodethirdpartyoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -443,7 +443,7 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" class="center">';
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.getDolGlobalString('GENBARCODE_LOCATION').'">';
-	if (!empty($conf->global->GENBARCODE_LOCATION) && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
+	if (getDolGlobalString('GENBARCODE_LOCATION') && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
 		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
 	}
@@ -457,7 +457,7 @@ if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE'), "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
@@ -468,7 +468,7 @@ if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY, "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY'), "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';

@@ -80,7 +80,9 @@ if ($action == 'updateMask') {
 	$propal->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/propale/doc/pdf_".$modele.".modules.php");
@@ -123,38 +125,27 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_PROPALE_DRAFT_WATERMARK') {
-	$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
-
-	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
+} elseif ($action == 'update') {
+	if (GETPOSTISSET('PROPALE_VALIDITY_DURATION')) {
+		$value = GETPOST('PROPALE_VALIDITY_DURATION');
+		$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
+	if (GETPOSTISSET('PROPALE_DRAFT_WATERMARK')) {
+		$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
+		$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
-} elseif ($action == 'set_PROPOSAL_FREE_TEXT') {
-	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
-
-	$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-
-	if (!($res > 0)) {
-		$error++;
-	}
-
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-} elseif ($action == 'setdefaultduration') {
-	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
-
-	if (!($res > 0)) {
-		$error++;
+	if (GETPOSTISSET('PROPOSAL_FREE_TEXT')) {
+		$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'restricthtml'); // No alpha here, we want exact string
+		$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
 	}
 
 	if (!$error) {
@@ -280,19 +271,19 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.'/'.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -415,16 +406,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -607,68 +598,22 @@ print '<br>';
 
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
-print "<table class=\"noborder\" width=\"100%\">";
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="action" value="update">';
+
+print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
 print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
-print "<td>&nbsp;</td>\n";
 print "</tr>";
 
-
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
-print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
+print '<td width="60" align="center">';
+print "<input size=\"3\" class=\"flat\" type=\"text\" name=\"PROPALE_VALIDITY_DURATION\" value=\"" . getDolGlobalString('PROPALE_VALIDITY_DURATION')."\"></td>";
 print '</tr>';
-print '</form>';
-
-// Allow external download
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
-print '<td class="center" colspan="2">';
-print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
-print '</td></tr>';
-
-
-
-// default update prices on cloning a proposal
-/*
-print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '">';
-print '<input type="hidden" name="token" value="' . newToken() .'">';
-print '<tr class="oddeven">';
-print '<td>' . $langs->trans('DefaultPuttingPricesUpToDate').'</td>';
-print '<td></td>';
-print '<td class="right">';
-if (!empty($conf->use_javascript_ajax)) {
-	print ajax_constantonoff('PROPOSAL_CLONE_UPDATE_PRICES', array(), $conf->entity, 0, 0, 1, 0);
-} else {
-	if (empty($conf->global->PROPOSAL_CLONE_UPDATE_PRICES)) {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=set_PROPOSAL_CLONE_UPDATE_PRICES">' . img_picto($langs->trans('Disabled'), 'switch_off') . '</a>';
-	} else {
-		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=del_PROPOSAL_CLONE_UPDATE_PRICES">' . img_picto($langs->trans('Enabled'), 'switch_on') . '</a>';
-	}
-}
-print '</td>';
-print '</tr>';
-print '</form>';
-*/
-
-/*
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
-print '<tr class="oddeven"><td>';
-print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
-*/
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -678,36 +623,42 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_PROPOSAL_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnProposal"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'PROPOSAL_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
+print '</td>';
+print "</tr>\n";
 
 
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print "<input type=\"hidden\" name=\"action\" value=\"set_PROPALE_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftProposal"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="PROPALE_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('PROPALE_DRAFT_WATERMARK')).'">';
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
-print "</td></tr>\n";
-print '</form>';
+print '</td>';
+print "</tr>\n";
+
+
+// Allow external download
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowExternalDownload").'</td>';
+print '<td class="center">';
+print ajax_constantonoff('PROPOSAL_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
+// Allow OnLine Sign
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
+print '<td class="center">';
+print ajax_constantonoff('PROPOSAL_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
 
 /* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
 if (isModEnabled('facture'))
@@ -742,6 +693,9 @@ else
 
 print '</table>';
 
+print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></center>';
+
+print '</form>';
 
 
 /*

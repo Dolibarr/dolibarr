@@ -48,7 +48,7 @@ $search_group = GETPOST('search_group');
 $search = array();
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -87,7 +87,7 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	if (!$user->hasRight("user", "group_advance", "read") && !$user->admin) {
 		accessforbidden();
 	}
@@ -106,7 +106,7 @@ if (!$user->hasRight("user", "user", "read") && !$user->admin) {
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 $permissiontodelete = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
@@ -174,6 +174,9 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, g.tms, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
+
+$sqlfields = $sql;
+
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
@@ -190,11 +193,29 @@ if ($search_all) {
 }
 $sql .= " GROUP BY g.rowid, g.nom, g.note, g.entity, g.datec, g.tms";
 
+// Count total nb of records
+$nbtotalofrecords = '';
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
-if ($limit) {
-	$sql .= $db->plimit($limit + 1, $offset);
-}
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -203,9 +224,6 @@ if (!$resql) {
 }
 
 $num = $db->num_rows($resql);
-
-
-$nbtotalofrecords = $num;
 
 $i = 0;
 
@@ -248,7 +266,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -328,7 +346,7 @@ if (!empty($moreforfilter)) {
 	print '</div>';
 }
 
-$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$varpage=empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -352,7 +370,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", $param, "", "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 //multicompany
-if (isModEnabled('multicompany') && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -409,13 +427,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -450,7 +469,7 @@ while ($i < $imaxinloop) {
 			$totalarray['nbfield']++;
 		}
 		//multicompany
-		if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1) {
+		if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
 			$mc->getInfo($obj->entity);
 			print '<td class="center">'.dol_escape_htmltag($mc->label).'</td>';
 			if (!$i) {

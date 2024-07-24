@@ -1,8 +1,8 @@
 -- =============================================================================
--- Copyright (C) 2000-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
--- Copyright (C) 2004-2014	Laurent Destailleur 	<eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012	Regis Houssin       	<regis.houssin@inodbox.com>
--- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+-- Copyright (C) 2000-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+-- Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ create table llx_bank_account
   tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   ref						varchar(12) NOT NULL,
   label						varchar(30) NOT NULL,
-  entity					integer DEFAULT 1 NOT NULL,	-- multi company id
+  entity					integer DEFAULT 1 NOT NULL, -- multi company id
   fk_user_author			integer,
   fk_user_modif				integer,
   bank						varchar(60),
@@ -37,12 +37,13 @@ create table llx_bank_account
   code_guichet				varchar(6),
   number					varchar(255),
   cle_rib					varchar(5),
-  bic						varchar(11),
+  bic						varchar(11),                -- 11 according to ISO 9362
+  bic_intermediate          varchar(11),                -- 11 according to ISO 9362. Same as bic but for intermediate bank
   iban_prefix				varchar(34),				-- full iban. 34 according to ISO 13616
   country_iban				varchar(2),					-- deprecated
   cle_iban					varchar(2),
   domiciliation				varchar(255),
-  pti_in_ctti         smallint DEFAULT 0,
+  pti_in_ctti               smallint DEFAULT 0,
   state_id					integer        DEFAULT NULL,
   fk_pays					integer        NOT NULL,
   proprio					varchar(60),
@@ -64,6 +65,6 @@ create table llx_bank_account
   model_pdf					varchar(255),
   import_key				varchar(14),
   extraparams			    varchar(255),				-- for other parameters with json format
-  ics						varchar(32),			-- Creditor Identifier CI
-  ics_transfer			varchar(32)				-- Creditor Identifier CI for transfer
+  ics						varchar(32),                -- Creditor Identifier CI
+  ics_transfer              varchar(32)                 -- Creditor Identifier CI for transfer
 )ENGINE=innodb;

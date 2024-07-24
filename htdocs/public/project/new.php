@@ -66,7 +66,7 @@ $action = GETPOST('action', 'aZ09');
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
-if (empty($conf->global->PROJECT_ENABLE_PUBLIC)) {
+if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	print $langs->trans("Form for public lead registration has not been enabled");
 	exit;
 }
@@ -125,15 +125,15 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
 		print '>';
 		print '</div>';
-		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
 
-	if (!empty($conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD)) {
+	if (getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD')) {
 		print '<div class="backimagepublicnewlead">';
-		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="'.$conf->global->PROJECT_IMAGE_PUBLIC_NEWLEAD.'">';
+		print '<img id="idPROJECT_IMAGE_PUBLIC_NEWLEAD" src="' . getDolGlobalString('PROJECT_IMAGE_PUBLIC_NEWLEAD').'">';
 		print '</div>';
 	}
 
@@ -206,12 +206,14 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Project"))."<br>\n";
 	}
 
+	$visibility = getDolGlobalString('PROJET_VISIBILITY');
+
 	$proj = new Project($db);
 	$thirdparty = new Societe($db);
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
@@ -256,10 +258,12 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
-		$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 		// Search template files
-		$file = ''; $classname = ''; $filefound = 0;
+		$file = '';
+		$classname = '';
+		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
 			$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -272,7 +276,7 @@ if (empty($reshook) && $action == 'add') {
 
 		if ($filefound) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-			$modProject = new $classname;
+			$modProject = new $classname();
 
 			$defaultref = $modProject->getNextValue($thirdparty, $object);
 		}
@@ -285,10 +289,17 @@ if (empty($reshook) && $action == 'add') {
 			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 		}
 
+		if ($visibility === "1") {
+			$proj->public = 1;
+		} elseif ($visibility === "0") {
+			$proj->public = 0;
+		} elseif (empty($visibility)) {
+			$proj->public = 1;
+		}
+
 		$proj->ref         = $defaultref;
 		$proj->statut      = $proj::STATUS_DRAFT;
 		$proj->status      = $proj::STATUS_DRAFT;
-		$proj->public      = 1;
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
@@ -361,7 +372,9 @@ if (empty($reshook) && $action == 'add') {
 						$msg     = $arraydefaultmessage->content;
 					}
 					if (empty($labeltosue)) {
-						$labeltouse = '['.$mysoc->name.'] '.$langs->trans("YourMessage");
+						$appli = $mysoc->name;
+
+						$labeltouse = '['.$appli.'] '.$langs->trans("YourMessage");
 						$msg = $langs->trans("YourMessageHasBeenReceived");
 					}
 
@@ -382,7 +395,7 @@ if (empty($reshook) && $action == 'add') {
 
 				if (!empty($backtopage)) {
 					$urlback = $backtopage;
-				} elseif (!empty($conf->global->PROJECT_URL_REDIRECT_LEAD)) {
+				} elseif (getDolGlobalString('PROJECT_URL_REDIRECT_LEAD')) {
 					$urlback = $conf->global->PROJECT_URL_REDIRECT_LEAD;
 					// TODO Make replacement of __AMOUNT__, etc...
 				} else {
@@ -449,7 +462,7 @@ print '<div align="center">';
 print '<div id="divsubscribe">';
 
 print '<div class="center subscriptionformhelptext opacitymedium justify">';
-if (!empty($conf->global->PROJECT_NEWFORM_TEXT)) {
+if (getDolGlobalString('PROJECT_NEWFORM_TEXT')) {
 	print $langs->trans($conf->global->PROJECT_NEWFORM_TEXT)."<br>\n";
 } else {
 	print $langs->trans("FormForNewLeadDesc", getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."<br>\n";
@@ -505,7 +518,7 @@ print '</td></tr>';
 // Country
 print '<tr><td>'.$langs->trans('Country').'</td><td>';
 $country_id = GETPOST('country_id');
-if (!$country_id && !empty($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE)) {
+if (!$country_id && getDolGlobalString('PROJECT_NEWFORM_FORCECOUNTRYCODE')) {
 	$country_id = getCountry($conf->global->PROJECT_NEWFORM_FORCECOUNTRYCODE, 2, $db, $langs);
 }
 if (!$country_id && !empty($conf->geoipmaxmind->enabled)) {
@@ -523,7 +536,7 @@ $country_code = getCountry($country_id, 2, $db, $langs);
 print $form->select_country($country_id, 'country_id');
 print '</td></tr>';
 // State
-if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
 		print $formcompany->select_state(GETPOST("state_id", 'int'), $country_code);

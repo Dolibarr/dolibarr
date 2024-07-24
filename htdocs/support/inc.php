@@ -80,11 +80,11 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root        = isset($dolibarr_main_data_root) ?trim($dolibarr_main_data_root) : '';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ?trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ?trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ?trim($dolibarr_main_document_root) : '';
-		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ?trim($dolibarr_main_document_root_alt) : '';
+		$dolibarr_main_data_root        = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : '';
+		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
 		if (!empty($dolibarr_main_document_root) && !preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) {
@@ -182,7 +182,7 @@ $bc[true] = ' class="bg2"';
  *	Load conf file (file must exists)
  *
  *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	@return	int											<0 if KO, >0 if OK
+ *	@return	int											Return integer <0 if KO, >0 if OK
  */
 function loadconf($dolibarr_main_document_root)
 {

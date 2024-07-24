@@ -101,7 +101,9 @@ $permissiontoread = $user->rights->hrm->evaluation->read; // Used by the include
 if (!isModEnabled('hrm')) {
 	accessforbidden();
 }
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*

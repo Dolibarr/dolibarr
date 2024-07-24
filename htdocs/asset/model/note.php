@@ -51,17 +51,25 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/" . $object->id;
 }
 
-$permissiontoread = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'read')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'model_advance', 'read')));
-$permissiontoadd = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'write')) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoread = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'read')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'read')));
+$permissiontoadd = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'write')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('asset', 'model_advance', 'write'))); // Used by the include of actions_addupdatedelete.inc.php
 $permissionnote = $permissiontoadd; // Used by the include of actions_setnotes.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'asset', $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->asset->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (empty($conf->asset->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*

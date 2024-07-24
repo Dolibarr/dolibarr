@@ -38,7 +38,7 @@ $ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'assetcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'assetcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
@@ -77,12 +77,20 @@ $permissiondellink = $user->hasRight('asset', 'write'); // Used by the include o
 $upload_dir = $conf->asset->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -110,7 +118,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$object->oldcopy = dol_clone($object);
+	$object->oldcopy = dol_clone($object, 2);
 	$triggermodname = 'ASSET_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Action dispose object

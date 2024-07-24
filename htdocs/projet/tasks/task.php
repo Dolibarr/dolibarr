@@ -45,7 +45,7 @@ $ref = GETPOST("ref", 'alpha', 1); // task ref
 $taskref = GETPOST("taskref", 'alpha'); // task ref
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
-$planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ?GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ?GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
+$planned_workload = ((GETPOST('planned_workloadhour', 'int') != '' || GETPOST('planned_workloadmin', 'int') != '') ? (GETPOST('planned_workloadhour', 'int') > 0 ? GETPOST('planned_workloadhour', 'int') * 3600 : 0) + (GETPOST('planned_workloadmin', 'int') > 0 ? GETPOST('planned_workloadmin', 'int') * 60 : 0) : '');
 $mode = GETPOST('mode', 'alpha');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -79,7 +79,7 @@ restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
  * Actions
  */
 
-if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
+if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'creer')) {
 	$error = 0;
 
 	if (empty($taskref)) {
@@ -101,7 +101,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->rights->projet->creer) {
 
 		$object->ref = $taskref ? $taskref : GETPOST("ref", 'alpha', 2);
 		$object->label = GETPOST("label", "alphanohtml");
-		if (empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) {
+		if (!getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE')) {
 			$object->description = GETPOST('description', "alphanohtml");
 		} else {
 			$object->description = GETPOST('description', "restricthtml");
@@ -155,7 +155,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes') {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer) {
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('projet', 'supprimer')) {
 	$result = $projectstatic->fetch($object->fk_project);
 	$projectstatic->fetch_thirdparty();
 
@@ -181,7 +181,7 @@ if (!empty($project_ref) && !empty($withproject)) {
 }
 
 // Build doc
-if ($action == 'builddoc' && $user->rights->projet->creer) {
+if ($action == 'builddoc' && $user->hasRight('projet', 'creer')) {
 	// Save last template used to generate document
 	if (GETPOST('model')) {
 		$object->setDocModel($user, GETPOST('model', 'alpha'));
@@ -200,7 +200,7 @@ if ($action == 'builddoc' && $user->rights->projet->creer) {
 }
 
 // Delete file in doc form
-if ($action == 'remove_file' && $user->rights->projet->creer) {
+if ($action == 'remove_file' && $user->hasRight('projet', 'creer')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$langs->load("other");
@@ -235,12 +235,12 @@ llxHeader('', $title, $help_url);
 
 if ($id > 0 || !empty($ref)) {
 	$res = $object->fetch_optionals();
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_TASK') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 		$object->fetchComments();
 	}
 
 
-	if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
+	if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 		$projectstatic->fetchComments();
 	}
 	if (!empty($projectstatic->socid)) {
@@ -273,9 +273,9 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
+			$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
 
 		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
@@ -287,24 +287,24 @@ if ($id > 0 || !empty($ref)) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Usage
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
 			print $langs->trans("Usage");
 			print '</td>';
 			print '<td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("ProjectFollowOpportunity");
 				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 				print '<br>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_task ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
 				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 				print '<br>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 				print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($projectstatic->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 				$htmltext = $langs->trans("ProjectBillTimeDescription");
 				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -339,10 +339,10 @@ if ($id > 0 || !empty($ref)) {
 		// Date start - end project
 		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 		$start = dol_print_date($projectstatic->date_start, 'day');
-		print ($start ? $start : '?');
+		print($start ? $start : '?');
 		$end = dol_print_date($projectstatic->date_end, 'day');
 		print ' - ';
-		print ($end ? $end : '?');
+		print($end ? $end : '?');
 		if ($projectstatic->hasDelay()) {
 			print img_warning("Late");
 		}
@@ -431,7 +431,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = task_prepare_head($object);
 
-	if ($action == 'edit' && $user->rights->projet->creer) {
+	if ($action == 'edit' && $user->hasRight('projet', 'creer')) {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -497,7 +497,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// WYSIWYG editor
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$cked_enabled = (!empty($conf->global->FCKEDITOR_ENABLE_SOCIETE) ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
+		$cked_enabled = (getDolGlobalString('FCKEDITOR_ENABLE_SOCIETE') ? $conf->global->FCKEDITOR_ENABLE_SOCIETE : 0);
 		$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 0);
 		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, $cked_enabled, $nbrows);
 		print $doleditor->Create();
@@ -579,10 +579,10 @@ if ($id > 0 || !empty($ref)) {
 		// Date start - Date end task
 		print '<tr><td class="titlefield">'.$langs->trans("DateStart").' - '.$langs->trans("Deadline").'</td><td colspan="3">';
 		$start = dol_print_date($object->date_start, 'dayhour');
-		print ($start ? $start : '?');
+		print($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'dayhour');
 		print ' - ';
-		print ($end ? $end : '?');
+		print($end ? $end : '?');
 		if ($object->hasDelay()) {
 			print img_warning("Late");
 		}

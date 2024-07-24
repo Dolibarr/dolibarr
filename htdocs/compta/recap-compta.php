@@ -35,7 +35,7 @@ if (isModEnabled('facture')) {
 	$langs->load("bills");
 }
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 
 // Security check
 if ($user->socid) {
@@ -52,7 +52,7 @@ if ($id > 0) {
 $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -98,7 +98,7 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Summary");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Summary");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -247,6 +247,9 @@ if ($id > 0) {
 			$balance = 0;
 			foreach ($TData as &$data1) {
 				$balance += $data1['amount'];
+				if (!isset($data1['balance'])) {
+					$data1['balance'] = 0;
+				}
 				$data1['balance'] += $balance;
 			}
 

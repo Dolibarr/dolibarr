@@ -67,14 +67,25 @@ class mod_contract_olive extends ModelNumRefContracts
 	/**
 	 *	Return description of module
 	 *
-	 *	@return string      		Description of module
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 
 		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
+	}
+
+	/**
+	 *	Return numbering example
+	 *
+	 *	@return     string      Example
+	 */
+	public function getExample()
+	{
+		return '';
 	}
 
 	/**
@@ -86,7 +97,6 @@ class mod_contract_olive extends ModelNumRefContracts
 	 */
 	public function getNextValue($objsoc, $contract)
 	{
-		global $langs;
 		return '';
 	}
 
@@ -111,9 +121,9 @@ class mod_contract_olive extends ModelNumRefContracts
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_CONTARCT_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}
 

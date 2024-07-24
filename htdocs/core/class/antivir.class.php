@@ -66,7 +66,7 @@ class AntiVir
 	 *  Return also true (virus found) if file end with '.virus' (so we can make test safely).
 	 *
 	 *	@param	string	$file		File to scan
-	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
+	 *	@return	int					Return integer <0 if KO (-98 if error, -99 if virus), 0 if OK
 	 */
 	public function dol_avscan_file($file)
 	{

@@ -68,4 +68,4 @@ body:
     id: files
     attributes:
       label: Attached files
-      description: Screenshots, screencasts, dolibarr.log, debugging informations
+      description: Screenshots, screencasts, dolibarr.log, debugging information

@@ -54,7 +54,7 @@ function ecm_prepare_dasboard_head($object)
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+	if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';

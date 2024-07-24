@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
@@ -29,26 +29,30 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
+// Get Parameters
 $socid = GETPOST('socid', 'int');
 
+// action+display Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
+
+// Search Parameters
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
@@ -125,7 +129,7 @@ $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -161,7 +165,7 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 			$search_date_start = strtotime($fiscalYear->date_start);
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
-			$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
@@ -197,7 +201,7 @@ $arrayfields = array(
 	't.import_key'=>array('label'=>$langs->trans("ImportId"), 'checked'=>0, 'position'=>1100),
 );
 
-if (empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
 }
 
@@ -221,7 +225,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 $param = '';
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunletteringauto' && $massaction != 'preunletteringmanual' && $massaction != 'predeletebookkeepingwriting') {
 	$massaction = '';
@@ -479,7 +484,7 @@ if (empty($reshook)) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 					break;
-				} elseif (isset($object->date_validation) || $object->date_validation != '') {
+				} elseif (isset($object->date_validation) && $object->date_validation != '') {
 					setEventMessages($langs->trans("ValidatedRecordWhereFound"), null, 'errors');
 					$error++;
 					break;
@@ -706,8 +711,8 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Output page
 // --------------------------------------------------------------------
-
-llxHeader('', $title_page);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+llxHeader('', $title_page, $help_url);
 
 $formconfirm = '';
 
@@ -772,6 +777,7 @@ if (empty($reshook)) {
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
+	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->hasRight('accounting', 'mouvements', 'creer'));
 }
 
@@ -842,10 +848,10 @@ if (!empty($arrayfields['t.code_journal']['checked'])) {
 // Date document
 if (!empty($arrayfields['t.doc_date']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -870,7 +876,7 @@ if (!empty($arrayfields['t.subledger_account']['checked'])) {
 	print '<td class="liste_titre">';
 	// TODO For the moment we keep a free input text instead of a combo. The select_auxaccount has problem because it does not
 	// use setup of keypress to select thirdparty and this hang browser on large database.
-	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
 		print '<div class="nowrap">';
 		//print $langs->trans('From').' ';
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', $langs->trans('From'), 'maxwidth250', 'subledgeraccount');
@@ -917,10 +923,10 @@ print $hookmanager->resPrint;
 // Date creation
 if (!empty($arrayfields['t.date_creation']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_start, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_end, 'search_date_creation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -928,21 +934,21 @@ if (!empty($arrayfields['t.date_creation']['checked'])) {
 // Date modification
 if (!empty($arrayfields['t.tms']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modification_start, 'search_date_modification_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
-	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_modification_end, 'search_date_modification_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
 }
 // Date export
 if (!empty($arrayfields['t.date_export']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_export_start, 'search_date_export_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_export_end, 'search_date_export_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -950,10 +956,10 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 // Date validation
 if (!empty($arrayfields['t.date_validated']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_validation_start, 'search_date_validation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_validation_end, 'search_date_validation_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '</td>';
@@ -974,7 +980,8 @@ print "</tr>\n";
 
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');}
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+}
 if (!empty($arrayfields['t.piece_num']['checked'])) {
 	print_liste_field_titre($arrayfields['t.piece_num']['label'], $_SERVER['PHP_SELF'], "t.piece_num", "", $param, "", $sortfield, $sortorder);
 }
@@ -1039,7 +1046,7 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $total_debit = 0;
 $total_credit = 0;
-$totalarray['val'] = array ();
+$totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
 
@@ -1191,7 +1198,7 @@ while ($i < min($num, $limit)) {
 			$labeltoshowalt .= $line->doc_ref;
 		}
 
-		print '<td class="nowraponall tdoverflowmax200" title="'.dol_escape_htmltag($labeltoshowalt).'">';
+		print '<td class="nowraponall tdoverflowmax250" title="'.dol_escape_htmltag($labeltoshowalt).'">';
 		print $labeltoshow;
 		print "</td>\n";
 		if (!$i) {
@@ -1293,7 +1300,7 @@ while ($i < min($num, $limit)) {
 	}
 
 	if (!empty($arrayfields['t.import_key']['checked'])) {
-		print '<td class="tdoverflowmax100">'.$obj->import_key."</td>\n";
+		print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($obj->import_key).'">'.dol_escape_htmltag($obj->import_key)."</td>\n";
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

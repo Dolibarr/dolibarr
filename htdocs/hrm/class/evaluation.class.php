@@ -75,7 +75,7 @@ class Evaluation extends CommonObject
 
 
 	/**
-	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
@@ -113,13 +113,13 @@ class Evaluation extends CommonObject
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>0, 'visible'=>5, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '6' => 'Closed'),),
 		'date_eval' => array('type'=>'date', 'label'=>'DateEval', 'enabled'=>'1', 'position'=>502, 'notnull'=>1, 'visible'=>1,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'User', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1,),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1,),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0', 'label'=>'Employee', 'enabled'=>'1', 'position'=>504, 'notnull'=>1, 'visible'=>1, 'picto'=>'user', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>505, 'notnull'=>1, 'visible'=>1, 'picto'=>'jobprofile', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 	);
 	public $rowid;
 	public $ref;
@@ -154,7 +154,7 @@ class Evaluation extends CommonObject
 	/**
 	 * @var string    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'Evaluationline';
+	public $class_element_line = 'EvaluationLine';
 
 	// /**
 	//  * @var array	List of child tables. To test if we can delete object.
@@ -166,10 +166,10 @@ class Evaluation extends CommonObject
 	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	//  */
-	protected $childtablesoncascade = array('@Evaluationline:hrm/class/evaluationdet.class.php:fk_evaluation');
+	protected $childtablesoncascade = array('@EvaluationLine:hrm/class/evaluationdet.class.php:fk_evaluation');
 
 	/**
-	 * @var Evaluationline[]     Array of subtable lines
+	 * @var EvaluationLine[]     Array of subtable lines
 	 */
 	public $lines = array();
 
@@ -186,14 +186,14 @@ class Evaluation extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
 
-		if (empty($user->rights->hrm->evaluation->readall)) {
+		if (!$user->hasRight('hrm', 'evaluation', 'readall')) {
 			$this->fields['fk_user']['type'].= ':rowid IN('.$this->db->sanitize(implode(", ", $user->getAllChildIds(1))).')';
 		}
 
@@ -223,7 +223,7 @@ class Evaluation extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -237,14 +237,16 @@ class Evaluation extends CommonObject
 			if (is_array($TRequiredRanks) && !empty($TRequiredRanks)) {
 				$this->lines = array();
 				foreach ($TRequiredRanks as $required) {
-					$line = new Evaluationline($this->db);
+					$line = new EvaluationLine($this->db);
 					$line->fk_evaluation = $resultcreate;
 					$line->fk_skill = $required->fk_skill;
 					$line->required_rank = $required->rankorder;
 					$line->fk_rank = 0;
 
 					$res = $line->create($user, $notrigger);
-					if ($res > 0) $this->lines[] = $line;
+					if ($res > 0) {
+						$this->lines[] = $line;
+					}
 				}
 			}
 		}
@@ -356,7 +358,7 @@ class Evaluation extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -370,7 +372,7 @@ class Evaluation extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -414,7 +416,7 @@ class Evaluation extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -466,7 +468,7 @@ class Evaluation extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -478,7 +480,7 @@ class Evaluation extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -510,7 +512,7 @@ class Evaluation extends CommonObject
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -581,13 +583,15 @@ class Evaluation extends CommonObject
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'evaluation/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'evaluation/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -643,12 +647,15 @@ class Evaluation extends CommonObject
 		$sql.=	"LIMIT 1 ";
 
 		$res = $this->db->query($sql);
-		if (!$res) { dol_print_error($this->db);}
+		if (!$res) {
+			dol_print_error($this->db);
+		}
 
 		$Tab = $this->db->fetch_object($res);
 
-		if (empty($Tab)) return null;
-		else {
+		if (empty($Tab)) {
+			return null;
+		} else {
 			$evaluation = new Evaluation($this->db);
 			$evaluation->fetch($Tab->rowid);
 
@@ -662,7 +669,7 @@ class Evaluation extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -679,7 +686,7 @@ class Evaluation extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -696,7 +703,7 @@ class Evaluation extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -740,7 +747,7 @@ class Evaluation extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -750,7 +757,7 @@ class Evaluation extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEvaluation");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -790,7 +797,7 @@ class Evaluation extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -881,6 +888,7 @@ class Evaluation extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -919,7 +927,7 @@ class Evaluation extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new Evaluationline($this->db);
+		$objectline = new EvaluationLine($this->db);
 		$result = $objectline->fetchAll('ASC', '', 0, 0, array('customsql'=>'fk_evaluation = '.$this->id));
 
 		if (is_numeric($result)) {
@@ -942,14 +950,14 @@ class Evaluation extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->HRMTEST_EVALUATION_ADDON)) {
+		if (!getDolGlobalString('HRMTEST_EVALUATION_ADDON')) {
 			$conf->global->HRMTEST_EVALUATION_ADDON = 'mod_evaluation_standard';
 		}
 
-		if (!empty($conf->global->HRMTEST_EVALUATION_ADDON)) {
+		if (getDolGlobalString('HRMTEST_EVALUATION_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->HRMTEST_EVALUATION_ADDON.".php";
+			$file = getDolGlobalString('HRMTEST_EVALUATION_ADDON') . ".php";
 			$classname = $conf->global->HRMTEST_EVALUATION_ADDON;
 
 			// Include file with class
@@ -1003,23 +1011,22 @@ class Evaluation extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("hrm");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_evaluation';
+			$modele = 'standard';
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->EVALUATION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('EVALUATION_ADDON_PDF')) {
 				$modele = $conf->global->EVALUATION_ADDON_PDF;
 			}
 		}
 
 		$modelpath = "core/modules/hrm/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
@@ -1084,7 +1091,7 @@ class Evaluation extends CommonObject
 			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

@@ -54,7 +54,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -242,7 +242,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
+function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
 	global $db, $conf;
 
@@ -254,19 +254,21 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->fournisseur->facture->lire) {
+		if ($fuser->hasRight('fournisseur', 'facture', 'lire')) {
 			$invoice = new FactureFournisseur($db);
 			$result = $invoice->fetch($id, $ref, $ref_ext);
 			if ($result > 0) {
@@ -320,11 +322,13 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 				));
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -355,14 +359,16 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -387,7 +393,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 				$result = $invoice->fetch($obj->facid);
 				if ($result < 0) {
 					$error++;
-					$errorcode = $result; $errorlabel = $invoice->error;
+					$errorcode = $result;
+					$errorlabel = $invoice->error;
 					break;
 				}
 
@@ -415,11 +422,11 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 					'ref'=>$invoice->ref,
 					'ref_supplier'=>$invoice->ref_supplier,
 					'ref_ext'=>$invoice->ref_ext,
-					'fk_user_author' => $invoice->fk_user_author,
-					'fk_user_valid' => $invoice->fk_user_valid,
-					'fk_thirdparty' => $invoice->fk_soc,
+					'fk_user_author' => $invoice->user_creation_id,
+					'fk_user_valid' => $invoice->user_validation_id,
+					'fk_thirdparty' => $invoice->socid,
 					'type'=>$invoice->type,
-					'status'=>$invoice->statut,
+					'status'=>$invoice->status,
 					'total_net'=>$invoice->total_ht,
 					'total_vat'=>$invoice->total_tva,
 					'total'=>$invoice->total_ttc,
@@ -447,7 +454,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 

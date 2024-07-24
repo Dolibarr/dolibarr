@@ -70,7 +70,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -128,7 +128,8 @@ class Propalmergepdfproduct extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -154,7 +155,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -211,7 +212,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *  @param	int		$product_id    	Id object
 	 *  @param	string	$lang  			Lang string code
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_by_product($product_id, $lang = '')
 	{
@@ -281,7 +282,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -324,7 +325,8 @@ class Propalmergepdfproduct extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -347,7 +349,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -363,7 +365,8 @@ class Propalmergepdfproduct extends CommonObject
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -389,7 +392,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *	@param  int		$product_id	 product_id
 	 *  @param  string	$lang_id	 language
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete_by_product($user, $product_id, $lang_id = '', $notrigger = 0)
 	{
@@ -410,7 +413,8 @@ class Propalmergepdfproduct extends CommonObject
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -433,7 +437,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param  User	$user        User that deletes
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete_by_file($user)
 	{
@@ -450,7 +454,8 @@ class Propalmergepdfproduct extends CommonObject
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -577,6 +582,6 @@ class PropalmergepdfproductLine
 	 */
 	public function __construct()
 	{
-		return 1;
+		return;
 	}
 }

@@ -11,7 +11,7 @@ WEBSITE_ALIASALT=Номҳои алтернативӣ/тахаллусҳо
 WEBSITE_ALIASALTDesc=Дар ин ҷо рӯйхати номҳо/тахаллусҳои дигарро истифода баред, то ба саҳифа инчунин бо истифода аз ин номҳо/тахаллусҳои дигар дастрасӣ пайдо кунед (масалан, номи кӯҳна пас аз тағйири тахаллус барои нигоҳ доштани истинод дар истиноди кӯҳна/кор). Синтаксис ин аст: <br> алтернативаи1, алтернативаи2, ...
 WEBSITE_CSS_URL=URL -и файли берунии CSS
 WEBSITE_CSS_INLINE=Мундариҷаи файли CSS (барои ҳамаи саҳифаҳо маъмул аст)
-WEBSITE_JS_INLINE=Мундариҷаи файли Javascript (барои ҳамаи саҳифаҳо умумӣ аст)
+WEBSITE_JS_INLINE=JavaScript file content (common to all pages)
 WEBSITE_HTML_HEADER=Илова дар поёни сарлавҳаи HTML (умумӣ барои ҳама саҳифаҳо)
 WEBSITE_ROBOT=Файли роботӣ (robots.txt)
 WEBSITE_HTACCESS=Файли вебсайт .htaccess
@@ -25,7 +25,7 @@ EditTheWebSiteForACommonHeader=Эзоҳ: Агар шумо хоҳед, ки ба
 MediaFiles=Китобхонаи ВАО
 EditCss=Хусусиятҳои вебсайтро таҳрир кунед
 EditMenu=Менюи таҳрир
-EditMedias=Таҳрири миёнаравӣ
+EditMedias=Edit media
 EditPageMeta=Хусусиятҳои саҳифа/контейнерро таҳрир кунед
 EditInLine=Таҳрири дохилӣ
 AddWebsite=Вебсайтро илова кунед
@@ -60,10 +60,11 @@ NoPageYet=Ҳоло ягон саҳифа нест
 YouCanCreatePageOrImportTemplate=Шумо метавонед як саҳифаи нав эҷод кунед ё як қолаби пурраи вебсайтро ворид кунед
 SyntaxHelp=Кӯмак дар маслиҳатҳои мушаххаси синтаксис
 YouCanEditHtmlSourceckeditor=Шумо метавонед рамзи сарчашмаи HTML -ро бо истифода аз тугмаи "Манбаъ" дар муҳаррир таҳрир кунед.
-YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Шумо метавонед бо истифода аз барчаспҳои <strong> &lt;? php? a0012c7d7c00770 Тағирёбандаҳои глобалӣ мавҷуданд: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Шумо инчунин метавонед мундариҷаи дигар Саҳифа/Контейнерро бо синтаксиси зерин дохил кунед: <br> a0e78439c0_f09_d094c0f4f4d94 ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Шумо метавонед масир ба дигар Page / зарф бо синтаксиси зерин кунад (Эзоҳ: мекунед, натиҷаи ҳама гуна мазмуни пеш аз масир надорад): <br> <strong> &lt; PHP redirectToContainer ( 'alias_of_container_to_redirect_to'); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Барои илова кардани пайванди саҳифаи дигар истифода наҳвӣ: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Барои дохил пайванди <strong> ба боргирӣ </strong> файл нигоҳ дошта, ба њуљљатњои <strong> ба феҳристи </strong>, истифода <strong> document.php </strong> wrapper: <br> Мисол, барои як файл ба санадњои / ecm (зарурати ба систем ворид шуда бошед), наҳвӣ аст? <br> <strong> &lt;a href = "/ document.php modulepart = ecm & файли = [relative_dir / ] filename.ext "&gt; </strong> <br> Барои файл дар ҳуҷҷатҳо/медиа (феҳристи кушод барои дастрасии оммавӣ), синтаксис ин аст: <br> a0e7843947d09cz "/document.php?modulepart=medias&file=[relativ_dir/] /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> барои дохил кардани </strong> тасвир <strong> захира ба ҳуҷҷатҳои <strong> </strong> феҳрист истифода <strong> viewimage.php </strong> wrapper: <br> Мисол, ки барои тасвир ба санадњои / medias (кушода директория барои дастрасии ҷамъиятӣ), синтаксис ин аст: <br> <strong> &lt;img src = "/viewimage.php? modulepart = medias&amp;file a0c7
-#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=Барои тасвире, ки бо истиноди мубодила мубодила карда мешавад (дастрасии кушод бо калиди мубодилаи ҳеши файл), синтаксис ин аст: <br> <strong> &lt;img src = "/viewimage.php? Hashp = 12345679012z00f01d0f0d0fd09d09d0fd09d0f0f0e9
-YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external">the wiki documentation</a><br>.
+YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Саҳифа/контейнерро клон кунед
 CloneSite=Сайти клон
 SiteAdded=Вебсайт илова карда шуд
@@ -91,7 +92,7 @@ SorryWebsiteIsCurrentlyOffLine=Бубахшед, ин вебсайт дар ҳо
 WEBSITE_USE_WEBSITE_ACCOUNTS=Ҷадвали ҳисоби вебсайтро фаъол созед
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Ҷадвалро барои нигоҳ доштани ҳисобҳои вебсайт (вуруд / гузар) барои ҳар як вебсайт / шахси сеюм фаъол созед
 YouMustDefineTheHomePage=Шумо аввал бояд саҳифаи хонагии пешфарзро муайян кунед
-OnlyEditionOfSourceForGrabbedContentFuture=Огоҳӣ: Эҷоди саҳифаи интернетӣ тавассути воридоти веб -саҳифаи беруна барои корбарони ботаҷриба ҳифз карда шудааст. Вобаста аз мураккабии саҳифаи сарчашма, натиҷаи воридот метавонад аз аслӣ фарқ кунад. Инчунин, агар саҳифаи манбаъ услубҳои умумии CSS ё JavaScript -и ихтилофнокро истифода барад, он метавонад ҳангоми кор дар ин саҳифа намуди зоҳирӣ ё хусусиятҳои муҳаррири вебсайтро вайрон кунад. Ин усул роҳи зудтари сохтани саҳифа аст, аммо тавсия дода мешавад, ки саҳифаи нави худро аз сифр ё аз қолаби пешниҳодшудаи саҳифа созед. <br> Ҳамчунин дар хотир доред, ки муҳаррири дохилӣ ҳангоми кор дар саҳифаи берунии дастгиршуда дуруст кор карда наметавонад.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
 OnlyEditionOfSourceForGrabbedContent=Танҳо нашри манбаи HTML имконпазир аст, агар мундариҷа аз сайти беруна гирифта шавад
 GrabImagesInto=Ҳамчунин тасвирҳои дар CSS ва саҳифа мавҷудбударо гиред.
 ImagesShouldBeSavedInto=Тасвирҳо бояд дар феҳрист сабт карда шаванд
@@ -112,13 +113,13 @@ GoTo=Ба
 DynamicPHPCodeContainsAForbiddenInstruction=Шумо рамзи PHP -и динамикиро илова мекунед, ки дорои дастурҳои PHP '<strong> %s </strong>' мебошад, ки бо нобаёнӣ ҳамчун мундариҷаи динамикӣ мамнӯъ аст (нигаред ба имконоти пинҳонии WEBSITE_PHP_ALLOW_xxx барои зиёд кардани рӯйхати фармонҳои иҷозатдодашуда).
 NotAllowedToAddDynamicContent=Шумо барои илова ё таҳрир кардани мундариҷаи динамикии PHP дар вебсайтҳо иҷозат надоред. Иҷозат пурсед ё танҳо рамзро дар тегҳои php бетағйир нигоҳ доред.
 ReplaceWebsiteContent=Ҷустуҷӯ ё иваз кардани мундариҷаи вебсайт
-DeleteAlsoJs=Ҳама файлҳои javascript -и ба ин вебсайт хосро нест кунед?
-DeleteAlsoMedias=Ҳамчунин ҳамаи файлҳои медиаҳои ба ин вебсайт хосро нест кунед?
+DeleteAlsoJs=Delete also all JavaScript files specific to this website?
+DeleteAlsoMedias=Delete also all media files specific to this website?
 MyWebsitePages=Саҳифаҳои вебсайти ман
 SearchReplaceInto=Ҷустуҷӯ | Ба ҷой иваз кунед
 ReplaceString=Ранги нав
 CSSContentTooltipHelp=Ин ҷо мундариҷаи CSS -ро ворид кунед. Барои роҳ надодан ба ҳама гуна ихтилоф бо CSS -и барнома, боварӣ ҳосил кунед, ки ҳама эъломияҳоро бо синфи .bodywebsite пешакӣ истифода баред. Масалан: <br> <br> #mycssselector, input.myclass: hover {...} <br> бояд <br> бошад. ин префикс, шумо метавонед 'lessc' -ро истифода баред, то онро ба замимаи префикси .bodywebsite дар ҳама ҷо табдил диҳед.
-LinkAndScriptsHereAreNotLoadedInEditor=Огоҳӣ: Ин мундариҷа танҳо ҳангоми дастрасӣ ба сайт аз сервер бароварда мешавад. Он дар реҷаи Таҳрир истифода намешавад, бинобар ин, агар ба шумо лозим аст, ки файлҳои javascript -ро низ дар ҳолати таҳрир бор кунед, барчаспи худро 'script src = ...' илова кунед.
+LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load JavaScript files also in edit mode, just add your tag 'script src=...' into the page.
 Dynamiccontent=Намунаи саҳифа бо мундариҷаи динамикӣ
 ImportSite=Шаблон вебсайтро ворид кунед
 EditInLineOnOff=Ҳолати 'Таҳрири дохилӣ' %s аст
@@ -157,3 +158,9 @@ Booking=Booking
 Reservation=Reservation
 PagesViewedPreviousMonth=Pages viewed (previous month)
 PagesViewedTotal=Pages viewed (total)
+Visibility=Visibility
+Everyone=Everyone
+AssignedContacts=Assigned contacts
+WebsiteTypeLabel=Type of Web site
+WebsiteTypeDolibarrWebsite=Web site (CMS Dolibarr)
+WebsiteTypeDolibarrPortal=Native Dolibarr portal

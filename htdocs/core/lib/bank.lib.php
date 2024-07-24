@@ -36,7 +36,7 @@
  */
 function bank_prepare_head(Account $object)
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -68,7 +68,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+	if ($object->courant != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -131,7 +131,9 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
+
+	$langs->loadLangs(array("compta"));
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
@@ -191,7 +193,7 @@ function bank_admin_prepare_head($object)
  */
 function account_statement_prepare_head($object, $num)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 	$h = 0;
 	$head = array();
 
@@ -273,12 +275,17 @@ function various_payment_prepare_head($object)
 /**
  *      Check SWIFT informations for a bank account
  *
- *      @param  Account     $account    A bank account
+ *      @param  Account     $account    A bank account (used to get BIC/SWIFT)
+ *      @param	string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
  *      @return boolean                 True if informations are valid, false otherwise
  */
-function checkSwiftForAccount($account)
+function checkSwiftForAccount(Account $account = null, $swift = null)
 {
-	$swift = $account->bic;
+	if ($account == null && $swift == null) {
+		return false;
+	} elseif ($swift == null) {
+		$swift = $account->bic;
+	}
 	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
 		return true;
 	} else {
@@ -289,14 +296,18 @@ function checkSwiftForAccount($account)
 /**
  *      Check IBAN number informations for a bank account.
  *
- *      @param  Account     $account    A bank account
- *      @return boolean                 True if informations are valid, false otherwise
+ *      @param  Account     $account    	A bank account
+ *      @param	string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
+ *      @return boolean                 	True if informations are valid, false otherwise
  */
-function checkIbanForAccount(Account $account)
+function checkIbanForAccount(Account $account = null, $ibantocheck = null)
 {
+	if ($account == null && $ibantocheck == null) {
+		return false;
+	} elseif ($ibantocheck == null) {
+		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+	}
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-
-	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 
 	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();
@@ -318,7 +329,7 @@ function getIbanHumanReadable(Account $account)
 {
 	if ($account->getCountryCode() == 'FR') {
 		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban)?'':$account->iban);
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban) ? '' : $account->iban);
 		$iban = new PHP_IBAN\IBAN($ibantoprint);
 		return $iban->HumanFormat();
 	}

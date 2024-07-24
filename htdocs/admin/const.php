@@ -41,7 +41,7 @@ $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -280,7 +280,7 @@ if ($result) {
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.($value ? htmlspecialchars($value) : '').'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
 		print '</td>';
 
 		// Note

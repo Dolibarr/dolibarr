@@ -65,18 +65,18 @@ $error = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err = error_reporting();
 error_reporting(0);
-if (!empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT)) {
+if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
 	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
 } else {
 	@set_time_limit(600);
 }
 error_reporting($err);
 
-$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ? GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom = GETPOST("versionfrom", 'alpha', 3) ?GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
-$versionto = GETPOST("versionto", 'alpha', 3) ?GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
-$enablemodules = GETPOST("enablemodules", 'alpha', 3) ?GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
+$versionfrom = GETPOST("versionfrom", 'alpha', 3) ? GETPOST("versionfrom", 'alpha', 3) : (empty($argv[1]) ? '' : $argv[1]);
+$versionto = GETPOST("versionto", 'alpha', 3) ? GETPOST("versionto", 'alpha', 3) : (empty($argv[2]) ? '' : $argv[2]);
+$enablemodules = GETPOST("enablemodules", 'alpha', 3) ? GETPOST("enablemodules", 'alpha', 3) : (empty($argv[3]) ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "bills", "suppliers"));
 
@@ -115,7 +115,7 @@ if ((!$versionfrom || preg_match('/version/', $versionfrom)) && (!$versionto || 
 	exit;
 }
 
-pHeader('', 'step5', GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
+pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'upgrade', 'versionfrom='.$versionfrom.'&versionto='.$versionto, '', 'main-inside main-inside-borderbottom');
 
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
@@ -499,6 +499,15 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_contractdet_rank();
 			}
+
+			// Scripts for 19.0
+			/*
+			$afterversionarray = explode('.', '18.0.9');
+			$beforeversionarray = explode('.', '19.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_contractdet_rank();
+			}
+			*/
 		}
 
 
@@ -521,6 +530,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				'MAIN_MODULE_EXPENSEREPORT'=>'newboxdefonly',
 				'MAIN_MODULE_FACTURE'=>'newboxdefonly',
 				'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+				'MAIN_MODULE_FICHEINTER'=>'newboxdefonly',
 				'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
 				'MAIN_MODULE_MARGIN'=>'menuonly',
 				'MAIN_MODULE_MRP'=>'menuonly',
@@ -871,7 +881,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 			$res = 0;
 			$num = count($row);
 			for ($i = 0; $i < $num; $i++) {
-				if ($conf->global->MAIN_FEATURES_LEVEL == 2) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) {
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
@@ -982,7 +992,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 
 			$res = 0;
 			for ($i = 0; $i < $num; $i++) {
-				if ($conf->global->MAIN_FEATURES_LEVEL == 2) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') == 2) {
 					print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 				}
 
@@ -1913,6 +1923,8 @@ function migrate_price_commande($db, $langs, $conf)
  */
 function migrate_price_commande_fournisseur($db, $langs, $conf)
 {
+	global $mysoc;
+
 	$db->begin();
 
 	$tmpmysoc = new Societe($db);
@@ -1951,7 +1963,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				$commandeligne = new CommandeFournisseurLigne($db);
 				$commandeligne->fetch($rowid);
 
-				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $tmpsoc);
+				$result = calcul_price_total($qty, $pu, $remise_percent, $vatrate, 0, 0, $remise_percent_global, 'HT', $info_bits, $commandeligne->product_type, $mysoc);
 				$total_ht  = $result[0];
 				$total_tva = $result[1];
 				$total_ttc = $result[2];
@@ -2523,7 +2535,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
- * @return	integer				<0 if KO, 0=Bad version, >0 if OK
+ * @return	integer				Return integer <0 if KO, 0=Bad version, >0 if OK
  */
 function migrate_restore_missing_links($db, $langs, $conf)
 {
@@ -2544,8 +2556,10 @@ function migrate_restore_missing_links($db, $langs, $conf)
 
 
 	// Restore missing link for this cross foreign key (link 1 <=> 1). Direction 1.
-	$table1 = 'facturedet'; $field1 = 'fk_remise_except';
-	$table2 = 'societe_remise_except'; $field2 = 'fk_facture_line';
+	$table1 = 'facturedet';
+	$field1 = 'fk_remise_except';
+	$table2 = 'societe_remise_except';
+	$field2 = 'fk_facture_line';
 
 	$db->begin();
 
@@ -2601,8 +2615,10 @@ function migrate_restore_missing_links($db, $langs, $conf)
 	print '<b>'.$langs->trans('MigrationFixData')."</b> (2)<br>\n";
 
 	// Restore missing link for this cross foreign key (link 1 <=> 1). Direction 2.
-	$table2 = 'facturedet'; $field2 = 'fk_remise_except';
-	$table1 = 'societe_remise_except'; $field1 = 'fk_facture_line';
+	$table2 = 'facturedet';
+	$field2 = 'fk_remise_except';
+	$table1 = 'societe_remise_except';
+	$field1 = 'fk_facture_line';
 
 	$db->begin();
 
@@ -4138,6 +4154,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/core/boxes/box_members.php',
 
 		'/includes/restler/framework/Luracast/Restler/Data/Object.php',
+		'/includes/nusoap/lib/class.*',
 		'/phenix/inc/triggers/interface_modPhenix_Phenixsynchro.class.php',
 		'/webcalendar/inc/triggers/interface_modWebcalendar_webcalsynchro.class.php',
 
@@ -4147,12 +4164,14 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/categories/class/api_deprecated_category.class.php',
 		'/compta/facture/class/api_invoice.class.php',
 		'/commande/class/api_commande.class.php',
-		'/user/class/api_user.class.php',
+		'/partnership/class/api_partnership.class.php',
 		'/product/class/api_product.class.php',
+		'/recruitment/class/api_recruitment.class.php',
 		'/societe/class/api_contact.class.php',
 		'/societe/class/api_thirdparty.class.php',
 		'/support/online.php',
 		'/takepos/class/actions_takepos.class.php',
+		'/user/class/api_user.class.php',
 
 		'/install/mysql/tables/llx_c_ticketsup_category.key.sql',
 		'/install/mysql/tables/llx_c_ticketsup_category.sql',
@@ -4162,9 +4181,16 @@ function migrate_delete_old_files($db, $langs, $conf)
 		'/install/mysql/tables/llx_c_ticketsup_type.sql'
 	);
 
+	/*
+	print '<tr><td colspan="4">';
+	print '<b>'.$langs->trans('DeleteOldFiles')."</b><br>\n";
+	print '</td></tr>';
+	*/
+
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
-		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
+		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete) || preg_match('/\*/', $filetodelete)) {
+			//print "Process file ".$filetodelete."\n";
 			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
 			if (!$result) {
 				$langs->load("errors");
@@ -4230,7 +4256,7 @@ function migrate_delete_old_dir($db, $langs, $conf)
  * @param	Conf		$conf			Object conf
  * @param	array		$listofmodule	List of modules, like array('MODULE_KEY_NAME'=>', $reloadmode)
  * @param   int         $force          1=Reload module even if not already loaded
- * @return	int					<0 if KO, >0 if OK
+ * @return	int					Return integer <0 if KO, >0 if OK
  */
 function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $force = 0)
 {
@@ -4259,14 +4285,17 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 		'MAIN_MODULE_SERVICE' => array('class' => 'modService'),
 		'MAIN_MODULE_COMMANDE' => array('class' => 'modCommande'),
 		'MAIN_MODULE_FACTURE' => array('class' => 'modFacture'),
+		'MAIN_MODULE_FICHEINTER' => array('class' => 'modFicheInter'),
 		'MAIN_MODULE_FOURNISSEUR' => array('class' => 'modFournisseur'),
 		'MAIN_MODULE_HOLIDAY' => array('class' => 'modHoliday', 'remove'=>1),
+		'MAIN_MODULE_EXPEDITION' => array('class' => 'modExpedition'),
 		'MAIN_MODULE_EXPENSEREPORT' => array('class' => 'modExpenseReport'),
 		'MAIN_MODULE_DON' => array('class' => 'modDon'),
 		'MAIN_MODULE_ECM' => array('class' => 'modECM', 'remove'=>1),
 		'MAIN_MODULE_KNOWLEDGEMANAGEMENT' => array('class' => 'modKnowledgeManagement', 'remove'=>1),
 		'MAIN_MODULE_EVENTORGANIZATION' => array('class' => 'modEventOrganization', 'remove'=>1),
 		'MAIN_MODULE_PAYBOX' => array('class' => 'modPaybox', 'remove'=>1),
+		'MAIN_MODULE_PROPAL' => array('class' => 'modPropale'),
 		'MAIN_MODULE_SUPPLIERPROPOSAL' => array('class' => 'modSupplierProposal', 'remove'=>1),
 		'MAIN_MODULE_OPENSURVEY' => array('class' => 'modOpenSurvey', 'remove'=>1),
 		'MAIN_MODULE_PRODUCTBATCH' => array('class' => 'modProductBatch', 'remove'=>1),
@@ -4306,8 +4335,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 			if (!empty($reg[1])) {
 				if (strtoupper($moduletoreload) == $moduletoreload) {	// If key is un uppercase
 					$moduletoreloadshort = ucfirst(strtolower($reg[1]));
-				} else // If key is a mix of up and low case
-				{
+				} else { // If key is a mix of up and low case
 					$moduletoreloadshort = $reg[1];
 				}
 
@@ -4363,7 +4391,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @return	int						<0 if KO, >0 if OK
+ * @return	int						Return integer <0 if KO, >0 if OK
  */
 function migrate_reload_menu($db, $langs, $conf)
 {
@@ -4372,8 +4400,8 @@ function migrate_reload_menu($db, $langs, $conf)
 
 	// Define list of menu handlers to initialize
 	$listofmenuhandler = array();
-	if ($conf->global->MAIN_MENU_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENU_SMARTPHONE == 'auguria_menu'
-		|| $conf->global->MAIN_MENUFRONT_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENUFRONT_SMARTPHONE == 'auguria_menu') {
+	if (getDolGlobalString('MAIN_MENU_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENU_SMARTPHONE') == 'auguria_menu'
+		|| getDolGlobalString('MAIN_MENUFRONT_STANDARD') == 'auguria_menu' || getDolGlobalString('MAIN_MENUFRONT_SMARTPHONE') == 'auguria_menu') {
 		$listofmenuhandler['auguria'] = 1; // We set here only dynamic menu handlers
 	}
 
@@ -5037,7 +5065,6 @@ function migrate_export_import_profiles($mode = 'export')
  */
 function migrate_contractdet_rank()
 {
-
 	global $db, $langs;
 
 	$error = 0;

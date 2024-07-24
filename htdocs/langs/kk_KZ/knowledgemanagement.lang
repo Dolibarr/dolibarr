@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Білім менеджментін (KM) неме�
 # Admin page
 #
 KnowledgeManagementSetup = Білімді басқару жүйесін орнату
-Settings = Параметрлер
 KnowledgeManagementSetupPage = Білімді басқару жүйесін орнату беті
 
 
 #
 # About page
 #
-About = Туралы
 KnowledgeManagementAbout = Білімді басқару туралы
 KnowledgeManagementAboutPage = Беттер туралы білімді басқару
 
 KnowledgeManagementArea = Білімді басқару
 MenuKnowledgeRecord = Білім қоры
+MenuKnowledgeRecordShort = Білім базасы
 ListKnowledgeRecord = Мақалалар тізімі
 NewKnowledgeRecord = Жаңа мақала
 ValidateReply = Шешімді тексеру
@@ -46,9 +45,15 @@ KnowledgeRecords = Мақалалар
 KnowledgeRecord = Мақала
 KnowledgeRecordExtraFields = Мақалаға арналған экстра өрістер
 GroupOfTicket=Билеттер тобы
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+YouCanLinkArticleToATicketCategory=Сіз мақаланы билеттер тобына байланыстыра аласыз (сондықтан мақала осы топтағы кез келген билеттерде бөлектелетін болады)
+SuggestedForTicketsInGroup=Билет жасау ұсынылады
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Ескірген ретінде орнату
+ConfirmCloseKM=Сіз бұл мақаланың ескірген деп жабылуын растайсыз ба?
+ConfirmReopenKM=Осы мақаланы "Тексерілген" күйіне қайтарғыңыз келе ме?
+BoxLastKnowledgerecordDescription=Соңғы %s мақалалар
+BoxLastKnowledgerecord=Соңғы мақалалар
+BoxLastKnowledgerecordContent=Соңғы мақалалар
+BoxLastKnowledgerecordModifiedContent=Соңғы өзгертілген мақалалар
+BoxLastModifiedKnowledgerecordDescription=Соңғы %s өзгертілген мақалалар
+BoxLastModifiedKnowledgerecord=Соңғы өзгертілген мақалалар

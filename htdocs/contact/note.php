@@ -78,7 +78,7 @@ if (empty($reshook)) {
 
 $now = dol_now();
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 $form = new Form($db);
 
@@ -104,7 +104,7 @@ if ($id > 0) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty

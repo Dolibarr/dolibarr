@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,14 +42,14 @@ $ref     = GETPOST('ref', 'alpha');
 $action  = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel  = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bomcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bomcard'; // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');
 
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 // Initialize technical objects
 $object = new BOM($db);
@@ -148,7 +149,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Add line
-	if ($action == 'addline' && $user->rights->bom->write) {
+	if ($action == 'addline' && $user->hasRight('bom', 'write')) {
 		$langs->load('errors');
 		$error = 0;
 		$predef = '';
@@ -168,13 +169,21 @@ if (empty($reshook)) {
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
+		$fk_workstation = GETPOST('idworkstations', 'int');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
 		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
 
-		if (!empty($idprod) && $conf->workstation->enabled) {
+		$fk_default_workstation = 0;
+		if (!empty($idprod) && isModEnabled('workstation')) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
-			if ($res > 0 && $product->type == Product::TYPE_SERVICE) $fk_default_workstation = $product->fk_default_workstation;
+			if ($res > 0 && $product->type == Product::TYPE_SERVICE) {
+				if (!empty($fk_workstation)) $fk_default_workstation = $fk_workstation;
+				else $fk_default_workstation = $product->fk_default_workstation;
+			}
+			if (empty($fk_unit)) {
+				$fk_unit = $product->fk_unit;
+			}
 		}
 
 		if ($qty == '') {
@@ -233,7 +242,7 @@ if (empty($reshook)) {
 	}
 
 	// Update line
-	if ($action == 'updateline' && $user->rights->bom->write) {
+	if ($action == 'updateline' && $user->hasRight('bom', 'write')) {
 		$langs->load('errors');
 		$error = 0;
 
@@ -264,7 +273,12 @@ if (empty($reshook)) {
 			$bomline = new BOMLine($db);
 			$bomline->fetch($lineid);
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options);
+			$fk_default_workstation = $bomline->fk_default_workstation;
+			if (isModEnabled('workstation') &&  GETPOSTISSET('idworkstations')) {
+				$fk_default_workstation = GETPOSTINT('idworkstations');
+			}
+
+			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -536,40 +550,40 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }
 	 */
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
-	 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
-	 print '<div class="fichecenter">';
-	 print '<div class="fichehalfleft">';
-	 print '<div class="underbanner clearboth"></div>';
-	 print '<table class="border centpercent tableforfield">'."\n";
+	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">'."\n";
 
-	 // Common attributes
-	 $keyforbreak = 'duration';
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-	 $object->calculateCosts();
-	 print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
-	 print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
+	// Common attributes
+	$keyforbreak = 'duration';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
+	$object->calculateCosts();
+	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
+	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
 
-	 // Other attributes
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	// Other attributes
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
-	 print '</table>';
-	 print '</div>';
-	 print '</div>';
+	print '</table>';
+	print '</div>';
+	print '</div>';
 
-	 print '<div class="clearboth"></div>';
+	print '<div class="clearboth"></div>';
 
-	 print dol_get_fiche_end();
+	print dol_get_fiche_end();
 
 
 
-	 /*
-	  * Lines
-	  */
+	/*
+	 * Lines
+	 */
 
 	if (!empty($object->table_element_line)) {
 		// Products
@@ -578,7 +592,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMProductsList'), '', 'product');
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
+		print '	<form name="addproduct" id="listbomproducts" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
     	<input type="hidden" name="token" value="' . newToken() . '">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
     	<input type="hidden" name="mode" value="">
@@ -607,9 +621,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, null, '/bom/tpl');
+				}
 			}
 		}
 
@@ -627,7 +644,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
 
-		print '	<form name="addservice" id="addservice" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
+		print '	<form name="addservice" id="listbomservices" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '') . '" method="POST">
     	<input type="hidden" name="token" value="' . newToken() . '">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
     	<input type="hidden" name="mode" value="">
@@ -654,9 +671,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				// Add services form
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectServiceLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, null, '/bom/tpl');
+				}
 			}
 		}
 	}
@@ -664,17 +684,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline')) {
 		print '</table>';
 	}
-	 print '</div>';
+	print '</div>';
 
-	 print "</form>\n";
-
-
-	 mrpCollapseBomManagement();
+	print "</form>\n";
 
 
-	 $res = $object->fetchLines();
+	mrpCollapseBomManagement();
 
-	 // Buttons for actions
+
+	$res = $object->fetchLines();
+
+	// Buttons for actions
 
 	if ($action != 'presend' && $action != 'editline') {
 		print '<div class="tabsAction">'."\n";
@@ -688,16 +708,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Send
 			//if (empty($user->socid)) {
 			//	print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
-				//}
+			//}
 
-				// Back to draft
+			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>'."\n";
 				}
 			}
 
-				// Modify
+			// Modify
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ($permissiontoadd) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>'."\n";
@@ -706,62 +726,62 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 
-				// Validate
+			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
 				if ($permissiontoadd) {
 					if (is_array($object->lines) && count($object->lines) > 0) {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate&amp;token='.newToken().'">'.$langs->trans("Validate").'</a>'."\n";
 					} else {
 						$langs->load("errors");
-						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>'."\n";
+						print '<a class="butActionRefused classfortooltip" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>'."\n";
 					}
 				}
 			}
 
-				// Re-open
+			// Re-open
 			if ($permissiontoadd && $object->status == $object::STATUS_CANCELED) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen").'</a>'."\n";
 			}
 
-				// Create MO
+			// Create MO
 			if (isModEnabled('mrp')) {
-				if ($object->status == $object::STATUS_VALIDATED && !empty($user->rights->mrp->write)) {
+				if ($object->status == $object::STATUS_VALIDATED && $user->hasRight('mrp', 'write')) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/mrp/mo_card.php?action=create&fk_bom='.$object->id.'&token='.newToken().'&backtopageforcancel='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("CreateMO").'</a>'."\n";
 				}
 			}
 
-				// Clone
+			// Clone
 			if ($permissiontoadd) {
 				print dolGetButtonAction($langs->trans("ToClone"), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : "").'&action=clone&object=bom', 'clone', $permissiontoadd);
 			}
 
-				// Close / Cancel
+			// Close / Cancel
 			if ($permissiontoadd && $object->status == $object::STATUS_VALIDATED) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=close&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
 			}
 
-				/*
-				  if ($user->rights->bom->write)
-				  {
-				  if ($object->status == 1)
-				  {
-				  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
-				  }
-				  else
-				  {
-				  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
-				  }
-				  }
-				  */
+			/*
+			  if ($user->rights->bom->write)
+			  {
+			  if ($object->status == 1)
+			  {
+			  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable&token='.newToken().'">'.$langs->trans("Disable").'</a>'."\n";
+			  }
+			  else
+			  {
+			  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Enable").'</a>'."\n";
+			  }
+			  }
+			  */
 
-				// Delete
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+			// Delete
+			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}
 
 
-	 // Select mail models is same action as presend
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
@@ -798,18 +818,18 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</div></div>';
 	}
 
-	 //Select mail models is same action as presend
+	//Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
 
-	 // Presend form
-	 $modelmail = 'bom';
-	 $defaulttopic = 'InformationMessage';
-	 $diroutput = $conf->bom->dir_output;
-	 $trackid = 'bom'.$object->id;
+	// Presend form
+	$modelmail = 'bom';
+	$defaulttopic = 'InformationMessage';
+	$diroutput = $conf->bom->dir_output;
+	$trackid = 'bom'.$object->id;
 
-	 include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 

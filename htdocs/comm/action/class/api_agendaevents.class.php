@@ -29,11 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
  */
 class AgendaEvents extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 	);
 
 	/**
@@ -58,9 +57,9 @@ class AgendaEvents extends DolibarrApi
 	 * Return an array with Agenda Events informations
 	 *
 	 * @param   int         $id         ID of Agenda Events
-	 * @return  Object              	Object with cleaned properties
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -81,7 +80,7 @@ class AgendaEvents extends DolibarrApi
 		}
 
 		if (!DolibarrApiAccess::$user->rights->agenda->allactions->read && $this->actioncomm->userownerid != DolibarrApiAccess::$user->id) {
-			throw new RestException(401, "Insufficient rights to read event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+			throw new RestException(401, 'Insufficient rights to read event of this owner id. Your id is '.DolibarrApiAccess::$user->id);
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('agenda', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
@@ -99,11 +98,12 @@ class AgendaEvents extends DolibarrApi
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
-	 * @param string   	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string	$user_ids   User ids filter field (owners of event). Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array               Array of Agenda Events objects
 	 */
-	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -185,16 +185,14 @@ class AgendaEvents extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$actioncomm_static = new ActionComm($this->db);
 				if ($actioncomm_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($actioncomm_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($actioncomm_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve Agenda Event list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No Agenda Event found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -217,6 +215,12 @@ class AgendaEvents extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->actioncomm->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 		/*if (isset($request_data["lines"])) {
@@ -267,6 +271,11 @@ class AgendaEvents extends DolibarrApi
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->actioncomm->context['caller'] = $request_data['caller'];
 				continue;
 			}
 
@@ -405,7 +414,6 @@ class AgendaEvents extends DolibarrApi
 		unset($object->region_id);
 		unset($object->actions);
 		unset($object->lines);
-		unset($object->modelpdf);
 
 		return $object;
 	}

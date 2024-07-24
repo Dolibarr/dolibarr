@@ -71,9 +71,10 @@ ToOfferALinkForTestWebhook=Ligazón para configurar Stripe WebHook para chamar a
 ToOfferALinkForLiveWebhook=Ligazón para configurar Stripe WebHook para chamar ao IPN (modo en directo)
 PaymentWillBeRecordedForNextPeriod=O pago será rexistrado para o seguinte período.
 ClickHereToTryAgain=<a href="%s"> Faga clic aquí para tentalo de novo ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode facer clic aquí para activar o rexistro de cliente de Stripe:%s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido as fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode premer aquí para activar o rexistro de cliente de Stripe:%s
 STRIPE_CARD_PRESENT=Transacción de tarxeta presente para terminais Stripe
 TERMINAL_LOCATION=Localización (enderezo) para terminais Stripe
 RequestDirectDebitWithStripe=Solicite domiciliación bancaria con Stripe
+RequesCreditTransferWithStripe=Solicite transferencia bancaria con Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activa os pagamentos por domiciliación bancaria a través de Stripe
-
+StripeConnect_Mode=Modo de conexión Stripe

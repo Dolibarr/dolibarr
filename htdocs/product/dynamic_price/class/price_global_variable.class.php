@@ -79,7 +79,7 @@ class PriceGlobalVariable
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -101,7 +101,8 @@ class PriceGlobalVariable
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -137,7 +138,7 @@ class PriceGlobalVariable
 	 *  Load object in memory from the database
 	 *
 	 *  @param		int		$id    	Id object
-	 *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
+	 *  @return		int			    Return integer < 0 if KO, 0 if OK but not found, > 0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -170,7 +171,7 @@ class PriceGlobalVariable
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = 0, $notrigger = 0)
 	{
@@ -190,7 +191,8 @@ class PriceGlobalVariable
 		dol_syslog(__METHOD__);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// if (! $error)
@@ -228,7 +230,7 @@ class PriceGlobalVariable
 	 * 	@param	int		$rowid		 Row id of global variable
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($rowid, $user, $notrigger = 0)
 	{
@@ -255,7 +257,8 @@ class PriceGlobalVariable
 			dol_syslog(__METHOD__);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 

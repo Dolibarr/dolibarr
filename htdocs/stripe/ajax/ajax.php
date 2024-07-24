@@ -1,4 +1,5 @@
 <?php
+
  /*  Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,7 +54,7 @@ $stripeacc = GETPOST('stripeacc', 'alphanohtml');
 $servicestatus = GETPOST('servicestatus', 'int');
 $amount = GETPOST('amount', 'int');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden('Not allowed to use TakePOS');
 }
 
@@ -109,7 +110,7 @@ if ($action == 'getConnexionToken') {
 		$stripe = new Stripe($db);
 		$customer = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 
-		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
+		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
 
 		echo json_encode(array('client_secret' => $intent->client_secret));
 	} catch (Error $e) {

@@ -62,6 +62,7 @@ class FormSms
 	public $withreplytoreadonly;
 	public $withtoreadonly;
 	public $withtopicreadonly;
+	public $withbodyreadonly;
 	public $withcancel;
 
 	public $substit = array();
@@ -109,8 +110,8 @@ class FormSms
 	 */
 	public function show_form($morecss = 'titlefield', $showform = 1)
 	{
-	 // phpcs:enable
-		global $conf, $langs, $user, $form;
+		// phpcs:enable
+		global $conf, $langs, $form;
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
@@ -185,21 +186,14 @@ function limitChars(textarea, limit, infodiv)
 				print "</td></tr>\n";
 			} else {
 				print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom")."</td><td>";
-				//print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
-				if ($conf->global->MAIN_SMS_SENDMODE == 'ovh') {        // For backward compatibility        @deprecated
-					dol_include_once('/ovh/class/ovhsms.class.php');
-					try {
-						$sms = new OvhSms($this->db);
-						if (empty($conf->global->OVHSMS_ACCOUNT)) {
-							$resultsender = 'ErrorOVHSMS_ACCOUNT not defined';
-						} else {
-							$resultsender = $sms->SmsSenderList();
-						}
-					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+				if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
+					$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
+					$classmoduleofsender = getDolGlobalString('MAIN_MODULE_'.strtoupper($sendmode).'_SMS', $sendmode);	// $conf->global->MAIN_MODULE_XXX_SMS looks like a value 'class@module'
+					if ($classmoduleofsender == 'ovh') {
+						$classmoduleofsender = 'ovhsms@ovh';	// For backward compatibility
 					}
-				} elseif (!empty($conf->global->MAIN_SMS_SENDMODE)) {    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
-					$tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
+
+					$tmp = explode('@', $classmoduleofsender);
 					$classfile = $tmp[0];
 					$module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
 					dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
@@ -210,7 +204,7 @@ function limitChars(textarea, limit, infodiv)
 							$resultsender = $sms->SmsSenderList();
 						} else {
 							$sms = new stdClass();
-							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 						}
 					} catch (Exception $e) {
 						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
@@ -229,7 +223,7 @@ function limitChars(textarea, limit, infodiv)
 					}
 					print '</select>';
 				} else {
-					print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
+					print '<span class="error wordbreak">'.$langs->trans("SmsNoPossibleSenderFound");
 					if (is_object($sms) && !empty($sms->error)) {
 						print ' '.$sms->error;
 					}
@@ -250,7 +244,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print '<input size="16" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
+				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {
@@ -260,7 +254,7 @@ function limitChars(textarea, limit, infodiv)
 					//var_dump($_REQUEST);exit;
 					print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
 				}
-				print ' <span class="opacitymedium">'.$langs->trans("SmsInfoNumero").'</span>';
+				print '<span class="opacitymedium hideonsmartphone"> '.$langs->trans("SmsInfoNumero").'</span>';
 			}
 			print "</td></tr>\n";
 		}

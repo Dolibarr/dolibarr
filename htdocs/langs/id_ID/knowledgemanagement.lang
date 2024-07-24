@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Kelola Manajemen Pengetahuan (KM) atau basis Help-
 # Admin page
 #
 KnowledgeManagementSetup = Pengaturan Sistem Manajemen Pengetahuan
-Settings = Pengaturan
 KnowledgeManagementSetupPage = Halaman penyiapan Sistem Manajemen Pengetahuan
 
 
 #
 # About page
 #
-About = Tentang
 KnowledgeManagementAbout = Tentang Manajemen Pengetahuan
 KnowledgeManagementAboutPage = Tentang halaman Manajemen Pengetahuan
 
 KnowledgeManagementArea = Manajemen Pengetahuan
 MenuKnowledgeRecord = Dasar pengetahuan
+MenuKnowledgeRecordShort = Dasar pengetahuan
 ListKnowledgeRecord = Daftar artikel
 NewKnowledgeRecord = Artikel baru
 ValidateReply = Validasi solusi
@@ -47,8 +46,14 @@ KnowledgeRecord = Artikel
 KnowledgeRecordExtraFields = Extrafields untuk Artikel
 GroupOfTicket=Kelompok tiket
 YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Disarankan untuk tiket saat grup
+SuggestedForTicketsInGroup=Suggested on ticket creation
 
 SetObsolete=Set as obsolete
 ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
 ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

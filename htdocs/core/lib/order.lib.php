@@ -49,7 +49,7 @@ function commande_prepare_head(Commande $object)
 		$h++;
 	}
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
@@ -98,7 +98,7 @@ function commande_prepare_head(Commande $object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'add', 'core');
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = 0;
 		if (!empty($object->note_private)) {
 			$nbNote++;
@@ -281,6 +281,7 @@ function getCustomerOrderPieChart($socid = 0)
 		}
 		$db->free($resql);
 
+		global $badgeStatus0, $badgeStatus1, $badgeStatus4, $badgeStatus6, $badgeStatus9;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 		$result = '<div class="div-table-responsive-no-min">';
@@ -298,10 +299,7 @@ function getCustomerOrderPieChart($socid = 0)
 			if ($status == Commande::STATUS_SHIPMENTONPROCESS) {
 				$colorseries[$status] = $badgeStatus4;
 			}
-			if ($status == Commande::STATUS_CLOSED && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
-				$colorseries[$status] = $badgeStatus6;
-			}
-			if ($status == Commande::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))) {
+			if ($status == Commande::STATUS_CLOSED) {
 				$colorseries[$status] = $badgeStatus6;
 			}
 			if ($status == Commande::STATUS_CANCELED) {

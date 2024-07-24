@@ -62,7 +62,7 @@ print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 // List of fields to get from LDAP
-$required_fields = array($conf->global->LDAP_KEY_GROUPS, $conf->global->LDAP_GROUP_FIELD_FULLNAME, $conf->global->LDAP_GROUP_FIELD_DESCRIPTION, $conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS);
+$required_fields = array(getDolGlobalString('LDAP_KEY_GROUPS'), getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME'), getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION'), getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS'));
 
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields = array_unique(array_values(array_filter($required_fields, "dolValidElement")));
@@ -92,15 +92,15 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
-print "host=".$conf->global->LDAP_SERVER_HOST."\n";
-print "port=".$conf->global->LDAP_SERVER_PORT."\n";
-print "login=".$conf->global->LDAP_ADMIN_DN."\n";
-print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
-print "DN to extract=".$conf->global->LDAP_GROUP_DN."\n";
-if (!empty($conf->global->LDAP_GROUP_FILTER)) {
-	print 'Filter=('.$conf->global->LDAP_GROUP_FILTER.')'."\n"; // Note: filter is defined into function getRecords
+print "host=" . getDolGlobalString('LDAP_SERVER_HOST')."\n";
+print "port=" . getDolGlobalString('LDAP_SERVER_PORT')."\n";
+print "login=" . getDolGlobalString('LDAP_ADMIN_DN')."\n";
+print "pass=".preg_replace('/./i', '*', getDolGlobalString('LDAP_ADMIN_PASS'))."\n";
+print "DN to extract=" . getDolGlobalString('LDAP_GROUP_DN')."\n";
+if (getDolGlobalString('LDAP_GROUP_FILTER')) {
+	print 'Filter=(' . getDolGlobalString('LDAP_GROUP_FILTER').')'."\n"; // Note: filter is defined into function getRecords
 } else {
-	print 'Filter=('.$conf->global->LDAP_KEY_GROUPS.'=*)'."\n";
+	print 'Filter=(' . getDolGlobalString('LDAP_KEY_GROUPS').'=*)'."\n";
 }
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
@@ -118,7 +118,7 @@ if (!$confirmed) {
 	$input = trim(fgets(STDIN));
 }
 
-if (empty($conf->global->LDAP_GROUP_DN)) {
+if (!getDolGlobalString('LDAP_GROUP_DN')) {
 	print $langs->trans("Error").': '.$langs->trans("LDAP setup for groups not defined inside Dolibarr");
 	exit(-1);
 }
@@ -131,17 +131,17 @@ if ($result >= 0) {
 	// We disable synchro Dolibarr-LDAP
 	$conf->global->LDAP_SYNCHRO_ACTIVE = 0;
 
-	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_GROUP_DN, $conf->global->LDAP_KEY_GROUPS, $required_fields, 'group', array($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS));
+	$ldaprecords = $ldap->getRecords('*', getDolGlobalString('LDAP_GROUP_DN'), getDolGlobalString('LDAP_KEY_GROUPS'), $required_fields, 'group', array(getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')));
 	if (is_array($ldaprecords)) {
 		$db->begin();
 
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$group = new UserGroup($db);
-			$group->fetch('', $ldapgroup[$conf->global->LDAP_KEY_GROUPS]);
-			$group->name = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_FULLNAME];
+			$group->fetch('', $ldapgroup[getDolGlobalString('LDAP_KEY_GROUPS')]);
+			$group->name = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')];
 			$group->nom = $group->name; // For backward compatibility
-			$group->note = $ldapgroup[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION];
+			$group->note = $ldapgroup[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')];
 			$group->entity = $conf->entity;
 
 			// print_r($ldapgroup);
@@ -181,7 +181,7 @@ if ($result >= 0) {
 					continue;
 				}
 				if (empty($userList[$userdn])) { // Récupération de l'utilisateur
-												 // Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
+					// Schéma rfc2307: les membres sont listés dans l'attribut memberUid sous form de login uniquement
 					if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS') === 'memberUid') {
 						$userKey = array($userdn);
 					} else { // Pour les autres schémas, les membres sont listés sous forme de DN complets

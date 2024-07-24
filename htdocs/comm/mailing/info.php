@@ -34,7 +34,7 @@ $id = GETPOST('id', 'int');
 $langs->load("mails");
 
 // Security check
-if (!$user->rights->mailing->lire || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');

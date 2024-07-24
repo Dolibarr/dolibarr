@@ -60,7 +60,7 @@ $morehtmlref = '<div class="refidno">';
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
-	if ($user->rights->banque->modifier && 0) {
+	if ($user->hasRight('banque', 'modifier') && 0) {
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 		}

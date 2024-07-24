@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class
 
 $langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal'));
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -72,13 +72,13 @@ if (isModEnabled("reception")) {
 	$permissiontoread = $user->rights->reception->lire;
 	$permissiontoadd = $user->rights->reception->creer;
 	$permissiondellink = $user->rights->reception->creer; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)));
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->creer)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->reception->reception_advance->validate)));
 	$permissiontodelete = $user->rights->reception->supprimer;
 } else {
 	$permissiontoread = $user->rights->fournisseur->commande->receptionner;
 	$permissiontoadd = $user->rights->fournisseur->commande->receptionner;
 	$permissiondellink = $user->rights->fournisseur->commande->receptionner; // Used by the include of actions_dellink.inc.php
-	$permissiontovalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande->receptionner)) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->commande_advance->check)));
+	$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande->receptionner)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($user->rights->fournisseur->commande_advance->check)));
 	$permissiontodelete = $user->rights->fournisseur->commande->receptionner;
 }
 $permissionnote = $user->rights->reception->creer; // Used by the include of actions_setnotes.inc.php
@@ -89,7 +89,7 @@ if ($origin == 'reception') {
 } else {
 	if ($origin == 'supplierorder' || $origin == 'order_supplier') {
 		$result = restrictedArea($user, 'fournisseur', $object, 'commande_fournisseur', 'commande');
-	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) {
+	} elseif (!$user->hasRight($origin, 'lire') && !$user->hasRight($origin, 'read')) {
 		accessforbidden();
 	}
 }
@@ -127,8 +127,8 @@ if ($id > 0 || !empty($ref)) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer reception
-	$morehtmlref .= $form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->rights->reception->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplier", '', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplier", '', $object->ref_supplier, $object, $user->hasRight('reception', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
@@ -140,7 +140,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);

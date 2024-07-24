@@ -62,8 +62,12 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (!isModEnabled('hrm')) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 
 /*
@@ -96,7 +100,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->status = GETPOST('status', 'int');
 			$object->fk_user_author	= $user->id;
 			$object->datec = dol_now();
-			$object->entity = GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity;
+			$object->entity = GETPOST('entity', 'int') > 0 ? GETPOST('entity', 'int') : $conf->entity;
 
 			$id = $object->create($user);
 
@@ -132,7 +136,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod = $user->id;
 			$object->status         = GETPOST('status', 'int');
-			$object->entity         = GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity;
+			$object->entity         = GETPOST('entity', 'int') > 0 ? GETPOST('entity', 'int') : $conf->entity;
 
 			$result = $object->update($user);
 

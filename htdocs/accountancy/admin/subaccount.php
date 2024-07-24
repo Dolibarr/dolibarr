@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2016-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $rowid = GETPOST('rowid', 'int');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'accountingsubaccountlist'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountingsubaccountlist'; // To manage different context of search
 
 $search_subaccount = GETPOST('search_subaccount', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -55,7 +55,7 @@ if (!$user->hasRight('accounting', 'chartofaccount')) {
 }
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -89,7 +89,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha')) {
 	$massaction = '';
@@ -125,8 +126,9 @@ $form = new Form($db);
 
 
 // Page Header
-$help_url = 'EN:Module_Double_Entry_Accounting#Setup';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 $title = $langs->trans('ChartOfIndividualAccountsOfSubsidiaryLedger');
+
 llxHeader('', $title, $help_url);
 
 
@@ -299,14 +301,17 @@ if ($resql) {
 	if ($limit > 0 && $limit != $conf->liste_limit) {
 		$param .= '&limit='.((int) $limit);
 	}
+	if ($optioncss != '') {
+		$param .= '&optioncss='.urlencode($optioncss);
+	}
 	if ($search_subaccount) {
 		$param .= '&search_subaccount='.urlencode($search_subaccount);
 	}
 	if ($search_label) {
 		$param .= '&search_label='.urlencode($search_label);
 	}
-	if ($optioncss != '') {
-		$param .= '&optioncss='.urlencode($optioncss);
+	if ($search_type) {
+		$param .= '&search_type='.urlencode($search_type);
 	}
 
 	// List of mass actions available
@@ -355,7 +360,7 @@ if ($resql) {
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer'), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
 	}
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['reconcilable']['checked'])) {
 			print '<td class="liste_titre">&nbsp;</td>';
 		}
@@ -372,7 +377,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	if (!empty($arrayfields['subaccount']['checked'])) {
 		print_liste_field_titre($arrayfields['subaccount']['label'], $_SERVER["PHP_SELF"], "subaccount", "", $param, '', $sortfield, $sortorder);
@@ -383,14 +388,14 @@ if ($resql) {
 	if (!empty($arrayfields['type']['checked'])) {
 		print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, '', $sortfield, $sortorder, 'center ');
 	}
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['reconcilable']['checked'])) {
 			print_liste_field_titre($arrayfields['reconcilable']['label'], $_SERVER["PHP_SELF"], 'reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
 		}
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	}
 	print "</tr>\n";
 
@@ -469,7 +474,7 @@ if ($resql) {
 			}
 		}
 
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			// Activated or not reconciliation on accounting account
 			if (!empty($arrayfields['reconcilable']['checked'])) {
 				print '<td class="center">';

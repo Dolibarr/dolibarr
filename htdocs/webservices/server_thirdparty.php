@@ -56,7 +56,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -339,7 +339,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire) {
+		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext, $barcode, $profid1, $profid2);
 			if ($result > 0) {
@@ -352,11 +352,11 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 						'supplier' => $thirdparty->fournisseur,
 						'customer_code' => $thirdparty->code_client,
 						'supplier_code' => $thirdparty->code_fournisseur,
-						'customer_code_accountancy' => $thirdparty->code_compta,
+						'customer_code_accountancy' => $thirdparty->code_compta_client,
 						'supplier_code_accountancy' => $thirdparty->code_compta_fournisseur,
-						'user_creation' => $thirdparty->user_creation,
+						'user_creation_id' => $thirdparty->user_creation_id,
 						'date_creation' => dol_print_date($thirdparty->date_creation, 'dayhourrfc'),
-						'user_modification' => $thirdparty->user_modification,
+						'user_modification_id' => $thirdparty->user_modification_id,
 						'date_modification' => dol_print_date($thirdparty->date_modification, 'dayhourrfc'),
 						'address' => $thirdparty->address,
 						'zip' => $thirdparty->zip,
@@ -405,14 +405,17 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 					'thirdparty'=>$thirdparty_result_fields);
 			} elseif ($result == -2) {
 				$error++;
-				$errorcode = 'DUPLICATE_FOUND'; $errorlabel = 'Object found several times for id='.$id.' or ref='.$ref.' or ref_ext='.$ref_ext;
+				$errorcode = 'DUPLICATE_FOUND';
+				$errorlabel = 'Object found several times for id='.$id.' or ref='.$ref.' or ref_ext='.$ref_ext;
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
@@ -446,12 +449,15 @@ function createThirdParty($authentication, $thirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($thirdparty['ref'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 
@@ -575,12 +581,15 @@ function updateThirdParty($authentication, $thirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($thirdparty['id'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Thirdparty id is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Thirdparty id is mandatory.";
 	}
 
 	if (!$error) {
@@ -708,7 +717,8 @@ function getListOfThirdParties($authentication, $filterthirdparty)
 	$objectresp = array();
 	$arraythirdparties = array();
 
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -817,21 +827,23 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		dol_syslog("Function: deleteThirdParty checkparam");
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 	dol_syslog("Function: deleteThirdParty 1");
 
 	if (!$error) {
 		$fuser->getrights();
 
-		if ($fuser->rights->societe->lire && $fuser->rights->societe->supprimer) {
+		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);
 			$result = $thirdparty->fetch($id, $ref, $ref_ext);
 
@@ -853,11 +865,13 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 				}
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 

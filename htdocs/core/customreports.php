@@ -29,7 +29,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	require '../main.inc.php';
 
 	// Get parameters
-	$action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
+	$action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 	$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 
 	$mode = GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'graph';
@@ -94,7 +94,7 @@ $ObjectClassName = '';
 // Objects available by default
 $arrayoftype = array(
 	'thirdparty' => array('langs'=>'companies', 'label' => 'ThirdParties', 'picto'=>'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
-	'contact' => array('label' => 'Contacts', 'picto'=>'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societ'), 'ClassPath' => "/contact/class/contact.class.php"),
+	'contact' => array('label' => 'Contacts', 'picto'=>'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
 	'proposal' => array('label' => 'Proposals', 'picto'=>'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
 	'order' => array('label' => 'Orders', 'picto'=>'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('commande'), 'ClassPath' => "/commande/class/commande.class.php"),
 	'invoice' => array('langs'=>'facture', 'label' => 'Invoices', 'picto'=>'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('facture'), 'ClassPath' => "/compta/facture/class/facture.class.php"),

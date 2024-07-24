@@ -29,7 +29,6 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
  */
 class SupplierProposals extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
@@ -47,7 +46,7 @@ class SupplierProposals extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->supplier_proposal = new SupplierProposal($this->db);
 	}
@@ -58,9 +57,9 @@ class SupplierProposals extends DolibarrApi
 	 * Return an array with supplier proposal informations
 	 *
 	 * @param       int         $id         ID of supplier proposal
-	 * @return  	Object              	Object with cleaned properties
+	 * @return		Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -86,18 +85,17 @@ class SupplierProposals extends DolibarrApi
 	 *
 	 * Get a list of supplier proposals
 	 *
-	 * @param string	$sortfield	        Sort field
-	 * @param string	$sortorder	        Sort order
-	 * @param int		$limit		        Limit for list
-	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter supplier proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$thirdparty_ids		Thirdparty ids to filter supplier proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
+	 * @param string    $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                       Array of order objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->supplier_proposal->lire) {
 			throw new RestException(401);
 		}
@@ -166,16 +164,14 @@ class SupplierProposals extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$propal_static = new SupplierProposal($this->db);
 				if ($propal_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($propal_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($propal_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving supplier proposal list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No supplier proposal found');
-		}
+
 		return $obj_ret;
 	}
 

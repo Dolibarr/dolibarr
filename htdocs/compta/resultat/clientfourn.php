@@ -54,7 +54,7 @@ $date_endday = GETPOST('date_endday', 'int');
 $date_endyear = GETPOST('date_endyear', 'int');
 $showaccountdetail = GETPOST('showaccountdetail', 'aZ09') ? GETPOST('showaccountdetail', 'aZ09') : 'yes';
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -90,6 +90,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 		// We define date_start and date_end
 		$year_end = $year_start;
 		$month_start = GETPOST("month") ? GETPOST("month", 'int') : getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$month_end = "";
 		if (!GETPOST('month')) {
 			if (!$year && $month_start > $month_current) {
 				$year_start--;
@@ -179,12 +180,12 @@ if ($modecompta == "CREANCES-DETTES") {
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultDue");
-	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-	if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 	$builddate = dol_now();
@@ -214,12 +215,12 @@ if (isModEnabled('accounting')) {
 	$calcmode .= '<input type="radio" name="modecompta" id="modecompta3" value="BOOKKEEPING"'.($modecompta == 'BOOKKEEPING' ? ' checked="checked"' : '').'><label for="modecompta3"> '.$langs->trans("CalcModeBookkeeping").'</label>';
 	$calcmode .= '<br>';
 }
-$calcmode .= '<input type="radio" name="modecompta" id="modecompta1" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta1"> '.$langs->trans("CalcModeDebt");
+$calcmode .= '<input type="radio" name="modecompta" id="modecompta1" value="RECETTES-DEPENSES"'.($modecompta == 'RECETTES-DEPENSES' ? ' checked="checked"' : '').'><label for="modecompta1"> '.$langs->trans("CalcModeEngagement");
 if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 }
 $calcmode .= '</label>';
-$calcmode .= '<br><input type="radio" name="modecompta" id="modecompta2" value="CREANCES-DETTES"'.($modecompta == 'CREANCES-DETTES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModeEngagement");
+$calcmode .= '<br><input type="radio" name="modecompta" id="modecompta2" value="CREANCES-DETTES"'.($modecompta == 'CREANCES-DETTES' ? ' checked="checked"' : '').'><label for="modecompta2"> '.$langs->trans("CalcModeDebt");
 if (isModEnabled('accounting')) {
 	$calcmode .= ' <span class="opacitymedium hideonsmartphone">('.$langs->trans("CalcModeNoBookKeeping").')</span>';
 }
@@ -330,7 +331,7 @@ if ($modecompta == 'BOOKKEEPING') {
 					print '<td></td>';
 					print '<td>';
 					print dol_escape_htmltag($objp->pcg_type);
-					print ($objp->name ? ' ('.dol_escape_htmltag($objp->name).')' : ' ('.$langs->trans("Unknown").')');
+					print($objp->name ? ' ('.dol_escape_htmltag($objp->name).')' : ' ('.$langs->trans("Unknown").')');
 					print "</td>\n";
 					print '<td class="right nowraponall"><span class="amount">'.price($objp->amount)."</span></td>\n";
 					print "</tr>\n";
@@ -375,7 +376,7 @@ if ($modecompta == 'BOOKKEEPING') {
 						}
 
 
-						if ($showaccountdetail == 'all' || $resultN <> 0) {
+						if ($showaccountdetail == 'all' || $resultN != 0) {
 							print '<tr>';
 							print '<td></td>';
 							print '<td class="tdoverflowmax200"> &nbsp; &nbsp; '.length_accountg($cpt['account_number']).' - '.$cpt['account_label'].'</td>';
@@ -405,7 +406,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$sql .= " AND f.type IN (0,1,2,5)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -639,7 +640,7 @@ if ($modecompta == 'BOOKKEEPING') {
 		$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " WHERE f.fk_soc = s.rowid";
 		$sql .= " AND f.fk_statut IN (1,2)";
-		if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 			$sql .= " AND f.type IN (0,1,2)";
 		} else {
 			$sql .= " AND f.type IN (0,1,2,3)";
@@ -1136,7 +1137,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 */
 	//$conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY = 1;
 
-	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY) && isModEnabled("banque") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY') && isModEnabled("banque") && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
@@ -1215,7 +1216,7 @@ if ($modecompta == 'BOOKKEEPING') {
 	 * Payment Loan
 	 */
 
-	if (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN) && isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	if (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN') && isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 		$subtotal_ht = 0;
 		$subtotal_ttc = 0;
 
@@ -1285,7 +1286,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 			$sql .= " WHERE f.fk_statut IN (1,2)";
-			if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2,5)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3,5)";
@@ -1343,7 +1344,7 @@ if ($modecompta == 'BOOKKEEPING') {
 			$sql = "SELECT date_format(f.datef,'%Y-%m') as dm, sum(f.total_tva) as amount";
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 			$sql .= " WHERE f.fk_statut IN (1,2)";
-			if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+			if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 				$sql .= " AND f.type IN (0,1,2)";
 			} else {
 				$sql .= " AND f.type IN (0,1,2,3)";

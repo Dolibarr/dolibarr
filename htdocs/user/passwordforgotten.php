@@ -38,7 +38,7 @@ if (isModEnabled('ldap')) {
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	header("Location: ".DOL_URL_ROOT.'/');
 	exit;
 }
@@ -84,7 +84,9 @@ $parameters = array('username' => $username);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	$message = $hookmanager->error;
-} else $message = '';
+} else {
+	$message = '';
+}
 
 if (empty($reshook)) {
 	// Validate new password
@@ -133,7 +135,7 @@ if (empty($reshook)) {
 
 			// Set the message to show (must be the same if login/email exists or not
 			// to avoid to guess them.
-			$messagewarning = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
+			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
 				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
 			} else {
@@ -179,7 +181,7 @@ $dol_url_root = DOL_URL_ROOT;
 
 // Title
 $title = 'Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = $conf->global->MAIN_APPLICATION_TITLE;
 }
 
@@ -201,7 +203,7 @@ $disabled = 'disabled';
 if (preg_match('/dolibarr/i', $mode)) {
 	$disabled = '';
 }
-if (!empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
 	$disabled = ''; // To force button enabled
 }
 

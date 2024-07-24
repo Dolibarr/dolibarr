@@ -104,6 +104,13 @@ class modPropale extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "PROPOSAL_ALLOW_ONLINESIGN";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "1";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
 		$this->const[$r][2] = "__(Draft)__";
 		$this->const[$r][3] = 'Watermark to show on draft proposals';
@@ -214,7 +221,7 @@ class modPropale extends DolibarrModules
 			'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel'
 		));
 		// Add multicompany field
-		if (!empty($conf->global->MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED)) {
+		if (getDolGlobalString('MULTICOMPANY_ENTITY_IN_EXPORT_IF_SHARED')) {
 			$nbofallowedentities = count(explode(',', getEntity('propal')));
 			if (isModEnabled('multicompany') && $nbofallowedentities > 1) {
 				$this->export_fields_array[$r]['c.entity'] = 'Entity';
@@ -269,7 +276,7 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s ';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra4 ON s.rowid = extra4.fk_object';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON s.fk_pays = co.rowid,';
@@ -284,7 +291,7 @@ class modPropale extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_propal';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('propal').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 
@@ -361,8 +368,8 @@ class modPropale extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->PROPALE_ADDON) ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
-				'path'=>"/core/modules/propale/".(empty($conf->global->PROPALE_ADDON) ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
+				'class'=>(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON),
+				'path'=>"/core/modules/propale/".(!getDolGlobalString('PROPALE_ADDON') ? 'mod_propale_marbre' : $conf->global->PROPALE_ADDON).'.php',
 				'classobject'=>'Propal',
 				'pathobject'=>'/comm/propal/class/propal.class.php',
 			),

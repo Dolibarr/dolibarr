@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
- * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2019 Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,10 +86,10 @@ if ($id > 0 || !empty($ref)) {
 
 	// Check current user can read this salary
 	$canread = 0;
-	if (!empty($user->rights->salaries->readall)) {
+	if ($user->hasRight('salaries', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->salaries->read) && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
+	if ($user->hasRight('salaries', 'read') && $object->fk_user > 0 && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
 
@@ -108,10 +108,9 @@ if ($user->socid) {
 }
 restrictedArea($user, 'salaries', $object->id, 'salary', '');
 
-$permissiontoread = $user->rights->salaries->read;
-$permissiontoadd = $user->rights->salaries->write; // Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
-$permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-
+$permissiontoread = $user->hasRight('salaries', 'read');
+$permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
 
 /*
  * Actions
@@ -120,13 +119,13 @@ $permissiontodelete = $user->rights->salaries->delete || ($permissiontoadd && is
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Link to a project
-if ($action == 'classin' && $user->rights->banque->modifier) {
+if ($action == 'classin' && $permissiontoadd) {
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
 
 // set label
-if ($action == 'setlabel' && $user->rights->salaries->write) {
+if ($action == 'setlabel' && $permissiontoadd) {
 	$object->fetch($id);
 	$object->label = $label;
 	$object->update($user);
@@ -138,7 +137,9 @@ if ($action == 'setlabel' && $user->rights->salaries->write) {
  */
 
 $form = new Form($db);
-if (isModEnabled('project')) $formproject = new FormProjets($db);
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Documents');
 $help_url = "";
@@ -152,7 +153,7 @@ if ($object->id) {
 	print dol_get_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'salary');
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -167,7 +168,7 @@ if ($object->id) {
 
 	// Label
 	if ($action != 'editlabel') {
-		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $user->rights->salaries->write, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldkey("Label", 'label', $object->label, $object, $permissiontoadd, 'string', '', 0, 1);
 		$morehtmlref .= $object->label;
 	} else {
 		$morehtmlref .= $langs->trans('Label').' :&nbsp;';
@@ -192,7 +193,7 @@ if ($object->id) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -237,7 +238,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'salaries';
-	$permissiontoadd = $user->rights->salaries->write;
+	$permissiontoadd = $permissiontoadd;
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

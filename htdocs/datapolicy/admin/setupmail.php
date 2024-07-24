@@ -132,7 +132,7 @@ $acc = 'DATAPOLICYACCEPT_'.$l;
 $ref = 'DATAPOLICYREFUSE_'.$l;
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICYSUBJECTMAIL').'</td><td>';
-print '<input type="text" name="'.$subject.'" value="'.$conf->global->$subject.'" />';
+print '<input type="text" name="'.$subject.'" value="' . getDolGlobalString($subject).'" />';
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICYCONTENTMAIL').'</td><td>';
@@ -145,24 +145,24 @@ $doleditor->Create();
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('TXTLINKDATAPOLICYACCEPT').'</td><td>';
-print '<input type="text" name="'.$linka.'" value="'.$conf->global->$linka.'" />';
+print '<input type="text" name="'.$linka.'" value="' . getDolGlobalString($linka).'" />';
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('TXTLINKDATAPOLICYREFUSE').'</td><td>';
-print '<input type="text" name="'.$linkr.'" value="'.$conf->global->$linkr.'" />';
+print '<input type="text" name="'.$linkr.'" value="' . getDolGlobalString($linkr).'" />';
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 
 print $langs->trans('DATAPOLICYACCEPT').'</td><td>';
 
-$doleditor = new DolEditor($acc, $conf->global->$acc, '', 250, 'Full', '', false, true, 1, 200, 70);
+$doleditor = new DolEditor($acc, getDolGlobalString($acc), '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICYREFUSE').'</td><td>';
 
 print $langs->trans('');
-$doleditor = new DolEditor($ref, $conf->global->$ref, '', 250, 'Full', '', false, true, 1, 200, 70);
+$doleditor = new DolEditor($ref, getDolGlobalString($ref), '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
 print '</table>';
@@ -172,11 +172,6 @@ print '<br><center><input type="submit" class="button button-edit" value="'.$lan
 print '</form>';
 
 print dol_get_fiche_end();
-
-print '<br><br>';
-
-print $langs->trans('SendAgreementText');
-print '<a class="button" href="'.DOL_URL_ROOT.'/datapolicy/admin/mailing.php">'.$langs->trans('SendAgreementRequestByEmail').'</a>';
 
 llxFooter();
 $db->close();

@@ -55,9 +55,10 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $conf, $langs, $db;
 
@@ -85,11 +86,11 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskLot" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
 		// Option to enable custom masks per product
 		$texte .= '<td class="right">';
-		if (!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS)) {
+		if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS')) {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		} else {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

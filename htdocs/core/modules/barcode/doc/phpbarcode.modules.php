@@ -58,9 +58,10 @@ class modPhpbarcode extends ModeleBarCode
 	/**
 	 * 	Return description
 	 *
-	 * 	@return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 
@@ -74,9 +75,10 @@ class modPhpbarcode extends ModeleBarCode
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $langs;
 
@@ -129,7 +131,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$readable		  Code can be read (What is this ? is this used ?)
 	 *	@param	integer		$scale			  Scale
 	 *  @param  integer     $nooutputiferror  No output if error
-	 *	@return	int							  <0 if KO, >0 if OK
+	 *	@return	int							  Return integer <0 if KO, >0 if OK
 	 */
 	public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
@@ -179,7 +181,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
 	 *  @param  integer     $nooutputiferror  No output if error
-	 *	@return	int							  <0 if KO, >0 if OK
+	 *	@return	int							  Return integer <0 if KO, >0 if OK
 	 */
 	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{

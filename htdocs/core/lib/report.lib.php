@@ -58,7 +58,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	print dol_get_fiche_head();
 
 	foreach ($moreparam as $key => $value) {
-		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
+		print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
 	}
 
 	print '<table class="border tableforfield centpercent">'."\n";

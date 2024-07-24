@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta", "accountancy"));
 
-$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
+$action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $id = 35;
 $rowid = GETPOST('rowid', 'alpha');
@@ -56,7 +56,7 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 $listoffset = GETPOST('listoffset', 'alpha');
-$listlimit = GETPOST('listlimit', 'int') > 0 ?GETPOST('listlimit', 'int') : 1000;
+$listlimit = GETPOST('listlimit', 'int') > 0 ? GETPOST('listlimit', 'int') : 1000;
 $active = 1;
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -184,9 +184,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
-			// Recupere id libre pour insertion
+			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -272,13 +272,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
-
-//if (GETPOST('actioncancel', 'alpha'))
-//{
-//	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-//}
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	if ($tabrowid[$id]) {
@@ -351,7 +345,9 @@ if ($action == $acts[1]) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader();
+$title = $langs->trans('AccountingJournals');
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+llxHeader('', $title, $help_url);
 
 $titre = $langs->trans("DictionarySetup");
 $linkback = '';
@@ -367,7 +363,6 @@ print load_fiche_titre($titre, $linkback, $titlepicto);
 if ($action == 'delete') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$rowid.'&code='.$code.'&id='.$id, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
-//var_dump($elementList);
 
 /*
  * Show a dictionary
@@ -452,7 +447,8 @@ if ($id) {
 		$tmpaction = 'create';
 		$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 		$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-		$error = $hookmanager->error; $errors = $hookmanager->errors;
+		$error = $hookmanager->error;
+		$errors = $hookmanager->errors;
 
 		if (empty($reshook)) {
 			fieldListJournal($fieldlist, $obj, $tabname[$id], 'add');
@@ -561,7 +557,8 @@ if ($id) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
 
 					// Show fields
 					if (empty($reshook)) {
@@ -580,7 +577,8 @@ if ($id) {
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
 
 					if (empty($reshook)) {
 						$langs->load("accountancy");
@@ -607,7 +605,9 @@ if ($id) {
 					}
 
 					// Can an entry be erased or disabled ?
-					$iserasable = 1; $canbedisabled = 1; $canbemodified = 1; // true by default
+					$iserasable = 1;
+					$canbedisabled = 1;
+					$canbemodified = 1; // true by default
 					if (isset($obj->code) && $id != 10) {
 						if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 							$iserasable = 0;
@@ -617,7 +617,7 @@ if ($id) {
 
 					$canbemodified = $iserasable;
 
-					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ?urlencode($obj->code) : '');
+					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 					if ($param) {
 						$url .= '&'.$param;
 					}
@@ -686,7 +686,7 @@ $db->close();
  *  @param      string  $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *  @return     void
  */
-function fieldListJournal($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListJournal($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db;
 	global $form, $mysoc;
@@ -700,13 +700,14 @@ function fieldListJournal($fieldlist, $obj = '', $tabname = '', $context = '')
 	foreach ($fieldlist as $field => $value) {
 		if ($fieldlist[$field] == 'nature') {
 			print '<td>';
-			print $form->selectarray('nature', $sourceList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:''));
+			print $form->selectarray('nature', $sourceList, (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
-			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'"></td>';
+			print '<td><input type="text" class="flat minwidth100" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'"></td>';
 		} else {
 			print '<td>';
-			$size = ''; $class = '';
+			$size = '';
+			$class = '';
 			if ($fieldlist[$field] == 'code') {
 				$class = 'maxwidth100';
 			}
@@ -716,7 +717,7 @@ function fieldListJournal($fieldlist, $obj = '', $tabname = '', $context = '')
 			if ($fieldlist[$field] == 'sortorder' || $fieldlist[$field] == 'sens' || $fieldlist[$field] == 'category_type') {
 				$size = 'size="2" ';
 			}
-			print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

@@ -64,7 +64,7 @@ function marges_prepare_head()
 	$h = 0;
 	$head = array();
 
-	if ($user->rights->produit->lire) {
+	if ($user->hasRight('produit', 'lire')) {
 		$head[$h][0] = DOL_URL_ROOT."/margin/productMargins.php";
 		$head[$h][1] = $langs->trans("ProductMargins");
 		$head[$h][2] = 'productMargins';
@@ -78,7 +78,7 @@ function marges_prepare_head()
 		$h++;
 	}
 
-	if ($user->rights->margins->read->all) {
+	if ($user->hasRight('margins', 'read', 'all')) {
 		$title = 'UserMargins';
 	} else {
 		$title = 'SalesRepresentativeMargins';
@@ -89,7 +89,7 @@ function marges_prepare_head()
 	$head[$h][2] = 'agentMargins';
 
 
-	if ($user->rights->margins->creer) {
+	if ($user->hasRight('margins', 'creer')) {
 		$h++;
 		$head[$h][0] = DOL_URL_ROOT."/margin/checkMargins.php";
 		$head[$h][1] = $langs->trans('CheckMargins');

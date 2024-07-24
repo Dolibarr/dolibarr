@@ -38,11 +38,6 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public $picto = 'company';
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 
 	/**
 	 *	Constructor
@@ -63,7 +58,7 @@ class mailing_thirdparties extends MailingTargets
 	 *    This is the main function that returns the array of emails
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
-	 *    @return   int 					<0 if error, number of emails added if ok
+	 *    @return   int 					Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -74,7 +69,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$addDescription = "";
 		$addFilter = "";
-		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") <> '-1') {
+		if (GETPOSTISSET("filter_client_thirdparties") && GETPOST("filter_client_thirdparties") != '-1') {
 			$addFilter .= " AND s.client=".((int) GETPOST("filter_client_thirdparties", 'int'));
 			$addDescription = $langs->trans('ProspectCustomer')."=";
 			if (GETPOST("filter_client_thirdparties") == 0) {
@@ -89,7 +84,7 @@ class mailing_thirdparties extends MailingTargets
 				$addDescription .= "Unknown status ".GETPOST("filter_client_thirdparties");
 			}
 		}
-		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") <> '-1') {
+		if (GETPOSTISSET("filter_supplier_thirdparties") && GETPOST("filter_supplier_thirdparties") != '-1') {
 			$addFilter .= " AND s.fournisseur = ".((int) GETPOST("filter_supplier_thirdparties", 'int'));
 			$addDescription = $langs->trans('Supplier')."=";
 			if (GETPOST("filter_supplier_thirdparties") == 0) {
@@ -193,7 +188,7 @@ class mailing_thirdparties extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$otherTxt = ($obj->label ? $langs->transnoentities("Category").'='.$obj->label : '');
 					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0) {
 						$otherTxt .= ";";
@@ -335,13 +330,13 @@ class mailing_thirdparties extends MailingTargets
 		// filter_client_thirdparties
 		$s .= '<select id="filter_client_thirdparties" name="filter_client_thirdparties" class="flat minwidth100">';
 		$s .= '<option value="-1">'.$langs->trans('ProspectCustomer').'</option>';
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS')) {
 			$s .= '<option value="2">'.$langs->trans('Prospect').'</option>';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 			$s .= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
 		}
-		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$s .= '<option value="1">'.$langs->trans('Customer').'</option>';
 		}
 		$s .= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';

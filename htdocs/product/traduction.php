@@ -212,10 +212,10 @@ if (!empty($object->multilangs)) {
 
 print dol_get_fiche_head($head, 'translation', $titre, 0, $picto);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 $shownav = 1;
-if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 	$shownav = 0;
 }
 
@@ -262,7 +262,7 @@ if ($action == 'edit') {
 			$i++;
 
 			$s = picto_from_langcode($key);
-			print ($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block margintop marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
+			print($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block margintop marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
@@ -271,7 +271,7 @@ if ($action == 'edit') {
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
-			if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
+			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
 				print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
 				$doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 				$doleditor->Create();
@@ -296,14 +296,14 @@ if ($action == 'edit') {
 			$i++;
 
 			$s = picto_from_langcode($key);
-			print ($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
+			print($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
 
 			print '<div class="fichecenter">';
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
-			if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
+			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
 				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
@@ -343,7 +343,7 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 	$doleditor->Create();
 	print '</td></tr>';
 	// Other field (not used)
-	if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) {
+	if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
 		print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
 		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 		$doleditor->Create();

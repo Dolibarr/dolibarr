@@ -89,7 +89,7 @@ class modStock extends DolibarrModules
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "stdmovement";
-		$this->const[$r][3] = 'Name of PDF model of stock mouvement';
+		$this->const[$r][3] = 'Name of PDF model of stock movement';
 		$this->const[$r][4] = 0;
 
 		$r++;
@@ -113,78 +113,82 @@ class modStock extends DolibarrModules
 		$this->rights = array();
 		$this->rights_class = 'stock';
 
-		$this->rights[0][0] = 1001;
-		$this->rights[0][1] = 'Lire les stocks';
-		$this->rights[0][2] = 'r';
-		$this->rights[0][3] = 0;
-		$this->rights[0][4] = 'lire';
-		$this->rights[0][5] = '';
+		$r = 0;
 
-		$this->rights[1][0] = 1002;
-		$this->rights[1][1] = 'Creer/Modifier les stocks';
-		$this->rights[1][2] = 'w';
-		$this->rights[1][3] = 0;
-		$this->rights[1][4] = 'creer';
-		$this->rights[1][5] = '';
+		$this->rights[$r][0] = 1001;
+		$this->rights[$r][1] = 'Read stocks';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'lire';
+		$this->rights[$r][5] = '';
 
-		$this->rights[2][0] = 1003;
-		$this->rights[2][1] = 'Supprimer les stocks';
-		$this->rights[2][2] = 'd';
-		$this->rights[2][3] = 0;
-		$this->rights[2][4] = 'supprimer';
-		$this->rights[2][5] = '';
+		$r++;
+		$this->rights[$r][0] = 1002;
+		$this->rights[$r][1] = 'Create/Modify stocks';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'creer';
+		$this->rights[$r][5] = '';
 
-		$this->rights[3][0] = 1004;
-		$this->rights[3][1] = 'Lire mouvements de stocks';
-		$this->rights[3][2] = 'r';
-		$this->rights[3][3] = 0;
-		$this->rights[3][4] = 'mouvement';
-		$this->rights[3][5] = 'lire';
+		$r++;
+		$this->rights[$r][0] = 1003;
+		$this->rights[$r][1] = 'Delete stock';
+		$this->rights[$r][2] = 'd';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'supprimer';
+		$this->rights[$r][5] = '';
 
-		$this->rights[4][0] = 1005;
-		$this->rights[4][1] = 'Creer/modifier mouvements de stocks';
-		$this->rights[4][2] = 'w';
-		$this->rights[4][3] = 0;
-		$this->rights[4][4] = 'mouvement';
-		$this->rights[4][5] = 'creer';
+		$r++;
+		$this->rights[$r][0] = 1004;
+		$this->rights[$r][1] = 'Read stock movements';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvement';
+		$this->rights[$r][5] = 'lire';
 
-		$this->rights[5][0] = 1011;
-		$this->rights[5][1] = 'inventoryReadPermission'; // Permission label
-		$this->rights[5][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[5][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[5][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 1005;
+		$this->rights[$r][1] = 'Create/modify stock movements';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvement';
+		$this->rights[$r][5] = 'creer';
 
-		$this->rights[6][0] = 1012;
-		$this->rights[6][1] = 'inventoryCreatePermission'; // Permission label
-		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[6][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 1011;
+		$this->rights[$r][1] = 'inventoryReadPermission'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-		$this->rights[6][0] = 1013;
-		$this->rights[6][1] = 'inventoryDeletePermission'; // Permission label
-		$this->rights[6][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[6][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[6][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
+		$this->rights[$r][0] = 1012;
+		$this->rights[$r][1] = 'inventoryCreatePermission'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
+		$r++;
+		$this->rights[$r][0] = 1013;
+		$this->rights[$r][1] = 'inventoryDeletePermission'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-		if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
-			$this->rights[8][0] = 1014;
-			$this->rights[8][1] = 'inventoryValidatePermission'; // Permission label
-			$this->rights[8][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[8][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[8][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			$r++;
+			$this->rights[$r][0] = 1014;
+			$this->rights[$r][1] = 'inventoryValidatePermission'; // Permission label
+			$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 
-			$this->rights[9][0] = 1015;
-			$this->rights[9][1] = 'inventoryChangePMPPermission'; // Permission label
-			$this->rights[9][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[9][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[9][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-
-			$this->rights[10][0] = 1016;
-			$this->rights[10][1] = 'inventoryDeletePermission'; // Permission label
-			$this->rights[10][3] = 0; // Permission by default for new user (0/1)
-			$this->rights[10][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-			$this->rights[10][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$r++;
+			$this->rights[$r][0] = 1015;
+			$this->rights[$r][1] = 'inventoryChangePMPPermission'; // Permission label
+			$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+			$this->rights[$r][4] = 'inventory_advance'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+			$this->rights[$r][5] = 'changePMP'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		}
 
 		// Main menu entries
@@ -242,23 +246,32 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
 			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration",
 			'p.datec'=>'DateCreation', 'p.tms'=>'DateModification', 'p.pmp'=>'PMPValue', 'p.cost_price'=>'CostPrice',
-			'p.seuil_stock_alerte'=>'StockLimit',
+			'p.seuil_stock_alerte'=>'StockLimit', 'p.barcode'=>'BarCode', 'bt.libelle'=>'BarcodeType',
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
+		}
 		$this->export_TypeFields_array[$r] = array(
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
 			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree",
 			'p.datec'=>'Date', 'p.tms'=>'Date', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric',
 			'ps.reel'=>'Numeric',
-			'p.seuil_stock_alerte'=>'Numeric',
+			'p.seuil_stock_alerte'=>'Numeric', 'p.barcode'=>'Text', 'bt.libelle'=>'List:c_barcode_type:libelle',
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
+		}
 		$this->export_entities_array[$r] = array(
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 			'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
 			'p.datec'=>'product', 'p.tms'=>'product', 'p.pmp'=>'product', 'p.cost_price'=>'product',
 			'ps.reel'=>'stock',
-			'p.seuil_stock_alerte'=>'product',
+			'p.seuil_stock_alerte'=>'product', 'p.barcode'=>'product', 'bt.libelle'=>'c_barcode_type',
 		);	// We define here only fields that use another icon that the one defined into export_icon
+		if (isModEnabled('barcode')) {
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
+		}
 		$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('stock'=>array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
 		$keyforselect = 'product';
@@ -268,7 +281,10 @@ class modStock extends DolibarrModules
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ps.reel'=>'Stock'));
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid, '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_barcode_type as bt ON bt.rowid = p.fk_barcode_type';
+		$this->export_sql_end[$r] .= ', '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = ps.fk_product AND ps.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
 
@@ -291,6 +307,9 @@ class modStock extends DolibarrModules
 				'pb.rowid'=>'Id', 'pb.batch'=>'Batch', 'pb.qty'=>'Qty',
 				'pl.eatby'=>'EatByDate', 'pl.sellby'=>'SellByDate'
 			);
+			if (isModEnabled('barcode')) {
+				$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
+			}
 			$this->export_TypeFields_array[$r] = array(
 				'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.lieu'=>'Text', 'e.description'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 				'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
@@ -299,6 +318,9 @@ class modStock extends DolibarrModules
 				'pb.batch'=>'Text', 'pb.qty'=>'Numeric',
 				'pl.eatby'=>'Date', 'pl.sellby'=>'Date'
 			);
+			if (isModEnabled('barcode')) {
+				$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
+			}
 			$this->export_entities_array[$r] = array(
 				'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
 				'p.price'=>"product", 'p.tva_tx'=>'product', 'p.tosell'=>"product", 'p.tobuy'=>"product", 'p.duration'=>"product",
@@ -306,6 +328,9 @@ class modStock extends DolibarrModules
 				'pb.rowid'=>'batch', 'pb.batch'=>'batch', 'pb.qty'=>'batch',
 				'pl.eatby'=>'batch', 'pl.sellby'=>'batch'
 			);	// We define here only fields that use another icon that the one defined into export_icon
+			if (isModEnabled('barcode')) {
+				$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
+			}
 			$this->export_aggregate_array[$r] = array('ps.reel'=>'SUM'); // TODO Not used yet
 			$this->export_dependencies_array[$r] = array('stockbatch'=>array('pb.rowid'), 'batch'=>array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 			$keyforselect = 'product_lot';
@@ -336,12 +361,18 @@ class modStock extends DolibarrModules
 			'p.rowid'=>"ProductId", 'p.ref'=>"Ref", 'p.fk_product_type'=>"Type", 'p.label'=>"Label", 'p.description'=>"Description", 'p.note'=>"Note",
 			'p.price'=>"Price", 'p.tva_tx'=>'VAT', 'p.tosell'=>"OnSell", 'p.tobuy'=>'OnBuy', 'p.duration'=>"Duration", 'p.datec'=>'DateCreation', 'p.tms'=>'DateModification'
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
+		}
 		$this->export_TypeFields_array[$r] = array(
 			'sm.rowid'=>'Numeric', 'sm.value'=>'Numeric', 'sm.datem'=>'Date', 'sm.batch'=>'Text', 'sm.label'=>'Text', 'sm.inventorycode'=>'Text',
 			'e.rowid'=>'List:entrepot:ref::stock', 'e.ref'=>'Text', 'e.description'=>'Text', 'e.lieu'=>'Text', 'e.address'=>'Text', 'e.zip'=>'Text', 'e.town'=>'Text',
 			'p.rowid'=>"Numeric", 'p.ref'=>"Text", 'p.fk_product_type'=>"Text", 'p.label'=>"Text", 'p.description'=>"Text", 'p.note'=>"Text",
 			'p.price'=>"Numeric", 'p.tva_tx'=>'Numeric', 'p.tosell'=>"Boolean", 'p.tobuy'=>"Boolean", 'p.duration'=>"Duree", 'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
+		if (isModEnabled('barcode')) {
+			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
+		}
 		$this->export_entities_array[$r] = array(
 			'e.rowid'=>'warehouse', 'e.ref'=>'warehouse', 'e.description'=>'warehouse', 'e.lieu'=>'warehouse', 'e.address'=>'warehouse', 'e.zip'=>'warehouse', 'e.town'=>'warehouse',
 			'p.rowid'=>"product", 'p.ref'=>"product", 'p.fk_product_type'=>"product", 'p.label'=>"product", 'p.description'=>"product", 'p.note'=>"product",
@@ -351,6 +382,9 @@ class modStock extends DolibarrModules
 			$this->export_fields_array[$r]['sm.batch'] = 'Batch';
 			$this->export_TypeFields_array[$r]['sm.batch'] = 'Text';
 			$this->export_entities_array[$r]['sm.batch'] = 'movement';
+		}
+		if (isModEnabled('barcode')) {
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode'=>'product'));
 		}
 		$this->export_aggregate_array[$r] = array('sm.value'=>'SUM'); // TODO Not used yet
 		$this->export_dependencies_array[$r] = array('movement'=>array('sm.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.

@@ -136,7 +136,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL").'</td>';
 print '<td>';
 $dnbdays = '30';
-$backlinks = (!empty($conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL)) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
+$backlinks = (getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL')) ? $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL : $dnbdays;
 print '<input class="maxwidth50" type="text" name="PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL" value="'.$backlinks.'">';
 print '</td>';
 print '<td><span class="opacitymedium">'.$dnbdays.'</span></td>';
@@ -165,7 +165,7 @@ print '</tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("PARTNERSHIP_BACKLINKS_TO_CHECK").'</td>';
 print '<td>';
-$backlinks = (empty($conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK) ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
+$backlinks = (!getDolGlobalString('PARTNERSHIP_BACKLINKS_TO_CHECK') ? '' : $conf->global->PARTNERSHIP_BACKLINKS_TO_CHECK);
 print '<input class="minwidth400" type="text" name="PARTNERSHIP_BACKLINKS_TO_CHECK" value="'.$backlinks.'">';
 print '</td>';
 print '<td><span class="opacitymedium">dolibarr.org|dolibarr.fr|dolibarr.es</span></td>';

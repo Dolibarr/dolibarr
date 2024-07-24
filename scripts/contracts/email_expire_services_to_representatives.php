@@ -136,7 +136,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$langs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency).") ".$obj->name.", ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_representatives.php: ".$obj->email);
 				$foundtoprocess++;
 			}
@@ -186,7 +186,7 @@ if ($resql) {
  * @param string 	$userlang				Code lang to use for email output.
  * @param string 	$oldtarget				Target name of sale representative
  * @param int 		$duration_value			Duration value
- * @return int 								<0 if KO, >0 if OK
+ * @return int 								Int <0 if KO, >0 if OK
  */
 function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
@@ -197,7 +197,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	}
 
 	$newlangs = new Translate('', $conf);
-	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
+	$newlangs->setDefaultLang(empty($userlang) ? getDolGlobalString('MAIN_LANG_DEFAULT', 'auto') : $userlang);
 	$newlangs->load("main");
 	$newlangs->load("contracts");
 
@@ -211,35 +211,35 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
 	}
 
-	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT);
+	$subject = getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_SUBJECT', $title);
 	$sendto = $oldemail;
-	$from = empty($conf->global->MAIN_MAIL_EMAIL_FROM) ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	$errorsto = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+	$msgishtml = -1;
 
 	print "- Send email for ".$oldtarget." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_expire_services_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER) && dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER'))) {
 		$usehtml += 1;
 	}
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER) && dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER'))) {
 		$usehtml += 1;
 	}
 
 	$allmessage = '';
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER;
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_HEADER');
 	} else {
 		$allmessage .= $title.($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourExpiredServices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER)) {
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $userlang, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER');
+		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_SALESREPRESENTATIVES_FOOTER'))) {
 			$usehtml += 1;
 		}
 	}

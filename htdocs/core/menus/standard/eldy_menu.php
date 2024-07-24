@@ -147,7 +147,7 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
 		$this->menu = new Menu();
 
-		if (empty($conf->global->MAIN_MENU_INVERT)) {
+		if (!getDolGlobalString('MAIN_MENU_INVERT')) {
 			if ($mode == 'top') {
 				print_eldy_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
 			}
@@ -184,14 +184,19 @@ class MenuManager
 					$substitarray['__USERID__'] = $user->id; // For backward compatibility
 					$val['url'] = make_substitutions($val['url'], $substitarray);
 
-					$relurl = dol_buildpath($val['url'], 1);
+					if (!preg_match('/^http/', $val['url'])) {
+						$relurl = dol_buildpath($val['url'], 1);
+					} else {
+						$relurl = $val['url'];
+					}
+
 					$canonurl = preg_replace('/\?.*$/', '', $val['url']);
 
 					print '<a class="alilevel0" href="#">';
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						print $val['prefix'];
+						print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 					}
 
 					print $val['titre'];
@@ -224,7 +229,7 @@ class MenuManager
 						print '<a href="'.$relurl.'">';
 
 						if ($val['level'] == 0) {
-							print '<span class="fa fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
+							print '<span class="fas fa-home fa-fw paddingright pictofixedwidth" aria-hidden="true"></span>';
 						}
 
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
@@ -256,7 +261,7 @@ class MenuManager
 					$lastlevel2 = array();
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 						$showmenu = true;
-						if (!empty($conf->global->MAIN_MENU_HIDE_UNAUTHORIZED) && empty($val2['enabled'])) {
+						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;
 						}
 
@@ -304,8 +309,7 @@ class MenuManager
 									//print ' data-ajax="false"';
 									print '>';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else // Not allowed but visible (greyed)
-								{
+								} else { // Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -317,9 +321,9 @@ class MenuManager
 								}
 							}
 
-							// Add font-awesome
+							// Add font-awesome (if $val2['level'] == 0, we are on level2
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
-								print $val2['prefix'];
+								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
 							}
 
 							print $val2['titre'];

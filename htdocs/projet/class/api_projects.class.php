@@ -43,6 +43,12 @@ class Projects extends DolibarrApi
 	public $project;
 
 	/**
+	 * @var Task $task {@type Task}
+	 */
+	public $task;
+
+
+	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -59,9 +65,9 @@ class Projects extends DolibarrApi
 	 * Return an array with project informations
 	 *
 	 * @param   int         $id         ID of project
-	 * @return  Object              	Object with cleaned properties
+	 * @return  Object					Object with cleaned properties
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -89,19 +95,18 @@ class Projects extends DolibarrApi
 	 *
 	 * Get a list of projects
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
-	 * @param string   	       $thirdparty_ids	    Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
+	 * @param string		   $thirdparty_ids		Thirdparty ids to filter projects of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of project objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
 		}
@@ -178,16 +183,14 @@ class Projects extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$project_static = new Project($this->db);
 				if ($project_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($project_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($project_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve project list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No project found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -206,6 +209,12 @@ class Projects extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->project->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->project->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -461,6 +470,12 @@ class Projects extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->project->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->project->$field = $value;
 		}
 

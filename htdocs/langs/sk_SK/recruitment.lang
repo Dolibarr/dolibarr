@@ -18,62 +18,63 @@
 #
 
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Nábor
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
+ModuleRecruitmentDesc = Spravujte a sledujte náborové kampane na nové pracovné pozície
 
 #
 # Admin page
 #
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Nastavenie náboru
+RecruitmentSetupPage = Tu zadajte nastavenie hlavných možností pre modul náboru
+RecruitmentArea=Oblasť náboru
+PublicInterfaceRecruitmentDesc=Verejné stránky úloh sú verejné adresy URL na zobrazenie a odpovedanie na otvorené úlohy. Pre každú otvorenú úlohu existuje jeden odlišný odkaz, ktorý sa nachádza v každom zázname o úlohe.
+EnablePublicRecruitmentPages=Povoliť verejné stránky otvorených úloh
 
 #
 # About page
 #
-About = O
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
+RecruitmentAbout = O nábore
+RecruitmentAboutPage = Nábor o stránke
+NbOfEmployeesExpected=Očakávaný počet zamestnancov
+JobLabel=Označenie pracovnej pozície
+WorkPlace=Pracovné miesto
+DateExpected=Očakávaný dátum
+FutureManager=Budúci manažér
+ResponsibleOfRecruitement=Zodpovedný za nábor
+IfJobIsLocatedAtAPartner=Ak sa práca nachádza na mieste partnera
 PositionToBeFilled=Poradie úlohy
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
+PositionsToBeFilled=Pracovné pozície
+ListOfPositionsToBeFilled=Zoznam pracovných pozícií
+NewPositionToBeFilled=Nové pracovné pozície
 
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
+JobOfferToBeFilled=Pracovná pozícia na obsadenie
+ThisIsInformationOnJobPosition=Informácie o pracovnej pozícii, ktorá sa má obsadiť
+ContactForRecruitment=Kontakt pre nábor
 EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+ToUseAGenericEmail=Ak chcete použiť všeobecný e-mail. Ak nie je definovaný, použije sa e-mailová adresa zodpovedného za nábor
+NewCandidature=Nová aplikácia
+ListOfCandidatures=Zoznam aplikácií
 Remuneration=Mzda
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+RequestedRemuneration=Požadovaný plat
+ProposedRemuneration=Navrhovaný plat
+ContractProposed=Navrhnutá zmluva
+ContractSigned=Zmluva podpísaná
+ContractRefused=Zmluva odmietnutá
+RecruitmentCandidature=Aplikácia
+JobPositions=Pracovné pozície
+RecruitmentCandidatures=Aplikácie
+InterviewToDo=Kontakty na sledovanie
+AnswerCandidature=Odpoveď aplikácie
+YourCandidature=Vaša aplikácia
+YourCandidatureAnswerMessage=Ďakujeme za vašu žiadosť.<br>...
+JobClosedTextCandidateFound=Pracovná pozícia je uzavretá. Pozícia je obsadená.
+JobClosedTextCanceled=Pracovná pozícia je uzavretá.
+ExtrafieldsJobPosition=Doplnkové atribúty (pracovné pozície)
+ExtrafieldsApplication=Doplnkové atribúty (žiadosti o zamestnanie)
+MakeOffer=Ponúknuť
+WeAreRecruiting=Robíme nábor. Toto je zoznam voľných pozícií, ktoré sa majú obsadiť...
+NoPositionOpen=Momentálne nie sú otvorené žiadne pozície
+ConfirmClose=Potvrďte zrušenie
+ConfirmCloseAsk=Naozaj chcete zrušiť túto náborovú kandidatúru?
+recruitment=Nábor

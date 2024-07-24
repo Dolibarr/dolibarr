@@ -43,35 +43,35 @@ function ldap_prepare_head()
 	$head[$h][2] = 'ldap';
 	$h++;
 
-	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE)) {
+	if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
 		$head[$h][1] = $langs->trans("LDAPUsersSynchro");
 		$head[$h][2] = 'users';
 		$h++;
 	}
 
-	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE)) {
+	if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_groups.php";
 		$head[$h][1] = $langs->trans("LDAPGroupsSynchro");
 		$head[$h][2] = 'groups';
 		$h++;
 	}
 
-	if (isModEnabled("societe") && !empty($conf->global->LDAP_CONTACT_ACTIVE)) {
+	if (isModEnabled("societe") && getDolGlobalString('LDAP_CONTACT_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
 		$head[$h][2] = 'contacts';
 		$h++;
 	}
 
-	if (isModEnabled('adherent') && !empty($conf->global->LDAP_MEMBER_ACTIVE)) {
+	if (isModEnabled('adherent') && getDolGlobalString('LDAP_MEMBER_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
 		$head[$h][2] = 'members';
 		$h++;
 	}
 
-	if (isModEnabled('adherent') && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE)) {
+	if (isModEnabled('adherent') && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE')) {
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
 		$head[$h][2] = 'memberstypes';
@@ -107,7 +107,7 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 	print '<br>';
 	if (!function_exists("ldap_connect")) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
-	} elseif (empty($conf->global->LDAP_SERVER_HOST)) {
+	} elseif (!getDolGlobalString('LDAP_SERVER_HOST')) {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	} elseif (empty($key) || empty($dn) || empty($objectclass)) {
 		$langs->load("errors");

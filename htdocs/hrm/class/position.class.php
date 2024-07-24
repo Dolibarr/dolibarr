@@ -108,8 +108,8 @@ class Position extends CommonObject
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_contrat' => array('type'=>'integer:Contrat:contrat/class/contrat.class.php', 'label'=>'fk_contrat', 'enabled'=>'isModEnabled("contract")', 'position'=>50, 'notnull'=>0, 'visible'=>0,),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0),
-		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1,),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php:0:(t.statut:=:1)', 'label'=>'Employee', 'enabled'=>'1', 'position'=>55, 'notnull'=>1, 'visible'=>1, 'default'=>0, 'picto'=>'user', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
+		'fk_job' => array('type'=>'integer:Job:/hrm/class/job.class.php', 'label'=>'JobProfile', 'enabled'=>'1', 'position'=>56, 'notnull'=>1, 'visible'=>1, 'picto'=>'jobprofile', 'css'=>'maxwidth300 widthcentpercentminusxx', 'csslist'=>'tdoverflowmax150'),
 		'date_start' => array('type'=>'date', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>101, 'notnull'=>1, 'visible'=>1,),
 		'date_end' => array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>1,),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>3,),
@@ -185,7 +185,7 @@ class Position extends CommonObject
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			//$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -222,7 +222,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User that creates
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -337,7 +337,7 @@ class Position extends CommonObject
 	 *
 	 * @param int $id Id object
 	 * @param string $ref Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -351,7 +351,7 @@ class Position extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -397,7 +397,7 @@ class Position extends CommonObject
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key . ' = \'' . $this->db->idate($value) . '\'';
 				} elseif (strpos($value, '%') === false) {
 					$sqlwhere[] = $key . ' IN (' . $this->db->sanitize($this->db->escape($value)) . ')';
@@ -447,7 +447,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User that modifies
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -459,7 +459,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -491,7 +491,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user User making status change
 	 * @param int $notrigger 1=Does not execute triggers, 0= execute triggers
-	 * @return    int                        <=0 if OK, 0=Nothing done, >0 if KO
+	 * @return    int                        Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -575,7 +575,8 @@ class Position extends CommonObject
 				$sql .= " WHERE filepath = 'position/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
-					$error++; $this->error = $this->db->lasterror();
+					$error++;
+					$this->error = $this->db->lasterror();
 				}
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
@@ -623,7 +624,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, >0 if OK
+	 * @return    int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -647,7 +648,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, 0=Nothing done, >0 if OK
+	 * @return    int                        Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -671,7 +672,7 @@ class Position extends CommonObject
 	 *
 	 * @param User $user Object user that modify
 	 * @param int $notrigger 1=Does not execute triggers, 0=Execute triggers
-	 * @return    int                        <0 if KO, 0=Nothing done, >0 if OK
+	 * @return    int                        Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -722,7 +723,7 @@ class Position extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -732,7 +733,7 @@ class Position extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowPosition");
 				$linkclose .= ' alt="' . dol_escape_htmltag($label, 1) . '"';
 			}
@@ -772,7 +773,7 @@ class Position extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class . '/' . $this->ref . '/thumbs/' . substr($filename, 0, $pospoint) . '_mini' . substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module . '_' . $class) . '_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo' . $module . '" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=' . $module . '&entity=' . $conf->entity . '&file=' . urlencode($pathtophoto) . '"></div>';
@@ -828,6 +829,10 @@ class Position extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		if (is_null($status)) {
+			return '';
+		}
+
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -870,9 +875,7 @@ class Position extends CommonObject
 			$vacantId = $keyprefix.$key.'vacant'.$keysuffix;
 
 			$out = parent::showInputField($val, $key, $value, $moreparam, $keysuffix, $keyprefix, $morecss);
-			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>';
-
-			?>
+			$out .= '<label class="nowrap position-fk-user classfortooltip" title="'.dol_escape_js($langs->trans('VacantCheckboxHelper')).'"><input type="checkbox" id="'.$vacantId.'" name="'.$vacantId.'" />&nbsp;'.$langs->trans("Vacant").'</label>'; ?>
 			<script type="text/javascript">
 				$(document).ready(function () {
 					var checkbox = $('#<?php print $vacantId; ?>');
@@ -919,7 +922,7 @@ class Position extends CommonObject
 	}
 
 
-		/**
+	/**
 	 *    Load the info information in the object
 	 *
 	 * @param int $id Id of object
@@ -935,6 +938,7 @@ class Position extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -996,14 +1000,14 @@ class Position extends CommonObject
 		global $langs, $conf;
 		$langs->load("hrm");
 
-		if (empty($conf->global->hrm_POSITION_ADDON)) {
+		if (!getDolGlobalString('hrm_POSITION_ADDON')) {
 			$conf->global->hrm_POSITION_ADDON = 'mod_position_standard';
 		}
 
-		if (!empty($conf->global->hrm_POSITION_ADDON)) {
+		if (getDolGlobalString('hrm_POSITION_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->hrm_POSITION_ADDON . ".php";
+			$file = getDolGlobalString('hrm_POSITION_ADDON') . ".php";
 			$classname = $conf->global->hrm_POSITION_ADDON;
 
 			// Include file with class
@@ -1081,7 +1085,7 @@ class Position extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->POSITION_ADDON_PDF)) {
+			} elseif (getDolGlobalString('POSITION_ADDON_PDF')) {
 				$modele = $conf->global->POSITION_ADDON_PDF;
 			}
 		}
@@ -1154,7 +1158,7 @@ class Position extends CommonObject
 			$return .= '<br><span class="info-box-label ">'.$arraydata['job'].'</span>';
 		}
 		if (property_exists($this, 'date_start') && property_exists($this, 'date_end')) {
-			$return .= '<br><div class ="margintoponly"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';
+			$return .= '<br><div class ="nothing"><span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_start), 'day').'</span>';
 			$return .= ' - <span class="info-box-label ">'.dol_print_date($this->db->jdate($this->date_end), 'day').'</span></div>';
 		}
 		$return .= '</div>';

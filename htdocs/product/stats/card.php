@@ -151,7 +151,7 @@ if ($result && ($id > 0 || !empty($ref)) && empty($notab)) {
 
 	print dol_get_fiche_head($head, 'stats', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
@@ -167,15 +167,22 @@ if ((!($id > 0) && empty($ref)) || $notab) {
 	$h++;
 
 	$title = $langs->trans("ListProductServiceByPopularity");
-	if ((string) $type == '1') {
-		$title = $langs->trans("ListServiceByPopularity");
-	}
 	if ((string) $type == '0') {
 		$title = $langs->trans("ListProductByPopularity");
 	}
+	if ((string) $type == '1') {
+		$title = $langs->trans("ListServiceByPopularity");
+	}
+
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/popuprop.php'.($type != '' ? '?type='.((int) $type) : '');
-	$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	$head[$h][1] = $langs->trans("ProductsServicesPerPopularity");
+	if ((string) $type == '0') {
+		$head[$h][1] = $langs->trans("ProductsPerPopularity");
+	}
+	if ((string) $type == '1') {
+		$head[$h][1] = $langs->trans("ServicesPerPopularity");
+	}
 	$head[$h][2] = 'popularity';
 	$h++;
 
@@ -264,7 +271,13 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
-	print $langs->trans("StatsByNumberOfUnits");
+	if ($type == '0') {
+		print $langs->trans("StatsByNumberOfUnitsProducts");
+	} elseif ($type == '1') {
+		print $langs->trans("StatsByNumberOfUnitsServices");
+	} else {
+		print $langs->trans("StatsByNumberOfUnits");
+	}
 	if ($mode != 'byunit') {
 		print '</a>';
 	} else {
@@ -296,7 +309,13 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<span class="a-mesure marginleftonly marginrightonly">';
 	}
-	print $langs->trans("StatsByAmount");
+	if ($type == '0') {
+		print $langs->trans("StatsByAmountProducts");
+	} elseif ($type == '1') {
+		print $langs->trans("StatsByAmountServices");
+	} else {
+		print $langs->trans("StatsByAmount");
+	}
 	if ($mode != 'byamount') {
 		print '</a>';
 	} else {
@@ -461,7 +480,7 @@ if ($result || !($id > 0)) {
 				continue;
 			}
 
-			if ($graphfiles == 'propal' && empty($user->rights->propal->lire)) {
+			if ($graphfiles == 'propal' && !$user->hasRight('propal', 'lire')) {
 				continue;
 			}
 			if ($graphfiles == 'order' && !$user->hasRight('commande', 'lire')) {
@@ -470,16 +489,16 @@ if ($result || !($id > 0)) {
 			if ($graphfiles == 'invoices' && !$user->hasRight('facture', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'proposals_suppliers' && empty($user->rights->supplier_proposal->lire)) {
+			if ($graphfiles == 'proposals_suppliers' && !$user->hasRight('supplier_proposal', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'invoices_suppliers' && empty($user->rights->fournisseur->facture->lire)) {
+			if ($graphfiles == 'invoices_suppliers' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'orders_suppliers' && empty($user->rights->fournisseur->commande->lire)) {
+			if ($graphfiles == 'orders_suppliers' && !$user->hasRight('fournisseur', 'commande', 'lire')) {
 				continue;
 			}
-			if ($graphfiles == 'mrp' && empty($user->rights->mrp->read)) {
+			if ($graphfiles == 'mrp' && !$user->hasRight('mrp', 'read')) {
 				continue;
 			}
 

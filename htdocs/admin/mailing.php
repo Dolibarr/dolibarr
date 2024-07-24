@@ -140,8 +140,8 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>';
 $help = img_help(1, $langs->trans("EMailHelpMsgSPFDKIM"));
 print $langs->trans("MailingEMailFrom").' '.$help.'</td><td>';
-print '<input class="minwidth100" type="text" name="MAILING_EMAIL_FROM" value="'.$conf->global->MAILING_EMAIL_FROM.'">';
-if (!empty($conf->global->MAILING_EMAIL_FROM) && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
+print '<input class="minwidth100" type="text" name="MAILING_EMAIL_FROM" value="' . getDolGlobalString('MAILING_EMAIL_FROM').'">';
+if (getDolGlobalString('MAILING_EMAIL_FROM') && !isValidEmail($conf->global->MAILING_EMAIL_FROM)) {
 	print ' '.img_warning($langs->trans("BadEMail"));
 }
 print '</td>';
@@ -190,7 +190,7 @@ print '<td class="hideonsmartphone"></td>';
 print '</tr>';
 
 
-if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+if (!empty($conf->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
 	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');

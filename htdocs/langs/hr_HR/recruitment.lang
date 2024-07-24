@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Upravljajte i pratite kampanje zapošljavanja za nova ra
 # Admin page
 #
 RecruitmentSetup = Postavljanje zapošljavanja
-Settings = Postavke
 RecruitmentSetupPage = Ovdje unesite postavke glavnih opcija za modul za zapošljavanje
 RecruitmentArea=Područje za zapošljavanje
 PublicInterfaceRecruitmentDesc=Javne stranice poslova su javni URL-ovi za prikaz i odgovaranje na otvorene poslove. Postoji jedna različita poveznica za svaki otvoreni posao, koja se nalazi na svakom zapisu o poslu.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Omogućite javne stranice otvorenih poslova
 #
 # About page
 #
-About = O programu
 RecruitmentAbout = O zapošljavanju
 RecruitmentAboutPage = Zapošljavanje opisna stranica
 NbOfEmployeesExpected=Očekivani broj zaposlenih
@@ -58,15 +56,15 @@ ToUseAGenericEmail=Za korištenje generičke e-pošte. Ako nije definirano, kori
 NewCandidature=Nova prijava
 ListOfCandidatures=Popis prijava
 Remuneration=Plaća
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+RequestedRemuneration=Tražena plaća
+ProposedRemuneration=Predložena plaća
 ContractProposed=Predložen ugovor
 ContractSigned=Ugovor potpisan
 ContractRefused=Ugovor odbijen
 RecruitmentCandidature=Prijava
 JobPositions=Radna mjesta
 RecruitmentCandidatures=Prijave
-InterviewToDo=Contacts to follow
+InterviewToDo=Kontakti koje treba pratiti
 AnswerCandidature=Odgovor na prijavu
 YourCandidature=Vaša prijava
 YourCandidatureAnswerMessage=Hvala vam na vašoj prijavi. <br> ...
@@ -75,5 +73,8 @@ JobClosedTextCanceled=Oglas za radno mjesto je zatvoren.
 ExtrafieldsJobPosition=Komplementarni atributi (radna mjesta)
 ExtrafieldsApplication=Komplementarni atributi (molbe za posao)
 MakeOffer=Dati ponudu
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+WeAreRecruiting=Zapošljavamo. Ovo je popis otvorenih pozicija koje treba popuniti...
+NoPositionOpen=Trenutno nema otvorenih pozicija
+ConfirmClose=Potvrdite otkazivanje
+ConfirmCloseAsk=Jeste li sigurni da želite da poništite ovu kandidaturu za zapošljavanje
+recruitment=Zapošljavanje

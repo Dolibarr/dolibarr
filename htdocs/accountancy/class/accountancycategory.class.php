@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,11 +123,19 @@ class AccountancyCategory // extends CommonObject
 	public $lines_display;
 
 	/**
-	 * @var mixed Sample property 1
+	 * @var mixed Sum debit credit
 	 */
 	public $sdc;
 
+	/**
+	 * @var array Sum debit credit per month
+	 */
+	public $sdcpermonth;
 
+	/**
+	 * @var array Sum debit credit per account
+	 */
+	public $sdcperaccount;
 
 	/**
 	 *  Constructor
@@ -145,7 +153,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -220,7 +228,8 @@ class AccountancyCategory // extends CommonObject
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -244,7 +253,7 @@ class AccountancyCategory // extends CommonObject
 	 *  @param      int		$id    	Id object
 	 *  @param		string	$code	Code
 	 *  @param		string	$label	Label
-	 *  @return     int          	<0 if KO, >0 if OK
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
@@ -303,7 +312,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -361,7 +370,8 @@ class AccountancyCategory // extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -384,7 +394,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param	int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -399,7 +409,8 @@ class AccountancyCategory // extends CommonObject
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -421,7 +432,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to select into ->lines_display all accounting accounts for a given custom accounting group
 	 *
 	 * @param 	int 	$id 	Id
-	 * @return 	int 			<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 			Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function display($id)
 	{
@@ -456,7 +467,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to fill ->lines_cptbk with accounting account (defined in chart of account) and not yet into a custom group
 	 *
 	 * @param 	int $id     Id of category to know which account to exclude
-	 * @return 	int 		<0 if KO, 0 if not found, >0 if OK
+	 * @return 	int 		Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function getAccountsWithNoCategory($id)
 	{
@@ -500,7 +511,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param int $id_cat Id category
 	 * @param array $cpts list of accounts array
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function updateAccAcc($id_cat, $cpts = array())
 	{
@@ -571,7 +582,7 @@ class AccountancyCategory // extends CommonObject
 	 *
 	 * @param int $cpt_id Id of accounting account
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteCptCat($cpt_id)
 	{
@@ -615,7 +626,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param string	$thirdparty_code	Thirdparty code
 	 * @param int       $month 				Specifig month - Can be empty
 	 * @param int       $year 				Specifig year - Can be empty
-	 * @return integer 						<0 if KO, >= 0 if OK
+	 * @return integer 						Return integer <0 if KO, >= 0 if OK
 	 */
 	public function getSumDebitCredit($cpt, $date_start, $date_end, $sens, $thirdparty_code = 'nofilter', $month = 0, $year = 0)
 	{

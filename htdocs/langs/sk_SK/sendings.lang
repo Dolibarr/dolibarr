@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Overené
 StatusSendingProcessedShort=Spracované
 SendingSheet=Zásielkový hárok
 ConfirmDeleteSending=Určite chcete zmazať túto zásielku ?
-ConfirmValidateSending=Určite chcete overiť túto zásielku s odkazom <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Určite chcete zrušiť túto zásielku ?
 DocumentModelMerou=Mero A5 modelu
 WarningNoQtyLeftToSend=Varovanie: žiadny tovar majú byť dodané.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Plánovaný dátum doručenia
 RefDeliveryReceipt=Ref delivery receipt
 StatusReceipt=Status delivery receipt
 DateReceived=Dátum doručenia obdržal
-ClassifyReception=Classify reception
+ClassifyReception=Classify Received
 SendShippingByEMail=Send shipment by email
 SendShippingRef=Podanie zásielky %s
 ActionsOnShipping=Udalosti na zásielky
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from open purchase
 NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
 WeightVolShort=Váha/Objem
 ValidateOrderFirstBeforeShipment=Najprv musíte overiť objednávku pred vytvorením zásielky.
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,3 +75,12 @@ SumOfProductWeights=Súčet hmotností produktov
 # warehouse details
 DetailWarehouseNumber= Detaily skladu
 DetailWarehouseFormat= W:%s (Qty: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
+
+ShipmentDistribution=Shipment distribution
+
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

@@ -7,18 +7,18 @@ Bug reports and feature requests
 <a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.** If you have questions about Dolibarr / need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
-Default **language here is english**. So please prepare your contributions in english.
+Default **language here is English**. So please prepare your contributions in English.
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
-4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
 5. Delete unnecessary submissions.
 6. **Check your Message at Preview before sending.**
 
 
 
-<a name="code"></a>Code
+<a name="code"></a>Submit code
 ---------------------
 
 ### Basic workflow
@@ -35,20 +35,22 @@ Default **language here is english**. So please prepare your contributions in en
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
 
-If you're fixing a bug, it is preferred that you cook your fix and pull request it
-against the oldest version affected that's still supported.
+If you're fixing a bug, it is preferred that you cook your fix and pull request it against an oldest version affected.
 
-We officially support versions N, N − 1 and N − 2 for N the latest version available.
+We recommend to push it into N - 2 for N the latest version available, if not possible into version N - 1, and finally into develop.
+This is just a recommendation, currently, if you push a bug fix on a very old version, it is still merged and propagated into
+higher versions. 
 
-Choose your base branch accordingly.
+The rule N - 2 is just a tip if you don't know which version to choose to get the best the best compromise between ease of correction 
+and number of potential beneficiaries of the correction.
 
 ### General rules
-Please don't edit the ChangeLog file. File will be generated from all commit messages during release process by the project manager.
+Please don't edit the ChangeLog file. This file is generated from all commit messages during release process by the project manager.
 
 ### <a name="commits"></a>Commits
 Use clear commit messages with the following structure:
 
-```
+```plaintext
 [KEYWORD] [ISSUENUM] DESC
 
 LONGDESC
@@ -66,10 +68,13 @@ where
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
-The keyword can be ommitted if your commit does not fit in any of the following categories:
+The keyword can be omitted if your commit does not fit in any of the following categories:
+
 - Fix/FIX: for a bug fix
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
 - Close/CLOSE: for closing a referenced feature request
+- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF: for a performance enhancement
+- Qual/QUAL: for quality code enhancement or re-engineering
 
 #### Issuenum
 If your commit fixes a referenced bug or feature request.
@@ -90,19 +95,19 @@ Feel free to express technical details, use cases or anything relevant to the cu
 
 This section can span multiple lines.
 
-Try to keep lines under 120 characters.
+If your PR is a change on interface, you must also paste a screenshot showing the new screen.
 
 #### Examples
 <pre>
 FIX|Fix #456 Short description (where #456 is number of bug fix, if it exists. In upper case to appear into ChangeLog)
 or
-NEW|New Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #456)
-or
 CLOSE|Close #456 Short description (where #456 is number of feature request, if it exists. In upper case to appear into ChangeLog)
+or
+NEW|New|QUAL|Qual|PERF|Perf Short description (In upper case to appear into ChangeLog, use this if you add a feature not tracked, otherwise use CLOSE #456)
 or
 Short description (when the commit is not introducing feature nor closing a bug)
 
-Long description (Can span accross multiple lines).
+Long description (Can span across multiple lines).
 </pre>
 
 ### Pull Requests
@@ -119,7 +124,7 @@ Also, some code changes need a prior approbation:
 
 * if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-jedi in your issue) to see if such a library can be accepted.
 
-* if you add a new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
+* if you add new tables or fields, you MUST first submit a standalone PR with the data structure changes you plan to add/modify (and only data structure changes). Start development only once this data structure has been accepted.
 
 Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
 
@@ -130,7 +135,8 @@ If your PR has errors reported by the Continuous Integration Platform, it means 
 If the PR is valid, and is kept open for a long time, a tag will also be added on the PR to describe the status of your PR and why the PR is kept open. By putting your mouse on the tag, you will get a full explanation of the tag/status that explain why your PR has not been integrated yet.
 In most cases, it gives you information of things you have to do to have the PR taken into consideration (for example a change is requested, a conflict is expected to be solved, some questions were asked). If you have a yellow, red flag of purple flag, don't expect to have your PR validated. You must first provide the answer the tag ask you. The majority of open PR are waiting an action of the author of the PR.
 
-Statistics on Dolibarr project shows that 95% of submitted PR are reviewed and tagged. Average answer delay is also one of the best among Open source projects (just few days before having the Answer Tag set). This is one of the most important ratio of answered PR in Open Source world for a major project. Don't expect the core team to reach the 100%. A so high ratio is very rare on a so popular project and with the increasing popularity of Dolibarr, this ratio will probably decrease in future to a more common level.
+Statistics on Dolibarr project shows that 95% of submitted PR are reviewed and tagged. Average answer delay is also one of the best among Open source projects (just few days before having the Answer Tag set). This is one of the most important ratio of answered PR in Open Source world for a major project. Don't expect the core team to reach the 100%. 
+A so high ratio is very rare on a so popular project and with the increasing popularity of Dolibarr, this ratio will probably decrease in future to a more common level.
 
 
 ### Resources
@@ -144,7 +150,7 @@ All other translations are managed online at [Transifex](https://www.transifex.c
 
 Translations done on transifex are available in the next major release.
 
-Note: Sometimes, the source text (english) is modified. In such a case, the translation is reset. Transifex assume that if the original source
+Note: Sometimes, the source text (English) is modified. In such a case, the translation is reset. Transifex assume that if the original source
 has changed, the translation is surely no more correct so must be done again. But old translation is not lost and you can use the tab "History"
 to retrieve all old translation of a source text, and restore the translation in one click with no need to retranslate it if there is no need to.
 

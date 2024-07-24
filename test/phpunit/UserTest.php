@@ -84,8 +84,9 @@ class UserTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (!empty($conf->global->MAIN_MODULE_LDAP)) {
-			print "\n".__METHOD__." module LDAP must be disabled.\n"; die(1);
+		if (getDolGlobalString('MAIN_MODULE_LDAP')) {
+			print "\n".__METHOD__." module LDAP must be disabled.\n";
+			die(1);
 		}
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -285,8 +286,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 		//$this->assertNotEquals($user->date_creation, '');
 		$localobject->addrights(0, 'supplier_proposal');
 		$this->assertEquals($localobject->hasRight('member', ''), 0);
-		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
-		$this->assertEquals($localobject->hasRight('member', 'member'), 0);$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);
+		$this->assertEquals($localobject->hasRight('product', 'member', 'read'), 0);
+		$this->assertEquals($localobject->hasRight('member', 'member'), 0);
+		$this->assertEquals($localobject->hasRight('produit', 'member', 'read'), 0);
 
 		return $localobject;
 	}
@@ -491,10 +494,10 @@ class UserTest extends PHPUnit\Framework\TestCase
 					continue;
 				}
 				if (! $ignoretype && ($oVarsA[$sKey] !== $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 				if ($ignoretype && ($oVarsA[$sKey] != $oVarsB[$sKey])) {
-					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);
+					$retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey]) ? get_class($oVarsA[$sKey]) : $oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey]) ? get_class($oVarsB[$sKey]) : $oVarsB[$sKey]);
 				}
 			}
 		}

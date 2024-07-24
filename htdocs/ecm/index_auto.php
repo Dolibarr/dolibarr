@@ -37,7 +37,7 @@ $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal"
 // Get parameters
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
-$section = GETPOST('section', 'int') ?GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
 $module = GETPOST('module', 'alpha');
 if (!$section) {
 	$section = 0;
@@ -104,7 +104,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 
 // Add directory
-if ($action == 'add' && $user->rights->ecm->setup) {
+if ($action == 'add' && $user->hasRight('ecm', 'setup')) {
 	$ecmdir->ref                = 'NOTUSEDYET';
 	$ecmdir->label              = GETPOST("label");
 	$ecmdir->description        = GETPOST("desc");
@@ -295,7 +295,7 @@ $moreheadjs = '';
 
 //$morejs=array();
 $morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
@@ -309,75 +309,97 @@ llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $m
 // Add sections to manage
 $rowspan = 0;
 $sectionauto = array();
-if (empty($conf->global->ECM_AUTO_TREE_HIDEN)) {
+if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
-		$rowspan++; $sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
+		$rowspan++;
+		$sectionauto[] = array('position'=>10, 'level'=>1, 'module'=>'product', 'test'=>(isModEnabled("product") || isModEnabled("service")), 'label'=>$langs->trans("ProductsAndServices"), 'desc'=>$langs->trans("ECMDocsByProducts"));
 	}
 	if (isModEnabled("societe")) {
-		$rowspan++; $sectionauto[] = array('position'=>20, 'level'=>1, 'module'=>'company', 'test'=>isModEnabled('societe'), 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>20, 'level'=>1, 'module'=>'company', 'test'=>isModEnabled('societe'), 'label'=>$langs->trans("ThirdParties"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ThirdParties")));
 	}
 	if (isModEnabled("propal")) {
-		$rowspan++; $sectionauto[] = array('position'=>30, 'level'=>1, 'module'=>'propal', 'test'=>isModEnabled('propal'), 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>30, 'level'=>1, 'module'=>'propal', 'test'=>isModEnabled('propal'), 'label'=>$langs->trans("Proposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Proposals")));
 	}
 	if (isModEnabled('contrat')) {
-		$rowspan++; $sectionauto[] = array('position'=>40, 'level'=>1, 'module'=>'contract', 'test'=>isModEnabled('contrat'), 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>40, 'level'=>1, 'module'=>'contract', 'test'=>isModEnabled('contrat'), 'label'=>$langs->trans("Contracts"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Contracts")));
 	}
 	if (isModEnabled('commande')) {
-		$rowspan++; $sectionauto[] = array('position'=>50, 'level'=>1, 'module'=>'order', 'test'=>isModEnabled('commande'), 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>50, 'level'=>1, 'module'=>'order', 'test'=>isModEnabled('commande'), 'label'=>$langs->trans("CustomersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Orders")));
 	}
 	if (isModEnabled('facture')) {
-		$rowspan++; $sectionauto[] = array('position'=>60, 'level'=>1, 'module'=>'invoice', 'test'=>isModEnabled('facture'), 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>60, 'level'=>1, 'module'=>'invoice', 'test'=>isModEnabled('facture'), 'label'=>$langs->trans("CustomersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Invoices")));
 	}
 	if (isModEnabled('supplier_proposal')) {
 		$langs->load("supplier_proposal");
-		$rowspan++; $sectionauto[] = array('position'=>70, 'level'=>1, 'module'=>'supplier_proposal', 'test'=>isModEnabled('supplier_proposal'), 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>70, 'level'=>1, 'module'=>'supplier_proposal', 'test'=>isModEnabled('supplier_proposal'), 'label'=>$langs->trans("SupplierProposals"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierProposals")));
 	}
 	if (isModEnabled("supplier_order")) {
-		$rowspan++; $sectionauto[] = array('position'=>80, 'level'=>1, 'module'=>'order_supplier', 'test'=>isModEnabled("supplier_order"), 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>80, 'level'=>1, 'module'=>'order_supplier', 'test'=>isModEnabled("supplier_order"), 'label'=>$langs->trans("SuppliersOrders"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
 	}
 	if (isModEnabled("supplier_invoice")) {
-		$rowspan++; $sectionauto[] = array('position'=>90, 'level'=>1, 'module'=>'invoice_supplier', 'test'=>isModEnabled("supplier_invoice"), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>90, 'level'=>1, 'module'=>'invoice_supplier', 'test'=>isModEnabled("supplier_invoice"), 'label'=>$langs->trans("SuppliersInvoices"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SupplierInvoices")));
 	}
 	if (isModEnabled('tax')) {
 		$langs->load("compta");
-		$rowspan++; $sectionauto[] = array('position'=>100, 'level'=>1, 'module'=>'tax', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
-		$rowspan++; $sectionauto[] = array('position'=>110, 'level'=>1, 'module'=>'tax-vat', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("VAT"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>100, 'level'=>1, 'module'=>'tax', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("SocialContributions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SocialContributions")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>110, 'level'=>1, 'module'=>'tax-vat', 'test'=>isModEnabled('tax'), 'label'=>$langs->trans("VAT"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("VAT")));
 	}
 	if (isModEnabled('salaries')) {
 		$langs->load("compta");
-		$rowspan++; $sectionauto[] = array('position'=>120, 'level'=>1, 'module'=>'salaries', 'test'=>isModEnabled('salaries'), 'label'=>$langs->trans("Salaries"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>120, 'level'=>1, 'module'=>'salaries', 'test'=>isModEnabled('salaries'), 'label'=>$langs->trans("Salaries"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Salaries")));
 	}
 	if (isModEnabled('project')) {
-		$rowspan++; $sectionauto[] = array('position'=>130, 'level'=>1, 'module'=>'project', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
-		$rowspan++; $sectionauto[] = array('position'=>140, 'level'=>1, 'module'=>'project_task', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>130, 'level'=>1, 'module'=>'project', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Projects"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Projects")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>140, 'level'=>1, 'module'=>'project_task', 'test'=>isModEnabled('project'), 'label'=>$langs->trans("Tasks"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Tasks")));
 	}
 	if (isModEnabled('ficheinter')) {
 		$langs->load("interventions");
-		$rowspan++; $sectionauto[] = array('position'=>150, 'level'=>1, 'module'=>'fichinter', 'test'=>isModEnabled('ficheinter'), 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>150, 'level'=>1, 'module'=>'fichinter', 'test'=>isModEnabled('ficheinter'), 'label'=>$langs->trans("Interventions"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Interventions")));
 	}
 	if (isModEnabled('expensereport')) {
 		$langs->load("trips");
-		$rowspan++; $sectionauto[] = array('position'=>160, 'level'=>1, 'module'=>'expensereport', 'test'=>isModEnabled('expensereport'), 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>160, 'level'=>1, 'module'=>'expensereport', 'test'=>isModEnabled('expensereport'), 'label'=>$langs->trans("ExpenseReports"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ExpenseReports")));
 	}
 	if (isModEnabled('holiday')) {
 		$langs->load("holiday");
-		$rowspan++; $sectionauto[] = array('position'=>170, 'level'=>1, 'module'=>'holiday', 'test'=>isModEnabled('holiday'), 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>170, 'level'=>1, 'module'=>'holiday', 'test'=>isModEnabled('holiday'), 'label'=>$langs->trans("Holidays"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Holidays")));
 	}
 	if (isModEnabled("banque")) {
 		$langs->load("banks");
-		$rowspan++; $sectionauto[] = array('position'=>180, 'level'=>1, 'module'=>'banque', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
-		$rowspan++; $sectionauto[] = array('position'=>190, 'level'=>1, 'module'=>'chequereceipt', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>180, 'level'=>1, 'module'=>'banque', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("BankAccount"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>190, 'level'=>1, 'module'=>'chequereceipt', 'test'=>isModEnabled('banque'), 'label'=>$langs->trans("CheckReceipt"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}
 	if (isModEnabled('mrp')) {
 		$langs->load("mrp");
-		$rowspan++; $sectionauto[] = array('position'=>200, 'level'=>1, 'module'=>'mrp-mo', 'test'=>isModEnabled('mrp'), 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>200, 'level'=>1, 'module'=>'mrp-mo', 'test'=>isModEnabled('mrp'), 'label'=>$langs->trans("MOs"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("ManufacturingOrders")));
 	}
 	if (isModEnabled('recruitment')) {
 		$langs->load("recruitment");
-		$rowspan++; $sectionauto[] = array('position'=>210, 'level'=>1, 'module'=>'recruitment-recruitmentcandidature', 'test'=>isModEnabled('recruitment'), 'label'=>$langs->trans("Candidatures"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
+		$rowspan++;
+		$sectionauto[] = array('position'=>210, 'level'=>1, 'module'=>'recruitment-recruitmentcandidature', 'test'=>isModEnabled('recruitment'), 'label'=>$langs->trans("Candidatures"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("JobApplications")));
 	}
-	$rowspan++; $sectionauto[] = array('position'=>220, 'level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
+	$rowspan++;
+	$sectionauto[] = array('position'=>220, 'level'=>1, 'module'=>'user', 'test'=>1, 'label'=>$langs->trans("Users"), 'desc'=>$langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("Users")));
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
@@ -408,7 +430,7 @@ if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
 print '<div class="inline-block toolbarbutton centpercent">';
 
 // Toolbar
-$url = ((!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
+$url = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 print '<a href="'.$url.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('Refresh')).'">';
 print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
 print '</a>';
@@ -459,7 +481,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			}
 
 			print '<li class="directory collapsed">';
-			if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 				print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.urlencode($val['module']).'">';
 				print $val['label'];
 				print '</a>';
@@ -514,7 +536,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 <?php
 // End of page
 
-if (!empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	include DOL_DOCUMENT_ROOT.'/ecm/tpl/enablefiletreeajax.tpl.php';
 }
 

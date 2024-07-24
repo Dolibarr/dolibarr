@@ -94,6 +94,7 @@ class DolGraph
 	public $bgcolorgrid = array(255, 255, 255); // array(R,G,B)
 	public $datacolor; // array(array(R,G,B),...)
 	public $borderwidth = 1;
+	public $borderskip = 'start';
 
 	private $stringtoshow; // To store string to output graph into HTML page
 
@@ -136,7 +137,7 @@ class DolGraph
 
 		$this->_library = $library;
 		if ($this->_library == 'auto') {
-			$this->_library = (empty($conf->global->MAIN_JS_GRAPH) ? 'chart' : $conf->global->MAIN_JS_GRAPH);
+			$this->_library = (!getDolGlobalString('MAIN_JS_GRAPH') ? 'chart' : $conf->global->MAIN_JS_GRAPH);
 		}
 	}
 
@@ -309,6 +310,18 @@ class DolGraph
 	public function setBorderWidth($borderwidth)
 	{
 		$this->borderwidth = $borderwidth;
+	}
+
+	/**
+	 * Set border skip
+	 *
+	 * @param 	int     $borderskip     Can be 'start' to skip start border, 'end' to skip end border, 'middle' to skip middle border,
+	 * 									'false' to not skip any border, 'true' to skip all border
+	 * @return	void
+	 */
+	public function setBorderSkip($borderskip)
+	{
+		$this->borderskip = $borderskip;
 	}
 
 	/**
@@ -1150,7 +1163,8 @@ class DolGraph
 		if (isset($this->type[$firstlot])) {
 			$cssfordiv .= ' dolgraphchar' . $this->type[$firstlot];
 		}
-		$this->stringtoshow .= '<div id="placeholder_' . $tag . '" style="min-height: ' . $this->height . (strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: ' . (strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:' . $this->width . (strpos($this->width, '%') > 0 ? '' : 'px') . ';" class="' . $cssfordiv . ' dolgraph' . (empty($dolxaxisvertical) ? '' : ' ' . $dolxaxisvertical) . (empty($this->cssprefix) ? '' : ' dolgraph' . $this->cssprefix) . ' center"><canvas id="canvas_' . $tag . '"></canvas></div>' . "\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; max-height: '.(strpos($this->height, '%') > 0 ? $this->height : ($this->height + 100) . 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center">'."\n";
+		$this->stringtoshow .= '<canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script nonce="'.getNonce().'" id="' . $tag . '">' . "\n";
 		$i = $firstlot;
@@ -1293,13 +1307,15 @@ class DolGraph
 			$this->stringtoshow .= '});' . "\n";
 		} else {
 			// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-			$type = 'bar'; $xaxis = '';
+			$type = 'bar';
+			$xaxis = '';
 
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') {
 				$type = 'bar';
 			}
 			if (isset($this->type[$firstlot]) && $this->type[$firstlot] == 'horizontalbars') {
-				$type = 'bar'; $xaxis = "indexAxis: 'y', ";
+				$type = 'bar';
+				$xaxis = "indexAxis: 'y', ";
 			}
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) {
 				$type = 'line';
@@ -1441,11 +1457,14 @@ class DolGraph
 					$color = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ', 0.9)';
 					$bordercolor = 'rgb(' . $newcolor[0] . ', ' . $newcolor[1] . ', ' . $newcolor[2] . ')';
 				} else { // We do not use a 'group by'
-					if (!empty($this->datacolor[$i]) && is_array($this->datacolor[$i])) {
-						$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
-					} else {
-						$color = $this->datacolor[$i];
+					if (!empty($this->datacolor[$i])) {
+						if (is_array($this->datacolor[$i])) {
+							$color = 'rgb(' . $this->datacolor[$i][0] . ', ' . $this->datacolor[$i][1] . ', ' . $this->datacolor[$i][2] . ', 0.9)';
+						} else {
+							$color = $this->datacolor[$i];
+						}
 					}
+					// else: $color will be undefined
 					if (!empty($this->bordercolor[$i]) && is_array($this->bordercolor[$i])) {
 						$bordercolor = 'rgb(' . $this->bordercolor[$i][0] . ', ' . $this->bordercolor[$i][1] . ', ' . $this->bordercolor[$i][2] . ', 0.9)';
 					} else {
@@ -1477,13 +1496,14 @@ class DolGraph
 					$this->stringtoshow .= 'borderWidth: \''.$this->borderwidth.'\', ';
 				}
 				$this->stringtoshow .= 'borderColor: \'' . $bordercolor . '\', ';
+				$this->stringtoshow .= 'borderSkipped: \'' . $this->borderskip . '\', ';
 				$this->stringtoshow .= 'backgroundColor: \'' . $color . '\', ';
 				if (!empty($arrayofgroupslegend) && !empty($arrayofgroupslegend[$i])) {
 					$this->stringtoshow .= 'stack: \'' . $arrayofgroupslegend[$i]['stacknum'] . '\', ';
 				}
 				$this->stringtoshow .= 'data: [';
 
-				$this->stringtoshow .= $this->mirrorGraphValues ? '[' . -$serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
+				$this->stringtoshow .= $this->mirrorGraphValues ? '[-' . $serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
 				$this->stringtoshow .= ']';
 				$this->stringtoshow .= '}' . "\n";
 

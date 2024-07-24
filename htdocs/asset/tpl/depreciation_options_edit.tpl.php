@@ -134,7 +134,7 @@ if (empty($reshook)) {
 				print img_picto('', $field_info['picto'], '', false, 0, 0, '', 'pictofixedwidth');
 			}
 			if (in_array($field_info['type'], array('int', 'integer'))) {
-				$value = GETPOSTISSET($html_name) ?GETPOST($html_name, 'int') : $assetdepreciationoptions->$field_key;
+				$value = GETPOSTISSET($html_name) ? GETPOST($html_name, 'int') : $assetdepreciationoptions->$field_key;
 			} elseif ($field_info['type'] == 'double') {
 				$value = GETPOSTISSET($html_name) ? price2num(GETPOST($html_name, 'alphanohtml')) : $assetdepreciationoptions->$field_key;
 			} elseif (preg_match('/^(text|html)/', $field_info['type'])) {

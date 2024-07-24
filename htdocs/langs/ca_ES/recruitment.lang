@@ -26,7 +26,6 @@ ModuleRecruitmentDesc = Gestiona i segueix les campanyes de contractació de llo
 # Admin page
 #
 RecruitmentSetup = Configuració de la contractació
-Settings = Configuració
 RecruitmentSetupPage = Introduïu aquí la configuració de les opcions principals del mòdul de contractació
 RecruitmentArea=Àrea de contractació
 PublicInterfaceRecruitmentDesc=Les pàgines públiques de llocs de treball són URL públics per a mostrar i respondre a les feines obertes. Hi ha un enllaç diferent per a cada treball obert, que es troba a cada registre de feina.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Activa les pàgines públiques de treballs actius
 #
 # About page
 #
-About = Quant a
 RecruitmentAbout = Quant a la contractació
 RecruitmentAboutPage = Pàgina quant a la contractació
 NbOfEmployeesExpected=Nombre previst d'empleats
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Atributs complementaris (sol·licituds de feina)
 MakeOffer=Feu una oferta
 WeAreRecruiting=Estem reclutant. Aquesta és una llista de places obertes per a cobrir...
 NoPositionOpen=No hi ha posicions obertes de moment
+ConfirmClose=Confirmeu la cancel·lació
+ConfirmCloseAsk=Esteu segur que voleu cancel·lar aquesta candidatura de contractació?
+recruitment=Contractació

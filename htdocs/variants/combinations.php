@@ -155,7 +155,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$price_impact = price2num($price_impact);
 
 		// for conf PRODUIT_MULTIPRICES
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
 		} else {
 			$level_price_impact = array(1 => $price_impact);
@@ -175,8 +175,8 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 			$sanit_features[$explode[0]] = $explode[1];
 
 			$tmp = new ProductCombination2ValuePair($db);
-			$tmp->fk_prod_attr = $explode[0];
-			$tmp->fk_prod_attr_val = $explode[1];
+			$tmp->fk_prod_attr = (int) $explode[0];
+			$tmp->fk_prod_attr_val = (int) $explode[1];
 
 			$productCombination2ValuePairs1[] = $tmp;
 		}
@@ -280,7 +280,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	$prodcomb->variation_weight = price2num($weight_impact);
 
 	// for conf PRODUIT_MULTIPRICES
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$level_price_impact = array_map('price2num', $level_price_impact);
 
 		$prodcomb->variation_price = $level_price_impact[1];
@@ -293,7 +293,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
-	if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$prodcomb->combination_price_levels = array();
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
@@ -406,7 +406,7 @@ llxHeader("", $title);
 
 if (!empty($id) || !empty($ref)) {
 	$showbarcode = isModEnabled('barcode');
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) {
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode', 'lire_advance')) {
 		$showbarcode = 0;
 	}
 
@@ -430,7 +430,7 @@ if (!empty($id) || !empty($ref)) {
 	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
-		print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 		print '</td><td>';
 		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 		print '</td></tr>';
@@ -534,8 +534,7 @@ if (!empty($id) || !empty($ref)) {
 
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
-			}
-			?>
+			} ?>
 
 		<script type="text/javascript">
 
@@ -547,8 +546,7 @@ if (!empty($id) || !empty($ref)) {
 
 			<?php
 			foreach ($productCombination2ValuePairs1 as $pc2v) {
-				$prodattr_val->fetch($pc2v->fk_prod_attr_val);
-				?>
+				$prodattr_val->fetch($pc2v->fk_prod_attr_val); ?>
 				variants_selected.index.push(<?php echo $pc2v->fk_prod_attr ?>);
 				variants_selected.info[<?php echo $pc2v->fk_prod_attr ?>] = {
 					attribute: variants_available[<?php echo $pc2v->fk_prod_attr ?>],
@@ -558,8 +556,7 @@ if (!empty($id) || !empty($ref)) {
 					}
 				};
 				<?php
-			}
-			?>
+			} ?>
 
 			restoreAttributes = function() {
 				jQuery("select[name=attribute]").empty().append('<option value="-1">&nbsp;</option>');
@@ -647,8 +644,7 @@ if (!empty($id) || !empty($ref)) {
 			print '</a>';*/
 
 			print '</td>';
-			print '</tr>';
-			?>
+			print '</tr>'; ?>
 			<!-- Value -->
 			<tr>
 				<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
@@ -660,11 +656,10 @@ if (!empty($id) || !empty($ref)) {
 					$htmltext = $langs->trans("GoOnMenuToCreateVairants", $langs->transnoentities("Product"), $langs->transnoentities("VariantAttributes"));
 					print $form->textwithpicto('', $htmltext);
 					/*
-						print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
-						print $langs->trans("Create");
-						print '</a>';
-					*/
-					?>
+					print ' &nbsp; &nbsp; <a href="'.DOL_URL_ROOT.'/variants/create.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=add&token='.newToken().'&id='.$object->id).'">';
+					print $langs->trans("Create");
+					print '</a>';
+					*/ ?>
 				</td>
 			</tr>
 			<tr>
@@ -701,8 +696,7 @@ if (!empty($id) || !empty($ref)) {
 							print $prodattr->label.' : '.$prodattr_val->value.'<br>';
 							// TODO Add delete link
 						}
-					}
-					?>
+					} ?>
 						</div>
 						<!-- <div class="inline-block valignmiddle">
 						<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
@@ -712,14 +706,13 @@ if (!empty($id) || !empty($ref)) {
 					</td>
 				</tr>
 				<?php
-			}
-			?>
+			} ?>
 			<tr>
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
 			<?php
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
@@ -732,10 +725,12 @@ if (!empty($id) || !empty($ref)) {
 				$prodcomb->fetchCombinationPriceLevels();
 
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+					$text = $langs->trans('ImpactOnPriceLevel', $i).' - '.getDolGlobalString($keyforlabel);
 					print '<tr>';
-					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel', $i).'</label>';
+					print '<td><label for="level_price_impact_'.$i.'">'.$text.'</label>';
 					if ($i === 1) {
-						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
+						print '<br/><a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
 					}
 					print '</td>';
 					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($prodcomb->combination_price_levels[$i]->variation_price).'">';
@@ -756,7 +751,7 @@ if (!empty($id) || !empty($ref)) {
 			print '</table>';
 		}
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			?>
 			<script>
 				$(document).ready(function() {
@@ -778,8 +773,7 @@ if (!empty($id) || !empty($ref)) {
 			<?php
 		}
 
-		print dol_get_fiche_end();
-		?>
+		print dol_get_fiche_end(); ?>
 
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) {
@@ -896,8 +890,7 @@ if (!empty($id) || !empty($ref)) {
 
 		print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $aaa, 0);
 
-		print '<div class="div-table-responsive">';
-		?>
+		print '<div class="div-table-responsive">'; ?>
 		<table class="liste">
 			<tr class="liste_titre">
 				<?php
@@ -907,8 +900,7 @@ if (!empty($id) || !empty($ref)) {
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
 					print '</td>';
-				}
-				?>
+				} ?>
 				<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
 				<td class="liste_titre"><?php echo $langs->trans('Attributes') ?></td>
 				<td class="liste_titre right"><?php echo $langs->trans('PriceImpact') ?></td>
@@ -925,8 +917,7 @@ if (!empty($id) || !empty($ref)) {
 					$searchpicto = $form->showCheckAddButtons('checkforselect', 1);
 					print $searchpicto;
 					print '</td>';
-				}
-				?>
+				} ?>
 			</tr>
 		<?php
 
@@ -988,7 +979,7 @@ if (!empty($id) || !empty($ref)) {
 				print '</tr>';
 			}
 		} else {
-			 print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table>';
 		print '</div>';

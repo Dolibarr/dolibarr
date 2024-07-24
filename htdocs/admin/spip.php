@@ -117,7 +117,7 @@ $head = mailmanspip_admin_prepare_head();
 /*
  * Spip
  */
-if (!empty($conf->global->ADHERENT_USE_SPIP)) {
+if (getDolGlobalString('ADHERENT_USE_SPIP')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';

@@ -117,11 +117,11 @@ $error = 0;
 
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('product', 'product_advance', 'read_prices'):$user->hasRight('product', 'lire');
+$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
 
 if ($object->isService()) {
 	$label = $langs->trans('Service');
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS')?$user->hasRight('service', 'service_advance', 'read_prices'):$user->hasRight('service', 'lire');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
 }
 
 if ($object->id > 0) {
@@ -611,10 +611,10 @@ if ($id > 0 || $ref) {
 
 		dol_htmloutput_events();
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -632,7 +632,7 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -686,7 +686,7 @@ if ($id > 0 || $ref) {
 			}
 			print '</td></tr>';
 
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				// Price
 				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 				if ($usercancreadprice) {
@@ -733,26 +733,26 @@ if ($id > 0 || $ref) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Stock alert threshold
-			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1), 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->rights->produit->creer).'</td><td>';
-			print $form->editfieldval("StockLimit", 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->rights->produit->creer, 'string');
+			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1), 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer')).'</td><td>';
+			print $form->editfieldval("StockLimit", 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer'), 'string');
 			print '</td></tr>';
 
 			// Desired stock
-			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1), 'desiredstock', $object->desiredstock, $object, $user->rights->produit->creer);
+			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1), 'desiredstock', $object->desiredstock, $object, $user->hasRight('produit', 'creer'));
 			print '</td><td>';
-			print $form->editfieldval("DesiredStock", 'desiredstock', $object->desiredstock, $object, $user->rights->produit->creer, 'string');
+			print $form->editfieldval("DesiredStock", 'desiredstock', $object->desiredstock, $object, $user->hasRight('produit', 'creer'), 'string');
 			print '</td></tr>';
 
 			// Real stock
 			$text_stock_options = $langs->trans("RealStockDesc").'<br>';
 			$text_stock_options .= $langs->trans("RealStockWillAutomaticallyWhen").'<br>';
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE) ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_BILL) ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
-			$text_stock_options .= (!empty($conf->global->STOCK_CALCULATE_ON_RECEPTION) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE) ? '- '.$langs->trans("StockOnReception").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') || getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') ? '- '.$langs->trans("DeStockOnShipment").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') ? '- '.$langs->trans("DeStockOnValidateOrder").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_BILL') ? '- '.$langs->trans("DeStockOnBill").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL') ? '- '.$langs->trans("ReStockOnBill").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') ? '- '.$langs->trans("ReStockOnValidateOrder").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') ? '- '.$langs->trans("ReStockOnDispatchOrder").'<br>' : '');
+			$text_stock_options .= (getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION') || getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION_CLOSE') ? '- '.$langs->trans("StockOnReception").'<br>' : '');
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('physicalStockTextStockOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
@@ -798,9 +798,9 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("expedition")) {
 				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$filterShipmentStatus = '';
-				if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+				if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 					$filterShipmentStatus = Expedition::STATUS_VALIDATED.','.Expedition::STATUS_CLOSED;
-				} elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
+				} elseif (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 					$filterShipmentStatus = Expedition::STATUS_CLOSED;
 				}
 				if ($found) {
@@ -874,7 +874,7 @@ if ($id > 0 || $ref) {
 			print '</tr>';
 
 			// Last movement
-			if (!empty($user->rights->stock->mouvement->lire)) {
+			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_product = ".((int) $object->id);
@@ -934,9 +934,9 @@ if (empty($reshook)) {
 	if (empty($action) && $object->id) {
 		print "<div class=\"tabsAction\">\n";
 
-		if ($user->rights->stock->mouvement->creer) {
-			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("TransferStock").'</a>';
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
+			if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
@@ -944,8 +944,8 @@ if (empty($reshook)) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
-		if ($user->rights->stock->mouvement->creer) {
-			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
+		if ($user->hasRight('stock', 'mouvement', 'creer')) {
+			if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("CorrectStock").'</a>';
@@ -959,7 +959,7 @@ if (empty($reshook)) {
 }
 
 
-if (!$variants) {
+if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {
 	/*
 	 * Stock detail (by warehouse). May go down into batch details.
 	 */
@@ -989,11 +989,11 @@ if (!$variants) {
 		}
 		print '</td>';
 		print '<td class="right">'.$langs->trans("batch_number").'</td>';
-		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 			$colspan--;
 			print '<td class="center width100">'.$langs->trans("SellByDate").'</td>';
 		}
-		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 			$colspan--;
 			print '<td class="center width100">'.$langs->trans("EatByDate").'</td>';
 		}
@@ -1050,7 +1050,7 @@ if (!$variants) {
 			print $entrepotstatic->getNomUrl(1);
 			if (!empty($conf->use_javascript_ajax) && isModEnabled('productbatch') && $object->hasbatch()) {
 				print '<a class="collapse_batch marginleftonly" id="ent' . $entrepotstatic->id . '" href="#">';
-				print (empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? '(+)' : '(-)');
+				print(!getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT') ? '(+)' : '(-)');
 				print '</a>';
 			}
 			print '</td>';
@@ -1068,9 +1068,10 @@ if (!$variants) {
 			}
 
 			// Sell price
-			$minsellprice = null; $maxsellprice = null;
-			print '<td class="right">';
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			$minsellprice = null;
+			$maxsellprice = null;
+			print '<td class="right nowraponall">';
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				foreach ($object->multiprices as $priceforlevel) {
 					if (is_numeric($priceforlevel)) {
 						if (is_null($maxsellprice) || $priceforlevel > $maxsellprice) {
@@ -1098,7 +1099,7 @@ if (!$variants) {
 
 			// Value sell
 			print '<td class="right amount nowraponall">';
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print '<span class="valignmiddle">';
 				if ($usercancreadprice) {
 					if ($minsellprice != $maxsellprice) {
@@ -1143,12 +1144,12 @@ if (!$variants) {
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder centpercent"><tr><td width="10%"></td>';
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
-						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							print '<td class="center" width="10%">';
 							print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
 							print '</td>';
 						}
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							print '<td class="center" width="10%">';
 							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
 							print '</td>';
@@ -1163,23 +1164,27 @@ if (!$variants) {
 						print '<td></td>';
 						print '</tr>';
 					} else {
-						print "\n".'<tr style="display:'.(empty($conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT) ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="left">';
+						print "\n".'<tr style="display:'.(!getDolGlobalString('STOCK_SHOW_ALL_BATCH_BY_DEFAULT') ? 'none' : 'visible').';" class="batch_warehouse'.$entrepotstatic->id.'"><td class="left">';
 						print '</td>';
 						print '<td class="right nowraponall">';
-						print $product_lot_static->getNomUrl(1);
+						if ($product_lot_static->id > 0) {
+							print $product_lot_static->getNomUrl(1);
+						} else {
+							print $product_lot_static->getNomUrl(1, 'nolink');
+						}
 						print '</td>';
 						$colspan = 3;
-						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->sellby, 'day').'</td>';
 						}
-						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 							$colspan--;
 							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
 						}
-						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
+						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : (($pdluo->qty > 1 && $object->status_batch == 2) ? ' '.img_warning($langs->trans('IlligalQtyForSerialNumbers')) : '')).'</td>';
 						print '<td colspan="4"></td>';
-						print '<td class="center">';
+						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("TransferStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1191,7 +1196,7 @@ if (!$variants) {
 							//print img_edit().'</a>';
 						}
 						print '</td>';
-						print '<td class="center">';
+						print '<td class="center tdoverflowmax125" title="'.dol_escape_htmltag($langs->trans("CorrectStock")).'">';
 						if ($entrepotstatic->status != $entrepotstatic::STATUS_CLOSED) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=correction&amp;pdluoid='.$pdluo->id.'">';
 							print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone paddingright" style="color: #a69944"');
@@ -1218,7 +1223,7 @@ if (!$variants) {
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
 	if ($usercancreadprice) {
-		print ($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
+		print($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
 	}
 	print '</td>';
 	// Value purchase
@@ -1231,7 +1236,7 @@ if (!$variants) {
 	if ($num) {
 		if ($total) {
 			print '<span class="valignmiddle">';
-			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print $form->textwithpicto('', $langs->trans("Variable"));
 			} elseif ($usercancreadprice) {
 				print price($totalvaluesell / $total, 1);
@@ -1244,7 +1249,7 @@ if (!$variants) {
 	print '<td class="liste_total right amount">';
 	if ($num) {
 		print '<span class="valignmiddle">';
-		if (empty($conf->global->PRODUIT_MULTIPRICES) && $usercancreadprice) {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES') && $usercancreadprice) {
 			print price(price2num($totalvaluesell, 'MT'), 1);
 		} else {
 			print $form->textwithpicto('', $langs->trans("Variable"));
@@ -1259,7 +1264,7 @@ if (!$variants) {
 	print "</table>";
 	print '</div>';
 
-	if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE')) {
 		print '<br><br>';
 		print load_fiche_titre($langs->trans('AddNewProductStockWarehouse'));
 
@@ -1327,8 +1332,7 @@ if (!$variants) {
 
 	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0);
 
-	print '<div class="div-table-responsive">';
-	?>
+	print '<div class="div-table-responsive">'; ?>
 	<table class="liste">
 		<tr class="liste_titre">
 			<td class="liste_titre"><?php echo $langs->trans('Product') ?></td>
@@ -1345,8 +1349,7 @@ if (!$variants) {
 			foreach ($productCombinations as $currcomb) {
 				$prodstatic->fetch($currcomb->fk_product_child);
 				$prodstatic->load_stock();
-				$stock_total += $prodstatic->stock_reel;
-				?>
+				$stock_total += $prodstatic->stock_reel; ?>
 				<tr class="oddeven">
 					<td><?php echo $prodstatic->getNomUrl(1) ?></td>
 					<td>
@@ -1382,8 +1385,7 @@ if (!$variants) {
 			print '</tr>';
 		} else {
 			print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
-		}
-		?>
+		} ?>
 	</table>
 
 	<?php

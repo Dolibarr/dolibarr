@@ -61,7 +61,7 @@ class modSupplierProposal extends DolibarrModules
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 
-		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
+		// Config pages. Put here list of php page names stored in admin directory used to setup module.
 		$this->config_page_url = array("supplier_proposal.php");
 
 		// Dependencies

@@ -84,8 +84,8 @@ print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 $coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
-<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
+<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -103,8 +103,7 @@ $coldisplay++;
 		if (empty($canchangeproduct)) {
 			if ($line->fk_parent_line > 0) {
 				echo img_picto('', 'rightarrow');
-			}
-			?>
+			} ?>
 			<a href="<?php echo DOL_URL_ROOT.'/product/card.php?id='.$line->fk_product; ?>">
 			<?php
 			if ($line->product_type == 1) {
@@ -112,8 +111,7 @@ $coldisplay++;
 			} else {
 				print img_object($langs->trans('ShowProduct'), 'product');
 			}
-			echo ' '.$line->ref;
-			?>
+			echo ' '.$line->ref; ?>
 			</a>
 			<?php
 			echo ' - '.nl2br($line->product_label);
@@ -146,7 +144,7 @@ $coldisplay++;
 
 	// Do not allow editing during a situation cycle
 	// but in some situations that is required (update legal informations for example)
-	if (!empty($conf->global->INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION)) {
+	if (getDolGlobalString('INVOICE_SITUATION_CAN_FORCE_UPDATE_DESCRIPTION')) {
 		$situationinvoicelinewithparent = 0;
 	}
 
@@ -154,15 +152,15 @@ $coldisplay++;
 		// editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
-		if (!empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) {
+		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 			$nbrows = $conf->global->MAIN_INPUT_DESC_HEIGHT;
 		}
 		$enable = (isset($conf->global->FCKEDITOR_ENABLE_DETAILS) ? $conf->global->FCKEDITOR_ENABLE_DETAILS : 0);
 		$toolbarname = 'dolibarr_details';
-		if (!empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) {
+		if (getDolGlobalString('FCKEDITOR_ENABLE_DETAILS_FULL')) {
 			$toolbarname = 'dolibarr_notes';
 		}
-		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', (empty($conf->global->MAIN_DOLEDITOR_HEIGHT) ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
+		$doleditor = new DolEditor('product_desc', GETPOSTISSET('product_desc') ? GETPOST('product_desc', 'restricthtml') : $line->description, '', (!getDolGlobalString('MAIN_DOLEDITOR_HEIGHT') ? 164 : $conf->global->MAIN_DOLEDITOR_HEIGHT), $toolbarname, '', false, true, $enable, $nbrows, '98%');
 		$doleditor->Create();
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">';
@@ -199,8 +197,7 @@ $coldisplay++;
 
 	<?php
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
-		$coldisplay++;
-		?>
+		$coldisplay++; ?>
 		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 		<?php
 		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
@@ -259,10 +256,10 @@ $coldisplay++;
 	</td>
 
 	<?php
-	if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+	if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		$unit_type = false;
 		// limit unit select to unit type
-		if (!empty($line->fk_unit) && empty($conf->global->MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE)) {
+		if (!empty($line->fk_unit) && !getDolGlobalString('MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE')) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 			$cUnit = new CUnits($line->db);
 			if ($cUnit->fetch($line->fk_unit) > 0) {
@@ -303,21 +300,21 @@ $coldisplay++;
 	}
 
 	if (!empty($usemargins)) {
-		if (!empty($user->rights->margins->creer)) {
-			$coldisplay++;
-			?>
+		if ($user->hasRight('margins', 'creer')) {
+			$coldisplay++; ?>
 		<td class="margininfos right">
 			<!-- For predef product -->
 			<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
-			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo (GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
+			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo(GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
 		</td>
-		<?php }
+			<?php
+		}
 
-		if ($user->rights->margins->creer) {
-			if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+		if ($user->hasRight('margins', 'creer')) {
+			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				$margin_rate = (GETPOSTISSET("np_marginRate") ? GETPOST("np_marginRate", "alpha", 2) : (($line->pa_ht == 0) ? '' : price($line->marge_tx)));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0) {
@@ -327,7 +324,7 @@ $coldisplay++;
 				}
 				$coldisplay++;
 			}
-			if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+			if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 				$mark_rate = (GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : price($line->marque_tx));
 				// if credit note, dont allow to modify margin
 				if ($line->subprice < 0) {
@@ -350,10 +347,10 @@ $coldisplay++;
 
 <?php if (isModEnabled("service") && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
-	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
 		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay - (!getDolGlobalString('MAIN_VIEW_LINE_NUMBER') ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
@@ -362,32 +359,32 @@ $coldisplay++;
 	print '<script>';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
-			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
 
 
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
-			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
 		$res = $line->fetch_product();
-		if ($res  > 0  ) {
-			if ( $line->product->isMandatoryPeriod() && $line->product->isService()) {
+		if ($res  > 0) {
+			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
 				print  'jQuery("#date_start").addClass("error");';
 			}
 		}
 	}
 	if (!$line->date_end) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
-			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
 		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
-			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 
 		$res = $line->fetch_product();
 		// on doit fetch le product là !!! pour connaître le type
-		if ($res  > 0  ) {
+		if ($res  > 0) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
 				print  'jQuery("#date_end").addClass("error");';
 			}
@@ -404,26 +401,25 @@ $coldisplay++;
 <script>
 
 <?php
-if (!empty($usemargins) && $user->rights->margins->creer) {
+if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 	?>
 	/* Some js test when we click on button "Add" */
 	jQuery(document).ready(function() {
 	<?php
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 		?>
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+	if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 		?>
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
 			});
 		<?php
-	}
-	?>
+	} ?>
 	});
 
 	/* TODO This does not work for number with thousand separator that is , */

@@ -18,37 +18,42 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Hệ thống quản lý tri thức
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Quản lý cơ sở Quản lý kiến thức (KM) hoặc Bộ phận trợ giúp
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Cài đặt
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = Thiết lập hệ thống quản lý tri thức
+KnowledgeManagementSetupPage = Trang thiết lập Hệ thống quản lý kiến thức
 
 
 #
 # About page
 #
-About = Về
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Giới thiệu về Quản lý tri thức
+KnowledgeManagementAboutPage = Quản lý kiến thức về trang
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Quản lý kiến thức
+MenuKnowledgeRecord = Kiến thức cơ bản
+MenuKnowledgeRecordShort = Kiến thức cơ bản
+ListKnowledgeRecord = Danh sách bài viết
+NewKnowledgeRecord = Bài viết mới
+ValidateReply = Xác thực giải pháp
+KnowledgeRecords = Bài viết
 KnowledgeRecord = Điều
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeRecordExtraFields = Trường ngoại lệ cho bài viết
+GroupOfTicket=Nhóm vé
+YouCanLinkArticleToATicketCategory=Bạn có thể liên kết bài viết với một nhóm yêu cầu (vì vậy bài viết sẽ được đánh dấu trên bất kỳ yêu cầu nào trong nhóm này)
+SuggestedForTicketsInGroup=Đề xuất tạo vé
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Đặt là lỗi thời
+ConfirmCloseKM=Bạn có xác nhận việc đóng bài viết này là lỗi thời không?
+ConfirmReopenKM=Bạn có muốn khôi phục bài viết này về trạng thái "Đã xác thực" không?
+BoxLastKnowledgerecordDescription=%s bài viết cuối cùng
+BoxLastKnowledgerecord=Bài viết cuối cùng
+BoxLastKnowledgerecordContent=Bài viết cuối cùng
+BoxLastKnowledgerecordModifiedContent=Bài viết sửa đổi lần cuối
+BoxLastModifiedKnowledgerecordDescription=Bài viết được sửa đổi %s cuối cùng
+BoxLastModifiedKnowledgerecord=Bài viết sửa đổi lần cuối

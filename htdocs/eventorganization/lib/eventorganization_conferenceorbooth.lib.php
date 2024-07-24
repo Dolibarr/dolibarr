@@ -47,7 +47,7 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if (!empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$head[$h][0] = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_contact.php?id='.$object->id.$withProjectUrl;
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		$head[$h][2] = 'contact';
@@ -118,7 +118,6 @@ function conferenceorboothPrepareHead($object, $with_project = 0)
  */
 function conferenceorboothProjectPrepareHead($object)
 {
-
 	global $db, $langs, $conf;
 
 	$langs->load("eventorganization");
@@ -126,7 +125,7 @@ function conferenceorboothProjectPrepareHead($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/eventorganization/conferenceorbooth_list.php", 1).'?projectid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/eventorganization/conferenceorbooth_list.php?projectid=' . $object->id;
 	$head[$h][1] = $langs->trans("ConferenceOrBooth");
 	$head[$h][2] = 'conferenceorbooth';
 	// Enable caching of conf or booth count attendees

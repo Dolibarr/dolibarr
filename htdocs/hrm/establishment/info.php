@@ -42,11 +42,11 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -86,8 +86,12 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('hrm')) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 
 /*
@@ -178,20 +182,20 @@ if ($object->id > 0) {
 	 }
 	 }
 	 }*/
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
-	 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-	 print '<div class="fichecenter">';
-	 print '<div class="underbanner clearboth"></div>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
-	 $object->info($object->id);
-	 dol_print_object_info($object, 1);
+	$object->info($object->id);
+	dol_print_object_info($object, 1);
 
-	 print '</div>';
+	print '</div>';
 
-	 print dol_get_fiche_end();
+	print dol_get_fiche_end();
 }
 
 

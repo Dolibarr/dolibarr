@@ -21,10 +21,12 @@
  */
 
 /**
- * 		\defgroup   fournisseur     Module suppliers
- *		\file       htdocs/core/modules/modFournisseur.class.php
- *		\ingroup    fournisseur
- *		\brief      Description and activation file for the module Supplier
+ *  \defgroup   fournisseur     Module suppliers
+ *  \brief      Module to manage suppliers relations and activities
+ *
+ *  \file       htdocs/core/modules/modFournisseur.class.php
+ *  \ingroup    fournisseur
+ *  \brief      Description and activation file for the module Supplier
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
@@ -41,7 +43,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -233,7 +235,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'supprimer';
 
-		if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
+		if (getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 			$r++;
 			$this->rights[$r][0] = 1190;
 			$this->rights[$r][1] = 'Approve supplier order (second level)'; // $langs->trans("Permission1190");
@@ -307,9 +309,14 @@ class modFournisseur extends DolibarrModules
 
 		// Exports
 		//--------
+		$uselocaltax1 = (is_object($mysoc) && $mysoc->localtax1_assuj) ? $mysoc->localtax1_assuj : 0;
+		$uselocaltax2 = (is_object($mysoc) && $mysoc->localtax2_assuj) ? $mysoc->localtax2_assuj : 0;
+
 		$r = 0;
 
 		$langs->loadLangs(array("suppliers", "multicurrency"));
+
+		$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
@@ -321,13 +328,30 @@ class modFournisseur extends DolibarrModules
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6',
 			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
 			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_supplier'=>"RefSupplier", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>'DateMaxPayment',
-			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote",
-			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription", 'fd.tva_tx'=>"LineVATRate", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount", 'fd.total_ht'=>"LineTotalHT",
-			'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT", 'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
+			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT",
+			'f.localtax1'=>"TotalLT1", 'f.localtax2'=>"TotalLT2",
+			'f.paye'=>"InvoicePaid", 'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote",
+			'fd.rowid'=>'LineId', 'fd.description'=>"LineDescription", 'fd.qty'=>"LineQty", 'fd.remise_percent'=>"Discount",
+			'fd.tva_tx'=>"LineVATRate", 'fd.total_ht'=>"LineTotalHT", 'fd.total_ttc'=>"LineTotalTTC", 'fd.tva'=>"LineTotalVAT",
+			'fd.localtax1_tx'=>"LineLT1Rate", 'fd.localtax1_type'=>"LineLT1Type", 'fd.total_localtax1'=>"LineTotalLT1",
+			'fd.localtax2_tx'=>"LineLT2Rate", 'fd.localtax2_type'=>"LineLT2Type", 'fd.total_localtax2'=>"LineTotalLT2",
+			'fd.date_start'=>"DateStart", 'fd.date_end'=>"DateEnd", 'fd.special_code'=>'SpecialCode',
 			'fd.product_type'=>'TypeOfLineServiceOrProduct', 'fd.fk_product'=>'ProductId',
-			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', 'p.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
+			'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel', $alias_product_perentity.'.accountancy_code_buy'=>'ProductAccountancyBuyCode', 'project.rowid'=>'ProjectId',
 			'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
+		if (!$uselocaltax1) {
+			unset($this->export_fields_array[$r]['fd.localtax1_tx']);
+			unset($this->export_fields_array[$r]['fd.localtax1_type']);
+			unset($this->export_fields_array[$r]['fd.total_localtax1']);
+		}
+		if (!$uselocaltax2) {
+			unset($this->export_fields_array[$r]['fd.localtax2_tx']);
+			unset($this->export_fields_array[$r]['fd.localtax2_type']);
+			unset($this->export_fields_array[$r]['fd.total_localtax2']);
+		}
+
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -335,6 +359,13 @@ class modFournisseur extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
+		if (!$uselocaltax1) {
+			unset($this->export_fields_array[$r]['f.localtax1']);
+		}
+		if (!$uselocaltax2) {
+			unset($this->export_fields_array[$r]['f.localtax2']);
+		}
+
 		//$this->export_TypeFields_array[$r]=array(
 		//    's.rowid'=>"Numeric",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text',
 		//    's.ape'=>'Text','s.idprof4'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.total_tva'=>"Numeric",
@@ -342,21 +373,35 @@ class modFournisseur extends DolibarrModules
 		//     'fd.tva'=>"Numeric",'fd.product_type'=>'Numeric','fd.fk_product'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
-			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>'Date',
-			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text", 'fd.description'=>"Text", 'fd.tva_tx'=>"Text",
-			'fd.qty'=>"Numeric", 'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.date_start'=>"Date", 'fd.date_end'=>"Date", 'fd.special_code'=>"Numeric",
-			'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label',
-			'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text'
+			's.rowid' => 'Numeric', 's.nom'=>'Text', 'ps.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text',
+			's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
+			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>'Date',
+			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
+			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>"Numeric", 'f.localtax2'=>"Numeric",
+			'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text",
+			'fd.rowid'=>'Numeric', 'fd.description'=>"Text", 'fd.tva_tx'=>"Text",
+			'fd.qty'=>"Numeric", 'fd.remise_percent'=>"Numeric",
+			'fd.total_ht'=>"Numeric", 'fd.total_ttc'=>"Numeric", 'fd.tva'=>"Numeric", 'fd.total_localtax1'=>"Numeric", 'fd.total_localtax2'=>"Numeric",
+			'fd.localtax1_tx'=>'Numeric', 'fd.localtax2_tx'=>'Numeric', 'fd.localtax1_type'=>'Numeric', 'fd.localtax2_type'=>'Numeric',
+			'fd.date_start'=>"Date", 'fd.date_end'=>"Date", 'fd.special_code'=>"Numeric",
+			'fd.product_type'=>'Numeric', 'fd.fk_product'=>'List:product:label', $alias_product_perentity . '.accountancy_code_buy'=>'Text',
+			'p.ref'=>'Text', 'p.label'=>'Text', 'project.ref'=>'Text', 'project.title'=>'Text',
+			'f.multicurrency_code' => 'Text',
+			'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 'ps.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.siret'=>'company',
 			's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company', 's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company', 'f.rowid'=>"invoice",
-			'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.date_lim_reglement'=>'invoice', 'f.total_ht'=>"invoice", 'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice",
-			'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line", 'fd.tva_tx'=>"invoice_line", 'fd.qty'=>"invoice_line",
-			'fd.remise_percent'=>"invoice_line", 'fd.total_ht'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>"invoice_line",
+			'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.date_lim_reglement'=>'invoice',
+			'f.fk_cond_reglement'=>'invoice', 'f.fk_mode_reglement'=>'invoice',
+			'f.total_ht'=>"invoice", 'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice",
+			'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'fd.rowid'=>'invoice_line', 'fd.description'=>"invoice_line", 'fd.qty'=>"invoice_line",
+			'fd.total_ht'=>"invoice_line", 'fd.tva'=>"invoice_line", 'fd.total_ttc'=>"invoice_line", 'fd.total_localtax1'=>"invoice_line", 'fd.total_localtax2'=>"invoice_line",
+			'fd.tva_tx'=>"invoice_line", 'fd.localtax1_tx'=>"invoice_line", 'fd.localtax2_tx'=>"invoice_line", 'fd.localtax1_type'=>"invoice_line", 'fd.localtax2_type'=>"invoice_line",
+			'fd.remise_percent'=>"invoice_line",
+			'fd.date_start'=>"invoice_line", 'fd.date_end'=>"invoice_line", 'fd.special_code'=>"invoice_line",
 			'fd.product_type'=>'invoice_line', 'fd.fk_product'=>'product',
-			'p.ref'=>'product', 'p.label'=>'product', 'p.accountancy_code_buy'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
+			'p.ref'=>'product', 'p.label'=>'product', $alias_product_perentity.'.accountancy_code_buy'=>'product', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r] = array('invoice_line'=>'fd.rowid', 'product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
@@ -372,7 +417,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
@@ -384,10 +429,11 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.((int) $user->id);
 		}
 
+		// Invoices and payments
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Factures fournisseurs et reglements';
@@ -397,11 +443,20 @@ class modFournisseur extends DolibarrModules
 			's.rowid'=>"IdCompany", 's.nom'=>'CompanyName', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'c.code'=>'CountryCode', 's.phone'=>'Phone',
 			's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5', 's.idprof6'=>'ProfId6',
 			's.code_compta'=>'CustomerAccountancyCode', 's.code_compta_fournisseur'=>'SupplierAccountancyCode', 's.tva_intra'=>'VATIntra',
-			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_supplier'=>"RefSupplier", 'f.datec'=>"InvoiceDateCreation",
-			'f.datef'=>"DateInvoice", 'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT", 'f.paye'=>"InvoicePaid",
+			'f.rowid'=>"InvoiceId", 'f.ref'=>"InvoiceRef", 'f.ref_supplier'=>"RefSupplier", 'f.datec'=>"InvoiceDateCreation", 'f.datef'=>"DateInvoice", 'f.date_lim_reglement'=>"DateMaxPayment",
+			'f.fk_cond_reglement'=>'IdPaymentTerm', 'f.fk_mode_reglement'=>'IdPaymentMode',
+			'f.total_ht'=>"TotalHT", 'f.total_ttc'=>"TotalTTC", 'f.total_tva'=>"TotalVAT",
+			'f.localtax1'=>"TotalLT1", 'f.localtax2'=>"TotalLT2",
+			'f.paye'=>"InvoicePaid",
 			'f.fk_statut'=>'InvoiceStatus', 'f.note_public'=>"InvoiceNote", 'p.rowid'=>'PaymentId', 'pf.amount'=>'AmountPayment',
 			'p.datep'=>'DatePayment', 'p.num_paiement'=>'PaymentNumber', 'p.fk_bank'=>'IdTransaction', 'project.rowid'=>'ProjectId', 'project.ref'=>'ProjectRef', 'project.title'=>'ProjectLabel'
 		);
+		if (!$uselocaltax1) {
+			unset($this->export_fields_array[$r]['f.localtax1']);
+		}
+		if (!$uselocaltax2) {
+			unset($this->export_fields_array[$r]['f.localtax2']);
+		}
 		if (isModEnabled("multicurrency")) {
 			$this->export_fields_array[$r]['f.multicurrency_code'] = 'Currency';
 			$this->export_fields_array[$r]['f.multicurrency_tx'] = 'CurrencyRate';
@@ -416,17 +471,24 @@ class modFournisseur extends DolibarrModules
 		//	'pf.amount'=>'Numeric','p.datep'=>'Date','p.num_paiement'=>'Numeric'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text',
-			's.idprof4'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text", 'f.datec'=>"Date", 'f.datef'=>"Date", 'f.total_ht'=>"Numeric",
-			'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text", 'pf.amount'=>'Numeric',
-			'p.datep'=>'Date', 'p.num_paiement'=>'Numeric', 'p.fk_bank'=>'Numeric', 'project.ref'=>'Text', 'project.title'=>'Text'
+			's.rowid'=>'Numeric', 's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'c.code'=>'Text', 's.phone'=>'Text', 's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text',
+			's.idprof4'=>'Text', 's.idprof5'=>'Text', 's.idprof6'=>'Text', 's.code_compta'=>'Text', 's.code_compta_fournisseur'=>'Text', 's.tva_intra'=>'Text',
+			'f.rowid'=>'Numeric', 'f.ref'=>"Text", 'f.ref_supplier'=>"Text",
+			'f.datec'=>"Date", 'f.datef'=>"Date", 'f.date_lim_reglement'=>'Date',
+			'f.fk_cond_reglement'=>'Numeric', 'f.fk_mode_reglement'=>'Numeric',
+			'f.total_ht'=>"Numeric", 'f.total_ttc'=>"Numeric", 'f.total_tva'=>"Numeric", 'f.localtax1'=>"Numeric", 'f.localtax2'=>"Numeric",
+			'f.paye'=>"Boolean", 'f.fk_statut'=>'Status', 'f.note_public'=>"Text", 'pf.amount'=>'Numeric',
+			'p.rowid'=>'Numeric', 'p.datep'=>'Date', 'p.num_paiement'=>'Numeric', 'p.fk_bank'=>'Numeric', 'project.rowid'=>'Numeric', 'project.ref'=>'Text', 'project.title'=>'Text',
+			'f.multicurrency_code' => 'Text',
+			'f.multicurrency_tx' => 'Number', 'f.multicurrency_total_ht' => 'Number', 'f.multicurrency_total_tva' => 'Number', 'f.multicurrency_total_ttc' => 'Number'
 		);
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'c.code'=>'company', 's.phone'=>'company',
 			's.siren'=>'company', 's.siret'=>'company', 's.ape'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company',
 			's.code_compta'=>'company', 's.code_compta_fournisseur'=>'company', 's.tva_intra'=>'company',
-			'f.rowid'=>"invoice", 'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.total_ht'=>"invoice",
-			'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice", 'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'p.rowid'=>'payment', 'pf.amount'=>'payment',
+			'f.rowid'=>"invoice", 'f.ref'=>"invoice", 'f.ref_supplier'=>"invoice", 'f.datec'=>"invoice", 'f.datef'=>"invoice", 'f.date_lim_reglement'=>'invoice',
+			'f.fk_cond_reglement'=>'invoice', 'f.fk_mode_reglement'=>'invoice',
+			'f.total_ht'=>"invoice", 'f.total_ttc'=>"invoice", 'f.total_tva'=>"invoice", 'f.paye'=>"invoice", 'f.fk_statut'=>'invoice', 'f.note_public'=>"invoice", 'p.rowid'=>'payment', 'pf.amount'=>'payment',
 			'p.datep'=>'payment', 'p.num_paiement'=>'payment', 'p.fk_bank'=>'account', 'project.rowid'=>'project', 'project.ref'=>'project', 'project.title'=>'project');
 		$this->export_dependencies_array[$r] = array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
@@ -437,7 +499,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields object
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
@@ -448,7 +510,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn as p ON pf.fk_paiementfourn = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_invoice').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.((int) $user->id);
 		}
 
@@ -476,7 +538,7 @@ class modFournisseur extends DolibarrModules
 			$this->export_fields_array[$r]['f.multicurrency_total_tva'] = 'MulticurrencyAmountVAT';
 			$this->export_fields_array[$r]['f.multicurrency_total_ttc'] = 'MulticurrencyAmountTTC';
 		}
-		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)) {
+		if (!getDolGlobalString('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED')) {
 			unset($this->export_fields_array['f.date_approve2']);
 			unset($this->export_fields_array['ua2.login']);
 		}
@@ -513,7 +575,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as ps ON ps.rowid = s.parent';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
@@ -528,7 +590,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .= ' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
 		$this->export_sql_end[$r] .= ' AND f.entity IN ('.getEntity('supplier_order').')';
-		if (is_object($user) && empty($user->rights->societe->client->voir)) {
+		if (is_object($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.((int) $user->id);
 		}
 
@@ -563,10 +625,10 @@ class modFournisseur extends DolibarrModules
 			'f.fk_account' => 'Bank Account*',
 			'f.note_public' => 'InvoiceNote',
 			'f.note_private' => 'NotePrivate',
-			'f.fk_cond_reglement' => 'Payment Condition',
-			'f.fk_mode_reglement' => 'Payment Mode',
+			'f.fk_cond_reglement' => 'PaymentTerm',
+			'f.fk_mode_reglement' => 'PaymentMode',
 			'f.model_pdf' => 'Model',
-			'f.date_valid' => 'Validation Date'
+			'f.date_valid' => 'DateValidation'
 		);
 		if (isModEnabled("multicurrency")) {
 			$this->import_fields_array[$r]['f.multicurrency_code'] = 'Currency';
@@ -628,8 +690,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'f.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
-				'path'=>"/core/modules/supplier_invoice/".(empty($conf->global->INVOICE_SUPPLIER_ADDON_NUMBER) ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
+				'class'=>(!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_invoice/".(!getDolGlobalString('INVOICE_SUPPLIER_ADDON_NUMBER') ? 'mod_facture_fournisseur_cactus' : $conf->global->INVOICE_SUPPLIER_ADDON_NUMBER).'.php',
 				'classobject'=>'FactureFournisseur',
 				'pathobject'=>'/fourn/class/fournisseur.facture.class.php',
 			),
@@ -781,8 +843,8 @@ class modFournisseur extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
-				'path'=>"/core/modules/supplier_order/".(empty($conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER) ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
+				'class'=>(!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER),
+				'path'=>"/core/modules/supplier_order/".(!getDolGlobalString('COMMANDE_SUPPLIER_ADDON_NUMBER') ? 'mod_commande_fournisseur_muguet' : $conf->global->COMMANDE_SUPPLIER_ADDON_NUMBER).'.php',
 				'classobject'=>'CommandeFournisseur',
 				'pathobject'=>'/fourn/class/fournisseur.commande.class.php',
 			),

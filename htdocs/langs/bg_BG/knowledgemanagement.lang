@@ -18,37 +18,42 @@
 #
 
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Система за управление на знания
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
+ModuleKnowledgeManagementDesc=Управлявайте база за управление на знания (KM) или Help-Desk
 
 #
 # Admin page
 #
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Настройки
-KnowledgeManagementSetupPage = Knowledge Management System setup page
+KnowledgeManagementSetup = Настройка на системата за управление на знания
+KnowledgeManagementSetupPage = Страница за настройка на системата за управление на знания
 
 
 #
 # About page
 #
-About = Относно
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
+KnowledgeManagementAbout = Относно управлението на знания
+KnowledgeManagementAboutPage = Управление на знания относно страницата
 
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementArea = Управление на знанието
+MenuKnowledgeRecord = Знание
+MenuKnowledgeRecordShort = Знание
+ListKnowledgeRecord = Списък на статиите
+NewKnowledgeRecord = Нова статия
+ValidateReply = Потвърждавам решение
+KnowledgeRecords = Статии
 KnowledgeRecord = Артикул
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
+KnowledgeRecordExtraFields = Допълнителни полета за статия
+GroupOfTicket=Група от тикети
+YouCanLinkArticleToATicketCategory=Можете да свържете статията към група тикет (така че статията ще бъде осветена във всеки тикети в тази група)
+SuggestedForTicketsInGroup=Предложено при създаване на тикет
 
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+SetObsolete=Задаване като остаряло
+ConfirmCloseKM=Потвърждавате ли закриването на тази статия като остаряла?
+ConfirmReopenKM=Искате ли да възстановите състоянието на тази статия „Потвърдена“?
+BoxLastKnowledgerecordDescription=Последни %s статии
+BoxLastKnowledgerecord=Последни статии
+BoxLastKnowledgerecordContent=Последни статии
+BoxLastKnowledgerecordModifiedContent=Последно променени статии
+BoxLastModifiedKnowledgerecordDescription=Последно %s променени статии
+BoxLastModifiedKnowledgerecord=Последно променени статии

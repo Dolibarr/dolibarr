@@ -88,7 +88,7 @@ function expedition_admin_prepare_head()
 	$h++;
 	*/
 
-	if (!empty($conf->global->MAIN_SUBMODULE_EXPEDITION)) {
+	if (getDolGlobalString('MAIN_SUBMODULE_EXPEDITION')) {
 		$extrafields->fetch_name_optionals_label('expedition');
 		$extrafields->fetch_name_optionals_label('expeditiondet');
 

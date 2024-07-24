@@ -8,7 +8,7 @@ dist: focal
 
 language: generic
 
-scan_logs: false
+#scan_logs: false
 
 git:
   depth: 1
@@ -31,25 +31,27 @@ env:
 
 jobs:
   fast_finish: true
-  #allow_failures:
-  #- php: nightly
+  allow_failures:
+  - php: '8.3'
   include:
-    - stage: PHP 7.0-8.1
+    - stage: PHP min and max
       if: type = push
       php: '7.1'
       env: 
       - DB=postgresql
       - TRAVIS_PHP_VERSION=7.1
-    - stage: PHP 7.0-8.1
+    - stage: PHP min and max
       if: type = pull_request OR type = push
-      php: '8.1'
+      php: '8.2'
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=8.2
+    - stage: PHP 8.3
+      if: type = push AND branch = develop
+      php: '8.3'
       env: 
       - DB=mysql
-      - TRAVIS_PHP_VERSION=8.1
-    #- stage: PHP Dev
-    #  if: type = push AND branch = developdisabled
-    #  php: '8.2'
-    #  env: DB=mysql
+      - TRAVIS_PHP_VERSION=8.3
 
 notifications:
   email:
@@ -81,7 +83,13 @@ before_install:
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
   	sudo apt install unzip apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
   fi
-
+  if [ "$TRAVIS_PHP_VERSION" = '8.2' ]; then
+  	sudo apt install unzip apache2 php8.2 php8.2-cli php8.2-curl php8.2-mysql php8.2-pgsql php8.2-gd php8.2-imap php8.2-intl php8.2-ldap php8.2-xml php8.2-mbstring php8.2-xml php8.2-zip libapache2-mod-php8.2
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = '8.3' ]; then
+  	sudo apt install unzip apache2 php8.3 php8.3-cli php8.3-curl php8.3-mysql php8.3-pgsql php8.3-gd php8.3-imap php8.3-intl php8.3-ldap php8.3-xml php8.3-mbstring php8.3-xml php8.3-zip libapache2-mod-php8.3
+  fi
+  
 - |
   echo Install pgsql if run is for pgsql
   if [ "$DB" = 'postgresql' ]; then
@@ -112,6 +120,9 @@ install:
   if [ "$TRAVIS_PHP_VERSION" = '8.1' ]; then
     sudo update-alternatives --set php /usr/bin/php8.1
   fi 
+  if [ "$TRAVIS_PHP_VERSION" = '8.2' ]; then
+    sudo update-alternatives --set php /usr/bin/php8.2
+  fi 
   php -i | head -
   
 - |
@@ -122,6 +133,8 @@ install:
   php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
   sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
   sudo chmod -R a+rwx /usr/local/bin/composer
+  
+  #sudo apt install composer
   composer -V
   composer -n config -g vendor-dir htdocs/includes
   echo
@@ -146,7 +159,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   # phpunit 9 is required for php 8
-  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
       sudo composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
@@ -255,8 +268,9 @@ before_script:
 
   - |
     export CONF_FILE=htdocs/conf/conf.php
-    echo "Setting up Dolibarr $CONF_FILE"
+    echo "Setting up Dolibarr '$CONF_FILE'"
     echo '<?php' > $CONF_FILE
+    echo 'error_reporting(E_ALL);' >> $CONF_FILE
     echo '$'dolibarr_main_url_root=\'http://127.0.0.1\'';' >> $CONF_FILE
     echo '$'dolibarr_main_document_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $CONF_FILE
     echo '$'dolibarr_main_data_root=\'$TRAVIS_BUILD_DIR/documents\'';' >> $CONF_FILE
@@ -321,26 +335,54 @@ script:
         --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
         --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
     fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+      parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+        --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+        --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+        --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+        --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
+    fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
+      parallel-lint -e php --exclude dev/tools/test/namespacemig --exclude htdocs/includes/composer --exclude htdocs/includes/myclabs --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes \
+        --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian \
+        --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/php-parallel-lint --exclude htdocs/includes/symfony \
+        --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/maximebf \
+        --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/tecnickcom/tcpdf/include/barcodes --exclude htdocs/includes/webmozart --exclude htdocs/includes/webklex --blame .
+    fi
     set +e
     echo
 
   - |
-    echo "Checking coding style (only for Pull Requests builds and 1 version to not overload travis and avoid duplicate tests)"
+    echo "Checking coding style (only for 1 version to not overload travis and avoid duplicate tests)"
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+    fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+      phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
+    fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
       phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
     fi
     set +e
     echo
 
   - |
-    echo "Checking missing debug"
+    echo "Checking missing debug (only for 1 version to not overload travis and avoid duplicate tests)"
     # Ensure we catch errors
     set -e
     # Exclusions are defined in the ruleset.xml file
-    if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    #if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+    if [ "$TRAVIS_PHP_VERSION" = "8.1" ]; then
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+    fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.2" ]; then
+       var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
+    fi
+    if [ "$TRAVIS_PHP_VERSION" = "8.3" ]; then
        var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
     fi
     set +e
@@ -352,6 +394,7 @@ script:
     # Ensure we catch errors
     set +e
     echo '<?php ' > $INSTALL_FORCED_FILE
+    echo 'error_reporting(E_ALL);' >> $INSTALL_FORCED_FILE
     echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
     if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ]; then
       echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
@@ -371,6 +414,7 @@ script:
     echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
     echo '$'force_install_main_data_root=\'$TRAVIS_BUILD_DIR/htdocs\'';' >> $INSTALL_FORCED_FILE
     #cat $INSTALL_FORCED_FILE
+    echo
   
   - |
     echo "Upgrading Dolibarr"
@@ -436,15 +480,22 @@ script:
     php upgrade.php 17.0.0 18.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade17001800.log
     php upgrade2.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-2.log
     php step5.php 17.0.0 18.0.0 > $TRAVIS_BUILD_DIR/upgrade17001800-3.log
+    php upgrade.php 18.0.0 19.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade18001900.log || cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    php upgrade2.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-2.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-2.log
+    php step5.php 18.0.0 19.0.0 > $TRAVIS_BUILD_DIR/upgrade18001900-3.log || cat $TRAVIS_BUILD_DIR/upgrade18001900-3.log
+    set +e
+    echo
 
-    #show table content and log
+  - |
+    echo Show some debug info like table content or log
     #echo '\d llx_adherent' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
-    #cat $TRAVIS_BUILD_DIR/upgrade500600.log
+    cat $TRAVIS_BUILD_DIR/upgrade18001900.log
+    echo
 
   - |
     echo Result of migration scripts
     ls -alrt $TRAVIS_BUILD_DIR/
-        
+
     echo Show content of last file
     cat $TRAVIS_BUILD_DIR/"$(ls -rt $TRAVIS_BUILD_DIR/ | tail -n1)"
 
@@ -463,6 +514,7 @@ script:
     echo
     #cat /tmp/dolibarr_install.log
     cat $TRAVIS_BUILD_DIR/enablemodule.log
+    echo
 
   - |
     echo "Unit testing"
@@ -472,6 +524,7 @@ script:
     phpunitresult=$?
     echo "Phpunit return code = $phpunitresult"
     set +e
+    echo
 
 after_script:
   - |

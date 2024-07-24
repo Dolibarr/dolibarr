@@ -1,7 +1,5 @@
 <?php
-use Stripe\BankAccount;
-
-/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
@@ -21,28 +19,32 @@ use Stripe\BankAccount;
  */
 
 /**
- *  \file       htdocs/loan/card.php
- *  \ingroup    loan
- *  \brief      Loan card
+ *   \file       htdocs/loan/card.php
+ *   \ingroup    loan
+ *   \brief      Loan card
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "bills", "loan"));
+$langs->loadLangs(array("bills", "compta", "loan"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
@@ -108,19 +110,23 @@ if (empty($reshook)) {
 			$rate = price2num(GETPOST('rate'));
 
 			if (!$capital) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 			}
 			if (!$datestart) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateStart")), null, 'errors');
 			}
 			if (!$dateend) {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DateEnd")), null, 'errors');
 			}
 			if ($rate == '') {
-				$error++; $action = 'create';
+				$error++;
+				$action = 'create';
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Rate")), null, 'errors');
 			}
 
@@ -240,6 +246,9 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -269,7 +278,7 @@ if ($action == 'create') {
 
 	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
-	print '<form name="loan" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+	print '<form name="loan" method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
@@ -334,7 +343,7 @@ if ($action == 'create') {
 	print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_6, '90%');
+	$doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_6, '90%');
 	print $doleditor->Create(1);
 
 	print '</td></tr>';
@@ -343,7 +352,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
-	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_6, '90%');
+	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_6, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -352,19 +361,19 @@ if ($action == 'create') {
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ?GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_capital') ? GETPOST('accountancy_account_capital') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL'), 'accountancy_account_capital', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_insurance
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ?GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_insurance') ? GETPOST('accountancy_account_insurance') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE'), 'accountancy_account_insurance', 1, '', 1, 1);
 		print '</td></tr>';
 
 		// Accountancy_account_interest
 		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
 		print '<td>';
-		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ?GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
+		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ? GETPOST('accountancy_account_interest') : getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST'), 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
 	} else {
 		// For external software
@@ -420,10 +429,9 @@ if ($id > 0) {
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'bill');
+		print dol_get_fiche_head($head, 'card', $langs->trans("Loan"), -1, 'money-bill-alt', 0, '', '', 0, '', 1);
 
 		// Loan card
-
 		$linkback = '<a href="'.DOL_URL_ROOT.'/loan/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$morehtmlref = '<div class="refidno">';
@@ -757,7 +765,7 @@ if ($id > 0) {
 				}
 
 				// Delete
-				if (($object->paid == 0 || $object->paid == 2) && $user->rights->loan->delete) {
+				if (($object->paid == 0 || $object->paid == 2) && $user->hasRight('loan', 'delete')) {
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 				}
 

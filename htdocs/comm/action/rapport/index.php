@@ -40,7 +40,7 @@ $month = GETPOST('month', 'int');
 $year = GETPOST('year', 'int');
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -57,13 +57,9 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
+//$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if (!$user->hasRight("agenda", "allactions", "read")) {
+	accessForbidden();
 }
 
 

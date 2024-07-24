@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ $id = GETPOST('id', 'int');
 
 $title = $langs->trans("Fiscalyear")." - ".$langs->trans("Info");
 
-$help_url = "EN:Module_Double_Entry_Accounting";
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxHeader('', $title, $help_url);
 
@@ -56,7 +56,7 @@ if ($id) {
 
 	$head = fiscalyear_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'cron');
+	print dol_get_fiche_head($head, 'info', $langs->trans("Fiscalyear"), 0, 'calendar');
 
 	print '<table width="100%"><tr><td>';
 	dol_print_object_info($object);

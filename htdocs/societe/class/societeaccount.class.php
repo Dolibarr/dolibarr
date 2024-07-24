@@ -81,11 +81,11 @@ class SocieteAccount extends CommonObject
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
 		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
-		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
+		'pass_crypted' => array('type'=>'password', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
-		'site' => array('type'=>'varchar(128)', 'label'=>'ExternalSite', 'visible'=>0, 'enabled'=>1, 'position'=>43, 'help'=>'Name of the website or service if this is account on an external website or service'),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1, 'picto'=>'company', 'css'=>'maxwidth300 widthcentpercentminusxx'),
+		'site' => array('type'=>'varchar(128)', 'label'=>'WebsiteTypeLabel', 'visible'=>0, 'enabled'=>0, 'position'=>41, 'notnull'=>1, 'default' => '', 'help'=>'Name of the website or service if this is account on an external website or service'),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>0, 'enabled'=>0, 'position'=>42, 'notnull'=>-1, 'index'=>1, 'picto'=>'website', 'css'=>'maxwidth300 widthcentpercentminusxx'),
 		'site_account' => array('type'=>'varchar(128)', 'label'=>'ExternalSiteAccount', 'visible'=>0, 'enabled'=>1, 'position'=>44, 'help'=>'A key to identify the account on external web site if this is an account on an external website'),
 		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>0, 'enabled'=>1, 'position'=>48, 'notnull'=>0, 'index'=>1, 'searchall'=>1, 'comment'=>'The id of third party in the external web site (for site_account if site_account defined)',),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
@@ -161,6 +161,10 @@ class SocieteAccount extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
+	const STATUS_ENABLED = 1;
+	const STATUS_DISABLED = 0;
+
+
 	/**
 	 * Constructor
 	 *
@@ -168,13 +172,29 @@ class SocieteAccount extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
 		}
+
+		// add site type list and set visible
+		$site_type_list = array();
+		if (isModEnabled('website')) {
+			$this->fields['fk_website']['visible'] = 1;
+			$this->fields['fk_website']['enabled'] = 1;
+			$this->fields['site']['visible'] = 1;
+			$this->fields['site']['enabled'] = 1;
+			$site_type_list['dolibarr_website'] = $langs->trans('WebsiteTypeDolibarrWebsite');
+		}
+		if (isModEnabled('webportal')) {
+			$this->fields['site']['visible'] = 1;
+			$this->fields['site']['enabled'] = 1;
+			$site_type_list['dolibarr_portal'] = $langs->trans('WebsiteTypeDolibarrPortal');
+		}
+		$this->fields['site']['arrayofkeyval'] = $site_type_list;
 	}
 
 	/**
@@ -182,7 +202,7 @@ class SocieteAccount extends CommonObject
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -244,7 +264,7 @@ class SocieteAccount extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -258,7 +278,7 @@ class SocieteAccount extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
 	{
@@ -343,7 +363,7 @@ class SocieteAccount extends CommonObject
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -355,7 +375,7 @@ class SocieteAccount extends CommonObject
 	 *
 	 * @param User $user       User that deletes
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -417,7 +437,7 @@ class SocieteAccount extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -440,11 +460,11 @@ class SocieteAccount extends CommonObject
 		}
 
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("WebsiteAccount");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -485,57 +505,29 @@ class SocieteAccount extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	public static function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
-		if ($mode == 0) {
-			$prefix = '';
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 1) {
-			if ($status == 1) {
-				return $langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled');
-			}
-		} elseif ($mode == 2) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-			}
-		} elseif ($mode == 3) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 1) {
-				return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
-			} elseif ($status == 0) {
-				return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-			}
-		} elseif ($mode == 5) {
-			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-			}
-		} elseif ($mode == 6) {
-			if ($status == 1) {
-				return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
-			} elseif ($status == 0) {
-				return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
-			}
+		if (is_null($status)) {
+			return '';
 		}
 
-		return '';
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_ENABLED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DISABLED] = $langs->transnoentitiesnoconv('Disabled');
+		}
+
+		$statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_DISABLED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -555,7 +547,6 @@ class SocieteAccount extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
-
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;

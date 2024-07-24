@@ -61,8 +61,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Return an array with myobject informations
 	 *
-	 * @param 	int 	$id 			ID of myobject
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of myobject
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @url	GET myobjects/{id}
 	 *
@@ -93,18 +93,19 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Get a list of myobjects
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /myobjects/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -182,16 +183,14 @@ class MyModuleApi extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new MyObject($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving myobject list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No myobject found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -215,6 +214,12 @@ class MyModuleApi extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->myobject->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 
@@ -257,6 +262,12 @@ class MyModuleApi extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->myobject->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 

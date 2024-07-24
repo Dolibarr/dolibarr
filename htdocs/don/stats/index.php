@@ -42,12 +42,15 @@ if ($user->socid > 0) {
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "sendings"));
+
+// Security check
+$result = restrictedArea($user, 'don');
 
 
 /*
@@ -71,7 +74,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenamenb = $dir.'/donationnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/donationnbinyear-'.$year.'.png';
@@ -81,7 +84,8 @@ $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;

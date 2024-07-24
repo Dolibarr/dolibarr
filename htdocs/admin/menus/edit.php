@@ -164,7 +164,8 @@ if ($action == 'add') {
 
 if ($action == 'update') {
 	if (!$cancel) {
-		$leftmenu = ''; $mainmenu = '';
+		$leftmenu = '';
+		$mainmenu = '';
 		if (GETPOST('menuIdParent', 'alphanohtml') && !is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 			$tmp = explode('&', GETPOST('menuIdParent', 'alphanohtml'));
 			foreach ($tmp as $s) {
@@ -359,13 +360,13 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td>';
 	print '<td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
-	// Picto
-	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtmlallowclass')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
-
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
 	print '<td><input type="text" class="minwidth500" name="url" value="'.dol_escape_htmltag(GETPOST("url", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+
+	// Picto
+	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
 
 	// Langs
 	print '<tr><td>'.$langs->trans('LangFile').'</td>';

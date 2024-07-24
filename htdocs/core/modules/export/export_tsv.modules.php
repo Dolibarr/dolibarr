@@ -156,7 +156,7 @@ class ExportTsv extends ModeleExports
 	 *
 	 *  @param      string		$file			Path of filename to generate
 	 *  @param      Translate	$outputlangs	Output language object
-	 *  @return     int							<0 if KO, >=0 if OK
+	 *  @return     int							Return integer <0 if KO, >=0 if OK
 	 */
 	public function open_file($file, $outputlangs)
 	{
@@ -183,7 +183,7 @@ class ExportTsv extends ModeleExports
 	 * 	Output header into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_header($outputlangs)
 	{
@@ -200,7 +200,7 @@ class ExportTsv extends ModeleExports
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
@@ -230,10 +230,10 @@ class ExportTsv extends ModeleExports
 	 * 	Output record line into file
 	 *
 	 *  @param      array		$array_selected_sorted      Array with list of field to export
-	 *  @param      resource	$objp                       A record from a fetch with all fields from select
+	 *  @param      Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
@@ -288,7 +288,7 @@ class ExportTsv extends ModeleExports
 	 * 	Output footer into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_footer($outputlangs)
 	{
@@ -300,7 +300,7 @@ class ExportTsv extends ModeleExports
 	/**
 	 * 	Close file handle
 	 *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function close_file()
 	{

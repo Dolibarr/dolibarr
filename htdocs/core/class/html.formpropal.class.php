@@ -140,7 +140,7 @@ class FormPropal
 			} else {
 				print '<option value="2,4">';
 			}
-			print ($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
+			print($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
 			print '</option>';
 		}
 		print '</select>';

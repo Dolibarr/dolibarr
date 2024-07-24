@@ -46,7 +46,7 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'contract';
 
-if (empty($conf->global->HOLIDAY_ADDON)) {
+if (!getDolGlobalString('HOLIDAY_ADDON')) {
 	$conf->global->HOLIDAY_ADDON = 'mod_holiday_madonna';
 }
 
@@ -80,7 +80,9 @@ if ($action == 'updateMask') {
 	$holiday->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/holiday/doc/pdf_".$modele.".modules.php", 0);
@@ -204,16 +206,16 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file($db);
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -281,7 +283,7 @@ print '<br>';
  *  Documents models for Holidays
  */
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("TemplatePDFHolidays"), '', '');
 
 	// Defined model definition table
@@ -341,16 +343,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 								$module = new $classname($db);
 
 								$modulequalified = 1;
-								if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 									$modulequalified = 0;
 								}
-								if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+								if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 									$modulequalified = 0;
 								}
 
 								if ($modulequalified) {
 									print '<tr class="oddeven"><td width="100">';
-									print (empty($module->name) ? $name : $module->name);
+									print(empty($module->name) ? $name : $module->name);
 									print "</td><td>\n";
 									if (method_exists($module, 'info')) {
 										print $module->info($langs);
@@ -468,7 +470,7 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', array(), null, 0);
 } else {
-	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY)) {
+	if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -484,7 +486,7 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY', array(), null, 0);
 } else {
-	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY)) {
+	if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -500,7 +502,7 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
-	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
+	if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -516,7 +518,7 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', array(), null, 0, 0, 0, 2, 0, 1);
 } else {
-	if (!empty($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY)) {
+	if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_other&token='.newToken().'&MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -525,7 +527,7 @@ if ($conf->use_javascript_ajax) {
 print "</td>";
 print "</tr>";
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	$substitutionarray = pdf_getSubstitutionArray($langs, array('objectamount'), null, 2);
 	$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 	$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -538,7 +540,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 	print $form->textwithpicto($langs->trans("FreeLegalTextOnHolidays"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'tooltiphelp');
 	print '<br>';
 	$variablename = 'HOLIDAY_FREE_TEXT';
-	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

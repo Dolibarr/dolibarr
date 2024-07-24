@@ -164,9 +164,9 @@ class TraceableDB extends DoliDB
 	 * @param   string $type   Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string         SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl')
+	public function convertSQLFromMysql($line, $type = 'ddl')
 	{
-		return self::$db->convertSQLFromMysql($line);
+		return $this->db->convertSQLFromMysql($line);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -292,7 +292,7 @@ class TraceableDB extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
-		return str_replace(array('_', '\\', '%'), array('\_', '\\\\', '\%'), (string) $stringtoencode);
+		return $this->db->escapeforlike($stringtoencode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -500,7 +500,7 @@ class TraceableDB extends DoliDB
 	 * @param        array 	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
 	 * @param        array 	$fulltext_keys 	Tableau des Nom de champs qui seront indexes en fulltext
 	 * @param        array $keys 			Tableau des champs cles noms => valeur
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
 	{
@@ -511,7 +511,7 @@ class TraceableDB extends DoliDB
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table)
 	{
@@ -535,7 +535,7 @@ class TraceableDB extends DoliDB
 	 * @param    string $field_name 		Name of field to add
 	 * @param    string $field_desc 		Tableau associatif de description du champ a inserer[nom du parametre][valeur du parametre]
 	 * @param    string $field_position 	Optionnel ex.: "after champtruc"
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "")
 	{
@@ -547,7 +547,7 @@ class TraceableDB extends DoliDB
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to drop
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name)
 	{
@@ -560,7 +560,7 @@ class TraceableDB extends DoliDB
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
 	 * @param    string 	$field_desc 	Array with description of field format
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
 	{
@@ -616,7 +616,7 @@ class TraceableDB extends DoliDB
 	 * @param    string $dolibarr_main_db_user 	Nom user a creer
 	 * @param    string $dolibarr_main_db_pass 	Mot de passe user a creer
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser($dolibarr_main_db_host, $dolibarr_main_db_user, $dolibarr_main_db_pass, $dolibarr_main_db_name)
 	{
@@ -720,8 +720,8 @@ class TraceableDB extends DoliDB
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection	 		$resultset    	Handler of the desired SQL request
-	 * @return  Object                 						Object result line or false if KO or end of cursor
+	 * @param   resource|PgSql\Connection	 	$resultset    	Handler of the desired SQL request
+	 * @return  Object                 							Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset)
 	{

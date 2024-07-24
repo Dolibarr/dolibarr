@@ -36,14 +36,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_ban extends ModeleBankAccountDoc
 {
 	/**
-	 * @var Societe Issuer
-	 */
-	public $emetteur;
-
-	/**
 	 * @var string Dolibarr version of the loaded document
 	 */
 	public $version = 'development';
+
+	/**
+	 * @var int posxdatestart
+	 */
+	public $posxdatestart;
+
+	/**
+	 * @var int posxdateend
+	 */
+	public $posxdateend;
 
 	/**
 	 *	Constructor
@@ -52,7 +57,7 @@ class pdf_ban extends ModeleBankAccountDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));
@@ -107,7 +112,7 @@ class pdf_ban extends ModeleBankAccountDoc
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -150,7 +155,7 @@ class pdf_ban extends ModeleBankAccountDoc
 				$heightforinfotot = 50; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
@@ -387,7 +392,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		// phpcs:enable
 		global $conf;
 
-		$showdetails = empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
+		$showdetails = !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 0 : $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return 1;
 	}
 }

@@ -63,6 +63,12 @@ if ($action == 'getlastversion') {
 	$result = getURLContent('https://sourceforge.net/projects/dolibarr/rss');
 	//var_dump($result['content']);
 	if (function_exists('simplexml_load_string')) {
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			libxml_disable_entity_loader(true);
+		}
+
 		$sfurl = simplexml_load_string($result['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 	} else {
 		$sfurl = 'xml_not_available';

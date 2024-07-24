@@ -145,8 +145,17 @@ $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') 
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
 
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('imports'));
+
+
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
+
+if (empty($updatekeys) && !empty($objimport->array_import_preselected_updatekeys[0])) {
+	$updatekeys = array_keys($objimport->array_import_preselected_updatekeys[0]);
+}
 
 $objmodelimport = new ModeleImports();
 
@@ -251,7 +260,7 @@ if ($action == 'add_import_model') {
 }
 
 if ($step == 3 && $datatoimport) {
-	if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if (GETPOST('sendit') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		dol_mkdir($conf->import->dir_temp);
 		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
@@ -633,10 +642,10 @@ if ($step == 3 && $datatoimport) {
 		print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 	}
 	print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-	$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
+	$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 	print '<input type="submit" class="button small" value="'.$langs->trans("AddFile").'"'.$out.' name="sendit">';
 	$out = '';
-	if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 		$maxphp = @ini_get('upload_max_filesize'); // In unknown
 		if (preg_match('/k$/i', $maxphp)) {
@@ -704,7 +713,7 @@ if ($step == 3 && $datatoimport) {
 
 			// readdir return value in ISO and we want UTF8 in memory
 			if (!utf8_check($file)) {
-				$file = utf8_encode($file);
+				$file = mb_convert_encoding($file, 'UTF-8', 'ISO-8859-1');
 			}
 
 			if (preg_match('/^\./', $file)) {
@@ -767,7 +776,7 @@ if ($step == 4 && $datatoimport) {
 	$list = $objmodelimport->listOfAvailableImportFormat($db);
 
 	if (empty($separator)) {
-		$separator = (empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
+		$separator = (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE);
 	}
 
 	// The separator has been defined, if it is a unique char, we check it is valid by reading the source file
@@ -1192,7 +1201,7 @@ if ($step == 4 && $datatoimport) {
 				}
 			}
 			// Source required
-			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode])?$objimport->array_import_examplevalues[0][$tmpcode]:"";
+			$example = !empty($objimport->array_import_examplevalues[0][$tmpcode]) ? $objimport->array_import_examplevalues[0][$tmpcode] : "";
 			// Example
 			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
 				if ($example) {
@@ -1499,7 +1508,7 @@ if ($step == 4 && $datatoimport) {
 		$sql = "SELECT rowid, label, fk_user, entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."import_model";
 		$sql .= " WHERE type = '".$db->escape($datatoimport)."'";
-		if (empty($conf->global->EXPORTS_SHARE_MODELS)) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
+		if (!getDolGlobalString('EXPORTS_SHARE_MODELS')) {	// EXPORTS_SHARE_MODELS means all templates are visible, whatever is owner.
 			$sql .= " AND fk_user IN (0, ".((int) $user->id).")";
 		}
 		$sql .= " ORDER BY rowid";
@@ -1545,7 +1554,7 @@ if ($step == 4 && $datatoimport) {
 
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport) {
-	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_execution_time_for_importexport = (!getDolGlobalString('IMPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -1840,8 +1849,8 @@ if ($step == 5 && $datatoimport) {
 		// Launch import
 		$arrayoferrors = array();
 		$arrayofwarnings = array();
-		$maxnboferrors = empty($conf->global->IMPORT_MAX_NB_OF_ERRORS) ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
-		$maxnbofwarnings = empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS) ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+		$maxnboferrors = !getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
+		$maxnbofwarnings = !getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
 		$nboferrors = 0;
 		$nbofwarnings = 0;
 
@@ -1858,7 +1867,8 @@ if ($step == 5 && $datatoimport) {
 		if ($result > 0) {
 			global $tablewithentity_cache;
 			$tablewithentity_cache = array();
-			$sourcelinenb = 0; $endoffile = 0;
+			$sourcelinenb = 0;
+			$endoffile = 0;
 
 			// Loop on each input file record
 			while (($sourcelinenb < $nboflines) && !$endoffile) {
@@ -1878,17 +1888,41 @@ if ($step == 5 && $datatoimport) {
 					break;
 				}
 
-				// Run import
-				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+				$parameters = array(
+					'step'                         => $step,
+					'datatoimport'                 => $datatoimport,
+					'obj'                          => &$obj,
+					'arrayrecord'                  => $arrayrecord,
+					'array_match_file_to_database' => $array_match_file_to_database,
+					'objimport'                    => $objimport,
+					'fieldssource'                 => $fieldssource,
+					'importid'                     => $importid,
+					'updatekeys'                   => $updatekeys,
+					'arrayoferrors'                => &$arrayoferrors,
+					'arrayofwarnings'              => &$arrayofwarnings,
+					'nbok'                         => &$nbok,
+				);
 
-				if (count($obj->errors)) {
-					$arrayoferrors[$sourcelinenb] = $obj->errors;
+				$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
+				if ($reshook < 0) {
+					$arrayoferrors[$sourcelinenb][] = [
+						'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+					];
 				}
-				if (count($obj->warnings)) {
-					$arrayofwarnings[$sourcelinenb] = $obj->warnings;
-				}
-				if (!count($obj->errors) && !count($obj->warnings)) {
-					$nbok++;
+
+				if (empty($reshook)) {
+					// Run import
+					$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+
+					if (count($obj->errors)) {
+						$arrayoferrors[$sourcelinenb] = $obj->errors;
+					}
+					if (count($obj->warnings)) {
+						$arrayofwarnings[$sourcelinenb] = $obj->warnings;
+					}
+					if (!count($obj->errors) && !count($obj->warnings)) {
+						$nbok++;
+					}
 				}
 			}
 			// Close file
@@ -2008,7 +2042,7 @@ if ($step == 5 && $datatoimport) {
 
 // STEP 6: Real import
 if ($step == 6 && $datatoimport) {
-	$max_execution_time_for_importexport = (empty($conf->global->IMPORT_MAX_EXECUTION_TIME) ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+	$max_execution_time_for_importexport = (!getDolGlobalString('IMPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->IMPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
 	if ($max_time && $max_time < $max_execution_time_for_importexport) {
 		dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
@@ -2228,8 +2262,8 @@ if ($step == 6 && $datatoimport) {
 	// Launch import
 	$arrayoferrors = array();
 	$arrayofwarnings = array();
-	$maxnboferrors = empty($conf->global->IMPORT_MAX_NB_OF_ERRORS) ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
-	$maxnbofwarnings = empty($conf->global->IMPORT_MAX_NB_OF_WARNINGS) ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+	$maxnboferrors = !getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
+	$maxnbofwarnings = !getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
 	$nboferrors = 0;
 	$nbofwarnings = 0;
 
@@ -2246,7 +2280,8 @@ if ($step == 6 && $datatoimport) {
 	if ($result > 0) {
 		global $tablewithentity_cache;
 		$tablewithentity_cache = array();
-		$sourcelinenb = 0; $endoffile = 0;
+		$sourcelinenb = 0;
+		$endoffile = 0;
 
 		while ($sourcelinenb < $nboflines && !$endoffile) {
 			$sourcelinenb++;
@@ -2263,17 +2298,49 @@ if ($step == 6 && $datatoimport) {
 				break;
 			}
 
-			// Run import
-			$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+			$parameters = array(
+				'step'                         => $step,
+				'datatoimport'                 => $datatoimport,
+				'obj'                          => &$obj,
+				'arrayrecord'                  => $arrayrecord,
+				'array_match_file_to_database' => $array_match_file_to_database,
+				'objimport'                    => $objimport,
+				'fieldssource'                 => $fieldssource,
+				'importid'                     => $importid,
+				'updatekeys'                   => $updatekeys,
+				'arrayoferrors'                => &$arrayoferrors,
+				'arrayofwarnings'              => &$arrayofwarnings,
+				'nbok'                         => &$nbok,
+			);
 
-			if (count($obj->errors)) {
-				$arrayoferrors[$sourcelinenb] = $obj->errors;
+			$reshook = $hookmanager->executeHooks('ImportInsert', $parameters);
+			if ($reshook < 0) {
+				$arrayoferrors[$sourcelinenb][] = [
+					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+				];
 			}
-			if (count($obj->warnings)) {
-				$arrayofwarnings[$sourcelinenb] = $obj->warnings;
+
+			if (empty($reshook)) {
+				// Run import
+				$result = $obj->import_insert($arrayrecord, $array_match_file_to_database, $objimport, count($fieldssource), $importid, $updatekeys);
+
+				if (count($obj->errors)) {
+					$arrayoferrors[$sourcelinenb] = $obj->errors;
+				}
+				if (count($obj->warnings)) {
+					$arrayofwarnings[$sourcelinenb] = $obj->warnings;
+				}
+
+				if (!count($obj->errors) && !count($obj->warnings)) {
+					$nbok++;
+				}
 			}
-			if (!count($obj->errors) && !count($obj->warnings)) {
-				$nbok++;
+
+			$reshook = $hookmanager->executeHooks('AfterImportInsert', $parameters);
+			if ($reshook < 0) {
+				$arrayoferrors[$sourcelinenb][] = [
+					'lib' => implode("<br>", array_merge([$hookmanager->error], $hookmanager->errors))
+				];
 			}
 		}
 		// Close file
@@ -2401,7 +2468,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		}
 		if ($example) {
 			if (!utf8_check($example)) {
-				$example = utf8_encode($example);
+				$example = mb_convert_encoding($example, 'UTF-8', 'ISO-8859-1');
 			}
 			if (!empty($conf->dol_optimize_smallscreen)) {
 				//print '<br>';

@@ -98,7 +98,9 @@ if (!empty($tag) && $tag != 'undefined') {
 	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag = '".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
-	if (!$resql) dol_print_error($db);
+	if (!$resql) {
+		dol_print_error($db);
+	}
 
 	$obj = $db->fetch_object($resql);
 
@@ -127,7 +129,9 @@ if (!empty($tag) && $tag != 'undefined') {
 	$statut = '2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE rowid = ".((int) $obj->rowid);
 	$resql = $db->query($sql);
-	if (!$resql) dol_print_error($db);
+	if (!$resql) {
+		dol_print_error($db);
+	}
 
 	// Update status communication of thirdparty prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'thirdparty' && $obj->entity) {

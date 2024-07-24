@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Ütemezett feladat olvasása
 Permission23102 = Ütemezett feladat létrehozása/frissítése
 Permission23103 = Ütemezett feladat törlése
@@ -13,8 +12,8 @@ KeyForCronAccess=Biztonsági kulcs az URL-hez a cron feladatok elindításához
 FileToLaunchCronJobs=Parancssor a minősített cron-feladatok ellenőrzéséhez és elindításához
 CronExplainHowToRunUnix=Unix környezetben a következő crontab bejegyzést kell használnia a parancssor 5 percenkénti futtatásához
 CronExplainHowToRunWin=A Microsoft(tm) Windows környezetben az Ütemezett feladat eszközöket használhatja a parancssor 5 percenkénti futtatására
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=A %s osztály %s metódusa a tiltott metódusok feketelistáján van
+CronMethodDoesNotExists=A %s osztály nem tartalmaz metódusokat: %s
+CronMethodNotAllowed=A %s osztály %s metódusa a tiltott metódusok tiltólistáján található
 CronJobDefDesc=A Cron jobprofilok a modulleíró fájlban vannak meghatározva. Amikor a modul aktiválva van, azok betöltődnek és elérhetők, így a feladatokat a %s adminisztrációs eszközök menüből adminisztrálhatja.
 CronJobProfiles=Előre meghatározott cron feladatprofilok listája
 # Menu
@@ -26,7 +25,7 @@ CronCommand=Parancs
 CronList=Ütemezett munkák
 CronDelete=Ütemezett munkák törlése
 CronConfirmDelete=Biztosan törölni szeretné ezeket az ütemezett munkákat?
-CronExecute=Launch now
+CronExecute=Indítsa el most
 CronConfirmExecute=Biztosan most végre akarja hajtani ezeket az ütemezett feladatokat?
 CronInfo=Az ütemezett feladat modul lehetővé teszi a feladatok ütemezését az automatikus végrehajtásra. A munkák manuálisan is elindíthatók.
 CronTask=Fealdat
@@ -58,7 +57,7 @@ CronNote=Megjegyzés
 CronFieldMandatory=A %s mezők kitöltése kötelező
 CronErrEndDateStartDt=A befejező dátum nem lehet korábbi a kezdő dátumnál
 StatusAtInstall=Modultelepítési állapot
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=Ütemezés engedélyezése
 CronStatusInactiveBtn=Letiltás
 CronTaskInactive=Ez a feladat le van tiltva (nincs ütemezve)
 CronId=Id
@@ -67,7 +66,7 @@ CronModuleHelp=A Dolibarr modul könyvtárának neve (külső Dolibarr modullal 
 CronClassFileHelp=A betöltendő relatív elérési út és fájlnév (az elérési út a webszerver gyökérkönyvtárához viszonyítva). <BR> Például a Dolibarr Product objektum htdocs/product/class/<u>product.class.php</u> lekérési metódusának meghívásához az osztályfájlnév értéke:<br><i>product/class/ termék.osztály.php</i>
 CronObjectHelp=A betöltendő objektum neve. <BR> Például a /htdocs/product/class/product.class.php Dolibarr Product objektum lekérési metódusának meghívásához az osztályfájlnév értéke<br><i>Termék</i>
 CronMethodHelp=Az indítandó objektum metódus. <BR> Például a /htdocs/product/class/product.class.php Dolibarr Product objektum lekérési metódusának meghívásához a metódus értéke<br><i>fetch</i>
-CronArgsHelp=A metódus argumentumai. <BR> Például a Dolibarr Product objektum /htdocs/product/class/product.class.php lekérési metódusának meghívásához a paraméterek értéke lehet<br><i>0, ProductRef</i>
+CronArgsHelp=A metódus argumentumai. <BR> Például a /htdocs/product/class/product.class.php Dolibarr Product objektum lekérési metódusának meghívásához a paraméterek értéke a következő lehet:<br><i>0, ProductRef</i>
 CronCommandHelp=A rendszer végrehajtandó parancssora.
 CronCreateJob=Új ütemezett feladat létrehozása
 CronFrom=Feladó
@@ -84,17 +83,18 @@ MakeLocalDatabaseDumpShort=Helyi adatbázis biztonsági mentése
 MakeLocalDatabaseDump=Helyi adatbázis kiíratásának létrehozása. A paraméterek a következők: tömörítés ('gz' vagy 'bz' vagy 'none'), biztonsági mentés típusa ('mysql', 'pgsql', 'auto'), 1, 'auto' vagy felépítendő fájlnév, megőrzendő biztonsági mentési fájlok száma
 MakeSendLocalDatabaseDumpShort=Helyi adatbázis biztonsági másolatának küldése
 MakeSendLocalDatabaseDump=Helyi adatbázis biztonsági másolatának küldése e-mailben. A paraméterek a következők: címzett, feladó, tárgy, üzenet, fájlnév (az elküldött fájl neve), szűrő ('sql' csak az adatbázis biztonsági mentéséhez)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
+BackupIsTooLargeSend=Sajnáljuk, az utolsó biztonsági másolat túl nagy ahhoz, hogy e-mailben elküldhető legyen
 CleanUnfinishedCronjobShort=Tisztítsa meg a befejezetlen munkát
 CleanUnfinishedCronjob=Tisztítsa meg a feldolgozás alatt elakadt cronjob-ot, amikor a folyamat már nem fut
 WarningCronDelayed=Figyelem, a teljesítmény érdekében, függetlenül attól, hogy az engedélyezett feladatok végrehajtásának következő dátuma legyen, a feladatok legfeljebb %s órával késlekedhetnek, mielőtt futnának.
 DATAPOLICYJob=Adattisztító és anonimizáló
 JobXMustBeEnabled=A %s feladatot engedélyezni kell
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+EmailIfError=E-mail a hiba figyelmeztetéséért
+JobNotFound=A(z) %s munka nem található a munkák listájában (próbálja meg letiltani/engedélyezni a modult)
+ErrorInBatch=Hiba a feladat futtatásakor %s
 
 # Cron Boxes
 LastExecutedScheduledJob=Utoljára végrehajtott ütemezett feladat
 NextScheduledJobExecute=Következő ütemezett végrehajtási feladat
 NumberScheduledJobError=A hibás ütemezett feladatok száma
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+NumberScheduledJobNeverFinished=Soha nem fejeződött be ütemezett munkák száma

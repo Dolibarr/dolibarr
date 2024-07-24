@@ -86,7 +86,8 @@ class ActionCommTest extends PHPUnit\Framework\TestCase
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		if (!isModEnabled('agenda')) {
-			print __METHOD__." module agenda must be enabled.\n"; die(1);
+			print __METHOD__." module agenda must be enabled.\n";
+			die(1);
 		}
 
 		print __METHOD__."\n";

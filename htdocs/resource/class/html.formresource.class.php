@@ -140,7 +140,7 @@ class FormResource
 			}
 			$out .= '</select>'."\n";
 
-			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && !$forcecombo) {
+			if (!empty($conf->use_javascript_ajax) && getDolGlobalString('RESOURCE_USE_SEARCH_TO_SELECT') && !$forcecombo) {
 				//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
 				$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
 			} else {
@@ -219,11 +219,11 @@ class FormResource
 				}
 				print '>';
 				if ($format == 0) {
-					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 1) {
 					$value = $arraytypes['code'];
 				} elseif ($format == 2) {
-					$value = ($maxlength ?dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
+					$value = ($maxlength ? dol_trunc($arraytypes['label'], $maxlength) : $arraytypes['label']);
 				} elseif ($format == 3) {
 					$value = $arraytypes['code'];
 				}

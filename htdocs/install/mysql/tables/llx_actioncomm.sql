@@ -82,6 +82,8 @@ create table llx_actioncomm
 
   ip            varchar(250),              --ip used to create record (for public submission page)
 
+  fk_bookcal_calendar integer DEFAULT NULL, --fk_bookcal_calendar used to link booking to bookcal calendar
+
   import_key		varchar(14),
   extraparams		varchar(255)					-- for other parameters with json format
 )ENGINE=innodb;

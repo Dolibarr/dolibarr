@@ -86,7 +86,8 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		if (!isModEnabled('commande')) {
-			print __METHOD__." module customer order must be enabled.\n"; die(1);
+			print __METHOD__." module customer order must be enabled.\n";
+			die(1);
 		}
 
 		print __METHOD__."\n";
@@ -145,11 +146,17 @@ class CommandeTest extends PHPUnit\Framework\TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		$soc = new Societe($db);
+		$soc->name = "CommandeTest Unittest";
+		$socid = $soc->create($user);
+		$this->assertLessThan($socid, 0, $soc->errorsToString());
+
 		$localobject=new Commande($db);
 		$localobject->initAsSpecimen();
+		$localobject->socid = $socid;
 		$result=$localobject->create($user);
 
-		$this->assertLessThan($result, 0);
+		$this->assertLessThan($result, 0, $localobject->errorsToString());
 		print __METHOD__." result=".$result."\n";
 		return $result;
 	}

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019-2022		Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2019-2023		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/pingresult.php
- *       \brief      Page called after a ping was done in js to the official dolibarr ping service.
- *                   This ajax URL is called with parameter 'firstpingok' or 'firstpingko' depending on the result of the ping.
+ *       \file		htdocs/core/ajax/pingresult.php
+ *       \brief		Page called after a ping was done in js to the official dolibarr ping service.
+ *					This ajax URL is called with parameter 'firstpingok' or 'firstpingko' depending on the result of the ping.
+ *					You can use &forceping=1 in parameters to force the ping if the ping was already sent.
  */
 
 if (!defined('NOTOKENRENEWAL')) {

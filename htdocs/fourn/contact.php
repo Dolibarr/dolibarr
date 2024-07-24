@@ -57,7 +57,7 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "p.name";
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 
 
 /*
@@ -105,7 +105,7 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 	print_barre_liste($title." (".$langs->trans("Suppliers").")", $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 	print '<table class="liste centpercent">';

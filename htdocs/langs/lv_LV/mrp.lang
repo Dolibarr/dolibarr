@@ -31,9 +31,14 @@ Consumption=Patēriņš
 ValueOfMeansLoss=Vērtība 0,95 nozīmē vidēji 5%% zaudējumus ražošanas vai demontāžas laikā
 ValueOfMeansLossForProductProduced=Vērtība 0,95 nozīmē saražotā produkta zaudējumu vidējo vērtību 5%%
 DeleteBillOfMaterials=Dzēst materiālus
+CancelMo=Atcelt ražošanas pasūtījumu
+MoCancelConsumedAndProducedLines=Atcelt arī visas patērētās un saražotās līnijas (dzēst līnijas un rezerves krājumus)
+ConfirmCancelMo=Vai tiešām vēlaties atcelt šo ražošanas pasūtījumu?
 DeleteMo=Dzēst ražošanas pasūtījumu
 ConfirmDeleteBillOfMaterials=Vai tiešām vēlaties dzēst šo materiālu sarakstu?
 ConfirmDeleteMo=Vai tiešām vēlaties dzēst šo ražošanas pasūtījumu?
+DeleteMoChild = Dzēst ar šo MO saistītos pakārtotos MO %s
+MoChildsDeleted = Visi bērnu MO ir izdzēsti
 MenuMRP=Ražošanas pasūtījumi
 NewMO=Jauns ražošanas pasūtījums
 QtyToProduce=Daudzums kas jāsaražo
@@ -60,6 +65,8 @@ ToProduce=Jāsaražo
 ToObtain=Iegūt
 QtyAlreadyConsumed=Patērētais daudzums
 QtyAlreadyProduced=Saražotais daudzums
+QtyAlreadyConsumedShort=Patērētais daudzums
+QtyAlreadyProducedShort=Saražotais daudzums
 QtyRequiredIfNoLoss=Daudzums, kas nepieciešams, lai saražotu MK noteikto daudzumu, ja nav zudumu (ja ražošanas efektivitāte ir 100%%)
 ConsumeOrProduce=Patērē vai ražo
 ConsumeAndProduceAll=Patērēt un ražot visu
@@ -122,3 +129,11 @@ BOMServicesList=BOM pakalpojumi
 Manufacturing=Ražošana
 Disassemble=Izjaukt
 ProducedBy=Ražotājs
+QtyTot=Kopējais daudzums
+
+QtyCantBeSplit= Daudzumu nevar sadalīt
+NoRemainQtyToDispatch=Nav atlikušā daudzuma, ko dalīt
+
+THMOperatorEstimatedHelp=Paredzamās operatora izmaksas stundā. Tiks izmantots, lai novērtētu MK izmaksas, izmantojot šo darbstaciju.
+THMMachineEstimatedHelp=Paredzamās mašīnas izmaksas stundā. Tiks izmantots, lai novērtētu MK izmaksas, izmantojot šo darbstaciju.
+

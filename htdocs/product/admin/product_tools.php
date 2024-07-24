@@ -108,7 +108,9 @@ if ($action == 'convert') {
 					$objectstatic = new Product($db); // Object init must be into loop to avoid to get value of previous step
 					$ret = $objectstatic->fetch($obj->rowid);
 					if ($ret > 0) {
-						$ret = 0; $retm = 0; $updatelevel1 = false;
+						$ret = 0;
+						$retm = 0;
+						$updatelevel1 = false;
 
 						// Update multiprice
 						$listofmulti = array_reverse($objectstatic->multiprices, true); // To finish with level 1
@@ -161,7 +163,7 @@ if ($action == 'convert') {
 						}
 						$newvat = str_replace('*', '', $newvatrate);
 						$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-						$newnpr = $objectstatic->recuperableonly;
+						$newnpr = $objectstatic->tva_npr;
 						$newdefaultvatcode = $vat_src_code_new;
 						$newlevel = 0;
 						if (!empty($price_base_type) && !$updatelevel1) {
@@ -209,7 +211,9 @@ if ($action == 'convert') {
 				$objectstatic2 = new ProductFournisseur($db); // Object init must be into loop to avoid to get value of previous step
 				$ret = $objectstatic2->fetch_product_fournisseur_price($obj->rowid);
 				if ($ret > 0) {
-					$ret = 0; $retm = 0; $updatelevel1 = false;
+					$ret = 0;
+					$retm = 0;
+					$updatelevel1 = false;
 
 					$price_base_type = 'HT';
 					//$price_base_type = $objectstatic2->price_base_type;	// Get price_base_type of product/service to keep the same for update
@@ -226,7 +230,7 @@ if ($action == 'convert') {
 					//if ($newminprice > $newprice) $newminprice=$newprice;
 					$newvat = str_replace('*', '', $newvatrate);
 					$localtaxes_type = getLocalTaxesFromRate($newvat, 0, $mysoc, $mysoc);
-					//$newnpr=$objectstatic2->recuperableonly;
+					//$newnpr=$objectstatic2->tva_npr;
 					$newnpr = 0;
 					$newdefaultvatcode = $vat_src_code_new;
 

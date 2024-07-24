@@ -102,7 +102,7 @@ $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-if ($object->priv && $object->user_creation->id != $user->id) {
+if ($object->priv && $object->user_creation_id != $user->id) {
 	accessforbidden();
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
@@ -157,17 +157,20 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$result2 = $nuser->setPassword($user, GETPOST("password"), 0, 0, 1); // Do not use GETPOST(alpha)
 				if (is_int($result2) && $result2 < 0) {
-					$error = $nuser->error; $errors = $nuser->errors;
+					$error = $nuser->error;
+					$errors = $nuser->errors;
 					$db->rollback();
 				} else {
 					$db->commit();
 				}
 			} else {
-				$error = $nuser->error; $errors = $nuser->errors;
+				$error = $nuser->error;
+				$errors = $nuser->errors;
 				$db->rollback();
 			}
 		} else {
-			$error = $object->error; $errors = $object->errors;
+			$error = $object->error;
+			$errors = $object->errors;
 		}
 	}
 
@@ -202,8 +205,8 @@ if (empty($reshook)) {
 			$object->canvas = $canvas;
 		}
 
-		$object->entity = (GETPOSTISSET('entity') ?GETPOST('entity', 'int') : $conf->entity);
-		$object->socid = GETPOST("socid", 'int');
+		$object->entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
+		$object->socid = $socid;
 		$object->lastname = (string) GETPOST("lastname", 'alpha');
 		$object->firstname = (string) GETPOST("firstname", 'alpha');
 		$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -317,7 +320,7 @@ if (empty($reshook)) {
 		$result = $object->fetch($id);
 		$object->oldcopy = clone $object;
 
-		$result = $object->delete(); // TODO Add $user as first param
+		$result = $object->delete($user);
 		if ($result > 0) {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			if ($backurlforlist) {
@@ -334,7 +337,8 @@ if (empty($reshook)) {
 
 	if ($action == 'update' && empty($cancel) && !empty($permissiontoadd)) {
 		if (!GETPOST("lastname", 'alpha')) {
-			$error++; $errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
+			$error++;
+			$errors = array($langs->trans("ErrorFieldRequired", $langs->transnoentities("Name").' / '.$langs->transnoentities("Label")));
 			$action = 'edit';
 		}
 
@@ -400,7 +404,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->socid = GETPOST("socid", 'int');
+			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->firstname = (string) GETPOST("firstname", 'alpha');
 			$object->civility_code = (string) GETPOST("civility_code", 'alpha');
@@ -454,15 +458,13 @@ if (empty($reshook)) {
 						$no_email = GETPOST('no_email', 'int');
 						$result = $object->setNoEmail($no_email);
 						if ($result < 0) {
+							$error++;
 							setEventMessages($object->error, $object->errors, 'errors');
-							$action = 'edit';
 						}
 					}
-
-					$action = 'view';
 				} else {
+					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
-					$action = 'edit';
 				}
 			}
 		}
@@ -472,6 +474,9 @@ if (empty($reshook)) {
 				header("Location: ".$backtopage);
 				exit;
 			}
+			$action = 'view';
+		} else {
+			$action = 'edit';
 		}
 	}
 
@@ -520,8 +525,8 @@ if (empty($reshook)) {
 	}
 
 	// Update extrafields
-	if ($action == 'update_extras' && !empty($user->rights->societe->contact->creer)) {
-		$object->oldcopy = dol_clone($object);
+	if ($action == 'update_extras' && $user->hasRight('societe', 'contact', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -563,12 +568,14 @@ if ($socid > 0) {
 	$objsoc->fetch($socid);
 }
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+if (empty($object->id)) {
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("NewContact") : $langs->trans("NewContactAddress"));
+}
 
 llxHeader('', $title, $help_url);
 
@@ -593,7 +600,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 	// -----------------------------------------
 
 	// Confirm deleting contact
-	if ($user->rights->societe->contact->supprimer) {
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
 		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id.($backtopage ? '&backtopage='.$backtopage : ''), $langs->trans("DeleteContact"), $langs->trans("ConfirmDeleteContact"), "confirm_delete", '', 0, 1);
 		}
@@ -617,7 +624,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$head = contact_prepare_head($object);
 	}
 
-	if ($user->rights->societe->contact->creer) {
+	if ($user->hasRight('societe', 'contact', 'creer')) {
 		if ($action == 'create') {
 			/*
 			 * Fiche en mode creation
@@ -677,18 +684,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Name
 			print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ?GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
+			print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname", 'alpha') ? GETPOST("lastname", 'alpha') : $object->lastname).'" autofocus="autofocus"></td>';
 			print '</tr>';
 
 			// Firstname
 			print '<tr>';
 			print '<td><label for="firstname">';
 			print $form->textwithpicto($langs->trans("Firstname"), $langs->trans("KeepEmptyIfGenericAddress")).'</label></td>';
-			print '<td colspan="3"><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ?GETPOST("firstname", 'alpha') : $object->firstname).'"></td>';
+			print '<td colspan="3"><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname", 'alpha') ? GETPOST("firstname", 'alpha') : $object->firstname).'"></td>';
 			print '</tr>';
 
 			// Company
-			if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 				if ($socid > 0) {
 					print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 					print '<td colspan="3" class="maxwidthonsmartphone">';
@@ -710,7 +717,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Job position
 			print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ?GETPOST("poste", 'alphanohtml') : $object->poste).'"></td>';
+			print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="255" value="'.dol_escape_htmltag(GETPOSTISSET("poste") ? GETPOST("poste", 'alphanohtml') : $object->poste).'"></td>';
 
 			$colspan = 3;
 			if ($conf->use_javascript_ajax && $socid > 0) {
@@ -718,15 +725,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Address
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->address)) == 0) {
 				$object->address = $objsoc->address; // Predefined with third party
 			}
 			print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
-			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ?GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
+			print '<td colspan="'.$colspan.'"><textarea class="flat quatrevingtpercent" name="address" id="address" rows="'.ROWS_2.'">'.(GETPOST("address", 'alpha') ? GETPOST("address", 'alpha') : $object->address).'</textarea></td>';
 
 			if ($conf->use_javascript_ajax && $socid > 0) {
 				$rowspan = 3;
-				if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
+				if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 					$rowspan++;
 				}
 
@@ -737,10 +744,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Zip / Town
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->zip)) == 0) {
 				$object->zip = $objsoc->zip; // Predefined with third party
 			}
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->town)) == 0) {
 				$object->town = $objsoc->town; // Predefined with third party
 			}
 			print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
@@ -758,8 +765,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
+				if (getDolGlobalString('MAIN_SHOW_REGION_IN_STATE_SELECT') && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
 				} else {
 					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
@@ -774,10 +781,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</td></tr>';
 			}
 
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->phone_pro)) == 0) {
 				$object->phone_pro = $objsoc->phone; // Predefined with third party
 			}
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->fax)) == 0) {
 				$object->fax = $objsoc->fax; // Predefined with third party
 			}
 
@@ -808,7 +815,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
 			print '</tr>';
 
-			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) {
+			if (((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) && dol_strlen(trim($object->email)) == 0) {
 				$object->email = $objsoc->email; // Predefined with third party
 			}
 
@@ -856,7 +863,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// Visibility
 			print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
 			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
-			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ?GETPOST("priv", 'alpha') : $object->priv), 0);
+			print $form->selectarray('priv', $selectarray, (GETPOST("priv", 'alpha') ? GETPOST("priv", 'alpha') : $object->priv), 0);
 			print '</td></tr>';
 
 			//Default language
@@ -977,7 +984,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			// Ref/ID
-			if (!empty($conf->global->MAIN_SHOW_TECHNICAL_ID)) {
+			if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 				print '<tr><td>'.$langs->trans("ID").'</td><td colspan="3">';
 				print $object->ref;
 				print '</td></tr>';
@@ -994,7 +1001,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</tr>';
 
 			// Company
-			if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 				print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
 				print '<td colspan="3" class="maxwidthonsmartphone">';
 				print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST('socid', 'int') ? GETPOST('socid', 'int') : ($object->socid ? $object->socid : -1), 'socid', '', $langs->trans("SelectThirdParty"));
@@ -1039,8 +1046,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '</td></tr>';
 
 			// State
-			if (empty($conf->global->SOCIETE_DISABLE_STATE)) {
-				if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2)) {
+			if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
+				if (getDolGlobalString('MAIN_SHOW_REGION_IN_STATE_SELECT') && (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
 					print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
 				} else {
 					print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
@@ -1055,32 +1062,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ?GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+			print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$form->editfieldkey('PhonePerso', 'fax', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ?GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+			print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
 			print '<tr><td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0, 'string', '').'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning_mobile', 'class="pictofixedwidth"');
-			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+			print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
 			if ($conf->browser->layout == 'phone') {
 				print '</tr><tr>';
 			}
 			print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
 			print '<td>';
 			print img_picto('', 'object_phoning_fax', 'class="pictofixedwidth"');
-			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ?GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
+			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ? GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
 
 			// EMail
-			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (getDolGlobalString('SOCIETE_EMAIL_MANDATORY'))).'</td>';
 			print '<td>';
 			print img_picto('', 'object_email', 'class="pictofixedwidth"');
-			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
+			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 			if (isModEnabled('mailing')) {
 				$langs->load("mails");
 				print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
@@ -1147,13 +1154,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Note Public
 			print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 
 			// Note Private
 			print '<tr><td class="tdtop"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
-			$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			print '</td></tr>';
 
@@ -1313,7 +1320,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morehtmlref .= '</a>';
 
 		$morehtmlref .= '<div class="refidno">';
-		if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+		if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 			$objsoc->fetch($object->socid);
 			// Thirdparty
 			if ($objsoc->id > 0) {
@@ -1392,7 +1399,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<table class="border tableforfield centpercent">';
 
 
-		if (!empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+		if (getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES')) {
 			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3) {
 				// Level of prospect
 				print '<tr><td class="titlefield">';
@@ -1453,7 +1460,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if (isModEnabled("propal")) {
 			print '<tr><td class="titlefield tdoverflow">'.$langs->trans("ContactForProposals").'</td><td>';
-			print $object->ref_propal ? $object->ref_propal : $langs->trans("NoContactForAnyProposal");
+			print $object->ref_propal ? $object->ref_propal : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyProposal").'<span>';
 			print '</td></tr>';
 		}
 
@@ -1465,9 +1472,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print $langs->trans("ContactForOrders");
 			}
 			print '</td><td>';
-			$none = $langs->trans("NoContactForAnyOrder");
+			$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrder").'</span>';
 			if (isModEnabled("expedition")) {
-				$none = $langs->trans("NoContactForAnyOrderOrShipments");
+				$none = '<span class="opacitymedium">'.$langs->trans("NoContactForAnyOrderOrShipments").'</span>';
 			}
 			print $object->ref_commande ? $object->ref_commande : $none;
 			print '</td></tr>';
@@ -1475,13 +1482,13 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		if (isModEnabled('contrat')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForContracts").'</td><td>';
-			print $object->ref_contrat ? $object->ref_contrat : $langs->trans("NoContactForAnyContract");
+			print $object->ref_contrat ? $object->ref_contrat : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyContract").'</span>';
 			print '</td></tr>';
 		}
 
 		if (isModEnabled('facture')) {
 			print '<tr><td class="tdoverflow">'.$langs->trans("ContactForInvoices").'</td><td>';
-			print $object->ref_facturation ? $object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
+			print $object->ref_facturation ? $object->ref_facturation : '<span class="opacitymedium">'.$langs->trans("NoContactForAnyInvoice").'</span>';
 			print '</td></tr>';
 		}
 
@@ -1523,7 +1530,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 			}
 
-			if ($user->rights->societe->contact->creer) {
+			if ($user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans('Modify').'</a>';
 			}
 
@@ -1537,8 +1544,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Delete
-			if ($user->rights->societe->contact->supprimer) {
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->rights->societe->contact->supprimer);
+			if ($user->hasRight('societe', 'contact', 'supprimer')) {
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($backtopage ? '&backtopage='.urlencode($backtopage) : ''), 'delete', $user->hasRight('societe', 'contact', 'supprimer'));
 			}
 		}
 

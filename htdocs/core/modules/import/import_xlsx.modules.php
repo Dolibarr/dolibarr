@@ -42,18 +42,6 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $db;
 
-	public $datatoimport;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
 	/**
 	 * @var string Code of driver
 	 */
@@ -128,7 +116,7 @@ class ImportXlsx extends ModeleImports
 		if (!class_exists('ZipArchive')) {	// For Excel2007
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorPHPNeedModule', 'zip');
-			return -1;
+			return;
 		}
 		$this->label_lib = 'PhpSpreadSheet';
 		$this->version_lib = '1.8.0';
@@ -240,7 +228,7 @@ class ImportXlsx extends ModeleImports
 	 *	Open input file
 	 *
 	 *	@param	string	$file		Path of filename
-	 *	@return	int					<0 if KO, >=0 if OK
+	 *	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_open_file($file)
 	{
@@ -264,7 +252,7 @@ class ImportXlsx extends ModeleImports
 	 * 	Return nb of records. File must be closed.
 	 *
 	 *	@param	string	$file		Path of filename
-	 * 	@return	int					<0 if KO, >=0 if OK
+	 * 	@return	int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_get_nb_of_lines($file)
 	{
@@ -285,7 +273,7 @@ class ImportXlsx extends ModeleImports
 	/**
 	 * 	Input header line from file
 	 *
-	 * 	@return		int		<0 if KO, >=0 if OK
+	 * 	@return		int		Return integer <0 if KO, >=0 if OK
 	 */
 	public function import_read_header()
 	{
@@ -356,7 +344,7 @@ class ImportXlsx extends ModeleImports
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
-	 * @return	int										<0 if KO, >0 if OK
+	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
@@ -664,7 +652,7 @@ class ImportXlsx extends ModeleImports
 
 										if (!empty($classModForNumber) && !empty($pathModForNumber) && is_readable(DOL_DOCUMENT_ROOT.$pathModForNumber)) {
 											require_once DOL_DOCUMENT_ROOT.$pathModForNumber;
-											$modForNumber = new $classModForNumber;
+											$modForNumber = new $classModForNumber();
 
 											$tmpobject = null;
 											// Set the object with the date property when we can
@@ -705,14 +693,14 @@ class ImportXlsx extends ModeleImports
 										$this->errors[$error]['lib'] = implode(
 											"\n",
 											array_merge([$classinstance->error], $classinstance->errors)
-											);
+										);
 										$errorforthistable++;
 										$error++;
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'numeric') {
 									$newval = price2num($newval);
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'accountingaccount') {
-									if (empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+									if (!getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 										$newval = rtrim(trim($newval), "0");
 									} else {
 										$newval = trim($newval);
@@ -793,7 +781,7 @@ class ImportXlsx extends ModeleImports
 							// ...
 						}
 
-						// Define $listfields and $listvalues to build SQL request
+						// Define $listfields and $listvalues to build the SQL request
 						if (isModEnabled("socialnetworks") && strpos($fieldname, "socialnetworks") !== false) {
 							if (!in_array("socialnetworks", $listfields)) {
 								$listfields[] = "socialnetworks";
@@ -819,7 +807,7 @@ class ImportXlsx extends ModeleImports
 
 							// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
 							if (empty($newval) && $arrayrecord[($key)]['type'] < 0) {
-								$listvalues[] = ($newval == '0' ? $newval : "null");
+								$listvalues[] = ($newval == '0' ? (int) $newval : "null");
 							} elseif (empty($newval) && $arrayrecord[($key)]['type'] == 0) {
 								$listvalues[] = "''";
 							} else {
@@ -847,7 +835,7 @@ class ImportXlsx extends ModeleImports
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
 							$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $key);
 							$listfields[] = $keyfield;
-							$listvalues[] = $lastinsertid;
+							$listvalues[] = (int) $lastinsertid;
 							//print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $val)) {
 							$tmp = explode('-', $val, 2);
@@ -860,6 +848,7 @@ class ImportXlsx extends ModeleImports
 									$file = (empty($objimport->array_import_convertvalue[0][$fieldname]['classfile']) ? $objimport->array_import_convertvalue[0][$fieldname]['file'] : $objimport->array_import_convertvalue[0][$fieldname]['classfile']);
 									$class = $objimport->array_import_convertvalue[0][$fieldname]['class'];
 									$method = $objimport->array_import_convertvalue[0][$fieldname]['method'];
+									$type = $objimport->array_import_convertvalue[0][$fieldname]['type'];
 									$resultload = dol_include_once($file);
 									if (empty($resultload)) {
 										dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method);
@@ -871,14 +860,22 @@ class ImportXlsx extends ModeleImports
 									if (count($fieldArr) > 0) {
 										$fieldname = $fieldArr[1];
 									}
+
+									// Set $listfields and $listvalues
 									$listfields[] = $fieldname;
-									$listvalues[] = $res;
+									if ($type == 'int') {
+										$listvalues[] = (int) $res;
+									} elseif ($type == 'double') {
+										$listvalues[] = (float) $res;
+									} else {
+										$listvalues[] = "'".$this->db->escape($res)."'";
+									}
 								} else {
 									$this->errors[$error]['type'] = 'CLASSERROR';
 									$this->errors[$error]['lib'] = implode(
 										"\n",
 										array_merge([$classinstance->error], $classinstance->errors)
-										);
+									);
 									$errorforthistable++;
 									$error++;
 								}
@@ -949,7 +946,9 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
-										if ($is_table_category_link) $lastinsertid = 'linktable'; // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
+										if ($is_table_category_link) {
+											$lastinsertid = 'linktable';
+										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
 										$last_insert_id_array[$tablename] = $lastinsertid;
 									} elseif ($num_rows > 1) {
 										$this->errors[$error]['lib'] = $langs->trans('MultipleRecordFoundWithTheseFilters', implode(', ', $filters));
@@ -1014,9 +1013,9 @@ class ImportXlsx extends ModeleImports
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
-									$set[] = $key." = ".$val;
+									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
-								$sqlstart .= " SET " . implode(', ', $set);
+								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
 
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';

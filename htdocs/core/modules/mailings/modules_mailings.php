@@ -32,9 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 class MailingTargets // This can't be abstract as it is used for some method
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
 	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var array of errors
+	 */
+	public $errors;
 
 	/**
 	 * @var string	Condition to be enabled
@@ -42,20 +52,25 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $enabled;
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string Name of the module
 	 */
-	public $error = '';
+	public $name;
 
+	/**
+	 * @var string Description of the module
+	 */
+	public $desc;
+
+	/**
+	 * @var string Tooltip to show after description of the module
+	 */
 	public $tooltip = '';
 
 	/**
-	 * @var string The SQL string used to find the recipients
+	 * @var string To store the SQL string used to find the recipients
 	 */
 	public $sql;
 
-	public $desc;
-
-	public $name;
 
 	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
 
@@ -144,7 +159,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Met a jour nombre de destinataires
 	 *
 	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 < 0 si erreur, nb destinataires si ok
+	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
 	 */
 	public function update_nb($mailing_id)
 	{
@@ -175,7 +190,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 *
 	 * @param	int		$mailing_id    Id of emailing
 	 * @param   array	$cibles        Array with targets
-	 * @return  int      			   < 0 if error, nb added if OK
+	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
 	{

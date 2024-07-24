@@ -37,17 +37,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_sepamandate extends ModeleBankAccountDoc
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int Height reserved to output the info and total part
+	 */
+	public $heightforinfotot;
+
+	/**
+	 * @var int Height reserved to output the free text on last page
+	 */
+	public $heightforfreetext;
+
+	/**
+	 * @var int Height reserved to output the footer (value include bottom margin)
+	 */
+	public $heightforfooter;
+
+	/**
+	 * @var int x coordinate reserved to output the Signature area
+	 */
+	public $xPosSignArea;
 	/**
 	 *	Constructor
 	 *
@@ -86,8 +99,17 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		// Define column position
 		$this->posxref = $this->marge_gauche;
-	}
 
+		$this->update_main_doc_field=1;
+
+		$this->heightforinfotot=50;
+
+		$this->xPosSignArea=120;
+
+		$this->heightforfreetext = (getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') > 0 ? getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT') : 5);
+
+		$this->heightforfooter = $this->marge_basse + 8;
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -111,7 +133,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -159,11 +181,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
-					$heightforfooter += 6;
+
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
+					$this->heightforfooter  += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
 
@@ -199,7 +219,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$tab_top = 50;
 				$tab_top_newpage = 40;
 
-				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
+				$tab_height = $this->page_hauteur - $tab_top - $this->heightforfooter  - $this->heightforfreetext ;
 
 				// Show notes
 				if (!empty($object->note_public)) {
@@ -243,7 +263,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$tmpbankfordirectdebit->fetch($idbankfordirectdebit);
 					$ics = $tmpbankfordirectdebit->ics;	// ICS for direct debit
 				}
-				if (empty($ics) && !empty($conf->global->PRELEVEMENT_ICS)) {
+				if (empty($ics) && getDolGlobalString('PRELEVEMENT_ICS')) {
 					$ics = $conf->global->PRELEVEMENT_ICS;
 				}
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->transnoentitiesnoconv("ICS").') : '.$ics, 0, 'L');
@@ -309,7 +329,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepavatid, 0, 'L');
 
 				$address = '______________________________________________';
-				if ($thirdparty->id > 0) {
+				if (!empty($object->owner_address)) {
+					$address = $object->owner_address;
+				} elseif ($thirdparty->id > 0) {
 					$tmpaddresswithoutcountry = $thirdparty->getFullAddress();	// we test on address without country
 					if ($tmpaddresswithoutcountry) {
 						$address = $thirdparty->getFullAddress(1);	// full address
@@ -357,7 +379,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
 				$pdf->Rect(80, $posY, 5, 5);
 				$pdf->SetXY(80, $posY);
-				if ($object->frstrecur == 'RECUR') {
+				if ($object->frstrecur == 'RCUR') {
 					$pdf->MultiCell(5, 3, 'X', 0, 'L');
 				}
 				$pdf->SetXY(86, $posY);
@@ -387,17 +409,17 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				// Show square
 				if ($pagenb == 1) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter, 0, $outputlangs, 0, 0);
+					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter  + 1;
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter, 0, $outputlangs, 1, 0);
+					$bottomlasttab = $this->page_hauteur - $this->heightforinfotot  - $this->heightforfreetext  - $this->heightforfooter  + 1;
 				}
 
 				//var_dump($tab_top);
-				//var_dump($heightforinfotot);
-				//var_dump($heightforfreetext);
-				//var_dump($heightforfooter);
+				//var_dump($this->heightforinfotot );
+				//var_dump($this->heightforfreetext );
+				//var_dump($this->heightforfooter );
 				//var_dump($bottomlasttab);
 
 				// Affiche zone infos
@@ -485,7 +507,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$diffsizetitle = (empty($conf->global->PDF_DIFFSIZE_TITLE) ? 1 : $conf->global->PDF_DIFFSIZE_TITLE);
+		$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 1 : $conf->global->PDF_DIFFSIZE_TITLE);
 
 		$posy += $this->_signature_area($pdf, $object, $posy, $outputlangs);
 
@@ -527,14 +549,13 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateOfSignature"), 0, 'L', 0);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentitiesnoconv("DateSigning"), 0, 'L', 0);
 		$pdf->MultiCell(100, 3, ' ');
 		$pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
 
-		$posx = 120;
+		$posx = $this->xPosSignArea;
 		$largcol = ($this->page_largeur - $this->marge_droite - $posx);
-		$useborder = 0;
-		$index = 0;
+
 		// Total HT
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($posx, $tab_top);

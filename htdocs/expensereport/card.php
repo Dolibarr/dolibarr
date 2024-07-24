@@ -66,13 +66,13 @@ $vatrate = GETPOST('vatrate', 'alpha');
 $ref = GETPOST("ref", 'alpha');
 $comments = GETPOST('comments', 'restricthtml');
 $fk_c_type_fees = GETPOST('fk_c_type_fees', 'int');
-$socid = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : GETPOST('socid_id', 'int');
+$socid = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : GETPOST('socid_id', 'int');
 
 $childids = $user->getAllChildIds(1);
 
-if (!empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH)) {
+if (getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH')) {
 	if (empty($date_start)) {
-		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'),  1, (int) dol_print_date(dol_now(), '%Y'));
+		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), 1, (int) dol_print_date(dol_now(), '%Y'));
 	}
 
 	if (empty($date_end)) {
@@ -96,9 +96,9 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
 
 $object = new ExpenseReport($db);
@@ -119,16 +119,16 @@ $permissiontoadd = $user->rights->expensereport->creer; // Used by the include o
 
 $upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
 
-$projectRequired = isModEnabled('project') && !empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED);
-$fileRequired = !empty($conf->global->EXPENSEREPORT_FILE_IS_REQUIRED);
+$projectRequired = isModEnabled('project') && getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED');
+$fileRequired = getDolGlobalString('EXPENSEREPORT_FILE_IS_REQUIRED');
 
 if ($object->id > 0) {
 	// Check current user can read this expense report
 	$canread = 0;
-	if (!empty($user->rights->expensereport->readall)) {
+	if ($user->hasRight('expensereport', 'readall')) {
 		$canread = 1;
 	}
-	if (!empty($user->rights->expensereport->lire) && in_array($object->fk_user_author, $childids)) {
+	if ($user->hasRight('expensereport', 'lire') && in_array($object->fk_user_author, $childids)) {
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -137,7 +137,7 @@ if ($object->id > 0) {
 }
 
 $candelete = 0;
-if (!empty($user->rights->expensereport->supprimer)) {
+if ($user->hasRight('expensereport', 'supprimer')) {
 	$candelete = 1;
 }
 if ($object->statut == ExpenseReport::STATUS_DRAFT && $user->hasRight('expensereport', 'write') && in_array($object->fk_user_author, $childids)) {
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php'; // Must be include, not include_once
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->expensereport->creer) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('expensereport', 'creer')) {
 		if (1 == 0 && !GETPOST('clone_content', 'alpha') && !GETPOST('clone_receivers', 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'add' && $user->rights->expensereport->creer) {
+	if ($action == 'add' && $user->hasRight('expensereport', 'creer')) {
 		$error = 0;
 
 		$object = new ExpenseReport($db);
@@ -265,13 +265,13 @@ if (empty($reshook)) {
 		}
 
 		// Check that expense report is for a user inside the hierarchy, or that advanced permission for all is set
-		if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer))
-			|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->expensereport->creer) && empty($user->rights->expensereport->writeall_advance))) {
+		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('expensereport', 'creer'))
+			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('expensereport', 'creer') && !$user->hasRight('expensereport', 'writeall_advance'))) {
 			$error++;
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 		}
 		if (!$error) {
-			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)) {
+			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance')) {
 				if (!in_array($object->fk_user_author, $childids)) {
 					$error++;
 					setEventMessages($langs->trans("UserNotInHierachy"), null, 'errors');
@@ -295,7 +295,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && empty($conf->global->EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS)) {
+		if (!$error && !getDolGlobalString('EXPENSEREPORT_ALLOW_OVERLAPPING_PERIODS')) {
 			$overlappingExpenseReportID = $object->periode_existe($fuser, $object->date_debut, $object->date_fin);
 
 			if ($overlappingExpenseReportID > 0) {
@@ -325,7 +325,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if (($action == 'update' || $action == 'updateFromRefuse') && $user->rights->expensereport->creer) {
+	if (($action == 'update' || $action == 'updateFromRefuse') && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -351,7 +351,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -373,7 +373,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_validate" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$error = 0;
 
 		$db->begin();
@@ -385,7 +385,7 @@ if (empty($reshook)) {
 
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -422,11 +422,13 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailTo && $emailFrom) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -488,14 +490,14 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_save_from_refuse" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_save_from_refuse" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		$result = $object->set_save_from_refuse($user);
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -529,11 +531,13 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -542,8 +546,7 @@ if (empty($reshook)) {
 				// CONTENT
 				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
 				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$dateRefusEx = explode(" ", $object->date_refuse);
-				$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", $dateRefusEx[0], $object->detail_refuse, $expediteur->getFullName($langs), $link);
+				$message = $langs->transnoentities("ExpenseReportWaitingForReApprovalMessage", dol_print_date($object->date_refuse, 'day'), $object->detail_refuse, $expediteur->getFullName($langs), get_date_range($object->date_debut, $object->date_fin, '', $langs), $link);
 
 				// Rebuild pdf
 				/*
@@ -597,7 +600,7 @@ if (empty($reshook)) {
 	}
 
 	// Approve
-	if ($action == "confirm_approve" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->approve) {
+	if ($action == "confirm_approve" && GETPOST("confirm", 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'approve')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -605,7 +608,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -634,7 +637,7 @@ if (empty($reshook)) {
 			$emailTo = $destinataire->email;
 
 			// CC
-			$emailCC = $conf->global->NDF_CC_EMAILS;
+			$emailCC = getDolGlobalString('NDF_CC_EMAILS');
 			if (empty($emailTo)) {
 				$emailTo = $emailCC;
 			}
@@ -642,15 +645,17 @@ if (empty($reshook)) {
 			// FROM
 			$expediteur = new User($db);
 			$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
-			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
-				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 				}
 
 				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportApproved");
@@ -710,7 +715,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->approve) {
+	if ($action == "confirm_refuse" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'approve')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -719,7 +724,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -753,11 +758,13 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -820,7 +827,7 @@ if (empty($reshook)) {
 	}
 
 	//var_dump($user->id == $object->fk_user_validator);exit;
-	if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_cancel" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		if (!GETPOST('detail_cancel', 'alpha')) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 		} else {
@@ -833,7 +840,7 @@ if (empty($reshook)) {
 
 				if ($result > 0) {
 					// Define output language
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -867,11 +874,13 @@ if (empty($reshook)) {
 					$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 					if ($emailFrom && $emailTo) {
-						$filename = array(); $filedir = array(); $mimetype = array();
+						$filename = array();
+						$filedir = array();
+						$mimetype = array();
 
 						// SUBJECT
 						$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-						if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+						if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 							$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 						}
 
@@ -937,7 +946,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->rights->expensereport->creer) {
+	if ($action == "confirm_setdraft" && GETPOST('confirm', 'alpha') == "yes" && $id > 0 && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
@@ -945,7 +954,7 @@ if (empty($reshook)) {
 
 			if ($result > 0) {
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -976,7 +985,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_unpaid' && $id > 0 && $user->rights->expensereport->to_paid) {
+	if ($action == 'set_unpaid' && $id > 0 && $user->hasRight('expensereport', 'to_paid')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -984,7 +993,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1005,7 +1014,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid) {
+	if ($action == 'set_paid' && $id > 0 && $user->hasRight('expensereport', 'to_paid')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1013,7 +1022,7 @@ if (empty($reshook)) {
 
 		if ($result > 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1047,11 +1056,13 @@ if (empty($reshook)) {
 			$emailFrom = $conf->global->MAIN_MAIL_EMAIL_FROM;
 
 			if ($emailFrom && $emailTo) {
-				$filename = array(); $filedir = array(); $mimetype = array();
+				$filename = array();
+				$filedir = array();
+				$mimetype = array();
 
 				// SUBJECT
 				$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
-				if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
+				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 					$societeName = $conf->global->MAIN_APPLICATION_TITLE;
 				}
 
@@ -1102,7 +1113,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "addline" && $user->rights->expensereport->creer) {
+	if ($action == "addline" && $user->hasRight('expensereport', 'creer')) {
 		$error = 0;
 
 		// First save uploaded file
@@ -1186,7 +1197,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
@@ -1226,7 +1237,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->rights->expensereport->creer) {
+	if ($action == 'confirm_delete_line' && GETPOST("confirm", 'alpha') == "yes" && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1239,7 +1250,7 @@ if (empty($reshook)) {
 		if ($result >= 0) {
 			if ($result > 0) {
 				// Define output language
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1266,7 +1277,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == "updateline" && $user->rights->expensereport->creer) {
+	if ($action == "updateline" && $user->hasRight('expensereport', 'creer')) {
 		$object = new ExpenseReport($db);
 		$object->fetch($id);
 
@@ -1331,7 +1342,7 @@ if (empty($reshook)) {
 			if ($result >= 0) {
 				if ($result > 0) {
 					// Define output language
-					if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
@@ -1440,7 +1451,7 @@ if ($action == 'create') {
 		$defaultselectuser = GETPOST('fk_user_author', 'int');
 	}
 	$include_users = 'hierarchyme';
-	if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expensereport->writeall_advance)) {
+	if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expensereport', 'writeall_advance')) {
 		$include_users = array();
 	}
 	$s = $form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users, '', '0,'.$conf->entity);
@@ -1458,20 +1469,20 @@ if ($action == 'create') {
 		print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateExpenseReport");
 	} else {
 		$defaultselectuser = (empty($user->fk_user_expense_validator) ? $user->fk_user : $user->fk_user_expense_validator); // Will work only if supervisor has permission to approve so is inside include_users
-		if (!empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) {
+		if (getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR')) {
 			$defaultselectuser = $conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR; // Can force default approver
 		}
 		if (GETPOST('fk_user_validator', 'int') > 0) {
 			$defaultselectuser = GETPOST('fk_user_validator', 'int');
 		}
-		$s = $form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE)) ? 0 : 1), $include_users);
+		$s = $form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", ((empty($defaultselectuser) || !getDolGlobalString('EXPENSEREPORT_DEFAULT_VALIDATOR_UNCHANGEABLE')) ? 0 : 1), $include_users);
 		print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	}
 	print '</td>';
 	print '</tr>';
 
 	// Payment mode
-	if (!empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION)) {
+	if (getDolGlobalString('EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION')) {
 		print '<tr>';
 		print '<td>'.$langs->trans("ModePaiement").'</td>';
 		print '<td>';
@@ -1487,7 +1498,7 @@ if ($action == 'create') {
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
@@ -1499,7 +1510,7 @@ if ($action == 'create') {
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -1525,19 +1536,19 @@ if ($action == 'create') {
 
 	if ($result > 0) {
 		if (!in_array($object->fk_user_author, $user->getAllChildIds(1))) {
-			if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-				&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
-					print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
+			if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+				&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
+				print load_fiche_titre($langs->trans('TripCard'), '', 'trip');
 
-					print '<div class="tabBar">';
-					print $langs->trans('NotUserRightToView');
-					print '</div>';
+				print '<div class="tabBar">';
+				print $langs->trans('NotUserRightToView');
+				print '</div>';
 
-					// End of page
-					llxFooter();
-					$db->close();
+				// End of page
+				llxFooter();
+				$db->close();
 
-					exit;
+				exit;
 			}
 		}
 
@@ -1559,7 +1570,7 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-			print '<table class="border" style="width:100%;">';
+			print '<table class="border centpercent">';
 
 			print '<tr>';
 			print '<td>'.$langs->trans("User").'</td>';
@@ -1589,7 +1600,7 @@ if ($action == 'create') {
 			print '</td>';
 			print '</tr>';
 
-			if (!empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION)) {
+			if (getDolGlobalString('EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION')) {
 				print '<tr>';
 				print '<td>'.$langs->trans("ModePaiement").'</td>';
 				print '<td>';
@@ -1639,7 +1650,7 @@ if ($action == 'create') {
 
 			print '</form>';
 		} else {
-			$taxlessUnitPriceDisabled = !empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? ' disabled' : '';
+			$taxlessUnitPriceDisabled = getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? ' disabled' : '';
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), -1, 'trip');
 
@@ -1649,7 +1660,7 @@ if ($action == 'create') {
 			if ($action == 'clone') {
 				// Create an array for form
 				$criteriaforfilter = 'hierarchyme';
-				if (!empty($user->rights->expensereport->readall)) {
+				if ($user->hasRight('expensereport', 'readall')) {
 					$criteriaforfilter = '';
 				}
 				$formquestion = array(
@@ -1737,7 +1748,7 @@ if ($action == 'create') {
 			print get_date_range($object->date_debut, $object->date_fin, 'day', $langs, 0);
 			print '</td>';
 			print '</tr>';
-			if (!empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION)) {
+			if (getDolGlobalString('EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION')) {
 				print '<tr>';
 				print '<td>'.$langs->trans("ModePaiement").'</td>';
 				print '<td>'.$object->fk_c_paiement.'</td>';
@@ -1941,7 +1952,8 @@ if ($action == 'create') {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				$i = 0; $totalpaid = 0;
+				$i = 0;
+				$totalpaid = 0;
 				while ($i < $num) {
 					$objp = $db->fetch_object($resql);
 
@@ -1957,7 +1969,7 @@ if ($action == 'create') {
 					print $paymentexpensereportstatic->getNomUrl(1);
 					print '</td>';
 					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != ("PaymentType".$objp->payment_code) ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
+					$labeltype = $langs->trans("PaymentType".$objp->payment_code) != "PaymentType".$objp->payment_code ? $langs->trans("PaymentType".$objp->payment_code) : $objp->payment_type;
 					print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 					// Bank account
 					if (isModEnabled("banque")) {
@@ -2037,7 +2049,8 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder centpercent">';
 
 			if (!empty($object->lines)) {
-				$i = 0; $total = 0;
+				$i = 0;
+				$total = 0;
 
 				print '<tr class="liste_titre headerexpensereportdet">';
 				print '<td class="center linecollinenb">'.$langs->trans('LineNb').'</td>';
@@ -2047,7 +2060,7 @@ if ($action == 'create') {
 					print '<td class="minwidth100imp linecolproject">'.$langs->trans('Project').'</td>';
 				}
 				print '<td class="center linecoltype">'.$langs->trans('Type').'</td>';
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td class="center linecolcarcategory">'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -2068,7 +2081,7 @@ if ($action == 'create') {
 				print '</td>';
 
 				// Ajout des boutons de modification/suppression
-				if (($object->status < 2 || $object->status == 99) && $user->rights->expensereport->creer) {
+				if (($object->status < 2 || $object->status == 99) && $user->hasRight('expensereport', 'creer')) {
 					print '<td class="right"></td>';
 				}
 				print '</tr>';
@@ -2121,7 +2134,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// IK
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 							print '<td class="fk_c_exp_tax_cat linecoltaxcat">';
 							$exp_tax_cat_label = dol_getIdFromCode($db, $line->fk_c_exp_tax_cat, 'c_exp_tax_cat', 'rowid', 'label');
 							print $langs->trans($exp_tax_cat_label);
@@ -2170,14 +2183,14 @@ if ($action == 'create') {
 										$minifile = getImageFileNameForSize($fileinfo['basename'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 									}
 									//print $file['path'].'/'.$minifile.'<br>';
-									$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+									$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 									if (empty($urlforhref)) {
-										$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+										$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 										print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 									} else {
 										print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 									}
-									print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
+									print '<img class="photo" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.'/'.$minifile).'" title="">';
 									print '</a>';
 								} else {
 									$modulepart = 'expensereport';
@@ -2191,7 +2204,7 @@ if ($action == 'create') {
 										if ($pdfexists) {
 											// Conversion du PDF en image png si fichier png non existant
 											if (!file_exists($fileimage) || (filemtime($fileimage) < filemtime($filepdf))) {
-												if (empty($conf->global->MAIN_DISABLE_PDF_THUMBS)) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
+												if (!getDolGlobalString('MAIN_DISABLE_PDF_THUMBS')) {		// If you experience trouble with pdf thumb generation and imagick, you can disable here.
 													include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 													$ret = dol_convert_file($filepdf, 'png', $fileimage, '0'); // Convert first page of PDF into a file _preview.png
 													if ($ret < 0) {
@@ -2209,7 +2222,7 @@ if ($action == 'create') {
 											// If the preview file is found
 											if (file_exists($fileimage)) {
 												$thumbshown = 1;
-												$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(!empty($object->entity) ? $object->entity : $conf->entity));
+												$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 												print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
 												print '<img height="'.$heightforphotref.'" class="photo photowithmargin photowithborder" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=apercu'.$modulepart.'&amp;file='.urlencode($relativepathimage).'">';
 												print '</a>';
@@ -2230,7 +2243,7 @@ if ($action == 'create') {
 						print '</td>';
 
 						// Ajout des boutons de modification/suppression
-						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->rights->expensereport->creer) {
+						if (($object->status < ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED) && $user->hasRight('expensereport', 'creer')) {
 							print '<td class="nowrap right linecolaction">';
 
 							print '<a class="editfielda reposition paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&rowid='.$line->rowid.'">';
@@ -2252,7 +2265,7 @@ if ($action == 'create') {
 						if (isModEnabled('project')) {
 							$colspan++;
 						}
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 							$colspan++;
 						}
 
@@ -2267,7 +2280,7 @@ if ($action == 'create') {
 						print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 						print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 						print '</a>';
-						if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+						if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 							print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 							print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 							print '</a>';
@@ -2335,7 +2348,7 @@ if ($action == 'create') {
 						print $formexpensereport->selectTypeExpenseReport($line->fk_c_type_fees, 'fk_c_type_fees');
 						print '</td>';
 
-						if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+						if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 							print '<td class="fk_c_exp_tax_cat">';
 							$params = array('fk_expense' => $object->id, 'fk_expense_det' => $line->id, 'date' => $line->date);
 							print $form->selectExpenseCategories($line->fk_c_exp_tax_cat, 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params);
@@ -2391,10 +2404,10 @@ if ($action == 'create') {
 				}
 			}
 
-			 // Add a new line
-			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->rights->expensereport->creer) {
+			// Add a new line
+			if (($object->status == ExpenseReport::STATUS_DRAFT || $object->status == ExpenseReport::STATUS_REFUSED) && $action != 'editline' && $user->hasRight('expensereport', 'creer')) {
 				$colspan = 12;
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					$colspan++;
 				}
 				if (isModEnabled('project')) {
@@ -2406,7 +2419,7 @@ if ($action == 'create') {
 
 				$nbFiles = $nbLinks = 0;
 				$arrayoffiles = array();
-				if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 					require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -2422,7 +2435,7 @@ if ($action == 'create') {
 				print '<a href="" class="commonlink auploadnewfilenow reposition">'.$langs->trans("UploadANewFileNow");
 				print img_picto($langs->trans("UploadANewFileNow"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 				print '</a>';
-				if (empty($conf->global->EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES)) {
+				if (!getDolGlobalString('EXPENSEREPORT_DISABLE_ATTACHMENT_ON_LINES')) {
 					print ' &nbsp; - &nbsp; <a href="" class="commonlink aattachtodoc reposition">'.$langs->trans("AttachTheNewLineToTheDocument");
 					print img_picto($langs->trans("AttachTheNewLineToTheDocument"), 'chevron-down', '', false, 0, 0, '', 'marginleftonly');
 					print '</a>';
@@ -2481,7 +2494,7 @@ if ($action == 'create') {
 					print '<td class="minwidth100imp">'.$form->textwithpicto($langs->trans('Project'), $langs->trans("ClosedProjectsAreHidden")).'</td>';
 				}
 				print '<td class="center expensereportcreatetype">'.$langs->trans('Type').'</td>';
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td>'.$langs->trans('CarCategory').'</td>';
 				}
 				print '<td class="expensereportcreatedescription">'.$langs->trans('Description').'</td>';
@@ -2512,12 +2525,12 @@ if ($action == 'create') {
 					print '</td>';
 				}
 
-					// Select type
-					print '<td class="center inputtype">';
-					print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
-					print '</td>';
+				// Select type
+				print '<td class="center inputtype">';
+				print $formexpensereport->selectTypeExpenseReport(!empty($fk_c_type_fees) ? $fk_c_type_fees : "", 'fk_c_type_fees', 1);
+				print '</td>';
 
-				if (!empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+				if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 					print '<td class="fk_c_exp_tax_cat">';
 					$params = array('fk_expense' => $object->id);
 					print $form->selectExpenseCategories('', 'fk_c_exp_tax_cat', 1, array(), 'fk_c_type_fees', $userauthor->default_c_exp_tax_cat, $params, 0);
@@ -2532,7 +2545,7 @@ if ($action == 'create') {
 				// Select VAT
 				print '<td class="right inputvat">';
 				$defaultvat = -1;
-				if (!empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) {
+				if (getDolGlobalString('EXPENSEREPORT_NO_DEFAULT_VAT')) {
 					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
@@ -2590,39 +2603,37 @@ if ($action == 'create') {
 				});
 			';
 
-			if (! empty($conf->global->MAIN_USE_EXPENSE_IK)) {
+			if (getDolGlobalString('MAIN_USE_EXPENSE_IK')) {
 				print '
 
-                /* unit price coéf calculation */
+                /* unit price coef calculation */
                 jQuery(".input_qty, #fk_c_type_fees, #select_fk_c_exp_tax_cat, #vatrate ").change(function(event) {
+					console.log("We change a parameter");
 
                     let type_fee = jQuery("#fk_c_type_fees").find(":selected").val();
                     let tax_cat = jQuery("#select_fk_c_exp_tax_cat").find(":selected").val();
                     let tva = jQuery("#vatrate").find(":selected").val();
                     let qty = jQuery(".input_qty").val();
 
-
-
-					let path = "'.dol_buildpath("/expensereport/ajax/ajaxik.php", 1) .'";
+					let path = "'.DOL_DOCUMENT_ROOT.'/expensereport/ajax/ajaxik.php";
 					path += "?fk_c_exp_tax_cat="+tax_cat;
-					path +="&fk_expense="+'.$object->id.';
+					path += "&fk_expense="+'.((int) $object->id).';
                     path += "&vatrate="+tva;
                     path += "&qty="+qty;
 
                     if (type_fee == 4) { // frais_kilométriques
-
                         if (tax_cat == "" || parseInt(tax_cat) <= 0){
                             return ;
                         }
 
 						jQuery.ajax({
-							url: path
-							,async:false
-							,dataType:"json"
-							,success:function(response) {
+							url: path,
+							async: true,
+							dataType: "json",
+							success: function(response) {
 								if (response.response_status == "success"){';
 
-				if (!empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY)) {
+				if (getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY')) {
 					print '
 									jQuery("#value_unit").val(parseFloat(response.data) * (100 + parseFloat(tva)) / 100);
 									jQuery("#value_unit").trigger("change");
@@ -2636,11 +2647,11 @@ if ($action == 'create') {
 				}
 
 				print '
-                                } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ){
+                                } else if(response.response_status == "error" && response.errorMessage != undefined && response.errorMessage.length > 0 ) {
+									console.log("We get an error result");
                                     $.jnotify(response.errorMessage, "error", {timeout: 0, type: "error"},{ remove: function (){} } );
                                 }
-							},
-
+							}
 						});
                     }
 
@@ -2687,7 +2698,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	if (empty($user->socid)) {
 		if ($object->status > ExpenseReport::STATUS_DRAFT) {
 			//if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expensereport->expensereport_advance->send)) {
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 			//} else
 			//	print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">' . $langs->trans('SendMail') . '</a></div>';
 		}
@@ -2698,8 +2709,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	*	ET fk_user_author == user courant
 	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	*/
-	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_DRAFT) {
-		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || !empty($user->rights->expensereport->writeall_advance)) {
+	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
+		if (in_array($object->fk_user_author, $user->getAllChildIds(1)) || $user->hasRight('expensereport', 'writeall_advance')) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
@@ -2715,7 +2726,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	 *	ET fk_user_author == user courant
 	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
 	 */
-	if ($user->rights->expensereport->creer && $object->status == ExpenseReport::STATUS_REFUSED) {
+	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_REFUSED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// Modify
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
@@ -2727,7 +2738,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'to_paid') && $object->status == ExpenseReport::STATUS_APPROVED) {
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
 			// setdraft
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=setdraft&token='.newToken().'&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
@@ -2746,13 +2757,13 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	if ($user->rights->expensereport->approve && $object->status == ExpenseReport::STATUS_VALIDATED) {
+	if ($user->hasRight('expensereport', 'approve') && $object->status == ExpenseReport::STATUS_VALIDATED) {
 		//if($object->fk_user_validator==$user->id)
 		//{
-			// Validate
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a></div>';
-			// Deny
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
+		// Validate
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a></div>';
+		// Deny
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 		//}
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) {
@@ -2765,12 +2776,12 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	// If status is Approved
 	// ---------------------
 
-	if ($user->rights->expensereport->approve && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'approve') && $object->status == ExpenseReport::STATUS_APPROVED) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 	}
 
 	// If bank module is used
-	if ($user->rights->expensereport->to_paid && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'to_paid') && isModEnabled("banque") && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Pay
 		if ($remaintopay == 0) {
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
@@ -2780,36 +2791,36 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 	}
 
 	// If bank module is not used
-	if (($user->rights->expensereport->to_paid || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if (($user->hasRight('expensereport', 'to_paid') || empty(isModEnabled("banque"))) && $object->status == ExpenseReport::STATUS_APPROVED) {
 		//if ((round($remaintopay) == 0 || !isModEnabled("banque")) && $object->paid == 0)
 		if ($object->paid == 0) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 	}
 
-	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->status == ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'creer') && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->status == ExpenseReport::STATUS_APPROVED) {
 		// Cancel
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
 
 	// TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
-	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->status == ExpenseReport::STATUS_CLOSED) {
+	if (($user->hasRight('expensereport', 'approve') || $user->hasRight('expensereport', 'to_paid')) && $object->status == ExpenseReport::STATUS_CLOSED) {
 		// Cancel
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
 
-	if ($user->rights->expensereport->to_paid && $object->paid && $object->status == ExpenseReport::STATUS_CLOSED) {
+	if ($user->hasRight('expensereport', 'to_paid') && $object->paid && $object->status == ExpenseReport::STATUS_CLOSED) {
 		// Set unpaid
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=set_unpaid&token='.newToken().'&id='.$object->id.'">'.$langs->trans('ClassifyUnPaid').'</a></div>';
 	}
 
 	// Clone
-	if ($user->rights->expensereport->creer) {
+	if ($user->hasRight('expensereport', 'creer')) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().'">'.$langs->trans("ToClone").'</a></div>';
 	}
 
 	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */
-	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
+	if ($user->hasRight('expensereport', 'creer') && $user->id == $object->fk_user_author && $object->status < ExpenseReport::STATUS_APPROVED) {
 		// Delete
 		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	} elseif ($candelete && $object->status != ExpenseReport::STATUS_CLOSED) {
@@ -2837,7 +2848,7 @@ if ($action != 'presend') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
 
-	if ($user->rights->expensereport->creer && $action != 'create' && $action != 'edit') {
+	if ($user->hasRight('expensereport', 'creer') && $action != 'create' && $action != 'edit') {
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->expensereport->dir_output."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;

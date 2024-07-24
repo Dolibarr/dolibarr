@@ -96,9 +96,9 @@ class PaiementFourn extends Paiement
 	 *	@param	int		$id         Id if payment to get
 	 *  @param	string	$ref		Ref of payment to get
 	 *  @param	int		$fk_bank	Id of bank line associated to payment
-	 *  @return int		            <0 if KO, -2 if not found, >0 if OK
+	 *  @return int		            Return integer <0 if KO, -2 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $fk_bank = '')
+	public function fetch($id, $ref = '', $fk_bank = 0)
 	{
 		$error = 0;
 
@@ -130,7 +130,6 @@ class PaiementFourn extends Paiement
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->num_payment    = $obj->num_payment;
-				$this->numero         = $obj->num_payment;
 				$this->bank_account   = $obj->fk_account;
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -198,7 +197,7 @@ class PaiementFourn extends Paiement
 			// Add controls of input validity
 			if ($value_converted === false) {
 				// We failed to find the conversion for one invoice
-				$this->error = 'FailedToFoundTheConversionRateForInvoice';
+				$this->error = $langs->trans('FailedToFoundTheConversionRateForInvoice');
 				return -1;
 			}
 			if (empty($currencyofpayment)) {
@@ -244,7 +243,7 @@ class PaiementFourn extends Paiement
 
 		$this->db->begin();
 
-		if ($totalamount <> 0) { // On accepte les montants negatifs
+		if ($totalamount != 0) { // On accepte les montants negatifs
 			$ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
 
 			if ($way == 'dolibarr') {
@@ -267,10 +266,10 @@ class PaiementFourn extends Paiement
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount) {
 					$facid = $key;
-					if (is_numeric($amount) && $amount <> 0) {
+					if (is_numeric($amount) && $amount != 0) {
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount, multicurrency_code, multicurrency_tx)';
-						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($currencytxofpayment) ? (double) $currencytxofpayment : 1).')';
+						$sql .= " VALUES (".((int) $facid).", ".((int) $this->id).", ".((float) $amount).', '.((float) $this->multicurrency_amounts[$key]).', '.($currencyofpayment ? "'".$this->db->escape($currencyofpayment)."'" : 'NULL').', '.(!empty($currencytxofpayment) ? (float) $currencytxofpayment : 1).')';
 						$resql = $this->db->query($sql);
 						if ($resql) {
 							$invoice = new FactureFournisseur($this->db);
@@ -299,6 +298,7 @@ class PaiementFourn extends Paiement
 											$discount->discount_type = 1; // Supplier discount
 											$discount->description = '(DEPOSIT)';
 											$discount->fk_soc = $invoice->socid;
+											$discount->socid = $invoice->socid;
 											$discount->fk_invoice_supplier_source = $invoice->id;
 
 											// Loop on each vat rate
@@ -363,7 +363,7 @@ class PaiementFourn extends Paiement
 							}
 
 							// Regenerate documents of invoices
-							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+							if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 								$newlang = '';
 								$outputlangs = $langs;
 								if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -408,7 +408,7 @@ class PaiementFourn extends Paiement
 			$error++;
 		}
 
-		if ($totalamount <> 0 && $error == 0) { // On accepte les montants negatifs
+		if ($totalamount != 0 && $error == 0) { // On accepte les montants negatifs
 			$this->amount = $total;
 			$this->total = $total;
 			$this->multicurrency_amount = $mtotal;
@@ -426,13 +426,14 @@ class PaiementFourn extends Paiement
 	 *	Delete a payment and lines generated into accounts
 	 *	Si le paiement porte sur un ecriture compte qui est rapprochee, on refuse
 	 *	Si le paiement porte sur au moins une facture a "payee", on refuse
+	 *	@TODO Add User $user as first param
 	 *
 	 *	@param		int		$notrigger		No trigger
-	 *	@return     int     <0 si ko, >0 si ok
+	 *	@return     int     Return integer <0 si ko, >0 si ok
 	 */
 	public function delete($notrigger = 0)
 	{
-		global $conf, $user, $langs;
+		global $user;
 
 		$bank_line_id = $this->bank_line;
 
@@ -519,7 +520,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
+		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms as fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -528,18 +529,10 @@ class PaiementFourn extends Paiement
 			$num = $this->db->num_rows($resql);
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
-				$this->id = $obj->rowid;
 
-				if ($obj->fk_user_creat) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation = $cuser;
-				}
-				if ($obj->fk_user_modif) {
-					$muser = new User($this->db);
-					$muser->fetch($obj->fk_user_modif);
-					$this->user_modification = $muser;
-				}
+				$this->id = $obj->rowid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
@@ -691,7 +684,7 @@ class PaiementFourn extends Paiement
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Payment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -736,8 +729,6 @@ class PaiementFourn extends Paiement
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $user, $langs, $conf;
-
 		$now = dol_now();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
@@ -765,18 +756,18 @@ class PaiementFourn extends Paiement
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+		if (!getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'brodator') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'brodator') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
-		} elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'bronan') {
+		} elseif (getDolGlobalString('SUPPLIER_PAYMENT_ADDON') == 'bronan') {
 			$conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 		}
 
-		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON)) {
+		if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
+			$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
 			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
 
 			// Include file with class
@@ -793,8 +784,8 @@ class PaiementFourn extends Paiement
 
 			// For compatibility
 			if ($mybool === false) {
-				$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
-				$classname = "mod_supplier_payment_".$conf->global->SUPPLIER_PAYMENT_ADDON;
+				$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
+				$classname = "mod_supplier_payment_" . getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
 				// Include file with class
 				foreach ($conf->file->dol_document_root as $dirroot) {
@@ -842,7 +833,7 @@ class PaiementFourn extends Paiement
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
 	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 *  @return     int         				Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -852,7 +843,7 @@ class PaiementFourn extends Paiement
 
 		// Set the model on the model name to use
 		if (empty($modele)) {
-			if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)) {
+			if (getDolGlobalString('SUPPLIER_PAYMENT_ADDON_PDF')) {
 				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
 			} else {
 				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
@@ -898,7 +889,7 @@ class PaiementFourn extends Paiement
 	 *  Load the third party of object, from id into this->thirdparty
 	 *
 	 *	@param		int		$force_thirdparty_id	Force thirdparty id
-	 *	@return		int								<0 if KO, >0 if OK
+	 *	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{

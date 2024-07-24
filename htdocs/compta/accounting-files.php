@@ -4,7 +4,7 @@
  * Copyright (C) 2017       Pierre-Henry Favre   <support@atm-consulting.fr>
  * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022       Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -124,7 +124,7 @@ if (isModEnabled('multicompany') && is_object($mc)) {
 
 $entity = (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : (GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $conf->entity));
 if (isModEnabled('multicompany') && is_object($mc)) {
-	if (empty($entity) && !empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	if (empty($entity) && getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
 		$entity = '0,'.join(',', array_keys($arrayofentities));
 	}
 }
@@ -185,7 +185,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Facture::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Vendor invoices
 		if (GETPOST('selectsupplierinvoices') && !empty($listofchoices['selectsupplierinvoices']['perms'])) {
@@ -199,7 +201,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datef between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".FactureFournisseur::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Expense reports
 		if (GETPOST('selectexpensereports') && !empty($listofchoices['selectexpensereports']['perms']) && empty($projectid)) {
@@ -226,7 +230,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datedon between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			$sql .= " AND t.fk_statut <> ".Don::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Payments of salaries
 		if (GETPOST('selectpaymentsofsalaries') && !empty($listofchoices['selectpaymentsofsalaries']['perms'])) {
@@ -240,7 +246,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".PaymentSalary::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Social contributions
 		if (GETPOST('selectsocialcontributions') && !empty($listofchoices['selectsocialcontributions']['perms'])) {
@@ -254,7 +262,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " WHERE t.date_ech between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
 			//$sql.=" AND fk_statut <> ".ChargeSociales::STATUS_DRAFT;
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Various payments
 		if (GETPOST('selectvariouspayment') && !empty($listofchoices['selectvariouspayment']['perms'])) {
@@ -267,7 +277,9 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."payment_various as t";
 			$sql .= " WHERE datep between ".$wheretail;
 			$sql .= " AND t.entity IN (".$db->sanitize($entity == 1 ? '0,1' : $entity).')';
-			if (!empty($projectid)) $sql .= " AND fk_projet = ".((int) $projectid);
+			if (!empty($projectid)) {
+				$sql .= " AND fk_projet = ".((int) $projectid);
+			}
 		}
 		// Loan payments
 		if (GETPOST('selectloanspayment') && !empty($listofchoices['selectloanspayment']['perms']) && empty($projectid)) {
@@ -468,7 +480,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
  *ZIP creation
  */
 
-$dirfortmpfile = ($conf->accounting->dir_temp ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
+$dirfortmpfile = (!empty($conf->accounting->dir_temp) ? $conf->accounting->dir_temp : $conf->comptabilite->dir_temp);
 if (empty($dirfortmpfile)) {
 	setEventMessages($langs->trans("ErrorNoAccountingModuleEnabled"), null, 'errors');
 	$error++;
@@ -514,7 +526,7 @@ if ($result && $action == "dl" && !$error) {
 
 		dol_delete_file($zipname);
 
-		$zip = new ZipArchive;
+		$zip = new ZipArchive();
 		$res = $zip->open($zipname, ZipArchive::OVERWRITE | ZipArchive::CREATE);
 		if ($res) {
 			foreach ($filesarray as $key => $file) {
@@ -526,7 +538,7 @@ if ($result && $action == "dl" && !$error) {
 					}
 				}
 
-				$log .= '"'.$langs->trans($file['item']).'"';
+				$log .= '"'.$langs->transnoentitiesnoconv($file['item']).'"';
 				if (isModEnabled('multicompany') && is_object($mc)) {
 					$log .= ',"'.(empty($arrayofentities[$file['entity']]) ? $file['entity'] : $arrayofentities[$file['entity']]).'"';
 				}
@@ -618,16 +630,14 @@ print "\n";
 $socid = 0;
 if (isModEnabled('multicompany') && is_object($mc)) {
 	$mc->getInfo($conf->entity);
-	print '<span class="marginleftonly marginrightonly'.(empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES) ? ' opacitymedium' : '').'">('.$langs->trans("Entity").' : ';
-	print "<td>";
-	if (!empty($conf->global->MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES)) {
+	print ' &nbsp; <span class="marginleftonly marginrightonly'.(!getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES') ? ' opacitymedium' : '').'">'.$langs->trans("Entity").' : ';
+	if (getDolGlobalString('MULTICOMPANY_ALLOW_EXPORT_ACCOUNTING_DOC_FOR_ALL_ENTITIES')) {
 		$socid = $mc->id;
 		print $mc->select_entities(GETPOSTISSET('search_entity') ? GETPOST('search_entity', 'int') : $mc->id, 'search_entity', '', false, false, false, false, true);
 	} else {
 		print $mc->label;
 	}
-	print "</td>";
-	print ")</span>\n";
+	print "</span>\n";
 }
 
 print '<br>';
@@ -724,18 +734,18 @@ if (!empty($date_start) && !empty($date_stop)) {
 	print_liste_field_titre($arrayfields['date']['label'], $_SERVER["PHP_SELF"], "date", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	print_liste_field_titre($arrayfields['date_due']['label'], $_SERVER["PHP_SELF"], "date_due", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	print_liste_field_titre($arrayfields['ref']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'nowraponall ');
-	print '<td>'.$langs->trans("Document").'</td>';
-	print '<td>'.$langs->trans("Paid").'</td>';
-	print '<td align="right">'.$langs->trans("TotalHT").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</td>';
-	print '<td align="right">'.$langs->trans("TotalTTC").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</td>';
-	print '<td align="right">'.$langs->trans("TotalVAT").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</td>';
+	print '<th>'.$langs->trans("Document").'</th>';
+	print '<th>'.$langs->trans("Paid").'</th>';
+	print '<th class="right">'.$langs->trans("TotalHT").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</th>';
+	print '<th class="right">'.$langs->trans("TotalTTC").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</th>';
+	print '<th class="right">'.$langs->trans("TotalVAT").(isModEnabled('multicurrency') ? ' ('.$langs->getCurrencySymbol($conf->currency).')' : '').'</th>';
 
-	print '<td>'.$langs->trans("ThirdParty").'</td>';
-	print '<td class="center">'.$langs->trans("Code").'</td>';
-	print '<td class="center">'.$langs->trans("Country").'</td>';
-	print '<td class="center">'.$langs->trans("VATIntra").'</td>';
+	print '<th>'.$langs->trans("ThirdParty").'</th>';
+	print '<th class="center">'.$langs->trans("Code").'</th>';
+	print '<th class="center">'.$langs->trans("Country").'</th>';
+	print '<th class="center">'.$langs->trans("VATIntra").'</th>';
 	if (isModEnabled('multicurrency')) {
-		print '<td class="center">'.$langs->trans("Currency").'</td>';
+		print '<th class="center">'.$langs->trans("Currency").'</th>';
 	}
 	print '</tr>';
 
@@ -852,9 +862,9 @@ if (!empty($date_start) && !empty($date_stop)) {
 			print '<td class="center">'.($data['paid'] ? yn($data['paid']) : '').'</td>';
 
 			// Total WOT
-			print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'], 'MT'))."</span></td>\n";
 			// Total INCT
-			print '<td align="right"><span class="amount">';
+			print '<td class="right"><span class="amount">';
 			$tooltip = $langs->trans("TotalVAT").' : '.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'));
 			if (!empty($data['amount_localtax1'])) {
 				$tooltip .= '<br>'.$langs->transcountrynoentities("TotalLT1", $mysoc->country_code).' : '.price(price2num($data['sens'] ? $data['amount_localtax1'] : -$data['amount_localtax1'], 'MT'));
@@ -868,7 +878,7 @@ if (!empty($date_start) && !empty($date_stop)) {
 			print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltip).'">'.price(price2num($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'], 'MT')).'</span>';
 			print "</span></td>\n";
 			// Total VAT
-			print '<td align="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
+			print '<td class="right"><span class="amount">'.price(price2num($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'], 'MT'))."</span></td>\n";
 
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($data['thirdparty_name']).'">'.dol_escape_htmltag($data['thirdparty_name'])."</td>\n";
 
@@ -899,9 +909,9 @@ if (!empty($date_start) && !empty($date_stop)) {
 		// Total credits
 		print '<tr class="liste_total">';
 		print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Income').'</td>';
-		print '<td align="right">'.price(price2num($totalET_credit, 'MT')).'</td>';
-		print '<td align="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
-		print '<td align="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalET_credit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalIT_credit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalVAT_credit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
@@ -910,9 +920,9 @@ if (!empty($date_start) && !empty($date_stop)) {
 		// Total debits
 		print '<tr class="liste_total">';
 		print '<td colspan="6" class="right">'.$langs->trans('Total').' '.$langs->trans('Outcome').'</td>';
-		print '<td align="right">'.price(price2num($totalET_debit, 'MT')).'</td>';
-		print '<td align="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
-		print '<td align="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalET_debit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalIT_debit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';
@@ -921,9 +931,9 @@ if (!empty($date_start) && !empty($date_stop)) {
 		// Balance
 		print '<tr class="liste_total">';
 		print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
-		print '<td align="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
-		print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
-		print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
 		print '<td colspan="4"></td>';
 		if (isModEnabled('multicurrency')) {
 			print '<td></td>';

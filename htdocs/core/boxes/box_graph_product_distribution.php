@@ -110,10 +110,10 @@ class box_graph_product_distribution extends ModeleBoxes
 		if (!isModEnabled('facture') || !$user->hasRight('facture', 'lire')) {
 			$showinvoicenb = 0;
 		}
-		if (isModEnabled('propal') || empty($user->rights->propal->lire)) {
+		if (isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 			$showpropalnb = 0;
 		}
-		if (!isModEnabled('commande') || empty($user->rights->commande->lire)) {
+		if (!isModEnabled('commande') || !$user->hasRight('commande', 'lire')) {
 			$showordernb = 0;
 		}
 
@@ -161,7 +161,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1;
 				$nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid > 0 ? $userid : 0));
-				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 				if (empty($data2)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
@@ -224,7 +224,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$nocolor = 0;
 				$mode = 'customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
@@ -288,7 +288,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$nocolor = 0;
 				$mode = 'customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 
 				if (empty($data1)) {
 					$showpointvalue = 0;
@@ -423,9 +423,9 @@ class box_graph_product_distribution extends ModeleBoxes
 			);
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover left"',
 				'maxlength'=>500,
-				'text' => $mesg
+				'text' => '<span class="opacitymedium">'.$mesg.'</span>'
 			);
 		}
 	}

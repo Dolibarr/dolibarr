@@ -35,11 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('holiday', 'hrm'));
 
-$action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
+$action      = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
-$socid = 0;
+
 $id = GETPOST('id', 'int');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
@@ -73,7 +73,11 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'holiday', $id, '');
+$result = restrictedArea($user, 'holiday', $id);
+
+if (!$user->hasRight('holiday', 'readall')) {
+	accessforbidden();
+}
 
 
 /*
@@ -81,7 +85,8 @@ $result = restrictedArea($user, 'holiday', $id, '');
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -145,8 +150,8 @@ $title = $langs->trans('CPTitreMenu');
 
 llxHeader('', $title);
 
-$search_month = GETPOST("remonth", 'int') ?GETPOST("remonth", 'int') : date("m", time());
-$search_year = GETPOST("reyear", 'int') ?GETPOST("reyear", 'int') : date("Y", time());
+$search_month = GETPOST("remonth", 'int') ? GETPOST("remonth", 'int') : date("m", time());
+$search_year = GETPOST("reyear", 'int') ? GETPOST("reyear", 'int') : date("Y", time());
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
@@ -317,7 +322,7 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'cp.fk_user', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'u.lastname', '', '', '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ct.label']['checked'])) {
 	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);

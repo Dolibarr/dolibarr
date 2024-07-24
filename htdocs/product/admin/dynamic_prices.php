@@ -67,9 +67,9 @@ if ($action == 'edit_updater') {
 if (!empty($action) && empty($cancel)) {
 	//Global variable actions
 	if ($action == 'create_variable' || $action == 'edit_variable') {
-		$price_globals->code = GETPOSTISSET('code') ?GETPOST('code', 'alpha') : $price_globals->code;
-		$price_globals->description = GETPOSTISSET('description') ?GETPOST('description', 'restricthtml') : $price_globals->description;
-		$price_globals->value = GETPOSTISSET('value') ?GETPOST('value', 'int') : $price_globals->value;
+		$price_globals->code = GETPOSTISSET('code') ? GETPOST('code', 'alpha') : $price_globals->code;
+		$price_globals->description = GETPOSTISSET('description') ? GETPOST('description', 'restricthtml') : $price_globals->description;
+		$price_globals->value = GETPOSTISSET('value') ? GETPOST('value', 'int') : $price_globals->value;
 		//Check if record already exists only when saving
 		if (!empty($save)) {
 			foreach ($price_globals->listGlobalVariables() as $entry) {
@@ -152,7 +152,7 @@ if (!empty($action) && empty($cancel)) {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("DynamicPrice"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
@@ -272,9 +272,9 @@ if ($action != 'create_variable' && $action != 'edit_variable') {
 			print '</tr>';
 		}
 	} else {
-		print '<tr><td colspan="7" class="opacitymedium">';
+		print '<tr><td colspan="7"><span class="opacitymedium">';
 		print $langs->trans("None");
-		print '</td></tr>';
+		print '</span></td></tr>';
 	}
 	print '</table>';
 

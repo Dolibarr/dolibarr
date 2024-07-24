@@ -81,7 +81,9 @@ if ($action == 'updateMask') {
 	$expensespecimen->status = 0; // Force statut draft to show watermark
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/expensereport/doc/pdf_".$modele.".modules.php", 0);
@@ -111,7 +113,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'set') {
 	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-	if ($ret > 0 && empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+	if ($ret > 0 && !getDolGlobalString('EXPENSEREPORT_ADDON_PDF')) {
 		dolibarr_set_const($db, 'EXPENSEREPORT_ADDON_PDF', $value, 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'del') {
@@ -223,16 +225,16 @@ foreach ($dirmodels as $reldir) {
 					$module = new $file($db);
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering model
@@ -351,16 +353,16 @@ foreach ($dirmodels as $reldir) {
 						$module = new $classname($db);
 
 						$modulequalified = 1;
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							$modulequalified = 0;
 						}
 
 						if ($modulequalified) {
 							print '<tr class="oddeven"><td width="100">';
-							print (empty($module->name) ? $name : $module->name);
+							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 							if (method_exists($module, 'info')) {
 								print $module->info($langs);
@@ -456,7 +458,7 @@ $htmltext .= '</i>';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'EXPENSEREPORT_FREE_TEXT';
-if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 } else {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -476,20 +478,20 @@ if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('ProjectIsRequiredOnExpenseReports');
 	print '</td><td class="right">';
-	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', empty($conf->global->EXPENSEREPORT_PROJECT_IS_REQUIRED) ? 0 : 1, 1);
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', !getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 0 : 1, 1);
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', empty($conf->global->EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH) ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', !getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 0 : 1, 1);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', empty($conf->global->EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY) ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', !getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 0 : 1, 1);
 print '</td></tr>';
 
 print '</table>';

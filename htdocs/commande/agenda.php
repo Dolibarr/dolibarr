@@ -238,7 +238,7 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_commande_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print_barre_liste($langs->trans("ActionsOnOrder").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnOrder").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 		//print_barre_liste($langs->trans("ActionsOnOrder"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 		// List of all actions

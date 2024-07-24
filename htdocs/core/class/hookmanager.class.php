@@ -77,7 +77,7 @@ class HookManager
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
 	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
-	 *	@return	int|void							    Always 1
+	 *	@return	int								0 or 1
 	 */
 	public function initHooks($arraycontext)
 	{
@@ -85,7 +85,7 @@ class HookManager
 
 		// Test if there is hooks to manage
 		if (!is_array($conf->modules_parts['hooks']) || empty($conf->modules_parts['hooks'])) {
-			return;
+			return 0;
 		}
 
 		// For backward compatibility
@@ -153,7 +153,7 @@ class HookManager
 	 *                                      All types can also return some values into an array ->results that will be finaly merged into this->resArray for caller.
 	 *                                      $this->error or this->errors are also defined by class called by this function if error.
 	 */
-	public function executeHooks($method, $parameters = array(), &$object = '', &$action = '')
+	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
 		if (!is_array($this->hooks) || empty($this->hooks)) {
 			return 0; // No hook available, do nothing.
@@ -207,7 +207,7 @@ class HookManager
 		}
 
 		// Init return properties
-		$this->resPrint = '';
+		$localResPrint = '';
 		$this->resArray = array();
 		$this->resNbOfHooks = 0;
 
@@ -270,9 +270,9 @@ class HookManager
 						}
 						if (!empty($actionclassinstance->resprints)) {
 							if ($resactiontmp > 0) {
-								$this->resPrint = $actionclassinstance->resprints;
+								$localResPrint = $actionclassinstance->resprints;
 							} else {
-								$this->resPrint .= $actionclassinstance->resprints;
+								$localResPrint .= $actionclassinstance->resprints;
 							}
 						}
 					} else {
@@ -294,7 +294,7 @@ class HookManager
 							$this->resArray = array_merge($this->resArray, $actionclassinstance->results);
 						}
 						if (!empty($actionclassinstance->resprints)) {
-							$this->resPrint .= $actionclassinstance->resprints;
+							$localResPrint .= $actionclassinstance->resprints;
 						}
 						if (is_numeric($resactiontmp) && $resactiontmp < 0) {
 							$error++;
@@ -307,7 +307,7 @@ class HookManager
 						if (!is_array($resactiontmp) && !is_numeric($resactiontmp)) {
 							dol_syslog('Error: Bug into hook '.$method.' of module class '.get_class($actionclassinstance).'. Method must not return a string but an int (0=OK, 1=Replace, -1=KO) and set string into ->resprints', LOG_ERR);
 							if (empty($actionclassinstance->resprints)) {
-								$this->resPrint .= $resactiontmp;
+								$localResPrint .= $resactiontmp;
 							}
 						}
 					}
@@ -319,6 +319,8 @@ class HookManager
 				}
 			}
 		}
+
+		$this->resPrint = $localResPrint;
 
 		return ($error ? -1 : $resaction);
 	}

@@ -30,7 +30,7 @@
  *  @param      string  $desc               Description of export
  *  @param      array   $events_array       Array of events ("uid","startdate","duration","enddate","title","summary","category","email","url","desc","author")
  *  @param      string  $outputfile         Output file
- *  @return     int                         < 0 if KO, Nb of events in file if OK
+ *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
 function build_calfile($format, $title, $desc, $events_array, $outputfile)
 {
@@ -71,7 +71,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 		fwrite($calfileh, "X-WR-CALDESC:".$encoding.format_cal($format, $desc)."\n");
 		//fwrite($calfileh,"X-WR-TIMEZONE:Europe/Paris\n");
 
-		if (!empty($conf->global->MAIN_AGENDA_EXPORT_CACHE) && $conf->global->MAIN_AGENDA_EXPORT_CACHE > 60) {
+		if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE') && getDolGlobalInt('MAIN_AGENDA_EXPORT_CACHE') > 60) {
 			$hh = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "hour");
 			$mm = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "min");
 			$ss = convertSecondToTime($conf->global->MAIN_AGENDA_EXPORT_CACHE, "sec");
@@ -320,7 +320,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
  *  @param		string	$langcode			Language code to show in header
- *  @return     int                         < 0 if KO, Nb of events in file if OK
+ *  @return     int                         Return integer < 0 if KO, Nb of events in file if OK
  */
 function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
 {
@@ -330,7 +330,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 	dol_syslog("xcal.lib.php::build_rssfile Build rss file ".$outputfile." to format ".$format);
 
 	if (empty($outputfile)) {
-		 // -1 = error
+		// -1 = error
 		return -1;
 	}
 
@@ -347,9 +347,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, "\n");
 
 		fwrite($fichier, "<channel>\n");
-		fwrite($fichier, "<title>".$title."</title>\n");
+		fwrite($fichier, "<title>".dol_escape_xml($title)."</title>\n");
 		if ($langcode) {
-			fwrite($fichier, "<language>".$langcode."</language>\n");
+			fwrite($fichier, "<language>".dol_escape_xml($langcode)."</language>\n");
 		}
 
 		// Define $urlwithroot
@@ -365,7 +365,7 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 
 		// Image
 		if (!empty($mysoc->logo_squarred_small)) {
-			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode($mysoc->logo_squarred_small);
+			$urlimage = $urlwithroot.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_small);
 			if ($urlimage) {
 				fwrite($fichier, "<image><url><![CDATA[".$urlimage."]]></url><title>'.$title.</title></image>\n");
 			}
@@ -401,8 +401,8 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				$startdate	  = $event["startdate"];
 				$summary  	  = $event["summary"];
 				$url		  = $event["url"];
-				$author = $event["author"];
-				$category = $event["category"];
+				$author       = $event["author"];
+				$category     = empty($event["category"]) ? null : $event["category"];
 				if (!empty($event["image"])) {
 					$image = $event["image"];
 				}
@@ -419,9 +419,10 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 				fwrite($fichier, "<title><![CDATA[".$summary."]]></title>\n");
 				fwrite($fichier, "<link><![CDATA[".$url."]]></link>\n");
 				fwrite($fichier, "<author><![CDATA[".$author."]]></author>\n");
-				fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
+				if (!empty($category)) {
+					fwrite($fichier, "<category><![CDATA[".$category."]]></category>\n");
+				}
 				fwrite($fichier, "<description><![CDATA[");
-
 				if (!empty($image)) {
 					fwrite($fichier, '<p><img class="center" src="'.$image.'"/></p>');
 				}
@@ -497,7 +498,7 @@ function calEncode($line)
 
 		for ($j = 0; $j < $strlength; $j++) {
 			// Take char at position $j
-			$char = mb_substr($line, $j, 1, "UTF-8");
+			$char = dol_substr($line, $j, 1, "UTF-8");
 
 			if ((mb_strlen($newpara, "UTF-8") + mb_strlen($char, "UTF-8")) >= 75) {
 				// CRLF + Space for cal

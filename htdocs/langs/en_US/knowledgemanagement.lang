@@ -26,14 +26,12 @@ ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk ba
 # Admin page
 #
 KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
 KnowledgeManagementSetupPage = Knowledge Management System setup page
 
 
 #
 # About page
 #
-About = About
 KnowledgeManagementAbout = About Knowledge Management
 KnowledgeManagementAboutPage = Knowledge Management about page
 

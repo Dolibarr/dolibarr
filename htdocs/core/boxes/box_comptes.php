@@ -29,14 +29,14 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
 /**
- * Class to manage the box to show last users
+ * Class to manage the box to show bank accounts
  */
 class box_comptes extends ModeleBoxes
 {
-	public $boxcode = "currentaccounts";
-	public $boximg = "bank_account";
+	public $boxcode  = "currentaccounts";
+	public $boximg   = "bank_account";
 	public $boxlabel = "BoxCurrentAccounts";
-	public $depends = array("banque"); // Box active if module banque active
+	public $depends  = array("banque"); // Box active if module banque active
 
 	/**
 	 * @var DoliDB Database handler.
@@ -63,7 +63,7 @@ class box_comptes extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('banque', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
@@ -85,7 +85,7 @@ class box_comptes extends ModeleBoxes
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
-		if ($user->rights->banque->lire) {
+		if ($user->hasRight('banque', 'lire')) {
 			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
 			$sql .= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
 			$sql .= ", b.domiciliation, b.proprio, b.owner_address";
@@ -165,7 +165,7 @@ class box_comptes extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 						'td' => 'class="liste_total nowraponall right amount"',
-						'text' => price($solde, 0, $langs, 0, -1, -1, $key)
+						'text' => '<span class="amount">'.price($solde, 0, $langs, 0, -1, -1, $key).'</span>'
 					);
 					$line++;
 				}
@@ -180,8 +180,8 @@ class box_comptes extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

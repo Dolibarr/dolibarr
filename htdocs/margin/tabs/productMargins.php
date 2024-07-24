@@ -62,7 +62,7 @@ if (!$sortfield) {
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
-if (empty($user->rights->margins->liretous)) {
+if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
 
@@ -75,8 +75,8 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 $totalMargin = 0;
-$marginRate = 0;
-$markRate = 0;
+$marginRate = '';
+$markRate = '';
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
@@ -117,14 +117,14 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 
 		// Margin Rate
-		if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+		if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 			print '<tr><td>'.$langs->trans("MarginRate").'</td><td>';
 			print '<span id="marginRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
 		}
 
 		// Mark Rate
-		if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+		if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 			print '<tr><td>'.$langs->trans("MarkRate").'</td><td>';
 			print '<span id="markRate"></span>'; // set by jquery (see below)
 			print '</td></tr>';
@@ -142,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.rowid as facid, f.ref, f.total_ht,";
 			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.type,";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " sc.fk_soc, sc.fk_user,";
 			}
 			$sql .= " sum(d.total_ht) as selling_price,"; // may be negative or positive
@@ -152,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
@@ -160,20 +160,20 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $object->id);
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if (!empty($socid)) {
-				$sql .= " AND f.fk_soc = $socid";
+				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
 			$sql .= " AND d.buy_price_ht IS NOT NULL";
 			// We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
 			// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
-			if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 2) {
+			if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}
 			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
 			$sql .= $db->order($sortfield, $sortorder);
@@ -198,12 +198,12 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'left ');
 				print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "buying_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "qty", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
-				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 					print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				}
-				if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 					print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
 				}
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
@@ -234,10 +234,10 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="right amount">'.price(price2num($objp->buying_price, 'MT'))."</td>\n";
 						print '<td class="right">'.price(price2num($objp->qty, 'MT'))."</td>\n";
 						print '<td class="right amount">'.price(price2num($objp->marge, 'MT'))."</td>\n";
-						if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+						if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 							print "<td class=\"right\">".(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 						}
-						if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+						if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 							print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 						}
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
@@ -253,8 +253,8 @@ if ($id > 0 || !empty($ref)) {
 
 				$totalMargin = $cumul_vente - $cumul_achat;
 				if ($totalMargin < 0) {
-					$marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
-					$markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
+					$marginRate = ($cumul_achat != 0) ? -1 * (100 * $totalMargin / $cumul_achat) : '';
+					$markRate = ($cumul_vente != 0) ? -1 * (100 * $totalMargin / $cumul_vente) : '';
 				} else {
 					$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
 					$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
@@ -265,10 +265,10 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="right amount">'.price(price2num($cumul_achat, 'MT'))."</td>\n";
 				print '<td class="right">'.price(price2num($cumul_qty, 'MT'))."</td>\n";
 				print '<td class="right amount">'.price(price2num($totalMargin, 'MT'))."</td>\n";
-				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 					print '<td class="right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%")."</td>\n";
 				}
-				if (!empty($conf->global->DISPLAY_MARK_RATES)) {
+				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
 					print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">&nbsp;</td>';

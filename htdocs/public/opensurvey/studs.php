@@ -330,7 +330,7 @@ foreach ($toutsujet as $value) {
 $toutsujet = str_replace("°", "'", $toutsujet);
 
 
-
+print '<div class="survey_intro">';
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
 print '<span class="opacitymedium">'.$langs->trans("OpenSurveyHowTo").'</span><br>';
 if (empty($object->allow_spy)) {
@@ -338,18 +338,21 @@ if (empty($object->allow_spy)) {
 } else {
 	print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("YourVoteIsPublic").'</span>', $langs->trans("CanSeeOthersVote")).'<br>';
 }
+print '</div>';
 print '<br>';
 
 if (empty($object->description)) {
-	print '<div class="corps"> '."\n";
+	print '<div class="corps">'."\n";
+} else {
+	print '<br>'."\n";
 }
 
 // show title of survey
 $titre = str_replace("\\", "", $object->title);
-print '<strong>'.dol_htmlentities($titre).'</strong><br>';
+print '<div class="survey_title">'.img_picto('', 'poll', 'class="size15x paddingright"').' <strong>'.dol_htmlentities($titre).'</strong></div>';
 
 if (!empty($object->description)) {
-	print '<br><div class="corps"> '."\n";
+	print '<br><div class="corps">'."\n";
 }
 
 // show description of survey
@@ -372,6 +375,7 @@ print '<div class="cadre"> '."\n";
 print '<br><br>'."\n";
 
 // Start to show survey result
+print '<div class="div-table-responsive">';
 print '<table class="resultats">'."\n";
 
 // Show choice titles
@@ -498,7 +502,7 @@ while ($compteur < $num) {
 	print '<tr>'."\n";
 
 	// Name
-	print '<td class="nom">'.dol_htmlentities($obj->name).'</td>'."\n";
+	print '<td class="nom">'.img_picto($obj->name, 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->name).'</td>'."\n";
 
 	// si la ligne n'est pas a changer, on affiche les données
 	if (!$testligneamodifier) {
@@ -686,7 +690,7 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	}
 	print '</td>'."\n";
 
-	// affichage des cases de formulaire checkbox pour un nouveau choix
+	// show cell form checkbox for a new choice
 	for ($i = 0; $i < $nbcolonnes; $i++) {
 		print '<td class="vide">';
 		if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst'))) {
@@ -773,6 +777,8 @@ if ($object->allow_spy) {
 print '</table>'."\n";
 print '</div>'."\n";
 
+print '</div>'."\n";
+
 if ($object->allow_spy) {
 	$toutsujet = explode(",", $object->sujet);
 	$toutsujet = str_replace("°", "'", $toutsujet);
@@ -784,7 +790,6 @@ if ($object->allow_spy) {
 		if (isset($sumfor[$i]) && isset($meilleurecolonne) && $sumfor[$i] == $meilleurecolonne) {
 			$meilleursujet .= ($meilleursujet ? ", " : "");
 			if ($object->format == "D") {
-				$meilleursujetexport = $toutsujet[$i];
 				if (strpos($toutsujet[$i], '@') !== false) {
 					$toutsujetdate = explode("@", $toutsujet[$i]);
 					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').') - '.$toutsujetdate[1];
@@ -800,7 +805,7 @@ if ($object->allow_spy) {
 		}
 	}
 
-	$meilleursujet = substr("$meilleursujet", 1);
+	//$meilleursujet = substr($meilleursujet, 1);
 	$meilleursujet = str_replace("°", "'", $meilleursujet);
 
 	// Show best choice
@@ -809,9 +814,9 @@ if ($object->allow_spy) {
 		print '<p class="affichageresultats">'."\n";
 
 		if (isset($meilleurecolonne) && $compteursujet == "1") {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoice').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 		} elseif (isset($meilleurecolonne)) {
-			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> ".$langs->trans('with')." <b>".$meilleurecolonne."</b>".$vote_str.".\n";
+			print '<img src="'.dol_buildpath('/opensurvey/img/medaille.png', 1).'"> '.$langs->trans('TheBestChoices').": <b>".$meilleursujet."</b> - <b>".$meilleurecolonne."</b> ".$vote_str.".\n";
 		}
 
 		print '</p><br>'."\n";
@@ -825,7 +830,7 @@ print '<br>';
 $comments = $object->getComments();
 
 if ($comments) {
-	print '<br><u><span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span></u><br>'."\n";
+	print '<br>'.img_picto('', 'note', 'class="pictofixedwidth"').'<span class="bold opacitymedium">'.$langs->trans("CommentsOfVoters").':</span><br>'."\n";
 
 	foreach ($comments as $obj) {
 		// ligne d'un usager pré-authentifié
@@ -836,7 +841,7 @@ if ($comments) {
 			print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
 		}
 		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
-		print dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
+		print img_picto('', 'user', 'class="pictofixedwidth"').dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }
 

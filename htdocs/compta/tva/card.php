@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  *
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/vat.lib.php';
 
 if (isModEnabled('accounting')) {
-		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
@@ -56,7 +56,7 @@ $refund = GETPOST("refund", "int");
 if (GETPOSTISSET('auto_create_paiement') || $action === 'add') {
 	$auto_create_payment = GETPOST("auto_create_paiement", "int");
 } else {
-	$auto_create_payment = empty($conf->global->CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT);
+	$auto_create_payment = !getDolGlobalString('CREATE_NEW_VAT_WITHOUT_AUTO_PAYMENT');
 }
 
 if (empty($refund)) {
@@ -113,7 +113,7 @@ if (empty($reshook)) {
 		exit;
 	}
 
-	if ($action == 'setlib' && $user->rights->tax->charges->creer) {
+	if ($action == 'setlib' && $user->hasRight('tax', 'charges', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setValueFrom('label', GETPOST('lib', 'alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
 		if ($result < 0) {
@@ -121,7 +121,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'setdatev' && $user->rights->tax->charges->creer) {
+	if ($action == 'setdatev' && $user->hasRight('tax', 'charges', 'creer')) {
 		$object->fetch($id);
 		$object->datev = $datev;
 		$result = $object->update($user);
@@ -133,7 +133,7 @@ if (empty($reshook)) {
 	}
 
 	// payment mode
-	if ($action == 'setmode' && $user->rights->tax->charges->creer) {
+	if ($action == 'setmode' && $user->hasRight('tax', 'charges', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0) {
@@ -142,7 +142,7 @@ if (empty($reshook)) {
 	}
 
 	// Bank account
-	if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
+	if ($action == 'setbankaccount' && $user->hasRight('tax', 'charges', 'creer')) {
 		$object->fetch($id);
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
 		if ($result < 0) {
@@ -151,12 +151,12 @@ if (empty($reshook)) {
 	}
 
 	// Classify paid
-	if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes') {
+	if ($action == 'confirm_paid' && $user->hasRight('tax', 'charges', 'creer') && $confirm == 'yes') {
 		$object->fetch($id);
 		$result = $object->setPaid($user);
 	}
 
-	if ($action == 'reopen' && $user->rights->tax->charges->creer) {
+	if ($action == 'reopen' && $user->hasRight('tax', 'charges', 'creer')) {
 		$result = $object->fetch($id);
 		if ($object->paye) {
 			$result = $object->setUnpaid($user);
@@ -181,7 +181,7 @@ if (empty($reshook)) {
 
 		$amount = price2num(GETPOST("amount", 'alpha'));
 		if ($refund == 1) {
-			$amount = -$amount;
+			$amount = price2num(-1 * $amount);
 		}
 		$object->amount = $amount;
 		$object->label = GETPOST("label", 'alpha');
@@ -295,7 +295,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !GETPOST("cancel") && $user->rights->tax->charges->creer) {
+	if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('tax', 'charges', 'creer')) {
 		$amount = price2num(GETPOST('amount', 'alpha'), 'MT');
 
 		if (empty($amount)) {
@@ -321,7 +321,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->charges->creer)) {
+	if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->hasRight('tax', 'charges', 'creer'))) {
 		$db->begin();
 
 		$originalId = $id;
@@ -561,7 +561,7 @@ if ($id > 0) {
 		print '<input type="hidden" name="action" value="update">';
 	}
 	// Call Hook formConfirm
-	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {
 		$formconfirm .= $hookmanager->resPrint;
@@ -576,8 +576,8 @@ if ($id > 0) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Label of social contribution
-	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("Label", 'lib', $object->label, $object, $user->hasRight('tax', 'charges', 'creer'), 'string', '', null, null, '', 1);
 	// Project
 	$morehtmlref .= '</div>';
 
@@ -602,9 +602,9 @@ if ($id > 0) {
 	print '</td></tr>';*/
 
 	print '<tr><td>';
-	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
 	print '</td><td>';
-	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
@@ -637,7 +637,7 @@ if ($id > 0) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('BankAccount');
 		print '<td>';
-		if ($action != 'editbankaccount' && $user->rights->tax->charges->creer) {
+		if ($action != 'editbankaccount' && $user->hasRight('tax', 'charges', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -713,7 +713,7 @@ if ($id > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/payment_vat/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"), "payment").' '.$objp->rowid.'</a>';
 				print '</td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
-				$labeltype = $langs->trans("PaymentType".$objp->type_code) != ("PaymentType".$objp->type_code) ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
+				$labeltype = $langs->trans("PaymentType".$objp->type_code) != "PaymentType".$objp->type_code ? $langs->trans("PaymentType".$objp->type_code) : $objp->paiement_type;
 				print "<td>".$labeltype.' '.$objp->num_payment."</td>\n";
 				if (isModEnabled("banque")) {
 					$bankaccountstatic->id = $objp->baid;
@@ -784,17 +784,17 @@ if ($id > 0) {
 
 	if ($action != 'edit') {
 		// Reopen
-		if ($object->paye && $user->rights->tax->charges->creer) {
+		if ($object->paye && $user->hasRight('tax', 'charges', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Edit
-		if ($object->paye == 0 && $user->rights->tax->charges->creer) {
+		if ($object->paye == 0 && $user->hasRight('tax', 'charges', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify")."</a></div>";
 		}
 
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->rights->tax->charges->creer) {
+		if ($object->paye == 0 && ((price2num($object->amount) < 0 && price2num($resteapayer, 'MT') < 0) || (price2num($object->amount) > 0 && price2num($resteapayer, 'MT') > 0)) && $user->hasRight('tax', 'charges', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/paiement_vat.php?id='.$object->id.'&action=create&token='.newToken().'">'.$langs->trans("DoPayment").'</a></div>';
 		}
 
@@ -804,16 +804,16 @@ if ($id > 0) {
 			(round($resteapayer) <= 0 && $object->amount > 0)
 			|| (round($resteapayer) >= 0 && $object->amount < 0)
 		)
-		&& $user->rights->tax->charges->creer) {
+		&& $user->hasRight('tax', 'charges', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
 
 		// Clone
-		if ($user->rights->tax->charges->creer) {
+		if ($user->hasRight('tax', 'charges', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id.'&token='.newToken().'&action=clone">'.$langs->trans("ToClone")."</a></div>";
 		}
 
-		if (!empty($user->rights->tax->charges->supprimer) && empty($totalpaid)) {
+		if ($user->hasRight('tax', 'charges', 'supprimer') && empty($totalpaid)) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("DisabledBecausePayments"))).'">'.$langs->trans("Delete").'</a></div>';

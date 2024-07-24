@@ -61,7 +61,8 @@ class Utils
 	 */
 	public function purgeFiles($choices = 'tempfilesold+logfiles', $nbsecondsold = 86400)
 	{
-		global $conf, $langs, $dolibarr_main_data_root;
+		global $conf, $langs, $user;
+		global $dolibarr_main_data_root;
 
 		$langs->load("admin");
 
@@ -75,6 +76,14 @@ class Utils
 		}
 
 		dol_syslog("Utils::purgeFiles choice=".$choices, LOG_DEBUG);
+
+		// For dangerous action, we check the user is admin
+		if (in_array($choices, array('allfiles', 'allfilesold'))) {
+			if (empty($user->admin)) {
+				$this->output = 'Error: to erase data files, user running the batch (currently '.$user->login.') must be an admin user';
+				return 1;
+			}
+		}
 
 		$count = 0;
 		$countdeleted = 0;
@@ -102,23 +111,23 @@ class Utils
 			}
 
 			if ($choice == 'allfiles') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'allfilesold') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'logfile' || $choice == 'logfiles') {
 				// Define files log
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
 				if (isModEnabled('syslog')) {
@@ -262,7 +271,7 @@ class Utils
 
 		// MYSQL
 		if ($type == 'mysql' || $type == 'mysqli') {
-			if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+			if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 				$cmddump = $db->getPathOfDump();
 			} else {
 				$cmddump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
@@ -312,6 +321,9 @@ class Utils
 			}
 			if (GETPOST("use_mysql_quick_param", "alpha")) {
 				$param .= " --quick";
+			}
+			if (GETPOST("use_force", "alpha")) {
+				$param .= " -f";
 			}
 			if (GETPOST("sql_structure", "alpha") || $usedefault) {
 				if (GETPOST("drop", "alpha") || $usedefault) {
@@ -400,7 +412,7 @@ class Utils
 
 			$ok = 0;
 			if ($handle) {
-				if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+				if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 					$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 				}
 				if (empty($execmethod)) {
@@ -704,7 +716,7 @@ class Utils
 			$command .= " 2>&1";
 		}
 
-		if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+		if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 			$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 		}
 		if (empty($execmethod)) {
@@ -756,7 +768,7 @@ class Utils
 	 * Generate documentation of a Module
 	 *
 	 * @param 	string	$module		Module name
-	 * @return	int					<0 if KO, >0 if OK
+	 * @return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function generateDoc($module)
 	{
@@ -813,7 +825,7 @@ class Utils
 					return -1;
 				}
 
-				if (empty($conf->global->MODULEBUILDER_ASCIIDOCTOR) && empty($conf->global->MODULEBUILDER_ASCIIDOCTORPDF)) {
+				if (!getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') && !getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF')) {
 					$this->error = 'Setup of module ModuleBuilder not complete';
 					return -1;
 				}
@@ -905,7 +917,7 @@ class Utils
 				$utils = new Utils($this->db);
 
 				// Build HTML doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTOR.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTOR') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOC;
 				$outfile = $dirofmoduletmp.'/out.tmp';
 
 				$resarray = $utils->executeCLI($command, $outfile);
@@ -920,7 +932,7 @@ class Utils
 				}
 
 				// Build PDF doc
-				$command = $conf->global->MODULEBUILDER_ASCIIDOCTORPDF.' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
+				$command = getDolGlobalString('MODULEBUILDER_ASCIIDOCTORPDF') . ' '.$destfile.' -n -o '.$dirofmoduledoc.'/'.$FILENAMEDOCPDF;
 				$outfile = $dirofmoduletmp.'/outpdf.tmp';
 				$resarray = $utils->executeCLI($command, $outfile);
 				if ($resarray['result'] != '0') {
@@ -976,7 +988,7 @@ class Utils
 
 		$nbSaves = intval(getDolGlobalString('SYSLOG_FILE_SAVES', 10));
 
-		if (empty($conf->global->SYSLOG_FILE)) {
+		if (!getDolGlobalString('SYSLOG_FILE')) {
 			$mainlogdir = DOL_DATA_ROOT;
 			$mainlog = 'dolibarr.log';
 		} else {
@@ -1073,7 +1085,7 @@ class Utils
 	 *
 	 *	@param	string	$outputfile		Output file name
 	 *	@param	string	$tables			Table name or '*' for all
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function backupTables($outputfile, $tables = '*')
 	{
@@ -1273,16 +1285,16 @@ class Utils
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
-		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}
 
 		if (!empty($sendto)) {
 			$sendto = dol_escape_htmltag($sendto);
-		} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) {
-			$from = dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL);
+		} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')) {
+			$from = dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
 		} else {
 			$error++;
 		}

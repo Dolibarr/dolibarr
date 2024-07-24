@@ -1,4 +1,5 @@
 <?php
+
 // BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
 if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
@@ -14,7 +15,7 @@ $encoding = '';
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOST('entity', 'int') ? GETPOST('entity', 'int') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOST('limit', 'int');
@@ -64,7 +65,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS_WEBSITE')) {
 	$attachment = false;
 }
 
@@ -225,7 +226,7 @@ if ($rss) {
 } else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, null, $refname);
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -251,7 +252,7 @@ if ($rss) {
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
-		print "ErrorFileDoesNotExists: ".$original_file;
+		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 		exit;
 	}
 

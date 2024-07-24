@@ -37,8 +37,8 @@ $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$year = GETPOST('year') > 0 ? GETPOST('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 $langs->loadLangs(array("receptions", "other", "companies"));
@@ -71,7 +71,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
 	$filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
@@ -82,7 +82,8 @@ $mesg = $px1->isGraphKo();
 $fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;

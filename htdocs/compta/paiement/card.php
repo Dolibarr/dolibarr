@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2023 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
@@ -73,169 +73,193 @@ if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
 
+// Init Stripe objects
+if (isModEnabled('stripe')) {
+	require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	// Force to use the correct API key
+	global $stripearrayofkeysbyenv;
+	$site_account = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+
+	$stripe = new Stripe($db);
+	$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account (no remote access to Stripe here)
+}
+
 $error = 0;
 
 /*
  * Actions
  */
-
-if ($action == 'setnote' && $user->hasRight('facture', 'paiement')) {
-	$db->begin();
-
-	$result = $object->update_note(GETPOST('note', 'restricthtml'));
-	if ($result > 0) {
-		$db->commit();
-		$action = '';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
-	}
+$parameters = array('socid'=>$socid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
-	$db->begin();
+if (empty($reshook)) {
+	if ($action == 'setnote' && $user->hasRight('facture', 'paiement')) {
+		$db->begin();
 
-	$result = $object->delete();
-	if ($result > 0) {
-		$db->commit();
-
-		if ($backtopage) {
-			header("Location: ".$backtopage);
-			exit;
+		$result = $object->update_note(GETPOST('note', 'restricthtml'));
+		if ($result > 0) {
+			$db->commit();
+			$action = '';
 		} else {
-			header("Location: list.php");
-			exit;
+			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
 		}
-	} else {
-		$langs->load("errors");
-		setEventMessages($object->error, $object->errors, 'errors');
-		$db->rollback();
 	}
-}
 
-if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
-	$db->begin();
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
+		$db->begin();
 
-	if ($object->validate($user) > 0) {
-		$db->commit();
+		$result = $object->delete();
+		if ($result > 0) {
+			$db->commit();
 
-		// Loop on each invoice linked to this payment to rebuild PDF
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$outputlangs = $langs;
-			if (GETPOST('lang_id', 'aZ09')) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
+			if ($backtopage) {
+				header("Location: ".$backtopage);
+				exit;
+			} else {
+				header("Location: list.php");
+				exit;
 			}
+		} else {
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
+		}
+	}
 
-			$hidedetails = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0;
-			$hidedesc = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0;
-			$hideref = !empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0;
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->hasRight('facture', 'paiement')) {
+		$db->begin();
 
-			$sql = 'SELECT f.rowid as facid';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
-			$sql .= ' WHERE pf.fk_facture = f.rowid';
-			$sql .= ' AND f.fk_soc = s.rowid';
-			$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
-			$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
-			$resql = $db->query($sql);
-			if ($resql) {
-				$i = 0;
-				$num = $db->num_rows($resql);
+		if ($object->validate($user) > 0) {
+			$db->commit();
 
-				if ($num > 0) {
-					while ($i < $num) {
-						$objp = $db->fetch_object($resql);
-
-						$invoice = new Facture($db);
-
-						if ($invoice->fetch($objp->facid) <= 0) {
-							$error++;
-							setEventMessages($invoice->error, $invoice->errors, 'errors');
-							break;
-						}
-
-						if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
-							$error++;
-							setEventMessages($invoice->error, $invoice->errors, 'errors');
-							break;
-						}
-
-						$i++;
-					}
+			// Loop on each invoice linked to this payment to rebuild PDF
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$outputlangs = $langs;
+				if (GETPOST('lang_id', 'aZ09')) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang(GETPOST('lang_id', 'aZ09'));
 				}
 
-				$db->free($resql);
-			} else {
-				$error++;
-				setEventMessages($db->error, $db->errors, 'errors');
+				$hidedetails = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0;
+				$hidedesc = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0;
+				$hideref = getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0;
+
+				$sql = 'SELECT f.rowid as facid';
+				$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
+				$sql .= ' WHERE pf.fk_facture = f.rowid';
+				$sql .= ' AND f.fk_soc = s.rowid';
+				$sql .= ' AND f.entity IN ('.getEntity('invoice').')';
+				$sql .= ' AND pf.fk_paiement = '.((int) $object->id);
+				$resql = $db->query($sql);
+				if ($resql) {
+					$i = 0;
+					$num = $db->num_rows($resql);
+
+					if ($num > 0) {
+						while ($i < $num) {
+							$objp = $db->fetch_object($resql);
+
+							$invoice = new Facture($db);
+
+							if ($invoice->fetch($objp->facid) <= 0) {
+								$error++;
+								setEventMessages($invoice->error, $invoice->errors, 'errors');
+								break;
+							}
+
+							if ($invoice->generateDocument($invoice->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref) < 0) {
+								$error++;
+								setEventMessages($invoice->error, $invoice->errors, 'errors');
+								break;
+							}
+
+							$i++;
+						}
+					}
+
+					$db->free($resql);
+				} else {
+					$error++;
+					setEventMessages($db->error, $db->errors, 'errors');
+				}
 			}
-		}
 
-		if (! $error) {
-			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
-			exit;
-		}
-	} else {
-		$db->rollback();
-
-		$langs->load("errors");
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-}
-
-if ($action == 'setnum_paiement' && GETPOST('num_paiement') && $user->hasRight('facture', 'paiement')) {
-	$res = $object->update_num(GETPOST('num_paiement'));
-	if ($res === 0) {
-		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
-	}
-}
-
-if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('facture', 'paiement')) {
-	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
-	$res = $object->update_date($datepaye);
-	if ($res === 0) {
-		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
-	}
-}
-
-if ($action == 'createbankpayment' && $user->hasRight('facture', 'paiement')) {
-	$db->begin();
-
-	// Create the record into bank for the amount of payment $object
-	if (!$error) {
-		$label = '(CustomerInvoicePayment)';
-		if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
-			$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
-		}
-
-		$bankaccountid = GETPOST('accountid', 'int');
-		if ($bankaccountid > 0) {
-			$object->paiementcode = $object->type_code;
-			$object->amounts = $object->getAmountsArray();
-
-			$result = $object->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
+			if (! $error) {
+				header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+				exit;
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
-			$error++;
+			$db->rollback();
+
+			$langs->load("errors");
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
+	if ($action == 'setnum_paiement' && GETPOST('num_paiement') && $user->hasRight('facture', 'paiement')) {
+		$res = $object->update_num(GETPOST('num_paiement'));
+		if ($res === 0) {
+			setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
+		}
+	}
 
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
+	if ($action == 'setdatep' && GETPOST('datepday') && $user->hasRight('facture', 'paiement')) {
+		$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
+		$res = $object->update_date($datepaye);
+		if ($res === 0) {
+			setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
+		}
+	}
+
+	if ($action == 'createbankpayment' && $user->hasRight('facture', 'paiement')) {
+		$db->begin();
+
+		// Create the record into bank for the amount of payment $object
+		if (!$error) {
+			$label = '(CustomerInvoicePayment)';
+			if (GETPOST('type') == Facture::TYPE_CREDIT_NOTE) {
+				$label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+			}
+
+			$bankaccountid = GETPOST('accountid', 'int');
+			if ($bankaccountid > 0) {
+				$object->paiementcode = $object->type_code;
+				$object->amounts = $object->getAmountsArray();
+
+				$result = $object->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+					$error++;
+				}
+			} else {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 }
-
 
 /*
  * View
@@ -264,8 +288,8 @@ if ($action == 'delete') {
 
 // Confirmation of payment validation
 if ($action == 'valide') {
-	$facid = $_GET['facid'];
-	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
+	$facid = GETPOSTINT('facid');
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&facid='.((int) $facid), $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_validate', '', 0, 2);
 }
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -284,7 +308,7 @@ print $form->editfieldval("Date", 'datep', $object->date, $object, $user->hasRig
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
-$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
+$labeltype = $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
 print $object->num_payment ? ' - '.$object->num_payment : '';
 print '</td></tr>';
@@ -396,9 +420,39 @@ if (isModEnabled("banque")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
-print $form->editfieldval("Note", 'note', $object->note, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
+
+if (!empty($object->ext_payment_id)) {
+	// External payment ID
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
+	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
+		$tmp1 = explode('@', $object->ext_payment_id);
+		if (!empty($tmp1[1])) {
+			$site_account_payment = $tmp1[1];	// pk_live_...
+		}
+		$tmp2 = explode(':', $tmp1[0]);
+		if (!empty($tmp2[1])) {
+			$stripecu = $tmp2[1];
+		}
+
+		print dol_escape_htmltag($tmp1[0]);
+
+		$connect = '';
+		if (!empty($stripeacc)) {
+			$connect = $stripeacc.'/';
+		}
+		$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$stripecu;
+		if (!empty($stripearrayofkeysbyenv[1]['publishable_key']) && $stripearrayofkeysbyenv[1]['publishable_key'] == $site_account_payment) {
+			$url = 'https://dashboard.stripe.com/'.$connect.'customers/'.$stripecu;
+		}
+		print ' <a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe').' - Publishable key = '.$site_account_payment, 'globe').'</a>';
+	} else {
+		print dol_escape_htmltag($object->ext_payment_id);
+	}
+	print '</td></tr>';
+}
 
 print '</table>';
 
@@ -432,7 +486,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+	if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 		print '<td>'.$langs->trans('Entity').'</td>';
 	}
 	//Add Margin
@@ -443,6 +497,10 @@ if ($resql) {
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
 	print '<td class="right">'.$langs->trans('Status').'</td>';
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 	print "</tr>\n";
 
 	if ($num > 0) {
@@ -481,7 +539,7 @@ if ($resql) {
 			print '</td>';
 
 			// Expected to pay
-			if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_INVOICE_SHARING_ENABLED')) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;
@@ -505,10 +563,13 @@ if ($resql) {
 			// Status
 			print '<td class="right">'.$invoice->getLibStatut(5, $alreadypayed).'</td>';
 
+			$parameters = array('fk_paiement'=> (int) $object->id);
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objp, $action); // Note that $action and $object may have been modified by hook
+
 			print "</tr>\n";
 
 			// If at least one invoice is paid, disable delete. INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED Can be use for maintenance purpose. Never use this in production
-			if ($objp->paye == 1 && empty($conf->global->INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED)) {
+			if ($objp->paye == 1 && !getDolGlobalString('INVOICE_CAN_DELETE_PAYMENT_EVEN_IF_INVOICE_CLOSED')) {
 				$disable_delete = 1;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 			}
@@ -535,7 +596,7 @@ if ($resql) {
 
 print '<div class="tabsAction">';
 
-if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION)) {
+if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 		if ($user->hasRight('facture', 'paiement')) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=valide&token='.newToken().'">'.$langs->trans('Valid').'</a>';

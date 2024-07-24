@@ -47,7 +47,9 @@ if (empty($forceall)) {
 	$forceall = 0;
 }
 
-if (empty($filtertype))	$filtertype = 0;
+if (empty($filtertype)) {
+	$filtertype = 0;
+}
 
 $formproduct = new FormProduct($object->db);
 
@@ -63,7 +65,7 @@ print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 $coldisplay = 0;
 print '<tr class="oddeven tredited">';
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<td class="linecolnum center">'.($i + 1).'</td>';
 	$coldisplay++;
 }
@@ -75,7 +77,7 @@ $coldisplay++;
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 	<input type="hidden" id="product_type" name="type" value="<?php echo $line->product_type; ?>">
-	<input type="hidden" id="product_id" name="productid" value="<?php echo (!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
+	<input type="hidden" id="product_id" name="productid" value="<?php echo(!empty($line->fk_product) ? $line->fk_product : 0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 	<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
 
@@ -128,7 +130,8 @@ print '</td>';
 if ($filtertype != 1) {
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 		$coldisplay++;
-		print '<td class="nobottom linecoluseunit left">';
+		print '<td class="nobottom nowrap linecolunit right">';
+		print  $formproduct->selectMeasuringUnits("fk_unit", '', (($line->fk_unit) ? $line->fk_unit : ''), 0, 0);
 		print '</td>';
 	}
 
@@ -155,6 +158,7 @@ if ($filtertype != 1) {
 
 	$coldisplay++;
 	print '<td class="nobottom nowrap linecolworkstation right">';
+	print $formproduct->selectWorkstations($line->fk_default_workstation, 'idworkstations', 1);
 	print '</td>';
 
 	$coldisplay++;

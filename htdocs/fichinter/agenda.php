@@ -71,16 +71,13 @@ if (!$sortorder) {
 // Initialize technical objects
 $object = new Fichinter($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->fichinter->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
+
 $hookmanager->initHooks(array('myobjectagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->fichinter->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
-}
 
 $permissiontoread = $user->hasRight("fichinter", "lire");
 $permissiontoadd = $user->hasRight("fichinter", "creer");
@@ -90,7 +87,8 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
-restrictedArea($user, 'ficheinter', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+restrictedArea($user, 'ficheinter', $object->id, 'fichinter', '', 'fk_soc', 'rowid', $isdraft);
+
 
 
 /*
@@ -239,7 +237,7 @@ if ($object->id > 0) {
 		$cachekey = 'count_events_fichinter_'.$object->id;
 		$nbEvent = dol_getcache($cachekey);
 
-		print_barre_liste($langs->trans("ActionsOnFicheInter").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>': ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
+		print_barre_liste($langs->trans("ActionsOnFicheInter").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : ''), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 		//print_barre_liste($langs->trans("ActionsOnPropal"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 1);
 
 		// List of all actions

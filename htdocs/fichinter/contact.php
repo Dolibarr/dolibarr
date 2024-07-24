@@ -157,10 +157,10 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<br>';
 
-	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_USER)) {
+	if (getDolGlobalString('FICHINTER_HIDE_ADD_CONTACT_USER')) {
 		$hideaddcontactforuser = 1;
 	}
-	if (!empty($conf->global->FICHINTER_HIDE_ADD_CONTACT_THIPARTY)) {
+	if (getDolGlobalString('FICHINTER_HIDE_ADD_CONTACT_THIPARTY')) {
 		$hideaddcontactforthirdparty = 1;
 	}
 

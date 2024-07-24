@@ -37,6 +37,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $socid = GETPOST('socid', 'int');
@@ -287,7 +288,7 @@ $moreheadjs = '';
 
 //$morejs=array();
 $morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 

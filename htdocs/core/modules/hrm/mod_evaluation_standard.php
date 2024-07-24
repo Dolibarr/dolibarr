@@ -52,9 +52,10 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -83,7 +84,8 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -99,7 +101,8 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 		if ($resql) {
 			$row = $db->fetch_row($resql);
 			if ($row) {
-				$coyymm = substr($row[0], 0, 6); $max = $row[0];
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
 			}
 		}
 		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
@@ -147,7 +150,7 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 
 		//$date=time();
 		$date = $object->date_creation;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

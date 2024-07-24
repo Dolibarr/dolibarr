@@ -1,26 +1,38 @@
 # Dolibarr language file - Source file is en_US - workflow
-WorkflowSetup=Workflow module setup
-WorkflowDesc=This module provides some automatic actions. By default, the workflow is open (you can do things in the order you want) but here you can activate some automatic actions.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowSetup=הגדרת מודול זרימת עבודה
+WorkflowDesc=מודול זה מספק כמה פעולות אוטומטיות. כברירת מחדל, זרימת העבודה פתוחה (אתה יכול לעשות דברים בסדר שאתה רוצה) אבל כאן אתה יכול להפעיל כמה פעולות אוטומטיות.
+ThereIsNoWorkflowToModify=אין שינויי זרימת עבודה זמינים עם המודולים המופעלים.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a sales order after a commercial proposal is signed (the new order will have same amount as the proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (the new invoice will have same amount as the proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a sales order is closed (the new invoice will have same amount as the order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=צור באופן אוטומטי הזמנת מכירות לאחר חתימה על הצעה מסחרית (ההזמנה החדשה תהיה זהה לסכום של ההצעה)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=צור אוטומטית חשבונית לקוח לאחר חתימה על הצעה מסחרית (החשבונית החדשה תהיה באותו סכום כמו ההצעה)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=צור אוטומטית חשבונית לקוח לאחר אימות חוזה
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=צור אוטומטית חשבונית לקוח לאחר סגירת הזמנת מכירות (החשבונית החדשה תהיה בסכום זהה להזמנה)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=ביצירת כרטיס, צור התערבות אוטומטית.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales order as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=סיווג הצעות מקור מקושרות כחויב כאשר הזמנת מכירה מוגדרת לחיוב (ואם סכום ההזמנה זהה לסכום הכולל של ההצעות המקושרות החתומות)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=סיווג הצעות מקור מקושר כחויב כאשר חשבונית לקוח מאומתת (ואם סכום החשבונית זהה לסכום הכולל של ההצעות המקושרות החתומות)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=סיווג הזמנת מכירה מקור מקושרת כחויבה כאשר חשבונית לקוח מאומתת (ואם סכום החשבונית זהה לסכום הכולל של הזמנות המכירה המקושרות). אם יש לך חשבונית אחת מאומתת עבור n הזמנות, זה עשוי להגדיר גם את כל ההזמנות לחיוב.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=סיווג הזמנות מכירות מקור מקושרות כחויב כאשר חשבונית לקוח מוגדרת לתשלום (ואם סכום החשבונית זהה לסכום הכולל של הזמנות המכירה המקושרות). אם יש לך ערכת חשבונית אחת שחויבת עבור n הזמנות, ייתכן שתגדיר את כל ההזמנות גם לחיוב.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=סיווג הזמנות מכירות מקור מקושרות כנשלחות כאשר משלוח מאומת (ואם הכמות שנשלחה על ידי כל המשלוחים זהה לזו בהזמנה לעדכון)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=סיווג הזמנת מכירות מקור מקושרת כנשלחת כאשר משלוח נסגר (ואם הכמות שנשלחה על ידי כל המשלוחים זהה לזו בהזמנה לעדכון)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=סיווג הצעת ספק מקור מקושר כחויבה כאשר חשבונית הספק מאומתת (ואם סכום החשבונית זהה לסכום הכולל של ההצעות המקושרות)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposal)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
-# Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=סיווג הזמנת רכש מקור מקושר כחויבה כאשר חשבונית הספק מאומתת (ואם סכום החשבונית זהה לסכום הכולל של ההזמנות המקושרות)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=סיווג הזמנת רכש מקור מקושרת כפי שהתקבלה כאשר קבלה מאומתת (ואם הכמות שהתקבלה בכל הקבלות זהה לזו שבהזמנת הרכש לעדכון)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=סיווג הזמנת רכש מקור מקושרת כפי שהתקבלה כאשר קבלה סגורה (ואם הכמות שהתקבלה בכל הקבלות זהה להזמנת הרכש לעדכון)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=סיווג משלוח מקור מקושר כסגור כאשר חשבונית לקוח מאומתת (ואם סכום החשבונית זהה לסכום הכולל של המשלוחים המקושרים)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=סיווג משלוח מקור מקושר כחויב כאשר חשבונית לקוח מאומתת (ואם סכום החשבונית זהה לסכום הכולל של המשלוחים המקושרים)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=סיווג קבלות מקור מקושר כחויב כאשר חשבונית רכישה מאומתת (ואם סכום החשבונית זהה לסכום הכולל של הקבלות המקושרות)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=סיווג קבלות מקור מקושר כחויב כאשר חשבונית רכישה מאומתת (ואם סכום החשבונית זהה לסכום הכולל של הקבלות המקושרות)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=בעת יצירת כרטיס, קשר את כל החוזים הזמינים של צדדים שלישיים תואמים
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=בעת קישור חוזים, חפש בין אלה של חברות הורים
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=סגור את כל ההתערבויות הקשורות לכרטיס כאשר כרטיס סגור
+AutomaticCreation=יצירה אוטומטית
+AutomaticClassification=סיווג אוטומטי
+AutomaticClosing=סגירה אוטומטית
+AutomaticLinking=קישור אוטומטי

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2021	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2021	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
@@ -74,8 +74,13 @@ $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_en
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
+// Define begin binding date
+if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+	$search_date_start = $db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'));
+}
+
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : (empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION) ? $conf->liste_limit : $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION);
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -89,7 +94,7 @@ if (!$sortfield) {
 	$sortfield = "f.datef, f.ref, l.rowid";
 }
 if (!$sortorder) {
-	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
+	if (getDolGlobalInt('ACCOUNTING_LIST_SORT_VENTILATION_TODO') > 0) {
 		$sortorder = "DESC";
 	} else {
 		$sortorder = "ASC";
@@ -121,7 +126,8 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list'; $massaction = '';
+	$action = 'list';
+	$massaction = '';
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -224,7 +230,9 @@ if (GETPOST('sortfield') == 'f.datef, f.ref, l.rowid') {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader('', $langs->trans("Ventilation"));
+$help_url ='EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
+
+llxHeader('', $langs->trans("CustomersVentilation"), $help_url);
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -238,7 +246,7 @@ if (empty($chartaccountcode)) {
 $sql = "SELECT f.rowid as facid, f.ref, f.datef, f.type as ftype, f.situation_cycle_ref, f.fk_facture_source,";
 $sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.situation_percent, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell as code_sell, ppe.accountancy_code_sell_intra as code_sell_intra, ppe.accountancy_code_sell_export as code_sell_export,";
 	$sql .= " ppe.accountancy_code_buy as code_buy, ppe.accountancy_code_buy_intra as code_buy_intra, ppe.accountancy_code_buy_export as code_buy_export,";
 } else {
@@ -249,7 +257,7 @@ $sql .= " p.tosell as status, p.tobuy as status_buy,";
 $sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export, aa4.rowid as aarowid_thirdparty,";
 $sql .= " co.code as country_code, co.label as country_label,";
 $sql .= " s.rowid as socid, s.nom as name, s.tva_intra, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur,";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 	$sql .= " spe.accountancy_code_sell as company_code_sell";
@@ -263,17 +271,17 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as l ON f.rowid = l.fk_facture";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
-if (!empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 }
-$alias_societe_perentity = empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED) ? "s" : "spe";
-$alias_product_perentity = empty($conf->global->MAIN_PRODUCT_PERENTITY_SHARED) ? "p" : "ppe";
+$alias_societe_perentity = !getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED') ? "s" : "spe";
+$alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') ? "p" : "ppe";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa  ON " . $alias_product_perentity . ".accountancy_code_sell = aa.account_number         AND aa.active = 1  AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON " . $alias_product_perentity . ".accountancy_code_sell_intra = aa2.account_number  AND aa2.active = 1 AND aa2.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa2.entity = ".$conf->entity;
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON " . $alias_product_perentity . ".accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa3.entity = ".$conf->entity;
@@ -281,10 +289,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa4 ON " . $alias_so
 
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND l.product_type <= 2";
-// Define begin binding date
-if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
-}
 // Add search filter like
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
@@ -343,7 +347,7 @@ if (strlen(trim($search_country))) {
 if (strlen(trim($search_tvaintra))) {
 	$sql .= natural_search("s.tva_intra", $search_tvaintra);
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
 } else {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
@@ -489,10 +493,10 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -658,7 +662,7 @@ if ($result) {
 		// Description of line
 		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
-		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION) ? 32 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION;
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
 		print '</td>';
 
@@ -693,7 +697,7 @@ if ($result) {
 		if ($product_static->tva_tx !== $facture_static_det->tva_tx && price2num($product_static->tva_tx) && price2num($facture_static_det->tva_tx)) {	// Note: having a vat rate of 0 is often the normal case when sells is intra b2b or to export
 			$code_vat_differ = 'warning bold';
 		}
-		print '<td class="right'.($code_vat_differ?' '.$code_vat_differ:'').'">';
+		print '<td class="right'.($code_vat_differ ? ' '.$code_vat_differ : '').'">';
 		print vatrate($facture_static_det->tva_tx.($facture_static_det->vat_src_code ? ' ('.$facture_static_det->vat_src_code.')' : ''));
 		print '</td>';
 
@@ -713,7 +717,8 @@ if ($result) {
 		print '<td class="small">';
 		// First show default account for any products
 		$s = '1. '.(($facture_static_det->product_type == 1) ? $langs->trans("DefaultForService") : $langs->trans("DefaultForProduct")).': ';
-		$shelp = ''; $ttype = 'help';
+		$shelp = '';
+		$ttype = 'help';
 		if ($suggestedaccountingaccountbydefaultfor == 'eec') {
 			$shelp .= $langs->trans("SaleEEC");
 		} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithvat') {
@@ -730,7 +735,8 @@ if ($result) {
 		if ($product_static->id > 0) {
 			print '<br>';
 			$s = '2. '.(($facture_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
-			$shelp = ''; $ttype = 'help';
+			$shelp = '';
+			$ttype = 'help';
 			if ($suggestedaccountingaccountfor == 'eec') {
 				$shelp = $langs->trans("SaleEEC");
 			} elseif ($suggestedaccountingaccountfor == 'eecwithvat') {
@@ -750,7 +756,7 @@ if ($result) {
 			$s .= $langs->trans("NotDefined");
 			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
-		if (!empty($conf->global->ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY)) {
+		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
 			print '<br>';
 			$s = '3. '.(($facture_static_det->product_type == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
 			$shelp = '';

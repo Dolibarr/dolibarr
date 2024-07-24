@@ -93,8 +93,12 @@ if (!isModEnabled('partnership')) {
 if (!$permissiontoread) {
 	accessforbidden();
 }
-if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
-if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') {
+	accessforbidden();
+}
 
 
 /*
@@ -135,7 +139,7 @@ if (empty($reshook)) {
 		$result = $object->validate($user);
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
@@ -167,7 +171,7 @@ if (empty($reshook)) {
 		$result = $object->approve($user);
 		if ($result >= 0) {
 			// Define output language
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
@@ -252,7 +256,9 @@ if (empty($reshook)) {
 	}
 }
 
-if ($object->id > 0 && $object->status == $object::STATUS_REFUSED) $object->fields['reason_decline_or_cancel']['visible'] = 3;
+if ($object->id > 0 && $object->status == $object::STATUS_REFUSED) {
+	$object->fields['reason_decline_or_cancel']['visible'] = 3;
+}
 
 
 
@@ -539,9 +545,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			}
 		}
 

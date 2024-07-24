@@ -63,7 +63,7 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('tax', 'charges', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -102,7 +102,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
 			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-				$fac->generateDocument($fac->modelpdf, $outputlangs);
+				$fac->generateDocument($fac->model_pdf, $outputlangs);
 			}
 		}
 
@@ -295,7 +295,7 @@ if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 */
 
 if ($action == '') {
-	if ($user->rights->tax->charges->supprimer) {
+	if ($user->hasRight('tax', 'charges', 'supprimer')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', 1);
 		} else {

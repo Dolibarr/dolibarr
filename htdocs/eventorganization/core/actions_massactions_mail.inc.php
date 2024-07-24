@@ -43,7 +43,7 @@ if (empty($objectclass) || empty($uploaddir)) {
 }
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (empty($conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS) ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -153,12 +153,12 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			if ($fromtype === 'user') {
 				$from = $user->getFullName($langs) . ' <' . $user->email . '>';
 			} elseif ($fromtype === 'company') {
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM . ' <' . $conf->global->MAIN_INFO_SOCIETE_MAIL . '>';
+				$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '>';
 			} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp = explode(',', $user->email_aliases);
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
-				$tmp = explode(',', $conf->global->MAIN_INFO_SOCIETE_MAIL_ALIASES);
+				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 				$from = trim($tmp[($reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 				$sql = "SELECT rowid, label, email FROM " . MAIN_DB_PREFIX . "c_email_senderprofile WHERE rowid = " . (int) $reg[1];
@@ -181,7 +181,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $attendees);
 
-			if (!empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+			if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 				$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 				$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT;
 				$url_link = $urlwithroot . '/public/agenda/agendaexport.php?format=ical' . ($conf->entity > 1 ? "&entity=" . $conf->entity : "");
@@ -260,7 +260,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					if ($mailfile->error) {
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$resaction .= '<br><div class="error">' . $mailfile->error . '</div>';
-					} elseif (!empty($conf->global->MAIN_DISABLE_ALL_MAILS)) {
+					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 						$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 					} else {
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';

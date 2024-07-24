@@ -62,52 +62,15 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	public $type;
 
+	public $destinataire;
+	public $expediteur;
+	public $livreur;
+
 	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
 	public $version = 'dolibarr';
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
-
-	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
 
 
 	/**
@@ -117,7 +80,7 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = "merou";
@@ -167,7 +130,7 @@ class pdf_merou extends ModelePdfExpedition
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -231,7 +194,7 @@ class pdf_merou extends ModelePdfExpedition
 				$heightforinfotot = 0; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
-				if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS)) {
+				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
 				$pdf->SetAutoPageBreak(1, 0);
@@ -242,8 +205,8 @@ class pdf_merou extends ModelePdfExpedition
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -350,7 +313,7 @@ class pdf_merou extends ModelePdfExpedition
 					$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', 0);
 
 					// Add line
-					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
@@ -512,7 +475,7 @@ class pdf_merou extends ModelePdfExpedition
 	 *  @param  Expedition	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	int							<0 if KO, > if OK
+	 *  @return	int							Return integer <0 if KO, > if OK
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -522,8 +485,8 @@ class pdf_merou extends ModelePdfExpedition
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
-			//Affiche le filigrane brouillon - Print Draft Watermark
-		if ($object->statut == 0 && (!empty($conf->global->SENDING_DRAFT_WATERMARK))) {
+		//Affiche le filigrane brouillon - Print Draft Watermark
+		if ($object->statut == 0 && (getDolGlobalString('SENDING_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SENDING_DRAFT_WATERMARK);
 		}
 
@@ -676,7 +639,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Recipient name
-		if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+		if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
 			$thirdparty = $object->contact;
 		} else {
 			$thirdparty = $object->thirdparty;

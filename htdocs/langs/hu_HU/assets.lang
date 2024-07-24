@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,15 +16,10 @@
 #
 # Generic
 #
-Assets = Eszközök
-NewAsset = Új eszköz
-AccountancyCodeAsset = Számviteli kód (eszköz)
-AccountancyCodeDepreciationAsset = Számviteli kód (értékcsökkenési eszköz számla)
-AccountancyCodeDepreciationExpense = Számviteli kód (értékcsökkenési leírás)
-NewAssetType=Új eszköztípus
-AssetsTypeSetup=Eszköztípus beállítás
-AssetTypeModified=Eszköz típus módosítva
-AssetType=Eszköz típusa
+NewAsset=Új eszköz
+AccountancyCodeAsset=Számviteli kód (eszköz)
+AccountancyCodeDepreciationAsset=Számviteli kód (értékcsökkenési eszköz számla)
+AccountancyCodeDepreciationExpense=Számviteli kód (értékcsökkenési leírás)
 AssetsLines=Eszközök
 DeleteType=Törlés
 DeleteAnAssetType=Eszköztípus törlése
@@ -32,34 +27,159 @@ ConfirmDeleteAssetType=Biztosan törölni szeretné ezt az eszköztípust?
 ShowTypeCard=Mutasd a '%s' típust
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Eszközök
+ModuleAssetsName=Eszközök
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Eszközök leírása
+ModuleAssetsDesc=Eszközök leírása
 
 #
 # Admin page
 #
-AssetsSetup = Eszközök beállítása
-Settings = Beállítások
-AssetsSetupPage = Eszközök beállító oldala
-ExtraFieldsAssetsType = Kiegészítő attribútumok (eszköztípus)
+AssetSetup=Eszközök beállítása
+AssetSetupPage=Eszközök beállító oldala
+ExtraFieldsAssetModel=Kiegészítő attribútumok (az eszköz modellje)
+
 AssetsType=Eszköz típusa
 AssetsTypeId=Eszköztípus azonosító
 AssetsTypeLabel=Eszköztípus címke
 AssetsTypes=Eszköztípusok
+ASSET_ACCOUNTANCY_CATEGORY=Tárgyi eszköz könyvelési csoport
 
 #
 # Menu
 #
-MenuAssets = Eszközök
-MenuNewAsset = Új eszköz
-MenuTypeAssets = Írja be az eszközöket
-MenuListAssets = Lista
-MenuNewTypeAssets = Új
-MenuListTypeAssets = Lista
+MenuAssets=Eszközök
+MenuNewAsset=Új eszköz
+MenuAssetModels=Modelleszközök
+MenuListAssets=Lista
+MenuNewAssetModel=Új eszköz modellje
+MenuListAssetModels=Lista
 
 #
 # Module
 #
-NewAssetType=Új eszköztípus
-NewAsset=Új eszköz
+ConfirmDeleteAsset=Biztosan el akarja távolítani ezt az elemet?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Értékcsökkenési lehetőségek
+AssetAccountancyCodes=Főkönyvi számlák
+AssetDepreciation=Értékcsökkenés
+
+#
+# Asset
+#
+Asset=Eszköz
+Assets=Eszközök
+AssetReversalAmountHT=Visszavonási összeg (adók nélkül)
+AssetAcquisitionValueHT=Akvizíció összege (adók nélkül)
+AssetRecoveredVAT=Visszaigényelt áfa
+AssetReversalDate=Visszavonás dátuma
+AssetDateAcquisition=Akvizíció dátuma
+AssetDateStart=Az indítás dátuma
+AssetAcquisitionType=A beszerzés típusa
+AssetAcquisitionTypeNew=Új
+AssetAcquisitionTypeOccasion=Használt
+AssetType=Eszköz típusa
+AssetTypeIntangible=Megfoghatatlan
+AssetTypeTangible=Kézzelfogható
+AssetTypeInProgress=Folyamatban
+AssetTypeFinancial=Pénzügyi
+AssetNotDepreciated=Nincs értékcsökkenés
+AssetDisposal=Selejtezés
+AssetConfirmDisposalAsk=Biztosan el akarja adni a(z) <b> %s</b> eszközt?
+AssetConfirmReOpenAsk=Biztosan újra meg akarja nyitni a(z) <b> %s</b> elemet?
+
+#
+# Asset status
+#
+AssetInProgress=Folyamatban
+AssetDisposed=Elidegenítve
+AssetRecorded=Számlák
+
+#
+# Asset disposal
+#
+AssetDisposalDate=A selejtezés dátuma
+AssetDisposalAmount=Selejtezési érték
+AssetDisposalType=A selejtezés típusa
+AssetDisposalDepreciated=Amortizálja az átruházás évét
+AssetDisposalSubjectToVat=Áfá-köteles ártalmatlanítás
+
+#
+# Asset model
+#
+AssetModel=Az eszköz modellje
+AssetModels=Eszköz modelljei
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Gazdasági értékcsökkenés
+AssetDepreciationOptionAcceleratedDepreciation=Gyorsított értékcsökkenés (adó)
+AssetDepreciationOptionDepreciationType=Amortizáció típusa
+AssetDepreciationOptionDepreciationTypeLinear=Lineáris
+AssetDepreciationOptionDepreciationTypeDegressive=Degresszív
+AssetDepreciationOptionDepreciationTypeExceptional=Kivételes
+AssetDepreciationOptionDegressiveRate=Degresszív árfolyam
+AssetDepreciationOptionDuration=Időtartam
+AssetDepreciationOptionDurationType=Típus időtartama
+AssetDepreciationOptionDurationTypeAnnual=Évi
+AssetDepreciationOptionDurationTypeMonthly=Havi
+AssetDepreciationOptionDurationTypeDaily=Napi
+AssetDepreciationOptionRate=Arány (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Amortizációs alap (áfa nélkül)
+AssetDepreciationOptionAmountBaseDeductibleHT=Levonás alapja (áfa nélkül)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Az utolsó értékcsökkenés teljes összege (áfa nélkül)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Gazdasági értékcsökkenés
+AssetAccountancyCodeAsset=Eszköz
+AssetAccountancyCodeDepreciationAsset=Amortizáció
+AssetAccountancyCodeDepreciationExpense=Amortizációs költség
+AssetAccountancyCodeValueAssetSold=Az elidegenített eszköz értéke
+AssetAccountancyCodeReceivableOnAssignment=Eladáskor követelés
+AssetAccountancyCodeProceedsFromSales=Az ártalmatlanításból származó bevétel
+AssetAccountancyCodeVatCollected=Beszedett áfa
+AssetAccountancyCodeVatDeductible=Az eszközök visszaigényelt áfája
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Gyorsított értékcsökkenés (adó)
+AssetAccountancyCodeAcceleratedDepreciation=Számla
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Amortizációs költség
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Újrabevétel/ellátás
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Értékcsökkenési leírás alapja (áfa nélkül)
+AssetDepreciationBeginDate=Az értékcsökkenés kezdete
+AssetDepreciationDuration=Időtartam
+AssetDepreciationRate=Arány (%%)
+AssetDepreciationDate=Amortizáció dátuma
+AssetDepreciationHT=Amortizáció (áfa nélkül)
+AssetCumulativeDepreciationHT=Halmozott értékcsökkenés (áfa nélkül)
+AssetResidualHT=Maradványérték (áfa nélkül)
+AssetDispatchedInBookkeeping=Amortizáció rögzítve
+AssetFutureDepreciationLine=Jövőbeni értékcsökkenés
+AssetDepreciationReversal=Visszavonás
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=A talált eszköz vagy modell azonosítója nem került megadásra
+AssetErrorFetchAccountancyCodesForMode=Hiba a '%s' értékcsökkenési mód könyvelési számláinak lekérésekor
+AssetErrorDeleteAccountancyCodesForMode=Hiba a könyvelési számlák törlésekor a '%s' értékcsökkenési módból
+AssetErrorInsertAccountancyCodesForMode=Hiba a '%s' értékcsökkenési mód könyvelési számláinak beszúrásakor
+AssetErrorFetchDepreciationOptionsForMode=Hiba a '%s' értékcsökkenési mód opcióinak lekérésekor
+AssetErrorDeleteDepreciationOptionsForMode=Hiba a '%s' értékcsökkenési mód beállításainak törlésekor
+AssetErrorInsertDepreciationOptionsForMode=Hiba a '%s' értékcsökkenési mód beállításainak beillesztésekor
+AssetErrorFetchDepreciationLines=Hiba a rögzített értékcsökkenési sorok lekérésekor
+AssetErrorClearDepreciationLines=Hiba a rögzített értékcsökkenési sorok törlésekor (visszafordítás és jövőbeli)
+AssetErrorAddDepreciationLine=Hiba értékcsökkenési sor hozzáadásakor
+AssetErrorCalculationDepreciationLines=Hiba az értékcsökkenési sorok kiszámításakor (megtérülés és jövő)
+AssetErrorReversalDateNotProvidedForMode=A visszavonási dátum nincs megadva a '%s' értékcsökkenési módszerhez
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=A visszavonási dátumnak nagyobbnak kell lennie, mint az aktuális pénzügyi év kezdete, vagy egyenlőnek kell lennie a „%s” értékcsökkenési módszerrel
+AssetErrorReversalAmountNotProvidedForMode=A visszavonási összeg nincs megadva a '%s' értékcsökkenési módhoz.
+AssetErrorFetchCumulativeDepreciation=Hiba a felhalmozott értékcsökkenési összeg lekérésekor az értékcsökkenési sorból
+AssetErrorSetLastCumulativeDepreciation=Hiba az utolsó halmozott értékcsökkenési összeg rögzítésekor

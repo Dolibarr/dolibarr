@@ -48,7 +48,7 @@ if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
 if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
 
 // Check if company name is defined (first install)
-if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_NOM)) {
+if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || !getDolGlobalString('MAIN_INFO_SOCIETE_NOM')) {
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
@@ -80,8 +80,8 @@ if (!isset($form) || !is_object($form)) {
 
 // Title
 $title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = $langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$title = $langs->trans("HomeArea").' - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 llxHeader('', $title);
@@ -92,12 +92,12 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
-if (!empty($conf->global->MAIN_MOTD)) {
+if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD);
-	if (!empty($conf->global->MAIN_MOTD)) {
+	if (getDolGlobalString('MAIN_MOTD')) {
 		$substitutionarray = getCommonSubstitutionArray($langs);
 		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions($conf->global->MAIN_MOTD, $substitutionarray, $langs);
+		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
 		print "\n<!-- Start of welcome text -->\n";
 		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
@@ -112,7 +112,7 @@ if (!empty($conf->global->MAIN_MOTD)) {
  */
 
 // Security warning if install.lock file is missing or if conf file is writable
-if (empty($conf->global->MAIN_REMOVE_INSTALL_WARNING)) {
+if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	$message = '';
 
 	// Check if install lock file is present
@@ -156,8 +156,8 @@ $boxstatFromHook = '';
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 // Dolibarr Working Board with weather
-if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
-	$showweather = (empty($conf->global->MAIN_DISABLE_METEO) || $conf->global->MAIN_DISABLE_METEO == 2) ? 1 : 0;
+if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD')) {
+	$showweather = (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') == 2) ? 1 : 0;
 
 	//Array that contains all WorkboardResponse classes to process them
 	$dashboardlines = array();
@@ -166,28 +166,28 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 	// Number of actions to do (late)
-	if (isModEnabled('agenda') && empty($conf->global->MAIN_DISABLE_BLOCK_AGENDA) && $user->hasRight('agenda', 'myactions', 'read')) {
+	if (isModEnabled('agenda') && !getDolGlobalString('MAIN_DISABLE_BLOCK_AGENDA') && $user->hasRight('agenda', 'myactions', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$board = new ActionComm($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of project opened
-	if (isModEnabled('project') && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && !getDolGlobalString('MAIN_DISABLE_BLOCK_PROJECT') && $user->hasRight('projet', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$board = new Project($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of tasks to do (late)
-	if (isModEnabled('project') && empty($conf->global->MAIN_DISABLE_BLOCK_PROJECT) && empty($conf->global->PROJECT_HIDE_TASKS) && $user->hasRight('projet', 'lire')) {
+	if (isModEnabled('project') && !getDolGlobalString('MAIN_DISABLE_BLOCK_PROJECT') && !getDolGlobalString('PROJECT_HIDE_TASKS') && $user->hasRight('projet', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$board = new Task($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of commercial customer proposals open (expired)
-	if (isModEnabled('propal') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('propal', 'read')) {
+	if (isModEnabled('propal') && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('propal', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		$board = new Propal($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -196,7 +196,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of supplier proposals open (expired)
-	if (isModEnabled('supplier_proposal')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('supplier_proposal', 'lire')) {
+	if (isModEnabled('supplier_proposal')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_SUPPLIER') && $user->hasRight('supplier_proposal', 'lire')) {
 		$langs->load("supplier_proposal");
 		include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 		$board = new SupplierProposal($db);
@@ -206,14 +206,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of sales orders
-	if (isModEnabled('commande')  && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('commande', 'lire')) {
+	if (isModEnabled('commande')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$board = new Commande($db);
-		$dashboardlines[$board->element] = $board->load_board($user);
+		// Number of customer orders to be shipped (validated and in progress)
+		$dashboardlines[$board->element.'_toship'] = $board->load_board($user, 'toship');
+		// Number of customer orders to be billed (not visible by default, does not match a lot of organization).
+		if (getDolGlobalInt('ORDER_BILL_AFTER_VALIDATION')) {
+			$dashboardlines[$board->element.'_tobill'] = $board->load_board($user, 'tobill');
+		}
+		// Number of customer orders to be billed (delivered but not billed)
+		$dashboardlines[$board->element.'_shippedtobill'] = $board->load_board($user, 'shippedtobill');
 	}
 
 	// Number of suppliers orders
-	if (isModEnabled('supplier_order')  && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'commande', 'lire')) {
+	if (isModEnabled('supplier_order')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_SUPPLIER') && $user->hasRight('fournisseur', 'commande', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$board = new CommandeFournisseur($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -221,7 +228,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of contract / services enabled (delayed)
-	if (isModEnabled('contrat')  && empty($conf->global->MAIN_DISABLE_BLOCK_CONTRACT) && $user->hasRight('contrat', 'lire')) {
+	if (isModEnabled('contrat')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_CONTRACT') && $user->hasRight('contrat', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 		$board = new Contrat($db);
 		$dashboardlines[$board->element.'_inactive'] = $board->load_board($user, "inactive");
@@ -230,7 +237,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of tickets open
-	if (isModEnabled('ticket')  && empty($conf->global->MAIN_DISABLE_BLOCK_TICKET) && $user->hasRight('ticket', 'read')) {
+	if (isModEnabled('ticket')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_TICKET') && $user->hasRight('ticket', 'read')) {
 		include_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$board = new Ticket($db);
 		$dashboardlines[$board->element.'_opened'] = $board->load_board($user, "opened");
@@ -239,21 +246,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of invoices customers (paid)
-	if (isModEnabled('facture') && empty($conf->global->MAIN_DISABLE_BLOCK_CUSTOMER) && $user->hasRight('facture', 'lire')) {
+	if (isModEnabled('facture') && !getDolGlobalString('MAIN_DISABLE_BLOCK_CUSTOMER') && $user->hasRight('facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$board = new Facture($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of supplier invoices (paid)
-	if (isModEnabled('supplier_invoice') && empty($conf->global->MAIN_DISABLE_BLOCK_SUPPLIER) && $user->hasRight('fournisseur', 'facture', 'lire')) {
+	if (isModEnabled('supplier_invoice') && !getDolGlobalString('MAIN_DISABLE_BLOCK_SUPPLIER') && $user->hasRight('fournisseur', 'facture', 'lire')) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$board = new FactureFournisseur($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
 	// Number of transactions to conciliate
-	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
+	if (isModEnabled('banque')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$board = new Account($db);
 		$nb = $board->countAccountToReconcile(); // Get nb of account to reconciliate
@@ -264,8 +271,8 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 
 	// Number of cheque to send
-	if (isModEnabled('banque')  && empty($conf->global->MAIN_DISABLE_BLOCK_BANK) && $user->hasRight('banque', 'lire') && !$user->socid) {
-		if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
+	if (isModEnabled('banque')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_BANK') && $user->hasRight('banque', 'lire') && !$user->socid) {
+		if (!getDolGlobalString('BANK_DISABLE_CHECK_DEPOSIT')) {
 			include_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
 			$board = new RemiseCheque($db);
 			$dashboardlines[$board->element] = $board->load_board($user);
@@ -283,7 +290,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of foundation members
-	if (isModEnabled('adherent')  && empty($conf->global->MAIN_DISABLE_BLOCK_ADHERENT) && $user->hasRight('adherent', 'lire') && !$user->socid) {
+	if (isModEnabled('adherent')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_ADHERENT') && $user->hasRight('adherent', 'lire') && !$user->socid) {
 		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$board = new Adherent($db);
 		$dashboardlines[$board->element.'_shift'] = $board->load_board($user, 'shift');
@@ -291,21 +298,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 	}
 
 	// Number of expense reports to approve
-	if (isModEnabled('expensereport')  && empty($conf->global->MAIN_DISABLE_BLOCK_EXPENSEREPORT) && $user->hasRight('expensereport', 'approve')) {
+	if (isModEnabled('expensereport')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_EXPENSEREPORT') && $user->hasRight('expensereport', 'approve')) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
 		$dashboardlines[$board->element.'_toapprove'] = $board->load_board($user, 'toapprove');
 	}
 
 	// Number of expense reports to pay
-	if (isModEnabled('expensereport')  && empty($conf->global->MAIN_DISABLE_BLOCK_EXPENSEREPORT) && $user->hasRight('expensereport', 'to_paid')) {
+	if (isModEnabled('expensereport')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_EXPENSEREPORT') && $user->hasRight('expensereport', 'to_paid')) {
 		include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 		$board = new ExpenseReport($db);
 		$dashboardlines[$board->element.'_topay'] = $board->load_board($user, 'topay');
 	}
 
 	// Number of holidays to approve
-	if (isModEnabled('holiday')  && empty($conf->global->MAIN_DISABLE_BLOCK_HOLIDAY) && $user->hasRight('holiday', 'approve')) {
+	if (isModEnabled('holiday')  && !getDolGlobalString('MAIN_DISABLE_BLOCK_HOLIDAY') && $user->hasRight('holiday', 'approve')) {
 		include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 		$board = new Holiday($db);
 		$dashboardlines[$board->element] = $board->load_board($user);
@@ -349,7 +356,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 				'groupName' => 'Orders',
 				'globalStatsKey' => 'orders',
 				'stats' =>
-					array('commande'),
+					array('commande_toship', 'commande_tobill', 'commande_shippedtobill'),
 			),
 		'facture' =>
 			array(
@@ -464,7 +471,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
 	$totalLateNumber = $totallate;
 	$totallatePercentage = ((!empty($totaltodo)) ? round($totallate / $totaltodo * 100, 2) : 0);
-	if (!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+	if (getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE')) {
 		$totallate = $totallatePercentage;
 	}
 
@@ -477,7 +484,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		if ($totallate > 0) {
 			$text = $langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv(
 				"NActionsLate",
-				$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')
+				$totallate.(getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? '%' : '')
 			).')';
 		} else {
 			$text = $langs->transnoentitiesnoconv("NoItemLate");
@@ -502,7 +509,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$boards = array();
 
 			// Scan $groupElement and save the one with 'stats' that must be used for the open objects dashboard
-			if (empty($conf->global->MAIN_DISABLE_NEW_OPENED_DASH_BOARD)) {
+			if (!getDolGlobalString('MAIN_DISABLE_NEW_OPENED_DASH_BOARD')) {
 				foreach ($groupElement['stats'] as $infoKey) {
 					if (!empty($valid_dashboardlines[$infoKey])) {
 						$boards[] = $valid_dashboardlines[$infoKey];
@@ -546,9 +553,9 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					$openedDashBoard .= '<div class="info-box-line spanoverflow nowrap">';
 
 					if (!empty($board->labelShort)) {
-						$infoName = '<span class="marginrightonly" title="'.$board->label.'">'.$board->labelShort.'</span>';
+						$infoName = '<div class="marginrightonly inline-block valignmiddle info-box-line-text" title="'.$board->label.'">'.$board->labelShort.'</div>';
 					} else {
-						$infoName = '<span class="marginrightonly">'.$board->label.'</span>';
+						$infoName = '<div class="marginrightonly inline-block valignmiddle info-box-line-text">'.$board->label.'</div>';
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
@@ -577,22 +584,27 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 					if ($board->total > 0) {
 						$labeltoshow .= ' - '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
-					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.'<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'" >';
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
+					$openedDashBoard .= $infoName;
+					$openedDashBoard .= '<div class="inline-block nowraponall">';
+					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
-					if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
+					if ($board->total > 0 && getDolGlobalString('MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX')) {
 						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
 					$openedDashBoard .= '</span>';
+
 					if ($textLate) {
 						if ($board->url_late) {
-							$openedDashBoard .= '</a>';
-							$openedDashBoard .= ' <a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
+							$openedDashBoard .= '</div></a>';
+							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
 							$openedDashBoard .= ' ';
 						}
 						$openedDashBoard .= $textLate;
 					}
 					$openedDashBoard .= '</a>'."\n";
+					$openedDashBoard .= '</div>';
 					$openedDashBoard .= '</div>'."\n";
 				}
 
@@ -607,14 +619,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 		}
 
 		if ($showweather && !empty($isIntopOpenedDashBoard)) {
-			$appendClass = (!empty($conf->global->MAIN_DISABLE_METEO) && $conf->global->MAIN_DISABLE_METEO == 2 ? ' hideonsmartphone' : '');
+			$appendClass = (getDolGlobalInt('MAIN_DISABLE_METEO') == 2 ? ' hideonsmartphone' : '');
 			$weather = getWeatherStatus($totallate);
 
 			$text = '';
 			if ($totallate > 0) {
 				$text = $langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv(
 					"NActionsLate",
-					$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')
+					$totallate.(getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? '%' : '')
 				).')';
 			} else {
 				$text = $langs->transnoentitiesnoconv("NoItemLate");
@@ -629,7 +641,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$weatherDashBoard .= '		<div class="info-box-content">'."\n";
 			$weatherDashBoard .= '			<div class="info-box-title">'.$langs->trans('GlobalOpenedElemView').'</div>'."\n";
 
-			if ($totallatePercentage > 0 && !empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) {
+			if ($totallatePercentage > 0 && getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE')) {
 				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv(
 					"NActionsLate",
 					price($totallatePercentage).'%'
@@ -687,7 +699,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 			$boxwork .= '<div class="boxstatscontent">';
 			$boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' <span>'.$board->label.'</span></span><br>';
 			$boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0) ? ' dashboardlineok' : '').'">'.$board->nbtodo.'</span></a>';
-			if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
+			if ($board->total > 0 && getDolGlobalString('MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX')) {
 				$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0) ? ' dashboardlineok' : '').'">'.price($board->total).'</span></a>';
 			}
 			$boxwork .= '</div>';
@@ -815,7 +827,7 @@ function getWeatherStatus($totallate)
 	$offset = 0;
 	$factor = 10; // By default
 
-	$used_conf = empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
+	$used_conf = !getDolGlobalString('MAIN_USE_METEO_WITH_PERCENTAGE') ? 'MAIN_METEO_LEVEL' : 'MAIN_METEO_PERCENTAGE_LEVEL';
 
 	$weather->level = 0;
 	$level0 = $offset;

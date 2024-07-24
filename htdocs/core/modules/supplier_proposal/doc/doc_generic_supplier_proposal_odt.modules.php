@@ -39,12 +39,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -104,7 +98,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'errors'));
@@ -149,17 +143,18 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
 		$texte .= $odtPath;
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
@@ -209,11 +204,6 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -300,8 +290,8 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -334,7 +324,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
@@ -364,7 +354,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$newfreetext = '';
 				$paramfreetext = 'SUPPLIER_PROPOSAL_FREE_TEXT';
 				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $substitutionarray);
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 
 				// Open and load template
@@ -426,8 +416,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -439,8 +428,11 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfException $e) {
+					} catch (OdfExceptionSegmentNotFound $e) {
 						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					} catch (OdfException $e) {
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -487,7 +479,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

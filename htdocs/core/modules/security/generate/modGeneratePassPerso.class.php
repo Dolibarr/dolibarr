@@ -65,15 +65,6 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $WithoutAmbi = 0;
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $conf;
-	public $lang;
-	public $user;
-
 	public $Maj;
 	public $Min;
 	public $Nb;
@@ -99,7 +90,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->langs = $langs;
 		$this->user = $user;
 
-		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
+		if (!getDolGlobalString('USER_PASSWORD_PATTERN')) {
 			// default value at auto generation (12 chars, 1 uppercase, 1 digit, 0 special char, 3 repeat max, exclude ambiguous characters).
 			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '12;1;1;0;3;1', 'chaine', 0, '', $conf->entity);
 		}
@@ -110,7 +101,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->Spe = "!@#$%&*()_-+={}[]\\|:;'/";
 		$this->Ambi = array("1", "I", "l", "|", "O", "0");
 
-		$tabConf = explode(";", $conf->global->USER_PASSWORD_PATTERN);
+		$tabConf = explode(";", getDolGlobalString('USER_PASSWORD_PATTERN'));
 		$this->length2 = $tabConf[0];
 		$this->NbMaj = $tabConf[1];
 		$this->NbNum = $tabConf[2];

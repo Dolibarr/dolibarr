@@ -27,8 +27,6 @@ class ProjectStats extends Stats
 	private $project;
 	public $userid;
 	public $socid;
-	public $year;
-	public $yearmonth;
 	public $status;
 	public $opp_status;
 
@@ -115,7 +113,7 @@ class ProjectStats extends Stats
 				} else {
 					$other += $row[1];
 				}
-					$i++;
+				$i++;
 			}
 			if ($num > $limit) {
 				$result[$i] = array(
@@ -123,7 +121,7 @@ class ProjectStats extends Stats
 				$other
 				);
 			}
-				$this->db->free($resql);
+			$this->db->free($resql);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this).'::'.__METHOD__.' '.$this->error, LOG_ERR);
@@ -179,7 +177,7 @@ class ProjectStats extends Stats
 		// Get list of project id allowed to user (in a string list separated by coma)
 		$object = new Project($this->db);
 		$projectsListId = '';
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$projectsListId = $object->getProjectsAuthorizedForUser($user, 0, 1, $user->socid);
 		}
 
@@ -222,7 +220,7 @@ class ProjectStats extends Stats
 			}
 		}
 
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$sqlwhere[] = " t.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 		}
 

@@ -17,151 +17,163 @@
 #
 # Generic
 #
-ModuleEventOrganizationName = Event Organization
-EventOrganizationDescription = Event Organization through Module Project
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
+ModuleEventOrganizationName = Tapahtuman järjestäminen
+EventOrganizationDescription = Tapahtuman järjestäminen moduuliprojektin kautta
+EventOrganizationDescriptionLong= Hallinnoi tapahtuman järjestämistä (esitys, konferenssit, osallistujat tai puhujat, julkisilla sivuilla ehdotuksia, äänestystä tai rekisteröintiä varten)
 #
 # Menu
 #
-EventOrganizationMenuLeft = Organized events
-EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
+EventOrganizationMenuLeft = Järjestettiin tapahtumia
+EventOrganizationConferenceOrBoothMenuLeft = Konferenssi tai osasto
 
-PaymentEvent=Payment of event
+PaymentEvent=maksu tapahtumasta
 
 #
 # Admin page
 #
-NewRegistration=Registration
-EventOrganizationSetup=Event Organization setup
-EventOrganization=Event organization
-Settings=Asetukset
-EventOrganizationSetupPage = Event Organization setup page
-EVENTORGANIZATION_TASK_LABEL = Label of tasks to create automatically when project is validated
-EVENTORGANIZATION_TASK_LABELTooltip = When you validate an organized event, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conference<br>Send Call for Booth<br>Receive call for conferences<br>Receive call for Booth<br>Open subscriptions to events for attendees<br>Send remind of event to speakers<br>Send remind of event to Booth hoster<br>Send remind of event to attendees
-EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Category to add to third-parties automatically created when someone suggests a conference
-EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Category to add to third-parties automatically created when they suggests a booth
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Template of email to send after receiving a suggestion of a conference.
-EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Template of email to send after receiving a suggestion of a booth.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
+NewRegistration=Rekisteröinti
+EventOrganizationSetup=Tapahtuman järjestämisen asetukset
+EventOrganization=Tapahtuman järjestäminen
+EventOrganizationSetupPage = Tapahtumaorganisaation asetussivu
+EVENTORGANIZATION_TASK_LABEL = Tehtävien tunniste luo automaattisesti, kun projekti vahvistetaan
+EVENTORGANIZATION_TASK_LABELTooltip = Kun vahvistat tapahtuman järjestämisen, projektissa voidaan luoda automaattisesti joitakin tehtäviä<br><br>Esimerkki: <br>Lähetä konferenssikutsu<br>Lähetä osastokutsu<br>Konferenssiehdotukset<span>Vahvista ='notranslate'><br></span>Vahvista Booths-hakemus<br>Avaa tapahtuman tilaukset osallistujille<br> tapahtuman puhujille<span class='notranslate'><br>Lähetä muistutus tapahtumasta Boothin isännöijille<br>Lähetä muistutus tapahtumasta osallistujille
+EVENTORGANIZATION_TASK_LABELTooltip2=Pidä tyhjänä, jos sinun ei tarvitse luo tehdä tehtäviä automaattisesti.
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Kolmansille osapuolille lisättävä luokka, joka luodaan automaattisesti, kun joku ehdottaa konferenssia
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Kolmansille osapuolille lisättävä luokka luodaan automaattisesti, kun he ehdottavat osastoa
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Sähköpostimalli, joka lähetetään konferenssiehdotuksen saatuaan.
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Sähköpostimalli, joka lähetetään osastoehdotuksen saatuaan.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Sähköpostimalli, joka lähetetään, kun ilmoittautuminen osastolle on maksettu.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Sähköpostimalli, joka lähetetään, kun tapahtumaan ilmoittautuminen on maksettu.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Sähköpostimalli, jota käytetään lähetettäessä sähköposteja "Lähetä sähköpostit" -toiminnosta puhujille
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Sähköpostimalli, jota käytetään lähetettäessä sähköposteja osallistujaluettelon "Lähetä sähköpostit" -toiminnosta
+EVENTORGANIZATION_FILTERATTENDEES_CAT = Lomakkeessa luo/lisää osallistuja rajoittaa kolmansien osapuolten luettelon luokan kolmansiin osapuoliin.
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = Lomakkeessa luo/lisää osallistuja rajoittaa kolmansien osapuolien luettelon kolmansiin osapuoliin luonteeltaan
 
 #
 # Object
 #
-EventOrganizationConfOrBooth= Conference Or Booth
-ManageOrganizeEvent = Manage the organization of an event
-ConferenceOrBooth = Conference Or Booth
-ConferenceOrBoothTab = Conference Or Booth
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
-ConferenceOrBoothAttendee = Conference Or Booth Attendee
+OrganizedEvent=Järjestetty tapahtuma
+EventOrganizationConfOrBooth= Konferenssi tai osasto
+EventOrganizationConfOrBoothes=Konferenssit tai osastot
+ManageOrganizeEvent = Hallitse tapahtuman järjestämistä
+ConferenceOrBooth = Konferenssi tai osasto
+ConferenceOrBoothTab = Konferenssi tai osasto
+AmountPaid = Maksettu summa
+DateOfRegistration = päiväys rekisteröinnistä
+ConferenceOrBoothAttendee = Konferenssin tai osaston osallistuja
+ApplicantOrVisitor=Hakija tai vierailija
+Speaker=Kaiutin
 
 #
 # Template Mail
 #
-YourOrganizationEventConfRequestWasReceived = Your request for conference was received
-YourOrganizationEventBoothRequestWasReceived = Your request for booth was received
-EventOrganizationEmailAskConf = Request for conference
-EventOrganizationEmailAskBooth = Request for booth
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
-EventOrganizationMassEmailAttendees = Communication to attendees
-EventOrganizationMassEmailSpeakers = Communication to speakers
-ToSpeakers=To speakers
+YourOrganizationEventConfRequestWasReceived = Kokouspyyntösi vastaanotettiin
+YourOrganizationEventBoothRequestWasReceived = Pyyntösi osastolle vastaanotettiin
+EventOrganizationEmailAskConf = Pyyntö konferenssiin
+EventOrganizationEmailAskBooth = Pyyntö osastolle
+EventOrganizationEmailBoothPayment = maksu osastostasi
+EventOrganizationEmailRegistrationPayment = Ilmoittautuminen tapahtumaan
+EventOrganizationMassEmailAttendees = Viestintä osallistujille
+EventOrganizationMassEmailSpeakers = Viestintä kaiuttimille
+ToSpeakers=Kaiuttimille
 
 #
 # Event
 #
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
-PriceOfRegistration=Price of registration
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
-PriceOfBooth=Subscription price to stand a booth
-PriceOfBoothHelp=Subscription price to stand a booth
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
-Attendees=Attendees
-ListOfAttendeesOfEvent=List of attendees of the event project
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
-NbVotes=Number of votes
+AllowUnknownPeopleSuggestConf=Salli ihmisten ehdottaa konferensseja
+AllowUnknownPeopleSuggestConfHelp=Anna tuntemattomien ehdottaa konferenssia, jonka he haluavat järjestää
+AllowUnknownPeopleSuggestBooth=Salli ihmisten hakea osastolle
+AllowUnknownPeopleSuggestBoothHelp=Salli tuntemattomien ihmisten hakea osastolle
+PriceOfRegistration=Rekisteröinnin hinta
+PriceOfRegistrationHelp=Ilmoittautumisesta tai tapahtumaan osallistumisesta maksettava hinta
+PriceOfBooth=Tilaushinta kestämään koppi
+PriceOfBoothHelp=Tilaushinta kestämään koppi
+EventOrganizationICSLink=Linkitä ICS konferensseihin
+ConferenceOrBoothInformation=Tiedot konferenssista tai osastosta
+Attendees=Osallistujat
+ListOfAttendeesOfEvent=Luettelo tapahtumaprojektin osallistujista
+DownloadICSLink = Lataa ICS-linkki
+EVENTORGANIZATION_SECUREKEY = Siemenet julkisen rekisteröintisivun avaimen suojaamiseen konferenssin ehdottamiseen
+SERVICE_BOOTH_LOCATION = Palvelua käytetään laskurivillä koskien sijainnista
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Palvelu, jota käytetään tapahtuman osallistujatilauksen laskuriville
+NbVotes=Äänten määrä
+
 #
 # Status
 #
 EvntOrgDraft = Luonnos
-EvntOrgSuggested = Suggested
-EvntOrgConfirmed = Confirmed
-EvntOrgNotQualified = Not Qualified
+EvntOrgSuggested = Ehdotettu
+EvntOrgConfirmed = Vahvistettu
+EvntOrgNotQualified = Epäpätevä
 EvntOrgDone = Valmis
-EvntOrgCancelled = Cancelled
-#
-# Public page
-#
-SuggestForm = Suggestion page
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
-ListOfSuggestedConferences = List of suggested conferences
-ListOfSuggestedBooths = List of suggested booths
-ListOfConferencesOrBooths=List of conferences or booths of event project
-SuggestConference = Suggest a new conference
-SuggestBooth = Suggest a booth
-ViewAndVote = View and vote for suggested events
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
-MissingOrBadSecureKey = The security key is invalid or missing
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
-EvntOrgDuration = This conference starts on %s and ends on %s.
-ConferenceAttendeeFee = Conference attendee fee for the event : '%s' occurring from %s to %s.
-BoothLocationFee = Booth location for the event : '%s' occurring from %s to %s
-EventType = Event type
-LabelOfBooth=Booth label
-LabelOfconference=Conference label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
+EvntOrgCancelled = Peruttu
 
 #
-# Vote page
+# Other
 #
-EvntOrgRegistrationWelcomeMessage = Welcome on the conference or booth suggestion page.
-EvntOrgRegistrationConfWelcomeMessage = Welcome on the conference suggestion page.
-EvntOrgRegistrationBoothWelcomeMessage = Welcome on the booth suggestion page.
-EvntOrgVoteHelpMessage = Here, you can view and vote for the suggested events for the project
-VoteOk = Your vote has been accepted.
-AlreadyVoted = You have already voted for this event.
-VoteError = An error has occurred during the vote, please try again.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
-Attendee = Attendee
-PaymentConferenceAttendee = Conference attendee payment
-PaymentBoothLocation = Booth location payment
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+SuggestForm = Ehdotussivu
+SuggestOrVoteForConfOrBooth = Sivu ehdotusta tai äänestämistä varten
+EvntOrgRegistrationHelpMessage = Täällä voit äänestää konferenssia tai ehdottaa uutta tapahtumaan. Voit myös hakea osastolle tilaisuuden aikana.
+EvntOrgRegistrationConfHelpMessage = Täällä voit ehdottaa uutta konferenssia animoitavaksi tapahtuman aikana.
+EvntOrgRegistrationBoothHelpMessage = Täältä voit hakea osastoa tapahtuman ajaksi.
+ListOfSuggestedConferences = Luettelo ehdotetuista konferensseista
+ListOfSuggestedBooths=Suositellut kopit
+ListOfConferencesOrBooths=Konferenssit tai tapahtumaprojektin osastot
+SuggestConference = Ehdota uutta kokousta
+SuggestBooth = Ehdota osastoa
+ViewAndVote = Katso ja äänestä ehdotetuille tapahtumille
+PublicAttendeeSubscriptionGlobalPage = Julkinen linkki ilmoittautumiseen tapahtumaan
+PublicAttendeeSubscriptionPage = Julkinen linkki vain tähän tapahtumaan ilmoittautumiseen
+MissingOrBadSecureKey = Suojausavain on virheellinen tai puuttuu
+EvntOrgWelcomeMessage = Tällä lomakkeella voit rekisteröityä uudeksi osallistujaksi tapahtumaan
+EvntOrgDuration = Tämä konferenssi alkaa %s ja päättyy %s.
+ConferenceAttendeeFee = Tapahtuman konferenssin osallistujamaksu : '%s' esiintyy välillä %s ja %s >.
+BoothLocationFee = Tapahtuman osastopaikka : '%s, esiintyy %s - %s
+EventType = Tapahtumatyyppi
+LabelOfBooth=Booth etiketti
+LabelOfconference=Konferenssimerkki
+ConferenceIsNotConfirmed=Ilmoittautuminen ei ole mahdollista, konferenssia ei ole vielä vahvistettu
+DateMustBeBeforeThan=%s on oltava ennen %s
+DateMustBeAfterThan=%s on oltava %s jälkeen.
+MaxNbOfAttendeesReached=Osallistujien enimmäismäärä on saavutettu
+NewSubscription=Rekisteröinti
+OrganizationEventConfRequestWasReceived=Ehdotuksesi konferenssiksi on vastaanotettu
+OrganizationEventBoothRequestWasReceived=Pyyntösi osastosta on vastaanotettu
+OrganizationEventPaymentOfBoothWasReceived=maksu osastollesi on tallennettu
+OrganizationEventPaymentOfRegistrationWasReceived=maksu tapahtumasi rekisteröintiin on tallennettu
+OrganizationEventBulkMailToAttendees=Tämä on muistutus osallistumisestasi tapahtumaan osallistujana
+OrganizationEventBulkMailToSpeakers=Tämä on muistutus osallistumisestasi tapahtumaan puhujana
+OrganizationEventLinkToThirdParty=Linkki kolmannelle osapuolelle (asiakas, toimittaja tai kumppani)
+OrganizationEvenLabelName=Konferenssin tai osaston julkinen nimi
+NewSuggestionOfBooth=Hakemus osastolle
+NewSuggestionOfConference=Hakemus konferenssin pitämiseen
+EvntOrgRegistrationWelcomeMessage = Tervetuloa konferenssi- tai osastoehdotussivulle.
+EvntOrgRegistrationConfWelcomeMessage = Tervetuloa konferenssin ehdotussivulle.
+EvntOrgRegistrationBoothWelcomeMessage = Tervetuloa osaston ehdotussivulle.
+EvntOrgVoteHelpMessage = Täällä voit katsoa ja äänestää projektille ehdotettuja tapahtumia
+VoteOk = Äänesi on hyväksytty.
+AlreadyVoted = Olet jo äänestänyt tätä tapahtumaa.
+VoteError = Äänestyksen aikana tapahtui virhe, yritä uudelleen.
+SubscriptionOk=Ilmoittauksesi on tallennettu
+AmountOfRegistrationPaid=Rekisteröinnin summa maksettu
+ConfAttendeeSubscriptionConfirmation = Vahvistus tilauksestasi tapahtumaan
+Attendee = Osallistuja
+PaymentConferenceAttendee = Konferenssin osallistuja maksu
+PaymentBoothLocation = Osaston sijainti maksu
+DeleteConferenceOrBoothAttendee=Poista osallistuja
+RegistrationAndPaymentWereAlreadyRecorder=Rekisteröinti ja maksu on jo tallennettu sähköpostiin <b>%s</b>
+EmailAttendee=Osallistujan sähköposti
+EmailCompany=Yritys sähköposti
+EmailCompanyForInvoice=Yritys sähköposti (laskua varten, jos eri kuin osallistujan sähköposti)
+ErrorSeveralCompaniesWithEmailContactUs=Useita yrityksiä, joilla on tämä sähköposti, on löydetty, joten emme voi vahvistaa rekisteröintiäsi automaattisesti. Ota yhteyttä numeroon %s manuaalista vahvistusta varten
+ErrorSeveralCompaniesWithNameContactUs=Useita yrityksiä tällä nimellä on löydetty, joten emme voi vahvistaa rekisteröintiäsi automaattisesti. Ota yhteyttä numeroon %s manuaalista vahvistusta varten
+NoPublicActionsAllowedForThisEvent=Tämän tapahtuman yhteydessä ei ole julkisia toimia
+MaxNbOfAttendees=Osallistujien enimmäismäärä
+DateStartEvent=Tapahtuman alku päiväys
+DateEndEvent=Tapahtuman loppu päiväys
+ModifyStatus=Muokkaa tilaa
+ConfirmModifyStatus=Vahvista tilan muutos
+ConfirmModifyStatusQuestion=Haluatko varmasti muokata %s valittua tietuetta?
+RecordsUpdated = %s Tietueet päivitetty
+RecordUpdated = Levy päivitetty
+NoRecordUpdated = Ei tietuetta päivitetty

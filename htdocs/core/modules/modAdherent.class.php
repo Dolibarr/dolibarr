@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modAdherent extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -363,8 +362,8 @@ class modAdherent extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'a.ref'=>array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
-				'path'=>"/core/modules/member/".(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
+				'class'=>(!getDolGlobalString('MEMBER_ADDON') ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
+				'path'=>"/core/modules/member/".(!getDolGlobalString('MEMBER_ADDON') ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
 			),
 			'a.state_id' => array(
 				'rule' => 'fetchidfromcodeid',

@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=Kumppanuuden hallinta
+PartnershipDescription=Moduuli Kumppanuuden hallinta
+PartnershipDescriptionLong= Moduuli Kumppanuuden hallinta
+Partnership=Kumppanuus
+Partnerships=Kumppanuudet
+AddPartnership=Lisää kumppanuus
+CancelPartnershipForExpiredMembers=Kumppanuus: Peruuta jäsenten kumppanuus, jonka tilaus on vanhentunut
+PartnershipCheckBacklink=Kumppanuus: Tarkista viittaava käänteinen linkki
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=Uusi kumppanuus
+NewPartnershipbyWeb=Kumppanuuspyyntösi on lisätty onnistuneesti. Saatamme pian ottaa sinuun yhteyttä...
+ListOfPartnerships=Kumppanuusluettelo
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=Kumppanuuden perustaminen
+PartnershipAbout=Tietoja kumppanuudesta
+PartnershipAboutPage=Kumppanuus sivusta
+partnershipforthirdpartyormember=Kumppanin tilaksi on asetettava "kolmas osapuoli" tai "jäsen"
+PARTNERSHIP_IS_MANAGED_FOR=Kumppanuus hoidettu
+PARTNERSHIP_BACKLINKS_TO_CHECK=Käänteisiä linkkejä tarkistettavaksi
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Päivämäärä ennen kumppanuustilan peruuttamista, kun tilaus on vanhentunut
+ReferingWebsiteCheck=Tarkista viittaava verkkosivusto
+ReferingWebsiteCheckDesc=Voit ottaa käyttöön ominaisuuden, joka tarkistaa, että kumppanisi ovat lisänneet käänteisen linkin verkkosivustosi verkkotunnuksiin omalla verkkosivustollaan.
+PublicFormRegistrationPartnerDesc=Dolibarr voi tarjota sinulle julkisen URL-osoitteen/verkkosivuston, jonka avulla ulkoiset vierailijat voivat pyytää saada osallistua kumppanuusohjelmaan.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Poista kumppanuus
+PartnershipDedicatedToThisThirdParty=Tälle kolmannelle osapuolelle omistettu kumppanuus
+PartnershipDedicatedToThisMember=Tälle jäsenelle omistettu kumppanuus
 DatePartnershipStart=Aloituspäivämäärä
 DatePartnershipEnd=Lopetuspäivä
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+ReasonDecline=Hylkäämisen syy
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=Kumppanuus on jo olemassa
+ManagePartnership=Hallitse kumppanuutta
+BacklinkNotFoundOnPartnerWebsite=Käänteistä linkkiä ei löydy kumppanin verkkosivuilta
+ConfirmClosePartnershipAsk=Haluatko varmasti peruuttaa tämän kumppanuuden?
+PartnershipType=Kumppanuuden tyyppi
+PartnershipRefApproved=Kumppanuus %s hyväksytty
+KeywordToCheckInWebsite=Jos haluat tarkistaa, että tietty avainsana on läsnä kunkin kumppanin verkkosivuilla, määritä tämä avainsana tähän
+PartnershipDraft=Luonnos
+PartnershipAccepted=Hyväksytty
+PartnershipRefused=Hylätty
+PartnershipCanceled=Peruttu
+PartnershipManagedFor=Yhteistyökumppanit ovat
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=Yhteistyö puretaan pian
+SendingEmailOnPartnershipRefused=Yhteistyö kieltäytyi
+SendingEmailOnPartnershipAccepted=Yhteistyö hyväksytty
+SendingEmailOnPartnershipCanceled=Kumppanuus peruttu
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=Yhteistyö puretaan pian
+YourPartnershipRefusedTopic=Yhteistyö kieltäytyi
+YourPartnershipAcceptedTopic=Yhteistyö hyväksytty
+YourPartnershipCanceledTopic=Kumppanuus peruttu
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=Haluamme ilmoittaa, että kumppanuus peruutetaan pian (emme saaneet uusintaa tai kumppanuusehtomme eivät ole täyttyneet). Ota yhteyttä, jos sait tämän virheen vuoksi.
+YourPartnershipRefusedContent=Haluamme ilmoittaa, että kumppanuuspyyntösi on hylätty. Edellytykset eivät ole täyttyneet. Ota yhteyttä, jos tarvitset lisätietoja.
+YourPartnershipAcceptedContent=Haluamme ilmoittaa, että kumppanuuspyyntösi on hyväksytty.
+YourPartnershipCanceledContent=Haluamme ilmoittaa, että yhteistyömme on peruttu. Ota meihin yhteyttä, jos tarvitset lisätietoja.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=Viimeisimmän URL-osoitteen tarkistuksen virheiden määrä
+LastCheckBacklink=päiväys viimeisestä URL-osoitteen tarkistuksesta
 
-#
-# Status
-#
-PartnershipDraft=Luonnos
-PartnershipAccepted=Accepted
-PartnershipRefused=Hylätty
-PartnershipCanceled=Peruttu
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=Uusi kumppanuuspyyntö
+NewPartnershipRequestDesc=Tällä lomakkeella voit pyytää liittymistä johonkin kumppanuusohjelmaamme. Jos tarvitset apua tämän lomakkeen täyttämisessä, ota yhteyttä sähköpostitse <b>%s</b><span class='notranslate'> span>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Tällä sivulla on oltava vähintään yksi linkki johonkin seuraavista verkkotunnuksista: %s
+
+IPOfApplicant=Hakijan IP
+

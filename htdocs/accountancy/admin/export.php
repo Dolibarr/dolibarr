@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2022  Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro	<aspangaro@easya.solutions>
  * Copyright (C) 2014	    Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
@@ -134,9 +134,9 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 $title = $langs->trans('ExportOptions');
-llxHeader('', $title);
-
+llxHeader('', $title, $help_url);
 
 $linkback = '';
 // $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
@@ -152,7 +152,7 @@ foreach ($listparam as $key => $param) {
 	print '        {'."\n";
 	print '            //console.log("'.$param['label'].'");'."\n";
 	if (empty($param['ACCOUNTING_EXPORT_FORMAT'])) {
-		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$conf->global->ACCOUNTING_EXPORT_FORMAT.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.getDolGlobalString('ACCOUNTING_EXPORT_FORMAT').'");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").prop("disabled", true);'."\n";
 	} else {
 		print '            jQuery("#ACCOUNTING_EXPORT_FORMAT").val("'.$param['ACCOUNTING_EXPORT_FORMAT'].'");'."\n";
@@ -162,7 +162,7 @@ foreach ($listparam as $key => $param) {
 		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").prop("disabled", true);'."\n";
 	} else {
-		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.$conf->global->ACCOUNTING_EXPORT_SEPARATORCSV.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").val("'.getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV').'");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_SEPARATORCSV").removeAttr("disabled");'."\n";
 	}
 	if (empty($param['ACCOUNTING_EXPORT_ENDLINE'])) {
@@ -174,7 +174,7 @@ foreach ($listparam as $key => $param) {
 		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_DATE").prop("disabled", true);'."\n";
 	} else {
-		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.$conf->global->ACCOUNTING_EXPORT_DATE.'");'."\n";
+		print '            jQuery("#ACCOUNTING_EXPORT_DATE").val("'.getDolGlobalString('ACCOUNTING_EXPORT_DATE').'");'."\n";
 		print '            jQuery("#ACCOUNTING_EXPORT_DATE").removeAttr("disabled");'."\n";
 	}
 	print '        }'."\n";

@@ -73,11 +73,11 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<div class="divsearchfield">';
 	// Type
 	$multiselect = 0;
-	if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
-		$multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+	if (getDolGlobalString('MAIN_ENABLE_MULTISELECT_TYPE')) {     // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+		$multiselect = (getDolGlobalString('AGENDA_USE_EVENT_TYPE'));
 	}
 	print img_picto($langs->trans("ActionType"), 'square', 'class="pictofixedwidth inline-block" style="color: #ddd;"');
-	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
+	print $formactions->select_type_actions($actioncode, "search_actioncode", $excludetype, (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1), 0, $multiselect, 0, 'maxwidth500 widthcentpercentminusx');
 	print '</div>';
 
 	if ($canedit) {
@@ -112,7 +112,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</div>';
 	}
 
-	if (isModEnabled('projet') && !empty($user->rights->projet->lire)) {
+	if (isModEnabled('projet') && $user->hasRight('projet', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($db);
 
@@ -162,12 +162,12 @@ function show_array_actions_to_do($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -278,12 +278,12 @@ function show_array_last_actions_done($max = 5)
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a LEFT JOIN ";
 	$sql .= " ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action ";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 	$sql .= " AND (a.percent >= 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))";
-	if (empty($user->rights->societe->client->voir) && !$socid) {
+	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	if ($socid) {
@@ -438,10 +438,10 @@ function actions_prepare_head($object)
 
 		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=action&element_id='.$object->id;
 		$listofresourcelinked = $resource->getElementResources($object->element, $object->id);
-		$nbResources = (is_array($listofresourcelinked) ?count($listofresourcelinked) : 0);
+		$nbResources = (is_array($listofresourcelinked) ? count($listofresourcelinked) : 0);
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResources > 0) {
-			$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
 		}
 		$head[$h][2] = 'resources';
 		$h++;
@@ -456,7 +456,7 @@ function actions_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
+		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
 	}
 	$head[$h][2] = 'documents';
 	$h++;
@@ -508,7 +508,7 @@ function calendars_prepare_head($param)
 	$h++;
 
 	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
-	if (!empty($conf->global->AGENDA_SHOW_PERTYPE)) {
+	if (getDolGlobalString('AGENDA_SHOW_PERTYPE')) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");
 		$head[$h][2] = 'cardpertype';

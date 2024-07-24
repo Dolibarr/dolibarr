@@ -1,65 +1,65 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Pročitaj planiranu operaciju
-Permission23102 = Kreiraj/ažuriraj planiranu operaciju
-Permission23103 = Obriši planiranu operaciju
-Permission23104 = Izvrši planiranu operaciju
+Permission23101 = Read Scheduled job
+Permission23102 = Create/update Scheduled job
+Permission23103 = Delete Scheduled job
+Permission23104 = Execute Scheduled job
 # Admin
-CronSetup=Podešavanja planiranih operacija
+CronSetup=Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
 OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
-KeyForCronAccess=Security key za URL za izvršenje cron operacija
+KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
-CronExplainHowToRunUnix=U Unix okruženju možete koristiti crontab za izvršenje komandne linije svakih 5 minuta
+CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
 CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
 # Menu
-EnabledAndDisabled=Aktivno i neaktivno
+EnabledAndDisabled=Enabled and disabled
 # Page list
 CronLastOutput=Latest run output
 CronLastResult=Latest result code
-CronCommand=Komanda
-CronList=Planirane operacije
-CronDelete=Obriši planirane operacije
+CronCommand=Command
+CronList=Scheduled jobs
+CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch now
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
-CronTask=Operacija
-CronNone=Nema
-CronDtStart=Ne pre
-CronDtEnd=Ne posle
-CronDtNextLaunch=Sledeće izvršenje
+CronTask=Job
+CronNone=None
+CronDtStart=Not before
+CronDtEnd=Not after
+CronDtNextLaunch=Next execution
 CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
-CronFrequency=Frekvencija
-CronClass=Klasa
-CronMethod=Metoda
-CronModule=Modul
-CronNoJobs=Nema prijavljenih operacija
-CronPriority=Prioritet
-CronLabel=Naziv
+CronFrequency=Frequency
+CronClass=Class
+CronMethod=Method
+CronModule=Module
+CronNoJobs=No jobs registered
+CronPriority=Priority
+CronLabel=Label
 CronNbRun=Number of launches
 CronMaxRun=Maximum number of launches
-CronEach=Svakih
-JobFinished=Operacija je izvršena
+CronEach=Every
+JobFinished=Job launched and finished
 Scheduled=Scheduled
 #Page card
-CronAdd= Dodaj operacije
-CronEvery=Izvrši operaciju svakih
-CronObject=Instanca/Objekat za kreiranje
-CronArgs=Parametri
+CronAdd= Add jobs
+CronEvery=Execute job each
+CronObject=Instance/Object to create
+CronArgs=Parameters
 CronSaveSucess=Save successfully
-CronNote=Komentar
-CronFieldMandatory=Polje %s je obavezno
-CronErrEndDateStartDt=Kraj ne može biti pre početka
+CronNote=Comment
+CronFieldMandatory=Fields %s is mandatory
+CronErrEndDateStartDt=End date cannot be before start date
 StatusAtInstall=Status at module installation
 CronStatusActiveBtn=Enable scheduling
-CronStatusInactiveBtn=Deaktiviraj
+CronStatusInactiveBtn=Disable
 CronTaskInactive=This job is disabled (not scheduled)
 CronId=Id
 CronClassFile=Filename with class
@@ -67,20 +67,20 @@ CronModuleHelp=Name of Dolibarr module directory (also work with external Doliba
 CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
 CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
-CronCommandHelp=Komandna linija za izvršenje
-CronCreateJob=Kreiraj novu planiranu operaciju
-CronFrom=Od
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
+CronCommandHelp=The system command line to execute.
+CronCreateJob=Create new Scheduled Job
+CronFrom=From
 # Info
 # Common
-CronType=Tip operacije
+CronType=Job type
 CronType_method=Call method of a PHP Class
-CronType_command=Komandna linija
+CronType_command=Shell command
 CronCannotLoadClass=Cannot load class file %s (to use class %s)
 CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
 UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
-JobDisabled=Operacija deaktivirana
-MakeLocalDatabaseDumpShort=Bekap lokalne baze
+JobDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
 MakeSendLocalDatabaseDumpShort=Send local database backup
 MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
@@ -91,6 +91,7 @@ WarningCronDelayed=Attention, for performance purpose, whatever is next date of 
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
 EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Error when running the job %s
 
 # Cron Boxes

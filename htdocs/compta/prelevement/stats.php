@@ -125,12 +125,12 @@ if ($resql) {
 		//print $st[$row[2]];
 		print '</td>';
 
-		print '<td align="center nowraponall">';
+		print '<td class="center nowraponall">';
 		print $row[1];
 		print '</td>';
 
 		print '<td class="right nowraponall">';
-		print round($row[1] / $nbtotal * 100, 2)." %";
+		print price2num($row[1] / $nbtotal * 100, 2)." %";
 		print '</td>';
 
 		print '<td class="right amount nowraponall">';
@@ -138,7 +138,7 @@ if ($resql) {
 		print '</td>';
 
 		print '<td class="right nowraponall">';
-		print round($row[0] / $total * 100, 2)." %";
+		print price2num($row[0] / $total * 100, 2)." %";
 		print '</td>';
 
 		print '</tr>';
@@ -229,17 +229,19 @@ if ($resql) {
 
 		print '<tr class="oddeven"><td>';
 		print $Rejet->motifs[$row[2]];
+		print '</td>';
 
-		print '</td><td align="center">'.$row[1];
+		print '<td class="center">'.$row[1];
+		print '</td>';
 
-		print '</td><td class="right">';
-		print round($row[1] / $nbtotal * 100, 2)." %";
+		print '<td class="right">';
+		print price2num($row[1] / $nbtotal * 100, 2)." %";
 
 		print '</td><td class="right">';
 		print price($row[0]);
 
 		print '</td><td class="right">';
-		print round($row[0] / $total * 100, 2)." %";
+		print price2num($row[0] / $total * 100, 2)." %";
 
 		print '</td></tr>';
 

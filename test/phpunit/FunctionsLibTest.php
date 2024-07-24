@@ -25,7 +25,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -118,15 +118,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		if (! function_exists('mb_substr')) {
-			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(1);
+			print "\n".__METHOD__." function mb_substr must be enabled.\n";
+			die(1);
 		}
 
 		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n"; die(1);
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
+			die(1);
 		}
 
 		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n"; die(1);
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
+			die(1);
 		}
 
 		print __METHOD__."\n";
@@ -180,21 +183,55 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolForgeCriteriaCallback()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
 
 		// An attempt for SQL injection
 		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, 'Filter syntax error - Bad syntax of the search string');
+		$this->assertEquals('Filter syntax error - Bad syntax of the search string', $sql);
 
 		// A real search string
 		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, ' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))');
+		$this->assertEquals(' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))', $sql);
 
+		// A real search string
 		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, " AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))");
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+
+		// A real search string
+		$filter = "(t.fieldstring:=:'aaa ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fieldstring = 'aaa ttt'))", $sql);
+
+
+		// Check that parenthesis are NOT allowed inside the last operand. Very important.
+		$filter = "(t.fieldint:=:(1,2))";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals("Filter syntax error - Bad syntax of the search string", $sql);
+
+		// Check that ' is escaped into the last operand
+		$filter = "(t.fieldstring:=:'aaa'ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+
+		if ($db->type == 'mysqli') {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa\'ttt'))", $sql);	// with mysql
+		} else {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa''ttt'))", $sql);	// with pgsql
+		}
+
+		$filter = "(t.fk_soc:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (1,2)))", $sql);
+
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
+
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
 		return true;
 	}
@@ -223,8 +260,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
-		$newproductcloned2 = dol_clone($newproduct1, 2);
-		var_dump($newproductcloned2);
+		//$newproductcloned2 = dol_clone($newproduct1, 2);
+		//var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}
@@ -385,11 +422,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		*/
 
 		$result=dol_buildpath('/google/oauth2callback.php', 2);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 
 		$result=dol_buildpath('/google/oauth2callback.php', 3);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 	}
 
@@ -661,15 +698,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolConcat()
 	{
-		$text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+		$text1="A string 1";
+		$text2="A string 2";	// text 1 and 2 are text, concat need only \n
 		$after=dol_concatdesc($text1, $text2);
 		$this->assertEquals("A string 1\nA string 2", $after);
 
-		$text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+		$text1="A<br>string 1";
+		$text2="A string 2";	// text 1 is html, concat need <br>\n
 		$after=dol_concatdesc($text1, $text2);
 		$this->assertEquals("A<br>string 1<br>\nA string 2", $after);
 
-		$text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+		$text1="A string 1";
+		$text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
 		$after=dol_concatdesc($text1, $text2);
 		$this->assertEquals("A string 1<br>\nA <b>string</b> 2", $after);
 
@@ -684,13 +724,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringNoSpecial()
 	{
-		$text="A string with space and special char like ' or ° and more...\n";
-		$after=dol_string_nospecial($text, '_', '', '', 0);
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 0);
 		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
 
-		$text="A string with space and special char like ' or ° and more...\n";
-		$after=dol_string_nospecial($text, '_', '', '', 1);
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 1);
 		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		$text = 'Bahnhofstraße';
+		$after = dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($text), ' '), 70, 'right', 'UTF-8', 1));
+		$this->assertEquals("Bahnhofstraße", $after, "testDolStringNoSpecial with german char");
 
 		return true;
 	}
@@ -1075,7 +1121,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 
 	/**
-	 * testDolFormatAddress
+	 * testDolPrintPhone
 	 *
 	 * @return	void
 	 */
@@ -1117,12 +1163,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		$s=img_picto('title', 'user');
 		print __METHOD__." s=".$s."\n";
-		$this->assertContains('fa-user', $s, 'testImgPicto1');
+		$this->assertStringContainsStringIgnoringCase('fa-user', $s, 'testImgPicto1');
 
 		$s=img_picto('title', 'img.png', 'style="float: right"', 0);
 		print __METHOD__." s=".$s."\n";
-		$this->assertContains('theme', $s, 'testImgPicto2');
-		$this->assertContains('style="float: right"', $s, 'testImgPicto2');
+		$this->assertStringContainsStringIgnoringCase('theme', $s, 'testImgPicto2');
+		$this->assertStringContainsStringIgnoringCase('style="float: right"', $s, 'testImgPicto2');
 
 		$s=img_picto('title', '/fullpath/img.png', '', 1);
 		print __METHOD__." s=".$s."\n";
@@ -1622,13 +1668,13 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$langs->load("main");
 
 		// Try simple replacement
-		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C replaced", "DDD"=>"D replaced");
+		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C instead", "DDD"=>"D instead");
 		$substit += getCommonSubstitutionArray($langs);
 
 		$chaine = 'This is a string with theme constant __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__ and DDD and __MYCOMPANY_NAME__ and __YEAR__';
 		$newstring = make_substitutions($chaine, $substit);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C replaced and D replaced and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
+		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C instead and D instead and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
 
 		// Try mix HTML not HTML, no change on initial text
 		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
@@ -1669,6 +1715,45 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		return true;
 	}
 
+	/**
+	 * testUtf8Check
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Check()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_check($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_check($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
+
+	/**
+	 * testUtf8Valid
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Valid()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_valid($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_valid($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
 
 	/**
 	 * testGetUserRemoteIP
@@ -1693,6 +1778,22 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
 		$result = getUserRemoteIP();
 		$this->assertEquals($result, '[1:2:3:4]');
+
+		return true;
+	}
+
+	/**
+	 * testFetchObjectByElement
+	 *
+	 * @return boolean;
+	 */
+	public function testFetchObjectByElement()
+	{
+		global $conf, $langs;
+
+		$result = fetchObjectByElement(0, 'product');
+
+		$this->assertTrue(is_object($result));
 
 		return true;
 	}

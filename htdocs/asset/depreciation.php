@@ -54,11 +54,17 @@ if ($id > 0 || !empty($ref)) {
 }
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
-if (!empty($object->not_depreciated)) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
+if (!empty($object->not_depreciated)) {
+	accessforbidden();
+}
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;
 $result = $assetdepreciationoptions->fetchDeprecationOptions($object->id);

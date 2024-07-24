@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 $langs->loadLangs(array("mails", "admin"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -86,7 +86,7 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 }
 
 // Security check
-if (!$user->hasRight('mailing', 'lire') || (empty($conf->global->EXTERNAL_USERS_ARE_AUTHORIZED) && $user->socid > 0)) {
+if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
 //$result = restrictedArea($user, 'mailing');
@@ -346,8 +346,8 @@ if ($object->fetch($id) >= 0) {
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
 		$text = '';
-		if ((!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
-			if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0) {
+		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail))) {
+			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 				$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
 			} else {
 				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
@@ -401,8 +401,8 @@ if ($object->fetch($id) >= 0) {
 	$allowaddtarget = ($object->statut == $object::STATUS_DRAFT);
 
 	// Show email selectors
-	if ($allowaddtarget && $user->rights->mailing->creer) {
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
+	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
 
 		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercentwithout1imp liste_titre_bydiv borderbottom" id="tablelines">';
@@ -430,7 +430,7 @@ if ($object->fetch($id) >= 0) {
 			$handle = @opendir($dir);
 			if (is_resource($handle)) {
 				while (($file = readdir($handle)) !== false) {
-					if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+					if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 						$reg = array();
 						if (preg_match("/(.*)\.modules\.php$/i", $file, $reg)) {
 							if ($reg[1] == 'example') {
@@ -645,6 +645,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
 		if ($allowaddtarget) {
@@ -712,7 +713,7 @@ if ($object->fetch($id) >= 0) {
 		print '&nbsp;';
 		print '</td>';
 
-		//Statut
+		// Status
 		print '<td class="liste_titre center parentonrightofpage">';
 		print $formmailing->selectDestinariesStatus($search_dest_status, 'search_dest_status', 1, 'width100 onrightofpage');
 		print '</td>';
@@ -776,7 +777,7 @@ if ($object->fetch($id) >= 0) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
-						if (!empty($user->rights->mailing->creer)) {
+						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}
 					}
@@ -853,7 +854,7 @@ if ($object->fetch($id) >= 0) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 					if ($obj->statut == $object::STATUS_DRAFT) {	// Not sent yet
-						if (!empty($user->rights->mailing->creer)) {
+						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}
 					}

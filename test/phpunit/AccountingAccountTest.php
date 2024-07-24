@@ -86,7 +86,8 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
 		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
 		if (!isModEnabled('accounting')) {
-			print __METHOD__." module accouting must be enabled.\n"; exit(-1);
+			print __METHOD__." module accouting must be enabled.\n";
+			exit(-1);
 		}
 
 		print __METHOD__."\n";

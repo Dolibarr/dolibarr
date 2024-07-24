@@ -57,7 +57,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout

@@ -423,7 +423,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 			$CKEcallback,
 			$sFileUrl,
 			($sErrorNumber != 0 ? 'Error '.$sErrorNumber.' upload failed.' : 'Upload Successful')
-			);
+		);
 	}
 
 	exit;
@@ -649,7 +649,7 @@ function GetRootPath()
 
 	// This can check only that this script isn't run from a virtual dir
 	// But it avoids the problems that arise if it isn't checked
-	if ($position === false || $position <> strlen($sRealPath) - strlen($sSelfPath)) {
+	if ($position === false || $position != strlen($sRealPath) - strlen($sSelfPath)) {
 		SendError(1, 'Sorry, can\'t map "UserFilesPath" to a physical path. You must set the "UserFilesAbsolutePath" value in "editor/filemanager/connectors/php/config.inc.php".');
 	}
 
@@ -926,7 +926,7 @@ function ConvertToXmlAttribute($value)
 	}
 
 	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value)) {
-		return (utf8_encode(htmlspecialchars($value)));
+		return (mb_convert_encoding(htmlspecialchars($value), 'UTF-8', 'ISO-8859-1'));
 	} else {
 		return (htmlspecialchars($value));
 	}

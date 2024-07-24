@@ -90,7 +90,9 @@ $error = 0;
 
 $managedfor	= getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 
-if ($managedfor != 'member' && $sortfield == 'd.datefin') $sortfield = '';
+if ($managedfor != 'member' && $sortfield == 'd.datefin') {
+	$sortfield = '';
+}
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
@@ -156,10 +158,18 @@ $permissiontodelete = $user->rights->partnership->delete;
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
-if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
+if (empty($conf->partnership->enabled)) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') {
+	accessforbidden();
+}
 
 
 /*
@@ -458,7 +468,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all && !$page) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".dol_buildpath('/partnership/partnership_card.php', 1).'?id='.$id);
@@ -499,7 +509,7 @@ if ($managedfor == "member") {
 		print '<table class="border centpercent tableforfield">';
 
 		// Login
-		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
+		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 		}
 
@@ -621,7 +631,7 @@ if ($search_filter && $search_filter != '-1') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -884,7 +894,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $object->getKanbanView('', array('thirdparty'=>$object->thirdparty, 'selected' => in_array($object->id, $arrayofselected)));
+		$selected = -1;
+		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($object->id, $arrayofselected)) {
+				$selected = 1;
+			}
+		}
+		print $object->getKanbanView('', array('thirdparty'=>$object->thirdparty, 'selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -929,7 +946,7 @@ while ($i < $imaxinloop) {
 
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
-				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
+				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
 					print ' title="'.dol_escape_htmltag($object->$key).'"';
 				}
 				print '>';

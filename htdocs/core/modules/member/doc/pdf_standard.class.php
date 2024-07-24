@@ -133,8 +133,8 @@ class pdf_standard extends CommonStickerGenerator
 
 		// Define background image
 		$backgroundimage = '';
-		if (!empty($conf->global->ADHERENT_CARD_BACKGROUND) && file_exists($conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND)) {
-			$backgroundimage = $conf->adherent->dir_output.'/'.$conf->global->ADHERENT_CARD_BACKGROUND;
+		if (getDolGlobalString('ADHERENT_CARD_BACKGROUND') && file_exists($conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND'))) {
+			$backgroundimage = $conf->adherent->dir_output.'/' . getDolGlobalString('ADHERENT_CARD_BACKGROUND');
 		}
 
 		// Print lines
@@ -213,15 +213,13 @@ class pdf_standard extends CommonStickerGenerator
 				}
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $widthtouse - $xleft - $xleft - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
-			} else // text on halft left and text on half right
-			{
+			} else { // text on halft left and text on half right
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX + round($this->_Width / 2), $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-		} else // Only a right part
-		{
+		} else { // Only a right part
 			// Output right area
 			if ($textright == '__LOGO__' && $logo) {
 				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
@@ -291,7 +289,7 @@ class pdf_standard extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->rowid,
+				'__ID__' => $object->id,
 				'__REF__' => $object->ref,
 				'__LOGIN__' => empty($object->login) ? '' : $object->login,
 				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
@@ -331,7 +329,7 @@ class pdf_standard extends CommonStickerGenerator
 					'textheader'=>$textheader,
 					'textfooter'=>$textfooter,
 					'textright'=>$textright,
-					'id'=>(isset($object->rowid) ? $object->rowid : ""),
+					'id'=>(isset($object->id) ? $object->id : ""),
 					'photo'=>(isset($object->photo) ? $object->photo : "")
 				);
 			}
@@ -364,7 +362,7 @@ class pdf_standard extends CommonStickerGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -464,7 +462,7 @@ class pdf_standard extends CommonStickerGenerator
 			clearstatcache();
 
 			$attachment = true;
-			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+			if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 				$attachment = false;
 			}
 			$type = dol_mimetype($filename);

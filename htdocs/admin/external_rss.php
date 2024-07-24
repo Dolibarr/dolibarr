@@ -193,23 +193,28 @@ print '<br>';
 print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder centpercent">';
+
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("NewRSS").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '</tr>';
-print '<tr class="impair">';
+
+print '<tr class="oddeven">';
 print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.($lastexternalrss + 1).'" value=""></td>';
 print '<td>'.$langs->trans('RSSUrlExample').'</td>';
 print '</tr>';
 
-print '<tr class="pair">';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans('RSSUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.($lastexternalrss + 1).'" value=""></td>';
 print '<td>http://news.google.com/news?ned=us&topic=h&output=rss<br>http://www.dolibarr.org/rss</td>';
 print '</tr>';
 print '</table>';
+
+print '</div>';
 
 print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
@@ -218,7 +223,9 @@ print '<input type="hidden" name="norss" value="'.($lastexternalrss + 1).'">';
 print '</form>';
 
 print '<br><br>';
-print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span> - <a href="'.DOL_MAIN_URL_ROOT.'/admin/boxes.php">'.$langs->trans('JumpToBoxes').'</a>';
+print '<span class="opacitymedium">'.$langs->trans('RssNote').'</span>';
+print ' - ';
+print '<a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.$langs->trans('JumpToBoxes').'</a>';
 print '<br><br>';
 
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
@@ -242,7 +249,7 @@ if ($resql) {
 		//print "x".$idrss;
 
 		$rssparser = new RssParser($db);
-		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
+		$result = $rssparser->parser(getDolGlobalString($keyrssurl), 5, 300, $conf->externalrss->dir_temp);
 
 		print "<br>";
 		print '<form name="externalrssconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
@@ -262,13 +269,13 @@ if ($resql) {
 
 		print '<tr class="oddeven">';
 		print '<td class="titlefield">'.$langs->trans("Title")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrsstitle).'"></td>';
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_title_'.$idrss.'" value="'.dol_escape_htmltag(getDolGlobalString($keyrsstitle)).'"></td>';
 		print '</tr>'."\n";
 
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
-		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag($conf->global->$keyrssurl).'"></td>';
+		print '<td><input type="text" class="flat minwidth300" name="external_rss_urlrss_'.$idrss.'" value="'.dol_escape_htmltag(getDolGlobalString($keyrssurl)).'"></td>';
 		print '</tr>'."\n";
 
 
@@ -276,7 +283,7 @@ if ($resql) {
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
 		if ($result > 0 && empty($rss->error)) {
-			print '<span class="ok">'.$langs->trans("Online").'</div>';
+			print '<span class="ok">'.img_picto($langs->trans("Online"), 'tick', 'class="pictofixedwidth"').$langs->trans("Online").'</div>';
 		} else {
 			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
@@ -315,7 +322,11 @@ if ($resql) {
 		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
-		print '<td>'.yn($active).'</td>';
+		print '<td>'.yn($active);
+		print ' &nbsp; - &nbsp; <a href="'.DOL_URL_ROOT.'/admin/boxes.php?backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
+		print $langs->trans("JumpToBoxes");
+		print '</a>';
+		print '</td>';
 		print '</tr>'."\n";
 
 		print '</table>'."\n";

@@ -57,7 +57,7 @@ if (empty($conf) || !is_object($conf)) {
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('LastName'); ?></span></td>
 	<td><input type="text" size="30" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
-	<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+	<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td><input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>"></td>
 	<?php } ?>
@@ -172,7 +172,7 @@ if (isModEnabled('barcode')) { ?>
 	echo $this->control->tpl['localtax'];
 } ?>
 
-<?php if ($user->rights->societe->client->voir) { ?>
+<?php if ($user->hasRight('societe', 'client', 'voir')) { ?>
 <tr>
 	<td><?php echo $langs->trans("AllocateCommercial"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_users']; ?></td>

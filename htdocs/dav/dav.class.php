@@ -27,7 +27,6 @@
  */
 class CdavLib
 {
-
 	private $db;
 
 	private $user;

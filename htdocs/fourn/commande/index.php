@@ -224,12 +224,12 @@ if (isModEnabled("supplier_order")) {
  */
 
 $sql = "SELECT";
-if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= " DISTINCT";
 }
 $sql .= " u.rowid, u.lastname, u.firstname, u.email, u.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-if (isModEnabled('multicompany') && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
@@ -256,7 +256,7 @@ if ($resql) {
 		$userstatic->id = $obj->rowid;
 		$userstatic->getrights('fournisseur');
 
-		if (!empty($userstatic->rights->fournisseur->commande->approuver)) {
+		if ($userstatic->hasRight('fournisseur', 'commande', 'approuver')) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			$userstatic->lastname = $obj->lastname;

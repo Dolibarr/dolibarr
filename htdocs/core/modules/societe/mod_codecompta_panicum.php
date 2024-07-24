@@ -36,6 +36,11 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	public $name = 'Panicum';
 
 	/**
+	 * @var string
+	 */
+	public $code;
+
+	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */

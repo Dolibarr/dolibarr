@@ -92,7 +92,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/knowledgemanagement/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -135,7 +137,7 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'KNOWLEDGEMANAGEMENT_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -236,7 +238,7 @@ if ($action == 'edit') {
 						$arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)) . $moreonlabel;
 					}
 				}
-				print $form->selectarray($constname, $arrayofmessagename, $conf->global->{$constname}, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+				print $form->selectarray($constname, $arrayofmessagename, getDolGlobalString($constname), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 			} elseif (preg_match('/category:/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
@@ -244,13 +246,13 @@ if ($action == 'edit') {
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories($tmp[1],  $conf->global->{$constname}, $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+				print $formother->select_categories($tmp[1], getDolGlobalString($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType($conf->global->{$constname}, $constname);
+				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname);
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($constname).'">';
 			}
 			print '</td></tr>';
 		}
@@ -293,7 +295,7 @@ if ($action == 'edit') {
 					print $langs->trans($template->label);
 				} elseif (preg_match('/category:/', $val['type'])) {
 					$c = new Categorie($db);
-					$result = $c->fetch($conf->global->{$constname});
+					$result = $c->fetch(getDolGlobalInt($constname));
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
 					}
@@ -374,10 +376,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -385,7 +387,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -511,16 +513,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);

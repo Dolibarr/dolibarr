@@ -49,7 +49,7 @@ $action   = GETPOST('action', 'aZ09');
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/messaging.php';
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "aZ09comma");
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -71,7 +71,7 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -88,7 +88,9 @@ if (!$action) {
 
 // Security check
 $id = GETPOST("id", 'int');
-if ($user->socid > 0) $socid = $user->socid;
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
@@ -96,7 +98,7 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 	accessforbidden();
 }
 
@@ -125,7 +127,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Set parent company
-if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
+if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
@@ -144,7 +146,7 @@ $userstat = new User($db);
 $formticket = new FormTicket($db);
 
 $title = $langs->trans("Ticket").' - '.$object->ref.' '.$object->name;
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/ticketnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ticketnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
 }
 $help_url = 'FR:DocumentationModuleTicket';
@@ -161,7 +163,7 @@ if ($socid > 0) {
 	print dol_get_fiche_end();
 }
 
-if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 	$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 } elseif ($user->socid > 0) {
 	$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
@@ -265,7 +267,13 @@ if (!empty($object->id)) {
 	$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&datep=now&origin=ticket&originid='.$object->id.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id);
 	$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, 'add-new-ticket-even-button', $btnstatus);
 
-	print_barre_liste($langs->trans("ActionsOnTicket"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+	$cachekey = 'count_events_ticket_'.$object->id;
+	$nbEvent = dol_getcache($cachekey);
+
+	$titlelist = $langs->trans("ActionsOnTicket").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 	// List of all actions
 	$filters = array();

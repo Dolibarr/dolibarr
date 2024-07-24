@@ -657,7 +657,35 @@ class NumberingModulesTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('A198201-0001', $result);	// counter must start to 1
 
 
-
 		return $result;
+	}
+
+
+	/**
+	 * testShipmentSafor
+	 *
+	 * @return int
+	 */
+	public function testShipmentSafor()
+	{
+		global $conf,$user,$langs,$db,$mysoc;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		require_once dirname(__FILE__).'/../../htdocs/expedition/class/expedition.class.php';
+		require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/mod_expedition_safor.php';
+
+		$localobject=new Expedition($db);
+		$localobject->initAsSpecimen();
+		$localobject->fetch_thirdparty();
+
+		$localobject->date_creation = dol_mktime(12, 0, 0, 1, 1, 1980);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
+		$numbering=new mod_expedition_safor();
+		$result=$numbering->getNextValue($mysoc, $localobject);
+
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('SH8001-0003', $result);	// counter must start to 1
 	}
 }

@@ -71,9 +71,10 @@ ToOfferALinkForTestWebhook=Link om Stripe WebHook in te stellen om de IPN te bel
 ToOfferALinkForLiveWebhook=Link om Stripe WebHook in te stellen om de IPN te bellen (live-modus)
 PaymentWillBeRecordedForNextPeriod=De betaling wordt geregistreerd voor de volgende periode.
 ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de strenge regels voor klantauthenticatie moet het aanmaken van een kaart worden gedaan vanuit Stripe backoffice. U kunt hier klikken om Stripe-klantrecord in te schakelen: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de sterke Klant Authenticatie regels, moet het maken van een kaart worden gedaan vanuit de Stripe-backoffice. U kunt hier klikken om het Stripe Klant record in te schakelen: %s
 STRIPE_CARD_PRESENT=Kaart aanwezig voor Stripe Terminals
 TERMINAL_LOCATION=Locatie (adres) voor Stripe Terminals
 RequestDirectDebitWithStripe=Automatische incasso aanvragen met Stripe
+RequesCreditTransferWithStripe=Vraag een overboeking aan met Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Schakel de automatische incasso via Stripe in
-
+StripeConnect_Mode=Stripe Connect-modus

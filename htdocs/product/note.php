@@ -122,11 +122,11 @@ if ($id > 0 || !empty($ref)) {
 
 	print dol_get_fiche_head($head, 'note', $titre, -1, $picto);
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	$shownav = 1;
-	if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 

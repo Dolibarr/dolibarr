@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 $langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'thirdpartylist';
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -52,7 +52,7 @@ if ($socid > 0) {
 }
 
 // Sort & Order fields
-$limit 		= GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit 		= GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield 	= GETPOST('sortfield', 'aZ09comma');
 $sortorder 	= GETPOST('sortorder', 'aZ09comma');
 $page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -86,7 +86,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 // Customer or supplier selected in drop box
-$thirdTypeSelect = GETPOST("third_select_id", 'az09');
+$thirdTypeSelect = GETPOST("third_select_id", 'aZ09');
 $type_element = GETPOST('type_element') ? GETPOST('type_element') : '';
 
 
@@ -115,7 +115,7 @@ $formother = new FormOther($db);
 $productstatic = new Product($db);
 
 $title = $langs->trans("Referers", $object->name);
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 	$title = $object->name." - ".$title;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -143,7 +143,7 @@ print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><t
 print $object->getTypeUrl(1);
 print '</td></tr>';
 
-if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
@@ -182,7 +182,7 @@ if ($object->client) {
 	}
 }
 
-if (isModEnabled('ficheinter') && !empty($user->rights->ficheinter->lire)) {
+if (isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire')) {
 	$elementTypeArray['fichinter'] = $langs->transnoentitiesnoconv('Interventions');
 }
 
@@ -205,10 +205,10 @@ if ($object->fournisseur) {
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier'] = $langs->trans("supplier");
-	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'facture', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 		$elementTypeArray['supplier_invoice'] = $langs->transnoentitiesnoconv('SuppliersInvoices');
 	}
-	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'commande', 'lire') && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
+	if ((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'commande', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))) {
 		$elementTypeArray['supplier_order'] = $langs->transnoentitiesnoconv('SuppliersOrders');
 	}
 	if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
@@ -543,7 +543,7 @@ if ($sql_select) {
 		// Product
 		if ($objp->fk_product > 0) {
 			// Define output language
-			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 				$prod = new Product($db);
 				$prod->fetch($objp->fk_product);
 
@@ -591,26 +591,26 @@ if ($sql_select) {
 				if ($objp->description == '(CREDIT_NOTE)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 				}
 				if ($objp->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
 				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0) {
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
-					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
+					echo($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
-					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+					if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 						echo ' ('.dol_print_date($discount->datec).')';
 					}
 				} else {
-					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
+					echo($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
 		} else {

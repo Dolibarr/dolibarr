@@ -61,7 +61,7 @@ $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 $module = $object->module;
 $element = $object->element;
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 
@@ -77,7 +77,7 @@ if (!empty($user->socid)) {
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/status$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+if (preg_match('/statu[st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');

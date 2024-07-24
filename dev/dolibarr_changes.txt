@@ -18,7 +18,7 @@ With
 
 
 
-CKEDITOR (4.6.2):
+CKEDITOR (4.22.1):
 -----------------
 * In ckeditor/ckeditor/contents.css
 Replace:
@@ -26,7 +26,12 @@ Replace:
 With
 	body { ... margin: 5px;
 
-
+* In ckeditor/ckeditor/ckeditor.js
+Replace:
+    d.items&&
+With
+    d&&d.items&&
+    
 
 ESCPOS:
 -------
@@ -36,40 +41,59 @@ With
 	protected $connector;
 
 
+SABRE:
+------
+rm -fr ./htdocs/includes/sabre/sabre/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
+
 
 NUSOAP:
 -------
-* In file nusoap.php, to avoid a warning,
-Replace
-	if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
-By
-	if (! is_array($this->methodreturn) && isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
+* Line 1257 of file nusoap.php. Add:
 
-* In file nusoap.php, to avoid a warning,
-Replace call to serialize_val with no bugged value
+	libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only for libxml < 2.
+	
+	
+* Line 4346 of file nusoap.php
 
-* In all files, replace constructor names into __construct. Replace also parent::constructor_name with parent::__construct
+	$rev = array();
+	preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
+	$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
 
-* Line 4222 of file nusoap.php
+* Line 6566 of file nusoap.php, replace
 
-		$rev = array();
-		preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
-		$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
-
+	if (count($attrs) > 0) {
+	with
+	if (is_array($attrs) && count($attrs) > 0) {
 
 
 
 TCPDF:
 ------
-* Replace in tcpdf.php:
+* Modify in tcpdf.php: make TCPDF::_out public.
+  (htdocs/core/lib/pdf.lib.php uses it as a public method)
 
+  Change:
+      protected function _out($s)
+  to
+      public function _out($s)
+
+  Change in method's _out phpdoc:
+
+      * @protected
+  to
+      * @public
+
+* Replace in tcpdf.php:
             if (isset($this->imagekeys)) {
                 foreach($this->imagekeys as $file) {
                     unlink($file);
                 }
             }
 with
-
             if (isset($this->imagekeys)) {
                 foreach($this->imagekeys as $file) {
 				// DOL CHANGE If we keep this, source image files are physically destroyed
@@ -77,8 +101,7 @@ with
                 }
             }
 
-* Replace in tcpdf.php
-
+* Replace in tcpdf.php:
 		$preserve = array(
 			'file_id',
 			'internal_encoding',
@@ -86,9 +109,7 @@ with
 			'bufferlen',
 			'buffer',
 			'cached_files',
-
 with
-
 		$preserve = array(
 			'file_id',
 			'internal_encoding',
@@ -99,14 +120,11 @@ with
 			// @CHANGE DOL
 			'imagekeys',
 
-* Replace in tcpdf.php
-
+* Replace in tcpdf.php:
 			if (!@TCPDF_STATIC::file_exists($file)) {
 				return false;
 			}
-
 with
-
 			if (!@TCPDF_STATIC::file_exists($file)) {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
 				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
@@ -116,13 +134,10 @@ with
 					$file = $tfile;
 				}
 			}
-
-* Replace in tcpdf.php
-
+			
+* Replace in tcpdf.php:
 		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
-
 with
-
 		// @CHANGE LDR Add support for src="file://..." links
 		if (strpos($imgsrc, 'file://') === 0) {
 			$imgsrc = str_replace('file://', '/', $imgsrc);
@@ -138,12 +153,10 @@ with
 		}
 		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 
-* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace
 
+* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace:
 		if (strpos($filename, '://') === false) {
-
 with
-
         if (strpos($filename, '//') === 0) {
             // Share folder on a (windows) server
             // e.g.: "//[MyServerName]/[MySharedFolder]/"
@@ -152,11 +165,16 @@ with
         }
         elseif (strpos($filename, '://') === false)
 
-* To avoid to have QRcode changed because generated with a random mask, replace
+* To avoid to have QRcode changed because generated with a random mask, replace:
 	define('QR_FIND_FROM_RANDOM', 2);
-	with:
+with
 	define('QR_FIND_FROM_RANDOM', false);
 
+* Change line:
+	imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
+into
+	imagesetpixel($imgalpha, $xpx, $ypx, (int) $alpha);
+	
 * Removed useless directories ("examples", "tools")
 
 * Optionnaly, removed all fonts except
@@ -184,6 +202,23 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 		return strval($number);
 	}
 
+* Add this at begin of tcpdf_autoconfig.php
+
+	// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+	if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
+		if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} else {
+			// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
+			$_SERVER['DOCUMENT_ROOT'] = '/';
+		}
+	}
+	$_SERVER['DOCUMENT_ROOT'] = str_replace('//', '/', $_SERVER['DOCUMENT_ROOT']);
+	if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
+		$_SERVER['DOCUMENT_ROOT'] .= '/';
+	}
 
 
 TCPDI:

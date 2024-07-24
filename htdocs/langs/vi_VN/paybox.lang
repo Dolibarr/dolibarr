@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Thiết lập mô-đun PayBox
-PayBoxDesc=Mô-đun này cung cấp các trang để cho phép thanh toán trên <a href="http://www.paybox.com" target="_blank">Paybox</a> của khách hàng. Điều này có thể được sử dụng để thanh toán tự do hoặc thanh toán cho một đối tượng Dolibarr cụ thể (hóa đơn, đơn đặt hàng, ...)
+PayBoxDesc=Mô-đun này cung cấp các trang cho phép thanh toán trên <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> của khách hàng. Điều này có thể được sử dụng cho thanh toán miễn phí hoặc cho thanh toán trên một đối tượng Dolibarr cụ thể (hóa đơn, đơn đặt hàng, ...)
 FollowingUrlAreAvailableToMakePayments=Các URL sau có sẵn để cung cấp một trang cho khách hàng để thanh toán trên các đối tượng Dolibarr
 PaymentForm=Hình thức thanh toán
 WelcomeOnPaymentPage=Chào mừng bạn đến với dịch vụ thanh toán trực tuyến của chúng tôi
@@ -20,7 +20,6 @@ AccountParameter=Thông số tài khoản
 UsageParameter=Thông số sử dụng
 InformationToFindParameters=Trợ giúp tìm thông tin tài khoản %s của bạn
 PAYBOX_CGI_URL_V2=Url của mô-đun Paybox CGI để thanh toán
-VendorName=Tên nhà cung cấp
 CSSUrlForPaymentForm=CSS style sheet Url cho hình thức thanh toán
 NewPayboxPaymentReceived=Thanh toán Paybox mới nhận được
 NewPayboxPaymentFailed=Thanh toán Paybox mới đã thử nhưng không thành công

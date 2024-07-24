@@ -14,7 +14,7 @@ ModuleBuilderDesctriggers=Esta es la vista de disparadores proporcionada por su 
 ModuleBuilderDeschooks=Esta pestaña está dedicada a los ganchos.
 ModuleBuilderDescbuildpackage=Puede generar aquí un archivo de paquete "listo para distribuir" (un archivo .zip normalizado) de su módulo y un archivo de documentación "listo para distribuir". Simplemente haga clic en el botón para crear el paquete o el archivo de documentación.
 EnterNameOfModuleToDeleteDesc=Puede eliminar su módulo. ADVERTENCIA: ¡Todos los archivos de codificación del módulo (generados o creados manualmente) Y los datos estructurados y la documentación serán eliminados!
-EnterNameOfObjectToDeleteDesc=Puede eliminar un objeto. ADVERTENCIA: ¡Se eliminarán todos los archivos de codificación (generados o creados manualmente) relacionados con el objeto!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 BuildPackage=Paquete de compilación
 BuildPackageDesc=Puede generar un paquete zip de su aplicación para que esté listo para distribuirlo en cualquier Dolibarr. También puede distribuirlo o venderlo en un mercado como <a href="https://www.dolistore.com"> DoliStore.com </a>.
 BuildDocumentation=Crear documentación
@@ -22,7 +22,6 @@ ModuleIsNotActive=Este módulo aún no está activado. Vaya a %s para hacerlo en
 ModuleIsLive=Este módulo ha sido activado. Cualquier cambio puede romper una función en vivo actual.
 DescriptorFile=Archivo descriptor del módulo
 ClassFile=Archivo para la clase PHP DAO CRUD
-ApiClassFile=Archivo para la clase API de PHP
 PageForList=Página de PHP para la lista de registro
 PageForDocumentTab=Página PHP para la pestaña del documento
 PageForNoteTab=Página PHP para la pestaña de notas
@@ -64,7 +63,6 @@ ListOfMenusEntries=Lista de entradas del menú
 ListOfDictionariesEntries=Lista de entradas de diccionarios
 ListOfPermissionsDefined=Lista de permisos definidos
 SeeExamples=Ver ejemplos aquí
-VisibleDesc=¿Se ve el campo? (Ejemplos: 0=Nunca visible, 1=Visible en la lista y formularios de creación/actualización/vista, 2=Visible solo en la lista, 3=Visible solo en el formulario de creación/actualización/vista (no en la lista), 4=Visible en la lista y actualizar/ver formulario solamente (no crear), 5=Visible solo en el formulario de vista final de la lista (no crear, no actualizar) <br> <br> El uso de un valor negativo significa que el campo no se muestra de forma predeterminada en la lista, pero se puede seleccionar para verlo).
 DisplayOnPdfDesc=Muestre este campo en documentos PDF compatibles, puede administrar la posición con el campo "Posición". <br> <strong> Para documento: </strong> <br> 0 = no se muestra <br> 1 = muestra <br> 2 = muestra solo si no está vacío b0342fccfda19bz 0 <br> <strong> Para líneas de documento: </strong> <br> 0 = no se muestra <br> 1 = se muestra en una columna <br> 3 = se muestra en la descripción de línea columna después de la descripción <br> 4 = mostrar en la columna de descripción después de la descripción solo si no está vacío
 DisplayOnPdf=en PDF
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en la lista? (Ejemplos: 1 o 0)
@@ -77,7 +75,6 @@ PermissionsDefDesc=Defina aquí los nuevos permisos proporcionados por su módul
 MenusDefDescTooltip=Los menús proporcionados por su módulo/aplicación se definen en la matriz <strong> $this->menus </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o usar el editor integrado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los menús también son visibles en el editor de menús disponible para los usuarios administradores en %s.
 DictionariesDefDescTooltip=Los diccionarios proporcionados por su módulo/aplicación se definen en la matriz <strong> $this->dictionaries </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o usar el editor integrado. <br> <br> Nota: Una vez definidos (y reactivado el módulo), los diccionarios también son visibles en el área de configuración para los usuarios administradores en %s.
 PermissionsDefDescTooltip=Los permisos proporcionados por su módulo/aplicación se definen en la matriz <strong> $this->rights </strong> en el archivo descriptor del módulo. Puede editar manualmente este archivo o usar el editor integrado. <br> <br> Nota: Una vez definidos (y el módulo reactivado), los permisos son visibles en la configuración de permisos predeterminada %s.
-HooksDefDesc=Defina en la propiedad <b> module_parts['hooks'] </b>, en el descriptor del módulo, el contexto de los enlaces que desea administrar (la lista de contextos se puede encontrar mediante una búsqueda en ' <b> initHooks( </b> ' en el código central). b03 42fccfda19bz0 Editar el archivo de gancho para agregar el código de sus funciones enganchadas (las funciones enganchables se pueden encontrar mediante una búsqueda en ' <b> executeHooks </b> ' en el código central).
 TriggerDefDesc=Defina en el archivo disparador el código que desea ejecutar cuando se ejecute un evento de negocio externo a su módulo (eventos disparados por otros módulos).
 SeeReservedIDsRangeHere=Ver rango de identificaciones reservadas
 ToolkitForDevelopers=Kit de herramientas para desarrolladores de Dolibarr
@@ -102,7 +99,6 @@ CSSClass=CSS para editar/crear formulario
 CSSListClass=CSS para la lista
 NotEditable=no editable
 ForeignKey=Clave externa
-TypeOfFieldsHelp=Ejemplo: <br> varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> ' 1' significa que agregamos un botón + después del combo para crear el registro <br> 'filtro' es una condición sql, ejemplo: 'status=1 AND fk_user=__USER_ID__ AND entidad IN (__SHARED_ENTITIES__)'
 AsciiToHtmlConverter=Conversor de ascii a html
 AsciiToPdfConverter=Convertidor de Ascii a PDF
 TableNotEmptyDropCanceled=Mesa no vacía. La entrega ha sido cancelada.

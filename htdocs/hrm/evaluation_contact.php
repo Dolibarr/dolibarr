@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 $langs->loadLangs(array('hrm', 'companies', 'other', 'mails'));
 
 // Get Parameters
-$id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');

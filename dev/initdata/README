@@ -1,5 +1,7 @@
 README
 ------
 
-Scripts in this directory can be used to load or purge data of a database instance.
+Scripts in this directory can be used to load massive data or purge data of a database instance.
 WARNING: Some of this script may delete definitely data.
+
+To init data for a demo, use instead the tool into dev/initdemo

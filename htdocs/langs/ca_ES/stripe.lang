@@ -71,9 +71,10 @@ ToOfferALinkForTestWebhook=Enllaç per a configurar el WebHook de Stripe per a t
 ToOfferALinkForLiveWebhook=Enllaç per a configurar el WebHook de Stripe per a trucar a l'IPN (mode en producció)
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
 ClickHereToTryAgain=<a href="%s"> Feu clic aquí per a tornar-ho a provar... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les fortes regles d'autenticació de clients, la creació d'una fitxa s'ha de fer des del panell de Stripe. Podeu fer clic aquí per a activar el registre de clients de Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les regles d'autenticació de client fortes, la creació d'una targeta s'ha de fer des de l'oficina administrativa de Stripe. Pots fer clic aquí per activar el registre de client de Stripe: %s
 STRIPE_CARD_PRESENT=Targeta de regal per a terminals Stripe
 TERMINAL_LOCATION=Ubicació (adreça) de Stripe Terminals
 RequestDirectDebitWithStripe=Sol·liciteu domiciliació bancària amb Stripe
+RequesCreditTransferWithStripe=Sol·liciteu una transferència de crèdit amb Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activeu els pagaments per domiciliació bancària mitjançant Stripe
-
+StripeConnect_Mode=Mode Stripe Connect

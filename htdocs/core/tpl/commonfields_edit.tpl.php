@@ -69,7 +69,7 @@ foreach ($object->fields as $key => $val) {
 	}
 
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTISSET($key) ?GETPOST($key, 'int') : $object->$key;
+		$value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $object->$key;
 	} elseif ($val['type'] == 'double') {
 		$value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $object->$key;
 	} elseif (preg_match('/^text/', $val['type'])) {

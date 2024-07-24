@@ -14,79 +14,75 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = Adatvédelmi szabályzat
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
+Module4100Desc = Adatvédelmi modul (a GDPR-nak megfelelő)
 
 #
 # Administration page
 #
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
+datapolicySetup = A modul adatvédelmi szabályzatának beállítása
+Deletion = Adatok törlése
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+NB_MONTHS = %s hónap
+ONE_YEAR = 1 év
+NB_YEARS = %s év
 DATAPOLICY_TIERS_CLIENT = Vevő
 DATAPOLICY_TIERS_PROSPECT = Leendő
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_TIERS_PROSPECT_CLIENT = jelentkező/vevő
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
 DATAPOLICY_TIERS_FOURNISSEUR = Beszállító
 DATAPOLICY_CONTACT_CLIENT = Vevő
 DATAPOLICY_CONTACT_PROSPECT = Leendő
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = jelentkező/vevő
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
 DATAPOLICY_CONTACT_FOURNISSEUR = Beszállító
 DATAPOLICY_ADHERENT = Tag
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
+DATAPOLICY_Tooltip_SETUP = Kapcsolat típusa – Jelölje meg választását az egyes típusokhoz.
+DATAPOLICYMail = E-mailek beállítása
+DATAPOLICYSUBJECTMAIL = Subject of the email
+DATAPOLICYCONTENTMAIL = Az e-mail tartalma
+DATAPOLICYSUBSITUTION = Az alábbi változókat használhatod az e-mailedben (a LINKACCEPT lehetővé teszi az érintett beleegyezését rögzítő link létrehozását, a LINKREFUSED pedig a személy elutasításának rögzítését):
+DATAPOLICYACCEPT = Üzenet egyeztetés után
+DATAPOLICYREFUSE = Message after disagreement
+SendAgreementText = Küldhet GDPR e-mailt minden érintett kapcsolattartójának (akik még nem kaptak e-mailt, és akikhez még nem regisztrált semmit a GDPR-megállapodásukkal kapcsolatban). Ehhez használja a következő gombot.
+SendAgreement = Emaileket küld
+AllAgreementSend = Minden e-mailt elküldtünk
+TXTLINKDATAPOLICYACCEPT = Szöveg a linkhez "megállapodás"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
 
 
 #
 # Extrafields
 #
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Személyes adatok feldolgozása
+DATAPOLICY_consentement = A személyes adatok feldolgozásához kapott hozzájárulás
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
 
 #
 # Popup
 #
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
+DATAPOLICY_POPUP_ANONYME_TITLE = A partner névtelenítése
+DATAPOLICY_POPUP_ANONYME_TEXTE = Nem törölheti ezt a névjegyet a Dolibarrból, mert vannak kapcsolódó elemek. A GDPR-nak megfelelően Ön ezeket az adatokat névtelenné teszi, hogy eleget tegyen kötelezettségeinek. Szeretné folytatni?
 
 #
 # Button for portability
 #
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
+DATAPOLICY_PORTABILITE = Hordozhatóság GDPR
+DATAPOLICY_PORTABILITE_TITLE = Személyes adatok exportálása
+DATAPOLICY_PORTABILITE_CONFIRMATION = Exportálni szeretné ennek a kapcsolattartónak a személyes adatait. Biztos vagy ebben ?
 
 #
 # Notes added during an anonymization
 #
-ANONYMISER_AT = Anonymised the %s
+ANONYMISER_AT = Anonimizálta a %s
 
-# V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+DATAPOLICY_SEND = GDPR e-mail küldése
+MailSent = Az e-mail el lett küldve
 
 # ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

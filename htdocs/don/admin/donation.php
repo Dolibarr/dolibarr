@@ -228,10 +228,10 @@ if (is_resource($handle)) {
 			$module = new $classname($db);
 
 			// Show modules according to features level
-			if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 				continue;
 			}
-			if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+			if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 				continue;
 			}
 
@@ -338,7 +338,7 @@ print '<td class="center">';
 if (isModEnabled('accounting')) {
 	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
 } else {
-	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="'.$conf->global->DONATION_ACCOUNTINGACCOUNT.'">';
+	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';
 }
 print '</td><td class="center">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
@@ -351,7 +351,7 @@ print '<input type="hidden" name="action" value="set_DONATION_MESSAGE" />';
 
 print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("FreeTextOnDonations").' '.img_info($langs->trans("AddCRIfTooLong")).'<br>';
-print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">'.$conf->global->DONATION_MESSAGE.'</textarea>';
+print '<textarea name="DONATION_MESSAGE" class="flat" cols="80">' . getDolGlobalString('DONATION_MESSAGE').'</textarea>';
 print '</td><td class="center">';
 print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

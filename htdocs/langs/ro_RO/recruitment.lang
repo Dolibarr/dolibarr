@@ -26,7 +26,6 @@ ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pe
 # Admin page
 #
 RecruitmentSetup = Configurare modul Recrutare personal
-Settings = Configurări
 RecruitmentSetupPage = Introdu aici setările pentru opţiunile principale ale modulului Recrutare personal
 RecruitmentArea=Recrutare personal
 PublicInterfaceRecruitmentDesc=Paginile publice de locuri de muncă sunt adrese URL publice pentru a afișa și răspunde la joburile deschise. Există o legătură diferită pentru fiecare job deschis, găsit pe fiecare fișă de job.
@@ -35,7 +34,6 @@ EnablePublicRecruitmentPages=Activați paginile publice cu joburile disponibile
 #
 # About page
 #
-About = Despre
 RecruitmentAbout = Despre modulul Recrutare personal
 RecruitmentAboutPage = Despre modulul Recrutări personal
 NbOfEmployeesExpected=Necesar număr angajaţi
@@ -77,3 +75,6 @@ ExtrafieldsApplication=Atribute complementare (aplicări job)
 MakeOffer=Fă o ofertă de job
 WeAreRecruiting=Recrutăm. Aceasta este o listă de posturi vacante care trebuiesc ocupate...
 NoPositionOpen=Niciun post vacant la acest moment
+ConfirmClose=Confirmare anulare
+ConfirmCloseAsk=Sigur vrei să anulezi această candidatură de recrutare
+recruitment=Recrutare personal

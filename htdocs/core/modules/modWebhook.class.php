@@ -62,9 +62,9 @@ class modWebhook extends DolibarrModules
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
 		// Module description, used if translation string 'ModuleWebhookDesc' not found (Webhook is name of module).
-		$this->description = "WebhookDescription";
+		$this->description = "WebHook";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "WebhookDescription";
+		$this->descriptionlong = "Interface to catch dolibarr triggers and send data of the event to an external URL";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'dolibarr';
@@ -285,7 +285,7 @@ class modWebhook extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleWebhookName',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth valignmiddle"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
 			'mainmenu'=>'webhook',
 			'leftmenu'=>'',
 			'url'=>'/webhook/webhookindex.php',

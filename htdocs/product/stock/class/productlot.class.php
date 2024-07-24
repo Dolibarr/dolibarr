@@ -105,16 +105,17 @@ class Productlot extends CommonObject
 		'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'picto' => 'product', 'css'=>'maxwidth500 widthcentpercentminusxx', 'csslist'=>'maxwidth150'),
 		'batch'         => array('type'=>'varchar(30)', 'label'=>'Batch', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'comment'=>'Batch', 'searchall'=>1, 'picto'=>'lot'),
 		'entity'        => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>20),
-		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>5, 'position'=>60),
-		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>70),
-		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>80),
-		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>90),
-		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_TRACEABILITY)?0:1', 'visible'=>5, 'position'=>100),
-		//'qc_frequency'        => array('type'=>'varchar(6)', 'label'=>'QCFrequency', 'enabled'=>'empty($conf->global->PRODUCT_ENABLE_QUALITYCONTROL)?1:0', 'visible'=>5, 'position'=>110),
-		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>5, 'position'=>62),
+		'sellby'        => array('type'=>'date', 'label'=>'SellByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_SELLBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>60),
+		'eatby'         => array('type'=>'date', 'label'=>'EatByDate', 'enabled'=>'empty($conf->global->PRODUCT_DISABLE_EATBY)?1:0', 'visible'=>1, 'notnull'=>0, 'position'=>62),
+		'eol_date'        => array('type'=>'date', 'label'=>'EndOfLife', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>70),
+		'manufacturing_date' => array('type'=>'date', 'label'=>'ManufacturingDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>80),
+		'scrapping_date'     => array('type'=>'date', 'label'=>'DestructionDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY")?5:0', 'position'=>90),
+		//'commissionning_date'        => array('type'=>'date', 'label'=>'FirstUseDate', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_TRACEABILITY", 0)', 'visible'=>5, 'position'=>100),
+		'qc_frequency'        => array('type'=>'integer', 'label'=>'QCFrequency', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
+		'lifetime'        => array('type'=>'integer', 'label'=>'Lifetime', 'enabled'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?1:0', 'visible'=>'getDolGlobalInt("PRODUCT_LOT_ENABLE_QUALITY_CONTROL")?5:0', 'position'=>110),
 		'model_pdf'		=> array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -2, 'position' => 310),
-		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>500),
+		'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>500),
 		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'llx_user.rowid'),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
@@ -141,7 +142,8 @@ class Productlot extends CommonObject
 	public $manufacturing_date = '';
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
-	//public $qc_frequency = '';
+	public $qc_frequency = '';
+	public $lifetime = '';
 	public $datec = '';
 	public $tms = '';
 
@@ -160,6 +162,8 @@ class Productlot extends CommonObject
 	 */
 	public $import_key;
 
+	public $stats_supplier_order=array();
+
 
 	/**
 	 * Constructor
@@ -172,12 +176,131 @@ class Productlot extends CommonObject
 	}
 
 	/**
+	 * Check sell or eat by date is mandatory
+	 *
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @return 	int			Return integer <0 if KO, 0 nothing done, >0 if OK
+	 */
+	public function checkSellOrEatByMandatory($onlyFieldName = '')
+	{
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return 0;
+		}
+
+		$errorMsgArr = array();
+		if ($this->fk_product > 0) {
+			$res = $this->fetch_product();
+			$product = $this->product;
+			if ($res <= 0) {
+				$errorMsgArr[] = $product->errorsToString();
+			}
+
+			if (empty($errorMsgArr)) {
+				$errorMsgArr = self::checkSellOrEatByMandatoryFromProductAndDates($product, $this->sellby, $this->eatby, $onlyFieldName, true);
+			}
+		}
+
+		if (!empty($errorMsgArr)) {
+			$this->errors = array_merge($this->errors, $errorMsgArr);
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+
+	/**
+	 * Check sell or eat by date is mandatory from product id and sell-by and eat-by dates
+	 *
+	 * @param 	int 		$productId			Product id
+	 * @param	int			$sellBy				Sell by date
+	 * @param 	int			$eatBy				Eat by date
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @return 	array|null	Array of errors or null if nothing done
+	 */
+	public static function checkSellOrEatByMandatoryFromProductIdAndDates($productId, $sellBy, $eatBy, $onlyFieldName = '')
+	{
+		global $db;
+
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return null;
+		}
+
+		$errorMsgArr = array();
+		if ($productId > 0) {
+			$product = new Product($db);
+			$res = $product->fetch($productId);
+			if ($res <= 0) {
+				$errorMsgArr[] = $product->errorsToString();
+			}
+
+			if (empty($errorMsgArr)) {
+				$errorMsgArr = self::checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName, true);
+			}
+		}
+
+		return $errorMsgArr;
+	}
+
+	/**
+	 * Check sell or eat by date is mandatory from product and sell-by and eat-by dates
+	 *
+	 * @param 	Product 	$product			Product object
+	 * @param	int			$sellBy				Sell by date
+	 * @param 	int			$eatBy				Eat by date
+	 * @param	string 		$onlyFieldName		[=''] check all fields by default or only one field name ("sellby", "eatby")
+	 * @param	bool		$alreadyCheckConf	[=false] conf hasn't been already checked by default or true not to check conf
+	 * @return 	array|null	Array of errors or null if nothing done
+	 */
+	public static function checkSellOrEatByMandatoryFromProductAndDates($product, $sellBy, $eatBy, $onlyFieldName = '', $alreadyCheckConf = false)
+	{
+		global $langs;
+
+		if ($alreadyCheckConf === false && getDolGlobalString('PRODUCT_DISABLE_SELLBY') && getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			return null;
+		}
+
+		$errorMsgArr = array();
+		$checkSellByMandatory = false;
+		$checkEatByMandatory = false;
+
+		$sellOrEatByMandatoryId = $product->sell_or_eat_by_mandatory;
+		if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && $sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY && ($onlyFieldName == '' || $onlyFieldName == 'sellby')) {
+			$checkSellByMandatory = true;
+		} elseif (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && $sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY && ($onlyFieldName == '' || $onlyFieldName == 'eatby')) {
+			$checkEatByMandatory = true;
+		} elseif ($sellOrEatByMandatoryId == Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT) {
+			if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY') && ($onlyFieldName == '' || $onlyFieldName == 'sellby')) {
+				$checkSellByMandatory = true;
+			}
+			if (!getDolGlobalString('PRODUCT_DISABLE_EATBY') && ($onlyFieldName == '' || $onlyFieldName == 'eatby')) {
+				$checkEatByMandatory = true;
+			}
+		}
+
+		if ($checkSellByMandatory === true) {
+			if (!isset($sellBy) || dol_strlen($sellBy) == 0) {
+				// error : sell by is mandatory
+				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('SellByDate'));
+			}
+		}
+		if ($checkEatByMandatory === true) {
+			if (!isset($eatBy) || dol_strlen($eatBy) == 0) {
+				// error : eat by is mandatory
+				$errorMsgArr[] = $langs->trans('ErrorFieldRequired', $langs->transnoentities('EatByDate'));
+			}
+		}
+
+		return $errorMsgArr;
+	}
+
+
+	/**
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -190,22 +313,22 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = (int) $this->fk_product;
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
-			 $this->batch = trim($this->batch);
+			$this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = (int) $this->fk_user_creat;
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = (int) $this->fk_user_modif;
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
-			 $this->import_key = trim($this->import_key);
+			$this->import_key = trim($this->import_key);
 		}
 
 		// Check parameters
@@ -227,7 +350,8 @@ class Productlot extends CommonObject
 		$sql .= 'manufacturing_date,';
 		$sql .= 'scrapping_date,';
 		//$sql .= 'commissionning_date,';
-		//$sql .= 'qc_frequency,';
+		$sql .= 'qc_frequency,';
+		$sql .= 'lifetime,';
 		$sql .= 'datec,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'fk_user_modif,';
@@ -242,7 +366,8 @@ class Productlot extends CommonObject
 		$sql .= ' '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) == 0 ? 'NULL' : "'".$this->db->idate($this->manufacturing_date)."'").',';
 		$sql .= ' '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) == 0 ? 'NULL' : "'".$this->db->idate($this->scrapping_date)."'").',';
 		//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
-		//$sql .= ' '.(!isset($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
+		$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
 		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
 		$sql .= ' '.(!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif).',';
@@ -298,7 +423,7 @@ class Productlot extends CommonObject
 	 * @param int    $product_id  	Id of product, batch number parameter required
 	 * @param string $batch 		batch number
 	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @return int Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id = 0, $product_id = 0, $batch = '')
 	{
@@ -316,7 +441,8 @@ class Productlot extends CommonObject
 		$sql .= " t.manufacturing_date,";
 		$sql .= " t.scrapping_date,";
 		//$sql .= " t.commissionning_date,";
-		//$sql .= " t.qc_frequency,";
+		$sql .= " t.qc_frequency,";
+		$sql .= " t.lifetime,";
 		$sql .= " t.model_pdf,";
 		$sql .= " t.last_main_doc,";
 		$sql .= " t.datec,";
@@ -352,7 +478,8 @@ class Productlot extends CommonObject
 				$this->manufacturing_date = $this->db->jdate($obj->manufacturing_date);
 				$this->scrapping_date = $this->db->jdate($obj->scrapping_date);
 				//$this->commissionning_date = $this->db->jdate($obj->commissionning_date);
-				//$this->qc_frequency = $obj->qc_frequency;
+				$this->qc_frequency = $obj->qc_frequency;
+				$this->lifetime = $obj->lifetime;
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
@@ -389,7 +516,7 @@ class Productlot extends CommonObject
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -400,22 +527,22 @@ class Productlot extends CommonObject
 		// Clean parameters
 
 		if (isset($this->entity)) {
-			 $this->entity = (int) $this->entity;
+			$this->entity = (int) $this->entity;
 		}
 		if (isset($this->fk_product)) {
-			 $this->fk_product = (int) $this->fk_product;
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->batch)) {
-			 $this->batch = trim($this->batch);
+			$this->batch = trim($this->batch);
 		}
 		if (isset($this->fk_user_creat)) {
-			 $this->fk_user_creat = (int) $this->fk_user_creat;
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			 $this->fk_user_modif = (int) $this->fk_user_modif;
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 		if (isset($this->import_key)) {
-			 $this->import_key = trim($this->import_key);
+			$this->import_key = trim($this->import_key);
 		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
@@ -434,7 +561,8 @@ class Productlot extends CommonObject
 		$sql .= ' manufacturing_date = '.(!isset($this->manufacturing_date) || dol_strlen($this->manufacturing_date) != 0 ? "'".$this->db->idate($this->manufacturing_date)."'" : 'null').',';
 		$sql .= ' scrapping_date = '.(!isset($this->scrapping_date) || dol_strlen($this->scrapping_date) != 0 ? "'".$this->db->idate($this->scrapping_date)."'" : 'null').',';
 		//$sql .= ' commissionning_date = '.(!isset($this->first_use_date) || dol_strlen($this->first_use_date) != 0 ? "'".$this->db->idate($this->first_use_date)."'" : 'null').',';
-		//$sql .= ' qc_frequency = '.(!isset($this->qc_frequency) || dol_strlen($this->qc_frequency) != 0 ? "'".$this->db->escape($this->qc_frequency)."'" : 'null').',';
+		$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
+		$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
 		$sql .= ' datec = '.(!isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
 		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").',';
@@ -486,7 +614,7 @@ class Productlot extends CommonObject
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -538,15 +666,15 @@ class Productlot extends CommonObject
 
 		// TODO
 		//if (!$error) {
-			//if (!$notrigger) {
-				// Uncomment this and change PRODUCTLOT to your own tag if you
-				// want this action calls a trigger.
+		//if (!$notrigger) {
+		// Uncomment this and change PRODUCTLOT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
-			//}
+		//// Call triggers
+		//$result=$this->call_trigger('PRODUCTLOT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
+		//}
 		//}
 
 		if (!$error) {
@@ -639,12 +767,12 @@ class Productlot extends CommonObject
 		$sql .= " INNER JOIN ".$this->db->prefix()."expeditiondet as ed ON (ed.rowid = edb.fk_expeditiondet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."expedition as exp ON (exp.rowid = ed.fk_expedition)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE exp.entity IN (".getEntity('expedition').")";
 		$sql .= " AND edb.batch = '".($this->db->escape($this->batch))."'";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND exp.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND exp.fk_statut != 0";
@@ -714,12 +842,12 @@ class Productlot extends CommonObject
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseurdet as cfd ON (cfd.rowid = cfdi.fk_commandefourndet)";
 		$sql .= " INNER JOIN ".$this->db->prefix()."commande_fournisseur as cf ON (cf.rowid = cfd.fk_commande)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE cf.entity IN (".getEntity('expedition').")";
 		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND cf.fk_statut != 0";
@@ -788,12 +916,12 @@ class Productlot extends CommonObject
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur_dispatch as cfdi";
 		$sql .= " INNER JOIN ".$this->db->prefix()."reception as recep ON (recep.rowid = cfdi.fk_reception)";
 		//      $sql .= ", ".$this->db->prefix()."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= ", ".$this->db->prefix()."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE recep.entity IN (".getEntity('reception').")";
 		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
-		if (empty($user->rights->societe->client->voir) && !$socid) {
+		if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND recep.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		//$sql.= " AND exp.fk_statut != 0";
@@ -868,7 +996,7 @@ class Productlot extends CommonObject
 			$sql .= " SUM(mp.qty) as qty";
 			$sql .= " FROM ".$this->db->prefix()."mrp_mo as c";
 			$sql .= " INNER JOIN ".$this->db->prefix()."mrp_production as mp ON mp.fk_mo=c.rowid";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= "INNER JOIN ".$this->db->prefix()."societe_commerciaux as sc ON sc.fk_soc=c.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= " WHERE ";
@@ -955,11 +1083,11 @@ class Productlot extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
 		//$datas['divopen'] = '<div width="100%">';
 		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
+		if ($this->eatby && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
 		}
-		if ($this->sellby && empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
+		if ($this->sellby && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
 		}
 		//$datas['divclose'] = '</div>';
 
@@ -1003,7 +1131,7 @@ class Productlot extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1013,11 +1141,11 @@ class Productlot extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1108,7 +1236,7 @@ class Productlot extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->PRODUCT_BATCH_ADDON_PDF)) {
+			} elseif (getDolGlobalString('PRODUCT_BATCH_ADDON_PDF')) {
 				$modele = $conf->global->PRODUCT_BATCH_ADDON_PDF;
 			}
 		}

@@ -63,7 +63,7 @@ if ($id) {
 	}
 	$socid = $object->thirdparty->id;
 	$title = $langs->trans("Projects");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
@@ -82,7 +82,7 @@ if ($id) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty

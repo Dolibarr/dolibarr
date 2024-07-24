@@ -55,7 +55,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -64,10 +64,10 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		}
 
 		// Test if event/record is qualified
-		if (empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) || !in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED))) {
+		if (!getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') || !in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED')))) {
 			// If custom actions are not set or if action not into custom actions, we can exclude action if object->elementis not valid
 			$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription', 'payment_various', 'cashcontrol');
-			if (!in_array($object->element, $listofqualifiedelement)) {
+			if (!is_object($object) || !property_exists($object, 'element') || !in_array($object->element, $listofqualifiedelement)) {
 				return 1;
 			}
 		}
@@ -93,18 +93,18 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			|| $action === 'CASHCONTROL_VALIDATE'
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_DOWNLOAD' && $object->statut != 0)
 			|| (in_array($object->element, array('facture', 'supplier_invoice')) && $action === 'DOC_PREVIEW' && $object->statut != 0)
-			|| (!empty($conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED) && in_array($action, explode(',', $conf->global->BLOCKEDLOG_ADD_ACTIONS_SUPPORTED)))
+			|| (getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED') && in_array($action, explode(',', getDolGlobalString('BLOCKEDLOG_ADD_ACTIONS_SUPPORTED'))))
 		) {
 			$qualified++;
 
 			if (in_array($action, array(
 				'MEMBER_SUBSCRIPTION_CREATE', 'MEMBER_SUBSCRIPTION_MODIFY', 'MEMBER_SUBSCRIPTION_DELETE',
 				'DON_VALIDATE', 'DON_MODIFY', 'DON_DELETE'))) {
-				$amounts = (double) $object->amount;
+				$amounts = (float) $object->amount;
 			} elseif ($action == 'CASHCONTROL_VALIDATE') {
-				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
+				$amounts = (float) $object->cash + (float) $object->cheque + (float) $object->card;
 			} elseif (property_exists($object, 'total_ttc')) {
-				$amounts = (double) $object->total_ttc;
+				$amounts = (float) $object->total_ttc;
 			}
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
@@ -119,14 +119,14 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$amounts = 0;
 			if (!empty($object->amounts)) {
 				foreach ($object->amounts as $amount) {
-					$amounts += (double) $amount;
+					$amounts += (float) $amount;
 				}
 			} elseif (!empty($object->amount)) {
 				$amounts = $object->amount;
 			}
 		} elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK'))) {
 			$qualified++;
-			$amounts = (double) $object->amount;
+			$amounts = (float) $object->amount;
 		}
 
 		// Another protection.

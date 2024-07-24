@@ -54,7 +54,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public $name = 'Muguet';
 
-	public $prefix = 'CF';
+	public $prefix = 'PO';	// PO for "Purchase Order"
 
 
 	/**
@@ -62,19 +62,18 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public function __construct()
 	{
-		global $conf;
-
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) {
-			$this->prefix = 'PO'; // We use correct standard code "PO = Purchase Order"
+		if (getDolGlobalInt('MAIN_VERSION_LAST_INSTALL') < 5) {
+			$this->prefix = 'CF'; // We use old prefix
 		}
 	}
 
 	/**
 	 * 	Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
@@ -96,9 +95,10 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	Object		$object		Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -160,7 +160,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		if (empty($date)) {
 			$date = $object->date; // Creation date is order date for suppliers orders
 		}
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is

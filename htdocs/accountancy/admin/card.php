@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -85,7 +85,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+			if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
@@ -148,7 +148,7 @@ if ($action == 'add' && $user->hasRight('accounting', 'chartofaccount')) {
 			// Clean code
 
 			// To manage zero or not at the end of the accounting account
-			if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+			if (getDolGlobalString('ACCOUNTING_MANAGE_ZERO')) {
 				$account_number = $account_number;
 			} else {
 				$account_number = clean_account($account_number);
@@ -215,7 +215,7 @@ $accountsystem->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 
 $title = $langs->trans('AccountAccounting')." - ".$langs->trans('Card');
 
-$help_url = 'EN:Category:Accounting';
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxheader('', $title, $help_url);
 

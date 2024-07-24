@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm');
 $id = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('id', 'int'));
 $ref = GETPOST('ref', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'userdoc'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -52,7 +52,7 @@ $canedituser = (!empty($user->admin) || $user->hasRight("user", "user", "write")
 $candisableuser = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
 $canreadgroup = $canreaduser;
 $caneditgroup = $canedituser;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$canreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
 	$caneditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
 }
@@ -77,7 +77,7 @@ $feature2 = 'user';
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-if ($user->id <> $id && !$canreaduser) {
+if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
@@ -161,7 +161,7 @@ if ($object->id) {
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin, 'rowid', 'ref', $morehtmlref);
 
@@ -169,7 +169,7 @@ if ($object->id) {
 	print '<div class="underbanner clearboth"></div>';
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

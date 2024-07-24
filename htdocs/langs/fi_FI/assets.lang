@@ -1,4 +1,4 @@
-# Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+# Copyright (C) 2018-2022  Alexandre Spangaro   <aspangaro@open-dsi.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,50 +16,171 @@
 #
 # Generic
 #
-Assets = Varannot
-NewAsset = Lisää varanto
-AccountancyCodeAsset = Kirjanpitokoodi (varanto)
-AccountancyCodeDepreciationAsset = Kirjanpitokoodi (varannon poistot tili)
-AccountancyCodeDepreciationExpense = Kirjanpitokoodi (poistokustannuslaskelma)
-NewAssetType=Uusi varanto tyyppi
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Varannon tyyppi
+NewAsset=Lisää varanto
+AccountancyCodeAsset=Kirjanpitokoodi (varanto)
+AccountancyCodeDepreciationAsset=Kirjanpitokoodi (varannon poistot tili)
+AccountancyCodeDepreciationExpense=Kirjanpitokoodi (poistokustannuslaskelma)
 AssetsLines=Varannot
 DeleteType=Poista
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Näytä tyyppi ' %s'
+DeleteAnAssetType=Poista sisältömalli
+ConfirmDeleteAssetType=Haluatko varmasti poistaa tämän sisältömallin?
+ShowTypeCard=Näytä malli '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Varannot
+ModuleAssetsName=Varannot
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Varannon kuvaus
+ModuleAssetsDesc=Varannon kuvaus
 
 #
 # Admin page
 #
-AssetsSetup = Varantojen asetukset
-Settings = Asetukset
-AssetsSetupPage = Varantojen asetus sivu
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Varannon tyyppi
-AssetsTypeId=Varannon tyypin tunnus
-AssetsTypeLabel=Varannon tyypin nimi
-AssetsTypes=Varantojen tyypit
+AssetSetup=Varantojen asetukset
+AssetSetupPage=Varantojen asetus sivu
+ExtraFieldsAssetModel=Täydentävät attribuutit (sisällön malli)
+
+AssetsType=Omaisuuden malli
+AssetsTypeId=Kohdemallin tunnus
+AssetsTypeLabel=Kohdemallin etiketti
+AssetsTypes=Omaisuusmallit
+ASSET_ACCOUNTANCY_CATEGORY=Käyttöomaisuus Kirjanpito ryhmä
 
 #
 # Menu
 #
-MenuAssets = Varannot
-MenuNewAsset = Lisää varanto
-MenuTypeAssets = Syötä varannot
-MenuListAssets = Luettelo
-MenuNewTypeAssets = Uusi
-MenuListTypeAssets = Luettelo
+MenuAssets=Varannot
+MenuNewAsset=Lisää varanto
+MenuAssetModels=Mallin omaisuus
+MenuListAssets=Luettelo
+MenuNewAssetModel=Uuden omaisuuden malli
+MenuListAssetModels=Luettelo
 
 #
 # Module
 #
-NewAssetType=Uusi varanto tyyppi
-NewAsset=Lisää varanto
+ConfirmDeleteAsset=Haluatko todella poistaa tämän sisällön?
+
+#
+# Tab
+#
+AssetDepreciationOptions=Poistovaihtoehdot
+AssetAccountancyCodes=Accounting accounts
+AssetDepreciation=Poistot
+
+#
+# Asset
+#
+Asset=Omaisuus
+Assets=Varannot
+AssetReversalAmountHT=Peruutussumma (ilman Verot)
+AssetAcquisitionValueHT=Hankintasumma (ilman Verot)
+AssetRecoveredVAT=Palautettu ALV
+AssetReversalDate=Kääntö päiväys
+AssetDateAcquisition=Hankinta päiväys
+AssetDateStart=päiväys käynnistyksestä
+AssetAcquisitionType=Hankinnan tyyppi
+AssetAcquisitionTypeNew=Uusi
+AssetAcquisitionTypeOccasion=Käytetty
+AssetType=Omaisuuden tyyppi
+AssetTypeIntangible=Aineeton
+AssetTypeTangible=Konkreettinen
+AssetTypeInProgress=Käsittelyssä
+AssetTypeFinancial=Taloudellinen
+AssetNotDepreciated=Ei poistoja
+AssetDisposal=Hävittäminen
+AssetConfirmDisposalAsk=Haluatko varmasti luopua sisällöstä <b> %s</b>?
+AssetConfirmReOpenAsk=Haluatko varmasti avata sisällön uudelleen <b> %s</b>?
+
+#
+# Asset status
+#
+AssetInProgress=Käsittelyssä
+AssetDisposed=Hävitetty
+AssetRecorded=Kirjattu
+
+#
+# Asset disposal
+#
+AssetDisposalDate=päiväys hävittämisestä
+AssetDisposalAmount=Hävitysarvo
+AssetDisposalType=Hävityksen tyyppi
+AssetDisposalDepreciated=Tee poisto siirtovuodesta
+AssetDisposalSubjectToVat=Hävitys arvonlisäverollinen
+
+#
+# Asset model
+#
+AssetModel=Omaisuuden malli
+AssetModels=Assetin mallit
+
+#
+# Asset depreciation options
+#
+AssetDepreciationOptionEconomic=Taloudellinen poisto
+AssetDepreciationOptionAcceleratedDepreciation=Nopeutettu poisto (vero)
+AssetDepreciationOptionDepreciationType=Poistotyyppi
+AssetDepreciationOptionDepreciationTypeLinear=Lineaarinen
+AssetDepreciationOptionDepreciationTypeDegressive=Degressiivinen
+AssetDepreciationOptionDepreciationTypeExceptional=Poikkeuksellinen
+AssetDepreciationOptionDegressiveRate=Degressiivinen korko
+AssetDepreciationOptionAcceleratedDepreciation=Nopeutettu poisto (vero)
+AssetDepreciationOptionDuration=Kesto
+AssetDepreciationOptionDurationType=Tyypin kesto
+AssetDepreciationOptionDurationTypeAnnual=Vuosittain
+AssetDepreciationOptionDurationTypeMonthly=Kuukausittain
+AssetDepreciationOptionDurationTypeDaily=Päivittäin
+AssetDepreciationOptionRate=Arvostele (%%)
+AssetDepreciationOptionAmountBaseDepreciationHT=Poistopohja (ilman ALV)
+AssetDepreciationOptionAmountBaseDeductibleHT=Vähennysoikeus (ilman ALV)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Viimeisimmän poiston kokonaissumma (ilman ALV)
+
+#
+# Asset accountancy codes
+#
+AssetAccountancyCodeDepreciationEconomic=Taloudellinen poisto
+AssetAccountancyCodeAsset=Omaisuus
+AssetAccountancyCodeDepreciationAsset=Poistot
+AssetAccountancyCodeDepreciationExpense=Poistokulut
+AssetAccountancyCodeValueAssetSold=Luovutetun omaisuuden arvo
+AssetAccountancyCodeReceivableOnAssignment=Saatavissa poistettaessa
+AssetAccountancyCodeProceedsFromSales=Tuotot hävittämisestä
+AssetAccountancyCodeVatCollected=Kerätty ALV
+AssetAccountancyCodeVatDeductible=Omaisuuden arvonlisävero palautettu
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Nopeutettu poisto (vero)
+AssetAccountancyCodeAcceleratedDepreciation=Account
+AssetAccountancyCodeEndowmentAcceleratedDepreciation=Poistokulut
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Takaisin haltuunotto/hallinta
+
+#
+# Asset depreciation
+#
+AssetBaseDepreciationHT=Poistoperuste (ilman ALV)
+AssetDepreciationBeginDate=Poistot alkavat
+AssetDepreciationDuration=Kesto
+AssetDepreciationRate=Arvostele (%%)
+AssetDepreciationDate=Poistot päiväys
+AssetDepreciationHT=Poistot (ilman ALV)
+AssetCumulativeDepreciationHT=Kumulatiivinen poisto (ilman ALV)
+AssetResidualHT=Jäännösarvo (ilman ALV)
+AssetDispatchedInBookkeeping=Poistot kirjattu
+AssetFutureDepreciationLine=Tulevaisuuden poistot
+AssetDepreciationReversal=Kääntäminen
+
+#
+# Errors
+#
+AssetErrorAssetOrAssetModelIDNotProvide=Löydetyn omaisuuden tai mallin tunnusta ei ole annettu
+AssetErrorFetchAccountancyCodesForMode=Virhe haettaessa kirjanpitotilit poistotilalle %s
+AssetErrorDeleteAccountancyCodesForMode=Virhe poistettaessa kirjanpitotilit poistotilasta %s
+AssetErrorInsertAccountancyCodesForMode=Virhe lisättäessä arvoa kirjanpitotilit poistotilasta %s
+AssetErrorFetchDepreciationOptionsForMode=Virhe haettaessa asetuksia %s' poistotilalle
+AssetErrorDeleteDepreciationOptionsForMode=Virhe poistettaessa %s' poistotilan asetuksia
+AssetErrorInsertDepreciationOptionsForMode=Virhe lisättäessä poistotilan asetuksia %s
+AssetErrorFetchDepreciationLines=Virhe haettaessa tallennettuja poistorivejä
+AssetErrorClearDepreciationLines=Virhe puhdistettaessa tallennettuja poistorivejä (kääntö ja tulevaisuus)
+AssetErrorAddDepreciationLine=Virhe lisättäessä poistoriviä
+AssetErrorCalculationDepreciationLines=Virhe laskettaessa poistorivejä (palautus ja tulevaisuus)
+AssetErrorReversalDateNotProvidedForMode=Käänteinen päiväys ei sisälly poistomenetelmään %s.
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Käänteisen päiväys on oltava suurempi tai yhtä suuri kuin kuluvan tilikauden alku %s-poistomenetelmälle
+AssetErrorReversalAmountNotProvidedForMode=Peruutussummaa ei ole annettu poistotilalle %s.
+AssetErrorFetchCumulativeDepreciation=Virhe haettaessa kertyneen poiston määrää poistoriviltä
+AssetErrorSetLastCumulativeDepreciation=Virhe tallennettaessa viimeistä kertynyttä poistoa

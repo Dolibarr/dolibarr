@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Tasdiqlangan
 StatusSendingProcessedShort=Qayta ishlangan
 SendingSheet=Yuk jo'natmasi
 ConfirmDeleteSending=Ushbu yukni o'chirishni xohlaysizmi?
-ConfirmValidateSending=Ushbu jo'natmani <b> %s </b> ma'lumotnomasi bilan tasdiqlamoqchimisiz?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Ushbu yukni bekor qilmoqchi ekanligingizga aminmisiz?
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Ogohlantirish, jo'natilishini kutayotgan mahsulotlar yo'q.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=Rejalashtirilgan etkazib berish sanasi
 RefDeliveryReceipt=Yetkazib berish kvitansiyasi
 StatusReceipt=Vaziyatni etkazib berish kvitansiyasi
 DateReceived=Qabul qilingan sana qabul qilindi
-ClassifyReception=Classify Received
+ClassifyReception=Qabul qilinganlarni tasniflash
 SendShippingByEMail=Yukni elektron pochta orqali yuboring
 SendShippingRef=%s jo'natmasini yuborish
 ActionsOnShipping=Yuk tashish bo'yicha tadbirlar
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Qabul qilingan ochiq xarid buyurtma
 NoProductToShipFoundIntoStock=<b> %s </b> omborida jo'natiladigan mahsulot topilmadi. Zaxirani to'g'rilang yoki boshqa omborni tanlash uchun qaytib boring.
 WeightVolShort=Og'irligi / jild
 ValidateOrderFirstBeforeShipment=Yuklarni jo'natishdan oldin avval buyurtmani tasdiqlashingiz kerak.
+NoLineGoOnTabToAddSome=Qator yoʻq, qoʻshish uchun “%s” sahifasiga oʻting
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=Mahsulot og'irliklari yig'indisi
 # warehouse details
 DetailWarehouseNumber= Ombor tafsilotlari
 DetailWarehouseFormat= V: %s (Miqdor: %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Seriya raqami yoki partiya uchun jo'natishni yaratish paytida stokda so'nggi kirish sanasini ko'rsatish
+CreationOptions=Yukni yaratish vaqtida mavjud variantlar
 
-ShipmentDistribution=Shipment distribution
+ShipmentDistribution=Yuklarni taqsimlash
 
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=%s qatori uchun jo‘natma yo‘q, chunki ombor, mahsulot, partiya kodining juda ko‘p kombinatsiyasi topilmadi (%s).
+ErrorNoCombinationBatchcode=%s qatorini ombor-mahsulot-lot/serial (%s, <span class='notranslate) birikmasi sifatida saqlab bo‘lmadi '>%s</span>, %s) zaxirada topilmadi.
+
+ErrorTooMuchShipped=Yuborilgan miqdor %s qatori uchun buyurtma qilingan miqdordan oshmasligi kerak

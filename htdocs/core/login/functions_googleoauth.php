@@ -115,6 +115,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 
 			// If googleoauth_login has been set (by google_oauthcallback after a successfull OAUTH2 request on openid scope
 			if (!empty($_SESSION['googleoauth_receivedlogin']) && dol_verifyHash($conf->file->instance_unique_id.$usertotest, $_SESSION['googleoauth_receivedlogin'], '0')) {
+				dol_syslog("Login received by Google OAuth was validated by callback page and saved crypted into session. This login is ".$usertotest);
 				unset($_SESSION['googleoauth_receivedlogin']);
 				$login = $usertotest;
 			}

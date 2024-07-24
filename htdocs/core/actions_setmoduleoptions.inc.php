@@ -41,7 +41,7 @@ if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin))
 	foreach ($arrayofparameters as $key => $val) {
 		// Modify constant only if key was posted (avoid resetting key to the null value)
 		if (GETPOSTISSET($key)) {
-			if (preg_match('/category:/', $val['type'])) {
+			if (!empty($val['type']) && preg_match('/category:/', $val['type'])) {
 				if (GETPOST($key, 'int') == '-1') {
 					$val_const = '';
 				} else {
@@ -75,8 +75,8 @@ if ($action == 'update' && is_array($arrayofparameters) && !empty($user->admin))
 if ($action == 'deletefile' && $modulepart == 'doctemplates' && !empty($user->admin)) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$keyforuploaddir = GETPOST('keyforuploaddir', 'aZ09');
-
 	$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString($keyforuploaddir))));
+
 	foreach ($listofdir as $key => $tmpdir) {
 		$tmpdir = preg_replace('/DOL_DATA_ROOT\/*/', '', $tmpdir);	// Clean string if we found a hardcoded DOL_DATA_ROOT
 		if (!$tmpdir) {
@@ -145,7 +145,6 @@ if ($action == 'setModuleOptions' && !empty($user->admin)) {
 				break;	// So we take the first directory found into setup $conf->global->$keyforuploaddir
 			}
 		}
-
 
 		if ($upload_dir) {
 			$result = dol_add_file_process($upload_dir, 1, 1, 'uploadfile', '');

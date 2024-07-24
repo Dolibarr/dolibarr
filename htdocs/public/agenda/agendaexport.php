@@ -83,13 +83,10 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-// Security check
-if (!isModEnabled('agenda')) {
-	httponly_accessforbidden('Module Agenda not enabled');
-}
+$object = new ActionComm($db);
 
 // Not older than
-if (empty($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
+if (!getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY')) {
 	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100; // default limit
 }
 
@@ -142,8 +139,19 @@ if (GETPOST("module", 'alpha')) {
 if (GETPOST("status", 'int')) {
 	$filters['status'] = GETPOST("status", 'int');
 }
+
+// Security check
+if (!isModEnabled('agenda')) {
+	httponly_accessforbidden('Module Agenda not enabled');
+}
+
+
+/*
+ * View
+ */
+
 // Check config
-if (empty($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
+if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$user->getrights();
 
 	llxHeaderVierge();
@@ -219,13 +227,16 @@ foreach ($filters as $key => $value) {
 }
 // Add extension
 if ($format == 'vcal') {
-	$shortfilename .= '.vcs'; $filename .= '.vcs';
+	$shortfilename .= '.vcs';
+	$filename .= '.vcs';
 }
 if ($format == 'ical') {
-	$shortfilename .= '.ics'; $filename .= '.ics';
+	$shortfilename .= '.ics';
+	$filename .= '.ics';
 }
 if ($format == 'rss') {
-	$shortfilename .= '.rss'; $filename .= '.rss';
+	$shortfilename .= '.rss';
+	$filename .= '.rss';
 }
 if ($shortfilename == 'dolibarrcalendar') {
 	$langs->load("errors");
@@ -238,7 +249,7 @@ if ($shortfilename == 'dolibarrcalendar') {
 $agenda = new ActionComm($db);
 
 $cachedelay = 0;
-if (!empty($conf->global->MAIN_AGENDA_EXPORT_CACHE)) {
+if (getDolGlobalString('MAIN_AGENDA_EXPORT_CACHE')) {
 	$cachedelay = $conf->global->MAIN_AGENDA_EXPORT_CACHE;
 }
 

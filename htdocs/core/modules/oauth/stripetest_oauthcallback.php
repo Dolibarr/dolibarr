@@ -56,7 +56,7 @@ $currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/
  * Load the credential for the service
  */
 
-/** @var $serviceFactory \OAuth\ServiceFactory An OAuth service factory. */
+/** @var \OAuth\ServiceFactory $serviceFactory An OAuth service factory. */
 $serviceFactory = new \OAuth\ServiceFactory();
 $httpClient = new \OAuth\Common\Http\Client\CurlClient();
 // TODO Set options for proxy and timeout
@@ -150,8 +150,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	} catch (Exception $e) {
 		print $e->getMessage();
 	}
-} else // If entry on page with no parameter, we arrive here
-{
+} else { // If entry on page with no parameter, we arrive here
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
@@ -163,7 +162,7 @@ if (GETPOST('code')) {     // We are coming from oauth provider page
 	} else {
 		//$url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
 		//https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_AX27ut70tJ1j6eyFCV3ObEXhNOo2jY6V&scope=read_write
-		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id='.$conf->global->$keyforparamid.'&scope=read_write';
+		$url = 'https://connect.stripe.com/oauth/authorize?response_type=code&client_id=' . getDolGlobalString($keyforparamid).'&scope=read_write';
 	}
 
 	if (empty($url)) {

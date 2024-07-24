@@ -42,7 +42,7 @@ $arrayofparameters['ThirdParty'] = array(
 	'DATAPOLICY_TIERS_NIPROSPECT_NICLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'company', 'class="pictofixedwidth"')),
 	'DATAPOLICY_TIERS_FOURNISSEUR'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'supplier', 'class="pictofixedwidth"')),
 );
-if (!empty($conf->global->DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT)) {
+if (getDolGlobalString('DATAPOLICY_USE_SPECIFIC_DELAY_FOR_CONTACT')) {
 	$arrayofparameters['Contact'] = array(
 		'DATAPOLICY_CONTACT_CLIENT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
 		'DATAPOLICY_CONTACT_PROSPECT'=>array('css'=>'minwidth200', 'picto'=>img_picto('', 'contact', 'class="pictofixedwidth"')),
@@ -172,7 +172,7 @@ if ($action == 'edit') {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
 			print $form->textwithpicto($langs->trans($key), $langs->trans('DATAPOLICY_Tooltip_SETUP'));
-			print '</td><td>'.($conf->global->$key == '' ? $langs->trans('None') : $valTab[$conf->global->$key]).'</td></tr>';
+			print '</td><td>'.(getDolGlobalString($key) == '' ? $langs->trans('None') : $valTab[getDolGlobalString($key)]).'</td></tr>';
 		}
 	}
 

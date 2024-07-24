@@ -90,8 +90,8 @@ print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // TODO Add a search into global search combo so we can remove this
-	if (isModEnabled('don') && $user->rights->don->lire) {
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // TODO Add a search into global search combo so we can remove this
+	if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		$listofsearchfields['search_donation'] = array('text'=>'Donation');
 	}
 
@@ -176,7 +176,7 @@ foreach ($listofstatus as $status) {
 	print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
 	print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
 	print '<td class="right nowraponall amount">'.(!empty($nb[$status]) ? price($somme[$status], 'MT') : '&nbsp;').'</td>';
-	print '<td class="right nowraponall">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
+	print '<td class="right nowraponall">'.(!empty($nb[$status]) ? price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';
 	$totalnb += (!empty($nb[$status]) ? $nb[$status] : 0);
 	$total += (!empty($somme[$status]) ? $somme[$status] : 0);
 	print "</tr>";
@@ -186,7 +186,7 @@ print '<tr class="liste_total">';
 print '<td>'.$langs->trans("Total").'</td>';
 print '<td class="right nowraponall">'.$totalnb.'</td>';
 print '<td class="right nowraponall">'.price($total, 'MT').'</td>';
-print '<td class="right nowraponall">'.($totalnb ?price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
+print '<td class="right nowraponall">'.($totalnb ? price(price2num($total / $totalnb, 'MT')) : '&nbsp;').'</td>';
 print '</tr>';
 print "</table>";
 

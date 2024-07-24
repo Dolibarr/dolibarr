@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
@@ -29,11 +29,10 @@
  */
 class Contracts extends DolibarrApi
 {
-
 	/**
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
-	static $FIELDS = array(
+	public static $FIELDS = array(
 		'socid',
 		'date_contrat',
 		'commercial_signature_id',
@@ -61,8 +60,8 @@ class Contracts extends DolibarrApi
 	 * Return an array with contract informations
 	 *
 	 * @param   int         $id         ID of contract
-	 * @return  Object              	Object with cleaned properties
-	 * @throws 	RestException
+	 * @return  Object					Object with cleaned properties
+	 * @throws	RestException
 	 */
 	public function get($id)
 	{
@@ -90,18 +89,19 @@ class Contracts extends DolibarrApi
 	 *
 	 * Get a list of contracts
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
-	 * @param string   	       $thirdparty_ids	    Thirdparty ids to filter contracts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
+	 * @param string		   $thirdparty_ids		Thirdparty ids to filter contracts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of contract objects
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
 	{
 		global $db, $conf;
 
@@ -174,16 +174,14 @@ class Contracts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$contrat_static = new Contrat($this->db);
 				if ($contrat_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($contrat_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($contrat_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve contrat list : '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No contract found');
-		}
+
 		return $obj_ret;
 	}
 
@@ -202,6 +200,12 @@ class Contracts extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->contract->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->contract->$field = $value;
 		}
 		/*if (isset($request_data["lines"])) {
@@ -370,11 +374,11 @@ class Contracts extends DolibarrApi
 	/**
 	 * Activate a service line of a given contract
 	 *
-	 * @param int   	$id             Id of contract to activate
-	 * @param int   	$lineid         Id of line to activate
-	 * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
+	 * @param int		$id             Id of contract to activate
+	 * @param int		$lineid         Id of line to activate
+	 * @param string	$datestart		{@from body}  Date start        {@type timestamp}
 	 * @param string    $dateend		{@from body}  Date end          {@type timestamp}
-	 * @param string    $comment  		{@from body}  Comment
+	 * @param string    $comment		{@from body}  Comment
 	 *
 	 * @url	PUT {id}/lines/{lineid}/activate
 	 *
@@ -409,10 +413,10 @@ class Contracts extends DolibarrApi
 	/**
 	 * Unactivate a service line of a given contract
 	 *
-	 * @param int   	$id             Id of contract to activate
-	 * @param int   	$lineid         Id of line to activate
-	 * @param string  	$datestart		{@from body}  Date start        {@type timestamp}
-	 * @param string    $comment  		{@from body}  Comment
+	 * @param int		$id             Id of contract to activate
+	 * @param int		$lineid         Id of line to activate
+	 * @param string	$datestart		{@from body}  Date start        {@type timestamp}
+	 * @param string    $comment		{@from body}  Comment
 	 *
 	 * @url	PUT {id}/lines/{lineid}/unactivate
 	 *
@@ -479,7 +483,7 @@ class Contracts extends DolibarrApi
 		if ($updateRes > 0) {
 			return $this->get($id);
 		} else {
-			  throw new RestException(405, $this->contract->error);
+			throw new RestException(405, $this->contract->error);
 		}
 	}
 
@@ -509,6 +513,12 @@ class Contracts extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
+				$this->contract->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$this->contract->$field = $value;
 		}
 

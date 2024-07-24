@@ -40,7 +40,7 @@ if ($action == 'addlink' && !empty($permissiondellink) && !$cancellink && $id > 
 }
 
 // Link by reference
-if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && !empty($conf->global->MAIN_LINK_BY_REF_IN_LINKTO)) {
+if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $id > 0 && !empty($addlinkref) && getDolGlobalString('MAIN_LINK_BY_REF_IN_LINKTO')) {
 	$element_prop = getElementProperties($addlink);
 	if (is_array($element_prop)) {
 		dol_include_once('/' . $element_prop['classpath'] . '/' . $element_prop['classfile'] . '.class.php');
@@ -51,7 +51,9 @@ if ($action == 'addlinkbyref' && !empty($permissiondellink) && !$cancellink && $
 			$object->fetch($id);
 			$object->fetch_thirdparty();
 			$result = $object->add_object_linked($addlink, $objecttmp->id);
-			if (isset($_POST['reftolinkto'])) unset($_POST['reftolinkto']);
+			if (isset($_POST['reftolinkto'])) {
+				unset($_POST['reftolinkto']);
+			}
 		} elseif ($ret < 0) {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 		} else {

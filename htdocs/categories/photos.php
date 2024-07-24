@@ -53,7 +53,8 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
@@ -63,36 +64,45 @@ if (is_numeric($type)) {
 
 $upload_dir = $conf->categorie->multidir_output[$object->entity];
 
+$hookmanager->initHooks(array('categorycard'));
+
 /*
  * Actions
  */
+$parameters = array('id' => $id,  'label' => $label, 'confirm' => $confirm, 'type' => $type, 'uploaddir' => $upload_dir, 'sendfile' => (GETPOST("sendit") ? true : false));
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC)) {
-	if ($object->id) {
-		$file = $_FILES['userfile'];
-		if (is_array($file['name']) && count($file['name']) > 0) {
-			foreach ($file['name'] as $i => $name) {
-				if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i])) {
-					setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
-					unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+if (empty($reshook)) {
+	if (isset($_FILES['userfile']) && $_FILES['userfile']['size'] > 0 && GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC')) {
+		if ($object->id) {
+			$file = $_FILES['userfile'];
+			if (is_array($file['name']) && count($file['name']) > 0) {
+				foreach ($file['name'] as $i => $name) {
+					if (empty($file['tmp_name'][$i]) || intval($conf->global->MAIN_UPLOAD_DOC) * 1000 <= filesize($file['tmp_name'][$i])) {
+						setEventMessage($file['name'][$i].' : '.$langs->trans(empty($file['tmp_name'][$i]) ? 'ErrorFailedToSaveFile' : 'MaxSizeForUploadedFiles'));
+						unset($file['name'][$i], $file['type'][$i], $file['tmp_name'][$i], $file['error'][$i], $file['size'][$i]);
+					}
 				}
 			}
-		}
 
-		if (!empty($file['tmp_name'])) {
-			$object->add_photo($upload_dir, $file);
+			if (!empty($file['tmp_name'])) {
+				$object->add_photo($upload_dir, $file);
+			}
 		}
 	}
-}
 
-if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->rights->categorie->creer) {
-	$object->delete_photo($upload_dir."/".$_GET["file"]);
-}
+	if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->hasRight('categorie', 'creer')) {
+		$object->delete_photo($upload_dir."/".$_GET["file"]);
+	}
 
-if ($action == 'addthumb' && $_GET["file"]) {
-	$object->addThumbs($upload_dir."/".$_GET["file"]);
+	if ($action == 'addthumb' && $_GET["file"]) {
+		$object->addThumbs($upload_dir."/".$_GET["file"]);
+	}
 }
-
 
 /*
  * View
@@ -159,8 +169,8 @@ if ($object->id) {
 	 */
 	print '<div class="tabsAction">'."\n";
 
-	if ($action != 'ajout_photo' && $user->rights->categorie->creer) {
-		if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if ($action != 'ajout_photo' && $user->hasRight('categorie', 'creer')) {
+		if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		} else {
@@ -174,10 +184,10 @@ if ($object->id) {
 	/*
 	 * Ajouter une photo
 	*/
-	if ($action == 'ajout_photo' && $user->rights->categorie->creer && !empty($conf->global->MAIN_UPLOAD_DOC)) {
+	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		// Affiche formulaire upload
 		$formfile = new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->rights->categorie->creer, 50, $object, '', false, '', 0);
+		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->hasRight('categorie', 'creer'), 50, $object, '', false, '', 0);
 	}
 
 	// Affiche photos
@@ -234,7 +244,7 @@ if ($object->id) {
 				if (!$obj['photo_vignette'] && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $obj['photo']) && ($object->imgWidth > $maxWidth || $object->imgHeight > $maxHeight)) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&token='.newToken().'&action=addthumb&type='.$type.'&file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'), 'refresh').'&nbsp;&nbsp;</a>';
 				}
-				if ($user->rights->categorie->creer) {
+				if ($user->hasRight('categorie', 'creer')) {
 					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&type='.$type.'&file='.urlencode($pdir.$viewfilename).'">';
 					print img_delete().'</a>';
 				}

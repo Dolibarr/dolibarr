@@ -73,8 +73,18 @@ class ConferenceOrBooth extends ActionComm
 
 
 	/**
-	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
-	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
@@ -109,7 +119,7 @@ class ConferenceOrBooth extends ActionComm
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:(t.usage_organize_event:=:1)', 'label'=>'Project', 'enabled'=>"isModEnabled('project')", 'position'=>52, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'picto'=>'project', 'css'=>'maxwidth500', 'csslist'=>'tdoverflowmax100'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label'=>'ThirdParty', 'enabled'=>'$conf->societe->enabled', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"OrganizationEventLinkToThirdParty", 'picto'=>'company', 'csslist'=>'tdoverflowmax100', 'css'=>'maxwidth500'),
 		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3),
-		'fk_action' => array('type'=>"sellist:c_actioncomm:libelle:id::module LIKE '%@eventorganization'", 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width100', 'csslist'=>'tdoverflowmax100 maxwidth75'),
+		'fk_action' => array('type'=>"sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label'=>'Format', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'css'=>'width100', 'csslist'=>'tdoverflowmax100'),
 		'datep' => array('type'=>'datetime', 'label'=>'DateStart', 'enabled'=>'1', 'position'=>70, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'2',),
 		'datep2' => array('type'=>'datetime', 'label'=>'DateEnd', 'enabled'=>'1', 'position'=>71, 'notnull'=>0, 'visible'=>1, 'showoncombobox'=>'3',),
 		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2, 'csslist'=>'nowraponall'),
@@ -149,7 +159,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['id']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -180,7 +190,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -239,7 +249,7 @@ class ConferenceOrBooth extends ActionComm
 	 * @param  string	$ref_ext		Ref ext to get
 	 * @param	string	$email_msgid	Email msgid
 	 * @param int 		$loadresources	1=Load also resources
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
@@ -294,7 +304,7 @@ class ConferenceOrBooth extends ActionComm
 			foreach ($filter as $key => $value) {
 				if ($key == 't.id' || $key == 't.fk_project' || $key == 't.fk_soc' || $key == 't.fk_action') {
 					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
 					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
 				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
@@ -346,7 +356,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -359,7 +369,7 @@ class ConferenceOrBooth extends ActionComm
 	 * Delete object in database
 	 *
 	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($notrigger = false)
 	{
@@ -372,7 +382,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 *	@param		User	$user     		User making status change
 	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
+	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -434,7 +444,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -458,7 +468,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -482,7 +492,7 @@ class ConferenceOrBooth extends ActionComm
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -536,7 +546,7 @@ class ConferenceOrBooth extends ActionComm
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -549,7 +559,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowConferenceOrBooth");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -695,7 +705,7 @@ class ConferenceOrBooth extends ActionComm
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -720,6 +730,7 @@ class ConferenceOrBooth extends ActionComm
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_creat;
@@ -770,7 +781,7 @@ class ConferenceOrBooth extends ActionComm
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->CONFERENCEORBOOTH_ADDON_PDF)) {
+			} elseif (getDolGlobalString('CONFERENCEORBOOTH_ADDON_PDF')) {
 				$modele = $conf->global->CONFERENCEORBOOTH_ADDON_PDF;
 			}
 		}

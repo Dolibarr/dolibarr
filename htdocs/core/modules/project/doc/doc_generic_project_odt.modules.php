@@ -78,12 +78,6 @@ if (isModEnabled('expedition')) {
 class doc_generic_project_odt extends ModelePDFProjects
 {
 	/**
-	 * Issuer
-	 * @var Societe
-	 */
-	public $emetteur;
-
-	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -97,7 +91,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load traductions files required by page
 		$langs->loadLangs(array("companies", "main"));
@@ -407,12 +401,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="PROJECT_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -436,22 +430,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 			}
 		}
 		$texthelp = $langs->trans("ListOfDirectoriesForModelGenODT");
+		$texthelp .= '<br><br><span class="opacitymedium">'.$langs->trans("ExampleOfDirectoriesForModelGen").'</span>';
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $conf->global->PROJECT_ADDON_PDF_ODT_PATH;
+		$texte .= getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button small reposition" name="modify" value="'.$langs->trans("Modify").'">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
 		$texte .= '<br></div></div>';
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->PROJECT_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('PROJECT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
@@ -469,14 +464,19 @@ class doc_generic_project_odt extends ModelePDFProjects
 			}
 			$texte .= '</div>';
 		}
-
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="PROJECT_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 		$texte .= '</td>';
 
-		$texte .= '<td rowspan="2" class="tdtop hideonsmartphone">';
-		$texte .= '<span class="opacitymedium">';
-		$texte .= $langs->trans("ExampleOfDirectoriesForModelGen");
-		$texte .= '</span>';
-		$texte .= '</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -559,8 +559,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -661,8 +661,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -971,13 +970,13 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListSupplierOrdersAssociatedProject",
 						'table' => 'commande_fournisseur',
 						'class' => 'CommandeFournisseur',
-						'test' => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->commande->lire) || (isModEnabled("supplier_order") && $user->rights->supplier_order->lire)
 					),
 					'invoice_supplier' => array(
 						'title' => "ListSupplierInvoicesAssociatedProject",
 						'table' => 'facture_fourn',
 						'class' => 'FactureFournisseur',
-						'test' => (isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
+						'test' => (isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->rights->fournisseur->facture->lire) || (isModEnabled("supplier_invoice") && $user->rights->supplier_invoice->lire)
 					),
 					'contract' => array(
 						'title' => "ListContractAssociatedProject",
@@ -1035,7 +1034,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						'title' => "ListMouvementStockProject",
 						'class' => 'MouvementStock',
 						'table' => 'stock_mouvement',
-						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && !empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))
+						'test' => (isModEnabled('stock') && $user->rights->stock->mouvement->lire && getDolGlobalString('STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW'))
 					),
 					'agenda' => array(
 						'title' => "ListActionsAssociatedProject",
@@ -1046,7 +1045,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					),
 				);
 
-				//Insert reference
+				// Insert list of objects into the project
 				try {
 					$listlines = $odfHandler->setSegment('projectrefs');
 
@@ -1122,6 +1121,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 						}
 						$odfHandler->mergeSegment($listlines);
 					}
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// Do nothing
 				} catch (OdfException $e) {
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -1144,7 +1145,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {

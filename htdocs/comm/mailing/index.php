@@ -58,35 +58,38 @@ print load_fiche_titre($title);
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
+$titlesearch = $langs->trans("SearchAMailing");
+if (getDolGlobalInt('EMAILINGS_SUPPORT_ALSO_SMS')) {
+	$titlesearch .= ' | '.$langs->trans("smsing");
+}
 
-//if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
-//{
-	// Search into emailings
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder nohover centpercent">';
-	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAMailing").'</td></tr>';
-	print '<tr class="oddeven"><td class="nowrap">';
-	print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
-	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr class="oddeven"><td class="nowrap">';
-	print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
+// Search into emailings
+print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder nohover centpercent">';
+print '<tr class="liste_titre"><td colspan="3">'.$titlesearch.'</td></tr>';
+print '<tr class="oddeven"><td class="nowrap">';
+print $langs->trans("Ref").':</td><td><input type="text" class="flat inputsearch" name="sref"></td>';
+print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print '<tr class="oddeven"><td class="nowrap">';
+print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
 
-	print "</table></div></form><br>\n";
-//}
+print "</table></div></form><br>\n";
+
+
 
 
 // Affiche stats de tous les modules de destinataires mailings
 print '<table class="noborder centpercent">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistics").'</td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TargetsStatistics").'</td></tr>';
 
 $dir = DOL_DOCUMENT_ROOT."/core/modules/mailings";
 $handle = opendir($dir);
 
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
-		if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+		if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 			if (preg_match("/(.*)\.(.*)\.(.*)/i", $file, $reg)) {
 				$modulename = $reg[1];
 				if ($modulename == 'example') {
@@ -101,14 +104,14 @@ if (is_resource($handle)) {
 
 				$qualified = 1;
 				foreach ($mailmodule->require_module as $key) {
-					if (empty($conf->$key->enabled) || (!$user->admin && $mailmodule->require_admin)) {
+					if (!isModEnabled($key) || (!$user->admin && !empty($mailmodule->require_admin))) {
 						$qualified = 0;
-						//print "Les pr�requis d'activation du module mailing ne sont pas respect�s. Il ne sera pas actif";
+						//print "Prerequisites are not not, selector won't be active";
 						break;
 					}
 				}
 
-				// Si le module mailing est qualifi�
+				// If emailing is qualified for statistic section
 				if ($qualified) {
 					foreach ($mailmodule->getSqlArrayForStats() as $sql) {
 						print '<tr class="oddeven">';
@@ -118,10 +121,10 @@ if (is_resource($handle)) {
 							$num = $db->num_rows($result);
 
 							$i = 0;
-
 							while ($i < $num) {
 								$obj = $db->fetch_object($result);
-								print '<td>'.img_object('', $mailmodule->picto).' '.$obj->label.'</td><td class="right">'.$obj->nb.'<td>';
+								print '<td>'.img_object('', $mailmodule->picto).' '.dol_escape_htmltag($obj->label).'</td>';
+								print '<td class="right">'.$obj->nb.'</td>';
 								$i++;
 							}
 
@@ -149,7 +152,7 @@ print '</div><div class="fichetwothirdright">';
  * List of last emailings
  */
 $limit = 10;
-$sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat";
+$sql  = "SELECT m.rowid, m.titre as title, m.nbemail, m.statut as status, m.date_creat";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.entity = ".$conf->entity;
 $sql .= " ORDER BY m.date_creat DESC";
@@ -179,7 +182,7 @@ if ($result) {
 			print '<td>'.(!empty($obj->title) ? dol_trunc($obj->title, 38) : '').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->date_creat), 'day').'</td>';
 			print '<td class="center">'.($obj->nbemail ? $obj->nbemail : "0").'</td>';
-			print '<td class="right">'.$mailstatic->LibStatut($obj->statut, 5).'</td>';
+			print '<td class="right">'.$mailstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}

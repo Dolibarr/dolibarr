@@ -303,4 +303,3 @@ function findChildGanttLine($tarr, $parent, $task_dependencies, $level)
 		}
 	}
 }
-

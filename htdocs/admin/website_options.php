@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
- * This program is free software; you can redistribute it and/or modify
+ * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -35,20 +35,12 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'companies', 'website'));
 
-$action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
+$action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$rowid = GETPOST('rowid', 'alpha');
-
-if (!$user->admin) {
-	accessforbidden();
-}
-
-$status = 1;
-
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -63,6 +55,25 @@ $pagenext = $page + 1;
 $hookmanager->initHooks(array('admin'));
 
 $arrayofparameters = array('WEBSITE_USE_WEBSITE_ACCOUNTS'=>array('css'=>'minwidth200'));
+
+$status = 1;
+$rowid = GETPOST('rowid', 'alpha');
+
+if (!$user->admin || !isModEnabled('website')) {
+	accessforbidden();
+}
+
+// Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
+/*
+$useFormSetup = 1;
+
+if (!class_exists('FormSetup')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
+}
+$formSetup = new FormSetup($db);
+
+$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+*/
 
 
 /*
@@ -102,45 +113,44 @@ $h++;
 print dol_get_fiche_head($head, 'options', '', -1);
 
 
-if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
+print '</tr>';
 
-	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'"></td></tr>';
-	}
 
-	print '</table>';
+// Mail required for users
 
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans('WEBSITE_USE_WEBSITE_ACCOUNTS'), $langs->trans('WEBSITE_USE_WEBSITE_ACCOUNTSTooltip'));
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
 
-	print '</form>';
-	print '<br>';
+print '<td align="center" width="100">';
+if (!empty($conf->use_javascript_ajax)) {
+	print ajax_constantonoff('WEBSITE_USE_WEBSITE_ACCOUNTS');
 } else {
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td>';
-		print $form->textwithpicto($langs->trans($key), $langs->trans($key.'Tooltip'));
-		print '</td><td>'.getDolGlobalString($key).'</td></tr>';
+	if (!getDolGlobalString('WEBSITE_USE_WEBSITE_ACCOUNTS')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_WEBSITE_USE_WEBSITE_ACCOUNTS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
+}
+print '</td></tr>';
 
-	print '</table>';
 
+print '</table>';
+
+if (empty($conf->use_javascript_ajax)) {
 	print '<div class="tabsAction">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	print '</div>';
 }
-
 
 print dol_get_fiche_end();
 

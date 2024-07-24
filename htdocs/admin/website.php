@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
-$action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
+$action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -49,7 +49,7 @@ $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off', 'class="size15x"')
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -161,9 +161,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		if ($tabrowid[$id]) {
-			// Recupere id libre pour insertion
+			// Get free id for insert
 			$newid = 0;
-			$sql = "SELECT max(".$tabrowid[$id].") newid from ".$tabname[$id];
+			$sql = "SELECT MAX(".$tabrowid[$id].") newid from ".$tabname[$id];
 			$result = $db->query($sql);
 			if ($result) {
 				$obj = $db->fetch_object($result);
@@ -588,7 +588,8 @@ if ($id) {
 					$tmpaction = 'edit';
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('editWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
 
 					if (empty($reshook)) {
 						fieldListWebsites($fieldlist, $obj, $tabname[$id], 'edit');
@@ -604,7 +605,8 @@ if ($id) {
 					$parameters = array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
 					$reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
-					$error = $hookmanager->error; $errors = $hookmanager->errors;
+					$error = $hookmanager->error;
+					$errors = $hookmanager->errors;
 
 					if (empty($reshook)) {
 						foreach ($fieldlist as $field => $value) {
@@ -624,12 +626,13 @@ if ($id) {
 					}
 
 					// Can an entry be erased or disabled ?
-					$iserasable = 1; $isdisable = 1; // true by default
+					$iserasable = 1;
+					$isdisable = 1; // true by default
 					if ($obj->status) {
 						$iserasable = 0; // We can't delete a website on. Disable it first.
 					}
 
-					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&amp;code='.(!empty($obj->code) ?urlencode($obj->code) : '').'&amp;';
+					$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&amp;code='.(!empty($obj->code) ? urlencode($obj->code) : '').'&amp;';
 
 
 					// Active
@@ -678,7 +681,7 @@ $db->close();
  *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we dont want it to be rendered
  *	@return		void
  */
-function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
+function fieldListWebsites($fieldlist, $obj = null, $tabname = '', $context = '')
 {
 	global $conf, $langs, $db;
 	global $form;

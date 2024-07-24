@@ -94,7 +94,9 @@ if ($action == 'updateMask') {
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/asset/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
@@ -137,7 +139,7 @@ if ($action == 'updateMask') {
 		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'ASSET_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-			if ($conf->global->$constforval == "$value") {
+			if (getDolGlobalString($constforval) == "$value") {
 				dolibarr_del_const($db, $constforval, $conf->entity);
 			}
 		}
@@ -236,10 +238,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							$module = new $file($db);
 
 							// Show modules according to features level
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								continue;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								continue;
 							}
 
@@ -247,7 +249,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -373,16 +375,16 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									$module = new $classname($db);
 
 									$modulequalified = 1;
-									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
 									}
-									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+									if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 										$modulequalified = 0;
 									}
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
 											print $module->info($langs);
@@ -514,7 +516,7 @@ if ($action == 'edit') {
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname);
 			} elseif ($val['type'] == 'securekey') {
-				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ?GETPOST($constname, 'alpha') : $conf->global->{$constname}).'" size="40">';
+				print '<input required="required" type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
 				if (!empty($conf->use_javascript_ajax)) {
 					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
 				}
@@ -560,7 +562,7 @@ if ($action == 'edit') {
 					print '<input name="' . $constname . '" class="maxwidth200" value="' . dol_escape_htmltag($selected) . '">';
 				}
 			} else {
-				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->{$constname}.'">';
+				print '<input name="'.$constname.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($constname).'">';
 			}
 			print '</td></tr>';
 		}
@@ -608,7 +610,7 @@ if ($action == 'edit') {
 					$result = $c->fetch(getDolGlobalInt($constname));
 					if ($result < 0) {
 						setEventMessages(null, $c->errors, 'errors');
-					} elseif ($result > 0 ) {
+					} elseif ($result > 0) {
 						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 						$toprint = array();
 						foreach ($ways as $way) {

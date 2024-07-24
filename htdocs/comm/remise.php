@@ -32,14 +32,14 @@ $langs->loadLangs(array('companies', 'orders', 'bills'));
 
 $id = GETPOST("id", 'int');
 
-$socid = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$socid = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
 $backtopage = GETPOST('backtopage', 'alpha');
-$cancel = GETPOST('cancel', 'aplha');
+$cancel = GETPOST('cancel', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
@@ -224,7 +224,6 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			print '<table class="noborder centpercent">';
-			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
@@ -245,7 +244,7 @@ if ($socid > 0) {
 					$i++;
 				}
 			} else {
-				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
@@ -275,7 +274,6 @@ if ($socid > 0) {
 		$resql = $db->query($sql);
 		if ($resql) {
 			print '<table class="noborder centpercent">';
-			$tag = !$tag;
 			print '<tr class="liste_titre">';
 			print '<td width="160">'.$langs->trans("Date").'</td>';
 			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
@@ -296,7 +294,7 @@ if ($socid > 0) {
 					$i++;
 				}
 			} else {
-				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+				print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";

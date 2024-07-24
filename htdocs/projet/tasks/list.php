@@ -46,7 +46,7 @@ $mode = GETPOST('mode', 'aZ');
 
 $id = GETPOST('id', 'int');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'int');
 
 $search_projectstatus = GETPOST('search_projectstatus');
@@ -74,7 +74,7 @@ $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $searchCategoryCustomerOperator = 0;
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator', 'int');
-} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryCustomerOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
 }
 $searchCategoryCustomerList = GETPOST('search_category_customer_list', 'array');
@@ -104,7 +104,7 @@ $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $sea
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'tasklist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tasklist';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Task($db);
@@ -187,7 +187,9 @@ $permissiontoread = $user->hasRight('projet', 'lire');
 $permissiontocreate = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 
-if (!$permissiontoread) accessforbidden();
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -300,7 +302,7 @@ if ($id) {
 }
 
 // Get list of project id allowed to user (in a string list separated by coma)
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
 //var_dump($projectsListId);
@@ -382,7 +384,7 @@ if ($search_task_user > 0) {
 }
 $sql .= " WHERE t.fk_projet = p.rowid";
 $sql .= " AND p.entity IN (".getEntity('project').')';
-if (empty($user->rights->projet->all->lire)) {
+if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId ? $projectsListId : '0').")"; // public and assigned to projects, or restricted to company for external users
 }
 if (is_object($projectstatic) && $projectstatic->id > 0) {
@@ -584,7 +586,7 @@ $num = $db->num_rows($resql);
 
 
 // Direct jump if only one record found
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->id;		// in select, task id has been aliases into 'id'
 	header("Location: ".DOL_URL_ROOT.'/projet/tasks/task.php?id='.$id.'&withproject=1');
@@ -627,7 +629,7 @@ if ($search_date_endmonth) {
 if ($search_date_endyear) {
 	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
 }
-if ($search_datelimit_startday)	{
+if ($search_datelimit_startday) {
 	$param .= '&search_datelimit_startday='.urlencode($search_datelimit_startday);
 }
 if ($search_datelimit_startmonth) {
@@ -702,7 +704,7 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -742,6 +744,7 @@ $newcardbutton = '';
 
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $permissiontocreate);
 
 
@@ -790,7 +793,7 @@ if (isModEnabled('categorie') && $user->hasRight('categorie', 'lire')) {
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('ProjectsWithThisUserAsContact');
 $includeonly = '';
-if (empty($user->rights->user->user->lire)) {
+if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
@@ -800,14 +803,14 @@ $moreforfilter .= '</div>';
 $moreforfilter .= '<div class="divsearchfield">';
 $tmptitle = $langs->trans('TasksWithThisUserAsContact');
 $includeonly = '';
-if (empty($user->rights->user->user->lire)) {
+if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
 $moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 // Filter on customer categories
-if (!empty($conf->global->MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST) && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
+if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST') && isModEnabled("categorie") && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
@@ -869,10 +872,10 @@ if (!empty($arrayfields['t.description']['checked'])) {
 // Start date
 if (!empty($arrayfields['t.dateo']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -880,10 +883,10 @@ if (!empty($arrayfields['t.dateo']['checked'])) {
 // End date
 if (!empty($arrayfields['t.datee']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	// TODO Add option late
 	//print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
@@ -913,7 +916,7 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center">';
 	$arrayofstatus = array();
-	foreach ($projectstatic->statuts_short as $key => $val) {
+	foreach ($projectstatic->labelStatusShort as $key => $val) {
 		$arrayofstatus[$key] = $langs->trans($val);
 	}
 	$arrayofstatus['99'] = $langs->trans("NotClosed").' ('.$langs->trans('Draft').'+'.$langs->trans('Opened').')';
@@ -1108,10 +1111,10 @@ print '</tr>'."\n";
 
 $plannedworkloadoutputformat = 'allhourmin';
 $timespentoutputformat = 'allhourmin';
-if (!empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) {
+if (getDolGlobalString('PROJECT_PLANNED_WORKLOAD_FORMAT')) {
 	$plannedworkloadoutputformat = $conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
 }
-if (!empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) {
+if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
 	$timespentoutputformat = $conf->global->PROJECT_TIME_SPENT_FORMAT;
 }
 
@@ -1356,7 +1359,8 @@ while ($i < $imaxinloop) {
 			}
 			// Time spent
 			if (!empty($arrayfields['t.duration_effective']['checked'])) {
-				$showlineingray = 0; $showproject = 1;
+				$showlineingray = 0;
+				$showproject = 1;
 				print '<td class="center">';
 				if ($showlineingray) {
 					print '<i>';
@@ -1600,9 +1604,9 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
-				print (!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
+				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {
-				print price(!empty($totalarray['val'][$totalarray['pos'][$i]])?$totalarray['val'][$totalarray['pos'][$i]]:0);
+				print price(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? $totalarray['val'][$totalarray['pos'][$i]] : 0);
 			}
 			print '</td>';
 		} else {

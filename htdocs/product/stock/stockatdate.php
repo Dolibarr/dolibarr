@@ -131,7 +131,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 $warehouseStatus = array();
-if (!empty($conf->global->ENTREPOT_EXTRA_STATUS)) {
+if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 	//$warehouseStatus[] = Entrepot::STATUS_CLOSED;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_ALL;
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
@@ -148,7 +148,7 @@ if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot AND p.rowid = ps.fk_product";
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS') && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
@@ -205,7 +205,7 @@ if ($date && $dateIsValid) {
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	$sql .= " AND w.rowid = sm.fk_entrepot AND p.rowid = sm.fk_product ";
-	if (!empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS') && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$db->sanitize(implode(',', $warehouseStatus)).")";
 	}
 	if ($mode == 'future') {
@@ -276,10 +276,10 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price, p.pmp,';
 $sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock, ';
 if (!empty($search_fk_warehouse)) {
-	$sql .= " SUM(p.pmp * ps.reel) as estimatedvalue, SUM(p.price * ps.reel) as sellvalue";
+	$sql .= " SUM(p.pmp * ps.reel) as currentvalue, SUM(p.price * ps.reel) as sellvalue";
 	$sql .= ', SUM(ps.reel) as stock_reel';
 } else {
-	$sql .= " SUM(p.pmp * p.stock) as estimatedvalue, SUM(p.price * p.stock) as sellvalue";
+	$sql .= " SUM(p.pmp * p.stock) as currentvalue, SUM(p.price * p.stock) as sellvalue";
 }
 // Add fields from hooks
 $parameters = array();
@@ -298,7 +298,7 @@ $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 if ($productid > 0) {
 	$sql .= " AND p.rowid = ".((int) $productid);
 }
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = 0";
 }
 if (!empty($canvas)) {
@@ -427,7 +427,7 @@ if (!empty($search_fk_warehouse)) {
 	}
 }
 if ($productid > 0) {
-	$param .= '&productid='.$productid;
+	$param .= '&productid='.(int) $productid;
 }
 if (GETPOST('dateday', 'int') > 0) {
 	$param .= '&dateday='.GETPOST('dateday', 'int');
@@ -513,6 +513,7 @@ print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield
 print "</tr>\n";
 
 $totalbuyingprice = 0;
+$totalsellingprice = 0;
 $totalcurrentstock = 0;
 $totalvirtualstock = 0;
 
@@ -520,7 +521,7 @@ $i = 0;
 while ($i < ($limit ? min($num, $limit) : $num)) {
 	$objp = $db->fetch_object($resql);
 
-	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0) {
+	if (getDolGlobalString('STOCK_SUPPORTS_SERVICES') || $objp->fk_product_type == 0) {
 		$prod->fetch($objp->rowid);
 
 		// Multilangs
@@ -555,7 +556,7 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//}
 		} else {
 			//if ($productid > 0) {
-				$currentstock = $stock_prod[$objp->rowid];
+			$currentstock = $stock_prod[$objp->rowid];
 			//} else {
 			//	$currentstock = $objp->stock;
 			//}
@@ -610,29 +611,35 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 
 			// PMP value
 			print '<td class="right">';
-			if (price2num($stock * $objp->pmp, 'MT')) {
-				print '<span class="amount">'.price(price2num($stock * $objp->pmp, 'MT'), 1).'</span>';
+			$estimatedvalue = $stock * $objp->pmp;
+			if (price2num($estimatedvalue, 'MT')) {
+				print '<span class="amount">'.price(price2num($estimatedvalue, 'MT'), 1).'</span>';
 			} else {
 				print '';
 			}
-			$totalbuyingprice += $stock * $objp->pmp;
+			$totalbuyingprice += $estimatedvalue;
 			print '</td>';
 
 			// Selling value
 			print '<td class="right">';
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-				print price(price2num($objp->sellvalue, 'MT'), 1);
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+				print '<span class="amount">';
+				if ($stock || (float) ($stock * $objp->price)) {
+					print price(price2num($stock * $objp->price, 'MT'), 1);
+				}
+				print '</span>';
+				$totalsellingprice += $stock * $objp->price;
 			} else {
 				$htmltext = $langs->trans("OptionMULTIPRICESIsOn");
 				print $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
 			}
-			print'</td>';
+			print '</td>';
 
 			print '<td class="right">';
 			if ($nbofmovement > 0) {
 				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid;
 				foreach ($search_fk_warehouse as $val) {
-					print ($val > 0 ? '&search_warehouse='.$val : '');
+					print($val > 0 ? '&search_warehouse='.$val : '');
 				}
 				print '">'.$langs->trans("Movements").'</a>';
 				print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
@@ -681,7 +688,11 @@ if (empty($date) || !$dateIsValid) {
 	} else {
 		print '<td></td>';
 		print '<td class="right">'.price(price2num($totalbuyingprice, 'MT')).'</td>';
-		print '<td></td>';
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			print '<td class="right">'.price(price2num($totalsellingprice, 'MT')).'</td>';
+		} else {
+			print '<td></td>';
+		}
 		print '<td></td>';
 		print '<td class="right">'.($productid > 0 ? price(price2num($totalcurrentstock, 'MS')) : '').'</td>';
 	}

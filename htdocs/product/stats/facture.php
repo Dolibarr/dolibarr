@@ -48,11 +48,17 @@ if (!empty($user->socid)) {
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
+$extrafields = new ExtraFields($db);
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label('facture');
+
+$search_array_options = $extrafields->getOptionalsFromPost('facture', '', 'search_');
 
 $showmessage = GETPOST('showmessage');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -69,12 +75,42 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
-$search_month = GETPOST('search_month', 'int');
-$search_year = GETPOST('search_year', 'int');
+$search_date_startday = GETPOSTINT('search_date_startday');
+if (!empty($search_date_startday)) {
+	$option .= '&search_date_startday='.$search_date_startday;
+}
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+if (!empty($search_date_startmonth)) {
+	$option .= '&search_date_startmonth='.$search_date_startmonth;
+}
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+if (!empty($search_date_startyear)) {
+	$option .= '&search_date_startyear='.$search_date_startyear;
+}
+$search_date_endday = GETPOSTINT('search_date_endday');
+if (!empty($search_date_endday)) {
+	$option .= '&search_date_endday='.$search_date_endday;
+}
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+if (!empty($search_date_endmonth)) {
+	$option .= '&search_date_endmonth='.$search_date_endmonth;
+}
+$search_date_endyear = GETPOSTINT('search_date_endyear');
+if (!empty($search_date_endyear)) {
+	$option .= '&search_date_endyear='.$search_date_endyear;
+}
+$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
+$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
-	$search_month = '';
-	$search_year = '';
+	$search_date_startday = '';
+	$search_date_startmonth = '';
+	$search_date_startyear = '';
+	$search_date_endday = '';
+	$search_date_endmonth = '';
+	$search_date_endyear = '';
+	$search_date_start = '';
+	$search_date_end = '';
 }
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
@@ -128,10 +164,10 @@ if ($id > 0 || !empty($ref)) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -157,31 +193,63 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " f.ref, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
+			// Add fields from extrafields
+			if (!empty($extrafields->attributes['facture']['label'])) {
+				foreach ($extrafields->attributes['facture']['label'] as $key => $val) {
+					$sql .= ($extrafields->attributes['facture']['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+				}
+			}
+			// Add fields from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+			$sql = preg_replace('/,\s*$/', '', $sql);
+
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
+			if (isset($extrafields->attributes['facture']['label']) && is_array($extrafields->attributes['facture']['label']) && count($extrafields->attributes['facture']['label'])) {
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.'facture'."_extrafields as ef on (f.rowid = ef.fk_object)";
+			}
 			$sql .= ", ".MAIN_DB_PREFIX."facturedet as d";
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
+			// Add table from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+
 			$sql .= " WHERE f.fk_soc = s.rowid";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " AND d.fk_facture = f.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
-			if (!empty($search_month)) {
-				$sql .= ' AND MONTH(f.datef) IN ('.$db->sanitize($search_month).')';
+			if ($search_date_start) {
+				$sql .= " AND f.datef >= '".$db->idate($search_date_start)."'";
 			}
-			if (!empty($search_year)) {
-				$sql .= ' AND YEAR(f.datef) IN ('.$db->sanitize($search_year).')';
+			if ($search_date_end) {
+				$sql .= " AND f.datef <= '".$db->idate($search_date_end)."'";
 			}
-			if (empty($user->rights->societe->client->voir) && !$socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($socid) {
 				$sql .= " AND f.fk_soc = ".((int) $socid);
 			}
+			// Add where from extra fields
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+			// Add where from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
+
+			// Add HAVING from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+
 			$sql .= $db->order($sortfield, $sortorder);
 
 			// Calcul total qty and amount for global if full scan list
@@ -213,6 +281,13 @@ if ($id > 0 || !empty($ref)) {
 					$option .= '&search_year='.urlencode($search_year);
 				}
 
+				// Add $param from extra fields
+				include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+				// Add $param from hooks
+				$parameters = array('param' => &$param);
+				$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				$option .= $hookmanager->resPrint;
+
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				if (!empty($sortfield)) {
@@ -231,8 +306,12 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
-				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
+
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -251,6 +330,10 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				// Hook fields
+				$parameters = array('param'=>$option, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+				$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				print $hookmanager->resPrint;
 				print "</tr>\n";
 
 				if ($num > 0) {
@@ -280,6 +363,10 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5, $paiement, $objp->type).'</td>';
+						// Fields from hook
+						$parameters = array();
+						$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+						print $hookmanager->resPrint;
 						print "</tr>\n";
 						$i++;
 					}

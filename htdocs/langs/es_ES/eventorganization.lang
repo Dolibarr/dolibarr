@@ -34,7 +34,6 @@ PaymentEvent=Pago del evento
 NewRegistration=Registro
 EventOrganizationSetup=Configuración de organización de eventos
 EventOrganization=Organización del evento
-Settings=Configuraciones
 EventOrganizationSetupPage = Página de configuración de organización de eventos
 EVENTORGANIZATION_TASK_LABEL = Etiqueta de tareas para crear automáticamente cuando se valida el proyecto
 EVENTORGANIZATION_TASK_LABELTooltip = Cuando valida un evento organizado, algunas tareas se pueden crear automáticamente en el proyecto<br><br> Por ejemplo: <br>Enviar llamada para conferencia<br> Enviar llamada para cabina<br> Recibir llamada para conferencias<br> Recibir llamada para cabina<br> Abrir suscripciones a eventos para asistentes<br> Enviar recordatorio del evento a los oradores<br> Enviar recordatorio del evento al anfitrión del stand<br> Enviar recordatorio del evento a los asistentes
@@ -98,6 +97,7 @@ EVENTORGANIZATION_SECUREKEY = Semilla para asegurar la clave de la página de re
 SERVICE_BOOTH_LOCATION = Servicio utilizado para la fila de facturas sobre la ubicación de un stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Servicio utilizado para la fila de la factura sobre la suscripción de un asistente a un evento
 NbVotes=Número de votos
+
 #
 # Status
 #
@@ -106,9 +106,10 @@ EvntOrgSuggested = Sugirió
 EvntOrgConfirmed = Confirmado
 EvntOrgNotQualified = No calificado
 EvntOrgDone = Realizadas
-EvntOrgCancelled = Cancelado
+EvntOrgCancelled = Anulado
+
 #
-# Public page
+# Other
 #
 SuggestForm = Página de sugerencias
 SuggestOrVoteForConfOrBooth = Página para sugerencia o voto
@@ -144,13 +145,8 @@ OrganizationEventBulkMailToAttendees=Este es un recordatorio sobre su participac
 OrganizationEventBulkMailToSpeakers=Este es un recordatorio sobre su participación en el evento como ponente.
 OrganizationEventLinkToThirdParty=Enlace a un tercero (cliente, proveedor o socio)
 OrganizationEvenLabelName=Nombre público de la conferencia o stand
-
 NewSuggestionOfBooth=Solicitud de stand
 NewSuggestionOfConference=Aplicación para realizar una conferencia
-
-#
-# Vote page
-#
 EvntOrgRegistrationWelcomeMessage = Bienvenido a la página de sugerencias de la conferencia o stand.
 EvntOrgRegistrationConfWelcomeMessage = Bienvenido a la página de sugerencias de la conferencia.
 EvntOrgRegistrationBoothWelcomeMessage = Bienvenido a la página de sugerencias del stand.
@@ -158,8 +154,8 @@ EvntOrgVoteHelpMessage = Aquí puede ver y votar los eventos sugeridos para el p
 VoteOk = Tu voto ha sido aceptado.
 AlreadyVoted = Ya has votado por este evento.
 VoteError = Se produjo un error durante la votación, inténtelo de nuevo.
-
 SubscriptionOk=Su registro ha sido registrado
+AmountOfRegistrationPaid=Monto de inscripción pagado
 ConfAttendeeSubscriptionConfirmation = Confirmación de su suscripción a un evento
 Attendee = Asistente
 PaymentConferenceAttendee = Pago de asistentes a la conferencia
@@ -169,8 +165,8 @@ RegistrationAndPaymentWereAlreadyRecorder=Ya se registró un registro y un pago 
 EmailAttendee=E-mail del asistente
 EmailCompany=Correo electrónico de la empresa
 EmailCompanyForInvoice=E-mailde la empresa (para la factura, si es diferente del e-mail del asistente)
-ErrorSeveralCompaniesWithEmailContactUs=Se han encontrado varias empresas con este e-mail, por lo que no podemos validar automáticamente su registro. Póngase en contacto con nosotros en %s para una validación manual
-ErrorSeveralCompaniesWithNameContactUs=Se han encontrado varias empresas con este nombre por lo que no podemos validar automáticamente su registro. Póngase en contacto con nosotros en %s para una validación manual
+ErrorSeveralCompaniesWithEmailContactUs=Se han encontrado varias empresas con este correo electrónico por lo que no podemos validar automáticamente tu registro. Comuníquese con nosotros en %s para una validación manual.
+ErrorSeveralCompaniesWithNameContactUs=Se han encontrado varias empresas con este nombre por lo que no podemos validar automáticamente su registro. Comuníquese con nosotros en %s para una validación manual.
 NoPublicActionsAllowedForThisEvent=No hay acciones públicas abiertas al público para este evento.
 MaxNbOfAttendees=Número máximo de asistentes
 DateStartEvent=Fecha de inicio del evento

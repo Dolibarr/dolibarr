@@ -59,7 +59,7 @@ if ($id > 0) {
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->don->supprimer) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', 'supprimer')) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -212,7 +212,7 @@ print dol_get_fiche_end();
 print '<div class="tabsAction">';
 
 if (empty($action)) {
-	if ($user->rights->don->supprimer) {
+	if ($user->hasRight('don', 'supprimer')) {
 		if (!$disable_delete) {
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', 1);
 		} else {

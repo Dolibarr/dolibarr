@@ -38,7 +38,7 @@ $permission = (isset($permissionnote) ? $permissionnote : (isset($permission) ? 
 $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES)) {
+if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES')) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action', 'aZ09') == 'edit'.$note_public) {
 		$value_public = dol_concatdesc($value_public, ($value_public ? "\n" : "")."-- ".$stringtoadd);
@@ -49,7 +49,7 @@ if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES)) {
 		}
 	}
 }
-if (!empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES)) {
+if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES')) {
 	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action', 'aZ09') == 'edit'.$note_private) {
 		$value_private = dol_concatdesc($value_private, ($value_private ? "\n" : "")."-- ".$stringtoadd);
@@ -73,13 +73,13 @@ if ($module == 'propal') {
 } elseif ($module == 'project_task') {
 	$permission = $user->hasRight("projet", "creer");
 } elseif ($module == 'invoice_supplier') {
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight("fournisseur", "facture", "creer");
 	} else {
 		$permission = $user->hasRight("supplier_invoice", "creer");
 	}
 } elseif ($module == 'order_supplier') {
-	if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
+	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight("fournisseur", "commande", "creer");
 	} else {
 		$permission = $user->hasRight("supplier_order", "creer");
@@ -101,12 +101,12 @@ if ($module == 'propal') {
 }
 //else dol_print_error('','Bad value '.$module.' for param module');
 
-if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC)) {
+if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC')) {
 	$typeofdatapub = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdatapub = 'textarea:12:95%';
 }
-if (isModEnabled('fckeditor') && !empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE)) {
+if (isModEnabled('fckeditor') && getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE')) {
 	$typeofdatapriv = 'ckeditor:dolibarr_notes:100%:200::1:12:95%:0'; // Rem: This var is for all notes, not only thirdparties note.
 } else {
 	$typeofdatapriv = 'textarea:12:95%';

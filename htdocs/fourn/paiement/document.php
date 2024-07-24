@@ -119,7 +119,7 @@ if ($object->id > 0) {
 
 	// Payment mode
 	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
-	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
+	$morehtmlref .= $langs->trans("PaymentType".$object->type_code) != "PaymentType".$object->type_code ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 	$morehtmlref .= $object->num_payment ? ' - '.$object->num_payment : '';
 
 	// Thirdparty
@@ -152,7 +152,7 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

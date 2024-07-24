@@ -42,8 +42,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	$trclass = 'oddeven';
 	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
 		$trclass .= ' liste_sub_total';
-	}
-	?>
+	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("SupplierOrder"); ?></td>
 		<td><?php print $objectlink->getNomUrl(1); ?></td>
@@ -61,7 +60,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 }
 if (count($linkedObjectBlock) > 1) {
 	?>
-	<tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
+	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
 		<td></td>
 		<td class="center"></td>

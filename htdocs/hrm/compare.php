@@ -51,8 +51,12 @@ $job = new Job($db);
 $permissiontoread = $user->rights->hrm->evaluation->read || $user->rights->hrm->compare_advance->read;
 $permissiontoadd = 0;
 
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 
 /*
@@ -113,7 +117,9 @@ print dol_get_fiche_head($head, 'compare', '', 1);
 
 $fk_usergroup2 = 0;
 $fk_job = (int) GETPOST('fk_job');
-if ($fk_job <= 0) $fk_usergroup2 = GETPOST('fk_usergroup2');
+if ($fk_job <= 0) {
+	$fk_usergroup2 = GETPOST('fk_usergroup2');
+}
 
 $fk_usergroup1 = GETPOST('fk_usergroup1');
 
@@ -284,17 +290,22 @@ llxFooter();
  */
 function diff(&$TMergedSkills)
 {
-
 	$out = '<ul class="diff">';
 
 	foreach ($TMergedSkills as $id => &$sk) {
 		$class = 'diffnote';
 
-		if (empty($sk->rate2)) $class .= ' toohappy';
-		elseif (empty($sk->rate1)) $class .= ' toosad';
-		elseif ($sk->rate1 == $sk->rate2) $class .= ' happy';
-		elseif ($sk->rate2 < $sk->rate1) $class .= ' veryhappy';
-		elseif ($sk->rate2 > $sk->rate1) $class .= ' sad';
+		if (empty($sk->rate2)) {
+			$class .= ' toohappy';
+		} elseif (empty($sk->rate1)) {
+			$class .= ' toosad';
+		} elseif ($sk->rate1 == $sk->rate2) {
+			$class .= ' happy';
+		} elseif ($sk->rate2 < $sk->rate1) {
+			$class .= ' veryhappy';
+		} elseif ($sk->rate2 > $sk->rate1) {
+			$class .= ' sad';
+		}
 
 		$out .= '<li fk_skill="' . $id . '" class="' . $class . '" style="text-align:center;">
 	      <span class="' . $class . '">&nbsp;</span>
@@ -329,8 +340,11 @@ function rate(&$TMergedSkills, $field)
 			$how_many = ($field === 'rate1') ? $sk->how_many_max1 : $sk->how_many_max2;
 		}
 
-		if ($field === 'rate2' && $fk_job > 0) $trad = $langs->trans('RequiredRank');
-		else $trad = $langs->trans('HighestRank');
+		if ($field === 'rate2' && $fk_job > 0) {
+			$trad = $langs->trans('RequiredRank');
+		} else {
+			$trad = $langs->trans('HighestRank');
+		}
 
 		$out .= '<li fk_skill="' . $id . '" style="text-align:center;">
 	      <p><span class="' . $class . ' classfortooltip" title="' . $trad . '">' . $note . '</span>' . ($how_many > 0 ? '<span class="bubble classfortooltip" title="' . $langs->trans('HowManyUserWithThisMaxNote') . '">' . $how_many . '</span>' : '') . '</p>
@@ -350,7 +364,6 @@ function rate(&$TMergedSkills, $field)
  */
 function skillList(&$TMergedSkills)
 {
-
 	$out = '<ul class="competence">';
 
 	foreach ($TMergedSkills as $id => &$sk) {
@@ -374,24 +387,27 @@ function skillList(&$TMergedSkills)
  */
 function mergeSkills($TSkill1, $TSkill2)
 {
-
 	$Tab = array();
 
 	foreach ($TSkill1 as &$sk) {
-			if (empty($Tab[$sk->fk_skill])) $Tab[$sk->fk_skill] = new stdClass;
+		if (empty($Tab[$sk->fk_skill])) {
+			$Tab[$sk->fk_skill] = new stdClass();
+		}
 
-			$Tab[$sk->fk_skill]->rate1 = $sk->rankorder;
-			$Tab[$sk->fk_skill]->how_many_max1 = $sk->how_many_max;
-			$Tab[$sk->fk_skill]->label = $sk->label;
-			$Tab[$sk->fk_skill]->description = $sk->description;
+		$Tab[$sk->fk_skill]->rate1 = $sk->rankorder;
+		$Tab[$sk->fk_skill]->how_many_max1 = $sk->how_many_max;
+		$Tab[$sk->fk_skill]->label = $sk->label;
+		$Tab[$sk->fk_skill]->description = $sk->description;
 	}
 
 	foreach ($TSkill2 as &$sk) {
-			if (empty($Tab[$sk->fk_skill])) $Tab[$sk->fk_skill] = new stdClass;
-			$Tab[$sk->fk_skill]->rate2 = $sk->rankorder;
-			$Tab[$sk->fk_skill]->label = $sk->label;
-			$Tab[$sk->fk_skill]->description = $sk->description;
-			$Tab[$sk->fk_skill]->how_many_max2 = $sk->how_many_max;
+		if (empty($Tab[$sk->fk_skill])) {
+			$Tab[$sk->fk_skill] = new stdClass();
+		}
+		$Tab[$sk->fk_skill]->rate2 = $sk->rankorder;
+		$Tab[$sk->fk_skill]->label = $sk->label;
+		$Tab[$sk->fk_skill]->description = $sk->description;
+		$Tab[$sk->fk_skill]->how_many_max2 = $sk->how_many_max;
 	}
 
 	return $Tab;
@@ -436,12 +452,16 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 			$user->fetch($obj->rowid);
 
 			$name = $user->getFullName($langs);
-			if (empty($name)) $name = $user->login;
+			if (empty($name)) {
+				$name = $user->login;
+			}
 
 			if (in_array($user->id, $TExcludedId)) {
 				$class .= ' disabled';
 			} else {
-				if (!in_array($user->id, $TUser)) $TUser[] = $user->id;
+				if (!in_array($user->id, $TUser)) {
+					$TUser[] = $user->id;
+				}
 			}
 
 			$desc = '';
@@ -458,7 +478,9 @@ function displayUsersListWithPicto(&$TUser, $fk_usergroup = 0, $namelist = 'list
 				$desc .= $langs->trans('NoEval');
 			}
 
-			if (!empty($user->array_options['options_DDA'])) $desc .= '<br>' . $langs->trans('Anciennete') . ' : ' . dol_print_date(strtotime($user->array_options['options_DDA']));
+			if (!empty($user->array_options['options_DDA'])) {
+				$desc .= '<br>' . $langs->trans('Anciennete') . ' : ' . dol_print_date(strtotime($user->array_options['options_DDA']));
+			}
 
 			$out .= '<li fk_user="' . $user->id . '" class="' . $class . '">
 		      ' . $form->showphoto('userphoto', $user, 0, 0, 0, 'photoref', 'small', 1, 0, 1) . '
@@ -486,7 +508,9 @@ function getSkillForUsers($TUser)
 	global $db;
 
 	//I go back to the user with the highest score in a given group for all the skills assessed in that group
-	if (empty($TUser)) return array();
+	if (empty($TUser)) {
+		return array();
+	}
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill, ';
 	$sql.= ' MAX(sr.rankorder) as rankorder';
@@ -502,7 +526,7 @@ function getSkillForUsers($TUser)
 	if ($resql) {
 		//For each skill, we count the number of times that the max score has been reached within a given group
 		$num = 0;
-		while ($obj = $db->fetch_object($resql) ) {
+		while ($obj = $db->fetch_object($resql)) {
 			$sql1 = "SELECT COUNT(rowid) as how_many_max FROM ".MAIN_DB_PREFIX."hrm_skillrank as sr";
 			$sql1.=" WHERE sr.rankorder = ".((int) $obj->rankorder);
 			$sql1.=" AND sr.objecttype = '".$db->escape(SkillRank::SKILLRANK_TYPE_USER)."'";
@@ -541,7 +565,9 @@ function getSkillForJob($fk_job)
 {
 	global $db;
 
-	if (empty($fk_job)) return array();
+	if (empty($fk_job)) {
+		return array();
+	}
 
 	$sql = 'SELECT sk.rowid, sk.label, sk.description, sk.skill_type, sr.fk_object, sr.objecttype, sr.fk_skill,';
 	$sql.= " MAX(sr.rankorder) as rankorder";
@@ -556,7 +582,7 @@ function getSkillForJob($fk_job)
 
 	if ($resql) {
 		$num = 0;
-		while ($obj = $db->fetch_object($resql) ) {
+		while ($obj = $db->fetch_object($resql)) {
 			$Tab[$num] = new stdClass();
 			$Tab[$num]->fk_skill = $obj->fk_skill;
 			$Tab[$num]->label = $obj->label;

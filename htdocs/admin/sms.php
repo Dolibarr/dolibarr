@@ -185,7 +185,7 @@ if ($action == 'edit') {
 	// Method
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	if (count($listofmethods)) {
-		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, $conf->global->MAIN_SMS_SENDMODE, 1);
+		print $form->selectarray('MAIN_SMS_SENDMODE', $listofmethods, getDolGlobalString('MAIN_SMS_SENDMODE'), 1);
 	} else {
 		print '<span class="error">'.$langs->trans("None").'</span>';
 	}
@@ -234,7 +234,7 @@ if ($action == 'edit') {
 	// From
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
-	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
+	if (getDolGlobalString('MAIN_MAIL_SMS_FROM') && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
 		print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	}
 	print '</td></tr>';
@@ -256,19 +256,7 @@ if ($action == 'edit') {
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 
-	/*if ($conf->global->MAIN_SMS_SENDMODE != 'mail' || ! $linuxlike)
-	{
-		if (function_exists('fsockopen') && $port && $server)
-		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
-		}
-	}
-	else
-	{
-		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
-	}*/
-
-	if (count($listofmethods) && !empty($conf->global->MAIN_SMS_SENDMODE)) {
+	if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';

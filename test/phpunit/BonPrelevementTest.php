@@ -164,31 +164,4 @@ class BonPrelevementTest extends PHPUnit\Framework\TestCase
 
 		return $result;
 	}
-
-	/**
-	 * testBonPrelevementDelete
-	 *
-	 * @param	int		$id		Id of contract
-	 * @return	int
-	 *
-	 * @depends	testBonPrelevementOther
-	 * The depends says test is run only if previous is ok
-	 */
-	/*    public function testBonPrelevementDelete($id)
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new BonPrelevement($db);
-		$result=$localobject->fetch($id);
-		$result=$localobject->delete($id);
-
-		print __METHOD__." id=".$id." result=".$result."\n";
-		$this->assertLessThan($result, 0);
-		return $result;
-	}
-	*/
 }

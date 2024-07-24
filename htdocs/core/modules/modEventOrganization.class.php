@@ -317,7 +317,9 @@ class modEventOrganization extends DolibarrModules
 		$this->export_label[$r]='ListOfAttendeesOfEvent';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]=$this->picto;
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'ConferenceOrBoothAttendee'; $keyforclassfile='/eventorganization/class/conferenceorboothattendee.class.php'; $keyforelement='conferenceorboothattendee';
+		$keyforclass = 'ConferenceOrBoothAttendee';
+		$keyforclassfile='/eventorganization/class/conferenceorboothattendee.class.php';
+		$keyforelement='conferenceorboothattendee';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$this->export_entities_array[$r]['t.fk_invoice'] = 'invoice';
 		unset($this->export_fields_array[$r]['t.fk_project']);	// Remove field so we can add it at end just after
@@ -335,7 +337,9 @@ class modEventOrganization extends DolibarrModules
 		$this->export_TypeFields_array[$r]['t.fk_soc'] = 'Numeric';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
-		$keyforselect='conferenceorboothattendee'; $keyforaliasextra='extra'; $keyforelement='conferenceorboothattendee';
+		$keyforselect='conferenceorboothattendee';
+		$keyforaliasextra='extra';
+		$keyforelement='conferenceorboothattendee';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		//$this->export_dependencies_array[$r] = array('aaaline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
 		//$this->export_special_array[$r] = array('t.field'=>'...');

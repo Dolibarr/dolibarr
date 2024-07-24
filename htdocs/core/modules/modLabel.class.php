@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modLabel extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -78,7 +77,7 @@ class modLabel extends DolibarrModules
 
 		$this->rights[1][0] = 601; // id de la permission
 		$this->rights[1][1] = 'Read stickers';
-		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[1][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 602; // id de la permission

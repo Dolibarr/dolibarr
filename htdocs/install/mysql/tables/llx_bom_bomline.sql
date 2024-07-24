@@ -19,6 +19,7 @@ CREATE TABLE llx_bom_bomline(
 	fk_bom integer NOT NULL, 
 	fk_product integer NOT NULL,
 	fk_bom_child integer NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
 	description text, 
 	import_key varchar(14), 
 	qty double(24,8) NOT NULL, 

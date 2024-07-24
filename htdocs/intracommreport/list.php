@@ -38,7 +38,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_type = GETPOST("search_type", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
@@ -46,7 +46,7 @@ $type = GETPOST("type", "int");
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -65,14 +65,16 @@ if (!$sortorder) {
 }
 
 // Initialize context for list
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'intracommreportlist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'intracommreportlist';
 if ((string) $type == '1') {
-	$contextpage = 'DESlist'; if ($search_type == '') {
+	$contextpage = 'DESlist';
+	if ($search_type == '') {
 		$search_type = '1';
 	}
 }
 if ((string) $type == '0') {
-	$contextpage = 'DEBlist'; if ($search_type == '') {
+	$contextpage = 'DEBlist';
+	if ($search_type == '') {
 		$search_type = '0';
 	}
 }
@@ -352,7 +354,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -371,7 +373,7 @@ if (in_array($massaction, array('presend', 'predelete'))) {
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $newcardbutton = '';
-if ($user->rights->intracommreport->write) {
+if ($user->hasRight('intracommreport', 'write')) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans("NewDeclaration"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/intracommreport/card.php?action=create&amp;type='.$type);
 }
 
@@ -578,13 +580,14 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
+		$selected = -1;
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
 			if (in_array($object->id, $arrayofselected)) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $object->getKanbanView('', array('selected' => $selected));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

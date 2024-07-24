@@ -55,9 +55,10 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 *  Returns the description of the numbering model
 	 *
-	 *  @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $conf, $langs, $db;
 
@@ -82,7 +83,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskMo" value="'.getDolGlobalString('MRP_MO_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 

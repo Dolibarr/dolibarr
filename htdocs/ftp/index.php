@@ -101,7 +101,7 @@ $mesg = '';
 if ($action == 'uploadfile') {
 	// set up a connection or die
 	if (!$conn_id) {
-		$newsectioniso = utf8_decode($section);
+		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id = $resultarray['conn_id'];
 		$ok = $resultarray['ok'];
@@ -111,8 +111,8 @@ if ($action == 'uploadfile') {
 		$nbfile = count($_FILES['userfile']['name']);
 		for ($i = 0; $i < $nbfile; $i++) {
 			$newsection = $newsectioniso;
-			$fileupload = $_FILES['userfile']['name'][$i];
-			$fileuploadpath = $_FILES['userfile']['tmp_name'][$i];
+			$fileupload = dol_sanitizeFileName($_FILES['userfile']['name'][$i]);
+			$fileuploadpath = dol_sanitizePathName($_FILES['userfile']['tmp_name'][$i]);
 			$result = dol_ftp_put($conn_id, $fileupload, $fileuploadpath, $newsection);
 
 			if ($result) {
@@ -131,7 +131,7 @@ if ($action == 'uploadfile') {
 if ($action == 'addfolder') {
 	// set up a connection or die
 	if (!$conn_id) {
-		$newsectioniso = utf8_decode($section);
+		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id = $resultarray['conn_id'];
 		$ok = $resultarray['ok'];
@@ -153,7 +153,7 @@ if ($action == 'addfolder') {
 }
 
 // Action ajout d'un rep
-if ($action == 'add' && $user->rights->ftp->setup) {
+if ($action == 'add' && $user->hasRight('ftp', 'setup')) {
 	$ecmdir = new EcmDirectory($db);
 	$ecmdir->ref                = GETPOST("ref");
 	$ecmdir->label              = GETPOST("label");
@@ -173,7 +173,7 @@ if ($action == 'add' && $user->rights->ftp->setup) {
 if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 	// set up a connection or die
 	if (!$conn_id) {
-		$newsectioniso = utf8_decode($section);
+		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id = $resultarray['conn_id'];
 		$ok = $resultarray['ok'];
@@ -201,7 +201,7 @@ if ($action == 'confirm_deletefile' && GETPOST('confirm') == 'yes') {
 if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $langs->trans("Delete")) {
 	// set up a connection or die
 	if (!$conn_id) {
-		$newsectioniso = utf8_decode($section);
+		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id = $resultarray['conn_id'];
 		$ok = $resultarray['ok'];
@@ -240,7 +240,7 @@ if (GETPOST("const", 'array') && GETPOST("delete") && GETPOST("delete") == $lang
 if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 	// set up a connection or die
 	if (!$conn_id) {
-		$newsectioniso = utf8_decode($section);
+		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id = $resultarray['conn_id'];
 		$ok = $resultarray['ok'];
@@ -270,7 +270,7 @@ if ($action == 'confirm_deletesection' && $confirm == 'yes') {
 if ($action == 'download') {
 	// set up a connection or die
 	if (!$conn_id) {
-		$newsectioniso = utf8_decode($section);
+		$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 		$resultarray = dol_ftp_connect($ftp_server, $ftp_port, $ftp_user, $ftp_password, $newsectioniso, $ftp_passive);
 		$conn_id = $resultarray['conn_id'];
 		$ok = $resultarray['ok'];
@@ -454,11 +454,11 @@ if (!function_exists('ftp_connect')) {
 			//$type = ftp_systype($conn_id);
 
 			$newsection = $section;
-			$newsectioniso = utf8_decode($section);
+			$newsectioniso = mb_convert_encoding($section, 'ISO-8859-1');
 			//$newsection='/home';
 
 			// List content of directory ($newsection = '/', '/home', ...)
-			if (!empty($conf->global->FTP_CONNECT_WITH_SFTP)) {
+			if (getDolGlobalString('FTP_CONNECT_WITH_SFTP')) {
 				if ($newsection == '/') {
 					//$newsection = '/./';
 					$newsection = ssh2_sftp_realpath($conn_id, ".").'/./'; // workaround for bug https://bugs.php.net/bug.php?id=64169
@@ -497,12 +497,12 @@ if (!function_exists('ftp_connect')) {
 			$i = 0;
 			$nbofentries = 0;
 			while ($i < $nboflines && $i < 1000) {
-				$vals = preg_split('@ +@', utf8_encode($buff[$i]), 9);
+				$vals = preg_split('@ +@', mb_convert_encoding($buff[$i], 'UTF-8', 'ISO-8859-1'), 9);
 				//$vals=preg_split('@ +@','drwxr-xr-x 2 root root 4096 Aug 30 2008 backup_apollon1',9);
 				$file = $vals[8];
 				if (empty($file)) {
 					$rawlisthasfailed = true;
-					$file = utf8_encode($contents[$i]);
+					$file = mb_convert_encoding($contents[$i], 'UTF-8', 'ISO-8859-1');
 				}
 
 				if ($file == '.' || ($file == '..' && $section == '/')) {
@@ -530,7 +530,7 @@ if (!function_exists('ftp_connect')) {
 					//print preg_match('@[\\\/]$@',"aaa\\").'Y';
 					$remotefile = $section.(preg_match('@[\\\/]$@', $section) ? '' : '/').preg_replace('@^[\\\/]@', '', $file);
 					//print 'A'.$remotefile.'A';
-					$newremotefileiso = utf8_decode($remotefile);
+					$newremotefileiso = mb_convert_encoding($remotefile, 'ISO-8859-1');
 					//print 'Z'.$newremotefileiso.'Z';
 					$is_directory = ftp_isdir($conn_id, $newremotefileiso);
 				}
@@ -605,8 +605,8 @@ if (!function_exists('ftp_connect')) {
 
 
 		if (!$ok) {
-			  print $mesg.'<br>'."\n";
-			  setEventMessages($mesg, null, 'errors');
+			print $mesg.'<br>'."\n";
+			setEventMessages($mesg, null, 'errors');
 		}
 
 
@@ -658,7 +658,7 @@ if (!function_exists('ftp_connect')) {
 		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (!empty($conf->global->$paramkey)) {
+			if (getDolGlobalString($paramkey)) {
 				$foundsetup = true;
 				break;
 			}

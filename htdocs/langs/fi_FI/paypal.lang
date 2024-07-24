@@ -1,36 +1,37 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduuli setup
-PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
-PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
-PaypalDoPayment=Pay with PayPal
+PaypalDesc=Tämä moduuli sallii maksu:n asiakkaat kautta <a href="https://www.paypal.com" target="_blank" rel="noopener noreferrer external">PayPalin</a>. Tätä voidaan käyttää ad hoc maksu tai maksu, joka liittyy Dolibarr-objektiin (lasku, tilaus, .. .)
+PaypalOrCBDoPayment=Maksa PayPalilla (kortti tai PayPal)
+PaypalDoPayment=Maksa PayPalilla
 PAYPAL_API_SANDBOX=Tila testi / hiekkalaatikko
 PAYPAL_API_USER=API käyttäjätunnus
 PAYPAL_API_PASSWORD=API salasana
 PAYPAL_API_SIGNATURE=API allekirjoitus
-PAYPAL_SSLVERSION=Curl SSL Version
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
-PaypalModeIntegral=Integral
-PaypalModeOnlyPaypal=PayPal only
-ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
+PAYPAL_SSLVERSION=Curl SSL -versio
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tarjoa vain "integraali" maksu (luottokortti+PayPal) tai "PayPal"
+PaypalModeIntegral=Integraali
+PaypalModeOnlyPaypal=Vain PayPal
+ONLINE_PAYMENT_CSS_URL=CSS-tyylitaulukon valinnainen URL-osoite online-sivulla maksu
 ThisIsTransactionId=Tämä on id liiketoimen: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
-NewOnlinePaymentReceived=New online payment received
-NewOnlinePaymentFailed=New online payment tried but failed
-ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
-ReturnURLAfterPayment=Return URL after payment
-ValidationOfOnlinePaymentFailed=Validation of online payment failed
-PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
-SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
-DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
-DetailedErrorMessage=Detailed Error Message
-ShortErrorMessage=Short Error Message
-ErrorCode=Error Code
-ErrorSeverityCode=Error Severity Code
-OnlinePaymentSystem=Online payment system
-PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import PayPal payments
-PostActionAfterPayment=Post actions after payments
-ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
-ValidationOfPaymentFailed=Validation of payment has failed
-CardOwner=Card holder
-PayPalBalance=Paypal credit
+PAYPAL_ADD_PAYMENT_URL=Sisällytä PayPalin maksu URL-osoite, kun lähetät asiakirjan sähköpostitse
+NewOnlinePaymentReceived=Uusi verkossa maksu vastaanotettu
+NewOnlinePaymentFailed=Uusi verkossa maksu yritti, mutta epäonnistui
+ONLINE_PAYMENT_SENDEMAIL=Sähköpostiosoite käyttäjälle Ilmoitukset jokaisen maksu yrityksen jälkeen (menestys <span class='notranslate'>ja)
+ReturnURLAfterPayment=Palauta URL-osoite maksu jälkeen
+ValidationOfOnlinePaymentFailed=Verkkotunnuksen maksu vahvistus epäonnistui
+PaymentSystemConfirmPaymentPageWasCalledButFailed=maksu vahvistussivun kutsui maksu järjestelmä palautti virheen
+SetExpressCheckoutAPICallFailed=SetExpressCheckout API -kutsu epäonnistui.
+DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API -kutsu epäonnistui.
+DetailedErrorMessage=Yksityiskohtainen virheilmoitus
+ShortErrorMessage=Lyhyt virheilmoitus
+ErrorCode=Virhekoodi
+ErrorSeverityCode=Virheen vakavuuskoodi
+OnlinePaymentSystem=Verkkojärjestelmä maksu
+PaypalLiveEnabled=PayPalin "live"-tila käytössä (muuten testi-/hiekkalaatikkotila)
+PaypalImportPayment=Tuo PayPal-maksut
+PostActionAfterPayment=Postitustoimenpiteet maksujen jälkeen
+ARollbackWasPerformedOnPostActions=Kaikille Post-toiminnoille suoritettiin peruutus. Sinun on suoritettava postaustoiminnot manuaalisesti, jos ne ovat tarpeen.
+ValidationOfPaymentFailed=Kohteen maksu vahvistus epäonnistui
+CardOwner=Kortin haltija
+PayPalBalance=Paypal luotto
+OnlineSubscriptionPaymentLine=Verkkotilaus tallennettu %s<br>Maksettu %s<br>Alkuperäinen IP-osoite: %s<br>Tapahtuman tunnus: <span class='notranslate2f87> </span>

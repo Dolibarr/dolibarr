@@ -57,10 +57,10 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
+if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
 	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
 }
-if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) {
+if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
 	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
 }
 
@@ -80,6 +80,10 @@ $permissiontoadd = $usercancreate;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('orderdocument', 'globalcard'));
+
 $result = restrictedArea($user, 'commande', $id, '');
 
 
@@ -114,7 +118,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, 'order');
 
 		// Build file list
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
 			$totalsize += $file['size'];
@@ -177,7 +181,7 @@ if ($id > 0 || !empty($ref)) {
 		$modulepart = 'commande';
 		$permissiontoadd = $user->rights->commande->creer;
 		$permtoedit = $user->rights->commande->creer;
-		$param = '&id='.$object->id.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
+		$param = '&id='.$object->id.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity);
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {
 		dol_print_error($db);

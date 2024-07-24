@@ -87,7 +87,7 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id && empty($user->rights->ticket->manage)) {
+if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id && !$user->hasRight('ticket', 'manage')) {
 	accessforbidden();
 }
 
@@ -101,7 +101,7 @@ $permissiontoadd = $user->rights->ticket->write;	// Used by the include of actio
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 // Set parent company
-if ($action == 'set_thirdparty' && $user->rights->ticket->write) {
+if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 		$result = $object->setCustomer(GETPOST('editcustomer', 'int'));
 		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
@@ -132,7 +132,7 @@ if ($object->id) {
 		print dol_get_fiche_end();
 	}
 
-	if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
+	if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
 		$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
 	} elseif ($user->socid > 0) {
 		$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);

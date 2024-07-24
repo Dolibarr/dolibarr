@@ -29,7 +29,7 @@ PartnershipCheckBacklink=Partners: Kontrollera hänvisningslänk
 # Menu
 #
 NewPartnership=Nytt partner
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
+NewPartnershipbyWeb=Din partnerskapsbegäran har lagts till. Vi kanske kontaktar dig snart...
 ListOfPartnerships=Lista över partners
 
 #
@@ -38,10 +38,10 @@ ListOfPartnerships=Lista över partners
 PartnershipSetup=Inställningar för partners
 PartnershipAbout=Om partners
 PartnershipAboutPage=Partners om-sida
-partnershipforthirdpartyormember=Partnerstatus måste anges till "tredjepart" eller "medlem"
+partnershipforthirdpartyormember=Partnerstatus måste ställas in på en "tredje part" eller en "medlem"
 PARTNERSHIP_IS_MANAGED_FOR=Partners hanterad åt
 PARTNERSHIP_BACKLINKS_TO_CHECK=Baklänkar att kontrollera
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan partners avbryts när ett prenumeration har löpt ut
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dagar innan ett partnerskaps status avslutas när ett abonnemang har löpt ut
 ReferingWebsiteCheck=Kontroll av webbplatsens hänvisningar
 ReferingWebsiteCheckDesc=Du kan aktivera en funktion för att kontrollera om din partner har länkat tillbaka till er hemsida via deras egen hemsida.
 PublicFormRegistrationPartnerDesc=Dolibarr kan ge dig en offentlig URL/webbplats så att externa besökare kan begära att få bli partner.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnerskap dedikerat denna medlem
 DatePartnershipStart=Startdatum
 DatePartnershipEnd=Slutdatum
 ReasonDecline=Avslagsanledning
-ReasonDeclineOrCancel=Avslagsanledning
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partner finns redan
 ManagePartnership=Hantera partner
 BacklinkNotFoundOnPartnerWebsite=Baklänk hittades inte på partners webbplats
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=Partner nekad
 YourPartnershipAcceptedTopic=Partner accepterad
 YourPartnershipCanceledTopic=Partnerskap avbruten
 
-YourPartnershipWillSoonBeCanceledContent=Vi vill informera dig om att ditt partnerskap snart kommer att avbrytas (baklänk hittades inte)
-YourPartnershipRefusedContent=Vi vill informera dig om att din förfrågan om partnerskap har nekats.
-YourPartnershipAcceptedContent=Vi vill informera dig om att din fråga om partnerskap har accepterats
-YourPartnershipCanceledContent=Vi vill informera dig om att din förfrågan om partnerskap har avbrutits
+YourPartnershipWillSoonBeCanceledContent=Vi vill informera dig om att vårt partnerskap snart kommer att avbrytas (vi fick ingen förnyelse eller en förutsättning för vårt partnerskap har inte uppfyllts). Kontakta oss om du fått detta på grund av ett fel.
+YourPartnershipRefusedContent=Vi vill informera dig om att din begäran om partnerskap har avslagits. Förutsättningarna är inte uppfyllda. Kontakta oss om du behöver mer information.
+YourPartnershipAcceptedContent=Vi vill informera dig om att din begäran om partnerskap har accepterats.
+YourPartnershipCanceledContent=Vi vill informera dig om att vårt samarbete har avbrutits. Kontakta oss om du behöver mer information.
 
 CountLastUrlCheckError=Antal fel för senaste URL-kontroll
 LastCheckBacklink=Datum för senaste URL-kontroll
-ReasonDeclineOrCancel=Avslagsanledning
 
 NewPartnershipRequest=Ny förfrågan om partnerskap
 NewPartnershipRequestDesc=I detta formulär kan du skicka in en fråga och beägra att bli en del av vårt partnerskapsprogram. Om du behöver hjälp med att fylla i detta formulär, vänligen kontakta oss via e-post <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Den här sidan måste innehålla minst en länk till en av följande domäner: %s
+
+IPOfApplicant=Sökandens IP
 

@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2023      Charlene Benke       <charlene@patas_monkey.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +67,10 @@ $objcanvas = GETPOST("objcanvas", "alphanohtml");
 $comefromclone = GETPOST("comefromclone", "alphanohtml");
 $date_start = dol_mktime(0, 0, 0, GETPOST('projectstartmonth', 'int'), GETPOST('projectstartday', 'int'), GETPOST('projectstartyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('projectendmonth', 'int'), GETPOST('projectendday', 'int'), GETPOST('projectendyear', 'int'));
-$date_start_event = dol_mktime(GETPOST('date_start_eventhour', 'int'), GETPOST('date_start_eventmin', 'int'), GETPOST('date_start_eventsec', 'int'), GETPOST('date_start_eventmonth', 'int'), GETPOST('date_start_eventday', 'int'), GETPOST('date_start_eventyear', 'int'));
-$date_end_event = dol_mktime(GETPOST('date_end_eventhour', 'int'), GETPOST('date_end_eventmin', 'int'), GETPOST('date_end_eventsec', 'int'), GETPOST('date_end_eventmonth', 'int'), GETPOST('date_end_eventday', 'int'), GETPOST('date_end_eventyear', 'int'));
+$date_start_event = dol_mktime(GETPOSTINT('date_start_eventhour'), GETPOSTINT('date_start_eventmin'), GETPOSTINT('date_start_eventsec'), GETPOSTINT('date_start_eventmonth'), GETPOSTINT('date_start_eventday'), GETPOSTINT('date_start_eventyear'), 'tzuserrel');
+$date_end_event = dol_mktime(GETPOSTINT('date_end_eventhour'), GETPOSTINT('date_end_eventmin'), GETPOSTINT('date_end_eventsec'), GETPOSTINT('date_end_eventmonth'), GETPOSTINT('date_end_eventday'), GETPOSTINT('date_end_eventyear'), 'tzuserrel');
 $location = GETPOST('location', 'alphanohtml');
+$fk_project = GETPOSTINT('fk_project');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
@@ -85,7 +88,7 @@ if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref); // If we create project, ref may be defined into POST but record does not yet exists into database
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
-		if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) {
+		if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 			$object->fetchComments();
 		}
 		$id = $object->id;
@@ -183,7 +186,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if (GETPOST('usage_opportunity') != '' && !(GETPOST('opp_status') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfUsage"), null, 'errors');
@@ -195,7 +198,7 @@ if (empty($reshook)) {
 		}
 
 		// Create with status validated immediatly
-		if (!empty($conf->global->PROJECT_CREATE_NO_DRAFT) && !$error) {
+		if (getDolGlobalString('PROJECT_CREATE_NO_DRAFT') && !$error) {
 			$status = Project::STATUS_VALIDATED;
 		}
 
@@ -205,6 +208,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$object->ref             = GETPOST('ref', 'alphanohtml');
+			$object->fk_project      = GETPOST('fk_project', 'int');
 			$object->title           = GETPOST('title', 'alphanohtml');
 			$object->socid           = GETPOST('socid', 'int');
 			$object->description     = GETPOST('description', 'restricthtml'); // Do not use 'alpha' here, we want field as it is
@@ -304,6 +308,7 @@ if (empty($reshook)) {
 			$old_start_date = $object->date_start;
 
 			$object->ref          = GETPOST('ref', 'alpha');
+			$object->fk_project   = GETPOST('fk_project', 'int');
 			$object->title        = GETPOST('title', 'alphanohtml'); // Do not use 'alpha' here, we want field as it is
 			$object->statut       = GETPOST('status', 'int');
 			$object->socid        = GETPOST('socid', 'int');
@@ -338,7 +343,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			if ($object->opp_amount && ($object->opp_status <= 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorOppStatusRequiredIfAmount"), null, 'errors');
@@ -487,7 +492,7 @@ if (empty($reshook)) {
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 		$clone_notes = GETPOST('clone_notes') ? 1 : 0;
 		$move_date = GETPOST('move_date') ? 1 : 0;
-		$clone_thirdparty = GETPOST('socid', 'int') ?GETPOST('socid', 'int') : 0;
+		$clone_thirdparty = GETPOST('socid', 'int') ? GETPOST('socid', 'int') : 0;
 
 		$result = $object->createFromClone($user, $object->id, $clone_contacts, $clone_tasks, $clone_project_files, $clone_task_files, $clone_notes, $move_date, 0, $clone_thirdparty);
 		if ($result <= 0) {
@@ -499,8 +504,11 @@ if (empty($reshook)) {
 			$newobject->fetch_optionals();
 			$newobject->fetch_thirdparty(); // Load new object
 			$object = $newobject;
-			$action = 'edit';
+			$action = 'view';
 			$comefromclone = true;
+
+			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
+			//var_dump($newobject); exit;
 		}
 	}
 
@@ -523,7 +531,7 @@ $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
 $title = $langs->trans("Project").' - '.$object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE)) {
 	$title = $object->ref.(!empty($object->thirdparty->name) ? ' - '.$object->thirdparty->name : '').(!empty($object->title) ? ' - '.$object->title : '');
 }
 
@@ -542,7 +550,7 @@ if (getDolGlobalInt('PROJECT_USE_OPPORTUNITIES') == 2) { // 2 = leads only
 	$titlenew = $langs->trans("NewLead");
 }
 
-if ($action == 'create' && $user->rights->projet->creer) {
+if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	/*
 	 * Create
 	 */
@@ -567,10 +575,12 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	$defaultref = '';
-	$modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+	$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$classname = '';
+	$filefound = 0;
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -583,7 +593,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 	if ($filefound) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-		$modProject = new $classname;
+		$modProject = new $classname();
 
 		$defaultref = $modProject->getNextValue($thirdparty, $object);
 	}
@@ -603,13 +613,21 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Label
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input class="width500 maxwidth150onsmartphone" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", 'alphanohtml')).'" autofocus></td></tr>';
 
+	// Parent
+	if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+		print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
+		print img_picto('', 'project', 'class="pictofixedwidth"');
+		$formproject->select_projects(-1, '', 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+		print '</td></tr>';
+	}
+
 	// Usage (opp, task, bill time, ...)
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 		print '<tr><td class="tdtop">';
 		print $langs->trans("Usage");
 		print '</td>';
 		print '<td>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
@@ -632,7 +650,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '</script>';
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			print '<input type="checkbox" id="usage_task" name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 			$htmltext = $langs->trans("ProjectFollowTasks");
 			print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
@@ -655,7 +673,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '</script>';
 			print '<br>';
 		}
-		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 			print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') ? ' checked="checked"' : '') : '').'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
 			print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
@@ -679,7 +697,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print '<br>';
 		}
 		if (isModEnabled('eventorganization')) {
-			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') :'').'"> ';
+			print '<input type="checkbox" id="usage_organize_event" name="usage_organize_event"'.(GETPOSTISSET('usage_organize_event') ? (GETPOST('usage_organize_event', 'alpha') ? ' checked="checked"' : '') : '').'"> ';
 			$htmltext = $langs->trans("EventOrganizationDescriptionLong");
 			print '<label for="usage_organize_event">'.$form->textwithpicto($langs->trans("ManageOrganizeEvent"), $htmltext).'</label>';
 			print '<script>';
@@ -707,16 +725,16 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Thirdparty
 	if (isModEnabled('societe')) {
 		print '<tr><td>';
-		print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '<span class="fieldrequired">');
+		print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '<span class="fieldrequired">');
 		print $langs->trans("ThirdParty");
-		print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '</span>');
+		print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '</span>');
 		print '</td><td class="maxwidthonsmartphone">';
 		$filter = '';
-		if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) {
+		if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
 			$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 		}
 		$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
-		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile)) {
+		if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
 		} else {
@@ -747,10 +765,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	// Visibility
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td class="maxwidthonsmartphone">';
 	$array = array();
-	if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) {
+	if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
 		$array[0] = $langs->trans("PrivateProject");
 	}
-	if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) {
+	if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
 		$array[1] = $langs->trans("SharedProject");
 	}
 
@@ -769,7 +787,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	}
 	print '</td></tr>';
 
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		// Opportunity status
 		print '<tr class="classuseopportunity"><td><span class="fieldrequired">'.$langs->trans("OpportunityStatus").'</span></td>';
 		print '<td class="maxwidthonsmartphone">';
@@ -963,20 +981,32 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Status
 		print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td><td>';
 		print '<select class="flat" name="status" id="status">';
-		foreach ($object->statuts_short as $key => $val) {
+		$statuses = $object->labelStatusShort;
+		if (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_PROJECT')) {
+			unset($statuses[$object::STATUS_DRAFT]);
+		}
+		foreach ($statuses as $key => $val) {
 			print '<option value="'.$key.'"'.((GETPOSTISSET('status') ? GETPOST('status') : $object->statut) == $key ? ' selected="selected"' : '').'>'.$langs->trans($val).'</option>';
 		}
 		print '</select>';
 		print ajax_combobox('status');
 		print '</td></tr>';
 
+		// Parent
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			print '<tr><td>'.$langs->trans("Parent").'</td><td class="maxwidthonsmartphone">';
+			print img_picto('', 'project', 'class="pictofixedwidth"');
+			$formproject->select_projects(-1, $object->fk_project, 'fk_project', 64, 0, 1, 1, 0, 0, 0, '', 0, 0, '', '', '');
+			print '</td></tr>';
+		}
+
 		// Usage
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
 			print $langs->trans("Usage");
 			print '</td>';
 			print '<td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'> ';
 				$htmltext = $langs->trans("ProjectFollowOpportunity");
 				print '<label for="usage_opportunity">'.$form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext).'</label>';
@@ -1002,7 +1032,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '</script>';
 				print '<br>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 				print '<input type="checkbox" id="usage_task" name="usage_task"' . (GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')) . '> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
 				print '<label for="usage_task">'.$form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext).'</label>';
@@ -1028,7 +1058,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 				print '</script>';
 				print '<br>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 				print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"' . (GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')) . '> ';
 				$htmltext = $langs->trans("ProjectBillTimeDescription");
 				print '<label for="usage_bill_time">'.$form->textwithpicto($langs->trans("BillTime"), $htmltext).'</label>';
@@ -1086,17 +1116,17 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Thirdparty
 		if (isModEnabled('societe')) {
 			print '<tr><td>';
-			print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '<span class="fieldrequired">');
+			print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '<span class="fieldrequired">');
 			print $langs->trans("ThirdParty");
-			print (empty($conf->global->PROJECT_THIRDPARTY_REQUIRED) ? '' : '</span>');
+			print(!getDolGlobalString('PROJECT_THIRDPARTY_REQUIRED') ? '' : '</span>');
 			print '</td><td>';
 			$filter = '';
-			if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) {
+			if (getDolGlobalString('PROJECT_FILTER_FOR_THIRDPARTY_LIST')) {
 				$filter = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
 			}
 			$text = img_picto('', 'company', 'class="pictofixedwidth"');
-			$text .= $form->select_company($object->thirdparty->id, 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
-			if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile)) {
+			$text .= $form->select_company(!empty($object->thirdparty->id) ? $object->thirdparty->id : "", 'socid', $filter, 'None', 1, 0, array(), 0, 'minwidth300');
+			if (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') && empty($conf->dol_use_jmobile)) {
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
 			} else {
@@ -1108,10 +1138,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Visibility
 		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 		$array = array();
-		if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) {
+		if (!getDolGlobalString('PROJECT_DISABLE_PRIVATE_PROJECT')) {
 			$array[0] = $langs->trans("PrivateProject");
 		}
-		if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) {
+		if (!getDolGlobalString('PROJECT_DISABLE_PUBLIC_PROJECT')) {
 			$array[1] = $langs->trans("SharedProject");
 		}
 
@@ -1130,7 +1160,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		}
 		print '</td></tr>';
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
 			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
@@ -1139,7 +1169,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'minwidth150 inline-block valignmiddle', 1, 1);
 
 			// Opportunity probability
-			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+			print ' <input class="width50 right" type="text" id="opp_percent" name="opp_percent" title="'.dol_escape_htmltag($langs->trans("OpportunityProbability")).'" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ? vatrate($object->opp_percent) : '')).'"> %';
 			print '<span id="oldopppercent" class="opacitymedium"></span>';
 			print '</div>';
 
@@ -1205,6 +1235,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		// Tags-Categories
 		if (isModEnabled('categorie')) {
+			$arrayselected = array();
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
@@ -1246,10 +1277,18 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
 			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'project');
 		}
+		// Parent
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			if (!empty($object->fk_project) && $object->fk_project) {
+				$parent = new Project($db);
+				$parent->fetch($object->fk_project);
+				$morehtmlref .= $langs->trans("Child of").' '.$parent->getNomUrl(1, 'project').' '.$parent->title;
+			}
+		}
 		$morehtmlref .= '</div>';
 
 		// Define a complementary filter for search of next/prev ref.
-		if (empty($user->rights->projet->all->lire)) {
+		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
 			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? join(',', array_keys($objectsListId)) : '0').")";
 		}
@@ -1263,24 +1302,24 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<table class="border tableforfield centpercent">';
 
 		// Usage
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) || empty($conf->global->PROJECT_HIDE_TASKS) || isModEnabled('eventorganization')) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJECT_HIDE_TASKS') || isModEnabled('eventorganization')) {
 			print '<tr><td class="tdtop">';
 			print $langs->trans("Usage");
 			print '</td>';
 			print '<td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'> ';
 				$htmltext = $langs->trans("ProjectFollowOpportunity");
 				print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
 				print '<br>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+			if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 				print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'> ';
 				$htmltext = $langs->trans("ProjectFollowTasks");
 				print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 				print '<br>';
 			}
-			if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT)) {
+			if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
 				print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'> ';
 				$htmltext = $langs->trans("ProjectBillTimeDescription");
 				print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
@@ -1306,7 +1345,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		}
 		print '</td></tr>';
 
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && !empty($object->usage_opportunity)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 			// Opportunity status
 			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
 			$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
@@ -1342,10 +1381,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		// Date start - end project
 		print '<tr><td>'.$langs->trans("Dates").'</td><td>';
 		$start = dol_print_date($object->date_start, 'day');
-		print ($start ? $start : '?');
+		print($start ? $start : '?');
 		$end = dol_print_date($object->date_end, 'day');
 		print ' <span class="opacitymedium">-</span> ';
-		print ($end ? $end : '?');
+		print($end ? $end : '?');
 		if ($object->hasDelay()) {
 			print img_warning("Late");
 		}
@@ -1416,10 +1455,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
         </script>';
 
 	// Change probability from status
-	if (!empty($conf->use_javascript_ajax) && !empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+	if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		// Default value to close or not when we set opp to 'WON'.
 		$defaultcheckedwhenoppclose = 1;
-		if (empty($conf->global->PROJECT_HIDE_TASKS)) {
+		if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 			$defaultcheckedwhenoppclose = 0;
 		}
 
@@ -1490,7 +1529,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 	print '<div class="tabsAction">';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-																							  // modified by hook
+	// modified by hook
 	if (empty($reshook)) {
 		if ($action != "edit" && $action != 'presend') {
 			// Create event
@@ -1551,7 +1590,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Close
-			if ($object->statut == Project::STATUS_VALIDATED && $user->rights->projet->creer) {
+			if ($object->statut == Project::STATUS_VALIDATED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('Close'), 'default', $_SERVER["PHP_SELF"].'?action=close&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1560,7 +1599,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Reopen
-			if ($object->statut == Project::STATUS_CLOSED && $user->rights->projet->creer) {
+			if ($object->statut == Project::STATUS_CLOSED && $user->hasRight('projet', 'creer')) {
 				if ($userWrite > 0) {
 					print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&amp;token='.newToken().'&amp;id='.$object->id, '');
 				} else {
@@ -1569,7 +1608,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 			}
 
 			// Buttons Create
-			if (empty($conf->global->PROJECT_HIDE_CREATE_OBJECT_BUTTON)) {
+			if (!getDolGlobalString('PROJECT_HIDE_CREATE_OBJECT_BUTTON')) {
 				$arrayforbutaction = array(
 					10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					20 => array('lang'=>'orders', 'enabled'=>isModEnabled("commande"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
@@ -1585,7 +1624,7 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);
 
-				print dolGetButtonAction($langs->trans("Create"), '', 'default', $arrayforbutaction, '', 1, $params);
+				print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayforbutaction, '', 1, $params);
 			}
 
 			// Clone
@@ -1618,6 +1657,41 @@ if ($action == 'create' && $user->rights->projet->creer) {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
+		if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
+			/*
+			 * Sub-projects (children)
+			 */
+			$children = $object->getChildren();
+			if ($children) {
+				print '<table class="centpercent notopnoleftnoright table-fiche-title">';
+				print '<tr class="titre"><td class="nobordernopadding valignmiddle col-title">';
+				print '<div class="titre inline-block">'.$langs->trans('Sub-projects').'</div>';
+				print '</td></tr></table>';
+
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="centpercent noborder'.($morecss ? ' '.$morecss : '').'">';
+				print '<tr class="liste_titre">';
+				print getTitleFieldOfList('Ref', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print getTitleFieldOfList('Title', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print getTitleFieldOfList('Status', 0, $_SERVER["PHP_SELF"], '', '', '', '', '', '', '', 1);
+				print '</tr>';
+				print "\n";
+
+				$subproject = new Project($db);
+				foreach ($children as $child) {
+					$subproject->fetch($child->rowid);
+					print '<tr class="oddeven">';
+					print '<td class="nowraponall">'.$subproject->getNomUrl(1, 'project').'</td>';
+					print '<td class="nowraponall tdoverflowmax125">'.$child->title.'</td>';
+					print '<td class="nowraponall">'.$subproject->getLibStatut(5).'</td>';
+					print '</tr>';
+				}
+
+				print '</table>';
+				print '</div>';
+			}
+		}
+
 		/*
 		 * Generated documents
 		 */
@@ -1633,7 +1707,10 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 		$MAXEVENT = 10;
 
-		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id);
+		$morehtmlcenter = '<div class="nowraponall">';
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/projet/messaging.php?id='.$object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullList'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/projet/agenda.php?id='.$object->id);
+		$morehtmlcenter .= '</div>';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';

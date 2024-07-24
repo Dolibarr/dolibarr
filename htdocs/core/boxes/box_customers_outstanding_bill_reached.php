@@ -61,7 +61,7 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
@@ -93,12 +93,12 @@ class box_customers_outstanding_bill_reached extends ModeleBoxes
 			$sql .= ", s.outstanding_limit";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

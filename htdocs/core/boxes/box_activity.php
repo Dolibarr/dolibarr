@@ -62,10 +62,11 @@ class box_activity extends ModeleBoxes
 		// FIXME: Pb into some status
 		$this->enabled = ($conf->global->MAIN_FEATURES_LEVEL); // Not enabled by default due to bugs (see previous comments)
 
-		$this->hidden = !((isModEnabled('facture') && $user->hasRight('facture', 'read'))
+		$this->hidden = !(
+			(isModEnabled('facture') && $user->hasRight('facture', 'read'))
 			|| (isModEnabled('commande') && $user->hasRight('commande', 'read'))
 			|| (isModEnabled('propal') && $user->hasRight('propal', 'read'))
-			);
+		);
 	}
 
 	/**
@@ -90,7 +91,7 @@ class box_activity extends ModeleBoxes
 		$savMAIN_ACTIVATE_FILECACHE = getDolGlobalInt('MAIN_ACTIVATE_FILECACHE');
 		$conf->global->MAIN_ACTIVATE_FILECACHE = 1;
 
-		if (!empty($conf->global->MAIN_BOX_ACTIVITY_DURATION)) {
+		if (getDolGlobalString('MAIN_BOX_ACTIVITY_DURATION')) {
 			$nbofperiod = $conf->global->MAIN_BOX_ACTIVITY_DURATION;
 		}
 
@@ -113,13 +114,13 @@ class box_activity extends ModeleBoxes
 
 			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")";
 			$sql .= " AND p.fk_soc = s.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -202,13 +203,13 @@ class box_activity extends ModeleBoxes
 
 			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 			$sql .= " AND c.fk_soc = s.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -287,12 +288,12 @@ class box_activity extends ModeleBoxes
 			$data = array();
 			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ")";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {

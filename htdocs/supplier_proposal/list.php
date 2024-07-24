@@ -56,12 +56,12 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'supplierproposallist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierproposallist';
 $mode = GETPOST('mode', 'alpha');
 
 $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
-$search_ref = GETPOST('sf_ref') ?GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
+$search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_societe_alias = GETPOST('search_societe_alias', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -101,12 +101,12 @@ $object_statut = $db->escape(GETPOST('supplier_proposal_statut'));
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 
 $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -197,6 +197,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
 
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
@@ -310,9 +314,6 @@ $sql .= ' sp.rowid, sp.note_public, sp.note_private, sp.total_ht, sp.total_tva, 
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_update,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " sc.fk_soc, sc.fk_user,";
-}
 $sql .= " u.firstname, u.lastname, u.photo, u.login, u.statut as ustatus, u.admin, u.employee, u.email as uemail";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -337,19 +338,12 @@ if ($sall) {
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sp.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = sp.fk_projet";
-// We'll need this table joined to the select in order to filter by sale
-if ($search_sale > 0 || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as c";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
 $sql .= ' WHERE sp.fk_soc = s.rowid';
 $sql .= ' AND sp.entity IN ('.getEntity('supplier_proposal').')';
-if (empty($user->rights->societe->client->voir) && !$socid) { //restriction
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
 if ($search_town) {
 	$sql .= natural_search('s.town', $search_town);
 }
@@ -408,7 +402,7 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
-if ($socid) {
+if ($socid > 0) {
 	$sql .= ' AND s.rowid = '.((int) $socid);
 }
 if ($search_status >= 0 && $search_status != '') {
@@ -426,11 +420,20 @@ if ($search_date_valid_start) {
 if ($search_date_valid_end) {
 	$sql .= " AND sp.date_valid <= '".$db->idate($search_date_valid_end)."'";
 }
+/*
 if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}
+}*/
 if ($search_user > 0) {
 	$sql .= " AND c.fk_c_type_contact = tc.rowid AND tc.element='supplier_proposal' AND tc.source='internal' AND c.element_id = sp.rowid AND c.fk_socpeople = ".((int) $search_user);
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
@@ -502,7 +505,7 @@ if ($resql) {
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
-	if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall) {
+	if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sall) {
 		$obj = $db->fetch_object($resql);
 
 		$id = $obj->rowid;
@@ -628,7 +631,7 @@ if ($resql) {
 		'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-	if ($user->rights->supplier_proposal->supprimer) {
+	if ($user->hasRight('supplier_proposal', 'supprimer')) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	}
 	if (in_array($massaction, array('presend', 'predelete'))) {
@@ -643,7 +646,8 @@ if ($resql) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url, '', $user->rights->supplier_proposal->creer);
+	$newcardbutton .= dolGetButtonTitleSeparator();
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAskPrice'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('supplier_proposal', 'creer'));
 
 	// Fields title search
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -677,7 +681,7 @@ if ($resql) {
 	$moreforfilter = '';
 
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$langs->load("commercial");
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('ThirdPartiesOfSaleRepresentative');
@@ -685,7 +689,7 @@ if ($resql) {
 		$moreforfilter .= '</div>';
 	}
 	// If the user can view prospects other than his'
-	if ($user->rights->user->user->lire) {
+	if ($user->hasRight('user', 'user', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('LinkedToSpecificUsers');
 		$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
@@ -767,16 +771,16 @@ if ($resql) {
 	// Company type
 	if (!empty($arrayfields['typent.code']['checked'])) {
 		print '<td class="liste_titre maxwidthonsmartphone center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
+		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT), '', 1);
 		print '</td>';
 	}
 	// Date
 	if (!empty($arrayfields['sp.date_valid']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_valid_start ? $search_date_valid_start : -1, 'search_date_valid_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_valid_end ? $search_date_valid_end : -1, 'search_date_valid_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -784,10 +788,10 @@ if ($resql) {
 	// Date
 	if (!empty($arrayfields['sp.date_livraison']['checked'])) {
 		print '<td class="liste_titre center">';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
-		print '<div class="nowrap">';
+		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 		print '</div>';
 		print '</td>';
@@ -865,7 +869,7 @@ if ($resql) {
 	}
 	// Status
 	if (!empty($arrayfields['sp.fk_statut']['checked'])) {
-		print '<td class="liste_titre right parentonrightofpage">';
+		print '<td class="liste_titre center parentonrightofpage">';
 		$formpropal->selectProposalStatus($search_status, 1, 0, 1, 'supplier', 'search_status', 'search_status width100 onrightofpage');
 		print '</td>';
 	}
@@ -979,7 +983,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['sp.fk_statut']['checked'])) {
-		print_liste_field_titre($arrayfields['sp.fk_statut']['label'], $_SERVER["PHP_SELF"], "sp.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+		print_liste_field_titre($arrayfields['sp.fk_statut']['label'], $_SERVER["PHP_SELF"], "sp.fk_statut", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	// Action
@@ -1270,7 +1274,7 @@ if ($resql) {
 			print $hookmanager->resPrint;
 			// Date creation
 			if (!empty($arrayfields['sp.datec']['checked'])) {
-				print '<td class="center nowrap">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -1279,7 +1283,7 @@ if ($resql) {
 			}
 			// Date modification
 			if (!empty($arrayfields['sp.tms']['checked'])) {
-				print '<td class="center nowrap">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 				print '</td>';
 				if (!$i) {
@@ -1288,7 +1292,7 @@ if ($resql) {
 			}
 			// Status
 			if (!empty($arrayfields['sp.fk_statut']['checked'])) {
-				print '<td class="right">'.$objectstatic->getLibStatut(5)."</td>\n";
+				print '<td class="center">'.$objectstatic->getLibStatut(5)."</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}

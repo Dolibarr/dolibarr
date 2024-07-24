@@ -59,10 +59,10 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 $coldisplay = 0;
 ?>
-<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE htm/core/tpl/objectline_view.tpl.php -->
 <tr  id="row-<?php print $line->id?>" class="drag drop oddeven" <?php print $domData; ?> >
-<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print ($i + 1); ?></span></td>
+<?php if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) { ?>
+	<td class="linecolnum center"><span class="opacitymedium"><?php $coldisplay++; ?><?php print($i + 1); ?></span></td>
 <?php } ?>
 	<td class="linecollabel"><?php $coldisplay++; ?><div id="line_<?php print $line->id; ?>"></div>
 <?php
@@ -70,9 +70,15 @@ if ($line->fk_skill > 0) {
 	$skill = new Skill($this->db);
 	$resSkill = $skill->fetch($line->fk_skill);
 	if ($resSkill > 0) {
-		print Skill::typeCodeToLabel($skill->skill_type).'</td>';
-		print '<td>'.$skill->getNomUrl(1);
+		print Skill::typeCodeToLabel($skill->skill_type);
 	}
+}
+?>
+	</td>
+	<td>
+<?php
+if ($line->fk_skill > 0) {
+	print $skill->getNomUrl(1);
 }
 ?>
 	</td>
@@ -82,18 +88,18 @@ if ($line->fk_skill > 0) {
 
 // Add description in form
 if ($line->fk_skill > 0 && $resSkill > 0) {
-	print $skill->description;
+	//print $skill->description;
 }
 
-print '</td>';
-
 ?>
+	</td>
 	<td class="linecolrank nowrap right"><?php $coldisplay++; ?>
 
 <?php
-global $permissiontoadd;
+	global $permissiontoadd;
 
-		print displayRankInfos($line->rankorder, $line->fk_skill, 'TNote', ($this->status == 0 && $permissiontoadd) ? 'edit' : 'view');
+	// Show evaluation boxes
+	print displayRankInfos($line->rankorder, $line->fk_skill, 'TNote', ($this->status == 0 && $permissiontoadd) ? 'edit' : 'view');
 
 ?>
 
@@ -102,14 +108,6 @@ global $permissiontoadd;
 <?php
 
 if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlines') {
-	$situationinvoicelinewithparent = 0;
-	if ($line->fk_prev_id != null && in_array($object->element, array('facture', 'facturedet'))) {
-		if (!empty($object->situation_cycle_ref)) {
-			// Set constant to disallow editing during a situation cycle
-			$situationinvoicelinewithparent = 1;
-		}
-	}
-
 	print '<td class="linecoledit center">';
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
@@ -119,32 +117,24 @@ if ($this->statut == 0 && !empty($object_rights->creer) && $action != 'selectlin
 	}
 	print '</td>';
 
-	/*print '<td class="linecoldelete center">';
-	$coldisplay++;
-	if (!$situationinvoicelinewithparent && empty($disableremove)) { // For situation invoice, deletion is not possible if there is a parent company.
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
-		print img_delete();
-		print '</a>';
-	}
-	print '</td>';
-
+	/*
 	if ($num > 1 && $conf->browser->layout != 'phone' && ($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disablemove)) {
-		print '<td class="linecolmove tdlineupdown center">';
-		$coldisplay++;
-		if ($i > 0) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
-			<?php print img_up('default', 0, 'imgupforline'); ?>
-			</a>
-		<?php }
-		if ($i < $num - 1) { ?>
-			<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
-			<?php print img_down('default', 0, 'imgdownforline'); ?>
-			</a>
-		<?php }
-		print '</td>';
+	print '<td class="linecolmove tdlineupdown center">';
+	$coldisplay++;
+	if ($i > 0) { ?>
+		<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=up&amp;rowid='.$line->id; ?>">
+		<?php print img_up('default', 0, 'imgupforline'); ?>
+		</a>
+	<?php }
+	if ($i < $num - 1) { ?>
+		<a class="lineupdown" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id; ?>">
+		<?php print img_down('default', 0, 'imgdownforline'); ?>
+		</a>
+	<?php }
+	print '</td>';
 	} else {
-		print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
-		$coldisplay++;
+	print '<td '.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'></td>';
+	$coldisplay++;
 	}*/
 } else {
 	//print '<td colspan="3"></td>';

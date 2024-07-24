@@ -62,7 +62,7 @@ $permissionnote = $user->rights->deplacement->creer; // Used by the include of a
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
-if ($action == 'validate' && $user->rights->deplacement->creer) {
+if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 	$object->fetch($id);
 	if ($object->statut == Deplacement::STATUS_DRAFT) {
 		$result = $object->setStatut(1);
@@ -73,7 +73,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'classifyrefunded' && $user->rights->deplacement->creer) {
+} elseif ($action == 'classifyrefunded' && $user->hasRight('deplacement', 'creer')) {
 	$object->fetch($id);
 	if ($object->statut == Deplacement::STATUS_VALIDATED) {
 		$result = $object->setStatut(Deplacement::STATUS_REFUNDED);
@@ -84,7 +84,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer) {
+} elseif ($action == 'confirm_delete' && $confirm == "yes" && $user->hasRight('deplacement', 'supprimer')) {
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: index.php");
@@ -92,7 +92,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add' && $user->rights->deplacement->creer) {
+} elseif ($action == 'add' && $user->hasRight('deplacement', 'creer')) {
 	if (!GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
@@ -135,7 +135,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 		header("Location: index.php");
 		exit;
 	}
-} elseif ($action == 'update' && $user->rights->deplacement->creer) {
+} elseif ($action == 'update' && $user->hasRight('deplacement', 'creer')) {
 	// Update record
 	if (!GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -160,14 +160,14 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 		exit;
 	}
-} elseif ($action == 'classin' && $user->rights->deplacement->creer) {
+} elseif ($action == 'classin' && $user->hasRight('deplacement', 'creer')) {
 	// Set into a project
 	$object->fetch($id);
 	$result = $object->setProject(GETPOST('projectid', 'int'));
 	if ($result < 0) {
 		dol_print_error($db, $object->error);
 	}
-} elseif ($action == 'setdated' && $user->rights->deplacement->creer) {
+} elseif ($action == 'setdated' && $user->hasRight('deplacement', 'creer')) {
 	// Set fields
 	$dated = dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));
 	$object->fetch($id);
@@ -175,7 +175,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer) {
 	if ($result < 0) {
 		dol_print_error($db, $object->error);
 	}
-} elseif ($action == 'setkm' && $user->rights->deplacement->creer) {
+} elseif ($action == 'setkm' && $user->hasRight('deplacement', 'creer')) {
 	$object->fetch($id);
 	$result = $object->setValueFrom('km', GETPOST('km', 'int'), '', null, 'text', '', $user, 'DEPLACEMENT_MODIFY');
 	if ($result < 0) {
@@ -238,7 +238,7 @@ if ($action == 'create') {
 	print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 
-	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_8, '90%');
+	$doleditor = new DolEditor('note_public', GETPOST('note_public', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_8, '90%');
 	print $doleditor->Create(1);
 
 	print '</td></tr>';
@@ -249,7 +249,7 @@ if ($action == 'create') {
 		print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 		print '<td>';
 
-		$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_8, '90%');
+		$doleditor = new DolEditor('note_private', GETPOST('note_private', 'restricthtml'), '', 200, 'dolibarr_notes', 'In', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_8, '90%');
 		print $doleditor->Create(1);
 
 		print '</td></tr>';
@@ -276,7 +276,7 @@ if ($action == 'create') {
 
 		print dol_get_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
 
-		if ($action == 'edit' && $user->rights->deplacement->creer) {
+		if ($action == 'edit' && $user->hasRight('deplacement', 'creer')) {
 			//WYSIWYG Editor
 			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -301,13 +301,13 @@ if ($action == 'create') {
 			// Type
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-			$form->select_type_fees(GETPOST('type', 'int') ?GETPOST('type', 'int') : $object->type, 'type', 0);
+			$form->select_type_fees(GETPOST('type', 'int') ? GETPOST('type', 'int') : $object->type, 'type', 0);
 			print '</td></tr>';
 
 			// Who
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-			print $form->select_dolusers(GETPOST('fk_user', 'int') ?GETPOST('fk_user', 'int') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers(GETPOST('fk_user', 'int') ? GETPOST('fk_user', 'int') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 			print '</td></tr>';
 
 			// Date
@@ -330,7 +330,7 @@ if ($action == 'create') {
 			print '<tr><td class="tdtop">'.$langs->trans("NotePublic").'</td>';
 			print '<td>';
 
-			$doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PUBLIC) ? 0 : 1, ROWS_8, '90%');
+			$doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_8, '90%');
 			print $doleditor->Create(1);
 
 			print "</td></tr>";
@@ -340,7 +340,7 @@ if ($action == 'create') {
 				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td>';
 				print '<td>';
 
-				$doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, empty($conf->global->FCKEDITOR_ENABLE_NOTE_PRIVATE) ? 0 : 1, ROWS_8, '90%');
+				$doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_8, '90%');
 				print $doleditor->Create(1);
 
 				print "</td></tr>";
@@ -388,9 +388,9 @@ if ($action == 'create') {
 
 			// Type
 			print '<tr><td>';
-			print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $user->rights->deplacement->creer, 'select:types_fees');
+			print $form->editfieldkey("Type", 'type', $langs->trans($object->type), $object, $user->hasRight('deplacement', 'creer'), 'select:types_fees');
 			print '</td><td>';
-			print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $user->rights->deplacement->creer, 'select:types_fees');
+			print $form->editfieldval("Type", 'type', $form->cache_types_fees[$object->type], $object, $user->hasRight('deplacement', 'creer'), 'select:types_fees');
 			print '</td></tr>';
 
 			// Who
@@ -402,16 +402,16 @@ if ($action == 'create') {
 
 			// Date
 			print '<tr><td>';
-			print $form->editfieldkey("Date", 'dated', $object->date, $object, $user->rights->deplacement->creer, 'datepicker');
+			print $form->editfieldkey("Date", 'dated', $object->date, $object, $user->hasRight('deplacement', 'creer'), 'datepicker');
 			print '</td><td>';
-			print $form->editfieldval("Date", 'dated', $object->date, $object, $user->rights->deplacement->creer, 'datepicker');
+			print $form->editfieldval("Date", 'dated', $object->date, $object, $user->hasRight('deplacement', 'creer'), 'datepicker');
 			print '</td></tr>';
 
 			// Km/Price
 			print '<tr><td class="tdtop">';
-			print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $user->rights->deplacement->creer, 'numeric:6');
+			print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
 			print '</td><td>';
-			print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $user->rights->deplacement->creer, 'numeric:6');
+			print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
 			print "</td></tr>";
 
 			// Where
@@ -431,7 +431,7 @@ if ($action == 'create') {
 				print '<table class="nobordernopadding" width="100%"><tr><td>';
 				print $langs->trans('Project');
 				print '</td>';
-				if ($action != 'classify' && $user->rights->deplacement->creer) {
+				if ($action != 'classify' && $user->hasRight('deplacement', 'creer')) {
 					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classify&token='.newToken().'&id='.$object->id.'">';
 					print img_edit($langs->trans('SetProject'), 1);
 					print '</a></td>';
@@ -469,7 +469,7 @@ if ($action == 'create') {
 			print '<div class="tabsAction">';
 
 			if ($object->statut < Deplacement::STATUS_REFUNDED) { 	// if not refunded
-				if ($user->rights->deplacement->creer) {
+				if ($user->hasRight('deplacement', 'creer')) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$id.'">'.$langs->trans('Modify').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Modify').'</a>';
@@ -477,7 +477,7 @@ if ($action == 'create') {
 			}
 
 			if ($object->statut == Deplacement::STATUS_DRAFT) { 	// if draft
-				if ($user->rights->deplacement->creer) {
+				if ($user->hasRight('deplacement', 'creer')) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$id.'">'.$langs->trans('Validate').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('Validate').'</a>';
@@ -485,7 +485,7 @@ if ($action == 'create') {
 			}
 
 			if ($object->statut == Deplacement::STATUS_VALIDATED) { 	// if validated
-				if ($user->rights->deplacement->creer) {
+				if ($user->hasRight('deplacement', 'creer')) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=classifyrefunded&token='.newToken().'&id='.$id.'">'.$langs->trans('ClassifyRefunded').'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans('ClassifyRefunded').'</a>';

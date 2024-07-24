@@ -55,7 +55,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -174,7 +174,8 @@ function getVersions($authentication)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
@@ -216,7 +217,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	}
 
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 
 	// Properties of doc
@@ -236,7 +238,8 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	// Check parameters
 	if (!$error && (!$file || !$modulepart)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter file and modulepart must be both provided.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter file and modulepart must be both provided.";
 	}
 
 	if (!$error) {

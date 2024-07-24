@@ -26,19 +26,18 @@ ModuleKnowledgeManagementDesc=Xestionar a Xestión do Coñecemento (XC) ou  Help
 # Admin page
 #
 KnowledgeManagementSetup = Configuración do Sistema de Xestión do Coñecemento
-Settings = Configuracións
 KnowledgeManagementSetupPage = Páxina de configuración do Sistema de Xestión do Coñecemento
 
 
 #
 # About page
 #
-About = Acerca de
 KnowledgeManagementAbout = Sobre a Xestión do Coñécemento
 KnowledgeManagementAboutPage = Páxina sobre a Xestión do Coñecemento
 
 KnowledgeManagementArea = Xestión do Coñecemento
 MenuKnowledgeRecord = Base de Coñecemento
+MenuKnowledgeRecordShort = Base de Coñecemento
 ListKnowledgeRecord = Listaxe de artígos
 NewKnowledgeRecord = Novo artigo
 ValidateReply = Validar a solución
@@ -47,8 +46,14 @@ KnowledgeRecord = Artigo
 KnowledgeRecordExtraFields = Campos extras para Artigos
 GroupOfTicket=Grupo de tickets
 YouCanLinkArticleToATicketCategory=Pode ligar o artigo a un grupo de entradas (polo que o artigo destacará en calquera entrada deste grupo)
-SuggestedForTicketsInGroup=Suxerido para tickes cando o grupo é
+SuggestedForTicketsInGroup=Suxerido para a creación de tickets
 
 SetObsolete=Establécese como obsoleto
 ConfirmCloseKM=Está certo de querer confirmar o peche deste artigo como obsoleto?
 ConfirmReopenKM=Está certo de querer restaurar este artigo ao estado "Validado"?
+BoxLastKnowledgerecordDescription=Últimos  %s artigos
+BoxLastKnowledgerecord=Últimos artigos
+BoxLastKnowledgerecordContent=Últimos artigos
+BoxLastKnowledgerecordModifiedContent=Últimos artigos modificados
+BoxLastModifiedKnowledgerecordDescription=Últimos  %s artigos modificados
+BoxLastModifiedKnowledgerecord=Últimos artigos modificados

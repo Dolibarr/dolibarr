@@ -185,7 +185,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = GETPOST("attachment", 'alpha') ?true:false;
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 	$attachment = false;
 }
 
@@ -209,20 +209,17 @@ $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
 
-// Find the subdirectory name as the reference
-$refname = basename(dirname($original_file)."/");
-
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
 }
 
 // Check security and set return info with full path of file
-$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, $refname);
+$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $user, '');
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($fullpath_original_file.' '.$original_file.' '.$refname.' '.$accessallowed);exit;
+//var_dump($fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
@@ -275,14 +272,14 @@ $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // Ne
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($fullpath_original_file_osencoded)) {
 	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print "ErrorFileDoesNotExists: ".$original_file;
+	print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 	exit;
 }
 
 // Hooks
 $hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
-	'entity' => $entity, 'refname' => $refname, 'fullpath_original_file' => $fullpath_original_file,
+	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
 $object = new stdClass();
 $reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
@@ -293,6 +290,7 @@ if ($reshook < 0) {
 	exit;
 }
 
+
 // Permissions are ok and file found, so we return it
 top_httphead($type);
 header('Content-Description: File Transfer');
@@ -300,6 +298,7 @@ if ($encoding) {
 	header('Content-Encoding: '.$encoding);
 }
 // Add MIME Content-Disposition from RFC 2183 (inline=automatically displayed, attachment=need user action to open)
+
 if ($attachment) {
 	header('Content-Disposition: attachment; filename="'.$filename.'"');
 } else {
@@ -311,7 +310,8 @@ header('Pragma: public');
 $readfile = true;
 
 // on view document, can output images with good orientation according to exif infos
-if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_format_supported($fullpath_original_file_osencoded) == 1) {
+// TODO Why this on document.php and not in viewimage.php ?
+if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
 	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
 	$readfile = !$imgres;
 }

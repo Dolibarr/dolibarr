@@ -34,8 +34,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 /**
  *  Description and activation class for module datapolicy
  */
-class modDataPolicy extends DolibarrModules {
-
+class modDataPolicy extends DolibarrModules
+{
 	// @codingStandardsIgnoreEnd
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
@@ -131,7 +131,7 @@ class modDataPolicy extends DolibarrModules {
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
-		$country = explode(":", empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) ? '' : $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+		$country = explode(":", !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') ? '' : $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 
 		// Some keys to add into the overwriting translation tables
 		/* $this->overwrite_translation = array(

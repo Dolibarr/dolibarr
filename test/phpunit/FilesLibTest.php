@@ -469,7 +469,9 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		// Test compression of a directory
 		// $dirout is $conf->admin->dir_temp.'/testdirgz'
 		$excludefiles = '/(\.back|\.old|\.log|documents[\/\\\]admin[\/\\\]documents[\/\\\])/i';
-		if (preg_match($excludefiles, 'a/temp/b')) { echo '----- Regex OK -----'."\n"; }
+		if (preg_match($excludefiles, 'a/temp/b')) {
+			echo '----- Regex OK -----'."\n";
+		}
 		$result=dol_compress_dir($dirout, $conf->admin->dir_temp.'/testcompressdirzip.zip', 'zip', $excludefiles);
 		print __METHOD__." dol_compress_dir result=".$result."\n";
 		print join(', ', $conf->logbuffer);

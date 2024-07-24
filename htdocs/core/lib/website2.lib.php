@@ -98,12 +98,14 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		dolChmod($filealiassub);
 	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		// Save also alias into all language subdirectories if it is a main language
-		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
+		if (!getDolGlobalString('WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR') && !empty($object->otherlang)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
 				// Avoid to erase main alias file if $sublang is empty string
-				if (empty(trim($sublang))) continue;
+				if (empty(trim($sublang))) {
+					continue;
+				}
 				$filealiassub = $dirname.'/'.$sublang.'/'.$filename;
 
 				$aliascontent = '<?php'."\n";
@@ -121,7 +123,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		}
 	}
 
-	return ($result ?true:false);
+	return ($result ? true : false);
 }
 
 
@@ -176,7 +178,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent .= "ob_start();\n";
 	$tplcontent .= "// END PHP ?>\n";
-	if (!empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5)) {
+	if (getDolGlobalString('WEBSITE_FORCE_DOCTYPE_HTML5')) {
 		$tplcontent .= "<!DOCTYPE html>\n";
 	}
 	$tplcontent .= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"' : '').'>'."\n";
@@ -248,7 +250,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	// Add js
 	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
 	$tplcontent .= '<!-- Include link to JS file -->'."\n";
-	$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php"></script>'."\n";
+	$tplcontent .= '<script nonce="'.getNonce().'" async src="/javascript.js.php?website=<?php echo $websitekey; ?>"></script>'."\n";
 	// Add headers
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent .= '<?php if (file_exists(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")) include DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html"; ?>'."\n";
@@ -318,11 +320,13 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 
 			// Create a version for sublanguages
 			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
-				if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && is_object($object) && !empty($object->otherlang)) {
+				if (!getDolGlobalString('WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR') && is_object($object) && !empty($object->otherlang)) {
 					$dirname = dirname($fileindex);
 					foreach (explode(',', $object->otherlang) as $sublang) {
 						// Avoid to erase main alias file if $sublang is empty string
-						if (empty(trim($sublang))) continue;
+						if (empty(trim($sublang))) {
+							continue;
+						}
 						$fileindexsub = $dirname.'/'.$sublang.'/index.php';
 
 						// Same indexcontent than previously but with ../ instead of ./ for master and tpl file include/require_once.
@@ -577,7 +581,7 @@ function showWebsiteTemplates(Website $website)
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
 					while (($subdir = readdir($handle)) !== false) {
-						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) <> '.' && substr($subdir, 0, 3) <> 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+						if (is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
 
 							// Disable not stable themes (dir ends with _exp or _dev)
@@ -664,10 +668,10 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 
 	// First check forbidden commands
 	$forbiddenphpcommands = array();
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_EXEC)) {    // If option is not on, we disallow functions to execute commands
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
 		$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
 	}
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_WRITE')) {    // If option is not on, we disallow functions to write files
 		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 	}
 	foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
@@ -679,7 +683,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 	// This char can be used to execute RCE for example using with echo `ls`
 	$forbiddenphpchars = array();
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_DANGEROUS_CHARS)) {    // If option is not on, we disallow functions to execute commands
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS')) {    // If option is not on, we disallow functions to execute commands
 		$forbiddenphpchars = array("`");
 	}
 	foreach ($forbiddenphpchars as $forbiddenphpchar) {
@@ -701,7 +705,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 
 	if ($phpfullcodestringold != $phpfullcodestring) {
-		if (!$error && empty($user->rights->website->writephp)) {
+		if (!$error && !$user->hasRight('website', 'writephp')) {
 			$error++;
 			setEventMessages($langs->trans("NotAllowedToAddDynamicContent"), null, 'errors');
 		}

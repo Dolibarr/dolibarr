@@ -38,12 +38,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $langs->loadLangs(array('companies', 'orders'));
 
 // Get parameters
-$id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
+$id = GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -163,7 +163,7 @@ if ($id > 0 || !empty($ref)) {
 		print yn($object->fournisseur);
 		print '</td></tr>';*/
 
-		if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+		if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 			print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 		}
 
@@ -205,7 +205,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 
 		// additionnal list with adherents of company
-		if (isModEnabled('adherent') && $user->rights->adherent->lire) {
+		if (isModEnabled('adherent') && $user->hasRight('adherent', 'lire')) {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
@@ -216,7 +216,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql .= " d.datefin,";
 			$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql .= " t.libelle as type, t.subscription";
+			$sql .= " t.libelle as type_label, t.subscription";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 			$sql .= " WHERE d.fk_soc = ".((int) $id);
@@ -270,9 +270,9 @@ if ($id > 0 || !empty($ref)) {
 
 						// Lastname
 						print "<td><a href=\"card.php?rowid=$objp->rowid\">";
-						print ((!empty($objp->lastname) || !empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
-						print (((!empty($objp->lastname) || !empty($objp->firstname)) && !empty($companyname)) ? ' / ' : '');
-						print (!empty($companyname) ? dol_trunc($companyname, 32) : '');
+						print((!empty($objp->lastname) || !empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
+						print(((!empty($objp->lastname) || !empty($objp->firstname)) && !empty($companyname)) ? ' / ' : '');
+						print(!empty($companyname) ? dol_trunc($companyname, 32) : '');
 						print "</a></td>\n";
 
 						// Login
@@ -280,8 +280,8 @@ if ($id > 0 || !empty($ref)) {
 
 						// Type
 						$membertypestatic->id = $objp->type_id;
-						$membertypestatic->libelle = $objp->type;
-						$membertypestatic->label = $objp->type;
+						$membertypestatic->libelle = $objp->type_label;	// deprecated
+						$membertypestatic->label = $objp->type_label;
 
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);

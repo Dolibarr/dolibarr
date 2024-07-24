@@ -126,7 +126,9 @@ if ($blogpostfooter === false) {
 
 $db->begin();
 
-$i = 0; $nbimported = 0; $nbalreadyexists = 0;
+$i = 0;
+$nbimported = 0;
+$nbalreadyexists = 0;
 while ($obj = $dbjoomla->fetch_object($resql)) {
 	if ($obj) {
 		$i++;

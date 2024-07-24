@@ -89,7 +89,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'), 1).'<br>';
 print '<br>';
 print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';
@@ -140,7 +140,7 @@ print '<span class="opacitymedium">'.$langs->trans("CIDLookupURL").'</span>';
 print '<br>'.$url;
 print '<br>';
 print '<br>';
-print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (!empty($conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP) ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
+print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -155,7 +155,7 @@ print $form->buttonsSaveCancel("Modify", '');
 print '</form><br><br>';
 
 
-if (!empty($conf->global->CLICKTODIAL_URL)) {
+if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
 	$phonefortest = $mysoc->phone;

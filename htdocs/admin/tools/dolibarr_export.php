@@ -44,7 +44,7 @@ if (!$sortfield) {
 if (empty($page) || $page == -1) {
 	$page = 0;
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
 if (!$user->admin) {
@@ -203,7 +203,7 @@ print '<tr>';
 print '<td class="tdtop nopaddingleftimp">';
 
 print '<div class="centpercent center margintoponly marginbottomonly">';
-print img_picto('', 'setup', 'class="pictofixedwidth"').'<a id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
+print img_picto('', 'setup', 'class="pictofixedwidth"').'<a class="classlink" id="lnk">'.$langs->trans("ShowAdvancedOptions").'...</a>';
 print '</div>';
 
 print '<script type="text/javascript">
@@ -235,7 +235,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<fieldset id="mysql_options">';
 
 	print '<fieldset class="formelementrow"><legend>'.$langs->trans("FullPathToMysqldumpCommand").'</legend>';
-	if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP)) {
+	if (!getDolGlobalString('SYSTEMTOOLS_MYSQLDUMP')) {
 		$fullpathofmysqldump = $db->getPathOfDump();
 	} else {
 		$fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
@@ -246,7 +246,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<br>';
 	print '<fieldset><legend>'.$langs->trans("ExportOptions").'</legend>';
 
-	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+	if (getDolGlobalString('MYSQL_OLD_OPTION_DISABLE_FK')) {
 		print '<div class="formelementrow">';
 		print '<input type="checkbox" name="disable_fk" value="yes" id="checkbox_disable_fk" checked>';
 		print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
@@ -279,8 +279,14 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '</label>';
 	print '<br>';
 
+	print '<input type="checkbox" name="use_force" value="no" id="checkbox_use_force" />';
+	print '<label for="checkbox_use_force">';
+	print $form->textwithpicto($langs->trans('ExportUseForce'), $langs->trans('ExportUseForceHelp'));
+	print '</label>';
+	print '<br>';
+
 	$execmethod = 0;
-	if (!empty($conf->global->MAIN_EXEC_USE_POPEN)) {
+	if (getDolGlobalString('MAIN_EXEC_USE_POPEN')) {
 		$execmethod = $conf->global->MAIN_EXEC_USE_POPEN;
 	}
 	if (empty($execmethod)) {
@@ -361,7 +367,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 	print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
 	print '</div>';
 
-	if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
+	if (getDolGlobalString('MYSQL_OLD_OPTION_DISABLE_FK')) {
 		print '<div class="formelementrow">';
 		print '<input type="checkbox" name="nobin_disable_fk" value="yes" id="checkbox_disable_fk" checked />';
 		print '<label for="checkbox_disable_fk">'.$langs->trans("CommandsToDisableForeignKeysForImport").' '.img_info($langs->trans('CommandsToDisableForeignKeysForImportWarning')).'</label>';
@@ -406,7 +412,7 @@ if (in_array($type, array('pgsql'))) {
 
 
 	print '<fieldset class="formelementrow"><legend>'.$langs->trans("FullPathToPostgreSQLdumpCommand").'</legend>';
-	if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
+	if (!getDolGlobalString('SYSTEMTOOLS_POSTGRESQLDUMP')) {
 		$fullpathofpgdump = $db->getPathOfDump();
 	} else {
 		$fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
@@ -597,7 +603,7 @@ print "</div> 	<!-- end div fichehalfleft -->\n";
 
 print '<div id="backupdatabaseright" class="fichehalfright">';
 
-$filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+$filearray = dol_dir_list($conf->admin->dir_output.'/backup', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'backup/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousDumpFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 
@@ -654,8 +660,7 @@ foreach ($filecompression as $key => $val) {
 		}
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2"'.$checked.'>';
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
-	} else // Disabled export format
-	{
+	} else { // Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'2" disabled>';
 		print ' <label for="'.$val['id'].'2">'.$val['label'].'</label>';
 		print ' <span class="opacitymedium">('.$langs->trans("NotAvailable").')</span>';
@@ -677,7 +682,7 @@ print '</div>';
 
 print '<div id="backupfileright" class="fichehalfright">';
 
-$filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+$filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
 $result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"), '', 0, -1, '', '', 'ASC', 1, 0, -1, 'style="height:250px; overflow: auto;"');
 print '<br>';
 

@@ -30,7 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modWebsite extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -64,7 +63,7 @@ class modWebsite extends DolibarrModules
 		$this->config_page_url = array('website.php');
 
 		// Dependencies
-		$this->hidden = !empty($conf->global->MODULE_WEBSITE_DISABLED); // A condition to disable module
+		$this->hidden = getDolGlobalString('MODULE_WEBSITE_DISABLED'); // A condition to disable module
 		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
@@ -120,7 +119,7 @@ class modWebsite extends DolibarrModules
 		$this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top', // This is a Left menu entry
 								'titre'=>'WebSites',
-								'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+								'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 								'mainmenu'=>'website',
 								'url'=>'/website/index.php',
 								'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.

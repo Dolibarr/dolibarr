@@ -31,7 +31,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'mymodule@mymodule';
+	public $picto = 'fa-file';
 
 	/**
 	 * @var DoliDB Database handler.
@@ -47,7 +47,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->enabled = isModEnabled('mymodule');
+		//$this->enabled = ...
 	}
 
 
@@ -96,7 +96,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *  This is the main function that returns the array of emails
 	 *
 	 *  @param  int     $mailing_id     Id of emailing
-	 *  @return int                     <0 if error, number of emails added if ok
+	 *  @return int                     Return integer <0 if error, number of emails added if ok
 	 */
 	public function add_to_target($mailing_id)
 	{
@@ -123,7 +123,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 			$old = '';
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				if ($old <> $obj->email) {
+				if ($old != $obj->email) {
 					$target[$j] = array(
 						'email' => $obj->email,
 						'name' => $obj->lastname,

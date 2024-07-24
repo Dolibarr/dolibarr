@@ -76,7 +76,7 @@ if ($user->hasRight('banque', 'consolidate') && $action == 'dvprev' && !empty($d
 }
 
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -125,6 +125,7 @@ $foundnext = '';
 $sql = "SELECT b.num_releve as num";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+$sql .= " AND b.num_releve <> ''";
 $sql .= " AND b.fk_account = ".((int) $object->id);
 $sql .= " ORDER BY b.num_releve DESC";
 $sql .= $db->plimit(1);
@@ -201,7 +202,7 @@ if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($n
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj && $obj->rowid) {
-			setEventMessages('ErrorThisBankReceiptIsAlreadyUsed', null, 'errors');
+			setEventMessages('ErrorBankReceiptAlreadyExists', null, 'errors');
 			$error++;
 		}
 	} else {
@@ -380,6 +381,7 @@ if (empty($numref)) {
 				$sql = "SELECT sum(b.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql .= " WHERE b.num_releve < '".$db->escape($objp->numr)."'";
+				$sql .= " AND b.num_releve <> ''";
 				$sql .= " AND b.fk_account = ".((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -387,7 +389,7 @@ if (empty($numref)) {
 					$balancestart[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, empty($object->currency_code)?$conf->currency:$object->currency_code).'</span></td>';
+				print '<td class="right"><span class="amount">'.price($balancestart[$objp->numr], '', $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 				// Calculate end amount
 				$sql = "SELECT sum(b.amount) as amount";
@@ -400,10 +402,10 @@ if (empty($numref)) {
 					$content[$objp->numr] = $obj->amount;
 					$db->free($resql);
 				}
-				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, empty($object->currency_code)?$conf->currency:$object->currency_code).'</span></td>';
+				print '<td class="right"><span class="amount">'.price(($balancestart[$objp->numr] + $content[$objp->numr]), '', $langs, 1, -1, -1, empty($object->currency_code) ? $conf->currency : $object->currency_code).'</span></td>';
 
 				print '<td class="center">';
-				if ($user->rights->banque->consolidate && $action != 'editbankreceipt') {
+				if ($user->hasRight('banque', 'consolidate') && $action != 'editbankreceipt') {
 					print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?account='.$object->id.($page > 0 ? '&page='.$page : '').'&action=editbankreceipt&token='.newToken().'&brref='.urlencode($objp->numr).'">'.img_edit().'</a>';
 				}
 				print '</td>';
@@ -464,6 +466,7 @@ if (empty($numref)) {
 	$sql = "SELECT sum(b.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+	$sql .= " AND b.num_releve <> ''";
 	$sql .= " AND b.fk_account = ".((int) $object->id);
 
 	$resql = $db->query($sql);
@@ -529,10 +532,10 @@ if (empty($numref)) {
 			print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'">';
 			$reg = array();
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
-			if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) {
+			if (!empty($reg[1]) && $langs->trans($reg[1]) != $reg[1]) {
 				print $langs->trans($reg[1]);
 			} else {
-				print $objp->label;
+				print dol_escape_htmltag($objp->label);
 			}
 			print '</a>';
 
@@ -682,7 +685,7 @@ if (empty($numref)) {
 
 			print '<td class="nowrap right">'.price(price2num($total, 'MT'))."</td>\n";
 
-			if ($user->rights->banque->modifier || $user->rights->banque->consolidate) {
+			if ($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) {
 				print '<td class="center"><a class="editfielda reposition" href="'.DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$objp->rowid.'&account='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?account='.$object->id.'&num='.$numref).'">';
 				print img_edit();
 				print "</a></td>";

@@ -83,7 +83,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param  User $user      User that creates
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, Id of created object if OK
+	 * @return int Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = false)
 	{
@@ -168,7 +168,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param int    $id  				Id object
 	 * @param int    $fk_product 		Id product
 	 * @param int    $fk_entrepot  		Id warehouse
-	 * @return int 						<0 if KO, 0 if not found, >0 if OK
+	 * @return int 						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $fk_product = 0, $fk_entrepot = 0)
 	{
@@ -242,7 +242,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param array  $filter     filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
-	 * @return int|array <0 if KO, array if OK
+	 * @return int|array Return integer <0 if KO, array if OK
 	 */
 	public function fetchAll($fk_product = '', $fk_entrepot = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
@@ -318,7 +318,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = false)
 	{
@@ -371,13 +371,13 @@ class ProductStockEntrepot extends CommonObject
 		}
 
 		//if (!$error && !$notrigger) {
-			// Uncomment this and change MYOBJECT to your own tag if you
-			// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		// Commit or rollback
@@ -398,7 +398,7 @@ class ProductStockEntrepot extends CommonObject
 	 * @param User $user      User that deletes
 	 * @param bool $notrigger false=launch triggers after, true=disable triggers
 	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @return int Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
@@ -409,13 +409,13 @@ class ProductStockEntrepot extends CommonObject
 		$this->db->begin();
 
 		//if (!$error && !$notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
+		// Uncomment this and change MYOBJECT to your own tag if you
+		// want this action calls a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-				//// End call triggers
+		//// Call triggers
+		//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+		//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+		//// End call triggers
 		//}
 
 		if (!$error) {

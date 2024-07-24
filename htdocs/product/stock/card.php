@@ -7,6 +7,7 @@
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
@@ -74,7 +75,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $result = restrictedArea($user, 'stock');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('warehousecard', 'globalcard'));
+$hookmanager->initHooks(array('warehousecard', 'stocklist', 'globalcard'));
 
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
@@ -132,7 +133,7 @@ if (empty($reshook)) {
 	}
 
 	// Ajout entrepot
-	if ($action == 'add' && $user->rights->stock->creer) {
+	if ($action == 'add' && $user->hasRight('stock', 'creer')) {
 		$object->ref = (string) GETPOST("ref", "alpha");
 		$object->fk_parent = (int) GETPOST("fk_parent", "int");
 		$object->fk_project = GETPOST('projectid', 'int');
@@ -182,7 +183,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete warehouse
-	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer) {
+	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('stock', 'supprimer')) {
 		$object->fetch(GETPOST('id', 'int'));
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -237,7 +238,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object);
+		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -335,7 +336,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Address').'</td><td><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
-	print (!empty($object->address) ? $object->address : '');
+	print(!empty($object->address) ? $object->address : '');
 	print '</textarea></td></tr>';
 
 	// Zip / Town
@@ -367,7 +368,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print '<select id="warehousestatus" name="statut" class="flat minwidth100">';
-	foreach ($object->statuts as $key => $value) {
+	foreach ($object->labelStatus as $key => $value) {
 		if ($key == 1) {
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
 		} else {
@@ -406,7 +407,7 @@ if ($action == 'create') {
 		}
 
 		// View mode
-		if ($action <> 'edit' && $action <> 're-edit') {
+		if ($action != 'edit' && $action != 're-edit') {
 			$head = stock_prepare_head($object);
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("Warehouse"), -1, 'stock');
@@ -474,7 +475,7 @@ if ($action == 'create') {
 			$morehtmlref .= '</div>';
 
 			$shownav = 1;
-			if ($user->socid && !in_array('stock', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+			if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 				$shownav = 0;
 			}
 
@@ -527,7 +528,7 @@ if ($action == 'create') {
 			print "</td></tr>";
 
 			// Last movement
-			if (!empty($user->rights->stock->mouvement->lire)) {
+			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
@@ -579,13 +580,13 @@ if ($action == 'create') {
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (empty($action) || $action == 'classin') {
-					if ($user->rights->stock->creer) {
+					if ($user->hasRight('stock', 'creer')) {
 						print '<a class="butAction" href="card.php?action=edit&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Modify").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Modify").'</a>';
 					}
 
-					if ($user->rights->stock->supprimer) {
+					if ($user->hasRight('stock', 'supprimer')) {
 						print '<a class="butActionDelete" href="card.php?action=delete&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Delete").'</a>';
 					} else {
 						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete").'</a>';
@@ -597,31 +598,33 @@ if ($action == 'create') {
 
 
 			// Show list of products into warehouse
-			print '<br>';
 
 
 			$totalarray = array();
-			$totalarray['val'] = array ();
-			$totalarray['pos'] = array ();
-			$totalarray['type'] = array ();
+			$totalarray['val'] = array();
+			$totalarray['pos'] = array();
+			$totalarray['type'] = array();
 			$totalarray['nbfield'] = 0;
 
 			// TODO Create $arrayfields with all fields to show
 
-			print '<table class="noborder centpercent">';
-			print "<tr class=\"liste_titre\">";
+			print load_fiche_titre($langs->trans("Stock"), '', 'stock');
+
+			print '<div class="div-table-responsive">';
+			print '<table class="noborder centpercent liste">';
+			print '<tr class="liste_titre">';
 			$parameters = array('totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
-			print_liste_field_titre("Product", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
+			print_liste_field_titre("Products", "", "p.ref", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Label", "", "p.label", "&amp;id=".$id, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("NumberOfUnit", "", "ps.reel", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 			$totalarray['nbfield'] += 3;
 			$totalarray['pos'][$totalarray['nbfield']] = 'totalunit';
 			$totalarray['type'][$totalarray['nbfield']] = 'stock';
 
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print_liste_field_titre("Unit", "", "p.fk_unit", "&amp;id=".$id, "", 'align="left"', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'units';
@@ -637,21 +640,21 @@ if ($action == 'create') {
 			$totalarray['type'][$totalarray['nbfield']] = '';
 
 
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print_liste_field_titre("SellPriceMin", "", "p.price", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 			}
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				print_liste_field_titre("EstimatedStockValueSellShort", "", "", "&amp;id=".$id, "", '', $sortfield, $sortorder, 'right ');
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalvaluesell';
 				$totalarray['type'][$totalarray['nbfield']] = '';
 			}
-			if ($user->rights->stock->mouvement->creer) {
+			if ($user->hasRight('stock', 'mouvement', 'creer')) {
 				print_liste_field_titre('');
 				$totalarray['nbfield']++;
 			}
-			if ($user->rights->stock->creer) {
+			if ($user->hasRight('stock', 'creer')) {
 				print_liste_field_titre('');
 				$totalarray['nbfield']++;
 			}
@@ -666,7 +669,7 @@ if ($action == 'create') {
 
 			//For MultiCompany PMP per entity
 			$separatedPMP = false;
-			if (!empty($conf->global->MULTICOMPANY_PRODUCT_SHARING_ENABLED) && !empty($conf->global->MULTICOMPANY_PMP_PER_ENTITY_ENABLED)) {
+			if (getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED') && getDolGlobalString('MULTICOMPANY_PMP_PER_ENTITY_ENABLED')) {
 				$separatedPMP = true;
 			}
 
@@ -685,7 +688,7 @@ if ($action == 'create') {
 				$sql .= " p.pmp as ppmp,";
 			}
 			$sql .= " ps.reel as value";
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				$sql .= ",fk_unit";
 			}
 			// Add fields from hooks
@@ -732,7 +735,7 @@ if ($action == 'create') {
 						$result = $db->query($sql);
 						if ($result) {
 							$objtp = $db->fetch_object($result);
-							if ($objtp->label != '') {
+							if (isset($objtp->label) && $objtp->label != '') {
 								$objp->produit = $objtp->label;
 							}
 						}
@@ -751,7 +754,7 @@ if ($action == 'create') {
 					$productstatic->type = $objp->type;
 					$productstatic->entity = $objp->entity;
 					$productstatic->status_batch = $objp->tobatch;
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						$productstatic->fk_unit = $objp->fk_unit;
 					}
 					$productstatic->status = $objp->tosell;
@@ -779,7 +782,7 @@ if ($action == 'create') {
 					print '</td>';
 					$totalunit += $objp->value;
 
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						// Units
 						print '<td align="left">';
 						if (is_null($productstatic->fk_unit)) {
@@ -797,7 +800,7 @@ if ($action == 'create') {
 					$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 					// Price sell min
-					if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+					if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 						$pricemin = $objp->price;
 						print '<td class="right">';
 						print price(price2num($pricemin, 'MU'), 1);
@@ -810,7 +813,7 @@ if ($action == 'create') {
 					$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
 
 					// Link to transfer
-					if ($user->rights->stock->mouvement->creer) {
+					if ($user->hasRight('stock', 'mouvement', 'creer')) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("TransferStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("TransferStock");
@@ -818,7 +821,7 @@ if ($action == 'create') {
 					}
 
 					// Link to stock
-					if ($user->rights->stock->creer) {
+					if ($user->hasRight('stock', 'creer')) {
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=correction&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 						print img_picto($langs->trans("CorrectStock"), 'add', 'class="hideonsmartphone pictofixedwidth" style="color: #a69944"');
 						print $langs->trans("CorrectStock");
@@ -830,7 +833,7 @@ if ($action == 'create') {
 					$i++;
 
 					// Define $unit and $sameunits
-					if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 						if ($i == 0) {
 							$units = $productstatic->fk_unit;
 						} elseif ($productstatic->fk_unit != $units) {
@@ -857,7 +860,8 @@ if ($action == 'create') {
 			} else {
 				dol_print_error($db);
 			}
-			print "</table>\n";
+			print "</table>";
+			print '</div>';
 		}
 
 
@@ -936,7 +940,7 @@ if ($action == 'create') {
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print '<select id="warehousestatus" name="statut" class="flat">';
-			foreach ($object->statuts as $key => $value) {
+			foreach ($object->labelStatus as $key => $value) {
 				if ($key == $object->statut) {
 					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
 				} else {

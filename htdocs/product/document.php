@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
+if (getDolGlobalString('PRODUIT_PDF_MERGE_PROPAL')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
 }
 
@@ -128,7 +128,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	// Delete line if product propal merge is linked to a file
-	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
+	if (getDolGlobalString('PRODUIT_PDF_MERGE_PROPAL')) {
 		if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoadd) {
 			//extract file name
 			$urlfile = GETPOST('urlfile', 'alpha');
@@ -226,10 +226,10 @@ if ($object->id) {
 	}
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
-		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearrayold = dol_dir_list($upload_dirold, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$filearray = array_merge($filearray, $filearrayold);
 	}
 
@@ -239,11 +239,11 @@ if ($object->id) {
 	}
 
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
 
 	$shownav = 1;
-	if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 
@@ -268,7 +268,7 @@ if ($object->id) {
 
 
 	// Merge propal PDF document PDF files
-	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL)) {
+	if (getDolGlobalString('PRODUIT_PDF_MERGE_PROPAL')) {
 		$filetomerge = new Propalmergepdfproduct($db);
 
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {

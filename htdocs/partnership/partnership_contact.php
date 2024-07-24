@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/partnership/lib/partnership.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("partnership", "companies", "other", "mails"));
 
-$id     = (GETPOST('id') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
@@ -59,10 +59,18 @@ $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$result = restrictedArea($user, 'partnership', $object->id);
-if (empty($conf->partnership->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
-if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') accessforbidden();
-if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') accessforbidden();
+if (empty($conf->partnership->enabled)) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_member > 0) && $managedfor == 'member') {
+	accessforbidden();
+}
+if ($object->id > 0 && !($object->fk_soc > 0) && $managedfor == 'thirdparty') {
+	accessforbidden();
+}
 
 
 

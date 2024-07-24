@@ -246,8 +246,6 @@ $description .= $langs->trans($LT);
 $calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
 $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
 
-//if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
-
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
 $builddate = dol_now();

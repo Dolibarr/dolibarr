@@ -38,8 +38,8 @@ if (empty($object) || !is_object($object)) {
 $id = $object->id;
 $fk_element = empty($object->fk_element) ? $fk_element : $object->fk_element;
 $table_element_line = (empty($table_element_line) ? $object->table_element_line : $table_element_line);
-$nboflines = (isset($object->lines) ?count($object->lines) : (isset($tasksarray) ?count($tasksarray) : (empty($nboflines) ? 0 : $nboflines)));
-$forcereloadpage = empty($conf->global->MAIN_FORCE_RELOAD_PAGE) ? 0 : 1;
+$nboflines = (isset($object->lines) ? count($object->lines) : (isset($tasksarray) ? count($tasksarray) : (empty($nboflines) ? 0 : $nboflines)));
+$forcereloadpage = !getDolGlobalString('MAIN_FORCE_RELOAD_PAGE') ? 0 : 1;
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
 $filepath = (empty($filepath) ? '' : $filepath);
 

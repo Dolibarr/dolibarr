@@ -83,7 +83,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
 		$forbarcode = $producttmp->barcode;
 		$fk_barcode_type = $producttmp->barcode_type;
 
-		if (empty($fk_barcode_type) && !empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) {
+		if (empty($fk_barcode_type) && getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE')) {
 			$fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 		}
 
@@ -99,7 +99,7 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
 		$forbarcode = $thirdpartytmp->barcode;
 		$fk_barcode_type = $thirdpartytmp->barcode_type_code;
 
-		if (empty($fk_barcode_type) && !empty($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY)) {
+		if (empty($fk_barcode_type) && getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY')) {
 			$fk_barcode_type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
 		}
 
@@ -110,7 +110,8 @@ if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
 }
 
 if ($action == 'builddoc') {
-	$result = 0; $error = 0;
+	$result = 0;
+	$error = 0;
 
 	if (empty($forbarcode)) {			// barcode value
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BarcodeValue")), null, 'errors');
@@ -213,12 +214,12 @@ if ($action == 'builddoc') {
 		// For labels
 		if ($mode == 'label') {
 			$txtforsticker = "%PHOTO%"; // Photo will be barcode image, %BARCODE% posible when using TCPDF generator
-			$textleft = make_substitutions((empty($conf->global->BARCODE_LABEL_LEFT_TEXT) ? $txtforsticker : $conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
-			$textheader = make_substitutions((empty($conf->global->BARCODE_LABEL_HEADER_TEXT) ? '' : $conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
-			$textfooter = make_substitutions((empty($conf->global->BARCODE_LABEL_FOOTER_TEXT) ? '' : $conf->global->BARCODE_LABEL_FOOTER_TEXT), $substitutionarray);
-			$textright = make_substitutions((empty($conf->global->BARCODE_LABEL_RIGHT_TEXT) ? '' : $conf->global->BARCODE_LABEL_RIGHT_TEXT), $substitutionarray);
-			$forceimgscalewidth = (empty($conf->global->BARCODE_FORCEIMGSCALEWIDTH) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEWIDTH);
-			$forceimgscaleheight = (empty($conf->global->BARCODE_FORCEIMGSCALEHEIGHT) ? 1 : $conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
+			$textleft = make_substitutions((!getDolGlobalString('BARCODE_LABEL_LEFT_TEXT') ? $txtforsticker : $conf->global->BARCODE_LABEL_LEFT_TEXT), $substitutionarray);
+			$textheader = make_substitutions((!getDolGlobalString('BARCODE_LABEL_HEADER_TEXT') ? '' : $conf->global->BARCODE_LABEL_HEADER_TEXT), $substitutionarray);
+			$textfooter = make_substitutions((!getDolGlobalString('BARCODE_LABEL_FOOTER_TEXT') ? '' : $conf->global->BARCODE_LABEL_FOOTER_TEXT), $substitutionarray);
+			$textright = make_substitutions((!getDolGlobalString('BARCODE_LABEL_RIGHT_TEXT') ? '' : $conf->global->BARCODE_LABEL_RIGHT_TEXT), $substitutionarray);
+			$forceimgscalewidth = (!getDolGlobalString('BARCODE_FORCEIMGSCALEWIDTH') ? 1 : $conf->global->BARCODE_FORCEIMGSCALEWIDTH);
+			$forceimgscaleheight = (!getDolGlobalString('BARCODE_FORCEIMGSCALEHEIGHT') ? 1 : $conf->global->BARCODE_FORCEIMGSCALEHEIGHT);
 
 			$MAXSTICKERS = 1000;
 			if ($numberofsticker <= $MAXSTICKERS) {
@@ -255,10 +256,18 @@ if ($action == 'builddoc') {
 
 			if (!$mesg) {
 				$outputlangs = $langs;
+				$previousConf = getDolGlobalInt('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE');
+				$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = 1;
+
 
 				// This generates and send PDF to output
 				// TODO Move
-				$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				try {
+					$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+				} catch (Exception $e) {
+					$mesg = $langs->trans('ErrorGeneratingBarcode');
+				}
+				$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;
 			}
 		}
 
@@ -313,7 +322,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $labeltoshow;
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ?GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print
@@ -321,7 +330,7 @@ print '	<div class="tagtr">';
 print '	<div class="tagtd">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
 print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
-print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ?GETPOST('numberofsticker', 'int') : 10).'">';
+print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker') ? GETPOST('numberofsticker', 'int') : 10).'">';
 print '</div></div>';
 
 print '</div>';
@@ -393,7 +402,7 @@ jQuery(document).ready(function() {
 print '<input id="fillmanually" type="radio" '.((!GETPOST("selectorforbarcode") || GETPOST("selectorforbarcode") == 'fillmanually') ? 'checked ' : '').'name="selectorforbarcode" value="fillmanually" class="radiobarcodeselect"><label for="fillmanually"> '.$langs->trans("FillBarCodeTypeAndValueManually").'</label>';
 print '<br>';
 
-if (!empty($user->rights->produit->lire) || $user->hasRight('service', 'lire')) {
+if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 	print '<input id="fillfromproduct" type="radio" '.((GETPOST("selectorforbarcode") == 'fillfromproduct') ? 'checked ' : '').'name="selectorforbarcode" value="fillfromproduct" class="radiobarcodeselect"><label for="fillfromproduct"> '.$langs->trans("FillBarCodeTypeAndValueFromProduct").'</label>';
 	print '<br>';
 	print '<div class="showforproductselector">';

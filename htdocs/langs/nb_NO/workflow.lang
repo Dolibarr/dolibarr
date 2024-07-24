@@ -9,28 +9,30 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Opprett automatisk en kundefaktura når
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Opprett en kundefaktura automatisk etter at en kundeordre er stengt (ny faktura vil ha samme beløp som ordre)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Ved opprettelse av billett oppretter du automatisk en intervensjon.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassifiser tilknyttede kildetilbud til fakturert(e) når kundeordren er satt til fakturert (og hvis beløpet av bestillingen er det samme som totalbeløpet av signerte koblede tilbud)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassifiser koblede kilde-tilbud som fakturert(e) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av signerte tilbud)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassifiser koblede kilde-kundeordre som fakturert(t) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av koblede ordrer)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassifiser koblede kilde-kundeordre som fakturert(t) når faktura er satt til betalt (og hvis fakturabeløpet er det samme som totalbeløpet av koblede ordrer)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassifiser koblet kilde-kundeordre til sendt når en forsendelse er validert (og hvis kvantitet som sendes av alle forsendelser, er det samme som i bestillingen som skal oppdateres)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a sales order is set to billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposals as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice validated for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales orders as billed when a customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you have 1 invoice set billed for n orders, this may set all orders to billed too.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source sales orders as shipped when a shipment is validated (and if the quantity shipped by all shipments is the same as in the order to update)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Klassifiser koblet kildesalgsordre som sendt når en forsendelse er stengt (og hvis kvantumet som sendes av alle forsendelser er det samme som i ordren som skal oppdateres)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassifiser tilsluttede kildeleverandørtilbud som fakturert når leverandørfaktura er validert (og hvis fakturabeløp er det samme som totalbeløp på koblede tilbud)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassifiser kildekjøpsordre (kjøpsordre) som fakturert når leverandørfakturaen er validert (og hvis fakturabeløp er det samme som totalbeløp på koblede ordre)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order as billed when vendor invoice is validated (and if the amount of the invoice is the same as the total amount of the linked orders)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Klassifiser koblet kilde-innkjøpsordre som mottatt når et mottak er validert (og hvis antallet mottatt av alle mottak er det samme som i innkjøpsordren som skal oppdateres)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Klassifiser koblet kilde-innkjøpsordre som mottatt når et mottak er stengt (og hvis antallet mottatt av alle mottak er det samme som i innkjøpsordren som skal oppdatere)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Klassifiser mottak til "fakturert" når en koblet kjøpsfaktura er validert (og hvis beløpet på fakturaen er det samme som totalbeløpet for de tilknyttede mottakene)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Classify linked source shipment as billed when a customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Classify linked source receptions as billed when a purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Når du oppretter en billett, kobler du tilgjengelige kontrakter til samsvarende tredjepart
+descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link all available contracts of matching third parties
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Når du kobler sammen kontrakter, søk blant de fra morselskapene
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Lukk alle intervensjoner knyttet til billetten når en billett er lukket
 AutomaticCreation=Automatisk opprettelse
 AutomaticClassification=Automatisk klassifisering
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Klassifiser koblet kildeforsendelse som lukket når kundefakturaen er validert (og hvis fakturabeløpet er det samme som totalbeløpet for de koblede forsendelsene)
 AutomaticClosing=Automatisk lukking
 AutomaticLinking=Automatisk kobling

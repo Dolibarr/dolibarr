@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - marque pages / bookmarks
 
 AddThisPageToBookmarks = Add current page to bookmarks
-BehaviourOnClick = Behaviour when a bookmark URL is selected
+BehaviourOnClick = Behavior when a bookmark URL is selected
 Bookmark = Bookmark
 Bookmarks = Bookmarks
 BookmarkTargetNewWindowShort = New tab

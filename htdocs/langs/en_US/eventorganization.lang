@@ -27,6 +27,7 @@ EventOrganizationMenuLeft = Organized events
 EventOrganizationConferenceOrBoothMenuLeft = Conference Or Booth
 
 PaymentEvent=Payment of event
+EventFee=Event fee
 
 #
 # Admin page
@@ -90,7 +91,7 @@ PriceOfRegistrationHelp=Price to pay to register or participate in the event
 PriceOfBooth=Subscription price to stand a booth
 PriceOfBoothHelp=Subscription price to stand a booth
 EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Conference Or Booth informations
+ConferenceOrBoothInformation=Conference Or Booth information
 Attendees=Attendees
 ListOfAttendeesOfEvent=List of attendees of the event project
 DownloadICSLink = Download ICS link
@@ -107,7 +108,7 @@ EvntOrgSuggested = Suggested
 EvntOrgConfirmed = Confirmed
 EvntOrgNotQualified = Not Qualified
 EvntOrgDone = Done
-EvntOrgCancelled = Cancelled
+EvntOrgCancelled = Canceled
 
 #
 # Other
@@ -156,7 +157,7 @@ VoteOk = Your vote has been accepted.
 AlreadyVoted = You have already voted for this event.
 VoteError = An error has occurred during the vote, please try again.
 SubscriptionOk=Your registration has been recorded
-AmountOfRegistrationPaid=Amount of resitration paid
+AmountOfRegistrationPaid=Amount of registration paid
 ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
 Attendee = Attendee
 PaymentConferenceAttendee = Conference attendee payment
@@ -166,9 +167,15 @@ RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were alre
 EmailAttendee=Attendee email
 EmailCompany=Company email
 EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
 NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
 MaxNbOfAttendees=Max number of attendees
 DateStartEvent=Event start date
 DateEndEvent=Event end date
+ModifyStatus=Modify status
+ConfirmModifyStatus=Confirm status modification
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated = %s Records updated
+RecordUpdated = Record updated
+NoRecordUpdated = No Record updated

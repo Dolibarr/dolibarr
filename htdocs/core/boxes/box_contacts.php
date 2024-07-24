@@ -92,7 +92,7 @@ class box_contacts extends ModeleBoxes
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= ", spe.accountancy_code_customer as code_compta";
 				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 			} else {
@@ -104,14 +104,14 @@ class box_contacts extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 			}
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks

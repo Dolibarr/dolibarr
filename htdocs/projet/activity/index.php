@@ -48,7 +48,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 //$result = restrictedArea($user, 'projet', $projectid);
-if (!$user->rights->projet->lire) {
+if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }
 
@@ -79,7 +79,7 @@ llxHeader("", $title);
 
 // Title for combo list see all projects
 $titleall = $langs->trans("AllAllowedProjects");
-if (!empty($user->rights->projet->all->lire) && !$socid) {
+if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
 	$titleall = $langs->trans("AllProjects");
 } else {
 	$titleall = $langs->trans("AllAllowedProjects").'<br><br>';
@@ -276,7 +276,7 @@ if ($db->type != 'pgsql')
 */
 
 /* Affichage de la liste des projets du mois */
-if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
+if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -323,7 +323,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH)) {
 }
 
 /* Affichage de la liste des projets de l'annee */
-if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
+if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
@@ -370,7 +370,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR)) {
 	print '</div>';
 }
 
-if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA)) {
+if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA')) {
 	// Get id of types of contacts for projects (This list never contains a lot of elements)
 	$listofprojectcontacttype = array();
 	$sql = "SELECT ctc.rowid, ctc.code FROM ".MAIN_DB_PREFIX."c_type_contact as ctc";
@@ -409,7 +409,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 	// This list can be very long, so we don't show it by default on task area. We prefer to use the list page.
 	// Add constant PROJECT_SHOW_TASK_LIST_ON_PROJECT_AREA to show this list
 
-	$max = (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA) ? 1000 : $conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
+	$max = (!getDolGlobalString('PROJECT_LIMIT_TASK_PROJECT_AREA') ? 1000 : $conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA);
 
 	$sql = "SELECT p.ref, p.title, p.rowid as projectid, p.fk_statut as status, p.fk_opp_status as opp_status, p.public, p.dateo as projdateo, p.datee as projdatee,";
 	$sql .= " t.label, t.rowid as taskid, t.planned_workload, t.duration_effective, t.progress, t.dateo, t.datee, SUM(tasktime.element_duration) as timespent";
@@ -422,7 +422,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ect";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
-	if ($mine || empty($user->rights->projet->all->lire)) {
+	if ($mine || !$user->hasRight('projet', 'all', 'lire')) {
 		$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // project i have permission on
 	}
 	if ($mine) {     // this may duplicate record if we are contact twice
@@ -449,7 +449,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 		print '<tr class="liste_titre">';
 		//print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
 		print '<th>'.$langs->trans('OpenedProjects').'</th>';
-		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+		if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 			print '<th>'.$langs->trans('OpportunityStatus').'</th>';
 		}
 		print '<th>'.$langs->trans('Task').'</th>';
@@ -494,7 +494,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 			print '<td>';
 			print $projectstatic->getNomUrl(1, '', 0, '', '<br>');
 			print '</td>';
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				print '<td>';
 				$code = dol_getIdFromCode($db, $obj->opp_status, 'c_lead_status', 'rowid', 'code');
 				if ($code) {
@@ -544,7 +544,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 
 		if ($num > $max) {
 			$colspan = 6;
-			if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES)) {
+			if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 				$colspan++;
 			}
 			print '<tr><td colspan="'.$colspan.'">'.$langs->trans("WarningTooManyDataPleaseUseMoreFilters").'</td></tr>';

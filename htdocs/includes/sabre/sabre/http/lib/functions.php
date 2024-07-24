@@ -421,7 +421,7 @@ function decodePathSegment(string $path): string
 
     switch ($encoding) {
         case 'ISO-8859-1':
-            $path = utf8_encode($path);
+            $path = mb_convert_encoding($path, 'UTF-8', 'ISO-8859-1');
     }
 
     return $path;
