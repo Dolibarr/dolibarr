@@ -3018,11 +3018,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 	} elseif ($object->element == 'project_task') {
 		$object->fk_statut = 1;
+		$object->status = 1;
 		if ($object->progress > 0) {
 			$object->fk_statut = 2;
+			$object->status = 2;
 		}
 		if ($object->progress >= 100) {
 			$object->fk_statut = 3;
+			$object->status = 3;
 		}
 		$tmptxt = $object->getLibStatut(5);
 		$morehtmlstatus .= $tmptxt; // No status on task
@@ -3810,6 +3813,8 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 
 		if ($max > 0) {
 			$newemail .= dol_trunc($email, $max);
+		} else {
+			$newemail .= $email;
 		}
 		$newemail .= '</a>';
 		if ($showinvalid && !isValidEmail($email)) {
@@ -3827,7 +3832,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 				$newemail = '<div>'.$newemail.' '.$linktoaddaction.'</div>';
 			}
 		}
-	} elseif ($addlink == 'thirdparty') {
+	} elseif ($addlink === 'thirdparty') {
 		$newemail = '<a class="paddingrightonly" style="text-overflow: ellipsis;" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$socid.'&action=presend&mode=init#formmailbeforetitle">';
 		$newemail .= ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, (is_numeric($withpicto) ? 'email' : $withpicto), 'class="paddingrightonly"') : '').$newemail;
 		$newemail .= '</a>';
