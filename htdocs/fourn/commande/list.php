@@ -984,7 +984,6 @@ if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
 //print $sql;
-//exit;
 
 $resql = $db->query($sql);
 if ($resql) {
