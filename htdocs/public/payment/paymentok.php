@@ -486,19 +486,25 @@ if ($ispaymentok) {
 				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
 						$typeid = $object->typeid;
+						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
-						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
 						// - If not found, take the default amount
 						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 						}
+						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
+						//if (empty($amount)) {
+						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+						//}
+						// - If a min is set, we take it into account
+						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
 
 						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
 							$error++;
-							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') differs from value expected for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
+							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') propagated by payment page differs from the expected value for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
 							dol_syslog("Failed to validate member (bad amount check): ".$errmsg, LOG_ERR, 0, '_payment');
@@ -507,13 +513,13 @@ if ($ispaymentok) {
 				}
 
 				// Security protection:
-				if (getDolGlobalString('MEMBER_MIN_AMOUNT')) {
-					if ($FinalPaymentAmt < $conf->global->MEMBER_MIN_AMOUNT) {
+				if (getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
+					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
 						$error++;
 						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . getDolGlobalString('MEMBER_MIN_AMOUNT').'). May be a hack to try to pay a different amount ?';
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
-						dol_syslog("Failed to validate member (amount lower than minimum): ".$errmsg, LOG_ERR, 0, '_payment');
+						dol_syslog("Failed to validate member (amount propagated from payment page is lower than allowed minimum): ".$errmsg, LOG_ERR, 0, '_payment');
 					}
 				}
 
@@ -539,14 +545,14 @@ if ($ispaymentok) {
 					}
 				}
 
-				// Subscription information
+				// Guess the subscription start date
 				$datesubscription = $object->datevalid; // By default, the subscription start date is the payment date
 				if ($object->datefin > 0) {
 					$datesubscription = dol_time_plus_duree($object->datefin, 1, 'd');
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 					$datesubscription = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 				}
-
+				// Now do a correction of the suggested date
 				if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
 					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"), dol_print_date($datesubscription, "%m"));
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
@@ -673,8 +679,9 @@ if ($ispaymentok) {
 				}
 
 				if (!$error) {
+					// If payment using Strip, save the Stripe payment info into societe_account
 					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice') {
-						$thirdparty_id = $object->fk_soc;
+						$thirdparty_id = ($object->socid ? $object->socid : $object->fk_soc);
 
 						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
@@ -723,7 +730,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".((int) $object->fk_soc).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".$thirdparty_id.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -757,6 +764,42 @@ if ($ispaymentok) {
 					$db->rollback();
 				}
 
+				// Set string to use to send email info
+				$infouserlogin = '';
+
+				// Create external user
+				if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
+					$nuser = new User($db);
+					$tmpuser = dol_clone($object, 0);		// $object is type Adherent
+
+					// Check if a user login already exists for this member or not
+					$found = 0;
+					$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE fk_member = ".((int) $object->id);
+					$resqlcount = $db->query($sql);
+					if ($resqlcount) {
+						$objcount = $db->fetch_object($resqlcount);
+						if ($objcount) {
+							$found = $objcount->nb;
+						}
+					}
+
+					if (!$found) {
+						$result = $nuser->create_from_member($tmpuser, $object->login);
+						$newpassword = $nuser->setPassword($user, '');
+
+						if ($result < 0) {
+							$outputlangs->load("errors");
+							$postactionmessages[] = 'Error in create external user : '.$nuser->error;
+						} else {
+							$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
+							$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
+						}
+					} else {
+						$outputlangs->load("errors");
+						$postactionmessages[] = 'No user created because a user linked to member already exists';
+					}
+				}
+
 				// Send email to member
 				if (!$error) {
 					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
@@ -786,22 +829,7 @@ if ($ispaymentok) {
 
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 
-						// Create external user
-						if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
-							$infouserlogin = '';
-							$nuser = new User($db);
-							$tmpuser = dol_clone($object, 0);
-
-							$result = $nuser->create_from_member($tmpuser, $object->login);
-							$newpassword = $nuser->setPassword($user, '');
-
-							if ($result < 0) {
-								$outputlangs->load("errors");
-								$postactionmessages[] = 'Error in create external user : '.$nuser->error;
-							} else {
-								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
-								$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
-							}
+						if ($infouserlogin) {
 							$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = $infouserlogin;
 						}
 
