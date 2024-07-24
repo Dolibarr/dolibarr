@@ -144,7 +144,7 @@ print dol_get_fiche_head($head, 'divers', $langs->trans('MenuDict'), -1, 'user',
 
 $title = $langs->trans("ConfigImportSocialNetwork");
 
-print_barre_liste($title, '', $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, '');
+print_barre_liste($title, '', $_SERVER["PHP_SELF"], '', '', '', '', -1, '', 'tools', 0, '', '', -1, 0, 0, 0, '');
 
 // Formulaire ajout
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
