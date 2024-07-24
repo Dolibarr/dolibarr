@@ -1107,16 +1107,20 @@ class SecurityTest extends CommonClassTest
 		$a = 'ab';
 		$result = (string) dol_eval("(\$a.'s')", 1, 0);
 		print "result19 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 19');
 
 		$leftmenu = 'abs';
 		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
 		print "result20 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 20');
 
 		$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
 		print "result21 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21');
+
+		$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
+		print "result22 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22');
 	}
 
 	/**
