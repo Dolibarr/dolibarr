@@ -2511,3 +2511,5 @@ EnabledByDefaultAtInstall=Enabled by default at install
 VulnerableToRCEAttack=You are vulnerable to RCE attacks by using the custom dol_json_decode function
 BlackListWords=Black list of words
 AddBlackList=Add to black list
+FaitDivers=Faits divers
+MenuDict=Menu of dictionary
