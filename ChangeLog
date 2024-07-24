@@ -7,7 +7,7 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-
+NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
 
 
 For developers:

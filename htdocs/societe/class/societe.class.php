@@ -5213,7 +5213,18 @@ class Societe extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax125 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref);
+		$return .= '</div>';
+		if (!empty($this->phone)) {
+			$return .= '<div class="inline-block valignmiddle">';
+			$return .= dol_print_phone($this->phone, $this->country_code, 0, $this->id, 'tel', 'hidenum', 'phone', $this->phone, 0, 'paddingleft paddingright');
+			$return .= '</div>';
+		}
+		if (!empty($this->email)) {
+			$return .= '<div class="inline-block valignmiddle">';
+			$return .= dol_print_email($this->email, 0, $this->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
+			$return .= '</div>';
+		}
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
@@ -5223,7 +5234,7 @@ class Societe extends CommonObject
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
-		$return .= '</div>';
+		$return .= '</div>';	// end info-box-content
 		$return .= '</div>';
 		$return .= '</div>';
 
