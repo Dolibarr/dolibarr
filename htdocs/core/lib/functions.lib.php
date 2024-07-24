@@ -207,9 +207,9 @@ function getMultidirVersion($object, $module = '', $forobject = 0)
 /**
  * Return dolibarr global constant string value
  *
- * @param string $key 		key to return value, return $default if not set
- * @param string $default 	value to return
- * @return string
+ * @param 	string 				$key 		Key to return value, return $default if not set
+ * @param 	string|int|float 	$default 	Value to return if not defined
+ * @return 	string							Value returned
  * @see getDolUserString()
  */
 function getDolGlobalString($key, $default = '')
@@ -236,10 +236,11 @@ function getDolGlobalInt($key, $default = 0)
 /**
  * Return Dolibarr user constant string value
  *
- * @param string $key 		key to return value, return '' if not set
- * @param string $default 	value to return
- * @param User   $tmpuser   To get another user than current user
+ * @param string 			$key 		Key to return value, return '' if not set
+ * @param string|int|float 	$default 	Value to return
+ * @param User   			$tmpuser	To get another user than current user
  * @return string
+ * @see getDolGlobalString()
  */
 function getDolUserString($key, $default = '', $tmpuser = null)
 {
@@ -254,8 +255,8 @@ function getDolUserString($key, $default = '', $tmpuser = null)
 /**
  * Return Dolibarr user constant int value
  *
- * @param string 	$key 			key to return value, return 0 if not set
- * @param int 		$default 		value to return
+ * @param string 	$key 			Key to return value, return 0 if not set
+ * @param int 		$default 		Value to return
  * @param User   	$tmpuser   		To get another user than current user
  * @return int
  */

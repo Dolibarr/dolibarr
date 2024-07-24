@@ -3099,7 +3099,7 @@ function top_menu_bookmark()
 }
 
 /**
- * Build the tooltip on top menu tsearch
+ * Build the tooltip on top menu search
  *
  * @return  string                  HTML content
  */
