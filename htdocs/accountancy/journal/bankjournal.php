@@ -212,10 +212,11 @@ if ($result) {
 	$tabtype = array();
 	$tabmoreinfo = array();
 
-	// Loop on each line into llx_bank table. For each line, we should get:
+	// Loop on each line into the llx_bank table. For each line, we should get:
 	// one line tabpay = line into bank
 	// one line for bank record = tabbq
 	// one line for thirdparty record = tabtp
+	// Note: tabcompany is used to store the subledger account
 	$i = 0;
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
@@ -263,7 +264,8 @@ if ($result) {
 		);
 
 		// Set accountancy code for user
-		// $obj->accountancy_code is the accountancy_code of table u=user but it is defined only if a link with type 'user' exists)
+		// $obj->accountancy_code is the accountancy_code of table u=user (but it is defined only if
+		// a link with type 'user' exists and user as a subledger account)
 		$compta_user = (!empty($obj->accountancy_code) ? $obj->accountancy_code : '');
 
 		$tabuser[$obj->rowid] = array(
@@ -307,15 +309,25 @@ if ($result) {
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
 			$is_sc = false;
+			$is_expensereport = false;
 			foreach ($links as $v) {
 				if ($v['type'] == 'sc') {
 					$is_sc = true;
 					break;
 				}
+				if ($v['type'] == 'payment_expensereport') {
+					$is_expensereport = true;
+					break;
+				}
 			}
+
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
-				if ($links[$key]['type'] == 'user' && !$is_sc) continue;
+				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_expensereport) {
+					// We must avoid as much as possible this "continue". If we want to jump to next loop, it means we don't want to process
+					// the case the link is user (often because managed by hard coded code into another link), and we must avoid this.
+					continue;
+				}
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
@@ -364,13 +376,25 @@ if ($result) {
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->statut = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
+					// For a payment of social contribution, we have a link sc + user.
+					// but we already fill the $tabpay[$obj->rowid]["soclib"] in the line 'sc'.
+					// If we fill it here to, we must concat
 					if ($userstatic->id > 0) {
-						$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
+						if ($is_sc) {
+							$tabpay[$obj->rowid]["soclib"] .= ' '.$userstatic->getNomUrl(1, 'accountancy', 0);
+						} else {
+							$tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, 'accountancy', 0);
+						}
 					} else {
 						$tabpay[$obj->rowid]["soclib"] = '???'; // Should not happen, but happens with old data when id of user was not saved on expense report payment.
 					}
+
 					if ($compta_user) {
-						$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+						if ($is_sc) {
+							//$tabcompany[$obj->rowid][$compta_user] += $amounttouse;
+						} else {
+							$tabtp[$obj->rowid][$compta_user] += $amounttouse;
+						}
 					}
 				} elseif ($links[$key]['type'] == 'sc') {
 					$chargestatic->id = $links[$key]['url_id'];
