@@ -139,7 +139,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -3356,9 +3356,9 @@ abstract class CommonObject
 	/**
 	 * 	Get children of line
 	 *
-	 * 	@param	int			$id				Id of parent line
-	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
-	 * 	@return	int[]			            Array with list of children lines id
+	 * 	@param	int			$id					Id of parent line
+	 * 	@param	int			$includealltree		0 = 1st level child, >0 = All level child
+	 * 	@return	int[]			            	Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
@@ -3375,13 +3375,14 @@ abstract class CommonObject
 		$sql .= " ORDER BY " . $fieldposition . " ASC";
 
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
-					if ($includealltree) {
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree));
+					if ($includealltree && $includealltree <= 1000) {	// Test <= 1000 is a protection to avoid infinite loop
+						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
 					}
 				}
 			}
