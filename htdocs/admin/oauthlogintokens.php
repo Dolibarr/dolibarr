@@ -231,7 +231,7 @@ if ($mode == 'setup' && $user->admin) {
 				// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 				print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
 				$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-				//print $storage->token.'<br>';
+				print '<!-- data stored into field token: '.$storage->token.' -->';
 				//print $tokenobj->getExtraParams()['id_token'].'<br>';
 				//print $tokenobj->getAccessToken().'<br>';
 			} catch (Exception $e) {
