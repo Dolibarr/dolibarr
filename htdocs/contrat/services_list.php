@@ -78,17 +78,17 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphalgt');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');
 
 $op1month = GETPOST('op1month', 'int');
 $op1day = GETPOST('op1day', 'int');
 $op1year = GETPOST('op1year', 'int');
-$filter_op1 = GETPOST('filter_op1', 'alphalgt');
+$filter_op1 = GETPOST('filter_op1', 'alphawithlgt');
 
 $op2month = GETPOST('op2month', 'int');
 $op2day = GETPOST('op2day', 'int');
 $op2year = GETPOST('op2year', 'int');
-$filter_op2 = GETPOST('filter_op2', 'alphalgt');
+$filter_op2 = GETPOST('filter_op2', 'alphawithlgt');
 
 $opcloturemonth = GETPOST('opcloturemonth', 'int');
 $opclotureday = GETPOST('opclotureday', 'int');
