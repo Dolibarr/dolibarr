@@ -847,12 +847,12 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<br>';
 			print img_picto('', 'check', '', false, 0, 0, '', 'size2x') . '<br>';
 			if ($message == 'signed') {
-				print '<span class="ok">' . $langs->trans("CommandeSigned") . '</span>';
+				print '<span class="ok">' . $langs->trans("OrderSigned") . '</span>';
 			} else {
-				print '<span class="ok">' . $langs->trans("CommandeAlreadySigned") . '</span>';
+				print '<span class="ok">' . $langs->trans("OrderAlreadySigned") . '</span>';
 			}
 		} else {
-			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignCommande").'">';
+			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignOrder").'">';
 		}
 	} else {
 		if ($message == 'signed') {
