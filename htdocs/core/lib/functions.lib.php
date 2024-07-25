@@ -732,11 +732,12 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @param  string  $check	     Type of check
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
+ *                               'email'=allow characters for an email
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                               'alpha'=Same than alphanohtml
- *                               'alphawithlgt' or 'email'=alpha with lgt
+ *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
@@ -1233,7 +1234,6 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'alphawithlgt':	// No " and no ../ but we keep balanced < > tags with no special chars inside. Can be used for email string like "Name <email@domain.com>". Less secured than 'alphanohtml'
-		case 'email':
 			if (!is_array($out)) {
 				$out = trim($out);
 				do {
