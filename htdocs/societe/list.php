@@ -1755,6 +1755,9 @@ while ($i < $imaxinloop) {
 		$companystatic->client = $obj->client;
 		$companystatic->status = $obj->status;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->phone_mobile = $obj->phone_mobile;
+		$companystatic->fax = $obj->fax;
 		$companystatic->address = $obj->address;
 		$companystatic->zip = $obj->zip;
 		$companystatic->town = $obj->town;
