@@ -1444,7 +1444,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print dol_htmlentitiesbr($object->description);
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($object->description);
+		print '</div>';
 		print '</td></tr>';
 
 		// Categories
