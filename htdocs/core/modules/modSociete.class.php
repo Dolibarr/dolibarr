@@ -524,10 +524,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 		// Add extra fields
@@ -696,10 +698,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 		// Add profids as criteria to search duplicates
@@ -760,10 +764,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_fields_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 		// Add extra fields
@@ -838,10 +844,12 @@ class modSociete extends DolibarrModules
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
 			$resql = $this->db->query($sql);
-			while ($obj = $this->db->fetch_object($resql)) {
-				$fieldname = 's.socialnetworks_'.$obj->code;
-				$fieldlabel = ucfirst($obj->label);
-				$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+			if ($resql) {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$fieldname = 's.socialnetworks_'.$obj->code;
+					$fieldlabel = ucfirst($obj->label);
+					$this->import_updatekeys_array[$r][$fieldname] = $fieldlabel;
+				}
 			}
 		}
 
