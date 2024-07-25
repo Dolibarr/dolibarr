@@ -179,11 +179,6 @@ class EmailCollector extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -1965,7 +1960,21 @@ class EmailCollector extends CommonObject
 					$to = $overview['to'];
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
-					$date = $overview['date'];
+
+					$tmpdate = $overview['date']->toDate();
+					$tmptimezone = $tmpdate->getTimezone()->getName();
+
+					$dateemail = dol_stringtotime((string) $overview['date'], 'gmt');    // if $overview['timezone'] is "+00:00"
+					if (preg_match('/^([+\-])(\d\d):(\d\d)/', $tmptimezone, $reg)) {
+						if ($reg[1] == '+' && ($reg[2] != '00' || $reg[3] != '00')) {
+							$dateemail -= (3600 * (int) $reg[2]);
+							$dateemail -= (60 * (int) $reg[3]);
+						}
+						if ($reg[1] == '-' && ($reg[2] != '00' || $reg[3] != '00')) {
+							$dateemail += (3600 * (int) $reg[2]);
+							$dateemail += (60 * (int) $reg[3]);
+						}
+					}
 					$subject = $overview['subject'];
 				} else {
 					$fromstring = $overview[0]->from;
@@ -1975,7 +1984,7 @@ class EmailCollector extends CommonObject
 					$to = $overview[0]->to;
 					$sendtocc = !empty($overview[0]->cc) ? $overview[0]->cc : '';
 					$sendtobcc = !empty($overview[0]->bcc) ? $overview[0]->bcc : '';
-					$date = $overview[0]->udate;
+					$dateemail = dol_stringtotime((string) $overview[0]->udate, 'gmt');
 					$subject = $overview[0]->subject;
 					//var_dump($msgid);exit;
 				}
@@ -2038,7 +2047,7 @@ class EmailCollector extends CommonObject
 				// var_dump($arrayofreferences);
 
 				foreach ($arrayofreferences as $reference) {
-					//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
+					//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($dateemail, 'dayhour', 'gmt').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
 					if (!empty($trackidfoundintorecipienttype)) {
 						$resultsearchtrackid = -1;		// trackid found
 						$reg[1] = $trackidfoundintorecipienttype;
@@ -2115,11 +2124,11 @@ class EmailCollector extends CommonObject
 							$objectemail = new Adherent($this->db);
 						}
 						/*if ($reg[1] == 'leav') {   // Leave / Holiday
-						 $objectemail = new Holiday($db);
-						 }
-						 if ($reg[1] == 'exp') {   // ExpenseReport
-						 $objectemail = new ExpenseReport($db);
-						 }*/
+							$objectemail = new Holiday($db);
+						}
+						if ($reg[1] == 'exp') {   // ExpenseReport
+							$objectemail = new ExpenseReport($db);
+						}*/
 					} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 						// This is an external reference, we check if we have it in our database
 						if (is_null($objectemail) && isModEnabled('ticket')) {
@@ -2348,11 +2357,20 @@ class EmailCollector extends CommonObject
 						dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
 						dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);	// If a Dolibarr tracker id is found, we should now the id of object
 
+						// Try to guess if this is an email in or out.
 						$actioncode = 'EMAIL_IN';
 						// If we scan the Sent box, we use the code for out email
-						if (preg_match('/Sent$/', $sourcedir)) {
-							$actioncode = 'EMAIL_OUT';
+						if (preg_match('/Sent$/', $sourcedir) || preg_match('/envoyés$/i', $sourcedir)) {
+							$actioncode = 'EMAIL';
 						}
+						// If sender is in the list MAIL_FROM_EMAILS_TO_CONSIDER_SENDING
+						$arrayofemailtoconsideresender = explode(',', getDolGlobalString('MAIL_FROM_EMAILS_TO_CONSIDER_SENDING'));
+						foreach ($arrayofemailtoconsideresender as $emailtoconsidersender) {
+							if (preg_match('/'.preg_quote($emailtoconsidersender, '/').'/', $fromstring)) {
+								$actioncode = 'EMAIL';
+							}
+						}
+						$operationslog .= '<br>Email will have actioncode='.$actioncode;
 
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
@@ -2360,7 +2378,7 @@ class EmailCollector extends CommonObject
 
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("EmailMsgID").' : '.dol_escape_htmltag($msgid));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
-						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($date, "dayhourtext")));
+						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($dateemail, "dayhourtext", "gmt")));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
 						if ($sender) {
 							$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
@@ -2649,7 +2667,7 @@ class EmailCollector extends CommonObject
 											// Search country by name or code
 											if (!empty($contactstatic->country)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry('', 3, $this->db, '', 1, $contactstatic->country);
+												$result = getCountry('', 3, $this->db, null, 1, $contactstatic->country);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
@@ -2766,8 +2784,8 @@ class EmailCollector extends CommonObject
 								$actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 								$actioncomm->note_private = $descriptionfull;
 								$actioncomm->fk_project  = $projectstatic->id;
-								$actioncomm->datep       = $date;	// date of email
-								$actioncomm->datef       = $date;	// date of email
+								$actioncomm->datep       = $dateemail;	// date of email
+								$actioncomm->datef       = $dateemail;	// date of email
 								$actioncomm->percentage  = -1; // Not applicable
 								$actioncomm->socid       = $thirdpartystatic->id;
 								$actioncomm->contact_id = $contactstatic->id;
@@ -2818,7 +2836,7 @@ class EmailCollector extends CommonObject
 													$operationslog .= '<br>Ticket Re-Opened successfully -> ref='.$objectemail->ref;
 												} else {
 													$errorforactions++;
-													$this->error = 'Error while changing the tcket status -> ref='.$objectemail->ref;
+													$this->error = 'Error while changing the ticket status -> ref='.$objectemail->ref;
 													$this->errors[] = $this->error;
 												}
 											}
@@ -3055,7 +3073,7 @@ class EmailCollector extends CommonObject
 								$percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
 
 								$projecttocreate->title = $subject;
-								$projecttocreate->date_start = $date;	// date of email
+								$projecttocreate->date_start = $dateemail;	// date of email
 								$projecttocreate->date_end = 0;
 								$projecttocreate->opp_status = $id_opp_status;
 								$projecttocreate->opp_percent = $percent_opp_status;
@@ -3201,7 +3219,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->note_private = $descriptionfull;
 								$tickettocreate->entity = $conf->entity;
 								$tickettocreate->email_msgid = $msgid;
-								$tickettocreate->email_date = $date;
+								$tickettocreate->email_date = $dateemail;
 								//$tickettocreate->fk_contact = $contactstatic->id;
 
 								$savesocid = $tickettocreate->socid;
@@ -3317,7 +3335,7 @@ class EmailCollector extends CommonObject
 								$candidaturetocreate->note_private = $descriptionfull;
 								$candidaturetocreate->entity = $conf->entity;
 								$candidaturetocreate->email_msgid = $msgid;
-								$candidaturetocreate->email_date = $date;		// date of email
+								$candidaturetocreate->email_date = $dateemail;		// date of email
 								$candidaturetocreate->status = $candidaturetocreate::STATUS_DRAFT;
 								//$candidaturetocreate->fk_contact = $contactstatic->id;
 
@@ -3442,8 +3460,11 @@ class EmailCollector extends CommonObject
 									$tmptargetdir = $this->getEncodedUtf7($targetdir);
 								}
 
-								$result = $imapemail->move($tmptargetdir);
-
+								try {
+									$result = $imapemail->move($tmptargetdir);
+								} catch (Exception $e) {
+									// Nothing to do. $result will remain 0
+								}
 								if (empty($result)) {
 									dol_syslog("Failed to move email into target directory ".$targetdir);
 									$operationslog .= '<br>Failed to move email into target directory '.$targetdir;

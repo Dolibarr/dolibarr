@@ -40,8 +40,12 @@ $weight_impact = GETPOSTFLOAT('weight_impact', 2);
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
 $price_impact = $price_impact_percent ? GETPOSTFLOAT('price_impact', 2) : GETPOSTFLOAT('price_impact', 'MU');
 
+// for PRODUIT_MULTIPRICES
 $level_price_impact = GETPOST('level_price_impact', 'array');
+$level_price_impact = array_map('price2num', $level_price_impact);
+$level_price_impact = array_map('floatval', $level_price_impact);
 $level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
+$level_price_impact_percent = array_map('boolval', $level_price_impact_percent);
 
 $form = new Form($db);
 
@@ -81,18 +85,18 @@ if ($user->socid > 0) { // Protection if external user
 }
 
 if ($object->id > 0) {
-	if ($object->type == Product::TYPE_PRODUCT) {
+	if ($object->isProduct()) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
 	}
-	if ($object->type == Product::TYPE_SERVICE) {
+	if ($object->isService()) {
 		restrictedArea($user, 'service', $object->id, 'product&product', '', '');
 	}
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
+$usercanread = (($object->isProduct() && $user->hasRight('produit', 'lire')) || ($object->isService() && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->isProduct() && $user->hasRight('produit', 'creer')) || ($object->isService() && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->isProduct() && $user->hasRight('produit', 'supprimer')) || ($object->isService() && $user->hasRight('service', 'supprimer')));
 
 
 /*
@@ -154,10 +158,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 		$weight_impact = price2num($weight_impact);
 		$price_impact = price2num($price_impact);
 
-		// for conf PRODUIT_MULTIPRICES
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			$level_price_impact = array_map('price2num', $level_price_impact);
-		} else {
+		if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			$level_price_impact = array(1 => $price_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
@@ -280,15 +281,13 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 
 	// for conf PRODUIT_MULTIPRICES
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$level_price_impact = array_map('price2num', $level_price_impact);
-
-		$prodcomb->variation_price = (float) $level_price_impact[1];
-		$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
+		$prodcomb->variation_price = $level_price_impact[1];
+		$prodcomb->variation_price_percentage = $level_price_impact_percent[1];
 	} else {
 		$level_price_impact = array(1 => $price_impact);
 		$level_price_impact_percent = array(1 => $price_impact_percent);
 
-		$prodcomb->variation_price = (float) $price_impact;
+		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 	}
 
@@ -411,7 +410,7 @@ if (!empty($id) || !empty($ref)) {
 
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
-	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
+	$picto = $object->isService() ? 'service' : 'product';
 
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 

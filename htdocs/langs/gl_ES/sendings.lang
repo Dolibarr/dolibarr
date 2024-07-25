@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=Non se atopou ningún produto para enviar no almac
 WeightVolShort=Peso/Vol.
 ValidateOrderFirstBeforeShipment=Antes de poder realizar envíos debe validar o pedimento.
 NoLineGoOnTabToAddSome=Sen liña, vai á lapela "%s" para engadir
+CreateInvoiceForThisCustomerFromSendings=Envíos de facturas
+IfValidateInvoiceIsNoSendingStayUnbilled=Se a validación da factura é "Non", o envío permanecerá no estado "Non facturado" ata que se valide a factura.
+OptionToSetSendingBilledNotEnabled=A opción do módulo Fluxo de traballo, para establecer o envío como 'Facturado' automaticamente cando se valida a factura, non está habilitada, polo que terá que configurar o estado dos envíos en 'Facturado' manualmente despois de xerar a factura.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Modelo de documento máis completo para a compatibilidade de 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER no definida
 SumOfProductVolumes=Suma do volume dos produtos
 SumOfProductWeights=Suma do peso dos produtos
-
 # warehouse details
 DetailWarehouseNumber= Detalles do almacén
 DetailWarehouseFormat= Alm.:%s (Cant. : %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Mostra a última data de entrada en stock durante a creación do envío para o número de serie ou o lote
 CreationOptions=Opcións dispoñibles durante a creación do envío
-
 ShipmentDistribution=Distribución do envío
-
 ErrorTooManyCombinationBatchcode=Non hai envío para a liña %s xa que se atoparon demasiadas combinacións de código de almacén, produto e lote (%s).
 ErrorNoCombinationBatchcode=Non se puido gardar a liña %s como a combinación de almacén-produto-lote/serie (%s, %s, %s) non se atopou en stock.
-
 ErrorTooMuchShipped=A cantidade enviada non debe ser superior á cantidade solicitada para a liña %s

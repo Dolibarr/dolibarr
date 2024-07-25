@@ -2,7 +2,7 @@
 /* Copyright (C) 2015       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2023  Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Francis Appels          <francis.appels@z-application.com>
  * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  * Copyright (C) 2019       Rafael Ingenleuf        <ingenleuf@welters.de>
@@ -25,7 +25,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expensereport/doc/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php
  *	\ingroup    expensereport
  *	\brief      File of class to generate expense report from standard model
  */
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
 /**
  *	Class to generate expense report based on standard model
  */
-class pdf_standard extends ModeleExpenseReport
+class pdf_standard_expensereport extends ModeleExpenseReport
 {
 	/**
 	 * @var DoliDB Database handler
@@ -236,7 +236,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 12; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -410,21 +410,6 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-
-					//$nblineFollowComment = 1;
-					// Search number of lines coming to know if there is enough room
-					// if ($i < ($nblines - 1))	// If it's not last line
-					// {
-					//     //Fetch current description to know on which line the next one should be placed
-					// 	$follow_comment = $object->lines[$i]->comments;
-					// 	$follow_type = $object->lines[$i]->type_fees_code;
-
-					// 	//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-					// 	$nbLineCommentNeed = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output);
-					// 	$nbLineTypeNeed = dol_nboflines_bis($follow_type,4,$outputlangs->charset_output);
-
-					//     $nblineFollowComment = max($nbLineCommentNeed, $nbLineTypeNeed);
-					// }
 
 					//$nexY+=$nblineFollowComment*($pdf->getFontSize()*1.3);    // Add space between lines
 					$nexY += ($pdf->getFontSize() * 1.3); // Add space between lines

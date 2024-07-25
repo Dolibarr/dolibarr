@@ -255,7 +255,7 @@ CustomerRelativeDiscount=相對客戶折扣
 SupplierRelativeDiscount=Relative vendor discount
 CustomerRelativeDiscountShort=相對折扣
 CustomerAbsoluteDiscountShort=絕對折扣
-CompanyHasRelativeDiscount=該客戶的默認折扣為 <b> %s%% </b>
+CompanyHasRelativeDiscount=該客戶的默認折扣為 <b> %s%% </b> 
 CompanyHasNoRelativeDiscount=該客戶默認無相對折扣
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> with this vendor
 HasNoRelativeDiscountFromSupplier=No default relative discount with this vendor
@@ -337,7 +337,7 @@ VATIntraCheck=查看
 VATIntraCheckDesc=增值稅 ID 必須包含國家/地區前綴。鏈接<b> %s </b>  使用歐洲增值稅檢查服務 (VIES)，該服務需要從 Dolibarr 服務器訪問互聯網。
 VATIntraCheckURL=https://ec.europa.eu/taxation_customs/vies/#/vat-validation
 VATIntraCheckableOnEUSite=在歐盟委員會網站上查看共同體內增值稅 ID
-VATIntraManualCheck=您還可以在歐盟委員會網站上手動查看<a href="%s" target="_blank" rel="noopener noreferrer"> %s </a>
+VATIntraManualCheck=您還可以在歐盟委員會網站上手動查看<a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> 
 ErrorVATCheckMS_UNAVAILABLE=檢查不可能。成員國不提供檢查服務 (%s）。
 NorProspectNorCustomer=不是潛在客戶，也不是客戶
 JuridicalStatus=企業實體類型

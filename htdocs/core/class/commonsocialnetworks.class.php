@@ -76,7 +76,6 @@ trait CommonSocialNetworks
 				print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
 			}
 		}
-		print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'><hr></td></tr>';
 
 		if ($nbofnetworks > 1) {
 			print '<script nonce="'.getNonce().'" type="text/javascript">

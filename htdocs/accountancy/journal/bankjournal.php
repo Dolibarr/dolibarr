@@ -413,9 +413,10 @@ if ($result) {
 					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					$userstatic->status = $tabuser[$obj->rowid]['status'];
 					$userstatic->accountancy_code = $tabuser[$obj->rowid]['accountancy_code'];
+
 					// For a payment of social contribution, we have a link sc + user.
 					// but we already fill the $tabpay[$obj->rowid]["soclib"] in the line 'sc'.
-					// If we fill it here to, we must concat
+					// If we fill it here to, we must concat.
 					if ($userstatic->id > 0) {
 						if ($is_sc) {
 							$tabpay[$obj->rowid]["soclib"] .= ' '.$userstatic->getNomUrl(1, 'accountancy', 0);
@@ -448,6 +449,8 @@ if ($result) {
 						$chargestatic->label = $links[$key]['label'];
 					}
 					$chargestatic->ref = $chargestatic->label;
+					//$chargestatic->fetch($chargestatic->id);
+
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 

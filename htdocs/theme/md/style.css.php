@@ -1163,6 +1163,9 @@ td.wordbreak img, td.wordbreakimp img {
 .uppercase {
 	text-transform: uppercase;
 }
+.marginpopup {
+	margin: 20px;
+}
 .nounderline {
 	text-decoration: none;
 }
@@ -2462,7 +2465,7 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other
 {
 	display: none;
 }
-<?php if (!getDolGlobalString('THEME_DISABLE_STICKY_TOPMENU')) {  ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
@@ -3833,8 +3836,8 @@ a.fmdirlia {
 /* ============================================================================== */
 div.tabs {
 	text-align: <?php print $left; ?>;
-	margin-left: 6px !important;
-	margin-right: 6px !important;
+	/*margin-left: 6px !important;
+	margin-right: 6px !important;*/
 	clear:both;
 	height:100%;
 }
@@ -5018,6 +5021,9 @@ a.valignmiddle.dashboardlineindicator {
 .height30 {
 	height: 30px !important;
 }
+.height50 {
+	height: 50px !important;
+}
 
 tr.box_titre {
 	height: 26px !important;
@@ -5093,8 +5099,10 @@ div.info {
 }
 
 /* Warning message */
-div.warning {
+div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
+}
+div.warning {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
@@ -6149,6 +6157,9 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
+}
 
 
 /* ============================================================================== */
@@ -6476,6 +6487,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	padding-top: 10px !important;
 	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
@@ -6490,9 +6502,10 @@ div#ecm-layout-center {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-	-webkit-box-shadow: 2px 2px 4px #888 !important;
-	box-shadow: 2px 2px 4px #888 !important;
+	-webkit-box-shadow: 2px 2px 4px #8888 !important;
+	box-shadow: 2px 2px 4px #8888 !important;
 }
+
 
 /* ============================================================================== */
 /*  blockUI                                                                      */

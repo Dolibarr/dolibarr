@@ -114,7 +114,7 @@ $arrayfields = array(
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentexpensereportlist'));
 $object = new PaymentExpenseReport($db);
 
@@ -179,6 +179,7 @@ $accountstatic = new Account($db);
 $userstatic = new User($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 
+$title = $langs->trans('ListPayment');
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -290,7 +291,7 @@ $i = 0;
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $langs->trans('ListPayment'), '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

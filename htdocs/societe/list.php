@@ -203,7 +203,7 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-// Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical objects to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage, 'thirdpartylist'));
@@ -1755,6 +1755,9 @@ while ($i < $imaxinloop) {
 		$companystatic->client = $obj->client;
 		$companystatic->status = $obj->status;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->phone_mobile = $obj->phone_mobile;
+		$companystatic->fax = $obj->fax;
 		$companystatic->address = $obj->address;
 		$companystatic->zip = $obj->zip;
 		$companystatic->town = $obj->town;

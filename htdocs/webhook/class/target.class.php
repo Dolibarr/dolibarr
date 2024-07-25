@@ -114,7 +114,6 @@ class Target extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -210,9 +209,22 @@ class Target extends CommonObject
 	 */
 	public function initListOfTriggers()
 	{
+		$entitytoicon = array(
+			'societe'			=> 'company',
+			'facture'			=> 'bill',
+			'commande'			=> 'order',
+			'order_supplier'    => 'supplier_order',
+			'proposal_supplier' => 'supplier_proposal',
+			'invoice_supplier' 	=> 'supplier_invoice',
+			'facturerec' 		=> 'bill',
+			'ficheinter'    	=> 'intervention',
+			'shipping'	   		=> 'shipment',
+			'contrat'       	=> 'contract',
+			'recruitment'       => 'recruitmentjobposition',
+		);
 		// Define the array $arrayofkeyval for $this->fields["trigger_codes"]
 		if (!empty($this->fields["trigger_codes"]['arrayofkeyval']) && is_array($this->fields["trigger_codes"]['arrayofkeyval']) && !empty($this->fields["trigger_codes"]["multiinput"])) {
-			$sql = "SELECT c.code, c.label FROM ".MAIN_DB_PREFIX."c_action_trigger as c ORDER BY c.rang DESC";
+			$sql = "SELECT c.code, c.label, c.elementtype FROM ".MAIN_DB_PREFIX."c_action_trigger as c ORDER BY c.rang ASC";
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -220,7 +232,8 @@ class Target extends CommonObject
 				$arraytrigger = array();
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					$arraytrigger[$obj->code] = $obj->label.' ('.$obj->code.')';
+					$elementtype = (!empty($entitytoicon[$obj->elementtype]) ? $entitytoicon[$obj->elementtype] : $obj->elementtype);
+					$arraytrigger[$obj->code] = img_object("", $elementtype).' '.$obj->label.' ('.$obj->code.')';
 					$i++;
 				}
 				$this->fields["trigger_codes"]['arrayofkeyval'] = $arraytrigger;

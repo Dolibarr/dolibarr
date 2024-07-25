@@ -141,7 +141,7 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid')) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
 $extrafields = new ExtraFields($db);
 
@@ -659,21 +659,23 @@ if ($search_thirdparty_user) {
 	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."user AS subUser ON (bu.type = 'user' AND bu.url_id = subUser.rowid)";
-	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, '', 1).")";
+	$sql .= "	  WHERE ". natural_search(array("subUser.firstname", "subUser.lastname"), $search_thirdparty_user, 0, 1).")";
 
 	$sql .= " OR b.rowid IN ";
 	$sql .= " 	( SELECT bu.fk_bank FROM ".MAIN_DB_PREFIX."bank_url AS bu";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."bank AS b2 ON b2.rowid = bu.fk_bank";
 	$sql .= "	 JOIN ".MAIN_DB_PREFIX."societe AS subSoc ON (bu.type = 'company' AND bu.url_id = subSoc.rowid)";
-	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, '', 1);
+	$sql .= "	  WHERE ". natural_search(array("subSoc.nom"), $search_thirdparty_user, 0, 1);
 	$sql .= "))";
 }
 if ($search_description) {
 	$search_description_to_use = $search_description;
 	$arrayoffixedlabels = array(
 		'payment_salary',
-		'CustomerInvoicePayment', 'CustomerInvoicePaymentBack',
-		'SupplierInvoicePayment', 'SupplierInvoicePaymentBack',
+		'CustomerInvoicePayment',
+		'CustomerInvoicePaymentBack',
+		'SupplierInvoicePayment',
+		'SupplierInvoicePaymentBack',
 		'DonationPayment',
 		'ExpenseReportPayment',
 		'SocialContributionPayment',
@@ -1310,7 +1312,6 @@ if ($resql) {
 	while ($i < $imaxinloop) {
 		$objp = $db->fetch_object($resql);
 		$links = $bankaccountstatic->get_url($objp->rowid);
-
 		// If we are in a situation where we need/can show balance, we calculate the start of balance
 		if (!$balancecalculated && (!empty($arrayfields['balancebefore']['checked']) || !empty($arrayfields['balance']['checked'])) && ($mode_balance_ok || $search_conciliated === '0')) {
 			if (!$search_account) {
@@ -1680,6 +1681,7 @@ if ($resql) {
 			$companylinked_id = 0;
 			$userlinked_id = 0;
 			$type_link = "";
+			$thirdstr = "";
 
 			//payment line type to define user display and user or company linked
 			foreach ($links as $key => $value) {
@@ -1688,6 +1690,16 @@ if ($resql) {
 				}
 				if ($links[$key]['type'] == 'payment_salary') {
 					$type_link = 'payment_salary';
+				}
+				if ($links[$key]['type'] == 'payment_donation') {
+					$paymentdonationstatic->fetch($links[$key]['url_id']);
+					$donstatic->fetch($paymentdonationstatic->fk_donation);
+					$companylinked_id = $donstatic->socid;
+					if (!$companylinked_id) {
+						$thirdstr = ($donstatic->societe !== "" ?
+									$donstatic->societe :
+									$donstatic->firstname." ".$donstatic->lastname);
+					}
 				}
 				if ($links[$key]['type'] == 'payment_expensereport') {
 					$type_link = 'payment_expensereport';
@@ -1701,6 +1713,7 @@ if ($resql) {
 				}
 			}
 
+			// Show more information in the column thirdparty.
 			if ($companylinked_id) {
 				// TODO Add a cache of loaded companies here ?
 				$companystatic->fetch($companylinked_id);
@@ -1718,6 +1731,8 @@ if ($resql) {
 					$conf->cache['user'][$userlinked_id] = $tmpuser;
 				}
 				print $tmpuser->getNomUrl(-1);
+			} elseif ($thirdstr) {
+				print $thirdstr;
 			} else {
 				print '&nbsp;';
 			}

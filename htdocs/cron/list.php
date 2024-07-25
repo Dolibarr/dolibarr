@@ -78,7 +78,7 @@ $diroutputmassaction = $outputdir.'/temp/massgeneration/'.$user->id;
 
 $object = new Cronjob($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
 
@@ -240,7 +240,7 @@ $cronjob = new Cronjob($db);
 
 $title = $langs->trans("CronList");
 
-llxHeader('', $title, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $TTestNotAllowed = array();
 $sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';

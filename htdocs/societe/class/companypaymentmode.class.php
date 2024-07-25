@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017  		Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,6 +301,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
+		$this->date_modification = $this->tms;
 
 		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;

@@ -310,3 +310,4 @@ MergeTasks=Merge tasks
 TaskMergeSuccess=Tasks have been merged
 ErrorTaskIdIsMandatory=Error: Task id is mandatory
 ErrorsTaskMerge=An error occurred while merging tasks
+Billable = Billable

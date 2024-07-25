@@ -115,7 +115,6 @@ class Skill extends CommonObject
 	public $rowid;
 	public $label;
 	public $description;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $required_level;

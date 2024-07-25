@@ -11,6 +11,7 @@ $sanitizeRegex
 		array(
 			// Documented:
 			'none',
+			'password',
 			'array',
 			'int',
 			'intcomma',
@@ -22,24 +23,15 @@ $sanitizeRegex
 			'aZ09',
 			'aZ09arobase',
 			'aZ09comma',
+			'email',
 			'san_alpha',
 			'restricthtml',
 			'nohtml',
 			'custom',
 			// Not documented:
-			'email',
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
-			'restricthtmlnolink',
-			//'ascii',
-			//'categ_id',
-			//'chaine',
-
-			//'html',
-			//'boolean',
-			//'double',
-			//'float',
-			//'string',
+			'restricthtmlnolink'
 		)
 	).')*$/';
 
@@ -425,7 +417,8 @@ return [
 		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
 		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
 		'PhanTypeObjectUnsetDeclaredProperty',
-		'PhanTypePossiblyInvalidDimOffset',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanTypePossiblyInvalidDimOffset',			// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginUnknownArrayFunctionReturnType',	// a lot of false positive, in most cases, we want to keep the code as it is
 
 		'PhanPluginWhitespaceTab',		// Dolibarr used tabs
 		'PhanPluginCanUsePHP71Void',	// Dolibarr is maintaining 7.0 compatibility

@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2022	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -63,17 +63,17 @@ class FormMail extends Form
 	public $frommail;
 
 	/**
-	 * @var string user, company, robot
+	 * @var string 	user, company, robot
 	 */
 	public $fromtype;
 
 	/**
-	 * @var int from ID
+	 * @var int 	from ID
 	 */
 	public $fromid;
 
 	/**
-	 * @var int also from robot
+	 * @var int 	Add also the robot email as possible senders
 	 */
 	public $fromalsorobot;
 
@@ -93,7 +93,7 @@ class FormMail extends Form
 	public $replytoname;
 
 	/**
-	 * @var string replyto email
+	 * @var string 	Reply-to email
 	 */
 	public $replytomail;
 
@@ -726,7 +726,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtouser;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
@@ -775,7 +775,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
@@ -1419,42 +1419,38 @@ class FormMail extends Form
 
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<tr id="ai_input" class="hidden">';
-		$out .= '<td>';
-		//$out .= $form->textwithpicto($langs->trans('HelpWithAI'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
-		$out .= '</td>';
-
-		$out .= '<td>';
-		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
-		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
-		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly margintoponly">';
+		$out = '<div id="ai_input'.$htmlContent.'" class="hidden">';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
+		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
+		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
 		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 		$out .= '</div>';
-		$out .= "</td></tr>\n";
+
+		$out .= "</div>\n";
 
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
 				// for keydown
-				$('#ai_instructions').keydown(function(event) {
+				$('#ai_instructions".$htmlContent."').keydown(function(event) {
 					if (event.keyCode === 13) {
 						event.preventDefault();
-						$('#generate_button').click();
+						$('#generate_button".$htmlContent."').click();
 					}
 				});
 
-				$('#generate_button').click(function() {
-					console.log('We click on generate ai button');
+				$('#generate_button".$htmlContent."').click(function() {
+					console.log('We click on generate_button".$htmlContent." ai button');
 
-					var instructions = $('#ai_instructions').val();
+					var instructions = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
 
-					$('#ai_status_message').show();
+					$('#ai_status_message".$htmlContent."').show();
 					$('.icon-container .loader').show();
 					setTimeout(function() {
 						timeoutfinished = 1;
 						if (apicallfinished) {
-							$('#ai_status_message').hide();
+							$('#ai_status_message".$htmlContent."').hide();
 						}
 					}, 2000);
 
@@ -1474,9 +1470,10 @@ class FormMail extends Form
 							'instructions': instructions,					/* the prompt string */
 						}),
 						success: function(response) {
-							console.log('Add response into field \'".$htmlContent."\': '+response);
+							console.log('Add response into field \'#".$htmlContent."\': '+response);
 
-							jQuery('#".$htmlContent."').val(response);
+							jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
+							jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
 							//jQuery('#".$htmlContent."preview').val(response);
 
 							if (CKEDITOR.instances) {
@@ -1492,17 +1489,17 @@ class FormMail extends Form
 							}
 
 							// remove readonly
-							$('#ai_instructions').val('');
+							$('#ai_instructions".$htmlContent."').val('');
 
 							apicallfinished = 1;
 							if (timeoutfinished) {
-								$('#ai_status_message').hide();
+								$('#ai_status_message".$htmlContent."').hide();
 							}
 						},
 						error: function(xhr, status, error) {
 							alert(error);
 							console.error('error ajax', status, error);
-							$('#ai_status_message').hide();
+							$('#ai_status_message".$htmlContent."').hide();
 						}
 
 					});

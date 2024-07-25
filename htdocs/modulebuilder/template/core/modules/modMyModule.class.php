@@ -464,6 +464,7 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		// Create tables of module at module activation
 		//$result = $this->_load_tables('/install/mysql/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
 		if ($result < 0) {

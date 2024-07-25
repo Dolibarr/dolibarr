@@ -74,7 +74,7 @@ $pageprev   = $page - 1;
 $pagenext   = $page + 1;
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Job($db);
 $objectposition = new Position($db);
 $extrafields = new ExtraFields($db);
@@ -143,7 +143,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('hrm', 'all', 'read');

@@ -800,7 +800,7 @@ Merge=Junção
 DocumentModelStandardPDF=Modelo PDF padrão
 PrintContentArea=Visualizar página para impressão área de conteúdo principal
 MenuManager=Gestão do menu
-WarningYouAreInMaintenanceMode=Atenção, você  está em modo de manutenção: Só o login <b>%s</b> está autorizado a usar a aplicação neste modo.
+WarningYouAreInMaintenanceMode=Atenção, você  está em modo de manutenção: Só o login <b>%s</b> está autorizado a usar a aplicação neste modo. 
 CoreErrorTitle=Erro de sistema
 CoreErrorMessage=Ocorreu um erro. Contacte o seu administrador do sistema de forma a que este proceda à análise do relatórios ou desative a opção $dolibarr_main_prod=1 para obter mais informação.
 CreditCard=Cartão de crédito

@@ -103,7 +103,7 @@ ErrorFieldRefNotIn=Felt <b> %s </b>: '<b> %s </b>' er ikke en <b> %s </b> eksist
 ErrorMultipleRecordFoundFromRef=Flere poster funnet ved søk fra ref <b> %s </b> . Ingen måte å vite hvilken ID du skal bruke.
 ErrorsOnXLines=%s feil funnet
 ErrorFileIsInfectedWithAVirus=Antivirus-programmet var ikke i stand til å validere filen (filen kan være infisert av et virus)
-ErrorFileIsAnInfectedPDFWithJSInside=Filen er en PDF-fil infisert av Javascript
+ErrorFileIsAnInfectedPDFWithJSInside=Filen er en PDF-fil infisert av Javascript 
 ErrorNumRefModel=En referanse finnes i databasen (%s), og er ikke kompatibel med denne nummereringsregelen. Fjern posten eller omdøp referansen for å aktivere denne modulen.
 ErrorQtyTooLowForThisSupplier=Mengde for lav for denne leverandøren eller ingen pris angitt på dette produktet for denne leverandøren
 ErrorOrdersNotCreatedQtyTooLow=Noen ordrer er ikke opprettet på grunn av for lave mengder
@@ -396,7 +396,7 @@ SwissQrDebitorAddressInvalid = Debitorinformasjonen var ugyldig (%s)
 # Validate
 RequireValidValue = Verdien er ikke gyldig
 RequireAtLeastXString = Krever minst %s tegn
-RequireXStringMax = Krever maks%s tegn
+RequireXStringMax = Krever maks%s tegn 
 RequireAtLeastXDigits = Krever minst %s siffer
 RequireXDigitsMax = Krever maks %s siffer
 RequireValidNumeric = Krever en numerisk verdi

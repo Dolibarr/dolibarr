@@ -330,3 +330,4 @@ BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
 KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+SetTitle=Set title

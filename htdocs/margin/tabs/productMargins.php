@@ -47,9 +47,10 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -64,6 +65,51 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 
 if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
+}
+
+$hookmanager->initHooks(array('tabproductmarginlist'));
+
+$search_invoice_date_start = '';
+$search_invoice_date_end = '';
+if (GETPOSTINT('search_invoice_date_start_month')) {
+	$search_invoice_date_start = dol_mktime(0, 0, 0, GETPOSTINT('search_invoice_date_start_month'), GETPOSTINT('search_invoice_date_start_day'), GETPOSTINT('search_invoice_date_start_year'));
+}
+if (GETPOSTINT('search_invoice_date_end_month')) {
+	$search_invoice_date_end = dol_mktime(23, 59, 59, GETPOSTINT('search_invoice_date_end_month'), GETPOSTINT('search_invoice_date_end_day'), GETPOSTINT('search_invoice_date_end_year'));
+}
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_invoice_date_start = '';
+	$search_invoice_date_end = '';
+}
+
+// set default dates from fiscal year
+if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GETPOSTISSET('restore_lastsearch_values')) {
+	$query = "SELECT date_start, date_end";
+	$query .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
+	$query .= " WHERE date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
+	$res = $db->query($query);
+
+	if ($res && $db->num_rows($res) > 0) {
+		$fiscalYear = $db->fetch_object($res);
+		$search_invoice_date_start = strtotime($fiscalYear->date_start);
+		$search_invoice_date_end = strtotime($fiscalYear->date_end);
+	} else {
+		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
+		$year_start = dol_print_date(dol_now(), '%Y');
+		if (dol_print_date(dol_now(), '%m') < $month_start) {
+			$year_start--; // If current month is lower that starting fiscal month, we start last year
+		}
+		$year_end = $year_start + 1;
+		$month_end = $month_start - 1;
+		if ($month_end < 1) {
+			$month_end = 12;
+			$year_end--;
+		}
+		$search_invoice_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+		$search_invoice_date_end = dol_get_last_day($year_end, $month_end);
+	}
 }
 
 
@@ -93,6 +139,17 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	llxHeader('', $title, $help_url);
+
+	$param = "&id=".$object->id;
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit='.((int) $limit);
+	}
+	if ($search_invoice_date_start) {
+		$param .= '&search_invoice_date_start_day='.dol_print_date($search_invoice_date_start, '%d').'&search_invoice_date_start_month='.dol_print_date($search_invoice_date_start, '%m').'&search_invoice_date_start_year='.dol_print_date($search_invoice_date_start, '%Y');
+	}
+	if ($search_invoice_date_end) {
+		$param .= '&search_invoice_date_end_day='.dol_print_date($search_invoice_date_end, '%d').'&search_invoice_date_end_month='.dol_print_date($search_invoice_date_end, '%m').'&search_invoice_date_end_year='.dol_print_date($search_invoice_date_end, '%Y');
+	}
 
 	// View mode
 	if ($result > 0) {
@@ -172,41 +229,161 @@ if ($id > 0 || !empty($ref)) {
 			if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 				$sql .= " AND d.buy_price_ht <> 0";
 			}
+			if (!empty($search_invoice_date_start)) {
+				$sql .= " AND f.datef >= '".$db->idate($search_invoice_date_start)."'";
+			}
+			if (!empty($search_invoice_date_end)) {
+				$sql .= " AND f.datef <= '".$db->idate($search_invoice_date_end)."'";
+			}
 			$sql .= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.ref, f.total_ht, f.datef, f.paye, f.fk_statut, f.type";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user";
 			}
-			$sql .= $db->order($sortfield, $sortorder);
+
 			// TODO: calculate total to display then restore pagination
-			//$sql.= $db->plimit($conf->liste_limit +1, $offset);
+
+			$sql .= $db->order($sortfield, $sortorder);
+			if ($limit) {
+				$sql .= $db->plimit($limit + 1, $offset);
+			}
 			dol_syslog('margin:tabs:productMargins.php', LOG_DEBUG);
 			$result = $db->query($sql);
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "&amp;id=$object->id", $sortfield, $sortorder, '', 0, 0, '');
+				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$id.'" name="search_form">'."\n";
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				if (!empty($sortfield)) {
+					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+				}
+				if (!empty($sortorder)) {
+					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
+				}
+
+				print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
+
+				$moreforfilter = '';
+
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+				if (empty($reshook)) {
+					$moreforfilter .= $hookmanager->resPrint;
+				} else {
+					$moreforfilter = $hookmanager->resPrint;
+				}
+
+				if (!empty($moreforfilter)) {
+					print '<div class="liste_titre liste_titre_bydiv centpercent">';
+					print $moreforfilter;
+					print '</div>';
+				}
+
+				$selectedfields = '';
 
 				$i = 0;
 
 				print '<div class="div-table-responsive">';
 				print '<table class="noborder centpercent">';
 
-				print '<tr class="liste_titre">';
-				print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
-				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
-				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "&amp;id=".$object->id, '', $sortfield, $sortorder);
-				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'left ');
-				print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "buying_price", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "qty", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
-				print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				// Fields title search
+				// --------------------------------------------------------------------
+				print '<tr class="liste_titre_filter">';
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center maxwidthsearch">';
+					$searchpicto = $form->showFilterButtons('left');
+					print $searchpicto;
+					print '</td>';
+				}
+
+				// invoice ref
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// company name
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// customer code
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// invoice date
+				print '<td class="liste_titre center">';
+				print '<div class="nowrapfordate">';
+				print $form->selectDate($search_invoice_date_start ?: -1, 'search_invoice_date_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+				print '</div>';
+				print '<div class="nowrapfordate">';
+				print $form->selectDate($search_invoice_date_end ?: -1, 'search_invoice_date_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+				print '</div>';
+				print '</td>';
+
+				// selling price
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// buying price
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// qty
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// margin
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// margin rate
 				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
-					print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+					print '<td class="liste_titre">';
+					print '</td>';
+				}
+
+				// mark rate
+				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
+					print '<td class="liste_titre">';
+					print '</td>';
+				}
+
+				// status
+				print '<td class="liste_titre">';
+				print '</td>';
+
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="liste_titre center maxwidthsearch">';
+					$searchpicto = $form->showFilterButtons();
+					print $searchpicto;
+					print '</td>';
+				}
+
+				print '</tr>'."\n";
+
+				print '<tr class="liste_titre">';
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+				}
+				print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", $param, '', $sortfield, $sortorder);
+				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $param, '', $sortfield, $sortorder, 'center ');
+				print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("BuyingPrice", $_SERVER["PHP_SELF"], "buying_price", "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "qty", "", $param, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", $param, '', $sortfield, $sortorder, 'right ');
+				if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
+					print_liste_field_titre("MarginRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 				}
 				if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-					print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+					print_liste_field_titre("MarkRate", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
 				}
-				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", "&amp;id=".$object->id, '', $sortfield, $sortorder, 'right ');
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $param, '', $sortfield, $sortorder, 'right ');
+				// Action column
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
+				}
 				print "</tr>\n";
 
 				$cumul_achat = 0;
@@ -214,13 +391,20 @@ if ($id > 0 || !empty($ref)) {
 				$cumul_qty = 0;
 
 				if ($num > 0) {
-					while ($i < $num /*&& $i < $conf->liste_limit*/) {
+					$imaxinloop = ($limit ? min($num, $limit) : $num);
+					while ($i < $imaxinloop) {
 						$objp = $db->fetch_object($result);
 
 						$marginRate = ($objp->buying_price != 0) ? (100 * $objp->marge / $objp->buying_price) : '';
 						$markRate = ($objp->selling_price != 0) ? (100 * $objp->marge / $objp->selling_price) : '';
 
 						print '<tr class="oddeven">';
+						// Action column
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center">';
+							print '</td>';
+						}
+
 						print '<td>';
 						$invoicestatic->id = $objp->facid;
 						$invoicestatic->ref = $objp->ref;
@@ -241,6 +425,12 @@ if ($id > 0 || !empty($ref)) {
 							print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 						}
 						print '<td class="right">'.$invoicestatic->LibStatut($objp->paye, $objp->statut, 5).'</td>';
+
+						// Action column
+						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="nowrap center">';
+							print '</td>';
+						}
 						print "</tr>\n";
 						$i++;
 						$cumul_achat += $objp->buying_price;
@@ -260,7 +450,11 @@ if ($id > 0 || !empty($ref)) {
 					$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
 				}
 				print '<tr class="liste_total">';
-				print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
+				$colspan = 4;
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					$colspan++; // add action column
+				}
+				print '<td colspan="'.$colspan.'">'.$langs->trans('TotalMargin')."</td>";
 				print '<td class="right amount">'.price(price2num($cumul_vente, 'MT'))."</td>\n";
 				print '<td class="right amount">'.price(price2num($cumul_achat, 'MT'))."</td>\n";
 				print '<td class="right">'.price(price2num($cumul_qty, 'MT'))."</td>\n";
@@ -272,9 +466,15 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="right">'.(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
 				}
 				print '<td class="right">&nbsp;</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					// add action column
+					print '<td class="center">';
+					print '</td>';
+				}
 				print "</tr>\n";
 				print "</table>";
 				print '</div>';
+				print '</form>';
 			} else {
 				dol_print_error($db);
 			}

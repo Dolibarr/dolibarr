@@ -1926,7 +1926,7 @@ class User extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		} else {
-			// $this->error deja positionne
+			// $this->error was already set
 			$this->db->rollback();
 			return -2;
 		}
@@ -3830,7 +3830,7 @@ class User extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
-		$this->users = dol_sort_array($this->users, 'fullname', 'asc', true, false, 1);
+		$this->users = dol_sort_array($this->users, 'fullname', 'asc', 1, 0, 1);
 
 		//var_dump($this->users);
 

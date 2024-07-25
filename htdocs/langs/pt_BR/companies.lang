@@ -126,6 +126,7 @@ VATIntra=ID do IVA
 VATIntraShort=ID do IVA
 VATIntraSyntaxIsValid=Sintaxe é válida
 ProspectCustomer=Possível cliente / Cliente
+Prospect=Prospecto de cliente
 CustomerRelativeDiscount=Desconto relativo do cliente
 CustomerRelativeDiscountShort=Desconto relativo
 CompanyHasRelativeDiscount=Esse cliente tem um desconto padrão de <b>%s%%</b>

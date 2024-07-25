@@ -323,7 +323,7 @@ ExternalSiteURL=URL for eksternt nettsted for HTML iframe-innhold
 ExternalSiteModuleNotComplete=Modulen Ekstern Side ble ikke riktig konfigurert.
 ExampleMyMenuEntry=Meny overskrift
 # ftp
-FTPClientSetup=Modul for oppsett av FTP- eller SFTP-klient
+FTPClientSetup=Modul for oppsett av FTP- eller SFTP-klient 
 NewFTPClient=Nytt oppsett av FTP/SFTP-tilkobling
 FTPArea=FTP/SFTP-område
 FTPAreaDesc=Dette skjermbildet viser en FTP et SFTP-server.

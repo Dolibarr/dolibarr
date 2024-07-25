@@ -137,7 +137,7 @@ class FormListWebPortal
 		// load module libraries
 		dol_include_once('/webportal/class/webportal' . $elementEn . '.class.php');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$objectclass = 'WebPortal' . ucfirst($elementEn);
 		$object = new $objectclass($this->db);
 
@@ -201,6 +201,9 @@ class FormListWebPortal
 			$arrayfields['remain_to_pay'] = array('type' => 'price', 'label' => 'RemainderToPay', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10000, 'help' => '',);
 		}
 		$arrayfields['download_link'] = array('label' => 'File', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10001, 'help' => '',);
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+			$arrayfields['signature_link'] = array('label' => 'Signature', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10002, 'help' => '',);
+		}
 
 		$object->fields = dol_sort_array($object->fields, 'position');
 		//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
@@ -514,7 +517,13 @@ class FormListWebPortal
 			$html .= '</td>';
 		}
 		$html .= '</tr>';
-
+		// Signature link
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+			if (!empty($arrayfields['signature_link']['checked'])) {
+				$html .= '<td data-label="' . $arrayfields['signature_link']['label'] . '">';
+				$html .= '</td>';
+			}
+		}
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
@@ -556,6 +565,15 @@ class FormListWebPortal
 			$html .= $langs->trans($arrayfields['download_link']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
+		}
+		// Signature link
+		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+			if (!empty($arrayfields['signature_link']['checked'])) {
+				$html .= '<th scope="col">';
+				$html .= $langs->trans($arrayfields['signature_link']['label']);
+				$html .= '</th>';
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Hook fields
@@ -680,11 +698,23 @@ class FormListWebPortal
 					$totalarray['nbfield']++;
 				}
 			}
+			// Signature link
+			if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+				if (!empty($arrayfields['signature_link']['checked'])) {
+					$html .= '<td class="nowraponall" data-label="' . $arrayfields['signature_link']['label'] . '">';
+					if ($object->fk_statut == Propal::STATUS_VALIDATED) {
+						$html .= $this->form->getSignatureLink('proposal', $object);
+					}
+					$html .= '</td>';
+					if (!$i) {
+						$totalarray['nbfield']++;
+					}
+				}
+			}
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			$html .= $hookmanager->resPrint;
-
 
 			$html .= '</tr>';
 

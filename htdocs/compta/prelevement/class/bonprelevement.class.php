@@ -1146,7 +1146,7 @@ class BonPrelevement extends CommonObject
 						}
 
 						$verif = checkSwiftForAccount(null, $fac[10]);
-						if ($verif) {
+						if ($verif || (empty($fac[10]) && getDolGlobalInt("WITHDRAWAL_WITHOUT_BIC"))) {
 							$verif = checkIbanForAccount(null, $fac[11]);
 						}
 
@@ -2213,7 +2213,9 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '				</DrctDbtTx>' . $CrLf;
 			$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
-			$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) {
+				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
+			}
 			$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
 			$XML_DEBITOR .= '				</DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '				<Dbtr>' . $CrLf;
@@ -2342,7 +2344,7 @@ class BonPrelevement extends CommonObject
 
 		fwrite($this->file, substr($this->raison_sociale . "                           ", 0, 24));
 
-		// Reference de la remise creancier D1 sur 7 caracteres
+		// Ref of thirdparty on 7 characters
 
 		fwrite($this->file, substr($this->reference_remise . "                           ", 0, 7));
 

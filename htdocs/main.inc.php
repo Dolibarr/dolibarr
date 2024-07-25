@@ -444,23 +444,23 @@ if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
 		$ok = 1; // We let working pages if not logged and inside a web browser (login form, to allow login by admin)
-	} elseif (isset($_POST["username"]) && $_POST["username"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (isset($_POST["username"]) && in_array($_POST["username"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working pages that is a login submission (login submit, to allow login by admin)
 	} elseif (defined('NOREQUIREDB')) {
 		$ok = 1; // We let working pages that don't need database access (xxx.css.php)
 	} elseif (defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 		$ok = 1; // We let working pages that ask to work even if only login enabled (logout.php)
-	} elseif (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] == $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+	} elseif (session_id() && isset($_SESSION["dol_login"]) && in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 		$ok = 1; // We let working if user is allowed admin
 	}
 	if (!$ok) {
-		if (session_id() && isset($_SESSION["dol_login"]) && $_SESSION["dol_login"] != $conf->global->MAIN_ONLY_LOGIN_ALLOWED) {
+		if (session_id() && isset($_SESSION["dol_login"]) && !in_array($_SESSION["dol_login"], explode(';', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')))) {
 			print 'Sorry, your application is offline.'."\n";
-			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'You are logged with user "'.$_SESSION["dol_login"].'" and only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/user/logout.php?token='.newToken();
 			print 'Please try later or <a href="'.$nexturl.'">click here to disconnect and change login user</a>...'."\n";
 		} else {
-			print 'Sorry, your application is offline. Only administrator user "' . getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED').'" is allowed to connect for the moment.'."\n";
+			print 'Sorry, your application is offline. Only administrator users (' . str_replace(';', ', ', getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')).') is allowed to connect for the moment.'."\n";
 			$nexturl = DOL_URL_ROOT.'/';
 			print 'Please try later or <a href="'.$nexturl.'">click here to change login user</a>...'."\n";
 		}
@@ -522,6 +522,7 @@ if (!empty($conf->file->main_force_https) && !isHTTPS() && !defined('NOHTTPSREDI
 				$newurl = preg_replace('/^http:/i', 'https:', $_SERVER["SCRIPT_URI"]);
 			}
 		} else {
+			// If HTTPS is not defined in DOL_MAIN_URL_ROOT,
 			// Check HTTPS environment variable (Apache/mod_ssl only)
 			$newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 		}
@@ -872,7 +873,7 @@ if (!defined('NOLOGIN')) {
 		}
 		// TODO Remove use of $_COOKIE['login_dolibarr'] ? Replace $usertotest = with $usertotest = GETPOST("username", "alpha", $allowedmethodtopostusername);
 		$usertotest = (!empty($_COOKIE['login_dolibarr']) ? preg_replace('/[^a-zA-Z0-9_@\-\.]/', '', $_COOKIE['login_dolibarr']) : GETPOST("username", "alpha", $allowedmethodtopostusername));
-		$passwordtotest = GETPOST('password', 'none', $allowedmethodtopostusername);
+		$passwordtotest = GETPOST('password', 'password', $allowedmethodtopostusername);
 		$entitytotest = (GETPOSTINT('entity') ? GETPOSTINT('entity') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		// Define if we received the correct data to go into the test of the login with the checkLoginPassEntity().
@@ -886,7 +887,7 @@ if (!defined('NOLOGIN')) {
 		if (GETPOST("username", "alpha", $allowedmethodtopostusername)) {	// For posting the login form
 			$goontestloop = true;
 		}
-		if (GETPOST('openid_mode', 'alpha', 1)) {	// For openid_connect ?
+		if (GETPOST('openid_mode', 'alpha')) {	// For openid_connect ?
 			$goontestloop = true;
 		}
 		if (GETPOST('beforeoauthloginredirect') || GETPOST('afteroauthloginreturn')) {	// For oauth login
@@ -1159,7 +1160,7 @@ if (!defined('NOLOGIN')) {
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
 		} else {
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 
 			// Code for search criteria persistence.
@@ -1341,17 +1342,23 @@ if (!defined('NOLOGIN')) {
 	 * Overwrite some configs globals (try to avoid this and have code to use instead $user->conf->xxx)
 	 */
 
-	// Set liste_limit
-	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {
-		$conf->liste_limit = $user->conf->MAIN_SIZE_LISTE_LIMIT; // Can be 0
+	// Set liste_limit from user setup
+	if (isset($user->conf->MAIN_SIZE_LISTE_LIMIT)) {	// If a user setup exists
+		$conf->liste_limit = getDolUserInt('MAIN_SIZE_LISTE_LIMIT'); // Can be 0
 	}
-	if (isset($user->conf->PRODUIT_LIMIT_SIZE)) {
-		$conf->product->limit_size = $user->conf->PRODUIT_LIMIT_SIZE; // Can be 0
+	if ((int) $conf->liste_limit <= 0) {
+		// Mode automatic.
+		$conf->liste_limit = 15;
+		if (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 910) {
+			$conf->liste_limit = 10;
+		} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
+			$conf->liste_limit = 20;
+		}
 	}
 
 	// Replace conf->css by personalized value if theme not forced
-	if (!getDolGlobalString('MAIN_FORCETHEME') && !empty($user->conf->MAIN_THEME)) {
-		$conf->theme = $user->conf->MAIN_THEME;
+	if (!getDolGlobalString('MAIN_FORCETHEME') && getDolUserString('MAIN_THEME')) {
+		$conf->theme = getDolUserString('MAIN_THEME');
 		$conf->css = "/theme/".$conf->theme."/style.css.php";
 	}
 } else {
@@ -1372,14 +1379,14 @@ if (GETPOST('theme', 'aZ09')) {
 if (GETPOSTINT('nojs')) {  // If javascript was not disabled on URL
 	$conf->use_javascript_ajax = 0;
 } else {
-	if (!empty($user->conf->MAIN_DISABLE_JAVASCRIPT)) {
-		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
+	if (getDolUserString('MAIN_DISABLE_JAVASCRIPT')) {
+		$conf->use_javascript_ajax = !getDolUserString('MAIN_DISABLE_JAVASCRIPT');
 	}
 }
 
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
-if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
+if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER');
 	if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') == 1) {
 		$conf->global->THEME_TOPMENU_DISABLE_IMAGE = 1;
 	}
@@ -1388,7 +1395,7 @@ if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && !empty($user->conf->MA
 //var_dump($user->conf->THEME_TOPMENU_DISABLE_IMAGE);
 
 // set MAIN_OPTIMIZEFORCOLORBLIND for user
-$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = empty($user->conf->MAIN_OPTIMIZEFORCOLORBLIND) ? '' : $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
+$conf->global->MAIN_OPTIMIZEFORCOLORBLIND = getDolUserString('MAIN_OPTIMIZEFORCOLORBLIND');
 
 // Set terminal output option according to conf->browser.
 if (GETPOSTINT('dol_hide_leftmenu') || !empty($_SESSION['dol_hide_leftmenu'])) {
@@ -1514,10 +1521,10 @@ $heightforframes = 50;
 // Init menu manager
 if (!defined('NOREQUIREMENU')) {
 	if (empty($user->socid)) {    // If internal user or not defined
-		$conf->standard_menu = (!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENU_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
+		$conf->standard_menu = getDolGlobalString('MAIN_MENU_STANDARD_FORCED', getDolGlobalString('MAIN_MENU_STANDARD', 'eldy_menu.php'));
 	} else {
 		// If external user
-		$conf->standard_menu = (!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENUFRONT_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+		$conf->standard_menu = getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED', getDolGlobalString('MAIN_MENUFRONT_STANDARD', 'eldy_menu.php'));
 	}
 
 	// Load the menu manager (only if not already done)
@@ -1626,7 +1633,7 @@ if (!function_exists("llxHeader")) {
 		}
 
 		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
-			left_menu(array(), $help_url, '', '', 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
+			left_menu(array(), $help_url, '', array(), 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
 		// main area
@@ -1634,6 +1641,7 @@ if (!function_exists("llxHeader")) {
 			print $replacemainareaby;
 			return;
 		}
+
 		main_area($title);
 	}
 }
@@ -2494,7 +2502,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 			$nophoto = '/public/theme/common/user_woman.png';
 		}
 
-		$userImage = '<img class="photo photouserphoto userphoto" alt="" src="'.DOL_URL_ROOT.$nophoto.'">';
+		$userImage = '<img class="photo photouserphoto userphoto" alt="" src="'.DOL_URL_ROOT.$nophoto.'" aria-hidden="true">';
 		$userDropDownImage = '<img class="photo dropdown-user-image" alt="" src="'.DOL_URL_ROOT.$nophoto.'">';
 	}
 
@@ -3097,7 +3105,7 @@ function top_menu_bookmark()
  */
 function top_menu_search()
 {
-	global $langs, $conf, $db, $user, $hookmanager;
+	global $langs, $conf, $db, $user, $hookmanager;	// used by htdocs/core/ajax/selectsearchbox.php
 
 	$html = '';
 
@@ -3378,7 +3386,11 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		// Show left menu with other forms
 		$menumanager->menu_array = $menu_array_before;
 		$menumanager->menu_array_after = $menu_array_after;
-		$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
+		if (getDolGlobalInt('MAIN_MENU_LEFT_DROPDOWN')) {
+			$menumanager->showmenu('leftdropdown', array('searchform' => $searchform)); // output menu_array and menu found in database
+		} else {
+			$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
+		}
 
 		// Dolibarr version + help + bug report link
 		print "\n";

@@ -127,6 +127,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
+			$stats->where = "f.fk_statut > 0";
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {

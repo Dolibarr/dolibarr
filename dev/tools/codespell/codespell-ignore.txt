@@ -68,7 +68,6 @@ unvalidate
 
 # Some french strings
 somme
-caracteres
 cas
 sur
 Datas
@@ -81,3 +80,6 @@ fonction
 espace
 methode
 datee
+
+# other
+blacklists

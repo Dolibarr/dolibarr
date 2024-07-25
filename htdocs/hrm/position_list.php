@@ -69,7 +69,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Position($db);
 $extrafields = new ExtraFields($db);
 $userstatic = new User($db);
