@@ -78,7 +78,7 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue','alphalgt');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphalgt');
 
 $op1month = GETPOST('op1month', 'int');
 $op1day = GETPOST('op1day', 'int');
