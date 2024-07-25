@@ -897,8 +897,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<tr><td class="tdtop">'.$langs->trans("ProjectContactTypeManager").'</td>';
 	print '<td>';
 	$contactList = $object->liste_type_contact('internal', 'position', 1);
-	$owner_contact = GETPOST('typeofcontact') ? GETPOST('owner_contact') : 'PROJECTLEADER';
-	print $form->selectarray('typeofcontact', $contactList, $owner_contact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
+	$typeofcontact = GETPOST('typeofcontact') ? GETPOST('typeofcontact') : 'PROJECTLEADER';
+	print $form->selectarray('typeofcontact', $contactList, $typeofcontact, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
 
 	// Other options
