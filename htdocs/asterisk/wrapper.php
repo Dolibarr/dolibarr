@@ -131,7 +131,7 @@ if (!getDolGlobalString('ASTERISK_MAX_RETRY')) {
 
 
 $login = GETPOST('login', 'alphanohtml');
-$password = GETPOST('password', 'none');
+$password = GETPOST('password', 'password');
 $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
 

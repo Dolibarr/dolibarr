@@ -2011,9 +2011,9 @@ class Commande extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Add line of fixed discount in the order in DB
+	 *	Add a discount line into a sale order (as a sale order line) using an existing absolute discount (Consume the discount)
 	 *
-	 *	@param     int	$idremise			Id for the fixed discount
+	 *	@param     int	$idremise			Id for the fixed discount from table llx_societe_remise_except
 	 *	@return    int          			>0 if OK, <0 if KO
 	 */
 	public function insert_discount($idremise)

@@ -373,7 +373,9 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 .paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
+	/* border: 1px solid var(--btncolorborder); */
+	border: unset;
+	background-color: unset;
 }
 .paginationafterarrows a.btnTitlePlus:hover, .titre_right a.btnTitlePlus:hover {
 	border-color: #ddd;
@@ -440,4 +442,3 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	background-color: #ddd;
 	border: 1px solid #ddd;
 }
-

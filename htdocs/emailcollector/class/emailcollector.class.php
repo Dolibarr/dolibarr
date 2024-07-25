@@ -2374,7 +2374,9 @@ class EmailCollector extends CommonObject
 
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
-						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
+						$descriptiontitle = $langs->transnoentitiesnoconv("RecordCreatedByEmailCollector", $this->ref);
+
+						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("EmailMsgID").' : '.dol_escape_htmltag($msgid));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($dateemail, "dayhourtext", "gmt")));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
@@ -2765,7 +2767,7 @@ class EmailCollector extends CommonObject
 								}
 
 								$description = $descriptiontitle;
-								$description = dol_concatdesc($description, "-----");
+
 								$description = dol_concatdesc($description, $descriptionmeta);
 								$description = dol_concatdesc($description, "-----");
 								$description = dol_concatdesc($description, $messagetext);
@@ -3056,7 +3058,7 @@ class EmailCollector extends CommonObject
 								}
 
 								$description = $descriptiontitle;
-								$description = dol_concatdesc($description, "-----");
+
 								$description = dol_concatdesc($description, $descriptionmeta);
 								$description = dol_concatdesc($description, "-----");
 								$description = dol_concatdesc($description, $messagetext);
@@ -3191,7 +3193,7 @@ class EmailCollector extends CommonObject
 								}
 
 								$description = $descriptiontitle;
-								$description = dol_concatdesc($description, "-----");
+
 								$description = dol_concatdesc($description, $descriptionmeta);
 								$description = dol_concatdesc($description, "-----");
 								$description = dol_concatdesc($description, $messagetext);
@@ -3204,9 +3206,9 @@ class EmailCollector extends CommonObject
 
 								$tickettocreate->subject = $subject;
 								$tickettocreate->message = $description;
-								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1));
-								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
-								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
+								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1)));
+								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1)));
+								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1)));
 								$tickettocreate->origin_email = $from;
 								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
 								$tickettocreate->origin_references = (!empty($headers['References']) ? $headers['References'] : null);
