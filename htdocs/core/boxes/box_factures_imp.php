@@ -89,7 +89,7 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql1 .= ", s.logo, s.email, s.entity";
 			$sql1 .= ", s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
-			$sql1 .= ", f.ref, f.date_lim_reglement as datelimite";
+			$sql1 .= ", f.ref, f.date_lim_reglement as datelimit";
 			$sql1 .= ", f.type";
 			$sql1 .= ", f.datef as date";
 			$sql1 .= ", f.total_ht";
@@ -124,7 +124,7 @@ class box_factures_imp extends ModeleBoxes
 			}
 			$sql3 .= " f.rowid, f.ref, f.date_lim_reglement,";
 			$sql3 .= " f.type, f.datef, f.total_ht, f.total_tva, f.total_ttc, f.paye, f.fk_statut";
-			$sql3 .= " ORDER BY datelimite ASC, f.ref ASC";
+			$sql3 .= " ORDER BY date_lim_reglement ASC, f.ref ASC";
 			$sql3 .= $this->db->plimit($this->max + 1, 0);
 
 			$sql = $sql1.$sql2.$sql3;
@@ -139,10 +139,8 @@ class box_factures_imp extends ModeleBoxes
 				while ($line < min($num, $this->max)) {
 					$objp = $this->db->fetch_object($result);
 
-					$datelimite = $this->db->jdate($objp->datelimite);
 					$date = $this->db->jdate($objp->date);
-					$datem = $this->db->jdate($objp->tms);
-					$datelimit = $this->db->jdate(datelimite);
+					$datelimit = $this->db->jdate($objp->datelimit);
 
 					$facturestatic->id = $objp->facid;
 					$facturestatic->ref = $objp->ref;
@@ -182,7 +180,7 @@ class box_factures_imp extends ModeleBoxes
 					$late = '';
 					if ($facturestatic->hasDelay()) {
 						// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day', 'tzuserrel')));
+						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimit, 'day', 'tzuserrel')));
 					}
 
 					$this->info_box_contents[$line][] = array(
@@ -204,8 +202,8 @@ class box_factures_imp extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$line][] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimite, 'day', 'tzuserrel')).'"',
-						'text' => dol_print_date($datelimite, 'day', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateDue").': '.dol_print_date($datelimit, 'day', 'tzuserrel')).'"',
+						'text' => dol_print_date($datelimit, 'day', 'tzuserrel'),
 					);
 
 					$this->info_box_contents[$line][] = array(

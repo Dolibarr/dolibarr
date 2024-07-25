@@ -2545,12 +2545,12 @@ class Project extends CommonObject
 			$return .= '</div>';
 			if (!empty($this->thirdparty->phone)) {
 				$return .= '<div class="inline-block valignmiddle">';
-				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'marginleftonly');
+				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'paddingleft paddingright');
 				$return .= '</div>';
 			}
 			if (!empty($this->thirdparty->email)) {
 				$return .= '<div class="inline-block valignmiddle">';
-				$return .= dol_print_email($this->thirdparty->email, 0, $this->thirdparty->id, 'thirdparty', -1, 1, 1);
+				$return .= dol_print_email($this->thirdparty->email, 0, $this->thirdparty->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
 				$return .= '</div>';
 			}
 		}

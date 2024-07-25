@@ -1106,10 +1106,10 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
-	* testDolEscapeHtmlTag
-	*
-	* @return	void
-	*/
+	 * testDolEscapeHtmlTag
+	 *
+	 * @return	void
+	 */
 	public function testDolEscapeHtmlTag()
 	{
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
@@ -1123,6 +1123,18 @@ class FunctionsLibTest extends CommonClassTest
 		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
 		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
+
+
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		</div>';
+
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
 	}
 
 

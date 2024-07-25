@@ -1752,8 +1752,7 @@ class Form
 	 * @param 	string 				$htmlid 			Html id to use instead of htmlname
 	 * @param 	bool 				$multiple 			add [] in the name of element and add 'multiple' attribute
 	 * @param 	integer 			$disableifempty 	Set tag 'disabled' on select if there is no choice
-	 * @param 	string 				$filter 			Optional filters criteras. WARNING: To avoid SQL injection, only few chars [.a-z0-9 =<>] are allowed here, example: 's.rowid <> x'
-	 * 													If you need parenthesis, use the Universal Filter Syntax, example: '(s.client:in:1,3)'
+	 * @param 	string 				$filter 			Optional filters criteras. You must use the USF (Universal Search Filter) syntax, example: '(s.client:in:1,3)'
 	 * 													Do not use a filter coming from input of users.
 	 * @return  int|string|array<int,array{key:int,value:string,label:string,labelhtml:string}>		Return integer <0 if KO, HTML with select string if OK.
 	 */
@@ -1799,8 +1798,8 @@ class Form
 				}
 			} else {
 				// If not, we do nothing. We already know that there is no parenthesis
-				// TODO Disallow this case in a future.
-				dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Syntax.", LOG_WARNING);
+				// TODO Disallow this case in a future by returning an error here.
+				dol_syslog("Warning, select_thirdparty_list was called with a filter criteria not using the Universal Search Filter Syntax.", LOG_WARNING);
 			}
 		}
 
@@ -9469,7 +9468,7 @@ class Form
 			}
 
 			if (!$nboftypesoutput) {
-				print '<tr><td class="impair" colspan="7"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
+				print '<tr><td colspan="7"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
 			}
 
 			print '</table>';
