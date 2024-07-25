@@ -5186,10 +5186,7 @@ class Societe extends CommonObject
 	 */
 	public function fetchPartnerships($mode)
 	{
-		global $langs;
-
 		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-
 
 		$this->partnerships[] = array();
 
@@ -5217,6 +5214,7 @@ class Societe extends CommonObject
 		$return .= '</div>';
 		if (!empty($this->phone)) {
 			$return .= '<div class="inline-block valignmiddle">';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$return .= dol_print_phone($this->phone, $this->country_code, 0, $this->id, 'tel', 'hidenum', 'phone', $this->phone, 0, 'paddingleft paddingright');
 			$return .= '</div>';
 		}
