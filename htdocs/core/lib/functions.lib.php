@@ -2603,7 +2603,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 
 				if ($displaytab == 0) {
-					$out .= img_picto($title, ($noprefix ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle paddingright').' ';
+					$out .= img_picto($title, $picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle paddingright').' ';
 				}
 
 				$out .= $links[$i][1];
