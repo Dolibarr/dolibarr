@@ -78,22 +78,22 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphalgt');
 
 $op1month = GETPOST('op1month', 'int');
 $op1day = GETPOST('op1day', 'int');
 $op1year = GETPOST('op1year', 'int');
-$filter_op1 = GETPOST('filter_op1', 'alpha');
+$filter_op1 = GETPOST('filter_op1', 'alphalgt');
 
 $op2month = GETPOST('op2month', 'int');
 $op2day = GETPOST('op2day', 'int');
 $op2year = GETPOST('op2year', 'int');
-$filter_op2 = GETPOST('filter_op2', 'alpha');
+$filter_op2 = GETPOST('filter_op2', 'alphalgt');
 
 $opcloturemonth = GETPOST('opcloturemonth', 'int');
 $opclotureday = GETPOST('opclotureday', 'int');
 $opclotureyear = GETPOST('opclotureyear', 'int');
-$filter_opcloture = GETPOST('filter_opcloture', 'alpha');
+$filter_opcloture = GETPOST('filter_opcloture', 'alphalgt');
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
