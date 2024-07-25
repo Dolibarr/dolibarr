@@ -2277,7 +2277,7 @@ class CommandeFournisseur extends CommonOrder
 						$result = $mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch, '', 0, $inventorycode);
 					}
 
-					if ($result < 0) {
+					if ($result < 0 && $result !== "") {
 						$this->error = $mouv->error;
 						$this->errors = $mouv->errors;
 						dol_syslog(get_class($this)."::dispatchProduct ".$this->error." ".implode(',', $this->errors), LOG_ERR);
