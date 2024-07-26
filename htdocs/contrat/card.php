@@ -802,6 +802,8 @@ if (empty($reshook)) {
 			$result = $objectline->update($user);
 			if ($result < 0) {
 				$error++;
+				$action = 'editline';
+				$_GET['rowid'] = GETPOST('elrowid');
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 			}
 		}
