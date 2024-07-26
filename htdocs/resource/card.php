@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
-$id						= GETPOST('id', 'int');
+$id						= GETPOSTINT('id');
 $action					= GETPOST('action', 'aZ09');
 $cancel					= GETPOST('cancel', 'alpha');
 $ref					= GETPOST('ref', 'alpha');
+$address				= GETPOST('address', 'alpha');
+$zip					= GETPOST('zipcode', 'alpha');
+$town					= GETPOST('town', 'alpha');
+$country_id				= GETPOSTINT('country_id');
+$state_id				= GETPOSTINT('state_id');
 $description			= GETPOST('description', 'restricthtml');
+$phone					= GETPOST('phone', 'alpha');
+$email					= GETPOST('email', 'alpha');
+$max_users				= GETPOSTINT('max_users');
+$url					= GETPOST('url', 'alpha');
 $confirm				= GETPOST('confirm', 'aZ09');
-$fk_code_type_resource = GETPOST('fk_code_type_resource', 'alpha');
-$country_id				= GETPOST('country_id', 'int');
+$fk_code_type_resource	= GETPOST('fk_code_type_resource', 'aZ09');
 
 // Protection if external user
 if ($user->socid > 0) {
@@ -56,13 +66,13 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
 
-$permissiontoadd = $user->rights->resource->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->resource->delete;
+$permissiontoadd = $user->hasRight('resource', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('resource', 'delete');
 
 
 /*
@@ -70,7 +80,7 @@ $permissiontodelete = $user->rights->resource->delete;
  */
 
 $hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
-$parameters = array('resource_id'=>$id);
+$parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -89,7 +99,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'add' && $user->rights->resource->write) {
+	if ($action == 'add' && $user->hasRight('resource', 'write')) {
 		if (!$cancel) {
 			$error = '';
 
@@ -98,9 +108,17 @@ if (empty($reshook)) {
 				$action = 'create';
 			} else {
 				$object->ref                    = $ref;
-				$object->description            = $description;
-				$object->fk_code_type_resource  = $fk_code_type_resource;
-				$object->country_id             = $country_id;
+				$object->address				= $address;
+				$object->zip					= $zip;
+				$object->town					= $town;
+				$object->country_id				= $country_id;
+				$object->state_id				= $state_id;
+				$object->description			= $description;
+				$object->phone					= $phone;
+				$object->email					= $email;
+				$object->max_users				= $max_users;
+				$object->url					= $url;
+				$object->fk_code_type_resource	= $fk_code_type_resource;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -111,8 +129,8 @@ if (empty($reshook)) {
 				$result = $object->create($user);
 				if ($result > 0) {
 					// Creation OK
-					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null, 'mesgs');
-					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					setEventMessages($langs->trans('ResourceCreatedWithSuccess'), null);
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
 					// Creation KO
@@ -121,12 +139,12 @@ if (empty($reshook)) {
 				}
 			}
 		} else {
-			Header("Location: list.php");
+			header("Location: list.php");
 			exit;
 		}
 	}
 
-	if ($action == 'update' && !$cancel && $user->rights->resource->write) {
+	if ($action == 'update' && !$cancel && $user->hasRight('resource', 'write')) {
 		$error = 0;
 
 		if (empty($ref)) {
@@ -138,9 +156,17 @@ if (empty($reshook)) {
 			$res = $object->fetch($id);
 			if ($res > 0) {
 				$object->ref          			= $ref;
-				$object->description  			= $description;
-				$object->fk_code_type_resource  = $fk_code_type_resource;
+				$object->address				= $address;
+				$object->zip					= $zip;
+				$object->town					= $town;
 				$object->country_id             = $country_id;
+				$object->state_id				= $state_id;
+				$object->description  			= $description;
+				$object->phone					= $phone;
+				$object->email					= $email;
+				$object->max_users				= $max_users;
+				$object->url					= $url;
+				$object->fk_code_type_resource  = $fk_code_type_resource;
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -150,7 +176,7 @@ if (empty($reshook)) {
 
 				$result = $object->update($user);
 				if ($result > 0) {
-					Header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -167,14 +193,14 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && $confirm === 'yes') {
+	if ($action == 'confirm_delete_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
 		$res = $object->fetch($id);
 		if ($res > 0) {
-			$result = $object->delete($id);
+			$result = $object->delete($user);
 
 			if ($result >= 0) {
-				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null, 'mesgs');
-				Header('Location: '.DOL_URL_ROOT.'/resource/list.php');
+				setEventMessages($langs->trans('RessourceSuccessfullyDeleted'), null);
+				header('Location: '.DOL_URL_ROOT.'/resource/list.php');
 				exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -191,7 +217,8 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
-llxHeader('', $title, '');
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
@@ -199,15 +226,15 @@ $formresource = new FormResource($db);
 if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if ($action == 'create') {
 		print load_fiche_titre($title, '', 'object_resource');
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 	} else {
 		$head = resource_prepare_head($object);
 		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
 	}
 
 	if ($action == 'create' || $action == 'edit') {
-		if (!$user->rights->resource->write) {
-			accessforbidden('', 0, 1);
+		if (!$user->hasRight('resource', 'write')) {
+			accessforbidden('', 0);
 		}
 
 		// Create/Edit object
@@ -220,7 +247,52 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Ref
 		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("ResourceFormLabel_ref").'</td>';
-		print '<td><input class="minwidth200" name="ref" value="'.($ref ? $ref : $object->ref).'" autofocus="autofocus"></td></tr>';
+		print '<td><input class="minwidth200" name="ref" value="'.($ref ?: $object->ref).'" autofocus="autofocus"></td></tr>';
+
+		// Address
+		print '<tr><td class="tdtop">'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
+		print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
+		print dol_escape_htmltag($object->address, 0, 1);
+		print '</textarea>';
+		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+		print '</td></tr>';
+
+		// Zip / Town
+		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+		print $formresource->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
+		print '</td>';
+		if ($conf->browser->layout == 'phone') {
+			print '</tr><tr>';
+		}
+		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
+		print $formresource->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
+		print '</td></tr>';
+
+		// Origin country
+		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
+		print $form->select_country($object->country_id);
+		if ($user->admin) {
+			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		}
+		print '</td></tr>';
+
+		// State
+		if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
+			if ((getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 || getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 2)) {
+				print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+			} else {
+				print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
+			}
+
+			if ($object->country_id) {
+				print img_picto('', 'state', 'class="pictofixedwidth"');
+				print $formresource->select_state($object->state_id, $object->country_code);
+			} else {
+				print $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
+			}
+			print '</td></tr>';
+		}
 
 		// Type
 		print '<tr><td>'.$langs->trans("ResourceType").'</td>';
@@ -232,17 +304,37 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ? $description : $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
 		$doleditor->Create();
 		print '</td></tr>';
 
-		// Origin country
-		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id, 'country_id');
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		print '</td></tr>';
+		// Phone
+		print '<td>'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_phoning', 'class="pictofixedwidth"');
+		print '<input type="tel" name="phone" id="phone" value="'.(GETPOSTISSET('phone') ? GETPOST('phone', 'alpha') : $object->phone).'"></td>';
+		print '</tr>';
+
+		// Email
+		print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_email', 'class="pictofixedwidth"');
+		print '<input type="email" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
+		print '</tr>';
+
+		// Max users
+		print '<tr><td>'.$form->editfieldkey('MaxUsers', 'max_users', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_user', 'class="pictofixedwidth"');
+		print '<input type="number" name="max_users" id="max_users" value="'.(GETPOSTISSET('max_users') ? GETPOSTINT('max_users') : $object->max_users).'"></td>';
+		print '</tr>';
+
+		// URL
+		print '<tr><td>'.$form->editfieldkey('URL', 'url', '', $object, 0).'</td>';
+		print '<td>';
+		print img_picto('', 'object_url', 'class="pictofixedwidth"');
+		print '<input type="url" name="url" id="url" value="'.(GETPOSTISSET('url') ? GETPOST('url', 'alpha') : $object->url).'"></td>';
+		print '</tr>';
 
 		// Other attributes
 		$parameters = array();
@@ -266,8 +358,8 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		$formconfirm = '';
 
 		// Confirm deleting resource line
-		if ($action == 'delete') {
-			$formconfirm = $form->formconfirm("card.php?&id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', '', 1);
+		if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("DeleteResource"), $langs->trans("ConfirmDeleteResource"), "confirm_delete_resource", '', 0, "action-delete");
 		}
 
 		// Print form confirm
@@ -276,12 +368,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-
-		$morehtmlref = '<div class="refidno">';
-		$morehtmlref .= '</div>';
-
-
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref');
 
 
 		print '<div class="fichecenter">';
@@ -308,13 +395,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td>';
 		print '</tr>';
 
-		// Origin country code
+		// Max users
 		print '<tr>';
-		print '<td>'.$langs->trans("CountryOrigin").'</td>';
+		print '<td>'.$langs->trans("MaxUsers").'</td>';
 		print '<td>';
-		print getCountry($object->country_id, 0, $db);
+		print $object->max_users;
 		print '</td>';
-
+		print '</tr>';
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -341,14 +428,20 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if (empty($reshook)) {
 		if ($action != "create" && $action != "edit") {
 			// Edit resource
-			if ($user->rights->resource->write) {
+			if ($user->hasRight('resource', 'write')) {
 				print '<div class="inline-block divButAction">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&action=edit&token='.newToken().'" class="butAction">'.$langs->trans('Modify').'</a>';
 				print '</div>';
 			}
 		}
-		if ($action != "delete" && $action != "create" && $action != "edit") {
-			print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', $permissiontodelete);
+		if ($action != "create" && $action != "edit") {
+			$deleteUrl = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken();
+			$buttonId = 'action-delete-no-ajax';
+			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)) {	// We can't use preloaded confirm form with jmobile
+				$deleteUrl = '';
+				$buttonId = 'action-delete';
+			}
+			print dolGetButtonAction('', $langs->trans("Delete"), 'delete', $deleteUrl, $buttonId, $permissiontodelete);
 		}
 	}
 	print '</div>';

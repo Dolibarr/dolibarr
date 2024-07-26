@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -79,11 +80,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 // Define WSDL Return object
@@ -94,8 +95,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
@@ -107,21 +108,21 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'id' => array('name'=>'id', 'type'=>'xsd:string'),
-		'type' => array('name'=>'type', 'type'=>'xsd:int'),
-		'desc' => array('name'=>'desc', 'type'=>'xsd:string'),
-		'fk_product' => array('name'=>'fk_product', 'type'=>'xsd:int'),
-		'total_net' => array('name'=>'total_net', 'type'=>'xsd:double'),
-		'total_vat' => array('name'=>'total_vat', 'type'=>'xsd:double'),
-		'total' => array('name'=>'total', 'type'=>'xsd:double'),
-		'vat_rate' => array('name'=>'vat_rate', 'type'=>'xsd:double'),
-		'qty' => array('name'=>'qty', 'type'=>'xsd:double'),
-		'date_start' => array('name'=>'date_start', 'type'=>'xsd:date'),
-		'date_end' => array('name'=>'date_end', 'type'=>'xsd:date'),
+		'id' => array('name' => 'id', 'type' => 'xsd:string'),
+		'type' => array('name' => 'type', 'type' => 'xsd:int'),
+		'desc' => array('name' => 'desc', 'type' => 'xsd:string'),
+		'fk_product' => array('name' => 'fk_product', 'type' => 'xsd:int'),
+		'total_net' => array('name' => 'total_net', 'type' => 'xsd:double'),
+		'total_vat' => array('name' => 'total_vat', 'type' => 'xsd:double'),
+		'total' => array('name' => 'total', 'type' => 'xsd:double'),
+		'vat_rate' => array('name' => 'vat_rate', 'type' => 'xsd:double'),
+		'qty' => array('name' => 'qty', 'type' => 'xsd:double'),
+		'date_start' => array('name' => 'date_start', 'type' => 'xsd:date'),
+		'date_end' => array('name' => 'date_end', 'type' => 'xsd:date'),
 		// From product
-		'product_ref' => array('name'=>'product_ref', 'type'=>'xsd:string'),
-		'product_label' => array('name'=>'product_label', 'type'=>'xsd:string'),
-		'product_desc' => array('name'=>'product_desc', 'type'=>'xsd:string')
+		'product_ref' => array('name' => 'product_ref', 'type' => 'xsd:string'),
+		'product_label' => array('name' => 'product_label', 'type' => 'xsd:string'),
+		'product_desc' => array('name' => 'product_desc', 'type' => 'xsd:string')
 	)
 );
 
@@ -133,7 +134,7 @@ $server->wsdl->addComplexType(
 	'SOAP-ENC:Array',
 	array(),
 	array(
-		array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:line[]')
+		array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:line[]')
 	),
 	'tns:line'
 );
@@ -145,29 +146,29 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'id' => array('name'=>'id', 'type'=>'xsd:string'),
-		'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
-		'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-		'ref_supplier' => array('name'=>'ref_supplier', 'type'=>'xsd:string'),
-		'fk_user_author' => array('name'=>'fk_user_author', 'type'=>'xsd:int'),
-		'fk_user_valid' => array('name'=>'fk_user_valid', 'type'=>'xsd:int'),
-		'fk_thirdparty' => array('name'=>'fk_thirdparty', 'type'=>'xsd:int'),
-		'date_creation' => array('name'=>'date_creation', 'type'=>'xsd:dateTime'),
-		'date_validation' => array('name'=>'date_validation', 'type'=>'xsd:dateTime'),
-		'date_modification' => array('name'=>'date_modification', 'type'=>'xsd:dateTime'),
-		'date_invoice' => array('name'=>'date_invoice', 'type'=>'xsd:date'),
-		'date_term' => array('name'=>'date_modification', 'type'=>'xsd:date'),
-		'label' => array('name'=>'label', 'type'=>'xsd:date'),
-		'type' => array('name'=>'type', 'type'=>'xsd:int'),
-		'total_net' => array('name'=>'type', 'type'=>'xsd:double'),
-		'total_vat' => array('name'=>'type', 'type'=>'xsd:double'),
-		'total' => array('name'=>'type', 'type'=>'xsd:double'),
-		'note_private' => array('name'=>'note_private', 'type'=>'xsd:string'),
-		'note_public' => array('name'=>'note_public', 'type'=>'xsd:string'),
-		'status' => array('name'=>'status', 'type'=>'xsd:int'),
-		'close_code' => array('name'=>'close_code', 'type'=>'xsd:string'),
-		'close_note' => array('name'=>'close_note', 'type'=>'xsd:string'),
-		'lines' => array('name'=>'lines', 'type'=>'tns:LinesArray')
+		'id' => array('name' => 'id', 'type' => 'xsd:string'),
+		'ref' => array('name' => 'ref', 'type' => 'xsd:string'),
+		'ref_ext' => array('name' => 'ref_ext', 'type' => 'xsd:string'),
+		'ref_supplier' => array('name' => 'ref_supplier', 'type' => 'xsd:string'),
+		'fk_user_author' => array('name' => 'fk_user_author', 'type' => 'xsd:int'),
+		'fk_user_valid' => array('name' => 'fk_user_valid', 'type' => 'xsd:int'),
+		'fk_thirdparty' => array('name' => 'fk_thirdparty', 'type' => 'xsd:int'),
+		'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
+		'date_validation' => array('name' => 'date_validation', 'type' => 'xsd:dateTime'),
+		'date_modification' => array('name' => 'date_modification', 'type' => 'xsd:dateTime'),
+		'date_invoice' => array('name' => 'date_invoice', 'type' => 'xsd:date'),
+		'date_term' => array('name' => 'date_modification', 'type' => 'xsd:date'),
+		'label' => array('name' => 'label', 'type' => 'xsd:date'),
+		'type' => array('name' => 'type', 'type' => 'xsd:int'),
+		'total_net' => array('name' => 'type', 'type' => 'xsd:double'),
+		'total_vat' => array('name' => 'type', 'type' => 'xsd:double'),
+		'total' => array('name' => 'type', 'type' => 'xsd:double'),
+		'note_private' => array('name' => 'note_private', 'type' => 'xsd:string'),
+		'note_public' => array('name' => 'note_public', 'type' => 'xsd:string'),
+		'status' => array('name' => 'status', 'type' => 'xsd:int'),
+		'close_code' => array('name' => 'close_code', 'type' => 'xsd:string'),
+		'close_note' => array('name' => 'close_note', 'type' => 'xsd:string'),
+		'lines' => array('name' => 'lines', 'type' => 'tns:LinesArray')
 	)
 );
 
@@ -179,7 +180,7 @@ $server->wsdl->addComplexType(
 	'SOAP-ENC:Array',
 	array(),
 	array(
-		array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:invoice[]')
+		array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:invoice[]')
 	),
 	'tns:invoice'
 );
@@ -192,7 +193,7 @@ $server->wsdl->addComplexType(
 	'SOAP-ENC:Array',
 	array(),
 	array(
-		array('ref'=>'SOAP-ENC:arrayType', 'wsdl:arrayType'=>'tns:invoice[]')
+		array('ref' => 'SOAP-ENC:arrayType', 'wsdl:arrayType' => 'tns:invoice[]')
 	),
 	'tns:invoice'
 );
@@ -210,9 +211,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getSupplierInvoice',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'invoice'=>'tns:invoice'),
+	array('result' => 'tns:result', 'invoice' => 'tns:invoice'),
 	$ns,
 	$ns.'#getSupplierInvoice',
 	$styledoc,
@@ -222,9 +223,9 @@ $server->register(
 $server->register(
 	'getSupplierInvoicesForThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'idthirdparty'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'idthirdparty' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'invoices'=>'tns:invoices'),
+	array('result' => 'tns:result', 'invoices' => 'tns:invoices'),
 	$ns,
 	$ns.'#getSupplierInvoicesForThirdParty',
 	$styledoc,
@@ -242,7 +243,7 @@ $server->register(
  * @param	string		$ref_ext			Ref_ext
  * @return	array							Array result
  */
-function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
+function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
 	global $db, $conf;
 
@@ -254,13 +255,15 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
@@ -275,43 +278,43 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 				foreach ($invoice->lines as $line) {
 					//var_dump($line); exit;
 					$linesresp[] = array(
-						'id'=>$line->rowid,
-						'type'=>$line->product_type,
-						'total_net'=>$line->total_ht,
-						'total_vat'=>$line->total_tva,
-						'total'=>$line->total_ttc,
-						'vat_rate'=>$line->tva_tx,
-						'qty'=>$line->qty
+						'id' => $line->rowid,
+						'type' => $line->product_type,
+						'total_net' => $line->total_ht,
+						'total_vat' => $line->total_tva,
+						'total' => $line->total_ttc,
+						'vat_rate' => $line->tva_tx,
+						'qty' => $line->qty
 					);
 					$i++;
 				}
 
 				// Create invoice
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'invoice'=>array(
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'invoice' => array(
 					'id' => $invoice->id,
 					'ref' => $invoice->ref,
-					'ref_supplier'=>$invoice->ref_supplier,
+					'ref_supplier' => $invoice->ref_supplier,
 					'ref_ext' => $invoice->ref_ext,
 					'fk_user_author' => $invoice->fk_user_author,
 					'fk_user_valid' => $invoice->fk_user_valid,
 					'fk_thirdparty' => $invoice->fk_soc,
-					'type'=>$invoice->type,
-					'status'=>$invoice->statut,
-					'total_net'=>$invoice->total_ht,
-					'total_vat'=>$invoice->total_tva,
-					'total'=>$invoice->total_ttc,
-					'date_creation'=>dol_print_date($invoice->datec, 'dayhourrfc'),
-					'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
-					'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
-					'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
-					'label'=>$invoice->label,
-					'paid'=>$invoice->paid,
-					'note_private'=>$invoice->note_private,
-					'note_public'=>$invoice->note_public,
-					'close_code'=>$invoice->close_code,
-					'close_note'=>$invoice->close_note,
+					'type' => $invoice->type,
+					'status' => $invoice->status,
+					'total_net' => $invoice->total_ht,
+					'total_vat' => $invoice->total_tva,
+					'total' => $invoice->total_ttc,
+					'date_creation' => dol_print_date($invoice->datec, 'dayhourrfc'),
+					'date_modification' => dol_print_date($invoice->tms, 'dayhourrfc'),
+					'date_invoice' => dol_print_date($invoice->date, 'dayhourrfc'),
+					'date_term' => dol_print_date($invoice->date_echeance, 'dayhourrfc'),
+					'label' => $invoice->label,
+					'paid' => $invoice->paid,
+					'note_private' => $invoice->note_private,
+					'note_public' => $invoice->note_public,
+					'close_code' => $invoice->close_code,
+					'close_note' => $invoice->close_note,
 
 					'lines' => $linesresp,
 					// 'lines' => array('0'=>array('id'=>222,'type'=>1),
@@ -320,16 +323,18 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 				));
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -355,14 +360,16 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -387,7 +394,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 				$result = $invoice->fetch($obj->facid);
 				if ($result < 0) {
 					$error++;
-					$errorcode = $result; $errorlabel = $invoice->error;
+					$errorcode = $result;
+					$errorlabel = $invoice->error;
 					break;
 				}
 
@@ -395,44 +403,44 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 				$linesresp = array();
 				foreach ($invoice->lines as $line) {
 					$linesresp[] = array(
-						'id'=>$line->rowid,
-						'type'=>$line->product_type,
-						'desc'=>dol_htmlcleanlastbr($line->description),
-						'total_net'=>$line->total_ht,
-						'total_vat'=>$line->total_tva,
-						'total'=>$line->total_ttc,
-						'vat_rate'=>$line->tva_tx,
-						'qty'=>$line->qty,
-						'product_ref'=>$line->product_ref,
-						'product_label'=>$line->product_label,
-						'product_desc'=>$line->product_desc,
+						'id' => $line->rowid,
+						'type' => $line->product_type,
+						'desc' => dol_htmlcleanlastbr($line->desc),
+						'total_net' => $line->total_ht,
+						'total_vat' => $line->total_tva,
+						'total' => $line->total_ttc,
+						'vat_rate' => $line->tva_tx,
+						'qty' => $line->qty,
+						'product_ref' => $line->product_ref,
+						'product_label' => $line->product_label,
+						'product_desc' => $line->product_desc,
 					);
 				}
 
 				// Now define invoice
 				$linesinvoice[] = array(
-					'id'=>$invoice->id,
-					'ref'=>$invoice->ref,
-					'ref_supplier'=>$invoice->ref_supplier,
-					'ref_ext'=>$invoice->ref_ext,
-					'fk_user_author' => $invoice->fk_user_author,
-					'fk_user_valid' => $invoice->fk_user_valid,
-					'fk_thirdparty' => $invoice->fk_soc,
-					'type'=>$invoice->type,
-					'status'=>$invoice->statut,
-					'total_net'=>$invoice->total_ht,
-					'total_vat'=>$invoice->total_tva,
-					'total'=>$invoice->total_ttc,
-					'date_creation'=>dol_print_date($invoice->datec, 'dayhourrfc'),
-					'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
-					'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
-					'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
-					'label'=>$invoice->label,
-					'paid'=>$invoice->paid,
-					'note_private'=>$invoice->note_private,
-					'note_public'=>$invoice->note_public,
-					'close_code'=>$invoice->close_code,
-					'close_note'=>$invoice->close_note,
+					'id' => $invoice->id,
+					'ref' => $invoice->ref,
+					'ref_supplier' => $invoice->ref_supplier,
+					'ref_ext' => $invoice->ref_ext,
+					'fk_user_author' => $invoice->user_creation_id,
+					'fk_user_valid' => $invoice->user_validation_id,
+					'fk_thirdparty' => $invoice->socid,
+					'type' => $invoice->type,
+					'status' => $invoice->status,
+					'total_net' => $invoice->total_ht,
+					'total_vat' => $invoice->total_tva,
+					'total' => $invoice->total_ttc,
+					'date_creation' => dol_print_date($invoice->datec, 'dayhourrfc'),
+					'date_modification' => dol_print_date($invoice->tms, 'dayhourrfc'),
+					'date_invoice' => dol_print_date($invoice->date, 'dayhourrfc'),
+					'date_term' => dol_print_date($invoice->date_echeance, 'dayhourrfc'),
+					'label' => $invoice->label,
+					'paid' => $invoice->paid,
+					'note_private' => $invoice->note_private,
+					'note_public' => $invoice->note_public,
+					'close_code' => $invoice->close_code,
+					'close_note' => $invoice->close_note,
 
 					'lines' => $linesresp
 				);
@@ -441,18 +449,19 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 			}
 
 			$objectresp = array(
-				'result'=>array('result_code'=>'OK', 'result_label'=>''),
-				'invoices'=>$linesinvoice
+				'result' => array('result_code' => 'OK', 'result_label' => ''),
+				'invoices' => $linesinvoice
 
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

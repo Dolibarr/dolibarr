@@ -4,73 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = ምልመላ
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = ለአዲስ የስራ መደቦች የቅጥር ዘመቻዎችን ያቀናብሩ እና ይከተሉ
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = የምልመላ ማዋቀር
+RecruitmentSetupPage = ለቅጥር ሞጁል ዋና አማራጮችን ማዋቀር እዚህ ያስገቡ
+RecruitmentArea=የምልመላ ቦታ
+PublicInterfaceRecruitmentDesc=የስራዎች ይፋዊ ገፆች ለማሳየት እና ክፍት ስራዎችን ለመመለስ የህዝብ ዩአርኤሎች ናቸው። በእያንዳንዱ የሥራ መዝገብ ላይ ለእያንዳንዱ ክፍት ሥራ አንድ የተለየ አገናኝ አለ.
+EnablePublicRecruitmentPages=ክፍት ስራዎችን ይፋዊ ገጾችን አንቃ
 
-#
-# About page
-#
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+NbOfEmployeesExpected=የሚጠበቀው የሰራተኞች nb
+JobLabel=የሥራ ቦታ መለያ
+WorkPlace=የስራ ቦታ
+DateExpected=የሚጠበቀው ቀን
+FutureManager=የወደፊት አስተዳዳሪ
+ResponsibleOfRecruitement=የምልመላ ኃላፊነት ያለው
+IfJobIsLocatedAtAPartner=ሥራ በአጋር ቦታ ላይ የሚገኝ ከሆነ
+PositionToBeFilled=የሥራ ቦታ
+PositionsToBeFilled=የሥራ ቦታዎች
+ListOfPositionsToBeFilled=የሥራ ቦታዎች ዝርዝር
+NewPositionToBeFilled=አዲስ የሥራ ቦታዎች
+JobOfferToBeFilled=የሚሞላ የስራ ቦታ
+ThisIsInformationOnJobPosition=የሚሞላው የሥራ ቦታ መረጃ
+ContactForRecruitment=ለቅጥር ያነጋግሩ
+EmailRecruiter=ኢሜል ቀጣሪ
+ToUseAGenericEmail=አጠቃላይ ኢሜይል ለመጠቀም። ካልተገለጸ፣ የመቅጠር ኃላፊነት ያለው ኢሜል ጥቅም ላይ ይውላል
+NewCandidature=አዲስ መተግበሪያ
+ListOfCandidatures=የመተግበሪያዎች ዝርዝር
+Remuneration=ደሞዝ
+RequestedRemuneration=የተጠየቀ ደሞዝ
+ProposedRemuneration=የታቀደ ደመወዝ
+ContractProposed=ውል ቀርቧል
+ContractSigned=ውል ተፈራርሟል
+ContractRefused=ውል ውድቅ አደረገ
+RecruitmentCandidature=መተግበሪያ
+JobPositions=የሥራ ቦታዎች
+RecruitmentCandidatures=መተግበሪያዎች
+InterviewToDo=የሚከተሏቸው እውቂያዎች
+AnswerCandidature=የመተግበሪያ መልስ
+YourCandidature=ማመልከቻዎ
+YourCandidatureAnswerMessage=ስለ ማመልከቻህ እናመሰግናለን።<br>...
+JobClosedTextCandidateFound=የሥራ ቦታው ተዘግቷል. ቦታው ተሞልቷል.
+JobClosedTextCanceled=የሥራ ቦታው ተዘግቷል.
+ExtrafieldsJobPosition=ተጨማሪ ባህሪያት (የስራ ቦታዎች)
+ExtrafieldsApplication=ተጨማሪ ባህሪያት (የስራ ማመልከቻዎች)
+MakeOffer=ቅናሽ ያድርጉ
+WeAreRecruiting=እየቀጠርን ነው። ይህ የሚሞሉ ክፍት የስራ መደቦች ዝርዝር ነው...
+NoPositionOpen=በአሁኑ ጊዜ ምንም ክፍት ቦታዎች የሉም
+ConfirmClose=መሰረዙን ያረጋግጡ
+ConfirmCloseAsk=እርግጠኛ ነዎት ይህን የምልመላ እጩ መሰረዝ ይፈልጋሉ
+Recruitment=Recruitment

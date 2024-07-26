@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,26 +38,27 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 
 // Get parameters
 $action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $file_manager = GETPOST('file_manager', 'alpha');
-$section = GETPOST('section', 'int') ? GETPOST('section', 'int') : GETPOST('section_id', 'int');
+$section = GETPOSTINT('section') ? GETPOSTINT('section') : GETPOSTINT('section_id');
 if (!$section) {
 	$section = 0;
 }
 $section_dir = GETPOST('section_dir', 'alpha');
-$overwritefile = GETPOST('overwritefile', 'int');
+$overwritefile = GETPOSTINT('overwritefile');
 
 if (empty($action) && $file_manager) {
 	$action = 'file_manager';
 }
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -102,7 +104,7 @@ $websitekey = '';
 
 $permissiontoadd = $permissiontouploadfile;	// Used by the include of actions_addupdatedelete.inc.php and actions_linkedfiles
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
 
 /*
@@ -110,7 +112,7 @@ $hookmanager->initHooks(array('ecmmediascard', 'globalcard'));
  */
 
 $savbacktopage = $backtopage;
-$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode($websitekey).'&pageid='.urlencode($pageid).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
+$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.urlencode((string) ($websitekey)).'&pageid='.urlencode((string) ($pageid)).(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode((string) (GETPOST('section_dir', 'alpha'))) : ''); // used after a confirm_deletefile into actions_linkedfiles.inc.php
 if ($sortfield) {
 	$backtopage .= '&sortfield='.urlencode($sortfield);
 }
@@ -153,7 +155,7 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes') 
 }
 
 // Refresh directory view
-// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// This refresh list of dirs, not list of files (for performance reason). List of files is refresh only if dir was not synchronized.
 // To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual') {
 	$ecmdirtmp = new EcmDirectory($db);
@@ -232,11 +234,11 @@ if ($action == 'refreshmanual') {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id'=>$id,
-									 'id_mere'=>$ecmdirtmp->fk_parent,
-									 'label'=>$ecmdirtmp->label,
-									 'description'=>$ecmdirtmp->description,
-									 'fullrelativename'=>$relativepathmissing);
+					$newdirsql = array('id' => $id,
+									 'id_mere' => $ecmdirtmp->fk_parent,
+									 'label' => $ecmdirtmp->label,
+									 'description' => $ecmdirtmp->description,
+									 'fullrelativename' => $relativepathmissing);
 					$sqltree[] = $newdirsql; // We complete fulltree for following loops
 					//var_dump($sqltree);
 					$adirwascreated = 1;
@@ -287,7 +289,7 @@ $moreheadjs = '';
 
 //$morejs=array();
 $morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
-if (empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
@@ -295,7 +297,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 0);
 
 $head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index_medias', '', -1, '');

@@ -20,7 +20,7 @@
 
 /**
  *	\file       htdocs/compta/paiement/rapport.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Payment reports page
  */
 
@@ -40,11 +40,11 @@ if ($user->socid > 0) {
 }
 
 $dir = $conf->facture->dir_output.'/payments';
-if (!$user->hasRight('societe', 'client', 'voir') || $socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$dir .= '/private/'.$user->id; // If user has no permission to see all, output dir is specific to user
 }
 
-$year = GETPOST('year', 'int');
+$year = GETPOSTINT('year');
 if (!$year) {
 	$year = date("Y");
 }
@@ -71,14 +71,14 @@ if ($action == 'builddoc') {
 	// We save charset_output to restore it because write_file can change it if needed for
 	// output format that does not support UTF8.
 	$sav_charset_output = $outputlangs->charset_output;
-	if ($rap->write_file($dir, GETPOST("remonth", "int"), GETPOST("reyear", "int"), $outputlangs) > 0) {
+	if ($rap->write_file($dir, GETPOSTINT("remonth"), GETPOSTINT("reyear"), $outputlangs) > 0) {
 		$outputlangs->charset_output = $sav_charset_output;
 	} else {
 		$outputlangs->charset_output = $sav_charset_output;
 		dol_print_error($db, $obj->error);
 	}
 
-	$year = GETPOST("reyear", "int");
+	$year = GETPOSTINT("reyear");
 }
 
 
@@ -98,8 +98,8 @@ print load_fiche_titre($titre, '', 'bill');
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = GETPOST("remonth") ?GETPOST("remonth") : date("n", time());
-$syear = GETPOST("reyear") ?GETPOST("reyear") : date("Y", time());
+$cmonth = GETPOST("remonth") ? GETPOST("remonth") : date("n", time());
+$syear = GETPOST("reyear") ? GETPOST("reyear") : date("Y", time());
 
 print $formother->select_month($cmonth, 'remonth');
 
@@ -119,7 +119,9 @@ foreach ($year_dirs as $d) {
 
 if ($year) {
 	if (is_dir($dir.'/'.$year)) {
-		if (!empty($year_dirs)) print '<br>';
+		if (!empty($year_dirs)) {
+			print '<br>';
+		}
 		print '<br>';
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';

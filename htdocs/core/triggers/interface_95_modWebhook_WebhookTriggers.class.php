@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2022 SuperAdmin <test@dolibarr.com>
+/* Copyright (C) 2022	SuperAdmin		<test@dolibarr.com>
+ * Copyright (C) 2023	William Mead	<william.mead@manchenumerique.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,48 +46,23 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		$this->db = $db;
-
-		$this->name = preg_replace('/^Interface/i', '', get_class($this));
+		parent::__construct($db);
 		$this->family = "demo";
 		$this->description = "Webhook triggers.";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = self::VERSIONS['dev'];
 		$this->picto = 'webhook';
 	}
 
 	/**
-	 * Trigger name
-	 *
-	 * @return string Name of trigger file
-	 */
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	/**
-	 * Trigger description
-	 *
-	 * @return string Description of trigger file
-	 */
-	public function getDesc()
-	{
-		return $this->description;
-	}
-
-
-	/**
-	 * Function called when a Dolibarrr business event is done.
-	 * All functions "runTrigger" are triggered if file
-	 * is inside directory core/triggers
+	 * Function called when a Dolibarr business event is done.
+	 * All functions "runTrigger" are triggered if file of function is inside directory core/triggers.
 	 *
 	 * @param string 		$action 	Event action code
 	 * @param CommonObject 	$object 	Object
 	 * @param User 			$user 		Object user
 	 * @param Translate 	$langs 		Object langs
 	 * @param Conf 			$conf 		Object conf
-	 * @return int              		<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -102,7 +78,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$target_url = $static_object->fetchAll();
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
-			if (is_array($actionarray) && in_array($action, $actionarray)) {
+			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;
@@ -120,7 +96,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 				$jsonstr = json_encode($resobject);
 
-				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array(), array('http', 'https'), 0, -1);
+				$response = getURLContent($tmpobject->url, 'POST', $jsonstr, 1, array('content-type:application/json'), array('http', 'https'), 2, -1);
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {

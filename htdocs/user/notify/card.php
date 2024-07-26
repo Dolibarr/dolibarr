@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'mails', 'admin', 'other', 'errors'));
 
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $ref = GETPOST('ref', 'alpha');
 
 if (!isset($id) || empty($id)) {
@@ -43,12 +44,12 @@ if (!isset($id) || empty($id)) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$actionid = GETPOST('actionid', 'int');
+$actionid = GETPOSTINT('actionid');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (!$sortorder) {
 	$sortorder = "DESC";
 }
@@ -71,7 +72,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->getrights();
 }
 
-$permissiontoadd = (($object->id == $user->id) || (!empty($user->rights->user->user->lire)));
+$permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
 
 // Security check
 if ($user->socid) {
@@ -126,7 +127,7 @@ if ($action == 'add') {
 
 // Remove a notification
 if ($action == 'delete') {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST("actid", "int");
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOSTINT("actid");
 	$db->query($sql);
 }
 
@@ -143,11 +144,11 @@ $result = $object->fetch($id, '', '', 1);
 $object->getrights();
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notification");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-notify_card');
 
 
 if ($result > 0) {
@@ -164,7 +165,7 @@ if ($result > 0) {
 	$morehtmlref .= '</a>';
 
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref, '', 0, '', '', 0, '');
 
@@ -217,8 +218,10 @@ if ($result > 0) {
 	// Help
 	print '<span class="opacitymedium">';
 	print '<br>'.$langs->trans("NotificationsDesc");
-	print '<br>'.$langs->trans("NotificationsDescUser");
-	print '<br>'.$langs->trans("NotificationsDescContact");
+	print '<br>'.$langs->trans("NotificationsDescUser").' - '.$langs->trans("YouAreHere");
+	if (isModEnabled('societe')) {
+		print '<br>'.$langs->trans("NotificationsDescContact");
+	}
 	print '<br>'.$langs->trans("NotificationsDescGlobal");
 	print '</span>';
 
@@ -228,11 +231,11 @@ if ($result > 0) {
 	// Add notification form
 	//  print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode($id).'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode((string) ($id)).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	$param = "&id=".urlencode($id);
+	$param = "&id=".urlencode((string) ($id));
 
 	// Line with titles
 	/*  print '<table width="100%" class="noborder">';
@@ -269,11 +272,11 @@ if ($result > 0) {
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-	$title = $langs->trans("ListOfActiveNotifications");
+	$titlelist = $langs->trans("ListOfActiveNotifications");
 
 	// List of active notifications
-	//print load_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')', '', '');
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
+	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $num, 'email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	// Line with titles
 	print '<table width="100%" class="noborder">';
@@ -311,7 +314,7 @@ if ($result > 0) {
 			print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').$form->selectarray("actionid", $actions, '', 1);
 			print '</td>';
 			print '<td>';
-			$type = array('email'=>$langs->trans("EMail"));
+			$type = array('email' => $langs->trans("EMail"));
 			print $form->selectarray("typeid", $type);
 			print '</td>';
 			print '<td class="nowraponall">';
@@ -338,7 +341,7 @@ if ($result > 0) {
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
 				$userstatic->email = $obj->email;
-				$userstatic->statut = $obj->status;
+				$userstatic->status = $obj->status;
 
 				print '<tr class="oddeven">';
 				print '<td>'.$userstatic->getNomUrl(1);
@@ -471,7 +474,7 @@ if ($result > 0) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	// List of notifications done
+	// List of notifications done  @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("ListOfNotificationsDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'email', 0, '', '', $limit);
 
 	// Line with titles
@@ -497,7 +500,7 @@ if ($result > 0) {
 				$userstatic->id = $obj->id;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->firstname = $obj->firstname;
-				$userstatic->statut = $obj->status;
+				$userstatic->status = $obj->status;
 				$userstatic->email = $obj->email;
 				print $userstatic->getNomUrl(1);
 				print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
@@ -539,7 +542,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	dol_print_error('', 'RecordNotFound');
+	dol_print_error(null, 'RecordNotFound');
 }
 
 // End of page

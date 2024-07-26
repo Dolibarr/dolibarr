@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'stock');
 $form = new Form($db);
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("WarehouseCard"), $help_url);
+llxHeader("", $langs->trans("WarehouseCard"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_fiche_valo');
 
 if ($id > 0) {
 	$entrepot = new Entrepot($db);

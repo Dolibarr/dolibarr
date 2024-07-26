@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
 Establishments=Establishments
@@ -24,7 +23,7 @@ SkillsManagement=Skills management
 HRM_MAXRANK=Maximum number of levels to rank a skill
 HRM_DEFAULT_SKILL_DESCRIPTION=Default description of ranks when skill is created
 deplacement=Shift
-DateEval=Evaluation date
+DateEval=Competency assessment date
 JobCard=Job card
 NewJobProfile=New Job Profile
 JobProfile=Job profile
@@ -41,15 +40,17 @@ Skill=Skill
 Skills=Skills
 SkillCard=Skill card
 EmployeeSkillsUpdated=Employee skills have been updated (see "Skills" tab of employee card)
-Eval=Evaluation
-Evals=Evaluations
-NewEval=New evaluation
-ValidateEvaluation=Validate evaluation
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with reference <b>%s</b>?
-EvaluationCard=Evaluation card
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
 RequiredRank=Required rank for the job profile
+RequiredRankShort=Required rank
 PositionsWithThisProfile=Positions with this job profiles
 EmployeeRank=Employee rank for this skill
+EmployeeRankShort=Employee rank
 EmployeePosition=Employee position
 EmployeePositions=Employee positions
 EmployeesInThisPosition=Employees in this position
@@ -88,8 +89,9 @@ SaveAddSkill = Skill(s) added
 SaveLevelSkill = Skill(s) level saved
 DeleteSkill = Skill removed
 SkillsExtraFields=Complementary attributes (Skills)
-JobsExtraFields=Complementary attributes (Job profile)
-EvaluationsExtraFields=Complementary attributes (Evaluations)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=Need business travels
 NoDescription=No description
 TheJobProfileHasNoSkillsDefinedFixBefore=The evaluated job profile of this employee has no skill defined on it. Please add skill(s), then delete and restart the evaluation.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment

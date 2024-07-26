@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=One click Printing
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
-MenuDirectPrinting=One click Printing jobs
-DirectPrint=One click Print
+Module64000Name=Satu klik Mencetak
+Module64000Desc=Aktifkan Sistem Pencetakan Sekali Klik
+PrintingSetup=Pengaturan Sistem Pencetakan Satu Klik
+PrintingDesc=Modul ini menambahkan tombol Cetak ke berbagai modul untuk memungkinkan dokumen dicetak langsung ke printer tanpa perlu membuka dokumen ke aplikasi lain.
+MenuDirectPrinting=Satu klik Mencetak pekerjaan
+DirectPrint=Satu klik Cetak
 PrintingDriverDesc=Variabel konfigurasi untuk driver pencetakan.
 ListDrivers=Daftar driver
 PrintTestDesc=Daftar Printer.
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Server cetak
 PRINTIPP_PORT=Pelabuhan
 PRINTIPP_USER=Gabung
 PRINTIPP_PASSWORD=Kata kunci
+PRINTIPP_SSL=Gunakan SSL
 NoDefaultPrinterDefined=Tidak ada printer standar yang ditentukan
 DefaultPrinter=Printer standar
 Printer=Pencetak
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Variabel konfigurasi untuk driver pencetakan Google C
 PrintingDriverDescprintipp=Variabel konfigurasi untuk driver Piala cetak.
 PrintTestDescprintgcp=Daftar Printer untuk Google Cloud Print.
 PrintTestDescprintipp=Daftar Printer untuk Piala.
+Testbbbb

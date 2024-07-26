@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2019	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,7 +146,7 @@ class Events // extends CommonObject
 	 *   Create in database
 	 *
 	 *   @param      User	$user       User that create
-	 *   @return     int                <0 if KO, >0 if OK
+	 *   @return     int                Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -201,7 +202,7 @@ class Events // extends CommonObject
 	 *
 	 * @param	User    $user        	User that modify
 	 * @param   int		$notrigger	    0=no, 1=yes (no update trigger)
-	 * @return  int         			<0 if KO, >0 if OK
+	 * @return  int         			Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -235,7 +236,7 @@ class Events // extends CommonObject
 	 *
 	 *  @param	int		$id         Id object
 	 *  @param  User	$user       User that load
-	 *  @return int         		<0 if KO, >0 if OK
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
 	{
@@ -282,7 +283,7 @@ class Events // extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param	User	$user       User that delete
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user)
 	{
@@ -305,7 +306,7 @@ class Events // extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -318,5 +319,7 @@ class Events // extends CommonObject
 		$this->ip = '1.2.3.4';
 		$this->user_agent = 'Mozilla specimen User Agent X.Y';
 		$this->prefix_session = dol_getprefix();
+
+		return 1;
 	}
 }

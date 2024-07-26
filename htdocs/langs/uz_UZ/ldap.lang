@@ -29,3 +29,5 @@ LDAPPasswordHashType=Parol xesh turi
 LDAPPasswordHashTypeExample=Serverda ishlatiladigan parol xesh turi
 SupportedForLDAPExportScriptOnly=Faqat ldap eksport skripti tomonidan quvvatlanadi
 SupportedForLDAPImportScriptOnly=Faqat ldap import skripti tomonidan qo'llab-quvvatlanadi
+LDAPUserAccountControl = Yaratishda userAccountControl (faol katalog)
+LDAPUserAccountControlExample = 512 Oddiy hisob / 546 Oddiy hisob + Passwd yo'q + O'chirilgan (qarang: https://fr.wikipedia.org/wiki/Active_Directory)

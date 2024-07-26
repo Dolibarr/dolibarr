@@ -5,7 +5,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 ?>
 /* <style type="text/css" > */
 /*
- Badge style is based on boostrap framework
+ Badge style is based on bootstrap framework
  */
 
 .badge {
@@ -27,7 +27,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 .badge-status {
 	font-size: 1em;
-	padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
+	padding: .19em .35em;			/* more than 0.19 generate a change into height of lines */
 }
 .tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
 	font-size: 1.1em;
@@ -231,7 +231,6 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
  */
 function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentLabel = '', $cssPrefix = '')
 {
-
 	global ${$statusVarNamePrefix.'badgeStatus'.$statusName}, ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
 
 	if (!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
@@ -291,4 +290,3 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		print "}\n";
 	}
 }
-

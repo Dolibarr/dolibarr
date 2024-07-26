@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,8 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			require_once $classfile;
 			$classname = 'printing_'.$driver;
 			$printer = new $classname($db);
-			$langs->load($printer::LANGFILE);
+			'@phan-var-force PrintingDriver $printer';
+			$langs->load('printing');
 			//print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {

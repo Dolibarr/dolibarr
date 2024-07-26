@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable par défaut pour les tiers "salariés"
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Le compte dédié défini sur la fiche utilisateur sera utilisé en tant que compte comptable de tiers (Compte auxiliaire).
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable par défaut pour les salaires "utilisateurs"
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Le compte dédié défini sur la fiche utilisateur sera utilisé pour le compte auxiliaire uniquement. Celui-ci sera utilisé pour le compte général, mais également comme valeur par défaut du compte auxiliaire s'il n'y a pas de compte comptable défini sur l'utilisateur.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable par défaut pour les paiements de salaires
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Par défaut, laissez vide l’option "Créer automatiquement un paiement complet" lors de la création d’un salaire
 Salary=Salaire
@@ -27,7 +27,7 @@ FillFieldFirst=Remplissez d'abord le champ de l'employé
 UpdateAmountWithLastSalary=Définir sur le montant du dernier salaire
 MakeTransferRequest=Faire une demande de virement
 VirementOrder=Demande de virement
-BankTransferAmount=Montant du virement bancaire
-WithdrawalReceipt=Ordre de virement
-OrderWaiting=Ordre en attente
+BankTransferAmount=Montant du virement
+WithdrawalReceipt=Ordres de virement
+OrderWaiting=En attente
 FillEndOfMonth=Remplir avec fin de mois

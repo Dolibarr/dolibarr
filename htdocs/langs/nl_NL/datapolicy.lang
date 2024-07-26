@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Gegevensprivacybeleid
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Module om gegevensprivacy te beheren (conformiteit met de AVG)
-
-#
 # Administration page
-#
 datapolicySetup = Module Gegevensprivacybeleid instellen
 Deletion = Verwijderen van gegevens
-datapolicySetupPage = Afhankelijk van de wetten van uw land (voorbeeld <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> artikel 5 </a> van de AVG), moeten persoonlijke gegevens worden bewaard voor een periode die niet langer is dan nodig is voor de doeleinden waarvoor ze zijn verzameld, behalve voor archiveringsdoeleinden. <br> De verwijdering wordt automatisch uitgevoerd na een bepaalde duur zonder gebeurtenis (de duur die u hieronder hebt aangegeven).
+datapolicySetupPage = Afhankelijk van de wetten van uw land (bijvoorbeeld <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> van de AVG), moeten persoonlijke gegevens gedurende een bepaalde periode worden bewaard. niet langer dan de duur dat de gegevens nodig zijn voor het doel waarvoor ze zijn verzameld, behalve voor archiveringsdoeleinden.<br>De verwijdering wordt automatisch uitgevoerd na een bepaalde duur zonder gebeurtenissen (de duur die u hieronder zult hebben aangegeven).
 NB_MONTHS = %s maanden
 ONE_YEAR = 1 jaar
 NB_YEARS = %s jaar
@@ -39,54 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Noch prospect/noch klant
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverancier
 DATAPOLICY_ADHERENT = Lid
 DATAPOLICY_Tooltip_SETUP = Type contact - Geef uw keuzes aan voor elk type.
-DATAPOLICYMail = E-mail instellen
-DATAPOLICYSUBJECTMAIL = Onderwerp van e-mail
-DATAPOLICYCONTENTMAIL = Inhoud van de e-mail
-DATAPOLICYSUBSITUTION = U kunt de volgende variabelen in uw e-mail gebruiken (LINKACCEPT maakt het mogelijk om een link te maken die de instemming van de persoon vastlegt, LINKREFUSED maakt het mogelijk om de weigering van de persoon vast te leggen):
-DATAPOLICYACCEPT = Bericht na akkoord
-DATAPOLICYREFUSE = Bericht na overeenkomst
 SendAgreementText = U kunt een AVG-e-mail sturen naar al uw relevante contacten (die nog geen e-mail hebben ontvangen en waarvoor u niets hebt geregistreerd over hun AVG-overeenkomst). Gebruik hiervoor de volgende knop.
 SendAgreement = Stuur emails
 AllAgreementSend = Alle e-mails zijn verzonden
 TXTLINKDATAPOLICYACCEPT = Tekst voor de link "overeenkomst"
 TXTLINKDATAPOLICYREFUSE = Tekst voor de link "onenigheid"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = AVG: Verwerking van persoonsgegevens
 DATAPOLICY_consentement = Toestemming verkregen voor de verwerking van persoonsgegevens
 DATAPOLICY_opposition_traitement = Verzet zich tegen de verwerking van zijn persoonsgegevens
 DATAPOLICY_opposition_prospection = Verzet zich tegen de verwerking van zijn persoonsgegevens met het oog op prospectie
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonimiseer een derde partij
-DATAPOLICY_POPUP_ANONYME_TEXTE = U kunt dit contact niet verwijderen uit Dolibarr omdat er gerelateerde items zijn. In overeenstemming met de AVG maakt u al deze gegevens anoniem om uw verplichtingen na te komen. Wil je verder gaan ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Overdraagbaarheid AVG
-DATAPOLICY_PORTABILITE_TITLE = Exporteren van persoonsgegevens
-DATAPOLICY_PORTABILITE_CONFIRMATION = U wilt de persoonsgegevens van dit contact exporteren. Weet je het zeker ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = De %s geanonimiseerd
-
-# V2
-DATAPOLICYReturn = AVG-validatie
-DATAPOLICY_date = Datum overeenkomst/ontbinding AVG
-DATAPOLICY_send = Datum verzending overeenkomst e-mail
-DATAPOLICYReturn = AVG-validatie
-DATAPOLICY_SEND = Stuur AVG-e-mail
+DATAPOLICY_date = Datum overeenkomst/onenigheid AVG
+DATAPOLICY_send = Datum overeenkomst e-mail verzonden
 MailSent = De email is verzonden
-
-# ERROR
-ErrorSubjectIsRequired = Fout: het onderwerp van e-mail is vereist. Geef het aan in de module-instellingen
-=Door een technisch probleem konden we uw keuze niet registreren. Onze excuses daarvoor. Neem contact met ons op om uw keuze door te geven.
 NUMBER_MONTH_BEFORE_DELETION = Aantal maanden vóór verwijdering

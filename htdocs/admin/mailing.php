@@ -51,7 +51,7 @@ if ($action == 'setvalue') {
 	$mailerror = GETPOST('MAILING_EMAIL_ERRORSTO', 'alpha');
 	$checkread = GETPOST('value', 'alpha');
 	$checkread_key = GETPOST('MAILING_EMAIL_UNSUBSCRIBE_KEY', 'alpha');
-	$contactbulkdefault = GETPOST('MAILING_CONTACT_DEFAULT_BULK_STATUS', 'int');
+	$contactbulkdefault = GETPOSTINT('MAILING_CONTACT_DEFAULT_BULK_STATUS');
 	if (GETPOST('MAILING_DELAY', 'alpha') != '') {
 		$mailingdelay = price2num(GETPOST('MAILING_DELAY', 'alpha'), 3);		// Not less than 1 millisecond.
 	} else {
@@ -82,7 +82,7 @@ if ($action == 'setvalue') {
 		$error++;
 	}
 
-	// Create temporary encryption key if nedded
+	// Create temporary encryption key if needed
 	$res = dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY", $checkread_key, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -98,7 +98,7 @@ if ($action == 'setvalue') {
 	}
 }
 if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
-	$setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
+	$setonsearchandlistgooncustomerorsuppliercard = GETPOSTINT('value');
 	$res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -114,7 +114,7 @@ if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
  *	View
  */
 
-llxHeader('', $langs->trans("MailingSetup"));
+llxHeader('', $langs->trans("MailingSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-mailing');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailingSetup"), $linkback, 'title_setup');
@@ -184,13 +184,13 @@ print '<tr class="oddeven">';
 print '<td>' . $langs->trans("DefaultBlacklistMailingStatus", $langs->transnoentitiesnoconv("No_Email")) . '</td>';
 print '<td>';
 $blacklist_setting=array(0=>$langs->trans('No'), 1=>$langs->trans('Yes'), 2=>$langs->trans('DefaultStatusEmptyMandatory'));
-print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, $conf->global->MAILING_CONTACT_DEFAULT_BULK_STATUS);
+print $form->selectarray("MAILING_CONTACT_DEFAULT_BULK_STATUS", $blacklist_setting, getDolGlobalString('MAILING_CONTACT_DEFAULT_BULK_STATUS'));
 print '</td>';
 print '<td class="hideonsmartphone"></td>';
 print '</tr>';
 
 
-if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >= 1) {
+if (!empty($conf->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
 	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');

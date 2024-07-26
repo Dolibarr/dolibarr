@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
- * Copyright (C) 2016	   Charlie Benke	   <charlie@patas-monkey.com>
- * Copyright (C) 2018-2019 Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
+ * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$this->marge_basse = 0;
 
 		$this->option_logo = 1; // Display logo
+		$this->option_freetext = 0; // Support add of a personalised text
+		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
 		// Retrieves transmitter
 		$this->emetteur = $mysoc;
@@ -106,7 +108,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->COMPANY_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -118,7 +120,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			if (!is_dir($tmpdir)) {
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
 			} else {
-				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
+				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, 1); // Disable hook for the moment
 				if (count($tmpfiles)) {
 					$listoffiles = array_merge($listoffiles, $tmpfiles);
 				}
@@ -130,21 +132,29 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<table><tr><td>';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</td>';
-		$texte .= '<td class="center">&nbsp; ';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '</td>';
-		$texte .= '</tr>';
-		$texte .= '</table>';
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			//$texte .= '<table><tr><td>';
+			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			//$texte .= '</td>';
+			//$texte .= '<td class="center">&nbsp; ';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+			//$texte .= '</td>';
+			//$texte .= '</tr>';
+			//$texte .= '</table>';
+			$texte .= '</div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="COMPANY_ADDON_PDF_ODT_PATH">';
+		}
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->COMPANY_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= $nbofiles;
@@ -244,12 +254,12 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (!empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME)) {
+				if (getDolGlobalString('MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME')) {
 					$newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)) . '-' . $newfiletmp;
 					$newfiletmp = preg_replace('/__+/', '_', $newfiletmp);	// Replace repeated _ into one _ (to avoid string with substitution syntax)
 				}
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -259,6 +269,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				$file = $dir . '/' . $filename;
 				$object->builddoc_filename = $filename; // For triggers
+				$object->context['builddoc_filename'] = $filename; // For triggers
 				//print "newfileformat=".$newfileformat;
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
@@ -316,9 +327,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
+					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('companycontacts');
-
+					} catch (OdfExceptionSegmentNotFound $e) {
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+					if ($foundtagforlines) {
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
 							if ((int) $res_contact > 0) {
@@ -326,8 +343,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 								foreach ($tmparray as $key => $val) {
 									try {
 										$listlines->setVars($key, $val, true, 'UTF-8');
-									} catch (OdfException $e) {
-										dol_syslog($e->getMessage(), LOG_INFO);
 									} catch (SegmentException $e) {
 										dol_syslog($e->getMessage(), LOG_INFO);
 									}
@@ -338,11 +353,13 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 								dol_syslog($this->error, LOG_WARNING);
 							}
 						}
-						$odfHandler->mergeSegment($listlines);
-					} catch (OdfException $e) {
-						$this->error = $e->getMessage();
-						dol_syslog($this->error, LOG_WARNING);
-						//return -1;
+						try {
+							$odfHandler->mergeSegment($listlines);
+						} catch (OdfException $e) {
+							$this->error = $e->getMessage();
+							dol_syslog($this->error, LOG_WARNING);
+							//return -1;
+						}
 					}
 				}
 
@@ -369,8 +386,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else // Text
-						{
+						} else { // Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -394,7 +410,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
@@ -408,7 +424,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$odfHandler->title = $object->builddoc_filename;
 						$odfHandler->subject = $object->builddoc_filename;
 
-						if (!empty($conf->global->ODT_ADD_DOLIBARR_ID)) {
+						if (getDolGlobalString('ODT_ADD_DOLIBARR_ID')) {
 							$odfHandler->userdefined['dol_id'] = $object->id;
 							$odfHandler->userdefined['dol_element'] = $object->element;
 						}

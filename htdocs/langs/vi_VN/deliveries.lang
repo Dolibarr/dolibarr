@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Giao hàng
 DeliveryRef=Tham chiếu giao hàng
-DeliveryCard=Stock receipt
+DeliveryCard=Biên nhận giao hàng
 DeliveryOrder=Biên nhận giao hàng
 DeliveryDate=Ngày giao hàng
 CreateDeliveryOrder=Tạo biên nhận giao hàng
@@ -27,7 +27,7 @@ Recipient=Người nhận
 ErrorStockIsNotEnough=Không có đủ tồn kho
 Shippable=Vận chuyển được
 NonShippable=Không vận chuyển được
-ShowShippableStatus=Show shippable status
+ShowShippableStatus=Hiển thị trạng thái có thể gửi được
 ShowReceiving=Hiển thị biên nhận giao hàng
 NonExistentOrder=Đơn hàng không tồn tại
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Số lượng hàng tồn kho đã được phân bổ trên các dòng trước đó

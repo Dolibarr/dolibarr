@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,13 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
-$usercancreate = $user->rights->paymentbybanktransfer->create;
+$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 
 
 /*
@@ -92,61 +93,53 @@ $totaltoshow = 0;
 if (isModEnabled('supplier_invoice')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
 	print '<td class="right">';
-	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer" title="'.price($amounttoshow).'">';
 	print $bprev->nbOfInvoiceToPay('bank-transfer');
 	print '</a>';
 	print '</td></tr>';
-	$totaltoshow += $bprev->SommeAPrelever('bank-transfer');
+	$totaltoshow += $amounttoshow;
 }
 
 if (isModEnabled('salaries')) {
 	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransferForSalaries").'</td>';
 	print '<td class="right">';
-	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer', 'salary');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary" title="'.price($amounttoshow).'">';
 	print $bprev->nbOfInvoiceToPay('bank-transfer', 'salary');
 	print '</a>';
 	print '</td></tr>';
-	$totaltoshow += $bprev->SommeAPrelever('bank-transfer', 'salary');
+	$totaltoshow += $amounttoshow;
 }
 
 print '<tr class="oddeven"><td>'.$langs->trans("Total").'</td>';
 print '<td class="right"><span class="amount nowraponall">';
-print price($totaltoshow, '', '', 1, -1, -1, 'auto');
+print price($totaltoshow, 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 
 /*
- * Invoices waiting for withdraw
+ * Invoices waiting for credit transfer
  */
 if (isModEnabled('supplier_invoice')) {
 	$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
 	$sql .= " pfd.date_demande, pfd.amount,";
 	$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
-	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
-	$sql .= ", ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	$sql .= " WHERE s.rowid = f.fk_soc";
 	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 	$sql .= " AND f.total_ttc > 0";
-	if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
+	if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
 		$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-	}
 	if ($socid) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
-
-	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd";
-	$sqlForSalary .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
-	$sqlForSalary .= " AND s.entity IN (".getEntity('salary').")";
 
 	$resql = $db->query($sql);
 
@@ -165,8 +158,9 @@ if (isModEnabled('supplier_invoice')) {
 				$invoicestatic->id = $obj->rowid;
 				$invoicestatic->ref = $obj->ref;
 				$invoicestatic->status = $obj->fk_statut;
-				$invoicestatic->statut = $obj->fk_statut;	// For backward comaptibility
+				$invoicestatic->statut = $obj->fk_statut;	// For backward compatibility
 				$invoicestatic->paye = $obj->paye;
+				$invoicestatic->paid = $obj->paye;
 				$invoicestatic->type = $obj->type;
 				$invoicestatic->date = $db->jdate($obj->datef);
 				$invoicestatic->date_echeance = $db->jdate($obj->date_lim_reglement);
@@ -219,6 +213,10 @@ if (isModEnabled('supplier_invoice')) {
 }
 
 if (isModEnabled('salaries')) {
+	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sqlForSalary .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sqlForSalary .= " AND s.entity IN (".getEntity('salary').")";
+
 	$resql2 = $db->query($sqlForSalary);
 	if ($resql2) {
 		$numRow = $db->num_rows($resql2);
@@ -230,7 +228,7 @@ if (isModEnabled('salaries')) {
 		print '<th colspan="5">'.$langs->trans("SalaryInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$numRow.')</span></th></tr>';
 
 		if ($numRow) {
-			while ($j < $numRow && $j<10) {
+			while ($j < $numRow && $j < 10) {
 				$objSalary = $db->fetch_object($resql2);
 
 				$user->fetch($objSalary->fk_user);

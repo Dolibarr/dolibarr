@@ -1,13 +1,15 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
- * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,14 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->load("members");
 
-$rowid  = GETPOST('rowid', 'int');
+$rowid  = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
-$mode = GETPOST('mode', 'alopha');
+$mode = GETPOST('mode', 'alpha');
 
 $sall = GETPOST("sall", "alpha");
 $filter = GETPOST("filter", 'alpha');
@@ -60,10 +62,10 @@ $status = GETPOST('status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -80,17 +82,17 @@ if (!$sortfield) {
 
 $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
-$status = GETPOST("status", "int");
-$subscription = GETPOST("subscription", "int");
+$status = GETPOST("status", "intcomma");
+$subscription = GETPOSTINT("subscription");
 $amount = GETPOST('amount', 'alpha');
-$duration_value = GETPOST('duration_value', 'int');
+$duration_value = GETPOSTINT('duration_value');
 $duration_unit = GETPOST('duration_unit', 'alpha');
-$vote = GETPOST("vote", "int");
+$vote = GETPOSTINT("vote");
 $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
@@ -144,7 +146,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (int) $vote;
+	$object->vote = $vote;  // $vote is already int
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
@@ -173,7 +175,12 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	if (!$error) {
 		$id = $object->create($user);
 		if ($id > 0) {
-			header("Location: ".$_SERVER["PHP_SELF"]);
+			$backurlforlist = $_SERVER["PHP_SELF"];
+
+			$urltogo = $backtopage ? str_replace('__ID__', (string) $id, $backtopage) : $backurlforlist;
+			$urltogo = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $urltogo); // New method to autoselect field created after a New on another form object creation
+
+			header("Location: " . $urltogo);
 			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -189,7 +196,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 	$object->oldcopy = dol_clone($object, 2);
 
-	$object->label= trim($label);
+	$object->label = trim($label);
 	$object->morphy	= trim($morphy);
 	$object->status	= (int) $status;
 	$object->subscription = (int) $subscription;
@@ -200,7 +207,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->note_public = trim($comment);
 	$object->note_private = '';
 	$object->mail_valid = trim($mail_valid);
-	$object->vote = (boolean) trim($vote);
+	$object->vote = $vote;  // $vote is already int.
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -222,7 +229,7 @@ if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 
 if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
-	$res = $object->delete();
+	$res = $object->delete($user);
 
 	if ($res > 0) {
 		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
@@ -242,9 +249,10 @@ if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+$title = $langs->trans("MembersTypeSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -265,7 +273,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$param = '';
 		if (!empty($mode)) {
-			$param .= '&mode'.urlencode($mode);
+			$param .= '&mode='.urlencode($mode);
 		}
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.$contextpage;
@@ -276,8 +284,8 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 		$newcardbutton = '';
 
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 
 		if ($user->hasRight('adherent', 'configurer')) {
 			$newcardbutton .= dolGetButtonTitleSeparator();
@@ -355,16 +363,20 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				}
 			} else {
 				print '<tr class="oddeven">';
+
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
 				}
+
 				print '<td class="nowraponall">';
 				print $membertype->getNomUrl(1);
 				//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 				print '</td>';
+
 				print '<td>'.dol_escape_htmltag($objp->label).'</td>';
+
 				print '<td class="center">';
 				if ($objp->morphy == 'phy') {
 					print $langs->trans("Physical");
@@ -374,23 +386,30 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 					print $langs->trans("MorAndPhy");
 				}
 				print '</td>';
+
 				print '<td class="center nowrap">';
 				if ($objp->duration) {
 					$duration_value = intval($objp->duration);
 					if ($duration_value > 1) {
-						$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+						$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 					} else {
-						$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+						$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 					}
 					$unit = preg_replace("/[^a-zA-Z]+/", "", $objp->duration);
 					print max(1, $duration_value).' '.$dur[$unit];
 				}
 				print '</td>';
+
 				print '<td class="center">'.yn($objp->subscription).'</td>';
+
 				print '<td class="center"><span class="amount">'.(is_null($objp->amount) || $objp->amount === '' ? '' : price($objp->amount)).'</span></td>';
+
 				print '<td class="center">'.yn($objp->caneditamount).'</td>';
+
 				print '<td class="center">'.yn($objp->vote).'</td>';
+
 				print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
+
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
@@ -431,6 +450,7 @@ if ($action == 'create') {
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print dol_get_fiche_head('');
 
@@ -440,7 +460,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+	print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 	print '</td></tr>';
 
 	// Morphy
@@ -534,7 +554,7 @@ if ($rowid > 0) {
 
 		// Amount
 		print '<tr><td class="titlefield">'.$langs->trans("Amount").'</td><td>';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
+		print((is_null($object->amount) || $object->amount === '') ? '' : '<span class="amount">'.price($object->amount).'</span>');
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("CanEditAmountShort"), $langs->transnoentities("CanEditAmount")).'</td><td>';
@@ -547,15 +567,15 @@ if ($rowid > 0) {
 
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
 		if ($object->duration_value > 1) {
-			$dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+			$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 		} elseif ($object->duration_value > 0) {
-			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+			$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 		}
-		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
-		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
+		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_public));
 		print "</td></tr>";
 
 		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
@@ -591,7 +611,7 @@ if ($rowid > 0) {
 			$morphy = '';
 		}
 
-		if ($user->hasRight('adherent', 'configurer')&& !empty($object->status)) {
+		if ($user->hasRight('adherent', 'configurer') && !empty($object->status)) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&token='.newToken().'&typeid='.$object->id.($morphy ? '&morphy='.urlencode($morphy) : '').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
@@ -711,7 +731,7 @@ if ($rowid > 0) {
 				$titre .= " (".$membertype->label.")";
 			}
 
-			$param = "&rowid=".urlencode($object->id);
+			$param = "&rowid=".urlencode((string) ($object->id));
 			if (!empty($mode)) {
 				$param .= '&mode='.urlencode($mode);
 			}
@@ -917,7 +937,7 @@ if ($rowid > 0) {
 			}
 
 			if ($i == 0) {
-				print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 			}
 
 			print "</table>\n";
@@ -955,7 +975,7 @@ if ($rowid > 0) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth300" name="label" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-		print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+		print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), $object->status, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
 		print '</td></tr>';
 
 		// Morphy
@@ -972,7 +992,7 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print '<input name="amount" size="5" value="';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
 		print '</td></tr>';
 

@@ -1,27 +1,39 @@
 How to contribute to Dolibarr
 =============================
 
-Bug reports and feature requests
---------------------------------
+Send a Bug reports or a Feature request
+---------------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.** If you have questions about Dolibarr / need help using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
+<a name="not-a-support-forum"></a>*Note*: **GitHub Issues is not a support forum.** If you have questions about Dolibarr / need help on using the software, please use [the forums](https://www.dolibarr.org/forum.php). Forums exist in different languages.
 
-Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues). 
-Default **language here is english**. So please prepare your contributions in english.
+Issues to inform about a bug or a development trouble, like requests for a new feature, are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
+Default **language here is English**. So please prepare your contributions in English (we recommand using an online translation service if you don't know English).
 
 1. Please [use the search engine](https://help.github.com/articles/searching-issues) to check if nobody's already reported your problem.
 2. [Create an issue](https://help.github.com/articles/creating-an-issue). Choose an appropriate title. Prepend appropriately with Bug or Feature Request.
 3. Tell us the version you are using!   (look at  /htdocs/admin/system/dolibarr.php?  and check if you are using the latest version) 
-4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging informations whenever possible).
+4. Write a report with as much detail as possible (Use [screenshots](https://help.github.com/articles/issue-attachments) or even screencasts and provide logging and debugging information whenever possible).
 5. Delete unnecessary submissions.
 6. **Check your Message at Preview before sending.**
 
 
 
-<a name="code"></a>Submit code
+<a name="code"></a>
+
+Submit code
 ---------------------
 
+This process describes how a Developer can submit code to the project so it can be analysezd and validated by the Merger (we call this a Pull Request).
+
+Definition:
+- The Developer: is the human knowing the development language of the application that want to change some part of the code by making changement on the sources of the project.
+- The Merger: is the human knowing the development and check that the code submitted for approbation is correct to validate it, in other word, the Merger is the approbator of commits. 
+- The Releaser: is the human that validates that there a freeze/beta version is ok to be released officialy as a stable version.
+
+
 ### Basic workflow
+
+As the Developer:
 
 1. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
 2. Clone your fork.
@@ -30,7 +42,19 @@ Default **language here is english**. So please prepare your contributions in en
 5. Commit and push your changes.
 6. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
+As the Merger:
+
+7. The Merger will check and say if he approves or not the commits. During this step, the Merger can modify your own code to make it valid for appobation or ask you to make the change yourself. For this the Merger may add commits himself. Depending on the tools used (can be done from github directly orfrom an IDE), such commits may be done directly after having validating your PR (for example to complete it).
+
+Note: Of course, the Merger, does not need to ask to himself if he is ok to validate a commit he did himself. This is a reason why the Merger can validate commits he did directly without passing by the approbation process described for the Developer.
+
+As the Releaser:
+
+8. A tag will be added to take a photo of the code will all the changes approved by the Merger, when he decide to do a release.
+
+
 <span id="branches" name="branches"></span>
+
 ### Branches
 
 Unless you're fixing a bug, all pull requests should be made against the *develop* branch.
@@ -38,19 +62,27 @@ Unless you're fixing a bug, all pull requests should be made against the *develo
 If you're fixing a bug, it is preferred that you cook your fix and pull request it against an oldest version affected.
 
 We recommend to push it into N - 2 for N the latest version available, if not possible into version N - 1, and finally into develop.
-This is just a recommendation, currently, if you push a bug fix on a very old version, it is still merged and propagated into
-higher versions. 
+This is just a recommendation, currently, if you push a bug fix on a very old version, it is still merged and propagated into higher versions. 
 
-The rule N - 2 is just a tip if you don't know which version to choose to get the best the best compromise between ease of correction 
-and number of potential beneficiaries of the correction.
+The rule N - 2 is just a tip if you don't know which version to choose to get the best compromise between ease of correction and number of potential beneficiaries of the correction.
+
 
 ### General rules
-Please don't edit the ChangeLog file. File will be generated from all commit messages during release process by the project manager.
 
-### <a name="commits"></a>Commits
+- As the Developer, please don't edit the ChangeLog file. This file is generated from all commit messages during the release process by the Project releaser.
+
+- As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated automatically by sync from Transifex. If you need to add a new language file, just add it for the en_US language.
+
+- As the Releaser: The releaser will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status "No more known serious bug known". 
+
+
+<a name="commits"></a>
+
+### Commits
+
 Use clear commit messages with the following structure:
 
-```
+```plaintext
 [KEYWORD] [ISSUENUM] DESC
 
 LONGDESC
@@ -68,12 +100,12 @@ where
 #### Keyword
 In uppercase if you want to have the log comment appears into the generated ChangeLog file.
 
-The keyword can be ommitted if your commit does not fit in any of the following categories:
+The keyword can be omitted if your commit does not fit in any of the following categories:
 
 - Fix/FIX: for a bug fix
 - Close/CLOSE: for closing a referenced feature request
-- New/NEW: for an unreferenced new feature (Opening a feature request and using close is prefered)
-- Perf/PERF: for performance enhancement
+- New/NEW: for an unreferenced new feature (Opening a feature request and using close is preferred)
+- Perf/PERF: for a performance enhancement
 - Qual/QUAL: for quality code enhancement or re-engineering
 
 #### Issuenum
@@ -110,7 +142,9 @@ Short description (when the commit is not introducing feature nor closing a bug)
 Long description (Can span across multiple lines).
 </pre>
 
+
 ### Pull Requests
+
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
@@ -119,6 +153,8 @@ a process to follow to optimize the chance to have PRs merged efficiently...
 * Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
 
 * When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
+
+* A screenshot will be always required for any PR of change/addition of a GUI behaviour.
 
 Also, some code changes need a prior approbation:
 
@@ -150,7 +186,7 @@ All other translations are managed online at [Transifex](https://www.transifex.c
 
 Translations done on transifex are available in the next major release.
 
-Note: Sometimes, the source text (english) is modified. In such a case, the translation is reset. Transifex assume that if the original source
+Note: Sometimes, the source text (English) is modified. In such a case, the translation is reset. Transifex assume that if the original source
 has changed, the translation is surely no more correct so must be done again. But old translation is not lost and you can use the tab "History"
 to retrieve all old translation of a source text, and restore the translation in one click with no need to retranslate it if there is no need to.
 

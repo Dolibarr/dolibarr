@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (!empty($conf->global->CONTRACT_ADDON_PDF_ODT_PATH)) {
+		if (getDolGlobalString('CONTRACT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -229,7 +229,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->contrat->multidir_output[$object->entity]) {
+		if ($conf->contract->multidir_output[$object->entity]) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -243,7 +243,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->contrat->multidir_output[$object->entity];
+			$dir = $conf->contract->multidir_output[$object->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -268,8 +268,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
-				if (getDolGlobalInt('MAIN_DOC_USE_TIMING')) {
-					$format = getDolGlobalInt('MAIN_DOC_USE_TIMING');
+				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
+					$format = getDolGlobalString('MAIN_DOC_USE_TIMING');
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
@@ -283,8 +283,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 				//print "file=".$file;
 				//print "conf->contrat->dir_temp=".$conf->contrat->dir_temp;
 
-				dol_mkdir($conf->contrat->dir_temp);
-				if (!is_writable($conf->contrat->dir_temp)) {
+				dol_mkdir($conf->contract->dir_temp);
+				if (!is_writable($conf->contract->dir_temp)) {
 					$this->error = $langs->transnoentities("ErrorFailedToWriteInTempDirectory", $conf->contrat->dir_temp);
 					dol_syslog('Error in write_file: ' . $this->error, LOG_ERR);
 					return -1;
@@ -302,13 +302,13 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$contactobject = null;
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
-					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))) {
+					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
 						$object->contact->fetch_thirdparty();
 						$socobject = $object->contact->thirdparty;
 						$contactobject = $object->contact;
 					} else {
 						$socobject = $object->thirdparty;
-						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
+						// if we have a CUSTOMER contact and we don't use it as thirdparty recipient we store the contact object for later use
 						$contactobject = $object->contact;
 					}
 				} else {
@@ -344,8 +344,8 @@ class doc_generic_contract_odt extends ModelePDFContract
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'CONTRACT_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
-					$newfreetext = make_substitutions($conf->global->$paramfreetext, $tmparray);
+				if (getDolGlobalString($paramfreetext)) {
+					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $tmparray);
 				}
 
 
@@ -355,10 +355,10 @@ class doc_generic_contract_odt extends ModelePDFContract
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->contrat->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->contrat->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -403,44 +403,39 @@ class doc_generic_contract_odt extends ModelePDFContract
 				}
 
 				// Replace tags of lines
+				$foundtagforlines = 1;
 				try {
-					$foundtagforlines = 1;
-					try {
-						$listlines = $odfHandler->setSegment('lines');
-					} catch (OdfExceptionSegmentNotFound $e) {
-						// We may arrive here if tags for lines not present into template
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					} catch (OdfException $e) {
-						$foundtagforlines = 0;
-						dol_syslog($e->getMessage(), LOG_INFO);
-					}
-					if ($foundtagforlines) {
-						$linenumber = 0;
-						foreach ($object->lines as $line) {
-							$linenumber++;
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
-							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-							// Call the ODTSubstitutionLine hook
-							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
-							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-							foreach ($tmparray as $key => $val) {
-								try {
-									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								}
+					$listlines = $odfHandler->setSegment('lines');
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for lines not present into template
+					$foundtagforlines = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagforlines) {
+					$linenumber = 0;
+					foreach ($object->lines as $line) {
+						$linenumber++;
+						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
+						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+						// Call the ODTSubstitutionLine hook
+						$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
+						$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+						foreach ($tmparray as $key => $val) {
+							try {
+								$listlines->setVars($key, $val, true, 'UTF-8');
+							} catch (SegmentException $e) {
+								dol_syslog($e->getMessage(), LOG_INFO);
 							}
-							$listlines->merge();
 						}
-						$odfHandler->mergeSegment($listlines);
+						$listlines->merge();
 					}
-				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					try {
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace labels translated
@@ -458,7 +453,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
-				if (!empty($conf->global->MAIN_ODT_AS_PDF)) {
+				if (getDolGlobalString('MAIN_ODT_AS_PDF')) {
 					try {
 						$odfHandler->exportAsAttachedPDF($file);
 					} catch (Exception $e) {
@@ -488,7 +483,6 @@ class doc_generic_contract_odt extends ModelePDFContract
 				return 1; // Success
 			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
-				return -1;
 			}
 		}
 

@@ -37,15 +37,15 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 $label = GETPOST('label', 'alphanohtml');
-$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : GETPOSTINT('fk_project'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -58,7 +58,7 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salaryinfo', 'globalcard'));
 
 $object = new Salary($db);
@@ -109,7 +109,9 @@ if ($action == 'setlabel' && $permissiontoadd) {
  */
 
 $form = new Form($db);
-if (isModEnabled('project')) $formproject = new FormProjets($db);
+if (isModEnabled('project')) {
+	$formproject = new FormProjets($db);
+}
 
 $title = $langs->trans('Salary')." - ".$langs->trans('Info');
 $help_url = "";

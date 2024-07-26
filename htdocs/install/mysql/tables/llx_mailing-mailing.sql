@@ -18,15 +18,10 @@
 -- ========================================================================
 
 
--- draft     : 0
--- valid     : 1
--- approved  : 2
--- sent      : 3
-
 create table llx_mailing
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  statut			smallint       DEFAULT 0,            --
+  messtype		    varchar(16) DEFAULT 'email',         -- 'email' or 'sms' or ...
   titre				varchar(128),                        -- Ref of mailing
   entity			integer DEFAULT 1 NOT NULL,	         -- multi company id
   sujet				varchar(128),                        -- Sujet of mailing
@@ -34,9 +29,9 @@ create table llx_mailing
   bgcolor			varchar(8),                          -- Backgroud color of mailing
   bgimage			varchar(255),                        -- Backgroud image of mailing
   evenunsubscribe   smallint       DEFAULT 0, 			 -- If 1, email will be send event if recipient has opt-out to emailings 
-  cible				varchar(60),
+  cible				varchar(60),						 -- ???
   nbemail			integer,
-  email_from		varchar(160),                        -- Email address of sender
+  email_from		varchar(160),                        -- Email address or Phone of sender
   name_from         varchar(128),                        -- Name to show of sender
   email_replyto		varchar(160),                        -- Email address for reply
   email_errorsto	varchar(160),                        -- Email addresse for errors
@@ -50,11 +45,12 @@ create table llx_mailing
   fk_user_modif		integer,                             -- user of last modification
   fk_user_valid		integer,                             -- user validator
   fk_user_appro		integer,                             -- not used
-  extraparams		varchar(255),						 -- for stock other parameters with json format
+  extraparams		varchar(255),						 -- to stock other parameters with json format
   joined_file1		varchar(255),
   joined_file2		varchar(255),
   joined_file3		varchar(255),
   joined_file4		varchar(255),
-  note_private    text,                       --
-  note_public     text,                       --
+  statut			smallint       DEFAULT 0,            -- status (draft:0, valid: 1, approved: 2, sent: 3)
+  note_private    text,
+  note_public     text
 )ENGINE=innodb;

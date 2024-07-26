@@ -28,7 +28,7 @@
 abstract class CommonDict
 {
 	/**
-	 * @var DoliDb		Database handler (result of a new DoliDB)
+	 * @var DoliDB		Database handler (result of a new DoliDB)
 	 */
 	public $db;
 
@@ -64,7 +64,7 @@ abstract class CommonDict
 	public $label;
 
 	/**
-	 * @var int			Is the entry active
+	 * @var int<0,1>	1 if the entry is active, 0 if not
 	 */
 	public $active;
 }

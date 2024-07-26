@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/compta/facture/stats/index.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      Page des stats factures
  */
 
@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -44,6 +44,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
+
+$hookmanager->initHooks(array('invoicestats', 'globalcard'));
+
 if ($mode == 'customer' && !$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
@@ -52,28 +55,34 @@ if ($mode == 'supplier' && !$user->hasRight('fournisseur', 'facture', 'lire')) {
 }
 
 $object_status = GETPOST('object_status', 'intcomma');
-$typent_id = GETPOST('typent_id', 'int');
-$categ_id = GETPOST('categ_id', 'categ_id');
+$typent_id = GETPOSTINT('typent_id');
+$categ_id = GETPOSTINT('categ_id');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
-$custcats = GETPOST('custcats', 'array');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
+$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$year = GETPOST('year') > 0 ? GETPOST('year', 'int') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 
 /*
  * View
  */
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	$langs->load('categories');
 }
 $form = new Form($db);
@@ -102,18 +111,18 @@ if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 
@@ -193,7 +202,7 @@ if (!$mesg) {
 
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
-if (!$user->hasRight('societe', 'client', 'voir') || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
 	if ($mode == 'customer') {
 		$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -263,7 +272,7 @@ if ($mode == 'supplier') {
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -290,7 +299,7 @@ print '</td></tr>';
 
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-$sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+$sortparam_typent = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam_typent, '', 1);
 if ($user->admin) {
 	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -298,7 +307,7 @@ if ($user->admin) {
 print '</td></tr>';
 
 // Category
-if (isModEnabled('categorie')) {
+if (isModEnabled('category')) {
 	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_CUSTOMER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
@@ -310,7 +319,7 @@ if (isModEnabled('categorie')) {
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	print $form->multiselectarray('select_categ_categ_id', $cate_arbo, GETPOST('select_categ_categ_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
 }
@@ -391,7 +400,7 @@ foreach ($data as $val) {
 	print '<td class="right">'.$val['nb'].'</td>';
 	print '<td class="right opacitylow" style="'.($greennb ? 'color: green;' : 'color: red;').'">'.(!empty($val['nb_diff']) && $val['nb_diff'] < 0 ? '' : '+').round(!empty($val['nb_diff']) ? $val['nb_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['total'], 'MT'), 1).'</span></td>';
-	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.( !empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
+	print '<td class="right opacitylow" style="'.($greentotal ? 'color: green;' : 'color: red;').'">'.(!empty($val['total_diff']) && $val['total_diff'] < 0 ? '' : '+').round(!empty($val['total_diff']) ? $val['total_diff'] : 0).'%</td>';
 	print '<td class="right"><span class="amount">'.price(price2num($val['avg'], 'MT'), 1).'</span></td>';
 	print '<td class="right opacitylow" style="'.($greenavg ? 'color: green;' : 'color: red;').'">'.(!empty($val['avg_diff']) && $val['avg_diff'] < 0 ? '' : '+').round(!empty($val['avg_diff']) ? $val['avg_diff'] : 0).'%</td>';
 	print '</tr>';

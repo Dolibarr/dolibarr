@@ -5,6 +5,7 @@
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 
 		// Option to enable custom masks per product
 		$texte .= '<td class="right">';
-		if (!empty($conf->global->PRODUCTBATCH_LOT_USE_PRODUCT_MASKS)) {
+		if (getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS')) {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		} else {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskslot&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -134,7 +135,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe		$objsoc	    Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

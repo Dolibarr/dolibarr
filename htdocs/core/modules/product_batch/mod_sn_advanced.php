@@ -3,8 +3,9 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2021       Christophe Battarel			<christophe@altairis.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 
 		// Option to enable custom masks per product
 		$texte .= '<td class="right">';
-		if (!empty($conf->global->PRODUCTBATCH_SN_USE_PRODUCT_MASKS)) {
+		if (getDolGlobalString('PRODUCTBATCH_SN_USE_PRODUCT_MASKS')) {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&token='.newToken().'&value=0">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		} else {
 			$texte .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmaskssn&token='.newToken().'&value=1">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -113,15 +114,14 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$old_code_type = $mysoc->typent_code;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$mysoc->typent_code = 'TTTTTTTTTT';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
-		$mysoc->typent_code = $old_code_type;
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, '');
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -134,7 +134,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe		$objsoc	    Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @return string|0      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -155,7 +155,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 			}
 		}
 
-		if (!$mask)	{
+		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return 0;
 		}

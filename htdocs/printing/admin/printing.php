@@ -151,7 +151,7 @@ if ($mode == 'setup' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 
 		$i = 0;
 		$submit_enabled = 0;
@@ -162,6 +162,15 @@ if ($mode == 'setup' && $user->admin) {
 					print '<tr class="oddeven">';
 					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
 					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="'.getDolGlobalString($key['varname']).'"';
+					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
+					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
+					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
+					print '</tr>'."\n";
+					break;
+				case "checkbox":
+					print '<tr class="oddeven">';
+					print '<td'.($key['required'] ? ' class=required' : '').'>'.$langs->trans($key['varname']).'</td>';
+					print '<td><input class="width100" type="'.(empty($key['type']) ? 'text' : $key['type']).'" name="setupdriver['.$i.'][value]" value="1" '.((getDolGlobalInt($key['varname'])) ? 'checked' : '');
 					print isset($key['moreattributes']) ? ' '.$key['moreattributes'] : '';
 					print '><input type="hidden" name="setupdriver['.$i.'][varname]" value="'.$key['varname'].'"></td>';
 					print '<td>&nbsp;'.($key['example'] != '' ? $langs->trans("Example").' : '.$key['example'] : '').'</td>';
@@ -278,7 +287,7 @@ if ($mode == 'config' && $user->admin) {
 		require_once $classfile;
 		$classname = 'printing_'.$tmpdriver;
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load('printing');
 		//print '<pre>'.print_r($printer, true).'</pre>';
 
 		print '<tr class="oddeven">';
@@ -324,9 +333,10 @@ if ($mode == 'test' && $user->admin) {
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
-		$langs->load($driver);
 		$printer = new $classname($db);
-		$langs->load($printer::LANGFILE);
+		$langs->load($driver);
+		$langs->load('printing');
+
 		//print '<pre>'.print_r($printer, true).'</pre>';
 		if (count($printer->getlistAvailablePrinters())) {
 			if ($printer->listAvailablePrinters() == 0) {

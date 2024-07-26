@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,8 +87,8 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
-	 *  @return boolean     			false if KO (there is a conflict), true if OK
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
 	{
@@ -124,7 +126,7 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	 *
 	 *  @param	Societe				$objsoc     			Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string      								Next value
+	 *  @return string|-1      								Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{
@@ -151,12 +153,12 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 		}
 
 		$date = time();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$yymm."-".$num);
@@ -166,9 +168,10 @@ class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next free value
 	 *
-	 *  @param	Societe		$objsoc      	Object third party
-	 * 	@param	Object		$objforref		Object for number to search
-	 *  @return string      				Next free value
+	 *  @param	Societe				$objsoc     Object third party
+	 * 	@param	SupplierProposal	$objforref	Object for number to search
+	 *  @return string      					Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

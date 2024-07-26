@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +63,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Test if existing numbers make problems with numbering
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	CommonObject	$object	Object we need next value for
 	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
 	public function canBeActivated($object)
@@ -98,8 +100,8 @@ class mod_reception_beryl extends ModelNumRefReception
 	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
-	 *	@return string      			Value if OK, 0 if KO
+	 *	@param	Reception	$reception	Reception object
+	 *	@return string|-1      			Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
@@ -125,29 +127,15 @@ class mod_reception_beryl extends ModelNumRefReception
 		}
 
 		$date = time();
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {
 			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		} else {
-			$num = sprintf("%04s", $max + 1);
+			$num = sprintf("%04d", $max + 1);
 		}
 
 		dol_syslog("mod_reception_beryl::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Shipment object
-	 *	@return string      			Next free value
-	 */
-	public function reception_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

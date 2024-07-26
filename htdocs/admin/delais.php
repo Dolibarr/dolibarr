@@ -188,7 +188,7 @@ if ($action == 'update') {
 	// Update values
 	for ($i = 0; $i < 4; $i++) {
 		if (GETPOSTISSET('MAIN_METEO'.$plus.'_LEVEL'.$i)) {
-			dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'), 'chaine', 0, '', $conf->entity);
+			dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOSTINT('MAIN_METEO'.$plus.'_LEVEL'.$i), 'chaine', 0, '', $conf->entity);
 		}
 	}
 
@@ -204,12 +204,13 @@ if ($action == 'update') {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delais');
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 if ($action == 'edit') {
@@ -286,7 +287,7 @@ if ($action == 'edit') {
 print '<br>';
 
 
-if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_METEO != 1) {
+if (!getDolGlobalString('MAIN_DISABLE_METEO') || getDolGlobalInt('MAIN_DISABLE_METEO') != 1) {
 	// Show logo for weather
 	print '<span class="opacitymedium">'.$langs->trans("DescWeather").'</span> ';
 
@@ -317,21 +318,22 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_MET
 	//if (!empty($conf->global->MAIN_METEO_GAP)) $cursor=$conf->global->MAIN_METEO_GAP;
 	$level0 = $offset;
 	if (getDolGlobalString('MAIN_METEO_LEVEL0')) {
-		$level0 = $conf->global->MAIN_METEO_LEVEL0;
+		$level0 = getDolGlobalString('MAIN_METEO_LEVEL0');
 	}
 	$level1 = $offset + $cursor;
 	if (getDolGlobalString('MAIN_METEO_LEVEL1')) {
-		$level1 = $conf->global->MAIN_METEO_LEVEL1;
+		$level1 = getDolGlobalString('MAIN_METEO_LEVEL1');
 	}
 	$level2 = $offset + 2 * $cursor;
 	if (getDolGlobalString('MAIN_METEO_LEVEL2')) {
-		$level2 = $conf->global->MAIN_METEO_LEVEL2;
+		$level2 = getDolGlobalString('MAIN_METEO_LEVEL2');
 	}
 	$level3 = $offset + 3 * $cursor;
 	if (getDolGlobalString('MAIN_METEO_LEVEL3')) {
-		$level3 = $conf->global->MAIN_METEO_LEVEL3;
+		$level3 = getDolGlobalString('MAIN_METEO_LEVEL3');
 	}
-	$text = ''; $options = 'class="valignmiddle" height="60px"';
+	$text = '';
+	$options = 'class="valignmiddle" height="60px"';
 
 
 	if ($action == 'edit') {
@@ -373,9 +375,7 @@ if (!getDolGlobalString('MAIN_DISABLE_METEO') || $conf->global->MAIN_DISABLE_MET
 		print '</div>';
 		print '</div>';
 
-		print '</div>';
-
-		?>
+		print '</div>'; ?>
 
 		<script type="text/javascript">
 

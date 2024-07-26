@@ -20,7 +20,7 @@
 // Protection to avoid direct call of template
 if (empty($blocname)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 $hide = true; // Hide by default
@@ -73,4 +73,4 @@ print '<div id="'.$blocname.'_bloc" class="'.($hide ? 'hideobject' : 'nohideobje
 include DOL_DOCUMENT_ROOT.'/core/tpl/'.$blocname.'.tpl.php';
 print '</div><br>';
 ?>
-<!-- END PHP TEMPLATE BLOC SHOW/HIDE -->
+<!-- END PHP TEMPLATE BLOCK SHOW/HIDE -->

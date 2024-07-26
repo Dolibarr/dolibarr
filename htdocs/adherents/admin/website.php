@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,13 +58,17 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
+	if (GETPOST('MEMBER_NEWFORM_AMOUNT') !== '') {
+		$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
+	} else {
+		$amount = '';
+	}
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
 	$showvoteallowed = GETPOST('MEMBER_SHOW_VOTE_ALLOWED');
 	$payonline = GETPOST('MEMBER_NEWFORM_PAYONLINE');
-	$forcetype = GETPOST('MEMBER_NEWFORM_FORCETYPE', 'int');
+	$forcetype = GETPOSTINT('MEMBER_NEWFORM_FORCETYPE');
 	$forcemorphy = GETPOST('MEMBER_NEWFORM_FORCEMORPHY', 'aZ09');
 
 	$res = dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC", $public, 'chaine', 0, '', $conf->entity);
@@ -104,7 +109,8 @@ $form = new Form($db);
 
 $title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -198,7 +204,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '</div>';
 	print ajax_autoselect('publicurlmember');
 
-	print '<br>';
+	print '<br><br>';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -215,17 +221,18 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '</td><td>';
 	$listofval = array();
 	$listofval += $adht->liste_array(1);
-	$forcetype = !getDolGlobalString('MEMBER_NEWFORM_FORCETYPE') ? -1 : $conf->global->MEMBER_NEWFORM_FORCETYPE;
+	$forcetype = getDolGlobalInt('MEMBER_NEWFORM_FORCETYPE', -1);
 	print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listofval) > 1 ? 1 : 0);
 	print "</td></tr>\n";
 
 	// Force nature of member (mor/phy)
+	$morphys = array();
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Moral");
 	print '<tr class="oddeven drag" id="trforcenature"><td>';
 	print $langs->trans("ForceMemberNature");
 	print '</td><td>';
-	$forcenature = !getDolGlobalString('MEMBER_NEWFORM_FORCEMORPHY') ? 0 : $conf->global->MEMBER_NEWFORM_FORCEMORPHY;
+	$forcenature = getDolGlobalInt('MEMBER_NEWFORM_FORCEMORPHY', 0);
 	print $form->selectarray("MEMBER_NEWFORM_FORCEMORPHY", $morphys, $forcenature, 1);
 	print "</td></tr>\n";
 
@@ -233,37 +240,37 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="tramount"><td>';
 	print $langs->trans("DefaultAmount");
 	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.(getDolGlobalString('MEMBER_NEWFORM_AMOUNT') ? $conf->global->MEMBER_NEWFORM_AMOUNT : '').'">';
+	print '<input type="text" class="right width50" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" value="'.getDolGlobalString('MEMBER_NEWFORM_AMOUNT').'">';
 	print "</td></tr>\n";
 
 	// Min amount
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MinimumAmount");
 	print '</td><td>';
-	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.(getDolGlobalString('MEMBER_MIN_AMOUNT') ? $conf->global->MEMBER_MIN_AMOUNT : '').'">';
+	print '<input type="text" class="right width50" id="MEMBER_MIN_AMOUNT" name="MEMBER_MIN_AMOUNT" value="'.getDolGlobalString('MEMBER_MIN_AMOUNT').'">';
 	print "</td></tr>\n";
 
 	// SHow counter of validated members publicly
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MemberCountersArePublic");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", (getDolGlobalString('MEMBER_COUNTERS_ARE_PUBLIC') ? $conf->global->MEMBER_COUNTERS_ARE_PUBLIC : 0), 1);
+	print $form->selectyesno("MEMBER_COUNTERS_ARE_PUBLIC", getDolGlobalInt('MEMBER_COUNTERS_ARE_PUBLIC'), 1, false, 0, 1);
 	print "</td></tr>\n";
 
 	// Show the table of all available membership types. If not, show a form (as the default was for Dolibarr <=16.0)
-	$skiptable = (getDolGlobalString('MEMBER_SKIP_TABLE') ? $conf->global->MEMBER_SKIP_TABLE : 0);
+	$skiptable = getDolGlobalInt('MEMBER_SKIP_TABLE');
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowMembershipTypesTable");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_TABLE", !$skiptable, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Show "vote allowed" setting for membership types
-	$hidevoteallowed = (getDolGlobalString('MEMBER_HIDE_VOTE_ALLOWED') ? $conf->global->MEMBER_HIDE_VOTE_ALLOWED : 0);
+	$hidevoteallowed = getDolGlobalInt('MEMBER_HIDE_VOTE_ALLOWED');
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("MembersShowVotesAllowed");
 	print '</td><td>';
-	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1); // Reverse the logic "hide -> show" for retrocompatibility
+	print $form->selectyesno("MEMBER_SHOW_VOTE_ALLOWED", !$hidevoteallowed, 1, false, 0, 1); // Reverse the logic "hide -> show" for retrocompatibility
 	print "</td></tr>\n";
 
 	// Jump to an online payment page
@@ -282,7 +289,7 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	if (isModEnabled('stripe')) {
 		$listofval['stripe'] = 'Stripe';
 	}
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, (getDolGlobalString('MEMBER_NEWFORM_PAYONLINE') ? $conf->global->MEMBER_NEWFORM_PAYONLINE : ''), 0);
+	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'), 0);
 	print "</td></tr>\n";
 
 	print '</table>';

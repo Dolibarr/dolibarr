@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 
 /**
- *      Superclass for thirdparties, contacts, members or users
+ *      Support class for thirdparties, contacts, members, users or resources
  */
 trait CommonPeople
 {
@@ -75,7 +76,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 
 		$ret = '';
@@ -89,7 +90,7 @@ trait CommonPeople
 
 		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
 
-		return dol_trunc($ret, $maxlen);
+		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
 	}
 
 	/**
@@ -131,7 +132,7 @@ trait CommonPeople
 			if (!empty($conf->use_javascript_ajax)) {
 				// Add picto with tooltip on map
 				$namecoords = '';
-				if ($this->element == 'contact' && !empty($conf->global->MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS)) {
+				if ($this->element == 'contact' && getDolGlobalString('MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS')) {
 					$namecoords .= $object->name.'<br>';
 				}
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
@@ -149,8 +150,8 @@ trait CommonPeople
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -161,7 +162,7 @@ trait CommonPeople
 				$extralanguages->fetch_name_extralanguages($elementforaltlanguage);
 
 				if (!empty($extralanguages->attributes[$elementforaltlanguage]['address']) || !empty($extralanguages->attributes[$elementforaltlanguage]['town'])) {
-					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".join(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
+					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".implode(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
 					$this->fetchValuesForExtraLanguages();
 					if (!is_object($form)) {
 						$form = new Form($this->db);
@@ -180,8 +181,8 @@ trait CommonPeople
 		}
 
 		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
+		if (!in_array($this->country_code, $countriesusingstate) && !getDolGlobalString('MAIN_FORCE_STATE_INTO_ADDRESS')
+				&& !getDolGlobalString('SOCIETE_DISABLE_STATE') && $this->state) {
 			if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
 			} else {
@@ -235,11 +236,14 @@ trait CommonPeople
 		}
 		$outdone = 0;
 		if (!empty($this->email)) {
-			$out .= dol_print_email($this->email, $this->id, $object->id, 'AC_EMAIL', 0, 0, 1);
+			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 0, 1);
 			$outdone++;
 		}
 		if (!empty($this->url)) {
 			//$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
+			if (!empty($this->email)) {
+				$out .= ' ';
+			}
 			$out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
@@ -276,24 +280,22 @@ trait CommonPeople
 	 */
 	public function setUpperOrLowerCase()
 	{
-		global $conf;
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
 			if (property_exists($this, 'name_alias')) {
-				$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
 			}
 		}
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_ALL_TO_UPPER')) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
 			if (property_exists($this, 'name_alias')) {
 				$this->name_alias = dol_strtoupper($this->name_alias);
 			}
 		}
-		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_ALL_TOWN_TO_UPPER')) {
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}

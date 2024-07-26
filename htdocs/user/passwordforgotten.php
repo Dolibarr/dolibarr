@@ -38,7 +38,7 @@ if (isModEnabled('ldap')) {
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	header("Location: ".DOL_URL_ROOT.'/');
 	exit;
 }
@@ -53,7 +53,7 @@ $username = GETPOST('username', 'alphanohtml');
 $passworduidhash = GETPOST('passworduidhash', 'alpha');
 $setnewpassword = GETPOST('setnewpassword', 'aZ09');
 
-$conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
+$conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
 $hookmanager->initHooks(array('passwordforgottenpage'));
@@ -84,7 +84,9 @@ $parameters = array('username' => $username);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	$message = $hookmanager->error;
-} else $message = '';
+} else {
+	$message = '';
+}
 
 if (empty($reshook)) {
 	// Validate new password
@@ -105,7 +107,7 @@ if (empty($reshook)) {
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 
-				header("Location: ".DOL_URL_ROOT.'/');
+				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
 				exit;
 			} else {
 				$langs->load("errors");
@@ -133,7 +135,7 @@ if (empty($reshook)) {
 
 			// Set the message to show (must be the same if login/email exists or not
 			// to avoid to guess them.
-			$messagewarning = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
+			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
 				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
 			} else {
@@ -179,8 +181,8 @@ $dol_url_root = DOL_URL_ROOT;
 
 // Title
 $title = 'Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = $conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 // Select templates
@@ -201,7 +203,7 @@ $disabled = 'disabled';
 if (preg_match('/dolibarr/i', $mode)) {
 	$disabled = '';
 }
-if (!empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
 	$disabled = ''; // To force button enabled
 }
 
@@ -227,7 +229,7 @@ if (function_exists("imagecreatefrompng") && !$disabled) {
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)
-$parameters = array('entity' => GETPOST('entity', 'int'));
+$parameters = array('entity' => GETPOSTINT('entity'));
 $hookmanager->executeHooks('getPasswordForgottenPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks
 if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 	$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
@@ -236,7 +238,7 @@ if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 }
 
 // Execute hook getPasswordForgottenPageExtraOptions (eg for js)
-$parameters = array('entity' => GETPOST('entity', 'int'));
+$parameters = array('entity' => GETPOSTINT('entity'));
 $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 $moreloginextracontent = $hookmanager->resPrint;
 

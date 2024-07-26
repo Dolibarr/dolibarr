@@ -27,8 +27,7 @@ ModuleBuilderDeschooks=Kichupo hiki kimejitolea kwa ndoano.
 ModuleBuilderDescwidgets=Kichupo hiki kimejitolea kudhibiti/kuunda wijeti.
 ModuleBuilderDescbuildpackage=Unaweza kutengeneza hapa "tayari kusambaza" faili ya kifurushi (faili ya .zip iliyosawazishwa) ya moduli yako na faili ya hati "tayari kusambaza". Bonyeza tu kwenye kitufe ili kuunda kifurushi au faili ya hati.
 EnterNameOfModuleToDeleteDesc=Unaweza kufuta moduli yako. ONYO: Faili zote za usimbaji za moduli (zinazozalishwa au kuundwa kwa mikono) NA data na nyaraka zilizopangwa zitafutwa!
-EnterNameOfObjectToDeleteDesc=Unaweza kufuta kitu. ONYO: Faili zote za usimbaji (zinazozalishwa au kuundwa kwa mikono) zinazohusiana na kitu zitafutwa!
-EnterNameOfObjectToDeleteDesc=Unaweza kufuta kitu. ONYO: Faili zote za usimbaji (zinazozalishwa au kuundwa kwa mikono) zinazohusiana na kitu zitafutwa!
+EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
 DangerZone=Eneo la hatari
 BuildPackage=Jenga kifurushi
 BuildPackageDesc=Unaweza kutengeneza kifurushi cha zip cha programu yako ili uwe tayari kukisambaza kwenye Dolibarr yoyote. Unaweza pia kuisambaza au kuiuza sokoni kama <a href="https://www.dolistore.com"> DoliStore.com </a> .
@@ -40,7 +39,7 @@ EditorName=Jina la mhariri
 EditorUrl=URL ya mhariri
 DescriptorFile=Faili ya maelezo ya moduli
 ClassFile=Faili ya darasa la PHP DAO CRUD
-ApiClassFile=Faili kwa darasa la PHP API
+ApiClassFile=API file of module
 PageForList=Ukurasa wa PHP kwa orodha ya rekodi
 PageForCreateEditView=Ukurasa wa PHP ili kuunda/kuhariri/kuona rekodi
 PageForAgendaTab=Ukurasa wa PHP kwa kichupo cha tukio
@@ -57,7 +56,7 @@ RegenerateMissingFiles=Tengeneza faili zinazokosekana
 SpecificationFile=Faili ya nyaraka
 LanguageFile=Faili kwa lugha
 ObjectProperties=Sifa za Kitu
-Property=Mali
+Property=Property
 PropertyDesc=Sifa ni sifa inayobainisha kitu. Sifa hii ina msimbo, lebo na aina yenye chaguo kadhaa.
 ConfirmDeleteProperty=Je, una uhakika unataka kufuta kipengee <strong> %s </strong> ? Hii itabadilisha nambari katika darasa la PHP lakini pia kuondoa safu kutoka kwa ufafanuzi wa jedwali la kitu.
 NotNull=Sio NULL
@@ -71,7 +70,7 @@ ArrayOfKeyValues=Safu ya ufunguo-val
 ArrayOfKeyValuesDesc=Mkusanyiko wa vitufe na thamani ikiwa sehemu ni orodha ya mchanganyiko yenye thamani zisizobadilika
 WidgetFile=Faili ya Widget
 CSSFile=Faili ya CSS
-JSFile=Javascript faili
+JSFile=JavaScript file
 ReadmeFile=Nisome faili
 ChangeLog=Badilisha faili ya logi
 TestClassFile=Faili ya darasa la Mtihani wa Kitengo cha PHP
@@ -92,8 +91,8 @@ ListOfMenusEntries=Orodha ya maingizo ya menyu
 ListOfDictionariesEntries=Orodha ya maingizo ya kamusi
 ListOfPermissionsDefined=Orodha ya ruhusa zilizobainishwa
 SeeExamples=Tazama mifano hapa
-EnabledDesc=Masharti ya kuwa na uga huu amilifu. <br>  <br> Mifano: <br> 1 <br> isModEnabled('MAIN_MODULE_MYMODULE') <br> getDolGlobalString('MYMODULE_OPTION')==2
-VisibleDesc=Uwanja unaonekana? (Mifano: 0=Haionekani kamwe, 1=Inaonekana kwenye orodha na unda/sasisha/angalia fomu, 2=Inaonekana kwenye orodha pekee, 3=Inaonekana kwenye fomu ya unda/sasisha/mtazamo pekee (sio orodha), 4=Inaonekana kwenye orodha na usasishe/angalia fomu pekee (sio kuunda), 5=Inaonekana kwenye fomu ya mwonekano wa mwisho wa orodha pekee (sio spanlate19b0fno) </span>\n  <br> Kutumia thamani hasi inamaanisha uga hauonyeshwi kwa chaguomsingi kwenye orodha lakini inaweza kuchaguliwa ili kutazamwa).
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not on lists), 4=Visible on lists and update/view form only (not create), 5=Visible on list and view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).
 ItCanBeAnExpression=Inaweza kuwa usemi. Mfano: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1 <br> $user->hasRight('likizo', 'define_holiday')?1:5
 DisplayOnPdfDesc=Onyesha uwanja huu kwenye hati zinazolingana za PDF, unaweza kudhibiti msimamo na uga wa "Position". <br>  <strong> Kwa hati : </strong>  <br> 0 = haijaonyeshwa <br> 1 = onyesho <br> 2 = onyesha tu ikiwa si tupu <br>  <br>  <strong> Kwa laini za hati : </strong>  <br> 0 = haijaonyeshwa <br> 1 = imeonyeshwa kwenye safu <br> 3 = onyesha katika safu wima ya maelezo baada ya maelezo <br> 4 = onyesha katika safu wima ya maelezo baada ya maelezo ikiwa sio tupu
 DisplayOnPdf=Kwenye PDF
@@ -107,7 +106,7 @@ PermissionsDefDesc=Bainisha hapa ruhusa mpya zinazotolewa na sehemu yako
 MenusDefDescTooltip=Menyu zinazotolewa na sehemu/programu yako zimefafanuliwa katika safu <strong> $this->menu </strong>  kwenye faili ya maelezo ya moduli. Unaweza kuhariri faili hii mwenyewe au kutumia kihariri kilichopachikwa. <br>  <br> Kumbuka: Baada ya kubainishwa (na moduli kuwezesha tena), menyu pia huonekana kwenye kihariri cha menyu kinachopatikana kwa watumiaji wa msimamizi kwenye %s.
 DictionariesDefDescTooltip=Kamusi zinazotolewa na sehemu/programu yako zimefafanuliwa katika safu <strong> $this->kamusi </strong>  kwenye faili ya maelezo ya moduli. Unaweza kuhariri faili hii mwenyewe au kutumia kihariri kilichopachikwa. <br>  <br> Kumbuka: Baada ya kubainishwa (na moduli kuwezesha upya), kamusi pia huonekana katika eneo la usanidi kwa watumiaji wa msimamizi kwenye %s.
 PermissionsDefDescTooltip=Ruhusa zinazotolewa na sehemu/programu yako zimefafanuliwa katika safu <strong> $this->haki </strong>  kwenye faili ya maelezo ya moduli. Unaweza kuhariri faili hii mwenyewe au kutumia kihariri kilichopachikwa. <br>  <br> Kumbuka: Baada ya kubainishwa (na moduli kuamilishwa upya), ruhusa huonekana kwenye usanidi chaguo-msingi wa ruhusa %s.
-HooksDefDesc=Bainisha katika <b> module_parts['hooks'] </b>  mali, katika kifafanuzi cha moduli, muktadha wa ndoano unazotaka kudhibiti (orodha ya muktadha inaweza kupatikana kwa utafutaji kwenye ' <b> initHooks( </b> 'katika nambari ya msingi). <br> Hariri faili ya ndoano ili kuongeza msimbo wa vitendaji vyako vilivyounganishwa (vitendaji vinavyoweza kuunganishwa vinaweza kupatikana kwa utafutaji kwenye ' <b> executeHooks </b> 'katika nambari ya msingi).
+HooksDefDesc=Define in the property <b>module_parts['hooks']</b>, in the module descriptor file, the list of contexts when your hook must be executed (the list of possible contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Then edit the file with hooks code with the code of your hooked functions (the list of hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
 TriggerDefDesc=Bainisha katika faili ya kichochezi msimbo ambao ungependa kutekeleza wakati tukio la biashara nje ya sehemu yako linapotekelezwa (matukio yaliyoanzishwa na moduli zingine).
 SeeIDsInUse=Angalia vitambulisho vinavyotumika katika usakinishaji wako
 SeeReservedIDsRangeHere=Angalia anuwai ya vitambulisho vilivyohifadhiwa
@@ -128,7 +127,7 @@ RealPathOfModule=Njia halisi ya moduli
 ContentCantBeEmpty=Maudhui ya faili hayawezi kuwa tupu
 WidgetDesc=Unaweza kutengeneza na kuhariri hapa wijeti ambazo zitapachikwa na moduli yako.
 CSSDesc=Unaweza kutengeneza na kuhariri hapa faili iliyo na CSS ya kibinafsi iliyopachikwa na moduli yako.
-JSDesc=Unaweza kutengeneza na kuhariri hapa faili iliyo na Javascript ya kibinafsi iliyopachikwa na moduli yako.
+JSDesc=You can generate and edit here a file with personalized JavaScript embedded with your module.
 CLIDesc=Unaweza kutoa hapa hati za safu ya amri unayotaka kutoa na moduli yako.
 CLIFile=Faili ya CLI
 NoCLIFile=Hakuna faili za CLI
@@ -148,8 +147,8 @@ CSSViewClass=CSS kwa fomu ya kusoma
 CSSListClass=CSS kwa orodha
 NotEditable=Haiwezi kuhaririwa
 ForeignKey=Kitufe cha kigeni
-ForeignKeyDesc=Ikiwa thamani ya sehemu hii lazima ihakikishwe kuwa ipo kwenye jedwali lingine. Weka hapa sintaksia inayolingana na thamani: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Mfano: <br> varchar(99), double(24,8), halisi, maandishi, html, tarehe, muhuri wa muda, nambari kamili, nambari kamili:ClassName:relativepath/to/classfile.class.php[:1[:filter]] <br> '1' inamaanisha tunaongeza kitufe cha + baada ya mseto ili kuunda rekodi <br> 'chujio' ni hali ya sql, mfano: 'status=1 NA fk_user=__USER_ID__ NA huluki KATIKA (__SHARED_ENTITIES__)'
+ForeignKeyDesc=If the value of this field must be guaranteed to exist into another table. Enter here a value matching syntax: tablename.parentfieldtocheck
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Hii ni aina ya uga/sifa.
 AsciiToHtmlConverter=Kigeuzi cha Ascii hadi HTML
 AsciiToPdfConverter=Kigeuzi cha Ascii hadi PDF
@@ -181,3 +180,9 @@ FailedToAddCodeIntoDescriptor=Imeshindwa kuongeza msimbo kwenye kifafanuzi. Haki
 DictionariesCreated=Dictionary <b>%s</b> created successfully
 DictionaryDeleted=Dictionary <b>%s</b> removed successfully
 PropertyModuleUpdated=Property <b>%s</b> has been update successfully
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
+SetupFile=Page for module setup
+EmailingSelectors=Emails selectors
+EmailingSelectorDesc=You can generate and edit here the class files to provide new email target selectors for the mass emailing module
+EmailingSelectorFile=Emails selector file
+NoEmailingSelector=No emails selector file

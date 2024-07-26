@@ -6,7 +6,6 @@ ClassCreditedConfirm=Are you sure you want to classify this Payment receipt as c
 WithdrawalRefused=Payment refused
 WithdrawalRefusedConfirm=Are you sure you want to enter a Payment rejection for Company
 RefusedInvoicing=Invoicing the rejection
-NoInvoiceRefused=Do not charge for the rejection
 StatusMotif6=Account without a balance
 OrderWaiting=Waiting for action
 WithdrawalFileNotCapable=Unable to generate Payment receipt file for your country %s (Your country is not supported)

@@ -125,7 +125,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 *
 	 *  @param	Societe				$objsoc     			Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string      								Value if OK, 0 if KO
+	 *  @return string|0      								Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{
@@ -134,7 +134,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// On defini critere recherche compteur
-		$mask = empty($conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK) ? '' : $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
+		$mask = !getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK') ? '' : $conf->global->SUPPLIER_PROPOSAL_SAPHIR_MASK;
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

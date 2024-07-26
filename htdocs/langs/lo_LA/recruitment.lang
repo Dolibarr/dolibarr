@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = ການຮັບສະັກພະນັກງານ
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = ຄຸ້ມຄອງແລະປະຕິບັດຕາມການໂຄສະນາຫາສຽງ ສຳ ລັບ ຕຳ ແໜ່ງ ວຽກໃ່
-
-#
 # Admin page
-#
 RecruitmentSetup = ການຕັ້ງການຮັບສະັກພະນັກງານ
-Settings = ການຕັ້ງຄ່າ
 RecruitmentSetupPage = ໃສ່ບ່ອນນີ້ການຕັ້ງຕົວເລືອກຫຼັກສໍາລັບໂມດູນການຮັບສະັກພະນັກງານ
 RecruitmentArea=ພື້ນທີ່ຮັບສະັກພະນັກງານ
 PublicInterfaceRecruitmentDesc=ໜ້າ ວຽກສາທາລະນະແມ່ນ URL ສາທາລະນະເພື່ອສະແດງແລະຕອບເພື່ອເປີດວຽກ. ມີການເຊື່ອມຕໍ່ທີ່ແຕກຕ່າງກັນອັນນຶ່ງສໍາລັບແຕ່ລະ ໜ້າ ວຽກທີ່ເປີດຢູ່, ພົບເຫັນຢູ່ໃນແຕ່ລະບັນທຶກວຽກ.
 EnablePublicRecruitmentPages=ເປີດໃຊ້ ໜ້າ ສາທາລະນະຂອງວຽກທີ່ເປີດຢູ່
 
-#
-# About page
-#
-About = ກ່ຽວກັບ
-RecruitmentAbout = ກ່ຽວກັບການຮັບສະັກພະນັກງານ
-RecruitmentAboutPage = ຮັບສະັກພະນັກງານກ່ຽວກັບ ໜ້າ
 NbOfEmployeesExpected=ຄາດວ່າຈະມີພະນັກງານ nb
 JobLabel=ປ້າຍ ກຳ ກັບ ຕຳ ແໜ່ງ ວຽກ
 WorkPlace=ບ່ອນເຮັດວຽກ
@@ -49,7 +34,6 @@ PositionToBeFilled=ຕຳ ແໜ່ງ ວຽກ
 PositionsToBeFilled=ຕຳ ແໜ່ງ ວຽກ
 ListOfPositionsToBeFilled=ລາຍຊື່ ຕຳ ແໜ່ງ ວຽກ
 NewPositionToBeFilled=ຕຳ ແໜ່ງ ວຽກໃ່
-
 JobOfferToBeFilled=ຕຳ ແໜ່ງ ວຽກທີ່ຕ້ອງຕື່ມໃສ່
 ThisIsInformationOnJobPosition=ຂໍ້ມູນຂອງ ຕຳ ແໜ່ງ ວຽກທີ່ຈະຕ້ອງຕື່ມໃສ່
 ContactForRecruitment=ຕິດຕໍ່ຮັບສະັກພະນັກງານ
@@ -57,16 +41,16 @@ EmailRecruiter=ນາຍຈ້າງອີເມລ
 ToUseAGenericEmail=ເພື່ອໃຊ້ອີເມວທົ່ວໄປ. ຖ້າບໍ່ໄດ້ລະບຸ, ອີເມລ of ຂອງຜູ້ຮັບຜິດຊອບການຮັບສະັກພະນັກງານຈະຖືກນໍາໃຊ້
 NewCandidature=ຄໍາຮ້ອງສະຫມັກໃຫມ່
 ListOfCandidatures=ລາຍການຄໍາຮ້ອງສະຫມັກ
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+Remuneration=ເງິນເດືອນ
+RequestedRemuneration=ເງິນເດືອນຮ້ອງຂໍ
+ProposedRemuneration=ເງິນເດືອນທີ່ສະເຫນີ
 ContractProposed=ສັນຍາສະ ເໜີ
 ContractSigned=ເຊັນສັນຍາແລ້ວ
 ContractRefused=ສັນຍາຖືກປະຕິເສດ
 RecruitmentCandidature=ຄໍາຮ້ອງສະຫມັກ
 JobPositions=ຕຳ ແໜ່ງ ວຽກ
 RecruitmentCandidatures=ຄໍາຮ້ອງສະຫມັກ
-InterviewToDo=Contacts to follow
+InterviewToDo=ຕິດຕໍ່ພົວພັນເພື່ອຕິດຕາມ
 AnswerCandidature=ຄໍາຕອບຄໍາຮ້ອງສະຫມັກ
 YourCandidature=ຄໍາຮ້ອງສະຫມັກຂອງທ່ານ
 YourCandidatureAnswerMessage=ຂອບໃຈສໍາລັບຄໍາຮ້ອງສະຫມັກຂອງເຈົ້າ. <br> ...
@@ -75,5 +59,8 @@ JobClosedTextCanceled=ຕຳ ແໜ່ງ ວຽກຖືກປິດ.
 ExtrafieldsJobPosition=ຄຸນສົມບັດເພີ່ມເຕີມ (ຕຳ ແໜ່ງ ວຽກ)
 ExtrafieldsApplication=ຄຸນລັກສະນະເສີມ (ການສະjobັກວຽກ)
 MakeOffer=ສະ ເໜີ ໃຫ້
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+WeAreRecruiting=ພວກເຮົາຮັບສະໝັກພະນັກງານ. ນີ້ແມ່ນລາຍຊື່ຕຳແໜ່ງທີ່ເປີດຮັບສະໝັກ...
+NoPositionOpen=ບໍ່​ມີ​ຕໍາ​ແຫນ່ງ​ເປີດ​ໃນ​ປັດ​ຈຸ​ບັນ​
+ConfirmClose=ຢືນຢັນການຍົກເລີກ
+ConfirmCloseAsk=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການຍົກເລີກການສະໝັກຮັບສະໝັກງານນີ້
+Recruitment=Recruitment

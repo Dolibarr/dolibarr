@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('proposalindex'));
 
@@ -39,10 +39,10 @@ $hookmanager->initHooks(array('proposalindex'));
 $langs->loadLangs(array('propal', 'companies'));
 
 $now = dol_now();
-$max = 5;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
@@ -82,15 +82,23 @@ if (isModEnabled("propal")) {
 	$sql .= ", s.rowid as socid, s.nom as name, s.client, s.canvas, s.code_client, s.code_fournisseur, s.email, s.entity, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
 	$sql .= " WHERE p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_soc = s.rowid";
 	$sql .= " AND p.fk_statut =".Propal::STATUS_DRAFT;
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	// If the internal user must only see his customers, force searching by him
+	$search_sale = 0;
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$search_sale = $user->id;
 	}
+	// Search on sale representative
+	if ($search_sale && $search_sale != '-1') {
+		if ($search_sale == -2) {
+			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+		} elseif ($search_sale > 0) {
+			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		}
+	}
+	// Search on socid
 	if ($socid) {
 		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
@@ -98,7 +106,7 @@ if (isModEnabled("propal")) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("DraftPropals", "comm/propal/list.php", "search_status=".Propal::STATUS_DRAFT, 2, $num);
 
 		$total = 0;
@@ -128,11 +136,11 @@ if (isModEnabled("propal")) {
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 16).'</td>';
-				print '<td class="nowrap right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="nowrap right">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
 
 				$i++;
-				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+				$total += (getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -152,29 +160,38 @@ print '<div class="fichetwothirdright">';
  * Last modified proposals
  */
 
-$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut, date_cloture as datec";
-$sql .= ", s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
-$sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
-$sql .= ", ".MAIN_DB_PREFIX."societe as s";
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
+$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
+$sql .= " ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.entity IN (".getEntity($propalstatic->element).")";
 $sql .= " AND c.fk_soc = s.rowid";
-//$sql.= " AND c.fk_statut > 2";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
 $sql .= " ORDER BY c.tms DESC";
+
 $sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
-	startSimpleTable($langs->trans("LastModifiedProposals", $max), "", "", 3);
+
+	startSimpleTable($langs->trans("LastModifiedProposals", $max), "comm/propal/list.php", "sortfield=p.tms&sortorder=DESC", 2, -1, 'propal');
 
 	if ($num) {
 		$i = 0;
@@ -197,7 +214,7 @@ if ($resql) {
 
 			print '<tr class="oddeven">';
 
-			print '<td width="20%" class="nowrap">';
+			print '<td class="nowrap">';
 			print '<table class="nobordernopadding">';
 			print '<tr class="nocellnopadd">';
 			print '<td width="96" class="nobordernopadding nowrap">'.$propalstatic->getNomUrl(1).'</td>';
@@ -208,8 +225,13 @@ if ($resql) {
 			print '</td>';
 
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
-			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
+
+			$datem = $db->jdate($obj->datem);
+			print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
+			print dol_print_date($datem, 'day', 'tzuserrel');
+			print '</td>';
+
+			print '<td class="right">'.$propalstatic->LibStatut($obj->status, 3).'</td>';
 
 			print '</tr>';
 
@@ -232,17 +254,25 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	$sql .= ", p.rowid as propalid, p.entity, p.total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	}
 	$sql .= " WHERE p.fk_soc = s.rowid";
 	$sql .= " AND p.entity IN (".getEntity($propalstatic->element).")";
 	$sql .= " AND p.fk_statut = ".Propal::STATUS_VALIDATED;
-	if (!$user->hasRight('societe', 'client', 'voir') && !$socid) {
-		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+	// If the internal user must only see his customers, force searching by him
+	$search_sale = 0;
+	if (!$user->hasRight('societe', 'client', 'voir')) {
+		$search_sale = $user->id;
 	}
+	// Search on sale representative
+	if ($search_sale && $search_sale != '-1') {
+		if ($search_sale == -2) {
+			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+		} elseif ($search_sale > 0) {
+			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		}
+	}
+	// Search on socid
 	if ($socid) {
-		$sql .= " AND s.rowid = ".((int) $socid);
+		$sql .= " AND p.fk_soc = ".((int) $socid);
 	}
 	$sql .= " ORDER BY p.rowid DESC";
 
@@ -250,7 +280,7 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 	if ($resql) {
 		$total = 0;
 		$num = $db->num_rows($resql);
-		$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
+		$nbofloop = min($num, (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 		startSimpleTable("ProposalsOpened", "comm/propal/list.php", "search_status=".Propal::STATUS_VALIDATED, 4, $num);
 
 		if ($num > 0) {
@@ -287,15 +317,15 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 				print '</table>';
 				print '</td>';
 
-				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
+				print '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>';
-				print '<td class="right">'.price(!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc).'</td>';
+				print '<td class="right">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 
 				print '</tr>';
 
 				$i++;
-				$total += (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT) ? $obj->total_ht : $obj->total_ttc);
+				$total += (getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc);
 			}
 		}
 
@@ -306,155 +336,6 @@ if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 		dol_print_error($db);
 	}
 }
-
-/*
- * Proposals to process
- */
-
-/*
-if (isModEnabled('propal'))
-{
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, s.nom as name, s.rowid as socid";
-	$sql.=" FROM ".MAIN_DB_PREFIX."propal as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 1";
-	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
-	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
-	$sql.= " ORDER BY c.rowid DESC";
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td></tr>';
-
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
-
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
-
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
-
-				print '<td width="16" class="nobordernopadding nowrap">';
-				print '&nbsp;';
-				print '</td>';
-
-				print '<td width="16" class="nobordernopadding right">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
-
-				print '</td>';
-
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td>';
-
-				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
-
-				print '</tr>';
-				$i++;
-			}
-		}
-
-		print "</table>";
-		print "</div><br>";
-	}
-	else dol_print_error($db);
-}
-*/
-
-/*
- * Proposal that are in a shipping process
- */
-
-/*
-if (isModEnabled('propal'))
-{
-	$sql = "SELECT c.rowid, c.ref, c.fk_statut, c.facture, s.nom as name, s.rowid as socid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE c.fk_soc = s.rowid";
-	$sql.= " AND c.entity = ".$conf->entity;
-	$sql.= " AND c.fk_statut = 2 ";
-	if ($socid) $sql.= " AND c.fk_soc = ".((int) $socid);
-	if (empty($user->rights->societe->client->voir) && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .((int) $user->id);
-	$sql.= " ORDER BY c.rowid DESC";
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=2"><span class="badge">'.$num.'</span></a></td></tr>';
-
-		if ($num)
-		{
-			$i = 0;
-			while ($i < $num)
-			{
-
-				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
-				print '<td width="20%" class="nowrap">';
-
-				$propalstatic->id=$obj->rowid;
-				$propalstatic->ref=$obj->ref;
-
-				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-				print '<td width="96" class="nobordernopadding nowrap">';
-				print $propalstatic->getNomUrl(1);
-				print '</td>';
-
-				print '<td width="16" class="nobordernopadding nowrap">';
-				print '&nbsp;';
-				print '</td>';
-
-				print '<td width="16" class="nobordernopadding right">';
-				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
-				print '</td></tr></table>';
-
-				print '</td>';
-
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
-
-				print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
-
-				print '</tr>';
-				$i++;
-			}
-		}
-		print "</table>";
-		print "</div><br>";
-	}
-	else dol_print_error($db);
-}
-*/
 
 print '</div>';
 print '</div>';

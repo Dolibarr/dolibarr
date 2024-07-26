@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
  * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,14 +73,14 @@ class ExpenseReportIk extends CommonObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'index'=>true)
-		,'fk_c_exp_tax_cat'=>array('type'=>'integer', 'index'=>true)
-		,'fk_range'=>array('type'=>'integer', 'index'=>true)
-		,'coef'=>array('type'=>'double')
-		,'ikoffset'=>array('type'=>'double')
+		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 10),
+		'fk_c_exp_tax_cat' => array('type' => 'integer', 'label' => 'Tax cat id', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 20),
+		'fk_range' => array('type' => 'integer', 'label' => 'Tax range id', 'enabled' => 1, 'index' => 1, 'visible' => -1, 'position' => 30),
+		'coef' => array('type' => 'double', 'label' => 'Coef', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'ikoffset' => array('type' => 'double', 'label' => 'Offset', 'enabled' => 1, 'visible' => -1, 'position' => 50),
 	);
 
 
@@ -97,10 +99,10 @@ class ExpenseReportIk extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
@@ -115,13 +117,11 @@ class ExpenseReportIk extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
-
-		return $result;
+		return $this->fetchCommon($id, $ref);
 	}
 
 
@@ -130,10 +130,10 @@ class ExpenseReportIk extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -141,11 +141,11 @@ class ExpenseReportIk extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User $user       	User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -198,7 +198,7 @@ class ExpenseReportIk extends CommonObject
 		$ranges = $this->getRangesByCategory($fk_c_exp_tax_cat);
 		// prevent out of range -1 indice
 		$indice = $default_range  - 1;
-		// substract 1 because array start from 0
+		// subtract 1 because array start from 0
 		if (empty($ranges) || $indice < 0 || !isset($ranges[$indice])) {
 			return false;
 		} else {
@@ -273,6 +273,8 @@ class ExpenseReportIk extends CommonObject
 				if ($obj->fk_expense_ik > 0) {
 					$ik->fetch($obj->fk_expense_ik);
 				}
+
+				// TODO Set a $tmparay = new stdObj(); and use it to fill $ranges array
 				$obj->ik = $ik;
 
 				if (!isset($ranges[$obj->fk_c_exp_tax_cat])) {

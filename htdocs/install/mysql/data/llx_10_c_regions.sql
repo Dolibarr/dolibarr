@@ -558,3 +558,9 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23208, '', 0, 'Nor-Oriental');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23209, '', 0, 'Zuliana');
 
+-- Cuba Regions (id_country=77)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7700, '', 0, 'Cuba');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7701, '', 0, 'Occidente');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7702, '', 0, 'Centro');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7703, '', 0, 'Occidente');
+

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2007  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2019       Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,8 +118,8 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param  RecruitmentJobPosition	$object	Object we need next value for
+	 *  @return string|0      					Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -135,9 +135,9 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date ?? '';
 
-		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentjobposition', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'recruitment_recruitmentjobposition', 'ref', '', '', $date);
 
 		return  $numFinal;
 	}

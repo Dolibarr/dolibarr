@@ -35,7 +35,7 @@ $WS_METHOD_UPDATETHIRDSPARTY = 'updateThirdParty';
 $WS_METHOD_GETTHIRDSPARTYLIST = 'getListOfThirdParties';
 $ns='http://www.dolibarr.org/ns/';
 
-//Chosse action to do
+//Chose action to do
 //$action='get';
 //$action='create';
 //$action='update';
@@ -124,8 +124,8 @@ if ($action=='create')
 	'capital'=>'3000',
 	'vat_used'=>'0',
 	'vat_number'=>''
-	//,'options_attr1'=>'Attr1 balbal', //Extra field exemple where field code is attr1
-	//'options_attr2'=>'Attr2 balbal' //Extra field exemple where field code is attr2
+	//,'options_attr1'=>'Attr1 balbal', //Extra field example where field code is attr1
+	//'options_attr2'=>'Attr2 balbal' //Extra field example where field code is attr2
 	);
 	
 	
@@ -173,8 +173,8 @@ if ($action=='update')
 	'capital'=>'3000',
 	'vat_used'=>'0',
 	'vat_number'=>''
-	//,'options_attr1'=>'Attr1 balbal', //Extra field exemple where field code is attr1
-	//'options_attr2'=>'Attr2 balbal' //Extra field exemple where field code is attr2
+	//,'options_attr1'=>'Attr1 balbal', //Extra field example where field code is attr1
+	//'options_attr2'=>'Attr2 balbal' //Extra field example where field code is attr2
 	);
 
 
