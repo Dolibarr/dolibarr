@@ -484,7 +484,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	 */
 	private function composeAndSendAssigneeMessage($sendto, $base_subject, $body, $see_ticket, Ticket $object, Translate $langs)
 	{
-		global $conf, $user;
+		global $conf, $user, $mysoc;
 
 		// Init to avoid errors
 		$filepath = array();
@@ -492,7 +492,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		$mimetype = array();
 
 		// Send email to assigned user
-		$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities($base_subject);
+		$subject = '[' . $mysoc->name . '] '.$langs->transnoentities($base_subject);
 		$message = '<p>'.$langs->transnoentities($body, $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
 		$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 		$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
