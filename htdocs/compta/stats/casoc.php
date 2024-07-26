@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
@@ -94,6 +96,7 @@ $date_startday = GETPOSTINT("date_startday");
 $date_endyear = GETPOSTINT("date_endyear");
 $date_endmonth = GETPOSTINT("date_endmonth");
 $date_endday = GETPOSTINT("date_endday");
+$typent_id = GETPOST('typent_id', 'int');
 if (empty($year)) {
 	$year_current = dol_print_date(dol_now(), '%Y');
 	$month_current = dol_print_date(dol_now(), '%m');
@@ -191,6 +194,9 @@ $tableparams['search_zip'] = $search_zip;
 $tableparams['search_town'] = $search_town;
 $tableparams['search_country'] = $search_country;
 $tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
+if (!empty($typent_id)) {
+	$tableparams['typent_id'] = $typent_id;
+}
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
@@ -345,6 +351,9 @@ if (!empty($search_town)) {
 if ($search_country > 0) {
 	$sql .= ' AND s.fk_pays = '.((int) $search_country);
 }
+if ($typent_id >0) {
+	$sql .= " AND s.fk_typent = ".((int) $typent_id);
+}
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) {
 	$sql .= " AND f.fk_soc = ".((int) $socid);
@@ -449,7 +458,7 @@ print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" :
 
 // Category filter
 print '<tr class="liste_titre">';
-print '<td class="nowraponall">';
+print '<td class="nowraponall" colspan=4>';
 print img_picto('', 'category', 'class="paddingrightonly"');
 print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 print ' ';
@@ -458,8 +467,19 @@ print '<input type="checkbox" name="subcat" value="yes"';
 if ($subcat) {
 	print ' checked';
 }
-print'></td>';
-print '<td colspan="7" class="right">';
+
+print'>';
+// type filter (produit/service)
+print ' ';
+print '&nbsp;&nbsp;';
+print $langs->trans("Type").': ';
+$formcompany = new FormCompany($db);
+// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+$sortparam = getDolGlobalString("SOCIETE_SORT_ON_TYPEENT", 'ASC'); 
+print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+
+print '</td>';
+print '<td colspan="3" class="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
