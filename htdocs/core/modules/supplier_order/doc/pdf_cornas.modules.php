@@ -1289,7 +1289,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$pdf->SetTextColor(255, 0, 0);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}*/
-  
+
 
 		$pdf->SetTextColor(0, 0, 60);
 		$usehourmin = 'day';
