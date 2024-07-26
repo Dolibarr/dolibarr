@@ -47,7 +47,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -104,7 +104,7 @@ if ((GETPOSTISSET("type") && GETPOST("type") == '1') || !isModEnabled("product")
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
+llxHeader("", $langs->trans("ProductsAndServices"), $helpurl, '', 0, 0, '', '', '', 'mod-product page-index');
 
 print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product');
 
@@ -349,15 +349,25 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 				$colnb++;
 			}
 
-			$lastmodified .= '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
-			$lastmodified .= '<th class="right" colspan="3">';
-			$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC&type=0">';
-			//$lastmodified .= $langs->trans("FullList");
-			$lastmodified .= img_picto($langs->trans("FullList").' - '.$langs->trans("Products"), 'product');
+			$lastmodified .= '<tr class="liste_titre"><th colspan="'.$colnb.'">';
+			$lastmodified .= $transRecordedType;
+			$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+			$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+			$lastmodified .= '</a>';
+			/*$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC&type=0" title="'.$langs->trans("FullList").' - '.$langs->trans("Products").'">';
+			$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+			//$lastmodified .= img_picto($langs->trans("FullList").' - '.$langs->trans("Products"), 'product');
 			$lastmodified .= '</a> &nbsp; ';
-			$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC&type=1">';
-			//$langs->trans("FullList").'</a>';
-			$lastmodified .= img_picto($langs->trans("FullList").' - '.$langs->trans("Services"), 'service');
+			$lastmodified .= '<a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC&type=1" title="'.$langs->trans("FullList").' - '.$langs->trans("Services").'">';
+			$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+			//$lastmodified .= img_picto($langs->trans("FullList").' - '.$langs->trans("Services"), 'service');
+			*/
+			$lastmodified .= '</th>';
+			$lastmodified .= '<th>';
+			$lastmodified .= '</th>';
+			$lastmodified .= '<th>';
+			$lastmodified .= '</th>';
+			$lastmodified .= '<th>';
 			$lastmodified .= '</th>';
 			$lastmodified .= '</tr>';
 
@@ -470,10 +480,10 @@ if (isModEnabled('stock')) {
 		// TODO: "search_status" on "/product/stock/list.php" currently only accept a single integer value
 		//print '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?search_status='.Entrepot::STATUS_CLOSED.','.Entrepot::STATUS_OPEN_ALL.'">';
 		//$latestwarehouse .= '<span class="badge">'.$num.'</span>';
-		$latestwarehouse .= '</th><th class="right">';
-		$latestwarehouse .= '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?sortfield=p.tms&sortorder=DESC">';
-		$latestwarehouse .= img_picto($langs->trans("FullList"), 'stock');
+		$latestwarehouse .= '<a href="'.DOL_URL_ROOT.'/product/stock/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$latestwarehouse .= '<span class="badge marginleftonlyshort">...</span>';
 		$latestwarehouse .= '</a>';
+		$latestwarehouse .= '</th><th class="right">';
 		$latestwarehouse .= '</th>';
 		$latestwarehouse .= '</tr>';
 
@@ -515,7 +525,7 @@ if (isModEnabled('stock')) {
 
 
 $latestmovement = '';
-if (isModEnabled('product')) {
+if (isModEnabled('stock')) {
 	// Latest movements
 	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
@@ -533,6 +543,7 @@ if (isModEnabled('product')) {
 	$sql .= $db->plimit($max, 0);
 
 	dol_syslog("Index:list stock movements", LOG_DEBUG);
+
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -540,15 +551,19 @@ if (isModEnabled('product')) {
 		$latestmovement .= '<div class="div-table-responsive-no-min">';
 		$latestmovement .= '<table class="noborder centpercent">';
 		$latestmovement .= '<tr class="liste_titre">';
-		$latestmovement .= '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
-		$latestmovement .= '<th>'.$langs->trans("Product").'</th>';
+		$latestmovement .= '<th>'.$langs->trans("LatestStockMovements", min($num, $max));
+		$latestmovement .= '<a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">';
+		$latestmovement .= '<span class="badge marginleftonlyshort">...</span>';
+		//$latestmovement .= img_picto($langs->trans("FullList"), 'movement');
+		$latestmovement .= '</a>';
+		$latestmovement .= '</th>';
+		$latestmovement .= '<th></th>';
 		if (isModEnabled('productbatch')) {
-			$latestmovement .= '<th>'.$langs->trans("Batch").'</th>';
+			$latestmovement .= '<th></th>';
 		}
-		$latestmovement .= '<th>'.$langs->trans("Warehouse").'</th>';
-		$latestmovement .= '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">';
-		$latestmovement .= img_picto($langs->trans("FullList"), 'movement');
-		$latestmovement .= '</a></th>';
+		$latestmovement .= '<th></th>';
+		$latestmovement .= '<th class="right">';
+		$latestmovement .= '</th>';
 		$latestmovement .= "</tr>\n";
 
 		$tmplotstatic = new Productlot($db);
@@ -607,6 +622,14 @@ if (isModEnabled('product')) {
 			$i++;
 		}
 		$db->free($resql);
+
+		if (empty($num)) {
+			$colspan = 4;
+			if (isModEnabled('productbatch')) {
+				$colspan++;
+			}
+			$latestmovement .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		}
 
 		$latestmovement .= "</table>";
 		$latestmovement .= '</div>';

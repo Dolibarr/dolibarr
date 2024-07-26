@@ -38,9 +38,10 @@ if (isModEnabled('invoice')) {
 $id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
 
 // Security check
-if ($user->socid) {
+if ($user->socid > 0) {
 	$id = $user->socid;
 }
+
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -48,7 +49,7 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
@@ -75,12 +76,14 @@ $arrayfields = array(
 	//...
 );
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
+
 
 /*
  * Actions
  */
+
 $parameters = array('socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object); // Note that $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -238,7 +241,7 @@ if ($id > 0) {
 		}
 
 		if (empty($TData)) {
-			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoInvoice").'</span></td></tr>';
 		} else {
 			// Sort array by date ASC to calculate balance
 			$TData = dol_sort_array($TData, 'datefieldforsort', 'ASC');

@@ -26,10 +26,11 @@
 
 /**
  *	\file       htdocs/compta/facture/class/facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File of class to manage recurring invoices
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1493,7 +1494,7 @@ class FactureRec extends CommonInvoice
 			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			$result .= dol_trunc($this->ref, $max);
 		}
 		$result .= $linkend;
 		global $action;
@@ -1584,7 +1585,7 @@ class FactureRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1603,7 +1604,7 @@ class FactureRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1622,7 +1623,7 @@ class FactureRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1644,7 +1645,7 @@ class FactureRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -2141,6 +2142,16 @@ class FactureLigneRec extends CommonInvoiceLine
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'facturedet_rec';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'facturerec';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_facture';
 
 	//! From llx_facturedet_rec
 	//! Id facture

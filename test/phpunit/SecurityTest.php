@@ -309,6 +309,7 @@ class SecurityTest extends CommonClassTest
 		$_GET["param3"] = '"&#110;a/b#e(pr)qq-rr\cc';    // Same than param2 + " and &#110;
 		$_GET["param4a"] = '..&#47;../dir';
 		$_GET["param4b"] = '..&#92;..\dirwindows';
+		$_GET["param4c"] = '\a123 \123 \u123 \x123';
 		$_GET["param5"] = "a_1-b";
 		$_POST["param6"] = "&quot;&gt;<svg o&#110;load='console.log(&quot;123&quot;)'&gt;";
 		$_POST["param6b"] = '<<<../>../>../svg><<<../>../>../animate =alert(1)>abc';
@@ -358,19 +359,23 @@ class SecurityTest extends CommonClassTest
 
 		$result = GETPOST("param2", 'alpha');
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'a/b#e(pr)qq-rr/cc', 'Test on param2');
+		$this->assertEquals('a/b#e(pr)qq-rr\cc', $result, 'Test on param2');
 
 		$result = GETPOST("param3", 'alpha');  // Must return string sanitized from char "
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'na/b#e(pr)qq-rr/cc', 'Test on param3');
+		$this->assertEquals('na/b#e(pr)qq-rr\cc', $result, 'Test on param3');
 
 		$result = GETPOST("param4a", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'dir');
+		$this->assertEquals('dir', $result);
 
 		$result = GETPOST("param4b", 'alpha');  // Must return string sanitized from ../
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals($result, 'dirwindows');
+		$this->assertEquals('dirwindows', $result);
+
+		$result = GETPOST("param4c", 'alpha');  // Must return string sanitized from ../
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('\a123 /123 /u123 /x123', $result);
 
 		// Test with aZ09
 
@@ -1102,14 +1107,21 @@ class SecurityTest extends CommonClassTest
 		$a = 'ab';
 		$result = (string) dol_eval("(\$a.'s')", 1, 0);
 		print "result19 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 19');
 
 		$leftmenu = 'abs';
 		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
 		print "result20 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate', $result);
-	}
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 20');
 
+		$result = (string) dol_eval('str_replace("z","e","zxzc")("whoami");', 1, 0);
+		print "result21 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 21');
+
+		$result = (string) dol_eval('($a = "ex") && ($b = "ec") && ($cmd = "$a$b") && $cmd ("curl localhost:5555")', 1, 0);
+		print "result22 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'Test 22');
+	}
 
 	/**
 	 * testDolPrintHTML.
@@ -1128,7 +1140,6 @@ class SecurityTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 		}
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
-
 
 
 		// For a string that is already HTML (contains HTML tags) with special tags but badly formatted
@@ -1172,11 +1183,120 @@ class SecurityTest extends CommonClassTest
 
 
 		// For a string with no HTML tags
-		$stringtotest = "testC\ntest";
-		$stringfixed = "testC<br>\ntest";
+		$stringtotest = "testwithnewline\nsecond line";
+		$stringfixed = "testwithnewline<br>\nsecond line";
 		$result = dolPrintHTML($stringtotest);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($stringfixed, $result, 'Error');
+
+
+		// For a string with ' and &#39;
+		// With no clean option
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+
+		$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
+		/*
+		var_dump($stringtotest);
+		var_dump(dol_htmlentitiesbr($stringtotest));
+		var_dump(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+		var_dump(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)));
+		var_dump(dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1));
+		*/
+		$result = dolPrintHTML($stringtotest);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals($stringtotest, $result, 'Error');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		// Enabled option MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY if possible
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		}
+
+		// For a string with ' and &#39;
+		// With cleaning options of HTML TIDY
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			$stringtotest = "Message<br>with ' and &egrave; and &#39; !";
+			$stringexpected = "Message<br>\nwith ' and &egrave; and ' !";		// The &#39; is modified into ' because html tidy fix it.
+			/*
+			var_dump($stringtotest);
+			var_dump(dol_htmlentitiesbr($stringtotest));
+			var_dump(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0));
+			var_dump(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)));
+			var_dump(dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($stringtotest), 1, 1, 1, 0)), 1, 1, 'common', 0, 1));
+			*/
+			$result = dolPrintHTML($stringtotest);
+			print __METHOD__." result=".$result."\n";
+			$this->assertEquals($stringexpected, $result, 'Error');
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * testRealCharforNumericEntities()
+	 *
+	 * @return int
+	 */
+	public function testRealCharforNumericEntities()
+	{
+		global $conf;
+
+		// Test that testRealCharforNumericEntities return an ascii char when code is inside Ascii range
+		$arraytmp = array(0 => '&#97;', 1 => '97;');
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('a', $result);
+
+		// Test that testRealCharforNumericEntities return an emoji utf8 char when code is inside Emoji range
+		$arraytmp = array(0 => '&#9989;', 1 => '9989;');	// Encoded as decimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
+
+		$arraytmp = array(0 => '&#x2705;', 1 => 'x2705;');	// Encoded as hexadecimal
+		$result = realCharForNumericEntities($arraytmp);
+		$this->assertEquals('✅', $result);
+
+		return 0;
+	}
+
+
+	/**
+	 * testDolHtmlWithNoJs()
+	 *
+	 * @return int
+	 */
+	public function testDolHtmlWithNoJs()
+	{
+		global $conf;
+
+		$sav1 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+		$sav2 = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
+
+		// Test with an emoji
+		$test = 'abc ✅ def';
+
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+		$result = dol_htmlwithnojs($test);
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+
+		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=0 with emoji = ".$result."\n";
+		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=0');
+
+
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
+		$result = dol_htmlwithnojs($test);
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $sav1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $sav2;
+
+		print __METHOD__." result for dol_htmlwithnojs and MAIN_RESTRICTHTML_ONLY_VALID_HTML=1 with emoji = ".$result."\n";
+		$this->assertEquals($test, $result, 'dol_htmlwithnojs failed with an emoji when MAIN_RESTRICTHTML_ONLY_VALID_HTML=1');
+
 
 		return 0;
 	}

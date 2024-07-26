@@ -21,7 +21,7 @@
 
 /**
  *       \file       htdocs/fourn/commande/contact.php
- *       \ingroup    commande
+ *       \ingroup    order
  *       \brief      Onglet de gestion des contacts de commande
  */
 

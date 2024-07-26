@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -152,7 +153,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new CommandeFournisseur($db);
 $hookmanager->initHooks(array('supplierorderlist'));
 $extrafields = new ExtraFields($db);
@@ -201,7 +202,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['cf.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -383,7 +384,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$default_ref_supplier = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
-
+		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
 			if ($cmd->fetch($id_order) <= 0) {
@@ -392,6 +393,7 @@ if (empty($reshook)) {
 
 			$objecttmp = new FactureFournisseur($db);
 			if (!empty($createbills_onebythird) && !empty($TFactThird[$cmd->socid])) {
+				$currentIndex++;
 				$objecttmp = $TFactThird[$cmd->socid]; // If option "one bill per third" is set, we use already created supplier invoice.
 			} else {
 				// Search if the VAT reverse-charge is activated by default in supplier card to resume the information
@@ -428,6 +430,10 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
+				if (empty($objecttmp->note_public)) {
+					$objecttmp->note_public =  $langs->transnoentities("Orders");
+				}
+
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
 				$sql .= "fk_source";
 				$sql .= ", sourcetype";
@@ -546,6 +552,11 @@ if (empty($reshook)) {
 						}
 					}
 				}
+			}
+
+			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_supplier) ? '' : ' ('.$cmd->ref_supplier.')'));
+				$objecttmp->update($user);
 			}
 
 			$cmd->classifyBilled($user); // TODO Move this in workflow like done for sales orders
@@ -871,10 +882,10 @@ if ($search_date_delivery_end) {
 	$sql .= " AND cf.date_livraison <= '".$db->idate($search_date_delivery_end)."'";
 }
 if ($search_date_valid_start) {
-	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_valid_start)."'";
+	$sql .= " AND cf.date_valid >= '".$db->idate($search_date_valid_start)."'";
 }
 if ($search_date_valid_end) {
-	$sql .= " AND cf.date_commande <= '".$db->idate($search_date_valid_end)."'";
+	$sql .= " AND cf.date_valid <= '".$db->idate($search_date_valid_end)."'";
 }
 if ($search_date_approve_start) {
 	$sql .= " AND cf.date_livraison >= '".$db->idate($search_date_approve_start)."'";
@@ -1021,7 +1032,7 @@ if ($resql) {
 		exit;
 	}
 
-	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-list');
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-supplier-order page-list');
 
 	$param = '';
 	if (!empty($mode)) {
@@ -1178,7 +1189,7 @@ if ($resql) {
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-	$parameters = array();
+	$parameters = array('param' => &$param);
 	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 	$param .= $hookmanager->resPrint;
 
@@ -1198,7 +1209,7 @@ if ($resql) {
 	}
 
 	if ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight("supplier_invoice", "creer")) {
-		$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
+		$arrayofmassactions['createbills'] = img_picto('', 'supplier_invoice', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisSupplier");
 	}
 	if ($permissiontodelete) {
 		$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -1747,7 +1758,7 @@ if ($resql) {
 				print '</td></tr>';
 			}
 		} else {
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="nowrap center">';
@@ -2047,8 +2058,8 @@ if ($resql) {
 			}
 			// Note public
 			if (!empty($arrayfields['cf.note_public']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_public);
+				print '<td class="sensiblehtmlcontent center">';
+				print dolPrintHTML($obj->note_public);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2057,8 +2068,8 @@ if ($resql) {
 
 			// Note private
 			if (!empty($arrayfields['cf.note_private']['checked'])) {
-				print '<td class="center">';
-				print dol_string_nohtmltag($obj->note_private);
+				print '<td class="sensiblehtmlcontent center">';
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

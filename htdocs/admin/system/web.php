@@ -43,7 +43,7 @@ if (!$user->admin) {
  * View
  */
 
-llxHeader('', $langs->trans("InfoWebServer"));
+llxHeader('', $langs->trans("InfoWebServer"), '', '', 0, 0, '', '', '', 'mod-admin page-system_web');
 
 print load_fiche_titre($langs->trans("InfoWebServer"), '', 'title_setup');
 

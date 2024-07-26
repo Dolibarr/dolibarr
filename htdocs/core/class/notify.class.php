@@ -138,6 +138,7 @@ class Notify
 		'FICHINTER_VALIDATE',
 		'FICHINTER_CLOSE',
 		'FICHINTER_ADD_CONTACT',
+		'ORDER_SUPPLIER_CANCEL',
 		'ORDER_SUPPLIER_VALIDATE',
 		'ORDER_SUPPLIER_APPROVE',
 		'ORDER_SUPPLIER_SUBMIT',
@@ -460,9 +461,10 @@ class Notify
 		// Subscription per contact
 		if (!$error) {
 			if ($socid >= 0 && in_array('thirdparty', $scope)) {
-				$sql = "SELECT a.code, c.email, c.rowid";
+				$sql = "SELECT a.code, c.email, c.rowid, c.statut as status";
 				$sql .= " FROM ".$this->db->prefix()."notify_def as n,";
 				$sql .= " ".$this->db->prefix()."socpeople as c,";
+
 				$sql .= " ".$this->db->prefix()."c_action_trigger as a,";
 				$sql .= " ".$this->db->prefix()."societe as s";
 				$sql .= " WHERE n.fk_contact = c.rowid";
@@ -482,7 +484,8 @@ class Notify
 					$i = 0;
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						if ($obj) {
+						// we want to notify only if contact is enable
+						if ($obj && $obj->status ==  1) {
 							$newval2 = trim($obj->email);
 							$isvalid = isValidEmail($newval2);
 							if (empty($resarray[$newval2])) {
@@ -823,6 +826,14 @@ class Notify
 								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderValidatedBy", $link, $user->getFullName($outputlangs));
 								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
 								break;
+							case 'ORDER_SUPPLIER_CANCEL':
+								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
+								$object_type = 'order_supplier';
+								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
+								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderCanceledBy", $link, $user->getFullName($outputlangs));
+								$mesg .= "\n\n".$outputlangs->transnoentitiesnoconv("Sincerely").".\n\n";
+								break;
 							case 'ORDER_SUPPLIER_APPROVE':
 								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
@@ -834,7 +845,7 @@ class Notify
 								break;
 							case 'ORDER_SUPPLIER_SUBMIT':
 								$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-								$dir_output = $conf->fournisseur->commande->dir_output;
+								$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 								$object_type = 'order_supplier';
 								$mesg = $outputlangs->transnoentitiesnoconv("Hello").",\n\n";
 								$mesg .= $outputlangs->transnoentitiesnoconv("EMailTextSupplierOrderSubmittedBy", $link, $user->getFullName($outputlangs));
@@ -1100,6 +1111,14 @@ class Notify
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionClosed", $link);
 						break;
+					case 'ORDER_SUPPLIER_CANCEL':
+						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
+						$object_type = 'order_supplier';
+						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
+						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderCanceledBy", $link, $user->getFullName($langs));
+						$mesg .= "\n\n".$langs->transnoentitiesnoconv("Sincerely").".\n\n";
+						break;
 					case 'ORDER_SUPPLIER_VALIDATE':
 						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
 						$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
@@ -1126,7 +1145,7 @@ class Notify
 						break;
 					case 'ORDER_SUPPLIER_REFUSE':
 						$link = '<a href="'.$urlwithroot.'/fourn/commande/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $conf->fournisseur->dir_output.'/commande/';
+						$dir_output = $conf->fournisseur->commande->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object);
 						$object_type = 'order_supplier';
 						$mesg = $langs->transnoentitiesnoconv("Hello").",\n\n";
 						$mesg .= $langs->transnoentitiesnoconv("EMailTextSupplierOrderRefusedBy", $link, $user->getFullName($langs));
@@ -1186,12 +1205,36 @@ class Notify
 					$mimefilename_list[] = $ref.".pdf";
 				}
 
-				$message = '';
-				$message .= $langs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
-				$message .= "\n";
-				$message .= $mesg;
+				// Set output language
+				$outputlangs = $langs;
 
-				$message = nl2br($message);
+				// if an e-mail template is configured for this notification code (for instance 'SHIPPING_VALIDATE_TEMPLATE', ...),
+				// we fetch this template by its label. Otherwise, a default message content will be sent.
+				$mailTemplateLabel = getDolGlobalString($notifcode.'_TEMPLATE');
+				$emailTemplate = null;
+				if (!empty($mailTemplateLabel)) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+					$formmail = new FormMail($this->db);
+					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
+				}
+				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
+					if (property_exists($object, 'thirdparty') && $object->thirdparty instanceof Societe && $object->thirdparty->default_lang && $object->thirdparty->default_lang != $langs->defaultlang) {
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang($object->thirdparty->default_lang);
+						$outputlangs->loadLangs(array('main', 'other'));
+					}
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);
+					$message = make_substitutions($emailTemplate->content, $substitutionarray, $outputlangs);
+				} else {
+					$message = '';
+					$message .= $outputlangs->transnoentities("YouReceiveMailBecauseOfNotification2", $application, $mysoc->name)."\n";
+					$message .= "\n";
+					$message .= $mesg;
+
+					$message = nl2br($message);
+				}
 
 				// Replace keyword __SUPERVISOREMAIL__
 				if (preg_match('/__SUPERVISOREMAIL__/', $sendto)) {

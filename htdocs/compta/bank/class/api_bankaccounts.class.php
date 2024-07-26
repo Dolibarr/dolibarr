@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +172,7 @@ class BankAccounts extends DolibarrApi
 		$account->date_solde = time();
 		// courant and type are the same thing but the one used when
 		// creating an account is courant
-		$account->courant = $account->type;
+		$account->courant = $account->type; // deprecated
 
 		if ($account->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
@@ -251,7 +252,7 @@ class BankAccounts extends DolibarrApi
 		$typefrom = 'PRE';
 		$typeto = 'VIR';
 
-		if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH) {
+		if ($accountto->type == Account::TYPE_CASH || $accountfrom->type == Account::TYPE_CASH) {
 			// This is transfer of change
 			$typefrom = 'LIQ';
 			$typeto = 'LIQ';

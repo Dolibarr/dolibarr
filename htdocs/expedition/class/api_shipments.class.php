@@ -95,14 +95,13 @@ class Shipments extends DolibarrApi
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter shipments of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of shipment objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
@@ -142,6 +141,9 @@ class Shipments extends DolibarrApi
 			}
 		}
 
+		//this query will return total shipments with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -171,6 +173,23 @@ class Shipments extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -178,7 +197,7 @@ class Shipments extends DolibarrApi
 	 * Create shipment object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of shipment
+	 * @return  int     				ID of shipment created
 	 */
 	public function post($request_data = null)
 	{
@@ -200,7 +219,20 @@ class Shipments extends DolibarrApi
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$shipmentline = new ExpeditionLigne($this->db);
+
+				$shipmentline->entrepot_id = $line['entrepot_id'];
+				$shipmentline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: order id.  this->origin is 'commande'
+				$shipmentline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: order id
+				$shipmentline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: order line id
+				$shipmentline->origin_type = $line['element_type'] ?? $line['origin_type'];			// example 'commande' or 'order'
+				$shipmentline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'commande' or 'order'
+				$shipmentline->qty = $line['qty'];
+				$shipmentline->rang = $line['rang'];
+				$shipmentline->array_options = $line['array_options'];
+				$shipmentline->detail_batch = $line['detail_batch'];
+
+				$lines[] = $shipmentline;
 			}
 			$this->shipment->lines = $lines;
 		}
@@ -679,6 +711,8 @@ class Shipments extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
+		unset($object->canvas);
+
 		unset($object->thirdparty); // id already returned
 
 		unset($object->note);
@@ -695,6 +729,8 @@ class Shipments extends DolibarrApi
 						unset($line->detail_batch[$keytmp2]->db);
 					}
 				}
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

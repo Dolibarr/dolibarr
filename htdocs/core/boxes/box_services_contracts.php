@@ -68,7 +68,9 @@ class box_services_contracts extends ModeleBoxes
 
 		$form = new Form($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxLastProductsInContract", $max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire')) {
 			$contractstatic = new Contrat($this->db);
@@ -123,6 +125,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractstatic->ref_customer = $objp->ref_customer;
 					$contractstatic->ref_supplier = $objp->ref_supplier;
 					$contractstatic->statut = $objp->contract_status;
+					$contractstatic->status = $objp->contract_status;
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
@@ -132,10 +135,11 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
+					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
 						$late = img_warning($langs->trans("Late"));
 					}
 

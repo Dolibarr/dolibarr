@@ -51,12 +51,6 @@ class Account extends CommonObject
 	public $table_element = 'bank_account';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'account';
@@ -76,11 +70,11 @@ class Account extends CommonObject
 
 	/**
 	 * Bank account type. Check TYPE_ constants
+	 * @var int
 	 * @deprecated
 	 * @see $type
-	 * @var int
 	 */
-	public $courant;
+	private $courant; // @phpstan-ignore-line
 
 	/**
 	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
@@ -99,8 +93,9 @@ class Account extends CommonObject
 	 *
 	 * @var int
 	 * @deprecated 	Duplicate field. We already have the field $this->status
+	 * @see $status
 	 */
-	public $clos = self::STATUS_OPEN;
+	private $clos = self::STATUS_OPEN;
 
 	/**
 	 * Does it need to be conciliated?
@@ -167,15 +162,33 @@ class Account extends CommonObject
 	/**
 	 * Name of account holder
 	 * @var string
+	 * @deprecated
+	 * @see $owner_name
 	 */
-	public $proprio;
+	private $proprio;
+
+	/**
+	 * Name of account holder
+	 * @var string
+	 */
+	public $owner_name;
 
 	/**
 	 * Address of account holder
 	 * @var string
 	 */
 	public $owner_address;
+
+	/**
+	 * Zip of account holder
+	 * @var string
+	 */
 	public $owner_zip;
+
+	/**
+	 * Town of account holder
+	 * @var string
+	 */
 	public $owner_town;
 	public $owner_country_id;
 	public $owner_country_code;
@@ -183,9 +196,10 @@ class Account extends CommonObject
 	/**
 	 * Address of the bank account
 	 * @var string
-	 * @deprecated see $address
+	 * @deprecated
+	 * @see $address
 	 */
-	public $domiciliation;
+	private $domiciliation;
 
 	/**
 	 * Address of the bank account
@@ -214,6 +228,7 @@ class Account extends CommonObject
 	 * @var int ID
 	 */
 	public $fk_accountancy_journal;
+
 	/**
 	 * @var string	Label of journal
 	 */
@@ -229,6 +244,7 @@ class Account extends CommonObject
 	 * Currency code
 	 * @var string
 	 * @deprecated Use currency_code instead
+	 * @see $currency_code
 	 */
 	public $account_currency_code;
 
@@ -262,7 +278,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $balance
 	 */
-	public $solde;
+	private $solde; // @phpstan-ignore-line
 
 	/**
 	 * Balance. Used in Account::create
@@ -374,6 +390,22 @@ class Account extends CommonObject
 
 
 	/**
+	 * Provide list of deprecated properties and replacements
+	 *
+	 * @return array<string,string>  Old property to new property mapping
+	 */
+	protected function deprecatedProperties()
+	{
+		return array(
+			'proprio' => 'owner_name',
+			'domiciliation' => 'owner_address',
+			'courant' => 'type',
+			'clos' => 'status',
+			'solde' => 'balance',
+		) + parent::deprecatedProperties();
+	}
+
+	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db		Database handler
@@ -383,6 +415,8 @@ class Account extends CommonObject
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 
 		$this->balance = 0;
 
@@ -438,10 +472,10 @@ class Account extends CommonObject
 		if (empty($this->rappro)) {
 			return -1;
 		}
-		if ($this->courant == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
+		if ($this->type == Account::TYPE_CASH && !getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 			return -2;
 		}
-		if ($this->clos) {
+		if ($this->status) {
 			return -3;
 		}
 		return 1;
@@ -469,7 +503,7 @@ class Account extends CommonObject
 		$sql .= ", label";
 		$sql .= ", type";
 		$sql .= ") VALUES (";
-		$sql .= " ".((int) $line_id);
+		$sql .= ((int) $line_id);
 		$sql .= ", ".((int) $url_id);
 		$sql .= ", '".$this->db->escape($url)."'";		// deprecated
 		$sql .= ", '".$this->db->escape($label)."'";
@@ -604,7 +638,7 @@ class Account extends CommonObject
 			$this->error = $langs->trans("ThisIdNotDefined");
 			return -2;
 		}
-		if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ') {
+		if ($this->type == Account::TYPE_CASH && $oper != 'LIQ') {
 			$this->error = "ErrorCashAccountAcceptsOnlyCashMoney";
 			return -3;
 		}
@@ -661,8 +695,7 @@ class Account extends CommonObject
 
 			return $accline->id;
 		} else {
-			$this->error = $accline->error;
-			$this->errors = $accline->errors;
+			$this->setErrorsFromObject($accline);
 			$this->db->rollback();
 
 			return -5;
@@ -714,6 +747,14 @@ class Account extends CommonObject
 		}
 		if (empty($balance)) {
 			$balance = 0;
+		}
+		if (empty($this->address && !empty($this->domiciliation))) {
+			dol_syslog(get_class($this)."::create domiciliation is deprecated use address", LOG_NOTICE);
+			$this->address = $this->domiciliation;
+		}
+		if (empty($this->status && !empty($this->clos))) {
+			dol_syslog(get_class($this)."::create clos is deprecated use status", LOG_NOTICE);
+			$this->status = $this->clos;
 		}
 
 		// Load the library to validate/check a BAN account
@@ -767,7 +808,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->cle_rib)."'";
 		$sql .= ", '".$this->db->escape($this->bic)."'";
 		$sql .= ", '".$this->db->escape($this->iban)."'";
-		$sql .= ", '".$this->db->escape($this->domiciliation)."'";
+		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
 		$sql .= ", '".$this->db->escape($this->proprio)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
@@ -854,7 +895,7 @@ class Account extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$error = 0;
 
@@ -880,8 +921,8 @@ class Account extends CommonObject
 		$sql .= " ref   = '".$this->db->escape($this->ref)."'";
 		$sql .= ",label = '".$this->db->escape($this->label)."'";
 
-		$sql .= ",courant = ".((int) $this->courant);
-		$sql .= ",clos = ".((int) $this->clos);
+		$sql .= ",courant = ".((int) $this->type);
+		$sql .= ",clos = ".((int) $this->status);
 		$sql .= ",rappro = ".((int) $this->rappro);
 		$sql .= ",url = ".($this->url ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ",account_number = '".$this->db->escape($this->account_number)."'";
@@ -893,7 +934,7 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
 		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
@@ -1018,9 +1059,9 @@ class Account extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
+		$sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant as type, ba.clos as status, ba.rappro, ba.url,";
 		$sql .= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
-		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
+		$sql .= " ba.domiciliation as address, ba.pti_in_ctti, ba.proprio as owner_name, ba.owner_address, ba.owner_zip, ba.owner_town, ba.owner_country_id, ba.state_id, ba.fk_pays as country_id,";
 		$sql .= " ba.account_number, ba.fk_accountancy_journal, ba.currency_code,";
 		$sql .= " ba.min_allowed, ba.min_desired, ba.comment,";
 		$sql .= " ba.datec as date_creation, ba.tms as date_modification, ba.ics, ba.ics_transfer,";
@@ -1049,11 +1090,11 @@ class Account extends CommonObject
 				$this->rowid         = $obj->rowid;
 				$this->ref           = $obj->ref;
 				$this->label         = $obj->label;
-				$this->type          = $obj->courant;
-				$this->courant       = $obj->courant;
+				$this->type          = $obj->type;
+				$this->courant       = $obj->type;
 				$this->bank          = $obj->bank;
-				$this->clos          = $obj->clos;
-				$this->status = $obj->clos;
+				$this->clos          = $obj->status;
+				$this->status = $obj->status;
 				$this->rappro        = $obj->rappro;
 				$this->url           = $obj->url;
 
@@ -1066,7 +1107,8 @@ class Account extends CommonObject
 				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio       = $obj->proprio;
+				$this->proprio = $obj->owner_name;
+				$this->owner_name = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;
@@ -1130,10 +1172,11 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *  @param	User|null	$user	User deleting
-	 *  @return int      	       	Return integer <0 if KO, >0 if OK
+	 *  @param	User|null	$user		User deleting
+	 *	@param  int			$notrigger	1=Disable triggers
+	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -1192,7 +1235,7 @@ class Account extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->clos, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1318,7 +1361,7 @@ class Account extends CommonObject
 		$sql .= " WHERE b.rappro=0";
 		$sql .= " AND b.fk_account = ba.rowid";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql .= " AND (ba.rappro = 1 AND ba.courant != 2)"; // Compte rapprochable
+		$sql .= " AND (ba.rappro = 1 AND ba.courant != " . Account::TYPE_CASH . ")"; // Compte rapprochable
 		$sql .= " AND clos = 0";
 		if ($filteraccountid) {
 			$sql .= " AND ba.rowid = ".((int) $filteraccountid);
@@ -1400,7 +1443,7 @@ class Account extends CommonObject
 	 */
 	public function countAccountToReconcile()
 	{
-		global $db, $conf, $user;
+		global $user;
 
 		//Protection against external users
 		if ($user->socid) {
@@ -1414,8 +1457,9 @@ class Account extends CommonObject
 		$sql .= " WHERE ba.rappro > 0 and ba.clos = 0";
 		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
 		if (!getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
-			$sql .= " AND ba.courant != 2";
+			$sql .= " AND ba.courant != " . Account::TYPE_CASH;
 		}
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -1583,7 +1627,9 @@ class Account extends CommonObject
 			$error++;
 			$this->error = 'IBANNotValid';
 		}
-		if (!checkSwiftForAccount($this)) {
+		// Call function to check Swift/BIC.
+		// A non valid BIC/Swift is a problem if: it is not empty or always a problem if WITHDRAWAL_WITHOUT_BIC is not set).
+		if (!checkSwiftForAccount($this) && (!empty($this->bic) || !getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 			$error++;
 			$this->error = 'SwiftNotValid';
 		}
@@ -1872,6 +1918,7 @@ class Account extends CommonObject
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
 		$this->proprio         = 'Owner';
+		$this->owner_name = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
 		$this->owner_town      = 'Owner town';
@@ -2477,7 +2524,7 @@ class AccountLine extends CommonObjectLine
 				// TODO Do no try the insert if link already exists
 			}
 
-			$this->rappro = 1;
+			$this->rappro = (int) $conciliated;
 
 			$this->db->commit();
 			return 1;

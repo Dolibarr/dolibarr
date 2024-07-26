@@ -64,7 +64,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 $operationid = GETPOSTINT('operationid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output.'/temp/massgeneration/'.$user->id;
@@ -92,7 +92,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -274,7 +274,7 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 
-llxHeader('', 'EmailCollector', $help_url);
+llxHeader('', 'EmailCollector', $help_url, '', 0, 0, '', '', '', 'mod-admin page-emailcollector_card');
 
 // Part to create
 if ($action == 'create') {
@@ -390,12 +390,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$targetdir = ($object->target_directory ? $object->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 	$connection = null;
-	$connectstringserver = '';
+	$connectstringserver = $object->getConnectStringIMAP();	// Note: $object->host has been loaded by the fetch
 	$connectstringsource = '';
 	$connectstringtarget = '';
 
-	// Note: $object->host has been loaded by the fetch
-	$connectstringserver = $object->getConnectStringIMAP();
 
 	if ($action == 'scan') {
 		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
@@ -603,6 +601,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
 
+	// Clean info (in view mode only)
+	if ($object->acces_type == 0) {
+		// If authent is using LOGIN and not OAUTHTOKEN, we don't need to show the OAUTH token
+		unset($object->fields['oauth_service']);
+	}
+	if ($object->acces_type == 1) {
+		// If authent is using OAUTHTOKEN, we don't need to show the password
+		unset($object->fields['password']);
+	}
+
 	// Common attributes
 	//$keyforbreak='fieldkeytoswithonsecondcolumn';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
@@ -760,7 +768,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add operation
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth300', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth250', 1);
 	print '</td><td>';
 	print '<textarea class="centpercent" name="operationparam" rows="3"></textarea>';
 	print '</td>';

@@ -21,7 +21,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_factures.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Module de generation de l'affichage de la box factures
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -73,7 +73,7 @@ class box_factures extends ModeleBoxes
 
 		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
-			'text' => $text,
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/compta/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
 			'limit' => dol_strlen($text)
 		);
 
@@ -97,6 +97,7 @@ class box_factures extends ModeleBoxes
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE f.fk_soc = s.rowid";
+			$sql .= " AND f.fk_statut > 0";
 			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -146,6 +147,7 @@ class box_factures extends ModeleBoxes
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta_client = $objp->code_compta;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;

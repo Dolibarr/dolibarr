@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2024 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  *              Other parameters into url are:
  *              &notolderthan=99
  *              &year=2015
+ *              &limit=1000
  *              &id=..., &idfrom=..., &idto=...
  */
 
@@ -123,22 +124,30 @@ if (GETPOST("logina", 'alpha')) {
 if (GETPOST("logint", 'alpha')) {
 	$filters['logint'] = GETPOST("logint", 'alpha');
 }
-if (GETPOST("notactiontype", 'alpha')) {
+if (GETPOST("notactiontype", 'alpha')) {	// deprecated
 	$filters['notactiontype'] = GETPOST("notactiontype", 'alpha');
 }
 if (GETPOST("actiontype", 'alpha')) {
 	$filters['actiontype'] = GETPOST("actiontype", 'alpha');
 }
+if (GETPOST("actioncode", 'alpha')) {
+	$filters['actioncode'] = GETPOST("actioncode", 'alpha');
+}
 if (GETPOSTINT("notolderthan")) {
 	$filters['notolderthan'] = GETPOSTINT("notolderthan");
 } else {
-	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY');
+	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
+}
+if (GETPOSTINT("limit")) {
+	$filters['limit'] = GETPOSTINT("limit");
+} else {
+	$filters['limit'] = 1000;
 }
 if (GETPOST("module", 'alpha')) {
 	$filters['module'] = GETPOST("module", 'alpha');
 }
-if (GETPOSTINT("status")) {
-	$filters['status'] = GETPOSTINT("status");
+if (GETPOST("status", "intcomma")) {
+	$filters['status'] = GETPOST("status", "intcomma");
 }
 
 // Security check
@@ -163,7 +172,7 @@ if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	exit;
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
@@ -220,11 +229,14 @@ foreach ($filters as $key => $value) {
 	if ($key == 'logint') {
 		$filename .= '-logint'.$value; // Assigned to
 	}
-	if ($key == 'notactiontype') {
+	if ($key == 'notactiontype') {	// deprecated
 		$filename .= '-notactiontype'.$value;
 	}
 	if ($key == 'actiontype') {
 		$filename .= '-actiontype'.$value;
+	}
+	if ($key == 'actioncode') {
+		$filename .= '-actioncode'.$value;
 	}
 	if ($key == 'module') {
 		$filename .= '-module'.$value;
@@ -345,6 +357,8 @@ if ($format == 'rss') {
 		}
 		if ($attachment) {
 			header('Content-Disposition: attachment; filename="'.$filename.'"');
+		} else {
+			header('Content-Disposition: inline; filename="'.$filename.'"');
 		}
 
 		// Ajout directives pour resoudre bug IE

@@ -24,7 +24,7 @@
 
 /**
  *    \file       htdocs/fourn/paiement/document.php
- *    \ingroup    facture, fournisseur
+ *    \ingroup    invoice, fournisseur
  *    \brief      Management page of attached documents to a payment
  */
 

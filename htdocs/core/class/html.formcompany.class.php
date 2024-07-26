@@ -93,9 +93,9 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
+	 *	Return the list of entries for staff (no translation, it is number ranges)
 	 *
-	 *	@param	int		$mode		0=renvoi id+libelle, 1=renvoi code+libelle
+	 *	@param	int		$mode		0=return id+label, 1=return code+Label
 	 *	@param  string	$filter     Add a SQL filter to select. Data must not come from user input.
 	 *  @return array				Array of types d'effectifs
 	 */
@@ -331,7 +331,7 @@ class FormCompany extends Form
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par default
 						if (
 							getDolGlobalString('MAIN_SHOW_STATE_CODE') &&
-							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')
+							(getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 1 || getDolGlobalInt('MAIN_SHOW_STATE_CODE') == 2 || getDolGlobalString('MAIN_SHOW_STATE_CODE') === 'all')
 						) {
 							if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1) {
 								$out .= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
@@ -887,7 +887,7 @@ class FormCompany extends Form
 					$selected = $newselected;
 				}
 			}
-			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss);
+			return $this->multiselectarray($htmlname, $contactType, $selected, 0, 0, $morecss, 0, '90%');
 		}
 
 		return 'ErrorBadValueForParameterRenderMode'; // Should not happened
@@ -1134,7 +1134,7 @@ class FormCompany extends Form
 		} else {
 			if ($selected > 0) {
 				$arr = $this->typent_array(0);
-				$typent = $arr[$selected];
+				$typent = empty($arr[$selected]) ? '' : $arr[$selected];
 				$out .= $typent;
 			} else {
 				$out .= "&nbsp;";

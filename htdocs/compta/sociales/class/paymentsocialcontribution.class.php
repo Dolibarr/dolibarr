@@ -21,7 +21,7 @@
 
 /**
  *      \file       htdocs/compta/sociales/class/paymentsocialcontribution.class.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      File of class to manage payment of social contributions
  */
 

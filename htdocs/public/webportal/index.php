@@ -32,8 +32,8 @@ include 'webportal.main.inc.php';
  * Action
  */
 
-
 $context->controllerInstance->action();
+
 
 /*
  * View

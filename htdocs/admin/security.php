@@ -39,7 +39,7 @@ if (!$user->admin) {
 }
 
 // Allow/Disallow change to clear passwords once passwords are encrypted
-$allow_disable_encryption = true;
+$allow_disable_encryption = false;
 
 
 /*
@@ -102,8 +102,7 @@ if ($action == 'activate_encrypt') {
 		dol_print_error($db, '');
 	}
 } elseif ($action == 'disable_encrypt') {
-	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
-	//Do not allow "disable encryption" as passwords cannot be decrypted
+	// By default, $allow_disable_encryption is false we do not allow to disable encryption because passwords can't be decoded once encrypted.
 	if ($allow_disable_encryption) {
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
 	}
@@ -172,7 +171,7 @@ if ($action == 'updatepattern') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Passwords"), $wikihelp);
+llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -237,7 +236,7 @@ foreach ($arrayhandler as $key => $module) {
 
 	if ($module->isEnabled()) {
 		print '<tr class="oddeven"><td>';
-		print img_picto('', $module->picto, 'class="width25 size15x"').' ';
+		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
 		print ucfirst($key);
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
@@ -289,31 +288,31 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MinLength")."</td>";
-	print '<td><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="1"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbMajMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbNumMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbSpeMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbIteConsecutive")."</td>";
-	print '<td><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
 
@@ -411,17 +410,14 @@ if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td class="center" width="100">';
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=activate_encrypt&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
-}
-
-// Database conf file encryption
-if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
+} else {
 	print '<td class="center" width="100">';
 	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {
-		print '-';
+		print '<span class="opacitymedium">'.$langs->trans("Always").'</span>';
 	}
 	print "</td>";
 }

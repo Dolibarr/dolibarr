@@ -55,11 +55,11 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
-	$sortorder = "ASC";
-}
 if (!$sortfield) {
 	$sortfield = "nom";
+}
+if (!$sortorder) {
+	$sortorder = "ASC";
 }
 
 
@@ -89,9 +89,7 @@ if ($mode == 'search') {
 
 
 
-/*
- * Mode List
- */
+// Mode List
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
 $sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";

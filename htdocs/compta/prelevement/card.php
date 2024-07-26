@@ -66,7 +66,7 @@ if (!$sortorder) {
 $object = new BonPrelevement($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
@@ -76,14 +76,14 @@ $salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 
-	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'read');
+	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'create');
 	$permissiontosend = $user->hasRight('paymentbybanktransfer', 'send');
 	$permissiontocreditdebit = $user->hasRight('paymentbybanktransfer', 'debit');
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'read');
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'read');
+	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'creer');
 	$permissiontosend = $user->hasRight('prelevement', 'bons', 'send');
 	$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
 	$permissiontodelete = $user->hasRight('prelevement', 'bons', 'read');
@@ -105,11 +105,12 @@ if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
+
 		$object->update($user);
 	}
 
 	// date of upload
-	if ($action == 'setdate_trans' && $permissiontoadd) {
+	if ($action == 'setdate_trans' && $permissiontosend) {
 		$result = $object->setValueFrom('date_trans', $date_trans, '', null, 'date');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -227,12 +228,12 @@ if ($id > 0 || $ref) {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('TransData');
 		print '</td>';
-		if ($action != 'editdate_trans') {
+		if ($action != 'editdate_trans' && $permissiontosend) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_trans&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetTransDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editdate_trans') {
+		if ($action == 'editdate_trans' && $permissiontosend) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
@@ -559,7 +560,7 @@ if ($id > 0 || $ref) {
 				$userSalary = new User($db);
 				$userSalary->fetch($obj->fk_user);
 			}
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print(!$salaryBonPl ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
 			print "</td>\n";
 

@@ -30,7 +30,6 @@ SupplierProposalStatusClosedShort=مقفول
 SupplierProposalStatusSignedShort=مقبول
 SupplierProposalStatusNotSignedShort=مرفوض
 CreateEmptyAsk=إنشاء طلب فارغ
-ConfirmCloneAsk=هل أنت متأكد أنك تريد استنساخ طلب السعر <b> %s </b>؟
 ConfirmReOpenAsk=هل أنت متأكد أنك تريد فتح طلب السعر مرة أخرى <b> %s </b>؟
 SendAskRef=إرسال طلب السعر %s
 SupplierProposalCard=بطاقة الطلب

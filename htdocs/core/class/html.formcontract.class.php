@@ -98,7 +98,7 @@ class FormContract
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
 				$ret .= '<option value="0">&nbsp;</option>';
 			}

@@ -37,7 +37,6 @@
  *	\brief      Page to show list of third parties
  */
 
-
 // Load Dolibarr environment
 require_once '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -72,7 +71,7 @@ $mode = GETPOST("mode", 'alpha');
 $search_all = trim(GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 
-$search_id = GETPOSTINT("search_id");
+$search_id = GETPOST("search_id", 'int');
 $search_nom = trim(GETPOST("search_nom", 'restricthtml'));
 $search_alias = trim(GETPOST("search_alias", 'restricthtml'));
 $search_nom_only = trim(GETPOST("search_nom_only", 'restricthtml'));
@@ -101,8 +100,8 @@ $search_vat = trim(GETPOST('search_vat', 'alpha'));
 $search_sale = GETPOSTINT("search_sale");
 $search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_categ_sup = GETPOSTINT("search_categ_sup");
-$searchCategoryCustomerOperator = 0;
-$searchCategorySupplierOperator = 0;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+$searchCategorySupplierOperator = GETPOSTINT('search_category_supplier_operator');
 if (GETPOSTISSET('formfilteraction')) {
 	$searchCategoryCustomerOperator = GETPOST('search_category_customer_operator');
 	$searchCategorySupplierOperator = GETPOST('search_category_supplier_operator');
@@ -122,6 +121,7 @@ $search_country = GETPOST("search_country", 'aZ09');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_price_level = GETPOST('search_price_level', 'int');
 $search_staff = GETPOST("search_staff", 'int');
+$search_legalform = GETPOST("search_legalform", 'int');
 $search_status = GETPOST("search_status", 'intcomma');
 $search_type = GETPOST('search_type', 'alpha');
 $search_level = GETPOST("search_level", "array:alpha");
@@ -203,10 +203,10 @@ if ($type == 'f') {
 		$search_type = '4';
 	}
 }
-// Initialize technical objects to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical objects to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
-$hookmanager->initHooks(array($contextpage));
+$hookmanager->initHooks(array($contextpage, 'thirdpartylist'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -289,7 +289,8 @@ $arrayfields = array(
 	's.fax' => array('label' => "Fax", 'position' => 28, 'checked' => 0),
 	'typent.code' => array('label' => "ThirdPartyType", 'position' => 29, 'checked' => $checkedtypetiers),
 	'staff.code' => array('label' => "Workforce", 'position' => 31, 'checked' => 0),
-	's.phone_mobile' => array('label' => "PhoneMobile", 'position' => 32, 'checked' => 0),
+	'legalform.code' => array('label' => 'JuridicalStatus', 'position'=>32, 'checked' => 0),
+	's.phone_mobile' => array('label' => "PhoneMobile", 'position' => 35, 'checked' => 0),
 	's.siren' => array('label' => "ProfId1Short", 'position' => 40, 'checked' => $checkedprofid1),
 	's.siret' => array('label' => "ProfId2Short", 'position' => 41, 'checked' => $checkedprofid2),
 	's.ape' => array('label' => "ProfId3Short", 'position' => 42, 'checked' => $checkedprofid3),
@@ -426,6 +427,7 @@ if (empty($reshook)) {
 		$search_price_level = '';
 		$search_type_thirdparty = '';
 		$search_staff = '';
+		$search_legalform = '';
 		$search_date_creation_startmonth = "";
 		$search_date_creation_startyear = "";
 		$search_date_creation_startday = "";
@@ -549,6 +551,7 @@ $sql .= " s.code_compta, s.code_compta_fournisseur, s.parent as fk_parent,s.pric
 $sql .= " s2.nom as name2,";
 $sql .= " typent.code as typent_code,";
 $sql .= " staff.code as staff_code,";
+$sql .= " s.fk_forme_juridique as legalform_code,";
 $sql .= " country.code as country_code, country.label as country_label,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " region.code_region as region_code, region.nom as region_name";
@@ -576,6 +579,7 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_effectif as staff on (staff.id = s.fk_effectif)";
+//$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_forme_juridique as legalform on (legalform.rowid = s.fk_forme_juridique)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as region on (region.code_region = state.fk_region)";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."c_stcomm as st ON s.fk_stcomm = st.id";
@@ -767,6 +771,9 @@ if ($search_type_thirdparty && $search_type_thirdparty > 0) {
 if (!empty($search_staff) && $search_staff != '-1') {
 	$sql .= natural_search("s.fk_effectif", $search_staff, 2);
 }
+if (!empty($search_legalform) && $search_legalform != '-1') {
+	$sql .= natural_search("s.fk_forme_juridique", $search_legalform, 2);
+}
 if ($search_parent_name) {
 	$sql .= natural_search("s2.nom", $search_parent_name);
 }
@@ -876,7 +883,7 @@ foreach ($searchCategorySupplierList as $searchCategorySupplier) {
 	$paramsCat .= "&search_category_supplier_list[]=".urlencode($searchCategorySupplier);
 }
 
-llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat);
+llxHeader('', $title, $help_url, '', 0, 0, array(), array(), $paramsCat, 'bodyforlist');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -1079,7 +1086,7 @@ if ($search_date_modif_end) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -1219,19 +1226,21 @@ if ($search_all) {
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
-// Filter on categories
 $moreforfilter = '';
+
+// Filter for customer categories
 if (empty($type) || $type == 'c' || $type == 'p') {
 	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerOperator ? $searchCategoryCustomerOperator : 0, 1, 1, $langs->transnoentities("CustomersProspectsCategoriesShort"));
 	}
 }
 
+// Filter for supplier categories
 if (empty($type) || $type == 'f') {
 	if (isModEnabled("fournisseur") && isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER, $searchCategorySupplierList, 'minwidth300', $searchCategorySupplierOperator ? $searchCategorySupplierOperator : 0, 1, 1, $langs->transnoentities("SuppliersCategoriesShort"));
 	}
 }
 
@@ -1253,8 +1262,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
-//$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= ((count($arrayofmassactions) && $contextpage != 'poslist') ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1376,6 +1385,12 @@ if (!empty($arrayfields['s.price_level']['checked'])) {
 if (!empty($arrayfields['staff.code']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectarray("search_staff", $formcompany->effectif_array(0), $search_staff, 0, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100', 1);
+	print '</td>';
+}
+// Legal form
+if (!empty($arrayfields['legalform.code']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	//print $form->selectarray("search_legalform", $formcompany->effectif_array(0), $search_legalform, 0, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100', 1);
 	print '</td>';
 }
 if (!empty($arrayfields['s.email']['checked'])) {
@@ -1611,6 +1626,10 @@ if (!empty($arrayfields['staff.code']['checked'])) {
 	print_liste_field_titre($arrayfields['staff.code']['label'], $_SERVER["PHP_SELF"], "staff.code", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['legalform.code']['checked'])) {
+	print_liste_field_titre($arrayfields['legalform.code']['label'], $_SERVER["PHP_SELF"], "legalform.code", "", $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['s.price_level']['checked'])) {
 	print_liste_field_titre($arrayfields['s.price_level']['label'], $_SERVER["PHP_SELF"], "s.price_level", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1736,6 +1755,9 @@ while ($i < $imaxinloop) {
 		$companystatic->client = $obj->client;
 		$companystatic->status = $obj->status;
 		$companystatic->email = $obj->email;
+		$companystatic->phone = $obj->phone;
+		$companystatic->phone_mobile = $obj->phone_mobile;
+		$companystatic->fax = $obj->fax;
 		$companystatic->address = $obj->address;
 		$companystatic->zip = $obj->zip;
 		$companystatic->town = $obj->town;
@@ -1769,7 +1791,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven"';
+		print '<tr data-rowid="'.$companystatic->id.'" class="oddeven"';
 		if ($contextpage == 'poslist') {
 			print ' onclick="location.href=\'list.php?action=change&contextpage=poslist&idcustomer='.$obj->rowid.'&place='.urlencode($place).'\'"';
 		}
@@ -1792,14 +1814,14 @@ while ($i < $imaxinloop) {
 		}
 		if (!empty($arrayfields['s.rowid']['checked'])) {
 			print '<td class="tdoverflowmax50" data-key="id">';
-			print $obj->rowid;
+			print dol_escape_htmltag($obj->rowid);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td'.(!getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? ' class="tdoverflowmax200"' : '').' data-key="ref">';
+			print '<td'.(getDolGlobalString('MAIN_SOCIETE_SHOW_COMPLETE_NAME') ? '' : ' class="tdoverflowmax200"').' data-key="ref">';
 			if ($contextpage == 'poslist') {
 				print dol_escape_htmltag($companystatic->name);
 			} else {
@@ -1971,6 +1993,23 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Legal form
+		if (!empty($arrayfields['legalform.code']['checked'])) {
+			$labeltoshow = '';
+			if (!empty($obj->legalform_code)) {
+				if (empty($conf->cache['legalformArray'][$obj->legalform_code])) {
+					$conf->cache['legalformArray'][$obj->legalform_code] = getFormeJuridiqueLabel($obj->legalform_code);
+				}
+				$labeltoshow = $conf->cache['legalformArray'][$obj->legalform_code];
+			}
+			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($labeltoshow).'">';
+			print dol_escape_htmltag($labeltoshow);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Email
 		if (!empty($arrayfields['s.email']['checked'])) {
 			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->rowid, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {

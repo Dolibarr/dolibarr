@@ -248,16 +248,6 @@ class ExpenseReport extends CommonObject
 	public $localtax2;	// for backward compatibility (real field should be total_localtax2 defined into CommonObject)
 
 	/**
-	 * @var array<int,string>
-	 */
-	public $labelStatus = array();
-
-	/**
-	 * @var array<int,string>
-	 */
-	public $labelStatusShort = array();
-
-	/**
 	 * Draft status
 	 */
 	const STATUS_DRAFT = 0;
@@ -1957,7 +1947,7 @@ class ExpenseReport extends CommonObject
 				$fk_project = 0;
 			}
 
-			$qty = price2num($qty);
+			$qty = (float) price2num($qty);
 			if (!preg_match('/\s*\((.*)\)/', $vatrate)) {
 				$vatrate = price2num($vatrate); // $txtva can have format '5.0 (XXX)' or '5'
 			}
@@ -1982,7 +1972,7 @@ class ExpenseReport extends CommonObject
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $up, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
+			$tmp = calcul_price_total($qty, $up, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 
 			$this->line->value_unit = $up;
 
@@ -2248,10 +2238,9 @@ class ExpenseReport extends CommonObject
 			}
 			$vatrate = preg_replace('/\*/', '', $vatrate);
 
-			$tmp = calcul_price_total($qty, $value_unit, 0, $vatrate, -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
-			//var_dump($vatrate);var_dump($localtaxes_type);var_dump($tmp);exit;
+			$tmp = calcul_price_total($qty, $value_unit, 0, (float) price2num($vatrate), -1, -1, 0, 'TTC', 0, $type, $seller, $localtaxes_type);
 			// calcul total of line
-			//$total_ttc  = price2num($qty*$value_unit, 'MT');
+			// $total_ttc  = price2num($qty*$value_unit, 'MT');
 
 			$tx_tva = 1 + (float) $vatrate / 100;
 
@@ -2893,6 +2882,10 @@ class ExpenseReportLine extends CommonObjectLine
 	public $rowid;
 
 	public $comments;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $value_unit;
 	public $date;
@@ -3064,7 +3057,7 @@ class ExpenseReportLine extends CommonObjectLine
 		if (empty($this->value_unit)) {
 			$this->value_unit = 0;
 		}
-		$this->qty = price2num($this->qty);
+		$this->qty = (float) price2num($this->qty);
 		$this->vatrate = price2num($this->vatrate);
 		if (empty($this->fk_c_exp_tax_cat)) {
 			$this->fk_c_exp_tax_cat = 0;

@@ -1,9 +1,16 @@
 # List of words codespell will ignore
 # one per line, case-sensitive (when not lowercase)
+
 # PROVid
 provid
+
 # PostgreSQL
 postgresql
+
+# Name of contributores
+noe
+udo
+tim
 
 # Inside email
 ba
@@ -32,27 +39,35 @@ thead
 ue
 whitelist
 ws
+
 # Thirdparty should be Third party or Third-party but ignoring it because it's omnipresent
 thirdparty
+
 # Code string
 ect
 tempdate
 sav
 files'
+
 # Used as array key
 seeked
+tweek
+
 # Used as key
 marge
+
 # moral (var name)
 mor
+
 # Strings used as keys for translation
 uptodate
 reenable
+
 # Function - rename to devalidate ?
 unvalidate
+
 # Some french strings
 somme
-caracteres
 cas
 sur
 Datas
@@ -65,3 +80,6 @@ fonction
 espace
 methode
 datee
+
+# other
+blacklists

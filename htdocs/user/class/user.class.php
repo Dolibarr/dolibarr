@@ -66,17 +66,6 @@ class User extends CommonObject
 	public $fk_element = 'fk_user';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string picto
 	 */
 	public $picto = 'user';
@@ -393,7 +382,13 @@ class User extends CommonObject
 	/**
 	 * @var int egroupware id
 	 */
-	public $egroupware_id;
+	//private $egroupware_id;
+
+	/**
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
+	 */
+	public $usergroup_entity;
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -415,6 +410,8 @@ class User extends CommonObject
 	{
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		// User preference
 		$this->clicktodial_loaded = 0;
 
@@ -842,8 +839,17 @@ class User extends CommonObject
 
 		// Special case for external user
 		if (!empty($this->socid)) {
-			if ($module = 'societe' && $permlevel1 = 'client' && $permlevel2 == 'voir') {
+			if ($module == 'societe' && ($permlevel1 == 'creer' || $permlevel1 == 'write')) {
+				return 0;	// An external user never has the permission ->societe->write to see all thirdparties (always restricted to himself)
+			}
+			if ($module == 'societe' && $permlevel1 == 'client' && $permlevel2 == 'voir') {
 				return 0;	// An external user never has the permission ->societe->client->voir to see all thirdparties (always restricted to himself)
+			}
+			if ($module == 'societe' && $permlevel1 == 'export') {
+				return 0;	// An external user never has the permission ->societe->export to see all thirdparties (always restricted to himself)
+			}
+			if ($module == 'societe' && ($permlevel1 == 'supprimer' || $permlevel1 == 'delete')) {
+				return 0;	// An external user never has the permission ->societe->delete to see all thirdparties (always restricted to himself)
 			}
 		}
 
@@ -1053,12 +1059,12 @@ class User extends CommonObject
 	/**
 	 *  Remove a right to the user
 	 *
-	 *  @param	int		$rid        Id du droit a retirer
-	 *  @param  string	$allmodule  Retirer tous les droits du module allmodule
-	 *  @param  string	$allperms   Retirer tous les droits du module allmodule, perms allperms
-	 *  @param	int		$entity		Entity to use
-	 *  @param  int	    $notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *  @return int         		> 0 if OK, < 0 if OK
+	 *  @param	int			$rid        Id of permission to remove (or 0 when using the other filters)
+	 *  @param  string		$allmodule  Retirer tous les droits du module allmodule
+	 *  @param  string		$allperms   Retirer tous les droits du module allmodule, perms allperms
+	 *  @param	int|string	$entity		Entity to use. Example: '1', or '0,1', or '2,3'
+	 *  @param  int	    	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *  @return int         			> 0 if OK, < 0 if OK
 	 *  @see	clearrights(), addrights(), getrights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
@@ -1079,7 +1085,7 @@ class User extends CommonObject
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
 			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
-			$sql .= " AND entity = ".((int) $entity);
+			$sql .= " AND entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -1120,17 +1126,17 @@ class User extends CommonObject
 			}
 		}
 
-		// Suppression des droits selon critere defini dans wherefordel
+		// Delete permission according to a criteria set into $wherefordel
 		if (!empty($wherefordel)) {
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
-			$sql .= " WHERE entity = ".((int) $entity);
+			$sql .= " WHERE entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 			if (!empty($wherefordel) && $wherefordel != 'allmodules') {
 				$sql .= " AND (".$wherefordel.")";	// Note: parenthesis are important because wherefordel can contains OR. Also note that $wherefordel is already sanitized
 			}
 
-			// avoid admin can remove his own important rights
+			// avoid admin to remove his own important rights
 			if ($this->admin == 1) {
 				$sql .= " AND id NOT IN (251, 252, 253, 254, 255, 256)"; // other users rights
 				$sql .= " AND id NOT IN (341, 342, 343, 344)"; // own rights
@@ -1142,7 +1148,7 @@ class User extends CommonObject
 			$sqldelete .= " WHERE fk_user = ".((int) $this->id)." AND fk_id IN (";
 			$sqldelete .= $sql;
 			$sqldelete .= ")";
-			$sqldelete .= " AND entity = ".((int) $entity);
+			$sqldelete .= " AND entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 
 			$resql = $this->db->query($sqldelete);
 			if (!$resql) {
@@ -1197,7 +1203,7 @@ class User extends CommonObject
 	 *	@return	void
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 */
-	public function getrights($moduletag = '', $forcereload = 0)
+	public function loadRights($moduletag = '', $forcereload = 0)
 	{
 		global $conf;
 
@@ -1215,12 +1221,12 @@ class User extends CommonObject
 			}
 		}
 
-		// For avoid error
+		// More init to avoid warnings/errors
 		if (!isset($this->rights) || !is_object($this->rights)) {
-			$this->rights = new stdClass(); // For avoid error
+			$this->rights = new stdClass();
 		}
 		if (!isset($this->rights->user) || !is_object($this->rights->user)) {
-			$this->rights->user = new stdClass(); // For avoid error
+			$this->rights->user = new stdClass();
 		}
 
 		// Get permission of users + Get permissions of groups
@@ -1288,12 +1294,12 @@ class User extends CommonObject
 			}
 
 			// Now permissions of groups
-			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms";
+			$sql = "SELECT DISTINCT r.module, r.perms, r.subperms, r.entity";
 			$sql .= " FROM ".$this->db->prefix()."usergroup_rights as gr,";
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = gr.fk_id";
-			// A very strange business rules. Must be same than into user->getrights() user/perms.php and user/group/perms.php
+			// @FIXME Very strange business rules. Must be alays the same than into user->getrights() user/perms.php and user/group/perms.php
 			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " AND gu.entity IN (0,".$conf->entity.")";
@@ -1302,9 +1308,9 @@ class User extends CommonObject
 				}
 			} else {
 				$sql .= " AND gr.entity = ".((int) $conf->entity);	// Only groups created in current entity
-				// The entity on the table usergroup_user should be useless and should never be used because it is already into gr and r.
-				// but when using MULTICOMPANY_TRANSVERSE_MODE, we may insert record that make rubbish result due to duplicate record of
-				// other entities, so we are forced to add a filter here
+				// The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
+				// but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
+				// other entities, so we are forced to add a filter on gu here
 				$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 				$sql .= " AND r.entity = ".((int) $conf->entity);	// Only permission of modules enabled in current entity
 			}
@@ -1337,12 +1343,12 @@ class User extends CommonObject
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 										$this->rights->$module->$perms = new stdClass();
 									}
-									if (empty($this->rights->$module->$perms->$subperms)) {
+									if (empty($this->rights->$module->$perms->$subperms)) {	// already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms->$subperms = 1;
 								} else {
-									if (empty($this->rights->$module->$perms)) {
+									if (empty($this->rights->$module->$perms)) {			// already counted
 										$this->nb_rights++;
 									}
 									// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
@@ -1433,6 +1439,22 @@ class User extends CommonObject
 				$this->_tab_loaded[$moduletag] = 1;
 			}
 		}
+	}
+
+	/**
+	 *	Load permissions granted to a user->id into object user->rights
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject.
+	 *
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
+	 *	@return	void
+	 *
+	 *  @see	clearrights(), delrights(), addrights(), hasRight()
+	 *  @phpstan-ignore-next-line
+	 */
+	public function getrights($moduletag = '', $forcereload = 0)
+	{
+		$this->loadRights($moduletag, $forcereload);
 	}
 
 	/**
@@ -1833,11 +1855,11 @@ class User extends CommonObject
 	public function create_from_member($member, $login = '')
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $user;
 
 		// Set properties on new user
 		$this->admin = 0;
-		$this->civility_code = $member->civility_id;
+		$this->civility_code = $member->civility_code;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
 		$this->gender		= $member->gender;
@@ -1904,7 +1926,7 @@ class User extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		} else {
-			// $this->error deja positionne
+			// $this->error was already set
 			$this->db->rollback();
 			return -2;
 		}
@@ -2040,7 +2062,7 @@ class User extends CommonObject
 		$this->db->begin();
 
 		// Check if login already exists in same entity or into entity 0.
-		if (!empty($this->oldcopy) && $this->oldcopy->login != $this->login) {
+		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->oldcopy->login != $this->login) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -2054,7 +2076,7 @@ class User extends CommonObject
 				}
 			}
 		}
-		if (!empty($this->oldcopy) && !empty($this->email) && $this->oldcopy->email != $this->email) {
+		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && !empty($this->email) && $this->oldcopy->email != $this->email) {
 			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
@@ -3112,7 +3134,7 @@ class User extends CommonObject
 
 		if ($option == 'xxx') {
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
-			$linkend = '</a>';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$linkend = '</a>';
 		}
 
 		if ($option == 'nolink') {
@@ -3324,7 +3346,7 @@ class User extends CommonObject
 
 				// Check if it is the LDAP key and if its value has been changed
 				if (getDolGlobalString('LDAP_KEY_USERS') && $conf->global->LDAP_KEY_USERS == getDolGlobalString($constname)) {
-					if (!empty($this->oldcopy) && $this->$varname != $this->oldcopy->$varname) {
+					if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
 				}
@@ -3405,11 +3427,13 @@ class User extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
+			/*
 			if (dol_strlen($this->egroupware_id) == 0) {
 				$this->egroupware_id = 1;
 			}
-
 			$info["phpgwContactOwner"] = $this->egroupware_id;
+			*/
+			$info["phpgwContactOwner"] = 1;
 
 			if ($this->email) {
 				$info["rfc822Mailbox"] = $this->email;
@@ -3768,6 +3792,10 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['gender'] = $obj->gender;
 				$this->users[$obj->rowid]['admin'] = $obj->admin;
 				$this->users[$obj->rowid]['photo'] = $obj->photo;
+				// fields are filled with build_path_from_id_user
+				$this->users[$obj->rowid]['fullpath'] = '';
+				$this->users[$obj->rowid]['fullname'] = '';
+				$this->users[$obj->rowid]['level'] = 0;
 				$i++;
 			}
 		} else {
@@ -3802,7 +3830,7 @@ class User extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
-		$this->users = dol_sort_array($this->users, 'fullname', 'asc', true, false);
+		$this->users = dol_sort_array($this->users, 'fullname', 'asc', 1, 0, 1);
 
 		//var_dump($this->users);
 

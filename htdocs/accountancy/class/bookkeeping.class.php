@@ -185,11 +185,6 @@ class BookKeeping extends CommonObject
 	public $linesexport = array();
 
 	/**
-	 * @var integer|string date of movement validated & lock
-	 */
-	public $date_validation;
-
-	/**
 	 * @var integer|string date of movement who are noticed like exported
 	 */
 	public $date_export;
@@ -738,10 +733,10 @@ class BookKeeping extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int 		$id 	Id object
-	 * @param string 	$ref 	Ref
-	 * @param string 	$mode 	Mode ('' or 'tmp_')
-	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int 			$id 	Id object
+	 * @param string|null	$ref 	Ref
+	 * @param string 		$mode 	Mode ('' or 'tmp_')
+	 * @return int 					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $mode = '')
 	{
@@ -891,6 +886,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.date_creation,";
 			$sql .= " t.date_export,";
 			$sql .= " t.date_validated as date_validation,";
+			$sql .= " t.date_lim_reglement,";
 			$sql .= " t.import_key";
 		}
 		// Manage filter
@@ -926,9 +922,13 @@ class BookKeeping extends CommonObject
 				} elseif ($key == 't.date_export<=') {
 					$sqlwhere[] = 't.date_export <= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated>=') {
-					$sqlwhere[] = 't;date_validate >= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = 't.date_validated >= \''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated<=') {
-					$sqlwhere[] = 't;date_validate <= \''.$this->db->idate($value).'\'';
+					$sqlwhere[] = 't.date_validated <= \''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_lim_reglement>=') {
+					$sqlwhere[] = 't.date_lim_reglement>=\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_lim_reglement<=') {
+					$sqlwhere[] = 't.date_lim_reglement<=\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
@@ -1013,6 +1013,8 @@ class BookKeeping extends CommonObject
 					$line->date_creation = $this->db->jdate($obj->date_creation);
 					$line->date_export = $this->db->jdate($obj->date_export);
 					$line->date_validation = $this->db->jdate($obj->date_validation);
+					// Due date
+					$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 					$line->import_key = $obj->import_key;
 
 					$this->lines[] = $line;
@@ -1087,6 +1089,7 @@ class BookKeeping extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
@@ -1839,7 +1842,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
-		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, import_key";
+		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
 			$sql .= ", date_export";
@@ -1865,6 +1868,7 @@ class BookKeeping extends CommonObject
 				$this->date_export = $this->db->jdate($obj->date_export);
 			}
 			$this->date_validation = $this->db->jdate($obj->date_validation);
+			$this->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 			$this->import_key = $obj->import_key;
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
@@ -3157,24 +3161,9 @@ class BookKeepingLine extends CommonObjectLine
 	public $piece_num;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string $date_modification;
-	 */
-	public $date_modification;
-
-	/**
 	 * @var integer|string $date_export;
 	 */
 	public $date_export;
-
-	/**
-	 * @var integer|string $date_validation;
-	 */
-	public $date_validation;
 
 	/**
 	 * @var integer|string $date_lim_reglement;

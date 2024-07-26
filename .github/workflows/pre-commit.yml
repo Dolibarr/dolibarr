@@ -10,6 +10,10 @@ on:
         type: string
   workflow_dispatch:
 
+concurrency:
+  group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
 jobs:
@@ -47,12 +51,14 @@ jobs:
           cache: pip
           python-version: "3.11"
       - run: python -m pip install pre-commit
+
       # Restore previous cache of precommit
       - uses: actions/cache/restore@v4
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      # Run all the precommit tools (defined into pre-commit-config.yaml).
+
+      # Run all the precommit tools (defined in pre-commit-config.yaml).
       # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
@@ -112,6 +118,7 @@ jobs:
           set -o pipefail
           ln -sf ~/.cache .cache  # Absolute path in .pre-commit-config.yaml
           pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a ${RAW_LOG}
+          pre-commit run --hook-stage manual -a sqlfluff-lint | tee -a ${RAW_LOG}
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations
@@ -135,4 +142,3 @@ jobs:
           path: |
             ${{ env.RAW_LOG }}
             ${{ env.CS_XML }}
-          retention-days: 2

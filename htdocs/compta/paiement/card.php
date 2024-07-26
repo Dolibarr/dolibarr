@@ -22,7 +22,7 @@
 
 /**
  *	    \file       htdocs/compta/paiement/card.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page of a customer payment
  *		\remarks	Nearly same file than fournisseur/paiement/card.php
  */
@@ -55,11 +55,11 @@ if ($socid < 0) {
 }
 
 $object = new Paiement($db);
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiement');	// This also test permission on read invoice
 
@@ -420,13 +420,13 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td>';
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
 if (!empty($object->ext_payment_id)) {
 	// External payment ID
-	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td>';
+	print '<tr><td class="tdtop">'.$langs->trans("StripePaymentId").'</td><td class="wordbreak">';
 	if (isModEnabled('stripe') && in_array($object->ext_payment_site, array('Stripe', 'StripeLive'))) {
 		$tmp1 = explode('@', $object->ext_payment_id);
 		if (!empty($tmp1[1])) {
@@ -529,7 +529,7 @@ if ($resql) {
 			print '<tr class="oddeven">';
 
 			// Invoice
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			print $invoice->getNomUrl(1);
 			print "</td>\n";
 

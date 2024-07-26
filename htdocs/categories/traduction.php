@@ -132,7 +132,7 @@ $cancel != $langs->trans("Cancel") &&
 
 	foreach ($object->multilangs as $key => $value) {     // recording of new values in the object
 		$libelle = GETPOST('libelle-'.$key, 'alpha');
-		$desc = GETPOST('desc-'.$key);
+		$desc = GETPOST('desc-'.$key, 'restricthtml');
 
 		if (empty($libelle)) {
 			$error++;
@@ -262,13 +262,13 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 
 			// Label
-			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : $object->multilangs[$key]['label']);
+			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : ($object->multilangs[$key]['label'] ?? ''));
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$libelle.'"></td></tr>';
 
 			// Desc
-			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : $object->multilangs[$key]['description']);
+			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : ($object->multilangs[$key]['description'] ?? ''));
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $desc, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $desc, '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
@@ -292,10 +292,10 @@ if ($action == 'edit') {
 			$s = picto_from_langcode($key);
 			print '<table class="border centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
-			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
-			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';
+			print '<tr><td>'.$langs->trans('Description').'</td><td>'.($object->multilangs[$key]["description"] ?? '').'</td></tr>';
 			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
-				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotYetAvailable").')</td><td>'.($object->multilangs[$key]["other"] ?? '').'</td></tr>';
 			}
 			print '</table>';
 		}
@@ -328,7 +328,7 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
 	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

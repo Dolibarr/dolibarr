@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_invoices_permonth.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -124,13 +124,14 @@ class box_graph_invoices_permonth extends ModeleBoxes
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}
-			$startyear = $endyear - (getDolGlobalString('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH') ? ($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH - 1) : 2);	// Default is 3 years
+			$startyear = $endyear - getDolGlobalInt('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH', 3) + 1;	// Default is 3 years
 
 			$mode = 'customer';
 			$WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '256' : '320';
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
+			$stats->where = "f.fk_statut > 0";
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {

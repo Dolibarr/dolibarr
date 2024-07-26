@@ -151,7 +151,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 			$res = $product->fetch($object->fk_product);
 			if ($res > 0 && !empty($product->batch_mask)) {
 				$mask = $product->batch_mask;
-				$filter = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$filter = '';
 			}
 		}
 

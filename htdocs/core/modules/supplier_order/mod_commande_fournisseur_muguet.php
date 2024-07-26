@@ -21,7 +21,7 @@
 
 /**
  *    	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_muguet.php
- *		\ingroup    commande
+ *		\ingroup    order
  *		\brief      Fichier contenant la class du modele de numerotation de reference de commande fournisseur Muguet
  */
 

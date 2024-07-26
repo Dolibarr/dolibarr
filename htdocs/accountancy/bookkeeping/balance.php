@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ if ($sortfield == "") {
 	$sortfield = "t.numero_compte";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules contains array
 
@@ -252,7 +252,7 @@ if ($type == 'sub') {
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
 
-llxHeader('', $title_page, $help_url);
+llxHeader('', $title_page, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-'.(($type == 'sub') ? 'sub' : '').'balance');
 
 
 if ($action != 'export_csv') {
@@ -293,6 +293,7 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	$url_param = '';
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -478,8 +479,12 @@ if ($action != 'export_csv') {
 			$nrows = $db->num_rows($resql);
 			for ($i = 0; $i < $nrows; $i++) {
 				$arr = $db->fetch_array($resql);
-				$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				if (is_array($arr)) {
+					$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				}
 			}
+		} else {
+			dol_print_error($db);
 		}
 	}
 

@@ -37,7 +37,7 @@ if (empty($user->admin)) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_browser');
 
 print load_fiche_titre($langs->trans("InfoBrowser"), '', 'title_setup');
 

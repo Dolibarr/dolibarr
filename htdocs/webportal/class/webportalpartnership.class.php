@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,14 +38,9 @@ class WebPortalPartnership extends Partnership
 	public $module = 'webportal';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Status list (short label)
 	 */
-	const STATUS_SHORT_LIST = array(
+	const ARRAY_STATUS_LABEL = array(
 		Partnership::STATUS_DRAFT => 'Draft',
 		Partnership::STATUS_VALIDATED => 'Accepted',
 		Partnership::STATUS_APPROVED => 'Refused',
@@ -123,15 +119,12 @@ class WebPortalPartnership extends Partnership
 		'reason_decline_or_cancel' => array('type' => 'text', 'label' => 'ReasonDeclineOrCancel', 'enabled' => 1, 'position' => 73, 'notnull' => 0, 'visible' => -2,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'Ip', 'enabled' => 1, 'position' => 74, 'notnull' => 0, 'visible' => -2,),
 
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => self::STATUS_SHORT_LIST, 'showonheader' => 1,),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL, 'showonheader' => 1,),
 	);
 	//public $rowid;
 	//public $ref;
 	//public $entity;
 	//public $fk_type;
-	//public $note_public;
-	//public $note_private;
-	//public $date_creation;
 	//public $fk_user_creat;
 	//public $fk_user_modif;
 	//public $last_main_doc;
@@ -173,6 +166,8 @@ class WebPortalPartnership extends Partnership
 		global $langs;
 
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 
 		$this->getPartnershipStatic();
 

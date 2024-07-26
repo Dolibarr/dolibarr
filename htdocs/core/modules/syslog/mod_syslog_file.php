@@ -8,7 +8,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 /**
  * Class to manage logging to a file
  */
-class mod_syslog_file extends LogHandler implements LogHandlerInterface
+class mod_syslog_file extends LogHandler
 {
 	public $code = 'file';
 	public $lastTime = 0;

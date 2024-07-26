@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Waël Almoman         <info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +171,7 @@ class AdherentStats extends Stats
 	 *	Return count of member by status group by adh type, total and average
 	 *
 	 *	@param	int		$numberYears    Number of years to scan (0 = all)
-	 *	@return	array<int|string,array{label:string,members_draft:int,members_pending:int,members_uptodate:int,members_expired:int,members_excluded:int,members_resiliated:int,all?:float|int,total_adhtag:float|int}>		Array with total of draft, pending, uptodate, expired, resiliated for each member type
+	 *	@return	array<int|string,array{label:string,members_draft:int,members_pending:int,members_uptodate:int,members_expired:int,members_excluded:int,members_resiliated:int,all?:float|int,total_adhtype:float|int}>		Array with total of draft, pending, uptodate, expired, resiliated for each member type
 	 */
 	public function countMembersByTypeAndStatus($numberYears = 0)
 	{
@@ -205,7 +206,6 @@ class AdherentStats extends Stats
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$totalstatus = array(
-				'label' => 'Total',
 				'members_draft' => 0,
 				'members_pending' => 0,
 				'members_uptodate' => 0,
@@ -285,7 +285,6 @@ class AdherentStats extends Stats
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			$totalstatus = array(
-				'label' => 'Total',
 				'members_draft' => 0,
 				'members_pending' => 0,
 				'members_uptodate' => 0,
@@ -318,6 +317,7 @@ class AdherentStats extends Stats
 			$MembersCountArray['total'] = $totalstatus;
 			$MembersCountArray['total']['all'] = array_sum($totalstatus);
 		}
+
 		return $MembersCountArray;
 	}
 }

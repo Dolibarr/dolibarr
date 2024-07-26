@@ -191,7 +191,7 @@ class modHRM extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Skill / Job / Position
 		$this->rights[$r][0] = 4001; // Permission id (must not be already used)

@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017	Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024   Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,18 +47,6 @@ class ConferenceOrBooth extends ActionComm
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'actioncomm';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int<0,1>  Does this object support extrafields ?
-	 * 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var string String with name of icon for conferenceorbooth. Must be the part after the 'object_' into object_conferenceorbooth.png
@@ -122,7 +109,7 @@ class ConferenceOrBooth extends ActionComm
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1:(t.usage_organize_event:=:1)', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'position' => 52, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => '$conf->societe->enabled', 'position' => 50, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'csslist' => 'tdoverflowmax100', 'css' => 'maxwidth500'),
 		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3),
-		'fk_action' => array('type' => "sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label' => 'Format', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'css' => 'width100', 'csslist' => 'tdoverflowmax100'),
+		'fk_action' => array('type' => "sellist:c_actioncomm:libelle:id::(module:LIKE:'%@eventorganization')", 'label' => 'ConferenceOrBoothFormat', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'css' => 'width200', 'csslist' => 'tdoverflowmax100'),
 		'datep' => array('type' => 'datetime', 'label' => 'DateStart', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => '2',),
 		'datep2' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'position' => 71, 'notnull' => 0, 'visible' => 1, 'showoncombobox' => '3',),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
@@ -158,9 +145,12 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['id']['visible'] = 0;
@@ -203,17 +193,20 @@ class ConferenceOrBooth extends ActionComm
 	}
 
 	/**
-	 * Set Percentage from status
+	 * Set the percentage of actioncomm from the status of the booth or conference
 	 *
 	 * @return void
 	 */
 	protected function setPercentageFromStatus()
 	{
+		if ($this->status == self::STATUS_DRAFT || $this->status == self::STATUS_SUGGESTED || $this->status == self::STATUS_NOT_QUALIFIED || $this->status == self::STATUS_CANCELED) {
+			$this->percentage = -1;
+		}
+		if ($this->status == self::STATUS_CONFIRMED) {
+			$this->percentage = 0;
+		}
 		if ($this->status == self::STATUS_DONE) {
 			$this->percentage = 100;
-		}
-		if ($this->status == self::STATUS_DRAFT) {
-			$this->percentage = 0;
 		}
 	}
 
@@ -279,16 +272,13 @@ class ConferenceOrBooth extends ActionComm
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * @param  string|array	$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return array|int                 	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		//TODO set percent according status
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -301,6 +291,32 @@ class ConferenceOrBooth extends ActionComm
 			$sql .= ' WHERE t.entity IN ('.getEntity($this->element).')';
 		} else {
 			$sql .= ' WHERE 1 = 1';
+		}
+
+		// Manage filter
+		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			$sqlwhere = array();
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.id' || $key == 't.fk_project' || $key == 't.fk_soc' || $key == 't.fk_action') {
+						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+					} elseif ($key == 'customsql') {
+						$sqlwhere[] = $value;
+					} elseif (strpos($value, '%') === false) {
+						$sqlwhere[] = $key.' IN ('.$this->db->sanitize($this->db->escape($value)).')';
+					} else {
+						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
+					}
+				}
+			}
+			if (count($sqlwhere) > 0) {
+				$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+			}
+
+			$filter = '';
 		}
 
 		// Manage filter
@@ -354,7 +370,9 @@ class ConferenceOrBooth extends ActionComm
 	public function update(User $user, $notrigger = 0)
 	{
 		$this->setPercentageFromStatus();
+
 		$this->setActionCommFields($user);
+
 		return parent::update($user, $notrigger);
 	}
 

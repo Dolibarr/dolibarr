@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2019      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2018		    Charlene Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018			Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -162,7 +162,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-holiday');
 
 $form = new Form($db);
 
@@ -214,7 +214,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -298,7 +298,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$num_rows = $db->num_rows($resql);
 		while ($i < $num_rows) {
 			$array = $db->fetch_array($resql);
-			array_push($def, $array[0]);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
 			$i++;
 		}
 	} else {

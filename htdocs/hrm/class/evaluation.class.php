@@ -53,17 +53,6 @@ class Evaluation extends CommonObject
 	public $table_element = 'hrm_evaluation';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for evaluation. Must be the part after the 'object_' into object_evaluation.png
 	 */
 	public $picto = 'label';
@@ -128,7 +117,6 @@ class Evaluation extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -185,6 +173,9 @@ class Evaluation extends CommonObject
 		global $conf, $langs, $user;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

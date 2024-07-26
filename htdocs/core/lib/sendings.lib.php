@@ -361,7 +361,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					// Add description in form
 					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print (!empty($objp->description) && $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
+						print (!empty($objp->description) ? ((empty($objp->product) || $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '') : '');
 					}
 
 					print '</td>';

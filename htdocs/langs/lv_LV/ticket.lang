@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Pieteikumi
 Module56000Desc=Biļešu sistēma izsniegšanai vai pieprasījuma pārvaldīšanai
-
 Permission56001=Apskatīt pieteikumus
 Permission56002=Labot pieteikumus
 Permission56003=Dzēst pieteikumus
 Permission56004=Pieteikumu pārvaldīšana
 Permission56005=Skatīt visu trešo pušu biļetes (nav efektīvas ārējiem lietotājiem, vienmēr aprobežojas ar trešajām personām, no kurām tie ir atkarīgi)
 Permission56006=Eksporta biļetes
-
 Tickets=Pieteikumi
 TicketDictType=Pieteikumu veids
 TicketDictCategory=Biļete – Grupas
 TicketDictSeverity=Pieteikuma svarīgums
 TicketDictResolution=Biļete - izšķirtspēja
-
 TicketTypeShortCOM=Tirdzniecības jautājums
 TicketTypeShortHELP=Lūgums pēc funkcionālās palīdzības
 TicketTypeShortISSUE=Izdevums vai kļūda
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problēma
 TicketTypeShortREQUEST=Mainīt vai uzlabot pieprasījumu
 TicketTypeShortPROJET=Projekts
 TicketTypeShortOTHER=Cits
-
 TicketSeverityShortLOW=Zems
 TicketSeverityShortNORMAL=Normāls
 TicketSeverityShortHIGH=Augsts
 TicketSeverityShortBLOCKING=Kritisks, bloķējošs
-
 TicketCategoryShortOTHER=Cits
-
 ErrorBadEmailAddress=Lauks "%s" ir nepareizs
 MenuTicketMyAssign=Mani pieteikumi
 MenuTicketMyAssignNonClosed=Mani atvērtie pieteikumi
 MenuListNonClosed=Atvērtie pieteikumi
-
 TypeContact_ticket_internal_CONTRIBUTOR=Ieguldītājs
 TypeContact_ticket_internal_SUPPORTTEC=Piešķirtais lietotājs
 TypeContact_ticket_external_SUPPORTCLI=Klientu kontaktu / incidentu izsekošana
 TypeContact_ticket_external_CONTRIBUTOR=Ārējais ieguldītājs
-
 OriginEmail=Reportiera e-pasts
+EmailReplyto=Atbildiet uz e-pastā
+EmailReferences=Atsauces e-pastos
 Notify_TICKET_SENTBYMAIL=Sūtīt biļeti pa e-pastu
-
 ExportDataset_ticket_1=Pieteikumi
-
 # Status
 Read=Lasīt
 Assigned=Piešķirts
 NeedMoreInformation=Gaida reportiera atsauksmes
 NeedMoreInformationShort=Gaida atsauksmes
-TicketAnswered=Atbildēts
 Waiting=Gaida
 SolvedClosed=Atrisināts
 Deleted=Dzēsts
-
 # Dict
-Type=Veids
 Severity=Smagums
 TicketGroupIsPublic=Grupa ir publiska
 TicketGroupIsPublicDesc=Ja biļešu grupa ir publiska, tā būs redzama formā, veidojot biļeti no publiskās saskarnes
-
 # Email templates
 MailToSendTicketMessage=Lai nosūtītu e-pastu no pieteikuma
-
-#
 # Admin page
-#
 TicketSetup=Pieteikumu moduļa iestatīšana
 TicketSettings=Iestatījumi
 TicketPublicAccess=Publiska saskarne, kurai nav nepieciešama identifikācija, ir pieejama šādā URL
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Veidojot biļeti, izmantojiet grafisko kodu (CAPTCHA).
 TicketUseCaptchaCodeHelp=Veidojot jaunu biļeti, pievieno CAPTCHA verifikāciju.
 TicketsAllowClassificationModificationIfClosed=Atļaut mainīt slēgto biļešu klasifikāciju
 TicketsAllowClassificationModificationIfClosedHelp=Atļaut mainīt klasifikāciju (tips, biļešu grupa, smaguma pakāpe) pat tad, ja biļetes ir slēgtas.
-
-#
 # Index & list page
-#
 TicketsIndex=Biļešu zona
 TicketList=Pieteikumu saraksts
 TicketAssignedToMeInfos=Šī lapa parāda pieteikumu sarakstu, kas izveidots vai piešķirts pašreizējam lietotājam
@@ -175,10 +152,7 @@ ShowAsConversation=Rādīt kā sarunu sarakstu
 MessageListViewType=Rādīt kā tabulu sarakstu
 ConfirmMassTicketClosingSendEmail=Automātiski sūtīt e-pastus, aizverot biļetes
 ConfirmMassTicketClosingSendEmailQuestion=Vai vēlaties informēt trešās puses, slēdzot šīs biļetes?
-
-#
 # Ticket card
-#
 Ticket=Biļete
 TicketCard=Pieteikuma kartiņa
 CreateTicket=Izveidot pieteikumu
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Pārāk daudz laika pagājis kopš pēdējā
 TicketNoContractFoundToLink=Netika atrasts neviens līgums, kas būtu automātiski saistīts ar šo biļeti. Lūdzu, manuāli saistiet līgumu.
 TicketManyContractsLinked=Daudzi līgumi ir automātiski saistīti ar šo biļeti. Noteikti pārbaudiet, kuru izvēlēties.
 TicketRefAlreadyUsed=Atsauce [%s] jau ir izmantota, jūsu jaunā atsauce ir [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Pieteikumu %s apskatīja %s
 NoLogForThisTicket=Vēl nav piereģistrējies par šo biļeti
 TicketLogAssignedTo=Pieteikums %s piešķirts %s
 TicketLogPropertyChanged=Pieteikums %s labots: klasifikācija no %s līdz %s
 TicketLogClosedBy=Pieteikumu %s slēdza %s
 TicketLogReopen=Pieteikums %s atvērts atkārtoti
-
-#
 # Public pages
-#
 TicketSystem=Pieteikumu sistēma
 ShowListTicketWithTrackId=Parādīt biļešu sarakstu no maršruta ID
 ShowTicketWithTrackId=Rādīt biļeti no maršruta ID
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Šis ir automātiskais e-pasta ziņojums, kas apstipr
 TicketNewEmailBodyInfosTicket=Informācija biļetes uzraudzībai
 TicketNewEmailBodyInfosTrackId=Biļešu izsekošanas numurs: %s
 TicketNewEmailBodyInfosTrackUrl=Biļešu iegādes gaitu varat apskatīt, noklikšķinot uz šīs saites
-TicketNewEmailBodyInfosTrackUrlCustomer=Jūs varat apskatīt pieteikuma statusu konkrētajā saskarnē, noklikšķinot uz šīs saites
+TicketNewEmailBodyInfosTrackUrlCustomer=Biļešu iegādes gaitu varat apskatīt publiskajā biļešu portālā, noklikšķinot uz šīs saites
 TicketCloseEmailBodyInfosTrackUrlCustomer=Ar šīs biļetes vēsturi varat iepazīties, noklikšķinot uz šīs saites
 TicketEmailPleaseDoNotReplyToThisEmail=Lūdzu, neatbildiet tieši uz šo e-pastu! Izmantojiet saiti, lai atbildētu interfeisu.
 TicketPublicInfoCreateTicket=Šī veidlapa ļauj ierakstīt atbalsta biļeti mūsu vadības sistēmā.
 TicketPublicPleaseBeAccuratelyDescribe=Lūdzu, precīzi aprakstiet savu pieprasījumu. Sniedziet pēc iespējas vairāk informācijas, lai mēs varētu pareizi identificēt jūsu pieprasījumu.
 TicketPublicMsgViewLogIn=Lūdzu, ievadiet biļešu izsekošanas ID
-TicketTrackId=Publiskais izsekošanas ID
+TicketTrackId=Izsekošanas ID
 OneOfTicketTrackId=Viens no jūsu izsekošanas ID
 ErrorTicketNotFound=Biļete ar izsekošanas ID %s nav atrasts!
 Subject=Virsraksts
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Pieteikumu skaits mēnesī
 NbOfTickets=Pieteikumu skaits
 ExternalContributors=Ārējie ieguldītāji
 AddContributor=Pievienojiet ārējo līdzautoru
-
 # notifications
 TicketCloseEmailSubjectCustomer=Biļete slēgta
 TicketCloseEmailBodyCustomer=Šis ir automātisks ziņojums, lai informētu, ka biļete %s tikko ir aizvērta.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Paziņojuma saņēmējs
 TicketNotificationLogMessage=Log ziņojums
 TicketNotificationEmailBodyInfosTrackUrlinternal=Skatīt biļeti interfeisu
 TicketNotificationNumberEmailSent=Paziņojuma e-pasts nosūtīts: %s
-
 ActionsOnTicket=Notikumi biļetē
-
-#
 # Boxes
-#
 BoxLastTicket=Jaunākais izveidotais pieteikums
 BoxLastTicketDescription=Jaunākie %s izveidotie pieteikumi
 BoxLastTicketContent=

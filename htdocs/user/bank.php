@@ -8,6 +8,7 @@
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,7 @@ $bankid = GETPOSTINT('bankid');
 $action = GETPOST("action", 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercardBank', 'globalcard'));
 
 // Security check
@@ -122,7 +123,7 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOSTINT('courant');
+	$account->type = GETPOSTINT('courant'); // not used
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -131,7 +132,8 @@ if ($action == 'add' && !$cancel && $permissiontoaddbankaccount) {
 	$account->iban            = GETPOST('iban', 'alpha');
 	$account->domiciliation   = GETPOST('address', 'alpha');
 	$account->address         = GETPOST('address', 'alpha');
-	$account->proprio         = GETPOST('proprio', 'alpha');
+	$account->owner_name = GETPOST('proprio', 'alpha');
+	$account->proprio = $account->owner_name;
 	$account->owner_address   = GETPOST('owner_address', 'alpha');
 
 	$account->currency_code = trim(GETPOST("account_currency_code"));
@@ -154,7 +156,7 @@ if ($action == 'update' && !$cancel && $permissiontoaddbankaccount) {
 
 	$account->bank            = GETPOST('bank', 'alpha');
 	$account->label           = GETPOST('label', 'alpha');
-	$account->courant         = GETPOSTINT('courant');
+	$account->type = GETPOSTINT('courant'); // not used
 	$account->code_banque     = GETPOST('code_banque', 'alpha');
 	$account->code_guichet    = GETPOST('code_guichet', 'alpha');
 	$account->number          = GETPOST('number', 'alpha');
@@ -280,7 +282,7 @@ $childids = $user->getAllChildIds(1);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('BankAccounts');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-bank');
 
 $head = user_prepare_head($object);
 
@@ -960,6 +962,7 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 
 	// Show fields of bank account
 	$bankaccount = $account;
+
 	// Code here is similar as in paymentmodes.php for third-parties
 	foreach ($bankaccount->getFieldsToShow(1) as $val) {
 		$require = false;

@@ -5,6 +5,7 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2015	    Alexandre Spangaro	    <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +191,7 @@ class UserBankAccount extends Account
 		}
 
 		$sql = "SELECT ur.rowid, ur.fk_user, ur.entity, ur.bank, ur.number, ur.code_banque, ur.code_guichet, ur.cle_rib, ur.bic, ur.iban_prefix as iban, ur.domiciliation as address";
-		$sql .= ", ur.proprio, ur.owner_address, ur.label, ur.datec, ur.tms as datem";
+		$sql .= ", ur.proprio as owner_name, ur.owner_address, ur.label, ur.datec, ur.tms as datem";
 		$sql .= ', ur.currency_code, ur.state_id, ur.fk_country as country_id';
 		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ', d.code_departement as state_code, d.nom as state';
@@ -222,11 +223,14 @@ class UserBankAccount extends Account
 				$this->cle_rib = $obj->cle_rib;
 				$this->bic = $obj->bic;
 				$this->iban = $obj->iban;
+				$this->courant = self::TYPE_CURRENT;
+				$this->type = self::TYPE_CURRENT;
 
 				$this->domiciliation = $obj->address;
 				$this->address = $obj->address;
 
-				$this->proprio = $obj->proprio;
+				$this->proprio = $obj->owner_name;
+				$this->owner_name = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->label = $obj->label;
 				$this->datec = $this->db->jdate($obj->datec);
@@ -253,10 +257,11 @@ class UserBankAccount extends Account
 	/**
 	 *  Delete user bank account from database
 	 *
-	 *  @param	User|null	$user	User deleting
-	 *  @return int             	Return integer <0 if KO, >0 if OK
+	 *  @param	User|null	$user		User deleting
+	 *	@param  int			$notrigger	1=Disable triggers
+	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete(User $user = null, $notrigger = 0)
 	{
 		$error = 0;
 

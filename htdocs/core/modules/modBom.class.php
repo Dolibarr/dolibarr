@@ -282,7 +282,7 @@ class modBom extends DolibarrModules
 		$keyforelement = 'bom';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		$keyforclass = 'BOMLine';
-		$keyforclassfile = '/bom/class/bom.class.php';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforclassfile = '/bom/class/bom.class.php';
 		$keyforelement = 'bomline';
 		$keyforalias = 'tl';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
@@ -329,7 +329,7 @@ class modBom extends DolibarrModules
 			'b.efficiency'        => 'Efficiency',
 			'b.duration'          => 'Duration',
 			'b.date_creation'     => 'DateCreation',
-			'b.date_valid'        => 'DateValid',
+			'b.date_valid'        => 'DateValidation',
 			'b.fk_user_modif'     => 'ModifiedById',
 			'b.fk_user_valid'     => 'ValidatedById',
 			'b.model_pdf'         => 'Model',
@@ -464,6 +464,10 @@ class modBom extends DolibarrModules
 		//$result4=$extrafields->addExtraField('myattr4', "New Attr 4 label", 'select',  1,  3, 'thirdparty',   0, 1, '', array('options'=>array('code1'=>'Val1','code2'=>'Val2','code3'=>'Val3')), 1,'', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 		//$result5=$extrafields->addExtraField('myattr5', "New Attr 5 label", 'text',    1, 10, 'user',         0, 0, '', '', 1, '', 0, 0, '', '', 'mrp', '$conf->bom->enabled');
 
+		$result = $this->_load_tables('/install/mysql/', 'bom');
+		if ($result < 0) {
+			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
+		}
 
 		// Permissions
 		$this->remove($options);

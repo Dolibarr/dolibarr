@@ -45,6 +45,11 @@ class DoliDBSqlite3 extends DoliDB
 	 */
 	private $_results;
 
+	/**
+	 * @var string					Last query string
+	 */
+	private $queryString;
+
 	const WEEK_MONDAY_FIRST = 1;
 	const WEEK_YEAR = 2;
 	const WEEK_FIRST_WEEKDAY = 4;
@@ -310,12 +315,12 @@ class DoliDBSqlite3 extends DoliDB
 	/**
 	 *	Connection to server
 	 *
-	 *	@param	    string	$host		database server host
-	 *	@param	    string	$login		login
-	 *	@param	    string	$passwd		password
-	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		integer	$port		Port of database server
-	 *	@return		SQLite3|string				Database access handler
+	 *	@param	    string			$host		database server host
+	 *	@param	    string			$login		login
+	 *	@param	    string			$passwd		password
+	 *	@param		string			$name		name of database (not used for mysql, used for pgsql)
+	 *	@param		integer			$port		Port of database server
+	 *	@return		SQLite3|false				Database access handler
 	 *	@see		close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0)
@@ -338,7 +343,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		} catch (Exception $e) {
 			$this->error = self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
-			return '';
+			return false;
 		}
 
 		//print "Resultat fonction connect: ".$this->db;
@@ -396,13 +401,13 @@ class DoliDBSqlite3 extends DoliDB
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *	@param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 *	@param	int		$result_mode	Result mode (not used with sqlite)
-	 *	@return	bool|SQLite3Result|null	Resultset of answer
+	 *	@return	false|SQLite3Result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
 		global $conf, $dolibarr_main_db_readonly;
 
-		$ret = null;
+		$ret = false;
 
 		$query = trim($query);
 
@@ -473,7 +478,7 @@ class DoliDBSqlite3 extends DoliDB
 			//$ret = $this->db->exec($query);
 			$ret = $this->db->query($query); // $ret is a Sqlite3Result
 			if ($ret) {
-				$ret->queryString = $query;
+				$this->queryString = $query;
 			}
 		} catch (Exception $e) {
 			$this->error = $this->db->lastErrorMsg();
@@ -581,7 +586,6 @@ class DoliDBSqlite3 extends DoliDB
 	public function num_rows($resultset)
 	{
 		// phpcs:enable
-		// FIXME: SQLite3Result does not have a queryString member
 
 		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
@@ -604,13 +608,12 @@ class DoliDBSqlite3 extends DoliDB
 	public function affected_rows($resultset)
 	{
 		// phpcs:enable
-		// FIXME: SQLite3Result does not have a queryString member
 
 		// If resultset not provided, we take the last used by connection
 		if (!is_object($resultset)) {
 			$resultset = $this->_results;
 		}
-		if (preg_match("/^SELECT/i", $resultset->queryString)) {
+		if (preg_match("/^SELECT/i", $this->queryString)) {
 			return $this->num_rows($resultset);
 		}
 		// mysql necessite un link de base pour cette fonction contrairement
@@ -841,7 +844,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	SQLite3Result   		resource defined if OK, null if KO
+	 * 	@return	false|SQLite3Result   		Resource defined if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
 	{

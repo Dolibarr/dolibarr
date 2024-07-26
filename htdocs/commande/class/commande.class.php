@@ -11,9 +11,9 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2022      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 
 /**
  *  \file       htdocs/commande/class/commande.class.php
- *  \ingroup    commande
+ *  \ingroup    order
  *  \brief      class for orders
  */
 
@@ -77,17 +77,6 @@ class Commande extends CommonOrder
 	 * @var string String with name of icon for commande class. Here is object_order.png
 	 */
 	public $picto = 'order';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -201,19 +190,19 @@ class Commande extends CommonOrder
 	public $demand_reason_code;
 
 	/**
-	 * @var int Date of order
+	 * @var null|int|'' Date of order
 	 */
 	public $date;
 
 	/**
-	 * @var int Date of order
+	 * @var null|int|'' Date of order
 	 * @deprecated
 	 * @see $date
 	 */
 	public $date_commande;
 
 	/**
-	 * @var int	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
+	 * @var null|int|''	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 	 */
 	public $delivery_date;
 
@@ -228,6 +217,12 @@ class Commande extends CommonOrder
 	public $remise_percent;
 
 	public $source; // Order mode. How we received order (by phone, by email, ...)
+
+	/**
+	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
+	 * @var int
+	 */
+	public $signed_status = 0;
 
 	/**
 	 * @var int Warehouse Id
@@ -318,6 +313,7 @@ class Commande extends CommonOrder
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'position' => 135, 'isameasure' => 1),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 146, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
@@ -374,12 +370,37 @@ class Commande extends CommonOrder
 	 * Shipment on process
 	 */
 	const STATUS_SHIPMENTONPROCESS = 2;		// We set this status when a shipment is validated
-	const STATUS_ACCEPTED = 2; 				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+
+	/**
+	 * For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+	 * @deprecated
+	 */
+	const STATUS_ACCEPTED = 2;
 
 	/**
 	 * Closed (Sent, billed or not)
 	 */
 	const STATUS_CLOSED = 3;
+
+	/*
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/*
+	 * Signed by sender
+	 */
+	CONST STATUS_SIGNED_SENDER   = 1;
+
+	/*
+	 * Signed by receiver
+	 */
+	CONST STATUS_SIGNED_RECEIVER = 2;
+
+	/*
+	 * Signed by all
+	 */
+	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -390,6 +411,9 @@ class Commande extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 	}
 
 	/**
@@ -619,7 +643,7 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->statut <= self::STATUS_DRAFT && !getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
 			return 0;
 		}
 
@@ -1139,7 +1163,7 @@ class Commande extends CommonOrder
 								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 							}
 						} else {
-							dol_print_error($resqlcontact);
+							dol_print_error($this->db, $resqlcontact);
 						}
 					}
 
@@ -1713,6 +1737,7 @@ class Commande extends CommonOrder
 
 				if ($result > 0) {
 					$this->db->commit();
+					$this->lines[] = $this->line;
 					return $this->line->id;
 				} else {
 					$this->db->rollback();
@@ -1985,9 +2010,9 @@ class Commande extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Add line of fixed discount in the order in DB
+	 *	Add a discount line into a sale order (as a sale order line) using an existing absolute discount (Consume the discount)
 	 *
-	 *	@param     int	$idremise			Id for the fixed discount
+	 *	@param     int	$idremise			Id for the fixed discount from table llx_societe_remise_except
 	 *	@return    int          			>0 if OK, <0 if KO
 	 */
 	public function insert_discount($idremise)
@@ -3239,7 +3264,7 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = empty($localtaxes_type[0]) ? '' : $localtaxes_type[0];
 			$this->line->localtax2_type = empty($localtaxes_type[2]) ? '' : $localtaxes_type[2];
 			$this->line->remise_percent = $remise_percent;
-			$this->line->subprice       = $subprice;
+			$this->line->subprice       = $pu_ht;
 			$this->line->info_bits      = $info_bits;
 			$this->line->special_code   = $special_code;
 			$this->line->total_ht       = $total_ht;
@@ -3762,7 +3787,7 @@ class Commande extends CommonOrder
 			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetch_project();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
@@ -4197,6 +4222,20 @@ class Commande extends CommonOrder
 		$text .= ' '.($conf->commande->client->warning_delay > 0 ? '+' : '-').' '.round(abs($conf->commande->client->warning_delay) / 3600 / 24, 1).' '.$langs->trans("days").' < '.$langs->trans("Today");
 
 		return $text;
+	}
+
+	/**
+	 * Set signed status
+	 *
+	 * @param  User   $user        Object user that modify
+	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string $triggercode Trigger code to use
+	 * @return int                 0 < if KO, > 0 if OK
+	 */
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	{
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }
 

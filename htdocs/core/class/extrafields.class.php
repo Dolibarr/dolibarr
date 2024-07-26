@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2023  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -47,7 +47,7 @@ class ExtraFields
 	/**
 	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed[]>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,loaded?:int,count:int}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
-	public $attributes;
+	public $attributes = array();
 
 	/**
 	 * @var array<string,bool>	Array with boolean of status of groups
@@ -96,6 +96,10 @@ class ExtraFields
 		'checkbox' => 'ExtrafieldCheckBox',
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
+		'point' => 'ExtrafieldPointGeo',
+		'multipts' => 'ExtrafieldMultiPointGeo',
+		'linestrg' => 'ExtrafieldLinestringGeo',
+		'polygon' => 'ExtrafieldPolygonGeo',
 		'separate' => 'ExtrafieldSeparator',
 	);
 
@@ -107,9 +111,6 @@ class ExtraFields
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->error = '';
-		$this->errors = array();
-		$this->attributes = array();
 	}
 
 	/**
@@ -312,6 +313,18 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'point') {
+				$typedb = 'point';
+				$lengthdb = '';
+			} elseif ($type == 'multipts') {
+				$typedb = 'multipoint';
+				$lengthdb = '';
+			} elseif ($type == 'linestrg') {
+				$typedb = 'linestring';
+				$lengthdb = '';
+			} elseif ($type == 'polygon') {
+				$typedb = 'polygon';
+				$lengthdb = '';
 			} elseif ($type == 'html') {
 				$typedb = 'text';
 				$lengthdb = $length;
@@ -670,6 +683,18 @@ class ExtraFields
 			} elseif ($type == 'link') {
 				$typedb = 'int';
 				$lengthdb = '11';
+			} elseif ($type == 'point') {
+				$typedb = 'point';
+				$lengthdb = '';
+			} elseif ($type == 'multipts') {
+				$typedb = 'multipoint';
+				$lengthdb = '';
+			} elseif ($type == 'linestrg') {
+				$typedb = 'linestring';
+				$lengthdb = '';
+			} elseif ($type == 'polygon') {
+				$typedb = 'polygon';
+				$lengthdb = '';
 			} elseif ($type == 'password') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
@@ -872,8 +897,8 @@ class ExtraFields
 			$sql .= " ".$pos.",";
 			$sql .= " '".$this->db->escape($alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
-			$sql .= " '".$this->db->escape($list)."', ";
-			$sql .= " '".$this->db->escape($printable)."', ";
+			$sql .= " '".$this->db->escape($list)."',";
+			$sql .= " ".((int) $printable).",";
 			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
 			$sql .= " ".(($default != '') ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
@@ -1014,8 +1039,8 @@ class ExtraFields
 	 * @param  string        $key            		Key of attribute
 	 * @param  string|array  $value 			    Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value); for dates in filter mode, a range array('start'=><timestamp>, 'end'=><timestamp>) should be provided
 	 * @param  string        $moreparam      		To add more parameters on html input tag
-	 * @param  string        $keysuffix      		Prefix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string        $keyprefix      		Suffix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keysuffix      		Suffix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string        $keyprefix      		Prefix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string        $morecss        		More css (to defined size of field. Old behaviour: may also be a numeric)
 	 * @param  int           $objectid       		Current object id
 	 * @param  string        $extrafieldsobjectkey	The key to use to store retrieved data (commonly $object->table_element)
@@ -1056,6 +1081,9 @@ class ExtraFields
 		$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 		$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+
+		//var_dump('key='.$key.' '.$value.' '.$moreparam.' '.$keysuffix.' '.$keyprefix.' '.$objectid.' '.$extrafieldsobjectkey.' '.$mode);
+		//var_dump('label='.$label.' type='.$type.' param='.var_export($param, 1));
 
 		if ($computed) {
 			if (!preg_match('/^search_/', $keyprefix)) {
@@ -1192,7 +1220,7 @@ class ExtraFields
 		} elseif ($type == 'html') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
+				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
@@ -1214,7 +1242,7 @@ class ExtraFields
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
-			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone right" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').' placeholder="'.$langs->getCurrencySymbol($conf->currency).'">';
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
 			if (!empty($value)) {
@@ -1231,7 +1259,7 @@ class ExtraFields
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
 		} elseif ($type == 'select') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			if ($mode) {
 				$options = array();
 				foreach ($param['options'] as $okey => $val) {
@@ -1286,7 +1314,7 @@ class ExtraFields
 				$out .= '</select>';
 			}
 		} elseif ($type == 'sellist') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
@@ -1449,7 +1477,7 @@ class ExtraFields
 			}
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ? null : $param['options']), $value_arr, '', 0, '', 0, '100%');
 		} elseif ($type == 'radio') {
-			$out = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$out = '';
 			foreach ($param['options'] as $keyopt => $val) {
 				$out .= '<input class="flat '.$morecss.'" type="radio" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '');
 				$out .= ' value="'.$keyopt.'"';
@@ -1666,10 +1694,10 @@ class ExtraFields
 				}
 			}
 		} elseif ($type == 'link') {
-			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
+			$param_list = array_keys($param['options']); // $param_list[0] = 'ObjectName:classPath' but can also be 'ObjectName:classPath:1:(status:=:1)'
 			/* Removed.
-			The selectForForms is called with parameter $objectfield defined, so that the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
-			filter was used to pass SQL requests leading to serious SQL injection problems. This should not be possible. Also the call of the ajax was broken by some WAF.
+			The selectForForms is called with parameter $objectfield defined, so the app can retrieve the filter inside the ajax component instead of being provided as parameters. The
+			filter was used to pass SQL requests leading to serious SQL injection problem. This should not be possible. Also the call of the ajax was broken by some WAF.
 			if (strpos($param_list[0], '$ID$') !== false && !empty($objectid)) {
 				$param_list[0] = str_replace('$ID$', $objectid, $param_list[0]);
 			}*/
@@ -1684,8 +1712,29 @@ class ExtraFields
 				$element = 'project';
 			}
 
-			//$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '');
-			$out = $form->selectForForms($tmparray[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $element.':options_'.$key);
+			//$objectdesc = $param_list[0];				// Example: 'ObjectName:classPath:1:(status:=:1)'	Replaced by next line: this was propagated also a filter by ajax call that was blocked by some WAF
+			$objectdesc = $tmparray[0];					// Example: 'ObjectName:classPath'					To not propagate any filter (selectForForms do ajax call and propagating SQL filter is blocked by some WAF). Also we should use the one into the definition in the ->fields of $elem if found.
+			$objectfield = $element.':options_'.$key;	// Example: 'actioncomm:options_fff'				To be used in priority to know object linked with all its definition (including filters)
+
+			$out = $form->selectForForms($objectdesc, $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $objectfield);
+		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+			$dolgeophp = new DolGeoPHP($this->db);
+			$geojson = '{}';
+			$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
+			if (!empty($value)) {
+				$tmparray = $dolgeophp->parseGeoString($value);
+				$geojson = $tmparray['geojson'];
+				$centroidjson = $tmparray['centroidjson'];
+			}
+			if (!preg_match('/search_/', $keyprefix)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
+				$geomapeditor = new GeoMapEditor();
+				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
+			} else {
+				// If keyprefix is search_ or search_options_, we must just use a simple text field
+				$out = '';
+			}
 		} elseif ($type == 'password') {
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
@@ -1740,6 +1789,8 @@ class ExtraFields
 		$langfile = $this->attributes[$extrafieldsobjectkey]['langfile'][$key];
 		$list = (string) dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '2');
 		$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
+		$cssview = $this->attributes[$extrafieldsobjectkey]['cssview'][$key];
+
 		$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 
 		if ($hidden) {
@@ -2050,8 +2101,24 @@ class ExtraFields
 					return 'Error bad setup of extrafield';
 				}
 			}
+		} elseif ($type == 'point') {
+			if (!empty($value)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+				$dolgeophp = new DolGeoPHP($this->db);
+				$value = $dolgeophp->getXYString($value);
+			} else {
+				$value = '';
+			}
+		} elseif (in_array($type, ['multipts','linestrg', 'polygon'])) {
+			if (!empty($value)) {
+				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+				$dolgeophp = new DolGeoPHP($this->db);
+				$value = $dolgeophp->getPointString($value);
+			} else {
+				$value = '';
+			}
 		} elseif ($type == 'text') {
-			$value = dol_htmlentitiesbr($value);
+			$value = '<div class="'.($cssview ? $cssview : 'shortmessagecut').'">'.dol_htmlentitiesbr($value).'</div>';
 		} elseif ($type == 'html') {
 			$value = dol_htmlentitiesbr($value);
 		} elseif ($type == 'password') {
@@ -2078,8 +2145,6 @@ class ExtraFields
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
 	{
-		global $conf, $langs;
-
 		$type = 'varchar';
 		if (!empty($extrafieldsobjectkey)) {
 			$type = $this->attributes[$extrafieldsobjectkey]['type'][$key];
@@ -2233,7 +2298,7 @@ class ExtraFields
 					continue;
 				}
 
-				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst')))) {
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && !GETPOSTISSET('options_'.$key) && (! in_array($this->attributes[$object->table_element]['type'][$key], array('boolean', 'checkbox', 'chkbxlst', 'point', 'multipts', 'linestrg', 'polygon')))) {
 					//when unticking boolean field, it's not set in POST
 					continue;
 				}
@@ -2319,6 +2384,16 @@ class ExtraFields
 					$value_key = price2num(GETPOST("options_".$key, 'alpha')).':'.GETPOST("options_".$key."currency_id", 'alpha');
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'restricthtml');
+				} elseif (in_array($key_type, ['point', 'multipts', 'linestrg', 'polygon'])) {
+					// construct point
+					require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
+					$geojson = GETPOST("options_".$key, 'restricthtml');
+					if ($geojson != '{}') {
+						$dolgeophp = new DolGeoPHP($this->db);
+						$value_key = $dolgeophp->getWkt($geojson);
+					} else {
+						$value_key = '';
+					}
 				} elseif (in_array($key_type, array('text'))) {
 					$label_security_check = 'alphanohtml';
 					// by default 'alphanohtml' (better security); hidden conf MAIN_SECURITY_ALLOW_UNSECURED_LABELS_WITH_HTML allows basic html
@@ -2364,11 +2439,11 @@ class ExtraFields
 	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
 	 * @param  array|string		$extrafieldsobjectkey  	array of extrafields (old usage) or value of object->table_element (new usage)
-	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string			$keysuffix      		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  string			$keyprefix      		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return array|int								array_options set or 0 if no value
 	 */
-	public function getOptionalsFromPost($extrafieldsobjectkey, $keyprefix = '', $keysuffix = '')
+	public function getOptionalsFromPost($extrafieldsobjectkey, $keysuffix = '', $keyprefix = '')
 	{
 		global $_POST;
 
@@ -2389,8 +2464,8 @@ class ExtraFields
 				}
 
 				if (in_array($key_type, array('date'))) {
-					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
-					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
+					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
 					if (GETPOST($dateparamname_start . 'year') || GETPOST($dateparamname_end . 'year')) {
 						$value_key = array();
 						// values provided as a component year, month, day, etc.
@@ -2400,15 +2475,16 @@ class ExtraFields
 						if (GETPOST($dateparamname_start . 'year')) {
 							$value_key['end'] = dol_mktime(23, 59, 59, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'));
 						}
-					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
 						// Clean parameters
-						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"));
+						$value_key = dol_mktime(12, 0, 0, GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"));
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
 				} elseif (in_array($key_type, array('datetime', 'datetimegmt'))) {
-					$dateparamname_start = $keysuffix . 'options_' . $key . $keyprefix . '_start';
-					$dateparamname_end   = $keysuffix . 'options_' . $key . $keyprefix . '_end';
+					$dateparamname_start = $keyprefix . 'options_' . $key . $keysuffix . '_start';
+					$dateparamname_end   = $keyprefix . 'options_' . $key . $keysuffix . '_end';
+
 					if (GETPOST($dateparamname_start . 'year') && GETPOST($dateparamname_end . 'year')) {
 						// values provided as a date pair (start date + end date), each date being broken down as year, month, day, etc.
 						$dateparamname_end_hour = GETPOSTINT($dateparamname_end . 'hour') != '-1' ? GETPOSTINT($dateparamname_end . 'hour') : '23';
@@ -2416,51 +2492,51 @@ class ExtraFields
 						$dateparamname_end_sec = GETPOSTINT($dateparamname_end . 'sec') != '-1' ? GETPOSTINT($dateparamname_end . 'sec') : '59';
 						if ($key_type == 'datetimegmt') {
 							$value_key = array(
-								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
+							'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'gmt'),
+							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'gmt')
 							);
 						} else {
 							$value_key = array(
-								'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
-								'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
+							'start' => dol_mktime(GETPOSTINT($dateparamname_start . 'hour'), GETPOSTINT($dateparamname_start . 'min'), GETPOSTINT($dateparamname_start . 'sec'), GETPOSTINT($dateparamname_start . 'month'), GETPOSTINT($dateparamname_start . 'day'), GETPOSTINT($dateparamname_start . 'year'), 'tzuserrel'),
+							'end' => dol_mktime($dateparamname_end_hour, $dateparamname_end_min, $dateparamname_end_sec, GETPOSTINT($dateparamname_end . 'month'), GETPOSTINT($dateparamname_end . 'day'), GETPOSTINT($dateparamname_end . 'year'), 'tzuserrel')
 							);
 						}
-					} elseif (GETPOST($keysuffix."options_".$key.$keyprefix."year")) {
+					} elseif (GETPOST($keyprefix."options_".$key.$keysuffix."year")) {
 						// Clean parameters
 						if ($key_type == 'datetimegmt') {
-							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'gmt');
+							$value_key = dol_mktime(GETPOSTINT($keyprefix."options_".$key.$keysuffix."hour"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."min"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."sec"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"), 'gmt');
 						} else {
-							$value_key = dol_mktime(GETPOSTINT($keysuffix."options_".$key.$keyprefix."hour"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."min"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."sec"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."month"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."day"), GETPOSTINT($keysuffix."options_".$key.$keyprefix."year"), 'tzuserrel');
+							$value_key = dol_mktime(GETPOSTINT($keyprefix."options_".$key.$keysuffix."hour"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."min"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."sec"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."month"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."day"), GETPOSTINT($keyprefix."options_".$key.$keysuffix."year"), 'tzuserrel');
 						}
 					} else {
 						continue; // Value was not provided, we should not set it.
 					}
 				} elseif ($key_type == 'select') {
 					// to detect if we are in search context
-					if (GETPOSTISARRAY($keysuffix."options_".$key.$keyprefix)) {
-						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix, 'array:aZ09');
+					if (GETPOSTISARRAY($keyprefix."options_".$key.$keysuffix)) {
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix, 'array:aZ09');
 						// Make sure we get an array even if there's only one selected
 						$value_arr = (array) $value_arr;
 						$value_key = implode(',', $value_arr);
 					} else {
-						$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+						$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
 					}
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					// We test on a hidden field named "..._multiselect" that is always set to 1 if param is in form so
 					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix.'_multiselect')) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix.'_multiselect')) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
 				} elseif (in_array($key_type, array('price', 'double', 'int'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
-					if ($keysuffix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
+					$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($keyprefix != 'search_') {    // If value is for a search, we must keep complex string like '>100 <=150'
 						$value_key = price2num($value_arr);
 					} else {
 						$value_key = $value_arr;
@@ -2468,31 +2544,59 @@ class ExtraFields
 				} elseif (in_array($key_type, array('boolean'))) {
 					// We test on a hidden field named "..._boolean" that is always set to 1 if param is in form so
 					// when nothing is provided we can make a difference between noparam in the form and param was set to nothing.
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."_boolean")) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix."_boolean")) {
 						$value_key = '';
 					} else {
-						$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
+						$value_arr = GETPOST($keyprefix."options_".$key.$keysuffix);
 						$value_key = $value_arr;
 					}
 				} elseif (in_array($key_type, array('html'))) {
-					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
+					$value_key = dol_htmlcleanlastbr(GETPOST($keyprefix."options_".$key.$keysuffix, 'restricthtml'));
 				} else {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
-					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+					$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
 				}
 
-				$array_options[$keysuffix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
+				$array_options[$keyprefix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.
 			}
 
 			return $array_options;
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Return array with all possible types and labels of extrafields
+	 *
+	 * @return string[]
+	 */
+	public static function getListOfTypesLabels()
+	{
+		global $langs;
+
+		$tmptype2label = ExtraFields::$type2label;
+		$type2label = array('');
+		foreach ($tmptype2label as $key => $val) {
+			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+		}
+
+		if (!getDolGlobalString('MAIN_USE_EXTRAFIELDS_ICON')) {
+			unset($type2label['icon']);
+		}
+		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
+			unset($type2label['point']);
+			unset($type2label['multipts']);
+			unset($type2label['linestrg']);
+			unset($type2label['polygon']);
+		}
+
+		return $type2label;
 	}
 
 	/**

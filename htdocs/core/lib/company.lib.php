@@ -74,7 +74,7 @@ function societe_prepare_head(Societe $object)
 			$sql .= " WHERE p.fk_soc = ".((int) $object->id);
 			$sql .= " AND p.entity IN (".getEntity($object->element).")";
 			// Add where from hooks
-			$parameters = array('contacttab' => true);  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$parameters = array('contacttab' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
 			$resql = $db->query($sql);
@@ -95,6 +95,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
+		// Some features may be unstable with this option, like permissions rules, import contact, ...
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddressesExt");
@@ -303,6 +304,41 @@ function societe_prepare_head(Societe $object)
 		}
 	}
 
+	// Notifications
+	if (isModEnabled('ticket') && $user->hasRight("ticket", "read")) {
+		//$langs->load('ticket');
+		$nbTicket = 0;
+		// Enable caching of thirdparty count notifications
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_ticket_thirdparty_'.$object->id;
+		$nbticketretreived = dol_getcache($cachekey);
+		if (!is_null($nbticketretreived)) {
+			$nbTicket = $nbticketretreived;
+		} else {
+			// List of notifications enabled for contacts of the third party
+			$sql = "SELECT COUNT(t.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
+			$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbTicket = $obj->nb;
+			} else {
+				dol_print_error($db);
+			}
+			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?socid='.urlencode((string) ($object->id));
+		$head[$h][1] = $langs->trans("Tickets");
+		if ($nbTicket > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTicket.'</span>';
+		}
+		$head[$h][2] = 'ticket';
+		$h++;
+	}
+
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -391,7 +427,7 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
@@ -600,18 +636,18 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
  *    Return state translated from an id. Return value is always utf8 encoded and without entities.
  *
  *    @param    int			$id         	id of state (province/departement)
- *    @param    string		$withcode   	'0'=Return label,
- *    										'1'=Return string code + label,
- *    						  				'2'=Return code,
- *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
- *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @param    int			$withregion   	'0'=Ignores region,
+ *    @param    '0'|'1'|'2'|'all'	$withcode	'0'=Return label,
+ *                                              '1'=Return string code + label,
+ *                                              '2'=Return code,
+ *                                              'all'=return array('id'=>,'code'=>,'label'=>)
+ *    @param	?DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param    int<0,1>	$withregion   	'0'=Ignores region,
  *    										'1'=Add region name/code/id as needed to output,
  *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
- *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
- *    @return   string|array       			String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
+ *    @param    int<0,1>    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @return   string|array{id:int,code:string,label:string}|array{id:int,code:string,label:string,region_code:string,region:string}		String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id, $withcode = '', $dbtouse = null, $withregion = 0, $outputlangs = null, $entconv = 1)
+function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outputlangs = null, $entconv = 1)
 {
 	global $db, $langs;
 
@@ -722,17 +758,22 @@ function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 }
 
 /**
- *    Return the name translated of juridical status
+ *    Return the name translated of juridical status.
+ *    This method include a cache.
  *
  *    @param      string	$code       Code of juridical status
  *    @return     string     			Value of the juridical status
  */
 function getFormeJuridiqueLabel($code)
 {
-	global $db, $langs;
+	global $conf, $db, $langs;
 
 	if (!$code) {
 		return '';
+	}
+
+	if (!empty($conf->cache["legalform_".$langs->defaultlang.'_'.$code])) {
+		return $conf->cache["legalform_".$langs->defaultlang.'_'.$code];
 	}
 
 	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
@@ -747,6 +788,8 @@ function getFormeJuridiqueLabel($code)
 			$obj = $db->fetch_object($resql);
 
 			$label = ($obj->label != '-' ? $obj->label : '');
+
+			$conf->cache["legalform_".$langs->defaultlang.'_'.$code] = $label;
 
 			return $langs->trans($label);
 		} else {
@@ -875,7 +918,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '<td class="right">'.$langs->trans("Status").'</td>';
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="center">';
-				$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+				$selectedfields = (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 				print $selectedfields;
 				print '</td>';
 			}
@@ -1107,7 +1150,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$search_status = 1; // always display active customer first
 	}
 
-	$search_rowid   = GETPOSTINT("search_rowid");
+	$search_rowid   = GETPOST("search_rowid", "intcomma");
 	$search_name    = GETPOST("search_name", 'alpha');
 	$search_address = GETPOST("search_address", 'alpha');
 	$search_poste   = GETPOST("search_poste", 'alpha');
@@ -1183,6 +1226,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => 1, 'position' => 40),
 		't.birthday' => array('label' => "Birthday", 'checked' => 0, 'position' => 45),
 		't.statut' => array('label' => "Status", 'checked' => 1, 'position' => 50, 'class' => 'center'),
+		'u.user'=>array('label'=>"DolibarrLogin", 'checked'=>1, 'position'=>50, 'class'=>'center'),
 	);
 	// Extra fields
 	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
@@ -1253,7 +1297,8 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$mode = 'view';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -1557,23 +1602,21 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag(dol_string_nohtmltag($addresstoshow)).'">';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
 				print $addresstoshow;
 				print '</td>';
 			}
 
 			// Note private
 			if (!empty($arrayfields['t.note_private']['checked'])) {
-				print '<td>';
-				if ($obj->note_private) {
-					print dol_string_nohtmltag($obj->note_private);
-				}
+				print '<td class="center">';
+				print dolPrintHTML($obj->note_private);
 				print '</td>';
 			}
 
 			// Role
 			if (!empty($arrayfields['sc.role']['checked'])) {
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				print $formcompany->showRoles("roles", $contactstatic, 'view');
 				print '</td>';
 			}
@@ -1596,7 +1639,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$resfetch = $tmpuser->fetch(0, '', '', 0, -1, '', $contactstatic->id);
 				if ($resfetch > 0) {
-					print $tmpuser->getNomUrl(1, '', 0, 0, 24, 1);
+					print $tmpuser->getNomUrl(-1, '', 0, 0, 24, 1);
 				}
 				print '</td>';
 			}
@@ -1756,7 +1799,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	$sql = '';
 
 	if (isModEnabled('agenda')) {
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
 		// Recherche histo sur actioncomm
@@ -2113,15 +2156,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= '<td class="liste_titre"></td>';
 		}
 
+		// ID
 		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
-		$out .= '<td class="liste_titre"></td>';
-		$out .= '<td class="liste_titre">';
-		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', !getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : -1, 0, (!getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 0 : 1), 1, 'minwidth100 maxwidth150');
-		$out .= '</td>';
-		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		// Date
 		$out .= '<td class="liste_titre center">';
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
 		$out .= '</td>';
+		// Owner
+		$out .= '<td class="liste_titre"></td>';
+		// Type
+		$out .= '<td class="liste_titre">';
+		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'combolargeelem minwidth100 maxwidth150');
+		$out .= '</td>';
+		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
@@ -2160,10 +2207,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$out .= getTitleFieldOfList($tmp);
 		}
 		$out .= getTitleFieldOfList("Ref", 0, $_SERVER["PHP_SELF"], 'a.id', '', $param, '', $sortfield, $sortorder);
+		$out .= getTitleFieldOfList("Date", 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder, 'center ');
 		$out .= getTitleFieldOfList("Owner");
 		$out .= getTitleFieldOfList("Type");
 		$out .= getTitleFieldOfList("Label", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-		$out .= getTitleFieldOfList("Date", 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, '', $sortfield, $sortorder, 'center ');
 		$out .= getTitleFieldOfList("RelatedObjects", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 		$out .= getTitleFieldOfList("ActionOnContact", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'tdoverflowmax125 ', 0, '', 0);
 		$out .= getTitleFieldOfList("Status", 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, '', $sortfield, $sortorder, 'center ');
@@ -2206,6 +2253,36 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= $actionstatic->getNomUrl(1, -1);
 			}
 			$out .= '</td>';
+
+			// Date
+			$out .= '<td class="center nowraponall">';
+			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
+			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
+				$tmpa = dol_getdate($histo[$key]['datestart'], true);
+				$tmpb = dol_getdate($histo[$key]['dateend'], true);
+				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
+				} else {
+					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
+				}
+			}
+			$late = 0;
+			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
+				$late = 1;
+			}
+			if ($late) {
+				$out .= img_warning($langs->trans("Late")).' ';
+			}
+			$out .= "</td>\n";
 
 			// Author of event
 			$out .= '<td class="tdoverflowmax125">';
@@ -2262,38 +2339,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 			$out .= '</td>';
 
-			// Date
-			$out .= '<td class="center nowraponall">';
-			$out .= dol_print_date($histo[$key]['datestart'], 'dayhour', 'tzuserrel');
-			if ($histo[$key]['dateend'] && $histo[$key]['dateend'] != $histo[$key]['datestart']) {
-				$tmpa = dol_getdate($histo[$key]['datestart'], true);
-				$tmpb = dol_getdate($histo[$key]['dateend'], true);
-				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
-				} else {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
-				}
-			}
-			$late = 0;
-			if ($histo[$key]['percent'] == 0 && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] == 0 && !$histo[$key]['datestart'] && $histo[$key]['dateend'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && $histo[$key]['dateend'] && $histo[$key]['dateend'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($histo[$key]['percent'] > 0 && $histo[$key]['percent'] < 100 && !$histo[$key]['dateend'] && $histo[$key]['datestart'] && $histo[$key]['datestart'] < ($now - $delay_warning)) {
-				$late = 1;
-			}
-			if ($late) {
-				$out .= img_warning($langs->trans("Late")).' ';
-			}
-			$out .= "</td>\n";
-
 			// Linked object
-			$out .= '<td class="nowraponall">';
+			$out .= '<td class="tdoverflowmax200 nowraponall">';
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($elementlinkcache[$histo[$key]['elementtype']]) && isset($elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
 					$link = $elementlinkcache[$histo[$key]['elementtype']][$histo[$key]['fk_element']];
@@ -2628,7 +2675,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	print '<!-- htmlPrintOnlineFooter -->'."\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center paddingleft paddingright opacitymedium">'."\n";
+	print '<footer class="center centpercent opacitymedium">'."\n";
 	print '<br>';
 	if ($addformmessage) {
 		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';

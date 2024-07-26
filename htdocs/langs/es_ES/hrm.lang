@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-Mail servicio externo R.R.H.H.
 Establishments=Establecimientos
@@ -24,7 +23,7 @@ SkillsManagement=Gestión de habilidades
 HRM_MAXRANK=Número máximo de niveles para clasificar una habilidad
 HRM_DEFAULT_SKILL_DESCRIPTION=Descripción predeterminada de los rangos cuando se crea la habilidad
 deplacement=Cambio
-DateEval=Fecha de evaluación
+DateEval=Fecha de evaluación de competencias
 JobCard=Ficha de trabajo
 NewJobProfile=Nuevo perfil de trabajo
 JobProfile=Perfil de trabajo
@@ -41,12 +40,12 @@ Skill=Habilidad
 Skills=Habilidades
 SkillCard=Ficha habilidad
 EmployeeSkillsUpdated=Se actualizaron las habilidades de los empleados (consulte la pestaña "Habilidades" de la ficha de empleado)
-Eval=Evaluación
-Evals=Evaluaciones
-NewEval=Nueva evaluación
-ValidateEvaluation=Validar evaluación
-ConfirmValidateEvaluation=Are you sure you want to validate this evaluation with the reference <b>%s</b>?
-EvaluationCard=Tarjeta de evaluación
+Eval=Evaluación de competencias
+Evals=Evaluaciones de competencias
+NewEval=Nueva evaluación de competencias
+ValidateEvaluation=Validar la evaluación de competencias
+ConfirmValidateEvaluation=¿Está seguro de que desea validar esta evaluación de competencias con la referencia <b>%s</b>?
+EvaluationCard=Evaluación de competencias
 RequiredRank=Rango requerido para el perfil de trabajo
 RequiredRankShort=rango requerido
 PositionsWithThisProfile=Puestos con este perfil laboral
@@ -90,8 +89,9 @@ SaveAddSkill = Habilidad(es) añadidas
 SaveLevelSkill = Nivel de habilidad(es) guardado
 DeleteSkill = Habilidad eliminada
 SkillsExtraFields=Atributos complementarios (Habilidades)
-JobsExtraFields=Atributos complementarios (Perfil de puesto)
-EvaluationsExtraFields=Atributos complementarios (Evaluaciones)
+JobsExtraFields=Atributos complementarios (Perfiles de puesto)
+EvaluationsExtraFields=Atributos complementarios (Evaluaciones de competencias)
 NeedBusinessTravels=Necesita viajes de negocios
 NoDescription=Sin descripción
 TheJobProfileHasNoSkillsDefinedFixBefore=El perfil laboral evaluado de este empleado no tiene ninguna habilidad definida. Agregue habilidades, luego elimine y reinicie la evaluación.
+PDFStandardHrmEvaluation=Plantilla estándar para generar un documento PDF para una evaluación de competencias

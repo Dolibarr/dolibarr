@@ -271,7 +271,7 @@ class Categorie extends CommonObject
 	public $childs = array();
 
 	/**
-	 * @var array{string,array{label:string,description:string,note?:string}} multilangs
+	 * @var ?array{string,array{label:string,description:string,note?:string}} multilangs
 	 */
 	public $multilangs;
 
@@ -375,17 +375,15 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				$res = $this->db->fetch_array($resql);
-
+			if ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
 				$this->id = $res['rowid'];
 				//$this->ref = $res['rowid'];
-				$this->fk_parent	= (int) $res['fk_parent'];
-				$this->label		= $res['label'];
+				$this->fk_parent = (int) $res['fk_parent'];
+				$this->label = $res['label'];
 				$this->description = $res['description'];
-				$this->color    	= $res['color'];
-				$this->position    	= $res['position'];
-				$this->socid		= (int) $res['fk_soc'];
+				$this->color = $res['color'];
+				$this->position = $res['position'];
+				$this->socid = (int) $res['fk_soc'];
 				$this->visible = (int) $res['visible'];
 				$this->type = $res['type'];
 				$this->ref_ext = $res['ref_ext'];
@@ -1011,7 +1009,7 @@ class Categorie extends CommonObject
 			$nbtotalofrecords = $this->db->num_rows($result);
 			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
-				$offset = 0; // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$offset = 0;
 			}
 		}
 
@@ -1125,24 +1123,24 @@ class Categorie extends CommonObject
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Rebuilding the category tree as an array
-	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
-	 *                id = id de la categorie
-	 *                id_mere = id de la categorie mere
-	 *                id_children = tableau des id enfant
-	 *                label = nom de la categorie
+	 * Return an array of table('id','id_mere',...) sorted to have a human readable tree, with
+	 *                id = id of category
+	 *                id_mere = id of parent category
+	 *                id_children = array of child ids
+	 *                label = name of category
 	 *                fulllabel = Name with full path for the category
 	 *                fullpath = Full path built with the id's
 	 *
 	 * @param   string              $type               Type of categories ('customer', 'supplier', 'contact', 'product', 'member', ...)
-	 * @param   int|string|array	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.
-	 *                                                  $markafterid can be an :
+	 * @param   int|string|array	$fromid        		Keep only or Exclude (depending on $include parameter) all categories (including the leaf $fromid) into the tree after this id $fromid.
+	 *                                                  $fromid can be an :
 	 *                                                  - int (id of category)
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
 	 * @param   int                 $include            [=0] Removed or 1=Keep only
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
-	public function get_full_arbo($type, $markafterid = 0, $include = 0)
+	public function get_full_arbo($type, $fromid = 0, $include = 0)
 	{
 		// phpcs:enable
 		global $langs;
@@ -1155,16 +1153,16 @@ class Categorie extends CommonObject
 			return -1;
 		}
 
-		if (is_string($markafterid)) {
-			$markafterid = explode(',', $markafterid);
-		} elseif (is_numeric($markafterid)) {
-			if ($markafterid > 0) {
-				$markafterid = array($markafterid);
+		if (is_string($fromid)) {
+			$fromid = explode(',', $fromid);
+		} elseif (is_numeric($fromid)) {
+			if ($fromid > 0) {
+				$fromid = array($fromid);
 			} else {
-				$markafterid = array();
+				$fromid = array();
 			}
-		} elseif (!is_array($markafterid)) {
-			$markafterid = array();
+		} elseif (!is_array($fromid)) {
+			$fromid = array();
 		}
 
 		$this->cats = array();
@@ -1203,6 +1201,9 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$this->cats[$obj->rowid]['picto'] = 'category';
+				// fields are filled with buildPathFromId
+				$this->cats[$obj->rowid]['fullpath'] = '';
+				$this->cats[$obj->rowid]['fulllabel'] = '';
 				$i++;
 			}
 		} else {
@@ -1217,11 +1218,11 @@ class Categorie extends CommonObject
 			$this->buildPathFromId($key, $nbcateg); // Process a branch from the root category key (this category has no parent)
 		}
 
-		// Include or exclude leaf including $markafterid from tree
-		if (count($markafterid) > 0) {
-			$keyfiltercatid = '('.implode('|', $markafterid).')';
+		// Include or exclude leaf (including $fromid) from tree
+		if (count($fromid) > 0) {
+			$keyfiltercatid = '('.implode('|', $fromid).')';
 
-			//print "Look to discard category ".$markafterid."\n";
+			//print "Look to discard category ".$fromid."\n";
 			$keyfilter1 = '^'.$keyfiltercatid.'$';
 			$keyfilter2 = '_'.$keyfiltercatid.'$';
 			$keyfilter3 = '^'.$keyfiltercatid.'_';
@@ -1346,9 +1347,9 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
+	 * 	Check if a category with same label already exists for this cat's parent or root and for this cat's type
 	 *
-	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
+	 * 	@return		integer		1 if record already exist, 0 otherwise, -1 if error
 	 */
 	public function already_exists()
 	{
@@ -1370,17 +1371,17 @@ class Categorie extends CommonObject
 		$sql .= " AND c.label = '".$this->db->escape($this->label)."'";
 
 		dol_syslog(get_class($this)."::already_exists", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {						// Checking for empty resql
-				$obj = $this->db->fetch_array($resql);
+				$obj = $this->db->fetch_object($resql);
 				/* If object called create, obj cannot have is id.
 				 * If object called update, he mustn't have the same label as an other category for this mother.
-				 * So if the result have the same id, update is not for label, and if result have an other one,
-				 * update may be for label.
+				 * So if the result has the same id, update is not for label, and if result has an other one, update may be for label.
 				 */
-				if ($obj[0] > 0 && $obj[0] != $this->id) {
-					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+				if (!empty($obj) && $obj->rowid > 0 && $obj->rowid != $this->id) {
+					dol_syslog(get_class($this)."::already_exists category with name=".$this->label." and parent ".$this->fk_parent." exists: rowid=".$obj->rowid." current_id=".$this->id, LOG_DEBUG);
 					return 1;
 				}
 			}
@@ -1531,10 +1532,10 @@ class Categorie extends CommonObject
 			$type = Categorie::$MAP_ID_TO_CODE[$type];
 		}
 
-		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_bank_categ into llx_categorie
+		if ($type === Categorie::TYPE_BANK_LINE) {   // TODO Remove this with standard category code after migration of llx_category_bank into llx_categorie
 			// Load bank categories
 			$sql = "SELECT c.label, c.rowid";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
+			$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."category_bank as c";
 			$sql .= " WHERE a.lineid=".((int) $id)." AND a.fk_categ = c.rowid";
 			$sql .= " AND c.entity IN (".getEntity('category').")";
 			$sql .= " ORDER BY c.label";
@@ -1979,18 +1980,19 @@ class Categorie extends CommonObject
 			$result = $this->db->query($sql);
 
 			if ($key == $current_lang) {
+				$sql2 = '';
 				if ($this->db->num_rows($result)) { // si aucune ligne dans la base
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 					$sql2 .= " SET label = '".$this->db->escape($this->label)."',";
 					$sql2 .= " description = '".$this->db->escape($this->description)."'";
 					$sql2 .= " WHERE fk_category = ".((int) $this->id)." AND lang = '".$this->db->escape($key)."'";
-				} else {
+				} elseif (isset($this->multilangs[$key])) {
 					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 					$sql2 .= " VALUES(".((int) $this->id).", '".$this->db->escape($key)."', '".$this->db->escape($this->label)."'";
 					$sql2 .= ", '".$this->db->escape($this->multilangs[$key]["description"])."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
-				if (!$this->db->query($sql2)) {
+				if ($sql2 && !$this->db->query($sql2)) {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}

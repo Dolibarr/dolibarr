@@ -32,7 +32,7 @@
 /**
  *	    \file       htdocs/admin/dict.php
  *		\ingroup    setup
- *		\brief      Page to administer data tables
+ *		\brief      Page to administer dictionary data tables
  */
 
 // Load Dolibarr environment
@@ -45,15 +45,63 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+// constants for IDs of core dictionaries
+const DICT_FORME_JURIDIQUE = 1;
+const DICT_DEPARTEMENTS = 2;
+const DICT_REGIONS = 3;
+const DICT_COUNTRY = 4;
+const DICT_CIVILITY = 5;
+const DICT_ACTIONCOMM = 6;
+const DICT_CHARGESOCIALES = 7;
+const DICT_TYPENT = 8;
+const DICT_CURRENCIES = 9;
+const DICT_TVA = 10;
+const DICT_TYPE_CONTACT = 11;
+const DICT_PAYMENT_TERM = 12;
+const DICT_PAIEMENT = 13;
+const DICT_ECOTAXE = 14;
+const DICT_PAPER_FORMAT = 15;
+const DICT_PROSPECTLEVEL = 16;
+const DICT_TYPE_FEES = 17;
+const DICT_SHIPMENT_MODE = 18;
+const DICT_EFFECTIF = 19;
+const DICT_INPUT_METHOD = 20;
+const DICT_AVAILABILITY = 21;
+const DICT_INPUT_REASON = 22;
+const DICT_REVENUESTAMP = 23;
+const DICT_TYPE_RESOURCE = 24;
+const DICT_TYPE_CONTAINER = 25;
+//const DICT_UNITS = 26;
+const DICT_STCOMM = 27;
+const DICT_HOLIDAY_TYPES = 28;
+const DICT_LEAD_STATUS = 29;
+const DICT_FORMAT_CARDS = 30;
+const DICT_INVOICE_SUBTYPE = 31;
+const DICT_HRM_PUBLIC_HOLIDAY = 32;
+const DICT_HRM_DEPARTMENT = 33;
+const DICT_HRM_FUNCTION = 34;
+const DICT_EXP_TAX_CAT = 35;
+const DICT_EXP_TAX_RANGE = 36;
+const DICT_UNITS = 37;
+const DICT_SOCIALNETWORKS = 38;
+const DICT_PROSPECTCONTACTLEVEL = 39;
+const DICT_STCOMMCONTACT = 40;
+const DICT_TRANSPORT_MODE = 41;
+const DICT_PRODUCT_NATURE = 42;
+const DICT_PRODUCTBATCH_QCSTATUS = 43;
+const DICT_ASSET_DISPOSAL_TYPE = 44;
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "main", "companies", "resource", "holiday", "accountancy", "hrm", "orders", "contracts", "projects", "propal", "bills", "interventions", "ticket"));
 
 $action = GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view';
 $confirm = GETPOST('confirm', 'alpha');
+
 $id = GETPOSTINT('id');
 $rowid = GETPOST('rowid', 'alpha');
 $entity = GETPOSTINT('entity');
 $code = GETPOST('code', 'alpha');
+$from = GETPOST('from', 'alpha');
 
 $acts = array();
 $actl = array();
@@ -76,26 +124,26 @@ $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_country_id = GETPOSTINT('search_country_id');
+$search_country_id = GETPOST('search_country_id', 'int');
 $search_code = GETPOST('search_code', 'alpha');
 $search_active = GETPOST('search_active', 'alpha');
 
 // Special case to set a default value for country according to dictionary
-if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == 2 || $id == 3 || $id == 10)) {	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
+if (!GETPOSTISSET('search_country_id') && $search_country_id == '' && ($id == DICT_DEPARTEMENTS || $id == DICT_REGIONS || $id == DICT_TVA)) {	// Not a so good idea to force on current country for all dictionaries. Some tables have entries that are for all countries, we must be able to see them, so this is done for dedicated dictionaries only.
 	$search_country_id = $mysoc->country_id;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin', 'dictionaryadmin'));
 
 $allowed = $user->admin;
-if ($id == 7 && $user->hasRight('accounting', 'chartofaccount')) {
+if ($id == DICT_CHARGESOCIALES && $user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Tax page allowed to manager of chart account
 }
-if ($id == 10 && $user->hasRight('accounting', 'chartofaccount')) {
+if ($id == DICT_TVA && $user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Vat page allowed to manager of chart account
 }
-if ($id == 17 && $user->hasRight('accounting', 'chartofaccount')) {
+if ($id == DICT_TYPE_FEES && $user->hasRight('accounting', 'chartofaccount')) {
 	$allowed = 1; // Dictionary with type of expense report and accounting account allowed to manager of chart account
 }
 if (!$allowed) {
@@ -109,432 +157,432 @@ $permissiontoadd = $allowed;
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 15, 30, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 6, 24, 0, 29, 0, 33, 34, 32, 28, 17, 35, 36, 0, 10, 31, 23, 12, 13, 7, 0, 14, 0, 22, 20, 18, 21, 41, 0, 37, 42, 0, 43, 0, 25, 0, 44, 0);
+$taborder = array(DICT_CURRENCIES, DICT_PAPER_FORMAT, DICT_FORMAT_CARDS, 0, DICT_COUNTRY, DICT_REGIONS, DICT_DEPARTEMENTS, 0, DICT_FORME_JURIDIQUE, DICT_TYPENT, DICT_EFFECTIF, DICT_PROSPECTLEVEL, DICT_PROSPECTCONTACTLEVEL, DICT_STCOMM, DICT_STCOMMCONTACT, DICT_SOCIALNETWORKS, 0, DICT_CIVILITY, DICT_TYPE_CONTACT, 0, DICT_ACTIONCOMM, DICT_TYPE_RESOURCE, 0, DICT_LEAD_STATUS, 0, DICT_HRM_DEPARTMENT, DICT_HRM_FUNCTION, DICT_HRM_PUBLIC_HOLIDAY, DICT_HOLIDAY_TYPES, DICT_TYPE_FEES, DICT_EXP_TAX_CAT, DICT_EXP_TAX_RANGE, 0, DICT_TVA, DICT_INVOICE_SUBTYPE, DICT_REVENUESTAMP, DICT_PAYMENT_TERM, DICT_PAIEMENT, DICT_CHARGESOCIALES, 0, DICT_ECOTAXE, 0, DICT_INPUT_REASON, DICT_INPUT_METHOD, DICT_SHIPMENT_MODE, DICT_AVAILABILITY, DICT_TRANSPORT_MODE, 0, DICT_UNITS, DICT_PRODUCT_NATURE, 0, DICT_PRODUCTBATCH_QCSTATUS, 0, DICT_TYPE_CONTAINER, 0, DICT_ASSET_DISPOSAL_TYPE, 0);
 
 // Name of SQL tables of dictionaries
 $tabname = array();
-$tabname[1] = "c_forme_juridique";
-$tabname[2] = "c_departements";
-$tabname[3] = "c_regions";
-$tabname[4] = "c_country";
-$tabname[5] = "c_civility";
-$tabname[6] = "c_actioncomm";
-$tabname[7] = "c_chargesociales";
-$tabname[8] = "c_typent";
-$tabname[9] = "c_currencies";
-$tabname[10] = "c_tva";
-$tabname[11] = "c_type_contact";
-$tabname[12] = "c_payment_term";
-$tabname[13] = "c_paiement";
-$tabname[14] = "c_ecotaxe";
-$tabname[15] = "c_paper_format";
-$tabname[16] = "c_prospectlevel";
-$tabname[17] = "c_type_fees";
-$tabname[18] = "c_shipment_mode";
-$tabname[19] = "c_effectif";
-$tabname[20] = "c_input_method";
-$tabname[21] = "c_availability";
-$tabname[22] = "c_input_reason";
-$tabname[23] = "c_revenuestamp";
-$tabname[24] = "c_type_resource";
-$tabname[25] = "c_type_container";
-//$tabname[26]= "c_units";
-$tabname[27] = "c_stcomm";
-$tabname[28] = "c_holiday_types";
-$tabname[29] = "c_lead_status";
-$tabname[30] = "c_format_cards";
-$tabname[31] = "c_invoice_subtype";
-$tabname[32] = "c_hrm_public_holiday";
-$tabname[33] = "c_hrm_department";
-$tabname[34] = "c_hrm_function";
-$tabname[35] = "c_exp_tax_cat";
-$tabname[36] = "c_exp_tax_range";
-$tabname[37] = "c_units";
-$tabname[38] = "c_socialnetworks";
-$tabname[39] = "c_prospectcontactlevel";
-$tabname[40] = "c_stcommcontact";
-$tabname[41] = "c_transport_mode";
-$tabname[42] = "c_product_nature";
-$tabname[43] = "c_productbatch_qcstatus";
-$tabname[44] = "c_asset_disposal_type";
+$tabname[DICT_FORME_JURIDIQUE] = "c_forme_juridique";
+$tabname[DICT_DEPARTEMENTS] = "c_departements";
+$tabname[DICT_REGIONS] = "c_regions";
+$tabname[DICT_COUNTRY] = "c_country";
+$tabname[DICT_CIVILITY] = "c_civility";
+$tabname[DICT_ACTIONCOMM] = "c_actioncomm";
+$tabname[DICT_CHARGESOCIALES] = "c_chargesociales";
+$tabname[DICT_TYPENT] = "c_typent";
+$tabname[DICT_CURRENCIES] = "c_currencies";
+$tabname[DICT_TVA] = "c_tva";
+$tabname[DICT_TYPE_CONTACT] = "c_type_contact";
+$tabname[DICT_PAYMENT_TERM] = "c_payment_term";
+$tabname[DICT_PAIEMENT] = "c_paiement";
+$tabname[DICT_ECOTAXE] = "c_ecotaxe";
+$tabname[DICT_PAPER_FORMAT] = "c_paper_format";
+$tabname[DICT_PROSPECTLEVEL] = "c_prospectlevel";
+$tabname[DICT_TYPE_FEES] = "c_type_fees";
+$tabname[DICT_SHIPMENT_MODE] = "c_shipment_mode";
+$tabname[DICT_EFFECTIF] = "c_effectif";
+$tabname[DICT_INPUT_METHOD] = "c_input_method";
+$tabname[DICT_AVAILABILITY] = "c_availability";
+$tabname[DICT_INPUT_REASON] = "c_input_reason";
+$tabname[DICT_REVENUESTAMP] = "c_revenuestamp";
+$tabname[DICT_TYPE_RESOURCE] = "c_type_resource";
+$tabname[DICT_TYPE_CONTAINER] = "c_type_container";
+//$tabname[DICT_UNITS]= "c_units";
+$tabname[DICT_STCOMM] = "c_stcomm";
+$tabname[DICT_HOLIDAY_TYPES] = "c_holiday_types";
+$tabname[DICT_LEAD_STATUS] = "c_lead_status";
+$tabname[DICT_FORMAT_CARDS] = "c_format_cards";
+$tabname[DICT_INVOICE_SUBTYPE] = "c_invoice_subtype";
+$tabname[DICT_HRM_PUBLIC_HOLIDAY] = "c_hrm_public_holiday";
+$tabname[DICT_HRM_DEPARTMENT] = "c_hrm_department";
+$tabname[DICT_HRM_FUNCTION] = "c_hrm_function";
+$tabname[DICT_EXP_TAX_CAT] = "c_exp_tax_cat";
+$tabname[DICT_EXP_TAX_RANGE] = "c_exp_tax_range";
+$tabname[DICT_UNITS] = "c_units";
+$tabname[DICT_SOCIALNETWORKS] = "c_socialnetworks";
+$tabname[DICT_PROSPECTCONTACTLEVEL] = "c_prospectcontactlevel";
+$tabname[DICT_STCOMMCONTACT] = "c_stcommcontact";
+$tabname[DICT_TRANSPORT_MODE] = "c_transport_mode";
+$tabname[DICT_PRODUCT_NATURE] = "c_product_nature";
+$tabname[DICT_PRODUCTBATCH_QCSTATUS] = "c_productbatch_qcstatus";
+$tabname[DICT_ASSET_DISPOSAL_TYPE] = "c_asset_disposal_type";
 
 // Dictionary labels
 $tablib = array();
-$tablib[1] = "DictionaryCompanyJuridicalType";
-$tablib[2] = "DictionaryCanton";
-$tablib[3] = "DictionaryRegion";
-$tablib[4] = "DictionaryCountry";
-$tablib[5] = "DictionaryCivility";
-$tablib[6] = "DictionaryActions";
-$tablib[7] = "DictionarySocialContributions";
-$tablib[8] = "DictionaryCompanyType";
-$tablib[9] = "DictionaryCurrency";
-$tablib[10] = "DictionaryVAT";
-$tablib[11] = "DictionaryTypeContact";
-$tablib[12] = "DictionaryPaymentConditions";
-$tablib[13] = "DictionaryPaymentModes";
-$tablib[14] = "DictionaryEcotaxe";
-$tablib[15] = "DictionaryPaperFormat";
-$tablib[16] = "DictionaryProspectLevel";
-$tablib[17] = "DictionaryFees";
-$tablib[18] = "DictionarySendingMethods";
-$tablib[19] = "DictionaryStaff";
-$tablib[20] = "DictionaryOrderMethods";
-$tablib[21] = "DictionaryAvailability";
-$tablib[22] = "DictionarySource";
-$tablib[23] = "DictionaryRevenueStamp";
-$tablib[24] = "DictionaryResourceType";
-$tablib[25] = "DictionaryTypeOfContainer";
-//$tablib[26]= "DictionaryUnits";
-$tablib[27] = "DictionaryProspectStatus";
-$tablib[28] = "DictionaryHolidayTypes";
-$tablib[29] = "DictionaryOpportunityStatus";
-$tablib[30] = "DictionaryFormatCards";
-$tablib[31] = "DictionaryInvoiceSubtype";
-$tablib[32] = "DictionaryPublicHolidays";
-$tablib[33] = "DictionaryDepartment";
-$tablib[34] = "DictionaryFunction";
-$tablib[35] = "DictionaryExpenseTaxCat";
-$tablib[36] = "DictionaryExpenseTaxRange";
-$tablib[37] = "DictionaryMeasuringUnits";
-$tablib[38] = "DictionarySocialNetworks";
-$tablib[39] = "DictionaryProspectContactLevel";
-$tablib[40] = "DictionaryProspectContactStatus";
-$tablib[41] = "DictionaryTransportMode";
-$tablib[42] = "DictionaryProductNature";
-$tablib[43] = "DictionaryBatchStatus";
-$tablib[44] = "DictionaryAssetDisposalType";
+$tablib[DICT_FORME_JURIDIQUE] = "DictionaryCompanyJuridicalType";
+$tablib[DICT_DEPARTEMENTS] = "DictionaryCanton";
+$tablib[DICT_REGIONS] = "DictionaryRegion";
+$tablib[DICT_COUNTRY] = "DictionaryCountry";
+$tablib[DICT_CIVILITY] = "DictionaryCivility";
+$tablib[DICT_ACTIONCOMM] = "DictionaryActions";
+$tablib[DICT_CHARGESOCIALES] = "DictionarySocialContributions";
+$tablib[DICT_TYPENT] = "DictionaryCompanyType";
+$tablib[DICT_CURRENCIES] = "DictionaryCurrency";
+$tablib[DICT_TVA] = "DictionaryVAT";
+$tablib[DICT_TYPE_CONTACT] = "DictionaryTypeContact";
+$tablib[DICT_PAYMENT_TERM] = "DictionaryPaymentConditions";
+$tablib[DICT_PAIEMENT] = "DictionaryPaymentModes";
+$tablib[DICT_ECOTAXE] = "DictionaryEcotaxe";
+$tablib[DICT_PAPER_FORMAT] = "DictionaryPaperFormat";
+$tablib[DICT_PROSPECTLEVEL] = "DictionaryProspectLevel";
+$tablib[DICT_TYPE_FEES] = "DictionaryFees";
+$tablib[DICT_SHIPMENT_MODE] = "DictionarySendingMethods";
+$tablib[DICT_EFFECTIF] = "DictionaryStaff";
+$tablib[DICT_INPUT_METHOD] = "DictionaryOrderMethods";
+$tablib[DICT_AVAILABILITY] = "DictionaryAvailability";
+$tablib[DICT_INPUT_REASON] = "DictionarySource";
+$tablib[DICT_REVENUESTAMP] = "DictionaryRevenueStamp";
+$tablib[DICT_TYPE_RESOURCE] = "DictionaryResourceType";
+$tablib[DICT_TYPE_CONTAINER] = "DictionaryTypeOfContainer";
+//$tablib[DICT_UNITS]= "DictionaryUnits";
+$tablib[DICT_STCOMM] = "DictionaryProspectStatus";
+$tablib[DICT_HOLIDAY_TYPES] = "DictionaryHolidayTypes";
+$tablib[DICT_LEAD_STATUS] = "DictionaryOpportunityStatus";
+$tablib[DICT_FORMAT_CARDS] = "DictionaryFormatCards";
+$tablib[DICT_INVOICE_SUBTYPE] = "DictionaryInvoiceSubtype";
+$tablib[DICT_HRM_PUBLIC_HOLIDAY] = "DictionaryPublicHolidays";
+$tablib[DICT_HRM_DEPARTMENT] = "DictionaryDepartment";
+$tablib[DICT_HRM_FUNCTION] = "DictionaryFunction";
+$tablib[DICT_EXP_TAX_CAT] = "DictionaryExpenseTaxCat";
+$tablib[DICT_EXP_TAX_RANGE] = "DictionaryExpenseTaxRange";
+$tablib[DICT_UNITS] = "DictionaryMeasuringUnits";
+$tablib[DICT_SOCIALNETWORKS] = "DictionarySocialNetworks";
+$tablib[DICT_PROSPECTCONTACTLEVEL] = "DictionaryProspectContactLevel";
+$tablib[DICT_STCOMMCONTACT] = "DictionaryProspectContactStatus";
+$tablib[DICT_TRANSPORT_MODE] = "DictionaryTransportMode";
+$tablib[DICT_PRODUCT_NATURE] = "DictionaryProductNature";
+$tablib[DICT_PRODUCTBATCH_QCSTATUS] = "DictionaryBatchStatus";
+$tablib[DICT_ASSET_DISPOSAL_TYPE] = "DictionaryAssetDisposalType";
 
 // Requests to extract data
 $tabsql = array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
-$tabsql[4] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec FROM ".MAIN_DB_PREFIX."c_country AS c";
-$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
-$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
-$tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
-$tabsql[8] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
-$tabsql[9] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
-$tabsql[10] = "SELECT t.rowid, t.entity, t.type_vat, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity IN (".getEntity($tabname[10]).")";
-$tabsql[11] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
-$tabsql[12] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[12]).")";
-$tabsql[13] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[13]).")";
-$tabsql[14] = "SELECT e.rowid as rowid, e.code as code, e.label, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
-$tabsql[15] = "SELECT t.rowid as rowid, t.code, t.label as libelle, t.width, t.height, t.unit, t.active FROM ".MAIN_DB_PREFIX."c_paper_format as t";
-$tabsql[16] = "SELECT t.code, t.label as libelle, t.sortorder, t.active FROM ".MAIN_DB_PREFIX."c_prospectlevel as t";
-$tabsql[17] = "SELECT t.id    as rowid, t.code, t.label, t.accountancy_code, t.active FROM ".MAIN_DB_PREFIX."c_type_fees as t";
-$tabsql[18] = "SELECT t.rowid as rowid, t.code, t.libelle, t.tracking, t.active FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
-$tabsql[19] = "SELECT t.id    as rowid, t.code, t.libelle, t.active FROM ".MAIN_DB_PREFIX."c_effectif as t";
-$tabsql[20] = "SELECT t.rowid as rowid, t.code, t.libelle, t.active FROM ".MAIN_DB_PREFIX."c_input_method as t";
-$tabsql[21] = "SELECT c.rowid as rowid, c.code, c.label, c.type_duration, c.qty, c.active, c.position FROM ".MAIN_DB_PREFIX."c_availability AS c";
-$tabsql[22] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_input_reason as t";
-$tabsql[23] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
-$tabsql[24] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_type_resource as t";
-$tabsql[25] = "SELECT t.rowid as rowid, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[25]).")";
-//$tabsql[26]= "SELECT t.rowid as rowid, t.code, t.label, t.short_label, t.active FROM ".MAIN_DB_PREFIX."c_units as t";
-$tabsql[27] = "SELECT t.id    as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcomm as t";
-$tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
-$tabsql[29] = "SELECT t.rowid as rowid, t.code, t.label, percent, t.position, t.active FROM ".MAIN_DB_PREFIX."c_lead_status as t";
-$tabsql[30] = "SELECT t.rowid, t.code, t.name, t.paper_size, t.orientation, t.metric, t.leftmargin, t.topmargin, t.nx, t.ny, t.spacex, t.spacey, t.width, t.height, t.font_size, t.custom_x, t.custom_y, t.active FROM ".MAIN_DB_PREFIX."c_format_cards as t";
-$tabsql[31] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as country_code, t.fk_country as country_id, t.active FROM ".MAIN_DB_PREFIX."c_invoice_subtype as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_country = c.rowid";
-$tabsql[32] = "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1";
-$tabsql[33] = "SELECT t.rowid, t.pos, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_hrm_department as t";
-$tabsql[34] = "SELECT t.rowid, t.pos, t.code, t.label, t.c_level, t.active FROM ".MAIN_DB_PREFIX."c_hrm_function as t";
-$tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat c as c";
-$tabsql[36] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
-$tabsql[37] = "SELECT r.rowid, r.code, r.sortorder, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
-$tabsql[38] = "SELECT s.rowid, s.entity, s.code, s.label, s.url, s.icon, s.active FROM ".MAIN_DB_PREFIX."c_socialnetworks as s WHERE s.entity IN (".getEntity($tabname[38]).")";
-$tabsql[39] = "SELECT t.code, t.label as libelle, t.sortorder, t.active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel as t";
-$tabsql[40] = "SELECT t.id as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcommcontact as t";
-$tabsql[41] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_transport_mode as t";
-$tabsql[42] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_product_nature as t";
-$tabsql[43] = "SELECT t.rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus as t";
-$tabsql[44] = "SELECT t.rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_asset_disposal_type as t";
+$tabsql[DICT_FORME_JURIDIQUE] = "SELECT f.rowid as rowid, f.code, f.libelle, c.code as country_code, c.label as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c WHERE f.fk_pays=c.rowid";
+$tabsql[DICT_DEPARTEMENTS] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, c.code as country_code, c.label as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and r.active=1 and c.active=1";
+$tabsql[DICT_REGIONS] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, c.code as country_code, c.label as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c WHERE r.fk_pays=c.rowid and c.active=1";
+$tabsql[DICT_COUNTRY] = "SELECT c.rowid as rowid, c.code, c.label, c.active, c.favorite, c.eec FROM ".MAIN_DB_PREFIX."c_country AS c";
+$tabsql[DICT_CIVILITY] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
+$tabsql[DICT_ACTIONCOMM] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.color, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
+$tabsql[DICT_CHARGESOCIALES] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays = c.rowid and c.active = 1";
+$tabsql[DICT_TYPENT] = "SELECT t.id	 as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.position, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
+$tabsql[DICT_CURRENCIES] = "SELECT c.code_iso as code, c.label, c.unicode, c.active FROM ".MAIN_DB_PREFIX."c_currencies AS c";
+$tabsql[DICT_TVA] = "SELECT t.rowid, t.entity, t.type_vat, t.code, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays = c.rowid AND t.entity IN (".getEntity($tabname[DICT_TVA]).")";
+$tabsql[DICT_TYPE_CONTACT] = "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
+$tabsql[DICT_PAYMENT_TERM] = "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.deposit_percent, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAYMENT_TERM]).")";
+$tabsql[DICT_PAIEMENT] = "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity IN (".getEntity($tabname[DICT_PAIEMENT]).")";
+$tabsql[DICT_ECOTAXE] = "SELECT e.rowid as rowid, e.code as code, e.label, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
+$tabsql[DICT_PAPER_FORMAT] = "SELECT t.rowid as rowid, t.code, t.label as libelle, t.width, t.height, t.unit, t.active FROM ".MAIN_DB_PREFIX."c_paper_format as t";
+$tabsql[DICT_PROSPECTLEVEL] = "SELECT t.code, t.label as libelle, t.sortorder, t.active FROM ".MAIN_DB_PREFIX."c_prospectlevel as t";
+$tabsql[DICT_TYPE_FEES] = "SELECT t.id    as rowid, t.code, t.label, t.accountancy_code, t.active FROM ".MAIN_DB_PREFIX."c_type_fees as t";
+$tabsql[DICT_SHIPMENT_MODE] = "SELECT t.rowid as rowid, t.code, t.libelle, t.tracking, t.active FROM ".MAIN_DB_PREFIX."c_shipment_mode as t";
+$tabsql[DICT_EFFECTIF] = "SELECT t.id    as rowid, t.code, t.libelle, t.active FROM ".MAIN_DB_PREFIX."c_effectif as t";
+$tabsql[DICT_INPUT_METHOD] = "SELECT t.rowid as rowid, t.code, t.libelle, t.active FROM ".MAIN_DB_PREFIX."c_input_method as t";
+$tabsql[DICT_AVAILABILITY] = "SELECT c.rowid as rowid, c.code, c.label, c.type_duration, c.qty, c.active, c.position FROM ".MAIN_DB_PREFIX."c_availability AS c";
+$tabsql[DICT_INPUT_REASON] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_input_reason as t";
+$tabsql[DICT_REVENUESTAMP] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
+$tabsql[DICT_TYPE_RESOURCE] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_type_resource as t";
+$tabsql[DICT_TYPE_CONTAINER] = "SELECT t.rowid as rowid, t.code, t.label, t.active, t.module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity($tabname[DICT_TYPE_CONTAINER]).")";
+//$tabsql[DICT_UNITS]= "SELECT t.rowid as rowid, t.code, t.label, t.short_label, t.active FROM ".MAIN_DB_PREFIX."c_units as t";
+$tabsql[DICT_STCOMM] = "SELECT t.id    as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcomm as t";
+$tabsql[DICT_HOLIDAY_TYPES] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.block_if_negative, h.sortorder, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid WHERE h.entity IN (".getEntity($tabname[DICT_HOLIDAY_TYPES]).")";
+$tabsql[DICT_LEAD_STATUS] = "SELECT t.rowid as rowid, t.code, t.label, percent, t.position, t.active FROM ".MAIN_DB_PREFIX."c_lead_status as t";
+$tabsql[DICT_FORMAT_CARDS] = "SELECT t.rowid, t.code, t.name, t.paper_size, t.orientation, t.metric, t.leftmargin, t.topmargin, t.nx, t.ny, t.spacex, t.spacey, t.width, t.height, t.font_size, t.custom_x, t.custom_y, t.active FROM ".MAIN_DB_PREFIX."c_format_cards as t";
+$tabsql[DICT_INVOICE_SUBTYPE] = "SELECT t.rowid, t.code, t.label, c.label as country, c.code as country_code, t.fk_country as country_id, t.active FROM ".MAIN_DB_PREFIX."c_invoice_subtype as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_country = c.rowid";
+$tabsql[DICT_HRM_PUBLIC_HOLIDAY] = "SELECT a.id    as rowid, a.entity, a.code, a.fk_country as country_id, c.code as country_code, c.label as country, a.dayrule, a.day, a.month, a.year, a.active FROM ".MAIN_DB_PREFIX."c_hrm_public_holiday as a LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country=c.rowid AND c.active=1 WHERE a.entity IN (".getEntity($tabname[DICT_HRM_PUBLIC_HOLIDAY]).")";
+$tabsql[DICT_HRM_DEPARTMENT] = "SELECT t.rowid, t.pos, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_hrm_department as t";
+$tabsql[DICT_HRM_FUNCTION] = "SELECT t.rowid, t.pos, t.code, t.label, t.c_level, t.active FROM ".MAIN_DB_PREFIX."c_hrm_function as t";
+$tabsql[DICT_EXP_TAX_CAT] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_cat as c";
+$tabsql[DICT_EXP_TAX_RANGE] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
+$tabsql[DICT_UNITS] = "SELECT r.rowid, r.code, r.sortorder, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
+$tabsql[DICT_SOCIALNETWORKS] = "SELECT s.rowid, s.entity, s.code, s.label, s.url, s.icon, s.active FROM ".MAIN_DB_PREFIX."c_socialnetworks as s WHERE s.entity IN (".getEntity($tabname[DICT_SOCIALNETWORKS]).")";
+$tabsql[DICT_PROSPECTCONTACTLEVEL] = "SELECT t.code, t.label as libelle, t.sortorder, t.active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel as t";
+$tabsql[DICT_STCOMMCONTACT] = "SELECT t.id as rowid, t.code, t.libelle, t.picto, t.active FROM ".MAIN_DB_PREFIX."c_stcommcontact as t";
+$tabsql[DICT_TRANSPORT_MODE] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_transport_mode as t";
+$tabsql[DICT_PRODUCT_NATURE] = "SELECT t.rowid as rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_product_nature as t";
+$tabsql[DICT_PRODUCTBATCH_QCSTATUS] = "SELECT t.rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_productbatch_qcstatus as t";
+$tabsql[DICT_ASSET_DISPOSAL_TYPE] = "SELECT t.rowid, t.code, t.label, t.active FROM ".MAIN_DB_PREFIX."c_asset_disposal_type as t";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
-$tabsqlsort[1] = "country ASC, code ASC";
-$tabsqlsort[2] = "country ASC, code ASC";
-$tabsqlsort[3] = "country ASC, code ASC";
-$tabsqlsort[4] = "code ASC";
-$tabsqlsort[5] = "label ASC";
-$tabsqlsort[6] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
-$tabsqlsort[7] = "c.label ASC, a.code ASC, a.libelle ASC";
-$tabsqlsort[8] = "country DESC,".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ' t.position ASC,' : '')." libelle ASC";
-$tabsqlsort[9] = "label ASC";
-$tabsqlsort[10] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
-$tabsqlsort[11] = "t.element ASC, t.source ASC, t.position ASC, t.code ASC";
-$tabsqlsort[12] = "sortorder ASC, code ASC";
-$tabsqlsort[13] = "code ASC";
-$tabsqlsort[14] = "country ASC, e.organization ASC, code ASC";
-$tabsqlsort[15] = "rowid ASC";
-$tabsqlsort[16] = "sortorder ASC";
-$tabsqlsort[17] = "code ASC";
-$tabsqlsort[18] = "code ASC, libelle ASC";
-$tabsqlsort[19] = "id ASC";
-$tabsqlsort[20] = "code ASC, libelle ASC";
-$tabsqlsort[21] = "position ASC, type_duration ASC, qty ASC";
-$tabsqlsort[22] = "code ASC, label ASC";
-$tabsqlsort[23] = "country ASC, taux ASC";
-$tabsqlsort[24] = "code ASC, label ASC";
-$tabsqlsort[25] = "t.module ASC, t.code ASC, t.label ASC";
-//$tabsqlsort[26]="code ASC";
-$tabsqlsort[27] = "code ASC";
-$tabsqlsort[28] = "sortorder ASC, country ASC, code ASC";
-$tabsqlsort[29] = "position ASC";
-$tabsqlsort[30] = "code ASC";
-$tabsqlsort[31] = "country ASC, code ASC";
-$tabsqlsort[32] = "country, year ASC, month ASC, day ASC";
-$tabsqlsort[33] = "code ASC";
-$tabsqlsort[34] = "code ASC";
-$tabsqlsort[35] = "c.label ASC";
-$tabsqlsort[36] = "r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
-$tabsqlsort[37] = "sortorder ASC";
-$tabsqlsort[38] = "rowid, code ASC";
-$tabsqlsort[39] = "sortorder ASC";
-$tabsqlsort[40] = "code ASC";
-$tabsqlsort[41] = "code ASC";
-$tabsqlsort[42] = "code ASC";
-$tabsqlsort[43] = "code ASC";
-$tabsqlsort[44] = "code ASC";
+$tabsqlsort[DICT_FORME_JURIDIQUE] = "country ASC, code ASC";
+$tabsqlsort[DICT_DEPARTEMENTS] = "country ASC, code ASC";
+$tabsqlsort[DICT_REGIONS] = "country ASC, code ASC";
+$tabsqlsort[DICT_COUNTRY] = "code ASC";
+$tabsqlsort[DICT_CIVILITY] = "label ASC";
+$tabsqlsort[DICT_ACTIONCOMM] = "a.type ASC, a.module ASC, a.position ASC, a.code ASC";
+$tabsqlsort[DICT_CHARGESOCIALES] = "c.label ASC, a.code ASC, a.libelle ASC";
+$tabsqlsort[DICT_TYPENT] = "country DESC,".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ' t.position ASC,' : '')." libelle ASC";
+$tabsqlsort[DICT_CURRENCIES] = "label ASC";
+$tabsqlsort[DICT_TVA] = "country ASC, code ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
+$tabsqlsort[DICT_TYPE_CONTACT] = "t.element ASC, t.source ASC, t.position ASC, t.code ASC";
+$tabsqlsort[DICT_PAYMENT_TERM] = "sortorder ASC, code ASC";
+$tabsqlsort[DICT_PAIEMENT] = "code ASC";
+$tabsqlsort[DICT_ECOTAXE] = "country ASC, e.organization ASC, code ASC";
+$tabsqlsort[DICT_PAPER_FORMAT] = "rowid ASC";
+$tabsqlsort[DICT_PROSPECTLEVEL] = "sortorder ASC";
+$tabsqlsort[DICT_TYPE_FEES] = "code ASC";
+$tabsqlsort[DICT_SHIPMENT_MODE] = "code ASC, libelle ASC";
+$tabsqlsort[DICT_EFFECTIF] = "id ASC";
+$tabsqlsort[DICT_INPUT_METHOD] = "code ASC, libelle ASC";
+$tabsqlsort[DICT_AVAILABILITY] = "position ASC, type_duration ASC, qty ASC";
+$tabsqlsort[DICT_INPUT_REASON] = "code ASC, label ASC";
+$tabsqlsort[DICT_REVENUESTAMP] = "country ASC, taux ASC";
+$tabsqlsort[DICT_TYPE_RESOURCE] = "code ASC, label ASC";
+$tabsqlsort[DICT_TYPE_CONTAINER] = "t.module ASC, t.code ASC, t.label ASC";
+//$tabsqlsort[DICT_UNITS]="code ASC";
+$tabsqlsort[DICT_STCOMM] = "code ASC";
+$tabsqlsort[DICT_HOLIDAY_TYPES] = "sortorder ASC, country ASC, code ASC";
+$tabsqlsort[DICT_LEAD_STATUS] = "position ASC";
+$tabsqlsort[DICT_FORMAT_CARDS] = "code ASC";
+$tabsqlsort[DICT_INVOICE_SUBTYPE] = "country ASC, code ASC";
+$tabsqlsort[DICT_HRM_PUBLIC_HOLIDAY] = "country, year ASC, month ASC, day ASC";
+$tabsqlsort[DICT_HRM_DEPARTMENT] = "code ASC";
+$tabsqlsort[DICT_HRM_FUNCTION] = "code ASC";
+$tabsqlsort[DICT_EXP_TAX_CAT] = "c.label ASC";
+$tabsqlsort[DICT_EXP_TAX_RANGE] = "r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
+$tabsqlsort[DICT_UNITS] = "sortorder ASC";
+$tabsqlsort[DICT_SOCIALNETWORKS] = "rowid, code ASC";
+$tabsqlsort[DICT_PROSPECTCONTACTLEVEL] = "sortorder ASC";
+$tabsqlsort[DICT_STCOMMCONTACT] = "code ASC";
+$tabsqlsort[DICT_TRANSPORT_MODE] = "code ASC";
+$tabsqlsort[DICT_PRODUCT_NATURE] = "code ASC";
+$tabsqlsort[DICT_PRODUCTBATCH_QCSTATUS] = "code ASC";
+$tabsqlsort[DICT_ASSET_DISPOSAL_TYPE] = "code ASC";
 
 // Field names in select result for dictionary display
 $tabfield = array();
-$tabfield[1] = "code,libelle,country";
-$tabfield[2] = "code,libelle,region_id,region,country"; // "code,libelle,region,country_code-country"
-$tabfield[3] = "code,libelle,country_id,country";
-$tabfield[4] = "code,label";
-$tabfield[5] = "code,label";
-$tabfield[6] = "code,libelle,type,color,position";
-$tabfield[7] = "code,libelle,country,accountancy_code";
-$tabfield[8] = "code,libelle,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
-$tabfield[9] = "code,label,unicode";
-$tabfield[10] = "country_id,country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
-$tabfield[11] = "element,source,code,libelle,position";
-$tabfield[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
-$tabfield[13] = "code,libelle,type";
-$tabfield[14] = "code,label,price,organization,country";
-$tabfield[15] = "code,libelle,width,height,unit";
-$tabfield[16] = "code,libelle,sortorder";
-$tabfield[17] = "code,label,accountancy_code";
-$tabfield[18] = "code,libelle,tracking";
-$tabfield[19] = "code,libelle";
-$tabfield[20] = "code,libelle";
-$tabfield[21] = "code,label,qty,type_duration,position";
-$tabfield[22] = "code,label";
-$tabfield[23] = "country_id,country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
-$tabfield[24] = "code,label";
-$tabfield[25] = "code,label";
-//$tabfield[26]= "code,label,short_label";
-$tabfield[27] = "code,libelle,picto";
-$tabfield[28] = "code,label,affect,delay,newbymonth,country_id,country,block_if_negative,sortorder";
-$tabfield[29] = "code,label,percent,position";
-$tabfield[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-$tabfield[31] = "country_id,country,code,label";
-$tabfield[32] = "code,dayrule,year,month,day,country_id,country";
-$tabfield[33] = "code,label";
-$tabfield[34] = "code,label";
-$tabfield[35] = "label";
-$tabfield[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfield[37] = "code,label,short_label,unit_type,scale,sortorder";
-$tabfield[38] = "code,label,url,icon";
-$tabfield[39] = "code,libelle,sortorder";
-$tabfield[40] = "code,libelle,picto";
-$tabfield[41] = "code,label";
-$tabfield[42] = "code,label";
-$tabfield[43] = "code,label";
-$tabfield[44] = "code,label";
+$tabfield[DICT_FORME_JURIDIQUE] = "code,libelle,country";
+$tabfield[DICT_DEPARTEMENTS] = "code,libelle,region_id,region,country"; // "code,libelle,region,country_code-country"
+$tabfield[DICT_REGIONS] = "code,libelle,country_id,country";
+$tabfield[DICT_COUNTRY] = "code,label";
+$tabfield[DICT_CIVILITY] = "code,label";
+$tabfield[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
+$tabfield[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfield[DICT_TYPENT] = "code,libelle,country_id,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
+$tabfield[DICT_CURRENCIES] = "code,label,unicode";
+$tabfield[DICT_TVA] = "country_id,country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
+$tabfield[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
+$tabfield[DICT_PAIEMENT] = "code,libelle,type";
+$tabfield[DICT_ECOTAXE] = "code,label,price,organization,country";
+$tabfield[DICT_PAPER_FORMAT] = "code,libelle,width,height,unit";
+$tabfield[DICT_PROSPECTLEVEL] = "code,libelle,sortorder";
+$tabfield[DICT_TYPE_FEES] = "code,label,accountancy_code";
+$tabfield[DICT_SHIPMENT_MODE] = "code,libelle,tracking";
+$tabfield[DICT_EFFECTIF] = "code,libelle";
+$tabfield[DICT_INPUT_METHOD] = "code,libelle";
+$tabfield[DICT_AVAILABILITY] = "code,label,qty,type_duration,position";
+$tabfield[DICT_INPUT_REASON] = "code,label";
+$tabfield[DICT_REVENUESTAMP] = "country_id,country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[DICT_TYPE_RESOURCE] = "code,label";
+$tabfield[DICT_TYPE_CONTAINER] = "code,label";
+//$tabfield[DICT_UNITS]= "code,label,short_label";
+$tabfield[DICT_STCOMM] = "code,libelle,picto";
+$tabfield[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,country_id,country,block_if_negative,sortorder";
+$tabfield[DICT_LEAD_STATUS] = "code,label,percent,position";
+$tabfield[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
+$tabfield[DICT_INVOICE_SUBTYPE] = "country_id,country,code,label";
+$tabfield[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,year,month,day,country_id,country";
+$tabfield[DICT_HRM_DEPARTMENT] = "code,label";
+$tabfield[DICT_HRM_FUNCTION] = "code,label";
+$tabfield[DICT_EXP_TAX_CAT] = "label";
+$tabfield[DICT_EXP_TAX_RANGE] = "range_ik,fk_c_exp_tax_cat";
+$tabfield[DICT_UNITS] = "code,label,short_label,unit_type,scale,sortorder";
+$tabfield[DICT_SOCIALNETWORKS] = "code,label,url,icon";
+$tabfield[DICT_PROSPECTCONTACTLEVEL] = "code,libelle,sortorder";
+$tabfield[DICT_STCOMMCONTACT] = "code,libelle,picto";
+$tabfield[DICT_TRANSPORT_MODE] = "code,label";
+$tabfield[DICT_PRODUCT_NATURE] = "code,label";
+$tabfield[DICT_PRODUCTBATCH_QCSTATUS] = "code,label";
+$tabfield[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
 
 // Edit field names for editing a record
 $tabfieldvalue = array();
-$tabfieldvalue[1] = "code,libelle,country";
-$tabfieldvalue[2] = "code,libelle,region"; // "code,libelle,region"
-$tabfieldvalue[3] = "code,libelle,country";
-$tabfieldvalue[4] = "code,label";
-$tabfieldvalue[5] = "code,label";
-$tabfieldvalue[6] = "code,libelle,type,color,position";
-$tabfieldvalue[7] = "code,libelle,country,accountancy_code";
-$tabfieldvalue[8] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
-$tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10] = "country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldvalue[11] = "element,source,code,libelle,position";
-$tabfieldvalue[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
-$tabfieldvalue[13] = "code,libelle,type";
-$tabfieldvalue[14] = "code,label,price,organization,country";
-$tabfieldvalue[15] = "code,libelle,width,height,unit";
-$tabfieldvalue[16] = "code,libelle,sortorder";
-$tabfieldvalue[17] = "code,label,accountancy_code";
-$tabfieldvalue[18] = "code,libelle,tracking";
-$tabfieldvalue[19] = "code,libelle";
-$tabfieldvalue[20] = "code,libelle";
-$tabfieldvalue[21] = "code,label,qty,type_duration,position";
-$tabfieldvalue[22] = "code,label";
-$tabfieldvalue[23] = "country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldvalue[24] = "code,label";
-$tabfieldvalue[25] = "code,label";
-//$tabfieldvalue[26]= "code,label,short_label";
-$tabfieldvalue[27] = "code,libelle,picto";
-$tabfieldvalue[28] = "code,label,affect,delay,newbymonth,country,block_if_negative,sortorder";
-$tabfieldvalue[29] = "code,label,percent,position";
-$tabfieldvalue[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-$tabfieldvalue[31] = "country,code,label";
-$tabfieldvalue[32] = "code,dayrule,day,month,year,country";
-$tabfieldvalue[33] = "code,label";
-$tabfieldvalue[34] = "code,label";
-$tabfieldvalue[35] = "label";
-$tabfieldvalue[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfieldvalue[37] = "code,label,short_label,unit_type,scale,sortorder";
-$tabfieldvalue[38] = "code,label,url,icon";
-$tabfieldvalue[39] = "code,libelle,sortorder";
-$tabfieldvalue[40] = "code,libelle,picto";
-$tabfieldvalue[41] = "code,label";
-$tabfieldvalue[42] = "code,label";
-$tabfieldvalue[43] = "code,label";
-$tabfieldvalue[44] = "code,label";
+$tabfieldvalue[DICT_FORME_JURIDIQUE] = "code,libelle,country";
+$tabfieldvalue[DICT_DEPARTEMENTS] = "code,libelle,region"; // "code,libelle,region"
+$tabfieldvalue[DICT_REGIONS] = "code,libelle,country";
+$tabfieldvalue[DICT_COUNTRY] = "code,label";
+$tabfieldvalue[DICT_CIVILITY] = "code,label";
+$tabfieldvalue[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
+$tabfieldvalue[DICT_CHARGESOCIALES] = "code,libelle,country,accountancy_code";
+$tabfieldvalue[DICT_TYPENT] = "code,libelle,country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
+$tabfieldvalue[DICT_CURRENCIES] = "code,label,unicode";
+$tabfieldvalue[DICT_TVA] = "country,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
+$tabfieldvalue[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder";
+$tabfieldvalue[DICT_PAIEMENT] = "code,libelle,type";
+$tabfieldvalue[DICT_ECOTAXE] = "code,label,price,organization,country";
+$tabfieldvalue[DICT_PAPER_FORMAT] = "code,libelle,width,height,unit";
+$tabfieldvalue[DICT_PROSPECTLEVEL] = "code,libelle,sortorder";
+$tabfieldvalue[DICT_TYPE_FEES] = "code,label,accountancy_code";
+$tabfieldvalue[DICT_SHIPMENT_MODE] = "code,libelle,tracking";
+$tabfieldvalue[DICT_EFFECTIF] = "code,libelle";
+$tabfieldvalue[DICT_INPUT_METHOD] = "code,libelle";
+$tabfieldvalue[DICT_AVAILABILITY] = "code,label,qty,type_duration,position";
+$tabfieldvalue[DICT_INPUT_REASON] = "code,label";
+$tabfieldvalue[DICT_REVENUESTAMP] = "country,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[DICT_TYPE_RESOURCE] = "code,label";
+$tabfieldvalue[DICT_TYPE_CONTAINER] = "code,label";
+//$tabfieldvalue[DICT_UNITS]= "code,label,short_label";
+$tabfieldvalue[DICT_STCOMM] = "code,libelle,picto";
+$tabfieldvalue[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,country,block_if_negative,sortorder";
+$tabfieldvalue[DICT_LEAD_STATUS] = "code,label,percent,position";
+$tabfieldvalue[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
+$tabfieldvalue[DICT_INVOICE_SUBTYPE] = "country,code,label";
+$tabfieldvalue[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,country";
+$tabfieldvalue[DICT_HRM_DEPARTMENT] = "code,label";
+$tabfieldvalue[DICT_HRM_FUNCTION] = "code,label";
+$tabfieldvalue[DICT_EXP_TAX_CAT] = "label";
+$tabfieldvalue[DICT_EXP_TAX_RANGE] = "range_ik,fk_c_exp_tax_cat";
+$tabfieldvalue[DICT_UNITS] = "code,label,short_label,unit_type,scale,sortorder";
+$tabfieldvalue[DICT_SOCIALNETWORKS] = "code,label,url,icon";
+$tabfieldvalue[DICT_PROSPECTCONTACTLEVEL] = "code,libelle,sortorder";
+$tabfieldvalue[DICT_STCOMMCONTACT] = "code,libelle,picto";
+$tabfieldvalue[DICT_TRANSPORT_MODE] = "code,label";
+$tabfieldvalue[DICT_PRODUCT_NATURE] = "code,label";
+$tabfieldvalue[DICT_PRODUCTBATCH_QCSTATUS] = "code,label";
+$tabfieldvalue[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
 
 // Field names in the table for inserting a record (add field "entity" only here when dictionary is ready to personalized by entity)
 $tabfieldinsert = array();
-$tabfieldinsert[1] = "code,libelle,fk_pays";
-$tabfieldinsert[2] = "code_departement,nom,fk_region";
-$tabfieldinsert[3] = "code_region,nom,fk_pays";
-$tabfieldinsert[4] = "code,label";
-$tabfieldinsert[5] = "code,label";
-$tabfieldinsert[6] = "code,libelle,type,color,position";
-$tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code";
-$tabfieldinsert[8] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
-$tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10] = "fk_pays,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
-$tabfieldinsert[11] = "element,source,code,libelle,position";
-$tabfieldinsert[12] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
-$tabfieldinsert[13] = "code,libelle,type,entity";
-$tabfieldinsert[14] = "code,label,price,organization,fk_pays";
-$tabfieldinsert[15] = "code,label,width,height,unit";
-$tabfieldinsert[16] = "code,label,sortorder";
-$tabfieldinsert[17] = "code,label,accountancy_code";
-$tabfieldinsert[18] = "code,libelle,tracking";
-$tabfieldinsert[19] = "code,libelle";
-$tabfieldinsert[20] = "code,libelle";
-$tabfieldinsert[21] = "code,label,qty,type_duration,position";
-$tabfieldinsert[22] = "code,label";
-$tabfieldinsert[23] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldinsert[24] = "code,label";
-$tabfieldinsert[25] = "code,label,entity";
-//$tabfieldinsert[26]= "code,label,short_label";
-$tabfieldinsert[27] = "code,libelle,picto";
-$tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country,block_if_negative,sortorder";
-$tabfieldinsert[29] = "code,label,percent,position";
-$tabfieldinsert[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-$tabfieldinsert[31] = "fk_country,code,label";
-$tabfieldinsert[32] = "code,dayrule,day,month,year,fk_country";
-$tabfieldinsert[33] = "code,label";
-$tabfieldinsert[34] = "code,label";
-$tabfieldinsert[35] = "label";
-$tabfieldinsert[36] = "range_ik,fk_c_exp_tax_cat";
-$tabfieldinsert[37] = "code,label,short_label,unit_type,scale,sortorder";
-$tabfieldinsert[38] = "code,label,url,icon,entity";
-$tabfieldinsert[39] = "code,label,sortorder";
-$tabfieldinsert[40] = "code,libelle,picto";
-$tabfieldinsert[41] = "code,label";
-$tabfieldinsert[42] = "code,label";
-$tabfieldinsert[43] = "code,label";
-$tabfieldinsert[44] = "code,label";
+$tabfieldinsert[DICT_FORME_JURIDIQUE] = "code,libelle,fk_pays";
+$tabfieldinsert[DICT_DEPARTEMENTS] = "code_departement,nom,fk_region";
+$tabfieldinsert[DICT_REGIONS] = "code_region,nom,fk_pays";
+$tabfieldinsert[DICT_COUNTRY] = "code,label";
+$tabfieldinsert[DICT_CIVILITY] = "code,label";
+$tabfieldinsert[DICT_ACTIONCOMM] = "code,libelle,type,color,position";
+$tabfieldinsert[DICT_CHARGESOCIALES] = "code,libelle,fk_pays,accountancy_code";
+$tabfieldinsert[DICT_TYPENT] = "code,libelle,fk_country".(getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? ',position' : '');
+$tabfieldinsert[DICT_CURRENCIES] = "code_iso,label,unicode";
+$tabfieldinsert[DICT_TVA] = "fk_pays,type_vat,code,taux,localtax1_type,localtax1,localtax2_type,localtax2,recuperableonly,accountancy_code_sell,accountancy_code_buy,note,entity";
+$tabfieldinsert[DICT_TYPE_CONTACT] = "element,source,code,libelle,position";
+$tabfieldinsert[DICT_PAYMENT_TERM] = "code,libelle,libelle_facture,deposit_percent,nbjour,type_cdr,decalage,sortorder,entity";
+$tabfieldinsert[DICT_PAIEMENT] = "code,libelle,type,entity";
+$tabfieldinsert[DICT_ECOTAXE] = "code,label,price,organization,fk_pays";
+$tabfieldinsert[DICT_PAPER_FORMAT] = "code,label,width,height,unit";
+$tabfieldinsert[DICT_PROSPECTLEVEL] = "code,label,sortorder";
+$tabfieldinsert[DICT_TYPE_FEES] = "code,label,accountancy_code";
+$tabfieldinsert[DICT_SHIPMENT_MODE] = "code,libelle,tracking";
+$tabfieldinsert[DICT_EFFECTIF] = "code,libelle";
+$tabfieldinsert[DICT_INPUT_METHOD] = "code,libelle";
+$tabfieldinsert[DICT_AVAILABILITY] = "code,label,qty,type_duration,position";
+$tabfieldinsert[DICT_INPUT_REASON] = "code,label";
+$tabfieldinsert[DICT_REVENUESTAMP] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[DICT_TYPE_RESOURCE] = "code,label";
+$tabfieldinsert[DICT_TYPE_CONTAINER] = "code,label,entity";
+//$tabfieldinsert[DICT_UNITS]= "code,label,short_label";
+$tabfieldinsert[DICT_STCOMM] = "code,libelle,picto";
+$tabfieldinsert[DICT_HOLIDAY_TYPES] = "code,label,affect,delay,newbymonth,fk_country,block_if_negative,sortorder,entity";
+$tabfieldinsert[DICT_LEAD_STATUS] = "code,label,percent,position";
+$tabfieldinsert[DICT_FORMAT_CARDS] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
+$tabfieldinsert[DICT_INVOICE_SUBTYPE] = "fk_country,code,label";
+$tabfieldinsert[DICT_HRM_PUBLIC_HOLIDAY] = "code,dayrule,day,month,year,fk_country,entity";
+$tabfieldinsert[DICT_HRM_DEPARTMENT] = "code,label";
+$tabfieldinsert[DICT_HRM_FUNCTION] = "code,label";
+$tabfieldinsert[DICT_EXP_TAX_CAT] = "label";
+$tabfieldinsert[DICT_EXP_TAX_RANGE] = "range_ik,fk_c_exp_tax_cat";
+$tabfieldinsert[DICT_UNITS] = "code,label,short_label,unit_type,scale,sortorder";
+$tabfieldinsert[DICT_SOCIALNETWORKS] = "code,label,url,icon,entity";
+$tabfieldinsert[DICT_PROSPECTCONTACTLEVEL] = "code,label,sortorder";
+$tabfieldinsert[DICT_STCOMMCONTACT] = "code,libelle,picto";
+$tabfieldinsert[DICT_TRANSPORT_MODE] = "code,label";
+$tabfieldinsert[DICT_PRODUCT_NATURE] = "code,label";
+$tabfieldinsert[DICT_PRODUCTBATCH_QCSTATUS] = "code,label";
+$tabfieldinsert[DICT_ASSET_DISPOSAL_TYPE] = "code,label";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
 // Use "nameoffield" if id field is not "rowid" or has not autoincrement on
 $tabrowid = array();
-$tabrowid[1] = "";
-$tabrowid[2] = "";
-$tabrowid[3] = "";
-$tabrowid[4] = "rowid";
-$tabrowid[5] = "rowid";
-$tabrowid[6] = "id";
-$tabrowid[7] = "id";
-$tabrowid[8] = "id";
-$tabrowid[9] = "code_iso";
-$tabrowid[10] = "";
-$tabrowid[11] = "rowid";
-$tabrowid[12] = "";
-$tabrowid[13] = "id";
-$tabrowid[14] = "";
-$tabrowid[15] = "";
-$tabrowid[16] = "code";
-$tabrowid[17] = "id";
-$tabrowid[18] = "rowid";
-$tabrowid[19] = "id";
-$tabrowid[20] = "";
-$tabrowid[21] = "rowid";
-$tabrowid[22] = "rowid";
-$tabrowid[23] = "";
-$tabrowid[24] = "";
-$tabrowid[25] = "";
-//$tabrowid[26]= "";
-$tabrowid[27] = "id";
-$tabrowid[28] = "";
-$tabrowid[29] = "";
-$tabrowid[30] = "";
-$tabrowid[31] = "";
-$tabrowid[32] = "id";
-$tabrowid[33] = "rowid";
-$tabrowid[34] = "rowid";
-$tabrowid[35] = "";
-$tabrowid[36] = "";
-$tabrowid[37] = "";
-$tabrowid[38] = "";
-$tabrowid[39] = "code";
-$tabrowid[40] = "id";
-$tabrowid[41] = "";
-$tabrowid[42] = "rowid";
-$tabrowid[43] = "rowid";
-$tabrowid[44] = "rowid";
+$tabrowid[DICT_FORME_JURIDIQUE] = "";
+$tabrowid[DICT_DEPARTEMENTS] = "";
+$tabrowid[DICT_REGIONS] = "";
+$tabrowid[DICT_COUNTRY] = "rowid";
+$tabrowid[DICT_CIVILITY] = "rowid";
+$tabrowid[DICT_ACTIONCOMM] = "id";
+$tabrowid[DICT_CHARGESOCIALES] = "id";
+$tabrowid[DICT_TYPENT] = "id";
+$tabrowid[DICT_CURRENCIES] = "code_iso";
+$tabrowid[DICT_TVA] = "";
+$tabrowid[DICT_TYPE_CONTACT] = "rowid";
+$tabrowid[DICT_PAYMENT_TERM] = "";
+$tabrowid[DICT_PAIEMENT] = "id";
+$tabrowid[DICT_ECOTAXE] = "";
+$tabrowid[DICT_PAPER_FORMAT] = "";
+$tabrowid[DICT_PROSPECTLEVEL] = "code";
+$tabrowid[DICT_TYPE_FEES] = "id";
+$tabrowid[DICT_SHIPMENT_MODE] = "rowid";
+$tabrowid[DICT_EFFECTIF] = "id";
+$tabrowid[DICT_INPUT_METHOD] = "";
+$tabrowid[DICT_AVAILABILITY] = "rowid";
+$tabrowid[DICT_INPUT_REASON] = "rowid";
+$tabrowid[DICT_REVENUESTAMP] = "";
+$tabrowid[DICT_TYPE_RESOURCE] = "";
+$tabrowid[DICT_TYPE_CONTAINER] = "";
+//$tabrowid[DICT_UNITS]= "";
+$tabrowid[DICT_STCOMM] = "id";
+$tabrowid[DICT_HOLIDAY_TYPES] = "";
+$tabrowid[DICT_LEAD_STATUS] = "";
+$tabrowid[DICT_FORMAT_CARDS] = "";
+$tabrowid[DICT_INVOICE_SUBTYPE] = "";
+$tabrowid[DICT_HRM_PUBLIC_HOLIDAY] = "id";
+$tabrowid[DICT_HRM_DEPARTMENT] = "rowid";
+$tabrowid[DICT_HRM_FUNCTION] = "rowid";
+$tabrowid[DICT_EXP_TAX_CAT] = "";
+$tabrowid[DICT_EXP_TAX_RANGE] = "";
+$tabrowid[DICT_UNITS] = "";
+$tabrowid[DICT_SOCIALNETWORKS] = "";
+$tabrowid[DICT_PROSPECTCONTACTLEVEL] = "code";
+$tabrowid[DICT_STCOMMCONTACT] = "id";
+$tabrowid[DICT_TRANSPORT_MODE] = "";
+$tabrowid[DICT_PRODUCT_NATURE] = "rowid";
+$tabrowid[DICT_PRODUCTBATCH_QCSTATUS] = "rowid";
+$tabrowid[DICT_ASSET_DISPOSAL_TYPE] = "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
-$tabcond[1] = (isModEnabled("societe"));
-$tabcond[2] = true;
-$tabcond[3] = true;
-$tabcond[4] = true;
-$tabcond[5] = (isModEnabled("societe") || isModEnabled('member'));
-$tabcond[6] = isModEnabled('agenda');
-$tabcond[7] = isModEnabled('tax');
-$tabcond[8] = isModEnabled("societe");
-$tabcond[9] = true;
-$tabcond[10] = true;
-$tabcond[11] = (isModEnabled("societe"));
-$tabcond[12] = (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
-$tabcond[13] = (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
-$tabcond[14] = (isModEnabled("product") && (isModEnabled('ecotax') || getDolGlobalString('MAIN_SHOW_ECOTAX_DICTIONNARY')));
-$tabcond[15] = true;
-$tabcond[16] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS'));
-$tabcond[17] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
-$tabcond[18] = isModEnabled("shipping") || isModEnabled("reception");
-$tabcond[19] = isModEnabled("societe");
-$tabcond[20] = isModEnabled("supplier_order");
-$tabcond[21] = isModEnabled("propal");
-$tabcond[22] = (isModEnabled('order') || isModEnabled("propal"));
-$tabcond[23] = true;
-$tabcond[24] = isModEnabled('resource');
-$tabcond[25] = isModEnabled('website');
-//$tabcond[26]= isModEnabled("product");
-$tabcond[27] = isModEnabled("societe");
-$tabcond[28] = isModEnabled('holiday');
-$tabcond[29] = isModEnabled('project');
-$tabcond[30] = (isModEnabled('label') || isModEnabled('barcode') || isModEnabled('member'));	// stickers format dictionary
-$tabcond[31] = ((isModEnabled('invoice') || isModEnabled('supplier_invoice')) && $mysoc->country_code == 'GR');
-$tabcond[32] = (isModEnabled('holiday') || isModEnabled('hrm'));
-$tabcond[33] = isModEnabled('hrm');
-$tabcond[34] = isModEnabled('hrm');
-$tabcond[35] = isModEnabled('expensereport') && getDolGlobalString('MAIN_USE_EXPENSE_IK');
-$tabcond[36] = isModEnabled('expensereport') && getDolGlobalString('MAIN_USE_EXPENSE_IK');
-$tabcond[37] = isModEnabled("product");
-$tabcond[38] = isModEnabled('socialnetworks');
-$tabcond[39] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
-$tabcond[40] = (isModEnabled("societe") && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
-$tabcond[41] = isModEnabled('intracommreport');
-$tabcond[42] = isModEnabled("product");
-$tabcond[43] = isModEnabled("product") && isModEnabled('productbatch') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2;
-$tabcond[44] = isModEnabled('asset');
+$tabcond[DICT_FORME_JURIDIQUE] = (isModEnabled("societe"));
+$tabcond[DICT_DEPARTEMENTS] = true;
+$tabcond[DICT_REGIONS] = true;
+$tabcond[DICT_COUNTRY] = true;
+$tabcond[DICT_CIVILITY] = (isModEnabled("societe") || isModEnabled('member'));
+$tabcond[DICT_ACTIONCOMM] = isModEnabled('agenda');
+$tabcond[DICT_CHARGESOCIALES] = isModEnabled('tax');
+$tabcond[DICT_TYPENT] = isModEnabled("societe");
+$tabcond[DICT_CURRENCIES] = true;
+$tabcond[DICT_TVA] = true;
+$tabcond[DICT_TYPE_CONTACT] = (isModEnabled("societe"));
+$tabcond[DICT_PAYMENT_TERM] = (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[DICT_PAIEMENT] = (isModEnabled('order') || isModEnabled("propal") || isModEnabled('invoice') || isModEnabled("supplier_invoice") || isModEnabled("supplier_order"));
+$tabcond[DICT_ECOTAXE] = (isModEnabled("product") && (isModEnabled('ecotax') || getDolGlobalString('MAIN_SHOW_ECOTAX_DICTIONNARY')));
+$tabcond[DICT_PAPER_FORMAT] = true;
+$tabcond[DICT_PROSPECTLEVEL] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS'));
+$tabcond[DICT_TYPE_FEES] = (isModEnabled('deplacement') || isModEnabled('expensereport'));
+$tabcond[DICT_SHIPMENT_MODE] = isModEnabled("shipping") || isModEnabled("reception");
+$tabcond[DICT_EFFECTIF] = isModEnabled("societe");
+$tabcond[DICT_INPUT_METHOD] = isModEnabled("supplier_order");
+$tabcond[DICT_AVAILABILITY] = isModEnabled("propal");
+$tabcond[DICT_INPUT_REASON] = (isModEnabled('order') || isModEnabled("propal"));
+$tabcond[DICT_REVENUESTAMP] = true;
+$tabcond[DICT_TYPE_RESOURCE] = isModEnabled('resource');
+$tabcond[DICT_TYPE_CONTAINER] = isModEnabled('website');
+//$tabcond[DICT_UNITS]= isModEnabled("product");
+$tabcond[DICT_STCOMM] = isModEnabled("societe");
+$tabcond[DICT_HOLIDAY_TYPES] = isModEnabled('holiday');
+$tabcond[DICT_LEAD_STATUS] = isModEnabled('project');
+$tabcond[DICT_FORMAT_CARDS] = (isModEnabled('label') || isModEnabled('barcode') || isModEnabled('member'));	// stickers format dictionary
+$tabcond[DICT_INVOICE_SUBTYPE] = ((isModEnabled('invoice') || isModEnabled('supplier_invoice')) && $mysoc->country_code == 'GR');
+$tabcond[DICT_HRM_PUBLIC_HOLIDAY] = (isModEnabled('holiday') || isModEnabled('hrm'));
+$tabcond[DICT_HRM_DEPARTMENT] = isModEnabled('hrm');
+$tabcond[DICT_HRM_FUNCTION] = isModEnabled('hrm');
+$tabcond[DICT_EXP_TAX_CAT] = isModEnabled('expensereport') && getDolGlobalString('MAIN_USE_EXPENSE_IK');
+$tabcond[DICT_EXP_TAX_RANGE] = isModEnabled('expensereport') && getDolGlobalString('MAIN_USE_EXPENSE_IK');
+$tabcond[DICT_UNITS] = isModEnabled("product");
+$tabcond[DICT_SOCIALNETWORKS] = isModEnabled('socialnetworks');
+$tabcond[DICT_PROSPECTCONTACTLEVEL] = (isModEnabled("societe") && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
+$tabcond[DICT_STCOMMCONTACT] = (isModEnabled("societe") && getDolGlobalString('THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES'));
+$tabcond[DICT_TRANSPORT_MODE] = isModEnabled('intracommreport');
+$tabcond[DICT_PRODUCT_NATURE] = isModEnabled("product");
+$tabcond[DICT_PRODUCTBATCH_QCSTATUS] = isModEnabled("product") && isModEnabled('productbatch') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2;
+$tabcond[DICT_ASSET_DISPOSAL_TYPE] = isModEnabled('asset');
 
 // List of help for fields (no more used, help is defined into tabcomplete)
 $tabhelp = array();
@@ -641,7 +689,7 @@ if (empty($sortfield)) {
 // Define elementList and sourceList (used for dictionary type of contacts "llx_c_type_contact")
 $elementList = array();
 $sourceList = array();
-if ($id == 11) {
+if ($id == DICT_TYPE_CONTACT) {
 	$elementList = array(
 		'' => '',
 		'agenda' => img_picto('', 'action', 'class="pictofixedwidth"').$langs->trans('Agenda'),
@@ -772,7 +820,7 @@ if (empty($reshook)) {
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 				&& (
 					!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
-					&& ($id != 10 || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
+					&& ($id != DICT_TVA || ($value != 'code' && $value != 'note')) // Field code and note is not mandatory for dictionary table 10
 				)
 			) {
 				$ok = 0;
@@ -844,7 +892,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities('ErrorCodeCantContainZero'), null, 'errors');
 			}
 		}
-		if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != 2)) {
+		if (GETPOSTISSET("country") && (GETPOST("country") == '0') && ($id != DICT_DEPARTEMENTS)) {
 			if (in_array($tablib[$id], array('DictionaryCompanyType', 'DictionaryHolidayTypes'))) {	// Field country is no mandatory for such dictionaries
 				$_POST["country"] = '';
 			} else {
@@ -852,11 +900,11 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Country")), null, 'errors');
 			}
 		}
-		if (($id == 3 || $id == 42) && !is_numeric(GETPOST("code")) && GETPOST('actionadd')) {
+		if (($id == DICT_REGIONS || $id == DICT_PRODUCT_NATURE) && !is_numeric(GETPOST("code")) && GETPOST('actionadd')) {
 			$ok = 0;
 			setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric", $langs->transnoentities("Code")), null, 'errors');
 		}
-		if ($id == 4 && strlen(GETPOST("code")) != 2) {  // 2 char on code for country code
+		if ($id == DICT_COUNTRY && strlen(GETPOST("code")) != 2) {  // 2 char on code for country code
 			$ok = 0;
 			setEventMessages($langs->transnoentities("ErrorCountryCodeMustBe2Char", $langs->transnoentities("Code")), null, 'errors');
 		}
@@ -877,7 +925,7 @@ if (empty($reshook)) {
 		if (GETPOST("accountancy_code_buy") <= 0) {
 			$_POST["accountancy_code_buy"] = ''; // If empty, we force to null
 		}
-		if ($id == 10 && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
+		if ($id == DICT_TVA && GETPOSTISSET("code")) {  // Spaces are not allowed into code for tax dictionary
 			$_POST["code"] = preg_replace('/[^a-zA-Z0-9_\-\+]/', '', GETPOST("code"));
 		}
 
@@ -934,7 +982,7 @@ if (empty($reshook)) {
 
 				if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
 					$sql .= GETPOSTINT('position');
-				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
+				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == DICT_TVA)) {
 					$sql .= "null"; // For vat, we want/accept code = ''
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
@@ -954,7 +1002,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->transnoentities("RecordCreatedSuccessfully"), null, 'mesgs');
 
 				// Clean $_POST array, we keep only id of dictionary
-				if ($id == 10 && GETPOSTINT('country') > 0) {
+				if ($id == DICT_TVA && GETPOSTINT('country') > 0) {
 					$search_country_id = GETPOSTINT('country');
 				}
 				$_POST = array('id' => $id);
@@ -1003,7 +1051,7 @@ if (empty($reshook)) {
 				$sql .= $field."=";
 				if ($keycode == 'sortorder') {		// For column name 'sortorder', we use the field name 'position'
 					$sql .= GETPOSTINT('position');
-				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == 10)) {
+				} elseif (GETPOST($keycode) == '' && !($keycode == 'code' && $id == DICT_TVA)) {
 					$sql .= "null"; // For vat, we want/accept code = ''
 				} elseif ($keycode == 'content') {
 					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
@@ -1211,19 +1259,19 @@ $form = new Form($db);
 
 $title = $langs->trans("DictionarySetup");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
 
 $linkback = '';
-if ($id) {
+if ($id && empty($from)) {
 	$title .= ' - '.$langs->trans($tablib[$id]);
 	$linkback = '<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
 $titlepicto = 'title_setup';
-if ($id == 10 && GETPOST('from') == 'accountancy') {
+if ($id == DICT_TVA && GETPOST('from') == 'accountancy') {
 	$title = $langs->trans("MenuVatAccounts");
 	$titlepicto = 'accountancy';
 }
-if ($id == 7 && GETPOST('from') == 'accountancy') {
+if ($id == DICT_CHARGESOCIALES && GETPOST('from') == 'accountancy') {
 	$title = $langs->trans("MenuTaxAccounts");
 	$titlepicto = 'accountancy';
 }
@@ -1241,6 +1289,9 @@ if ($search_active != '') {
 if ($entity != '') {
 	$param .= '&entity='.(int) $entity;
 }
+if ($from) {
+	$param .= '&from='.urlencode($from);
+}
 $paramwithsearch = $param;
 if ($sortorder) {
 	$paramwithsearch .= '&sortorder='.urlencode($sortorder);
@@ -1248,8 +1299,8 @@ if ($sortorder) {
 if ($sortfield) {
 	$paramwithsearch .= '&sortfield='.urlencode($sortfield);
 }
-if (GETPOST('from')) {
-	$paramwithsearch .= '&from='.urlencode(GETPOST('from', 'alpha'));
+if ($from) {
+	$paramwithsearch .= '&from='.urlencode($from);
 }
 
 
@@ -1265,7 +1316,7 @@ if ($id > 0) {
 
 	$tablecode = 't.code';
 	$tableprefix = '';
-	$tableprefixarray = array(1 => 'f.code', 2 => 'd.code_departement', 3 => 'r.code_region', 4 => 'c.code', 5 => 'c.code', 6 => 'a.code', 9 => 'code_iso', 14 => 'e.code', 28 => 'h.code', 7 => 'a.code', 32 => 'a.code', 37 => 'r.code', 38 => 's.code', 45 => 'f.code', 46 => 'f.code', 47 => 'f.code', 48 => 'f.code');
+	$tableprefixarray = array(DICT_FORME_JURIDIQUE => 'f.code', DICT_DEPARTEMENTS => 'd.code_departement', DICT_REGIONS => 'r.code_region', DICT_COUNTRY => 'c.code', DICT_CIVILITY => 'c.code', DICT_ACTIONCOMM => 'a.code', DICT_CURRENCIES => 'code_iso', DICT_ECOTAXE => 'e.code', DICT_HOLIDAY_TYPES => 'h.code', DICT_CHARGESOCIALES => 'a.code', DICT_HRM_PUBLIC_HOLIDAY => 'a.code', DICT_UNITS => 'r.code', DICT_SOCIALNETWORKS => 's.code', 45 => 'f.code', 46 => 'f.code', 47 => 'f.code', 48 => 'f.code');
 	if (!empty($tableprefixarray[$id])) {
 		$tablecode = $tableprefixarray[$id];
 		$tableprefix = preg_replace('/\..*$/', '.', $tablecode);
@@ -1347,10 +1398,10 @@ if ($id > 0) {
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+	print '<input type="hidden" name="from" value="'.dol_escape_htmltag($from).'">';
 
 	// Special warning for VAT dictionary
-	if ($id == 10 && !getDolGlobalString('FACTURE_TVAOPTION')) {
+	if ($id == DICT_TVA && !getDolGlobalString('FACTURE_TVAOPTION')) {
 		print info_admin($langs->trans("VATIsUsedIsOff", $langs->transnoentities("Setup"), $langs->transnoentities("CompanyFoundation")));
 		print "<br>\n";
 	}
@@ -1613,7 +1664,7 @@ if ($id > 0) {
 						$valuetoshow = $langs->trans('Unit');
 					}
 
-					if ($id == 2) {	// Special case for state page
+					if ($id == DICT_DEPARTEMENTS) {	// Special case for state page
 						if ($value == 'region_id') {
 							$valuetoshow = '&nbsp;';
 							$showfield = 1;
@@ -1639,7 +1690,7 @@ if ($id > 0) {
 					}
 				}
 
-				if ($id == 4) {
+				if ($id == DICT_COUNTRY) {
 					$tdsoffields .= '<th></th>';
 					$tdsoffields .= '<th></th>';
 				}
@@ -1676,7 +1727,7 @@ if ($id > 0) {
 				$error = $hookmanager->error;
 				$errors = $hookmanager->errors;
 
-				if ($id == 3) {
+				if ($id == DICT_REGIONS) {
 					unset($fieldlist[2]); // Remove field ??? if dictionary Regions
 				}
 
@@ -1684,7 +1735,7 @@ if ($id > 0) {
 					fieldList($fieldlist, $obj, $tabname[$id], 'add');
 				}
 
-				if ($id == 4) {
+				if ($id == DICT_COUNTRY) {
 					print '<td></td>';
 					print '<td></td>';
 				}
@@ -1778,7 +1829,7 @@ if ($id > 0) {
 				}
 			}
 		}
-		if ($id == 4) {
+		if ($id == DICT_COUNTRY) {
 			print '<td></td>';
 			$colspan++;
 			print '<td></td>';
@@ -1786,8 +1837,8 @@ if ($id > 0) {
 		}
 
 		// Active
-		print '<td class="liste_titre center">';
-		print $form->selectyesno('search_active', $search_active, 0, false, 1);
+		print '<td class="liste_titre center parentonrightofpage">';
+		print $form->selectyesno('search_active', $search_active, 0, false, 1, 1, 'maxwidth100 onrightofpage', 'Activated', 'Disabled');
 		print '</td>';
 		$colspan++;
 
@@ -1804,6 +1855,7 @@ if ($id > 0) {
 
 		print '</tr>';
 
+
 		// Title of lines
 		print '<!-- line title of record -->'."\n";
 		print '<tr class="liste_titre">';
@@ -1819,7 +1871,7 @@ if ($id > 0) {
 			}
 
 			if (in_array($value, array('label', 'libelle', 'libelle_facture')) && empty($tabcomplete[$tabname[$id]]['help'][$value])) {
-				if (!is_array($tabcomplete[$tabname[$id]]['help'])) {	// protection when $tabcomplete[$tabname[$id]]['help'] is a an empty string, we must force it into an array
+				if (!isset($tabcomplete[$tabname[$id]]['help']) || !is_array($tabcomplete[$tabname[$id]]['help'])) {	// protection when $tabcomplete[$tabname[$id]]['help'] is a an empty string, we must force it into an array
 					$tabcomplete[$tabname[$id]]['help'] = array();
 				}
 				$tabcomplete[$tabname[$id]]['help'][$value] = $langs->trans('LabelUsedByDefault');
@@ -2063,13 +2115,13 @@ if ($id > 0) {
 			}
 		}
 		// Favorite & EEC - Only activated on country dictionary
-		if ($id == 4) {
-			print getTitleFieldOfList($langs->trans("InEEC"), 0, $_SERVER["PHP_SELF"], "eec", ($page ? 'page='.$page.'&' : ''), $param, 'align="center"', $sortfield, $sortorder, '', 0, $langs->trans("CountryIsInEEC"));
-			print getTitleFieldOfList($langs->trans("Favorite"), 0, $_SERVER["PHP_SELF"], "favorite", ($page ? 'page='.$page.'&' : ''), $param, 'align="center"', $sortfield, $sortorder);
+		if ($id == DICT_COUNTRY) {
+			print getTitleFieldOfList($langs->trans("InEEC"), 0, $_SERVER["PHP_SELF"], "eec", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans("CountryIsInEEC"));
+			print getTitleFieldOfList($langs->trans("Favorite"), 0, $_SERVER["PHP_SELF"], "favorite", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 		}
 
 		// Status
-		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, 'align="center"', $sortfield, $sortorder);
+		print getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], "active", ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, 'center ');
 
 		// Action button
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2077,15 +2129,17 @@ if ($id > 0) {
 		}
 		print '</tr>';
 
+
+		// Lines with values
 		if ($num) {
-			// Lines with values
+			print '<!-- lines of dict -->'."\n";
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 
 				$withentity = null;
 
 				// We discard empty lines
-				if ($id == 4) {
+				if ($id == DICT_COUNTRY) {
 					if ($obj->code == '') {
 						$i++;
 						continue;
@@ -2096,7 +2150,7 @@ if ($id > 0) {
 				$iserasable = 1;
 				$canbedisabled = 1;
 				$canbemodified = 1;
-				if (isset($obj->code) && $id != 10 && $id != 42) {
+				if (isset($obj->code) && $id != DICT_TVA && $id != DICT_PRODUCT_NATURE) {
 					if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i', $obj->code))) {
 						$iserasable = 0;
 						$canbedisabled = 0;
@@ -2108,7 +2162,7 @@ if ($id > 0) {
 						$canbedisabled = 0;
 					}
 				}
-				if ($id == 25 && in_array($obj->code, array('banner', 'blogpost', 'menu', 'page', 'other'))) {
+				if ($id == DICT_TYPE_CONTAINER && in_array($obj->code, array('banner', 'blogpost', 'menu', 'page', 'other', 'service', 'library'))) {
 					$iserasable = 0;
 					$canbedisabled = 0;
 					if (in_array($obj->code, array('banner'))) {
@@ -2139,17 +2193,18 @@ if ($id > 0) {
 				// Build Url. The table is id=, the id of line is rowid=
 				$rowidcol = empty($tabrowid[$id]) ? 'rowid' : $tabrowid[$id];
 				// If rowidcol not defined
-				if (empty($rowidcol) || in_array($id, array(6, 7, 8, 13, 17, 19, 27, 32))) {
+				if (empty($rowidcol) || in_array($id, array(DICT_ACTIONCOMM, DICT_CHARGESOCIALES, DICT_TYPENT, DICT_PAIEMENT, DICT_TYPE_FEES, DICT_EFFECTIF, DICT_STCOMM, DICT_HRM_PUBLIC_HOLIDAY))) {
 					$rowidcol = 'rowid';
 				}
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder;
-				$url .= '&rowid='.(isset($obj->$rowidcol) ? $obj->$rowidcol : (!empty($obj->code) ? urlencode($obj->code) : ''));
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder);
+				$url .= '&rowid='.(isset($obj->$rowidcol) ? ((int) $obj->$rowidcol) : (!empty($obj->code) ? urlencode($obj->code) : ''));
 				$url .= '&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 				if (!empty($param)) {
 					$url .= '&'.$param;
 				}
+				// If dictionary is different for each entity
 				if (!is_null($withentity)) {
-					$url .= '&entity='.$withentity;
+					$url .= '&entity='.((int) $withentity);
 				}
 				$url .= '&';
 
@@ -2203,6 +2258,8 @@ if ($id > 0) {
 					$error = $hookmanager->error;
 					$errors = $hookmanager->errors;
 
+					$langs->loadLangs(array("bills", "agenda", "propal"));
+
 					if (empty($reshook)) {
 						$withentity = null;
 
@@ -2249,7 +2306,6 @@ if ($id > 0) {
 							if ($value == 'private') {
 								$valuetoshow = yn($valuetoshow);
 							} elseif ($value == 'libelle_facture') {
-								$langs->load("bills");
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "PaymentCondition".strtoupper($obj->code) ? $key : $obj->$value);
 								$valuetoshow = nl2br($valuetoshow);
@@ -2257,7 +2313,6 @@ if ($id > 0) {
 								$key = $langs->trans("Country".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "Country".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'label' && $tabname[$id] == 'c_availability') {
-								$langs->load("propal");
 								$key = $langs->trans("AvailabilityType".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "AvailabilityType".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_actioncomm') {
@@ -2276,17 +2331,22 @@ if ($id > 0) {
 								$key = $langs->trans("Civility".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "Civility".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_type_contact') {
-								$langs->load('agenda');
 								$key = $langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_payment_term') {
-								$langs->load("bills");
 								$key = $langs->trans("PaymentConditionShort".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code) ? $key : $obj->$value);
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_paiement') {
-								$langs->load("bills");
+								$transavailableforcode = $langs->tab_translate["PaymentType".strtoupper($obj->code)];
 								$key = $langs->trans("PaymentType".strtoupper($obj->code));
-								$valuetoshow = ($obj->code && $key != "PaymentType".strtoupper($obj->code) ? $key : $obj->$value);
+								$valuetoshow = $obj->$value;
+								if ($obj->code && $transavailableforcode) {
+									$htmltext = $form->textwithpicto($langs->trans("TranslationFound").': '.$key, $langs->trans("TheTranslationIsSearchedFromKey", "PaymentType".strtoupper($obj->code)));
+								} else {
+									$htmltext = $form->textwithpicto($langs->trans("TranslationFound").': '.$langs->trans("No"), $langs->trans("TheTranslationIsSearchedFromKey", "PaymentType".strtoupper($obj->code)));
+								}
+								//$valuetoshow = $form->textwithpicto($valuetoshow, $htmltext);
+								$valuetoshow .= '<br><span class="opacitymedium">'.$htmltext.'</span>';
 							} elseif ($value == 'type' && $tabname[$id] == 'c_paiement') {
 								$payment_type_list = array(0 => $langs->trans('PaymentTypeCustomer'), 1 => $langs->trans('PaymentTypeSupplier'), 2 => $langs->trans('PaymentTypeBoth'));
 								$valuetoshow = $payment_type_list[$valuetoshow];
@@ -2391,7 +2451,10 @@ if ($id > 0) {
 								}
 							}
 							$class .= ($class ? ' ' : '').'tddict';
-							if ($value == 'note' && $id == 10) {
+							if ($value == 'name') {
+								$class .= ' tdoverflowmax200';
+							}
+							if ($value == 'note' && $id == DICT_TVA) {
 								$class .= ' tdoverflowmax200';
 							}
 							if ($value == 'tracking') {
@@ -2411,13 +2474,13 @@ if ($id > 0) {
 							}
 							// Show value for field
 							if ($showfield) {
-								print '<!-- '. $value .' --><td class="'.$class.'"'.($titletoshow ? ' title="'.dol_escape_htmltag($titletoshow).'"' : '').'>'.$valuetoshow.'</td>';
+								print '<!-- '. $value .' --><td class="'.$class.'"'.($titletoshow ? ' title="'.dolPrintHTMLForAttribute($titletoshow).'"' : '').'>'.$valuetoshow.'</td>';
 							}
 						}
 
 						// Favorite & EEC
 						// Only for country dictionary
-						if ($id == 4) {
+						if ($id == DICT_COUNTRY) {
 							print '<td class="nowrap center">';
 							// Is in EEC
 							if ($iserasable) {
@@ -2494,6 +2557,7 @@ if ($id > 0) {
 	print '<span class="opacitymedium">'.$langs->trans("DictionaryDesc");
 	print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 	print '</span><br>';
+	print "<br>\n";
 
 	$lastlineisempty = false;
 
@@ -2571,7 +2635,7 @@ $db->close();
  */
 function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db, $mysoc;
+	global $langs, $db, $mysoc;
 	global $form;
 	global $region_id;
 	global $elementList, $sourceList, $localtax_typeList, $type_vatList;
@@ -2589,6 +2653,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		}
 
 		if (in_array($value, array('code', 'libelle', 'type')) && $tabname == "c_actioncomm" && isset($obj->$value) && in_array($obj->type, array('system', 'systemauto'))) {
+			// Special case for c_actioncomm (field that should not be modified)
 			$hidden = (!empty($obj->{$value}) ? $obj->{$value} : '');
 			print '<td>';
 			print '<input type="hidden" name="'. $value .'" value="'.$hidden.'">';
@@ -2704,7 +2769,15 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
 			print '<td><input type="text" class="flat minwidth75" value="'.price((!empty($obj->{$value}) ? $obj->{$value} : '')).'" name="'. $value .'"></td>';
 		} elseif ($value == 'code' && isset($obj->{$value})) {
-			print '<td><input type="text" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'"></td>';
+			print '<td>';
+			if ($tabname == 'c_paiement' && in_array($obj->{$value}, array('LIQ', 'CB', 'CHQ', 'VIR'))) {
+				// Case of code that should not be modified
+				print '<input type="hidden" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
+				print $obj->{$value};
+			} else {
+				print '<input type="text" class="flat minwidth75 maxwidth100" value="'.(!empty($obj->{$value}) ? $obj->{$value} : '').'" name="'. $value .'">';
+			}
+			print '</td>';
 		} elseif ($value == 'unit') {
 			print '<td>';
 			$units = array(

@@ -244,7 +244,7 @@ if ($action == 'update') {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans("Menu"));
+llxHeader('', $langs->trans('Menu'), '', '', 0, 0, '', '', '', 'mod-admin page-menus_edit');
 
 
 if ($action == 'create') {

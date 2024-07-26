@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,11 +52,11 @@ $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
 
 $accountingaccount_number = GETPOST('accountingaccount_number', 'alphanohtml');
-$accountingaccount->fetch(null, $accountingaccount_number, true);
+$accountingaccount->fetch(0, $accountingaccount_number, true);
 $accountingaccount_label = $accountingaccount->label;
 
 $journal_code = GETPOST('code_journal', 'alpha');
-$accountingjournal->fetch(null, $journal_code);
+$accountingjournal->fetch(0, $journal_code);
 $journal_label = $accountingjournal->label;
 
 $subledger_account = GETPOST('subledger_account', 'alphanohtml');
@@ -352,7 +352,7 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-card');
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -606,6 +606,14 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 		}
+
+		// Due date
+		print '<tr>';
+		print '<td class="titlefield">' . $langs->trans('DateDue') . '</td>';
+		print '<td>';
+		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
 
 		// Validate
 		/*

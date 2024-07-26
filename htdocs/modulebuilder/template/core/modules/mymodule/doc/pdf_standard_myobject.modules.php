@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -105,7 +105,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -523,10 +523,10 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					$pdf->SetTextColor(0, 0, 0);
 
 					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
+					// $imglinesize = array();
+					// if (!empty($realpatharray[$i])) {
+					// 	$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
+					// }
 
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
@@ -536,31 +536,31 @@ class pdf_standard_myobject extends ModelePDFMyObject
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					if ($this->getColumnStatus('photo')) {
-						// We start with Photo of product line
-						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
-							$pdf->AddPage('', '', true);
-							if (!empty($tplidx)) {
-								$pdf->useTemplate($tplidx);
-							}
-							$pdf->setPage($pageposbefore + 1);
+					// if ($this->getColumnStatus('photo')) {
+					// 	// We start with Photo of product line
+					// 	if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
+					// 		$pdf->AddPage('', '', true);
+					// 		if (!empty($tplidx)) {
+					// 			$pdf->useTemplate($tplidx);
+					// 		}
+					// 		$pdf->setPage($pageposbefore + 1);
 
-							$curY = $tab_top_newpage;
+					// 		$curY = $tab_top_newpage;
 
-							// Allows data in the first page if description is long enough to break in multiples pages
-							if (getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-								$showpricebeforepagebreak = 1;
-							} else {
-								$showpricebeforepagebreak = 0;
-							}
-						}
+					// 		// Allows data in the first page if description is long enough to break in multiples pages
+					// 		if (getDolGlobalInt('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
+					// 			$showpricebeforepagebreak = 1;
+					// 		} else {
+					// 			$showpricebeforepagebreak = 0;
+					// 		}
+					// 	}
 
-						if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
-							$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-							// $pdf->Image does not increase value return by getY, so we save it manually
-							$posYAfterImage = $curY + $imglinesize['height'];
-						}
-					}
+					// 	if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height'])) {
+					// 		$pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY + 1, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
+					// 		// $pdf->Image does not increase value return by getY, so we save it manually
+					// 		$posYAfterImage = $curY + $imglinesize['height'];
+					// 	}
+					// }
 
 					// Description of product line
 					if ($this->getColumnStatus('desc')) {
@@ -578,7 +578,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-							//var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
+
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
 								if ($i == ($nblines - 1)) {	// No more lines, and no space left to show total, so we create a new page
 									$pdf->AddPage('', '', true);
@@ -1046,7 +1046,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $langs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -1121,7 +1121,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			}
 
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalInt('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
@@ -1241,24 +1241,24 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		);
 
 		// PHOTO
-		$rank = $rank + 10;
-		$this->cols['photo'] = array(
-			'rank' => $rank,
-			'width' => (!getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')), // in mm
-			'status' => false,
-			'title' => array(
-				'textkey' => 'Photo',
-				'label' => ' '
-			),
-			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-			),
-			'border-left' => false, // remove left line separator
-		);
+		// $rank = $rank + 10;
+		// $this->cols['photo'] = array(
+		// 	'rank' => $rank,
+		// 	'width' => (!getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH')), // in mm
+		// 	'status' => false,
+		// 	'title' => array(
+		// 		'textkey' => 'Photo',
+		// 		'label' => ' '
+		// 	),
+		// 	'content' => array(
+		// 		'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+		// 	),
+		// 	'border-left' => false, // remove left line separator
+		// );
 
-		if (getDolGlobalInt('MAIN_GENERATE_INVOICES_WITH_PICTURE') && !empty($this->atleastonephoto)) {
-			$this->cols['photo']['status'] = true;
-		}
+		// if (getDolGlobalInt('MAIN_GENERATE_INVOICES_WITH_PICTURE') && !empty($this->atleastonephoto)) {
+		// 	$this->cols['photo']['status'] = true;
+		// }
 
 
 		$rank = $rank + 10;

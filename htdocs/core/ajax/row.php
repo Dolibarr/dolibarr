@@ -53,6 +53,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $hookmanager->initHooks(array('rowinterface'));
 
+$roworder = GETPOST('roworder', 'alpha', 3);
+$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
+$fk_element = GETPOST('fk_element', 'aZ09', 3);
+$element_id = GETPOSTINT('element_id', 3);
+
+
 // Security check
 // This is done later into view.
 
@@ -63,18 +69,13 @@ $hookmanager->initHooks(array('rowinterface'));
 
 top_httphead();
 
+dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
+
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
 if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
-	&& GETPOSTINT('fk_element', 3) && GETPOSTINT('element_id', 3)) {
-	$roworder = GETPOST('roworder', 'alpha', 3);
-	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
-	$fk_element = GETPOST('fk_element', 'aZ09', 3);
-	$element_id = GETPOSTINT('element_id', 3);
-
-	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
-
+	&& GETPOST('fk_element', 'aZ09', 3) && GETPOSTINT('element_id', 3)) {
 	// Make test on permission
 	$perm = 0;
 	if ($table_element_line == 'propaldet' && $user->hasRight('propal', 'creer')) {

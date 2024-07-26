@@ -22,7 +22,7 @@
 
 /**
  *  \file       htdocs/compta/facture/stats/index.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      Page des stats factures
  */
 
@@ -44,6 +44,9 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 $langs->loadLangs(array('bills', 'companies', 'other'));
 
 $mode = GETPOST("mode") ? GETPOST("mode") : 'customer';
+
+$hookmanager->initHooks(array('invoicestats', 'globalcard'));
+
 if ($mode == 'customer' && !$user->hasRight('facture', 'lire')) {
 	accessforbidden();
 }
@@ -57,11 +60,17 @@ $categ_id = GETPOSTINT('categ_id');
 
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
-$custcats = GETPOST('custcats', 'array');
+$select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+}
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
@@ -102,18 +111,18 @@ if ($mode == 'customer') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
 		$stats->where .= ' AND f.fk_statut IN ('.$db->sanitize($object_status).')';
 	}
-	if (is_array($custcats) && !empty($custcats)) {
+	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
-		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $custcats)).')';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
 }
 
@@ -310,7 +319,7 @@ if (isModEnabled('category')) {
 	print '<tr><td>'.$cat_label.'</td><td>';
 	$cate_arbo = $form->select_all_categories($cat_type, null, 'parent', null, null, 1);
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	print $form->multiselectarray('select_categ_categ_id', $cate_arbo, GETPOST('select_categ_categ_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
 }

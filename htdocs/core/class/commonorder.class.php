@@ -72,6 +72,28 @@ abstract class CommonOrder extends CommonObject
 		return $return;
 	}
 
+	/** return nb of fines of order where products or services that can be buyed
+	 *
+	 * @param	boolean		$ignoreFree		Ignore free lines
+	 * @return	int							number of products or services on buy in a command
+	 */
+	public function getNbLinesProductOrServiceOnBuy($ignoreFree = false)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$product = new Product($this->db);
+		$return = 0;
+		foreach ($this->lines as $line) {
+			if (empty($line->fk_product) && !$ignoreFree) {
+				$return ++;
+			} elseif ((int) $line->fk_product > 0) {
+				if ($product->fetch($line->fk_product) > 0) {
+					if ($product->status_buy) $return ++;
+				}
+			}
+		}
+		return $return;
+	}
+
 	/**
 	 * @var string code
 	 */

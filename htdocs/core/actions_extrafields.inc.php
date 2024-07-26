@@ -192,7 +192,7 @@ if ($action == 'add') {
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 
@@ -350,7 +350,11 @@ if ($action == 'update') {
 				} else {
 					//Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						list($key, $value) = explode(',', $param_ligne);
+						$tmp = explode(',', $param_ligne);
+						$key = $tmp[0];
+						if (!empty($tmp[1])) {
+							$value = $tmp[1];
+						}
 						if (!array_key_exists('options', $params)) {
 							$params['options'] = array();
 						}
@@ -358,9 +362,11 @@ if ($action == 'update') {
 					}
 				}
 
+				// $params['options'][$key] can be 'Facture:/compta/facture/class/facture.class.php' => '/custom'
+
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 

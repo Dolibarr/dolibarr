@@ -97,7 +97,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 		return;
 	}
 
-	// Filter on the company to search can be:
+	// The filter on the company to search for can be:
 	// Into an array with key $htmlname123 (we take first one found). Which page use this ?
 	// Into a var with name $htmlname can be 'prodid', 'productid', ...
 	$match = preg_grep('/('.preg_quote($htmlname, '/').'[0-9]+)/', array_keys($_GET));
@@ -105,7 +105,7 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 
 	$id = (!empty($match[0]) ? $match[0] : '');		// Take first key found into GET array with matching $htmlname123
 
-	// When used from jQuery, the search term is added as GET param "term".
+	// When used from jQuery, the search term is added as GET param $htmlname.
 	$searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
 	if (!$searchkey) {
 		return;
@@ -120,6 +120,10 @@ if (!empty($action) && $action == 'fetch' && !empty($id)) {
 	} else {
 		$excludeids = array();
 	}
+
+	// FIXME
+	// If SOCIETE_USE_SEARCH_TO_SELECT is set, check that nb of chars in $filter is >= to avoid DOS attack
+
 
 	$arrayresult = $form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson, 0, 'minwidth100', '', false, $excludeids, $showcode);
 

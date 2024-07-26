@@ -213,7 +213,7 @@ class CActionComm
 
 					$qualified = 1;
 
-					// $obj->type can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
+					// $obj->type into c_actioncomm can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
 					// Note: type = system... than type of event is added among other standard events.
 					//       type = module... then type of event is grouped into module defined into module = myobject@mymodule. Example: Event organization or external modules
 					//       type = xxx... then type of event is added into list as a new flat value (not grouped). Example: Agefod external module
@@ -292,8 +292,10 @@ class CActionComm
 							$keyfortrans = "Action".$code;
 							$transcode = $langs->trans($keyfortrans);
 						}
+
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
 						if (($onlyautoornot == -1 || $onlyautoornot == -2) && getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
+							// Add a group of elements
 							if ($typecalendar == 'system' || $typecalendar == 'user') {
 								$label = '&nbsp;&nbsp; '.$label;
 								$TSystem['id'][-99] = $langs->trans("ActionAC_MANUAL");
@@ -306,20 +308,16 @@ class CActionComm
 							}
 
 							if ($typecalendar == 'module') {
-								//TODO check if possible to push it between system and systemauto
-								if (preg_match('/@/', $obj->module)) {
-									$module = explode('@', $obj->module)[1];
-								} else {
-									$module = $obj->module;
-								}
+								$module = preg_replace('/^[^@]+@/', '', $obj->module);
 								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
+								if (!isset($TModule['id'][-1 * $idforallfornewmodule])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
-								$TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
+								$TModule['id'][-1 * $idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
 								$TModule['code']['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
 							}
 						}
+						// Add element
 						if ($typecalendar == 'system' || $typecalendar == 'user') {
 							$TSystem['id'][$obj->id] = $label;
 							$TSystem['code'][$obj->code] = $label;
@@ -328,23 +326,36 @@ class CActionComm
 							$TSystemAuto['id'][$obj->id] = $label;
 							$TSystemAuto['code'][$obj->code] = $label;
 							$TSystemAuto['all'][$obj->code] = array('id' => $label, 'label' => $label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
+						} elseif ($typecalendar == 'module') {	// Can be automatic or manual
+							$module = preg_replace('/^[^@]+@/', '', $obj->module);
+							$TModule['id'][$obj->id] = $label;
+							$TModule['code'][$obj->code] = $label;
+							$TModule['all'][$obj->code] = array('id' => $label, 'label' => $langs->trans("Module").' '.ucfirst($module).' - '.$label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
 						}
 
 						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) {
-							array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['code'][$obj->code] = ' ('.$langs->trans("Module").': '.$obj->module.')');
-							array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['all'][$obj->code]['label'] = ' ('.$langs->trans("Module").': '.$obj->module.')');
+							$moduletoshow = ucfirst(preg_replace('/^[^@]+@/', '', $obj->module));
+							//array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= $langs->trans("Module").': '.$moduletoshow.' - '.$label) : ($TModule['code'][$obj->code] = $langs->trans("Module").': '.$moduletoshow.' - '.$label);
+							//array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= $langs->trans("Module").': '.$moduletoshow.' - '.$label) : ($TModule['all'][$obj->code]['label'] = $langs->trans("Module").': '.$moduletoshow.' - '.$label);
+							$TModule['code'][$obj->code] = $moduletoshow.' - '.$label;
+							$TModule['all'][$obj->code]['label'] = $moduletoshow.' - '.$label;
 						}
 					}
 					$i++;
 				}
 			}
 
-			if (empty($idorcode)) $idorcode = 'all';
+			if (empty($idorcode)) {
+				$idorcode = 'all';
+			}
 			$TType = $TSystem[$idorcode];
-			if (! empty($TSystemAuto[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TSystemAuto[$idorcode]);
-			if (! empty($TModule[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TModule[$idorcode]);
+			if (! empty($TSystemAuto[$idorcode])) {
+				$TType = array_merge($TType, $TSystemAuto[$idorcode]);
+			}
+			if (! empty($TModule[$idorcode])) {
+				$TType = array_merge($TType, $TModule[$idorcode]);
+			}
 			$this->liste_array = $TType;
-
 
 			return $this->liste_array;
 		} else {

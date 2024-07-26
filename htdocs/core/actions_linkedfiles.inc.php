@@ -253,6 +253,13 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			if ($filenamefrom && $filenameto) {
 				$srcpath = $upload_dir.'/'.$filenamefrom;
 				$destpath = $upload_dir.'/'.$filenameto;
+				if ($modulepart == "ticket" && !dol_is_file($srcpath)) {
+					$srcbis = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenamefrom;
+					if (dol_is_file($srcbis)) {
+						$srcpath = $srcbis;
+						$destpath = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenameto;
+					}
+				}
 
 				$reshook = $hookmanager->initHooks(array('actionlinkedfiles'));
 				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);

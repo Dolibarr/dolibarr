@@ -8,7 +8,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016-2018  Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -27,7 +27,7 @@
  */
 
 /**
- *  \file        fichinter/card-rec.php
+ *  \file        htdocs/fichinter/card-rec.php
  *  \ingroup     intervention
  *  \brief       Page to show predefined fichinter
  */
@@ -98,7 +98,7 @@ $extrafields = new ExtraFields($db);
 
 
 $arrayfields = array(
-	'f.titre' => array('label' => "Ref", 'checked' => 1),
+	'f.title' => array('label' => "Ref", 'checked' => 1),
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
 	'f.fk_contrat' => array('label' => "Contract", 'checked' => 1),
 	'f.duree' => array('label' => "Duration", 'checked' => 1),
@@ -130,7 +130,7 @@ if ($cancel) {
 
 // Create predefined intervention
 if ($action == 'add') {
-	if (!GETPOST('titre')) {
+	if (!GETPOST('title')) {
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Title")), null, 'errors');
 		$action = "create";
 		$error++;
@@ -149,8 +149,8 @@ if ($action == 'add') {
 	$reday = GETPOST('reday');
 	$rehour = GETPOST('rehour');
 	$remin = GETPOST('remin');
-	$nb_gen_max = (GETPOSTINT('nb_gen_max') ? GETPOSTINT('nb_gen_max') : 0);
-	if (GETPOST('frequency')) {
+	$nb_gen_max = GETPOSTINT('nb_gen_max');
+	if ($frequency) {
 		if (empty($reyear) || empty($remonth) || empty($reday)) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			$action = "create";
@@ -158,7 +158,7 @@ if ($action == 'add') {
 		} else {
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		}
-		if ($nb_gen_max === '') {
+		if ($nb_gen_max === 0) {
 			setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("MaxPeriodNumber")), null, 'errors');
 			$action = "create";
 			$error++;
@@ -167,7 +167,7 @@ if ($action == 'add') {
 
 	if (!$error) {
 		$object->id_origin = $id;
-		$object->title			= GETPOST('titre', 'alpha');
+		$object->title			= GETPOST('title', 'alpha');
 		$object->description	= GETPOST('description', 'restricthtml');
 		$object->socid			= GETPOSTINT('socid');
 		$object->fk_project		= GETPOSTINT('projectid');
@@ -243,7 +243,7 @@ if ($action == 'add') {
 } elseif ($action == 'setfrequency' && $user->hasRight('ficheinter', 'creer')) {
 	// Set frequency and unit frequency
 	$object->fetch($id);
-	$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOSTINT('unit_frequency'));
+	$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
 } elseif ($action == 'setdate_when' && $user->hasRight('ficheinter', 'creer')) {
 	// Set next date of execution
 	$object->fetch($id);
@@ -264,7 +264,7 @@ if ($action == 'add') {
 
 $help_url = '';
 
-llxHeader('', $langs->trans("RepeatableIntervention"), $help_url);
+llxHeader('', $langs->trans("RepeatableIntervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card-rec');
 
 $form = new Form($db);
 $companystatic = new Societe($db);
@@ -322,7 +322,7 @@ if ($action == 'create') {
 
 		// Title
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", "alphanohtml")).'">';
+		print '<input class="flat quatrevingtpercent" type="text" name="title" value="'.dol_escape_htmltag(GETPOST("title", "alphanohtml")).'">';
 		print '</td>';
 
 		// Note
@@ -485,6 +485,7 @@ if ($action == 'create') {
 
 	print '<input type="hidden" name="action" value="createfrommodel">';
 	print '<input type="hidden" name="id" value="'.$id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print $form->buttonsSaveCancel("CreateDraftIntervention", '');
 
 	print '</form>';
@@ -576,7 +577,7 @@ if ($action == 'create') {
 				print $langs->trans('Contract');
 				print '</td>';
 				if ($action != 'contrat') {
-					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&amp;id='.$object->id.'">';
+					print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=contrat&id='.$object->id.'&token='.newToken().'">';
 					print img_edit($langs->trans('SetContract'), 1);
 					print '</a></td>';
 				}
@@ -777,9 +778,9 @@ if ($action == 'create') {
 		/*
 		 *  List mode
 		 */
-		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title,";
+		$sql = "SELECT f.rowid as fich_rec, s.nom as name, s.rowid as socid, f.rowid as facid, f.title,";
 		$sql .= " f.duree, f.fk_contrat, f.fk_projet as fk_project, f.frequency, f.nb_gen_done, f.nb_gen_max,";
-		$sql .= " f.date_last_gen, f.date_when, f.datec";
+		$sql .= " f.date_last_gen, f.date_when, f.datec, f.status";
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter_rec as f";
 		$sql .= " , ".MAIN_DB_PREFIX."societe as s ";
@@ -796,7 +797,7 @@ if ($action == 'create') {
 		}
 		/*
 		if (!empty($search_ref)) {
-			$sql .= natural_search('f.titre', $search_ref);
+			$sql .= natural_search('f.title', $search_ref);
 		}
 		*/
 		if (!empty($search_societe)) {
@@ -824,7 +825,7 @@ if ($action == 'create') {
 			$i = 0;
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.titre", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
+			print_liste_field_titre("Ref", $_SERVER['PHP_SELF'], "f.title", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			print_liste_field_titre("Company", $_SERVER['PHP_SELF'], "s.nom", "", "", 'width="200px"', $sortfield, $sortorder, 'left ');
 			if (isModEnabled('contract')) {
 				print_liste_field_titre("Contract", $_SERVER['PHP_SELF'], "f.fk_contrat", "", "", 'width="100px"', $sortfield, $sortorder, 'left ');
@@ -910,8 +911,8 @@ if ($action == 'create') {
 						if ($user->hasRight('ficheinter', 'creer')) {
 							if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 								print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=createfrommodel';
-								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'">';
-								print $langs->trans("CreateFichInter").'</a>';
+								print '&socid='.$objp->socid.'&id='.$objp->fich_rec.'&token='.newToken().'">';
+								print $langs->trans("NewIntervention").'</a>';
 							} else {
 								print $langs->trans("DateIsNotEnough");
 							}

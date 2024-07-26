@@ -91,7 +91,7 @@ $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
@@ -244,7 +244,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		print dol_get_fiche_head();
 
-		print '<table width="100%" class="border">';
+		print '<table class="border centpercent">';
 
 		// Ref
 		print '<tr>';
@@ -254,7 +254,7 @@ if ($user->hasRight('categorie', 'creer')) {
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
+		$doleditor = new DolEditor('description', $description, '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -265,7 +265,7 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		// Position
 		print '<tr>';
-		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" class="minwidth100" name="position" value="'.$position.'">';
+		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" type="number" class="minwidth50 maxwidth50" name="position" value="'.$position.'">';
 		print'</td></tr>';
 
 		// Parent category

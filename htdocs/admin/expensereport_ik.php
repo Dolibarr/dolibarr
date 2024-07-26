@@ -102,7 +102,7 @@ $rangesbycateg = $expIk->getAllRanges();
  * View
  */
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport_ik');
 
 $form = new Form($db);
 

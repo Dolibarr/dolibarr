@@ -24,6 +24,7 @@
  * \brief File of class to manage predefined price products or services by customer
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  * File of class to manage predefined price products or services by customer
@@ -470,7 +471,7 @@ class ProductCustomerPrice extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new PriceByCustomerLine();
+				$line = new PriceByCustomerLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -581,7 +582,7 @@ class ProductCustomerPrice extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new PriceByCustomerLine();
+				$line = new PriceByCustomerLine($this->db);
 
 				$line->id = $obj->rowid;
 
@@ -1070,7 +1071,7 @@ class ProductCustomerPrice extends CommonObject
 /**
  * File of class to manage predefined price products or services by customer lines
  */
-class PriceByCustomerLine
+class PriceByCustomerLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
@@ -1083,7 +1084,6 @@ class PriceByCustomerLine
 	public $entity;
 
 	public $datec = '';
-	public $tms = '';
 
 	/**
 	 * @var int ID

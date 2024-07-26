@@ -165,7 +165,9 @@ if (!GETPOST('code')) {
 	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
 	if ($forlogin) {
-		$apiService->setApprouvalPrompt('force');
+		// Set approval_prompt
+		$approval_prompt = getDolGlobalString('OAUTH_GOOGLE_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
+		$apiService->setApprouvalPrompt($approval_prompt);
 	}
 
 	// This may create record into oauth_state before the header redirect.
@@ -349,7 +351,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

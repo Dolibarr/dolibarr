@@ -4,6 +4,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,10 @@ require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
 
+if (!isModEnabled('ai')) {
+	accessforbidden('Module AI not enabled');
+}
+
 
 /*
  * View
@@ -57,13 +62,14 @@ $rawData = file_get_contents('php://input');
 $jsonData = json_decode($rawData, true);
 
 if (is_null($jsonData)) {
-	dol_print_error('data with format JSON valide.');
+	dol_print_error($db, 'data with format JSON valide.');
 }
 $ai = new Ai($db);
 
-$function = 'textgeneration';
+// Get parameters
+$function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
-$format = empty($jsonData['instructions']) ? '' : $jsonData['instructions'];
+$format = empty($jsonData['format']) ? '' : $jsonData['format'];
 
 $generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 
@@ -78,5 +84,16 @@ if (is_array($generatedContent) && $generatedContent['error']) {
 		print "Error returned by API call: " . $generatedContent['message'];
 	}
 } else {
-	print $generatedContent;
+	if ($function == 'textgenerationemail' || $function == 'textgenerationwebpage') {
+		print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+	} elseif ($function == 'imagegeneration') {
+		// TODO
+	} elseif ($function == 'videogeneration') {
+		// TODO
+	} elseif ($function == 'audiogeneration') {
+		// TODO
+	} else {
+		// Default case 'textgeneration'
+		print dolPrintText($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+	}
 }

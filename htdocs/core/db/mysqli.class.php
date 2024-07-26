@@ -316,11 +316,11 @@ class DoliDBMysqli extends DoliDB
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * 	@param	int		$result_mode	Result mode (Using 1=MYSQLI_USE_RESULT instead of 0=MYSQLI_STORE_RESULT will not buffer the result and save memory)
-	 *	@return	bool|mysqli_result		Resultset of answer
+	 *	@return	false|mysqli_result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf, $dolibarr_main_db_readonly;
+		global $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -692,7 +692,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	bool|mysqli_result		resource defined if OK, null if KO
+	 * 	@return	null|mysqli_result		Resource defined if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
 	{
@@ -716,6 +716,7 @@ class DoliDBMysqli extends DoliDB
 			dol_syslog($sql, LOG_DEBUG);
 			$ret = $this->query($sql);
 		}
+
 		return $ret;
 	}
 

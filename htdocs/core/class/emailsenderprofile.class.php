@@ -46,12 +46,6 @@ class EmailSenderProfile extends CommonObject
 	public $table_element = 'c_email_senderprofile';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for emailsenderprofile
 	 */
 	public $picto = 'emailsenderprofile';
@@ -122,11 +116,6 @@ class EmailSenderProfile extends CommonObject
 
 	public $email;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
 	public $private;
 	public $signature;
 	public $position;
@@ -144,6 +133,8 @@ class EmailSenderProfile extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;

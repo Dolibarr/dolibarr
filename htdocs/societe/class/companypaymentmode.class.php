@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017  		Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France     	<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,17 +42,6 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'societe_rib';
-
-	/**
-	 * @var string  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_soc@societe';
-
-	/**
-	 * @var int  Does companypaymentmode support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for companypaymentmode. Must be the part after the 'object_' into object_companypaymentmode.png
@@ -214,6 +203,9 @@ class CompanyPaymentMode extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 'fk_soc@societe';
+		$this->isextrafieldmanaged = 0;
+
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
@@ -309,6 +301,7 @@ class CompanyPaymentMode extends CommonObject
 
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
+		$this->date_modification = $this->tms;
 
 		//if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;

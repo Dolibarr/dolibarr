@@ -52,19 +52,27 @@ class Productlot extends CommonObject
 	 */
 	public $picto = 'lot';
 
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
 	public $stats_propale;
 	public $stats_commande;
 	public $stats_contrat;
 	public $stats_facture;
 	public $stats_commande_fournisseur;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
 	public $stats_expedition;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
 	public $stats_reception;
+
+	/**
+	 * @var array{customers:int,nb:int,rows:int,qty:int} stats_expedition
+	 */
+	public $stats_supplier_order;
+
 	public $stats_mo;
 	public $stats_bom;
 	public $stats_mrptoconsume;
@@ -137,10 +145,30 @@ class Productlot extends CommonObject
 	 * @var string batch ref
 	 */
 	public $batch;
+
+	/**
+	 * @var int|string eatby
+	 */
 	public $eatby = '';
+
+	/**
+	 * @var int|string sellby
+	 */
 	public $sellby = '';
+
+	/**
+	 * @var int|string eal_date
+	 */
 	public $eol_date = '';
+
+	/**
+	 * @var int|string manufacturing_date
+	 */
 	public $manufacturing_date = '';
+
+	/**
+	 * @var int|string scrapping_date
+	 */
 	public $scrapping_date = '';
 	//public $commissionning_date = '';
 	public $qc_frequency = '';
@@ -162,8 +190,6 @@ class Productlot extends CommonObject
 	 */
 	public $import_key;
 
-	public $stats_supplier_order = array();
-
 
 	/**
 	 * Constructor
@@ -173,6 +199,8 @@ class Productlot extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -560,7 +588,7 @@ class Productlot extends CommonObject
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 		if (empty($this->oldcopy)) {
-			$this->oldcopy = dol_clone($this);
+			$this->oldcopy = dol_clone($this, 2);
 		}
 
 		if (!$error) {
@@ -1089,7 +1117,7 @@ class Productlot extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $langs, $user;
+		global $langs;
 
 		$langs->loadLangs(['stocks', 'productbatch']);
 
@@ -1099,11 +1127,11 @@ class Productlot extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Batch").'</u>';
 		//$datas['divopen'] = '<div width="100%">';
 		$datas['batch'] = '<br><b>'.$langs->trans('Batch').':</b> '.$this->batch;
-		if ($this->eatby && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
-			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->db->jdate($this->eatby), 'day');
+		if (isDolTms($this->eatby) && !getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+			$datas['eatby'] = '<br><b>'.$langs->trans('EatByDate').':</b> '.dol_print_date($this->eatby, 'day');
 		}
-		if ($this->sellby && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
-			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->db->jdate($this->sellby), 'day');
+		if (isDolTms($this->sellby) && !getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+			$datas['sellby'] = '<br><b>'.$langs->trans('SellByDate').':</b> '.dol_print_date($this->sellby, 'day');
 		}
 		//$datas['divclose'] = '</div>';
 
@@ -1221,7 +1249,7 @@ class Productlot extends CommonObject
 
 		$this->entity = $conf->entity;
 		$this->fk_product = 0;
-		$this->batch = '';
+		$this->batch = 'ABCD123456';
 		$this->eatby = $now - 100000;
 		$this->sellby = $now - 100000;
 		$this->datec = $now - 3600;

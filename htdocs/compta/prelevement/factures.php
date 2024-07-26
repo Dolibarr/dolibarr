@@ -65,7 +65,7 @@ if (!$sortorder) {
 $object = new BonPrelevement($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
@@ -94,112 +94,116 @@ $thirdpartytmp = new Societe($db);
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
-	if ($object->fetch($id, $ref) >= 0) {
-		$head = prelevement_prepare_head($object);
+	$object->fetch($id, $ref);
+	if (empty($object->id)) {
+		$langs->load('errors');
+		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
+		llxFooter();
+		exit;
+	}
 
-		print dol_get_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
+	$head = prelevement_prepare_head($object);
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
+	print dol_get_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?restore_lastsearch_values=1'.($object->type != 'bank-transfer' ? '' : '&type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
-		print '<div class="fichecenter">';
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">'."\n";
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
-		//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
-		print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
-		print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">'."\n";
 
-		if (!empty($object->date_trans)) {
-			$muser = new User($db);
-			$muser->fetch($object->user_trans);
+	//print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td><span class="amount">'.price($object->amount).'</span></td></tr>';
 
-			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
-			print dol_print_date($object->date_trans, 'day');
-			print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
-			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
-			print $object->methodes_trans[$object->method_trans];
-			print '</td></tr>';
-		}
-		if (!empty($object->date_credit)) {
-			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
-			print dol_print_date($object->date_credit, 'day');
-			print '</td></tr>';
-		}
+	if (!empty($object->date_trans)) {
+		$muser = new User($db);
+		$muser->fetch($object->user_trans);
 
-		print '</table>';
+		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
+		print dol_print_date($object->date_trans, 'day');
+		print ' &nbsp; <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getNomUrl(-1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
+		print $object->methodes_trans[$object->method_trans];
+		print '</td></tr>';
+	}
+	if (!empty($object->date_credit)) {
+		print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
+		print dol_print_date($object->date_credit, 'day');
+		print '</td></tr>';
+	}
 
-		print '<br>';
+	print '</table>';
 
-		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent tableforfield">';
+	print '<br>';
 
-		// Get bank account for the payment
-		$acc = new Account($db);
-		$fk_bank_account = $object->fk_bank_account;
-		if (empty($fk_bank_account)) {
-			$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
-		}
-		if ($fk_bank_account > 0) {
-			$result = $acc->fetch($fk_bank_account);
-		}
+	print '<div class="underbanner clearboth"></div>';
+	print '<table class="border centpercent tableforfield">';
 
-		$labelofbankfield = "BankToReceiveWithdraw";
-		if ($object->type == 'bank-transfer') {
-			$labelofbankfield = 'BankToPayCreditTransfer';
-		}
+	// Get bank account for the payment
+	$acc = new Account($db);
+	$fk_bank_account = $object->fk_bank_account;
+	if (empty($fk_bank_account)) {
+		$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
+	}
+	if ($fk_bank_account > 0) {
+		$result = $acc->fetch($fk_bank_account);
+	}
 
-		print '<tr><td class="titlefieldcreate">';
-		print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
-		print '</td>';
+	$labelofbankfield = "BankToReceiveWithdraw";
+	if ($object->type == 'bank-transfer') {
+		$labelofbankfield = 'BankToPayCreditTransfer';
+	}
 
-		print '<td>';
-		if ($acc->id > 0) {
-			print $acc->getNomUrl(1);
-		}
-		print '</td>';
-		print '</tr>';
+	print '<tr><td class="titlefieldcreate">';
+	print $form->textwithpicto($langs->trans("BankAccount"), $langs->trans($labelofbankfield));
+	print '</td>';
 
-		$modulepart = 'prelevement';
-		if ($object->type == 'bank-transfer') {
-			$modulepart = 'paymentbybanktransfer';
-		}
+	print '<td>';
+	if ($acc->id > 0) {
+		print $acc->getNomUrl(1);
+	}
+	print '</td>';
+	print '</tr>';
 
-		print '<tr><td class="titlefieldcreate">';
-		$labelfororderfield = 'WithdrawalFile';
-		if ($object->type == 'bank-transfer') {
-			$labelfororderfield = 'CreditTransferFile';
-		}
-		print $langs->trans($labelfororderfield).'</td><td>';
+	$modulepart = 'prelevement';
+	if ($object->type == 'bank-transfer') {
+		$modulepart = 'paymentbybanktransfer';
+	}
 
-		if (isModEnabled('multicompany')) {
-			$labelentity = $conf->entity;
-			$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+	print '<tr><td class="titlefieldcreate">';
+	$labelfororderfield = 'WithdrawalFile';
+	if ($object->type == 'bank-transfer') {
+		$labelfororderfield = 'CreditTransferFile';
+	}
+	print $langs->trans($labelfororderfield).'</td><td>';
 
-			if ($type != 'bank-transfer') {
-				$dir = $conf->prelevement->dir_output;
-			} else {
-				$dir = $conf->paymentbybanktransfer->dir_output;
-			}
-			if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
-				$relativepath = 'receipts/'.$object->ref.'.xml';
-			}
+	if (isModEnabled('multicompany')) {
+		$labelentity = $conf->entity;
+		$relativepath = 'receipts/'.$object->ref.'-'.$labelentity.'.xml';
+
+		if ($type != 'bank-transfer') {
+			$dir = $conf->prelevement->dir_output;
 		} else {
+			$dir = $conf->paymentbybanktransfer->dir_output;
+		}
+		if (!dol_is_file($dir.'/'.$relativepath)) {	// For backward compatibility
 			$relativepath = 'receipts/'.$object->ref.'.xml';
 		}
-
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
-		print img_picto('', 'download', 'class="paddingleft"');
-		print '</a>';
-		print '</td></tr></table>';
-
-		print '</div>';
-
-		print dol_get_fiche_end();
 	} else {
-		dol_print_error($db);
+		$relativepath = 'receipts/'.$object->ref.'.xml';
 	}
+
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath;
+	print img_picto('', 'download', 'class="paddingleft"');
+	print '</a>';
+	print '</td></tr></table>';
+
+	print '</div>';
+
+	print dol_get_fiche_end();
 }
 
 
@@ -323,16 +327,18 @@ if ($resql) {
 		$invoicetmpsupplier = new FactureFournisseur($db);
 	}
 
-	while ($i < min($num, $limit)) {
+	$imaxinloop = ($limit ? min($num, $limit) : $num);
+	while ($i < $imaxinloop) {
 		$obj = $db->fetch_object($resql);
+
 		$itemurl = '';
 		$partyurl = '';
-		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($user instanceof User)) {
+		if ($salaryBonPl && ($salarytmp instanceof Salary) && ($usertmp instanceof User)) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
 			$itemurl = $salarytmp->getNomUrl(1);
 			$partyurl = $usertmp->getNomUrl(1);
-		} elseif ($invoicetmp instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
+		} elseif ($invoicetmpcustomer instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
 			} else {
@@ -351,9 +357,15 @@ if ($resql) {
 		print $itemurl;
 		print "</td>\n";
 
-		if ($object->type == 'bank-transfer' && !$salaryBonPl && $invoicetmp instanceof Facture) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($invoicetmp->ref_supplier).'">';
-			print dol_escape_htmltag($invoicetmp->ref_supplier);
+		if ($object->type == 'bank-transfer' && !$salaryBonPl) {
+			$labeltoshow = '';
+			if ($invoicetmp instanceof Facture) {
+				$labeltoshow = $invoicetmp->ref_supplier;
+			}
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($labeltoshow).'">';
+			if ($invoicetmp instanceof Facture) {
+				print dol_escape_htmltag($invoicetmp->ref_supplier);
+			}
 			print "</td>\n";
 		}
 

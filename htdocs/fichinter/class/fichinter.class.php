@@ -6,9 +6,9 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2023-2024      William Mead         <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,15 +107,26 @@ class Fichinter extends CommonObject
 	public $author;
 
 	/**
-	 * Date creation record (datec)
-	 *
-	 * @var integer
+	 * @var null|int|'' Date creation record (datec)
 	 */
 	public $datec;
 
+	/**
+	 * @var null|int|'' Date record (datev)
+	 */
 	public $datev;
+	/**
+	 * @var null|int|'' Date record (dateo)
+	 */
 	public $dateo;
+	/**
+	 * @var null|int|'' Date record (datee)
+	 */
 	public $datee;
+
+	/**
+	 * @var null|int|'' Date t record (datet)
+	 */
 	public $datet;
 
 	/**
@@ -192,29 +203,31 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_CLOSED = 3;
 
-	/*
+
+	/**
 	 * No signature
 	 */
 	const STATUS_NO_SIGNATURE    = 0;
 
-	/*
+	/**
 	 * Signed by sender
 	 */
 	const STATUS_SIGNED_SENDER   = 1;
 
-	/*
+	/**
 	 * Signed by receiver
 	 */
 	const STATUS_SIGNED_RECEIVER = 2;
 
-	/*
+	/**
 	 * Signed by all
 	 */
 	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
+
 	/**
 	 * Date delivery
-	 * @var string|int		Delivery int
+	 * @var null|int|''		Delivery int
 	 */
 	public $date_delivery;
 
@@ -1548,7 +1561,7 @@ class Fichinter extends CommonObject
 
 			$this->db->begin();
 
-			$this->oldcopy = dol_clone($this);
+			$this->oldcopy = dol_clone($this, 2);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET ref_client = ".(empty($ref_client) ? 'NULL' : "'".$this->db->escape($ref_client)."'");
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1679,6 +1692,11 @@ class FichinterLigne extends CommonObjectLine
 	public $duration; 	// Duration of intervention
 	public $rang = 0;
 	public $tva_tx;
+
+	/**
+	 * Unit price before taxes
+	 * @var float
+	 */
 	public $subprice;
 
 	/**

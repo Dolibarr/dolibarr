@@ -56,7 +56,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'produit|service');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productlotdocuments'));
 
 // Get parameters
@@ -149,7 +149,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans('ProductLot'), '');
+llxHeader('', $langs->trans('ProductLot'), '', '', 0, 0, '', '', '', 'mod-product page-stock_productlot_document');
 
 
 if ($object->id) {

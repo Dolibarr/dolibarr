@@ -247,7 +247,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 
 	/*
-	 * Remove deprecated indexes and constraints for Mysql
+	 * Remove deprecated indexes and constraints for Mysql without knowing its name
 	 */
 	if ($ok && preg_match('/mysql/', $db->type)) {
 		$versioncommande = array(4, 0, 0);
@@ -275,17 +275,19 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 					$resql = $db->query($sql);
 					if ($resql) {
 						$values = $db->fetch_array($resql);
-						$i = 0;
-						$createsql = $values[1];
-						$reg = array();
-						while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
-							$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
-							$resqldrop = $db->query($sqldrop);
-							if ($resqldrop) {
-								print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+						if (is_array($values)) {
+							$i = 0;
+							$createsql = $values[1];
+							$reg = array();
+							while (preg_match('/CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`/i', $createsql, $reg) && $i < 100) {
+								$sqldrop = "ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
+								$resqldrop = $db->query($sqldrop);
+								if ($resqldrop) {
+									print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+								}
+								$createsql = preg_replace('/CONSTRAINT `'.$reg[1].'`/i', 'XXX', $createsql);
+								$i++;
 							}
-							$createsql = preg_replace('/CONSTRAINT `'.$reg[1].'`/i', 'XXX', $createsql);
-							$i++;
 						}
 						$db->free($resql);
 					} else {

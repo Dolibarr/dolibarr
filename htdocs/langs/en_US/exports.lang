@@ -46,10 +46,16 @@ LineLabel=Label of line
 LineDescription=Description of line
 LineUnitPrice=Unit price of line
 LineVATRate=VAT Rate of line
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=Quantity for line
 LineTotalHT=Amount excl. tax for line
 LineTotalTTC=Amount with tax for line
 LineTotalVAT=Amount of VAT for line
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
 FileToImport=Source file to import
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=Choose the file format to use as import file format b
 ChooseFileToImport=Upload file then click on the %s icon to select file as source import file...
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
-FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file

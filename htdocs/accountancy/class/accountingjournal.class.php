@@ -44,12 +44,6 @@ class AccountingJournal extends CommonObject
 	public $fk_element = '';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'generic';
@@ -105,16 +99,18 @@ class AccountingJournal extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**
 	 * Load an object from database
 	 *
-	 * @param	int		$rowid				Id of record to load
-	 * @param 	string 	$journal_code		Journal code
+	 * @param	int			$rowid			Id of record to load
+	 * @param 	string|null $journal_code	Journal code
 	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
-	public function fetch($rowid = null, $journal_code = null)
+	public function fetch($rowid = 0, $journal_code = null)
 	{
 		global $conf;
 

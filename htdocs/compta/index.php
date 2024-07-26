@@ -73,7 +73,7 @@ $maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->glo
 $maxLatestEditCount = 5;
 $maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('invoiceindex'));
 
 
@@ -102,7 +102,12 @@ llxHeader("", $langs->trans("InvoicesArea"));
 print load_fiche_titre($langs->trans("InvoicesArea"), '', 'bill');
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 if (isModEnabled('invoice')) {
 	print getNumberInvoicesPieChart('customers');
@@ -124,7 +129,8 @@ if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print '<br>';
 }
 
-print '</div><div class="fichetwothirdright">';
+
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 // Latest modified customer invoices
@@ -166,7 +172,10 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max).'</th>';
+
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastCustomerBills", $max);
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+		print '</th>';
 		if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 			print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		}
@@ -309,7 +318,9 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max).'</th>';
+		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BoxTitleLastSupplierBills", $max);
+		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+		print '</th>';
 		if (getDolGlobalString('MAIN_SHOW_HT_ON_SUMMARY')) {
 			print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		}
@@ -354,7 +365,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$thirdpartystatic->fournisseur = 1;
 				$thirdpartystatic->code_client = '';
 				$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-				$thirdpartystatic->code_compta = '';
+				$thirdpartystatic->code_compta_client = '';
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				print '<tr class="oddeven nowraponall tdoverflowmax100"><td>';
@@ -427,8 +438,9 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th>'.$langs->trans("BoxTitleLastModifiedDonations", $max).'</th>';
-		print '<th></th>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedDonations", $max);
+		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+		print '</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '<th width="16">&nbsp;</th>';
@@ -517,7 +529,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
-			print '<th>'.$langs->trans("ContributionsToPay").($num ? ' <a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge">'.$num.'</span></a>' : '').'</th>';
+			print '<th>'.$langs->trans("ContributionsToPay").($num ? '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?status=0"><span class="badge marginleftonly">'.$num.'</span></a>' : '').'</th>';
 			print '<th align="center">'.$langs->trans("DateDue").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("Paid").'</th>';
@@ -526,6 +538,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			if ($num) {
 				$i = 0;
 				$tot_ttc = 0;
+				$tot_paid = 0;
 				$othernb = 0;
 
 				while ($i < $num) {
@@ -534,6 +547,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 					if ($i >= $max) {
 						$othernb += 1;
 						$tot_ttc += $obj->amount;
+						$tot_paid += $obj->sumpaid;
 						$i++;
 						continue;
 					}
@@ -566,7 +580,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 				print '<tr class="liste_total"><td class="left" colspan="2">'.$langs->trans("Total").'</td>';
 				print '<td class="nowrap right">'.price($tot_ttc).'</td>';
-				print '<td class="right"></td>';
+				print '<td class="nowrap right">'.price($tot_paid).'</td>';
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
 			} else {
@@ -627,11 +641,11 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
-			print "<tr class=\"liste_titre\">";
+			print '<tr class="liste_titre">';
 			print '<th colspan="2">';
-			print $langs->trans("OrdersDeliveredToBill").' ';
+			print $langs->trans("OrdersDeliveredToBill");
 			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&search_billed=0">';
-			print '<span class="badge">'.$num.'</span>';
+			print '<span class="badge marginleftonly">'.$num.'</span>';
 			print '</a>';
 			print '</th>';
 
@@ -664,8 +678,8 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 				$societestatic->client = 1;
 				$societestatic->code_client = $obj->code_client;
 				//$societestatic->code_fournisseur = $obj->code_fournisseur;
-				$societestatic->code_compta = $obj->code_compta;
-				//$societestatic->code_fournisseur = $obj->code_fournisseur;
+				$societestatic->code_compta_client = $obj->code_compta;
+				//$societestatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;
@@ -738,7 +752,7 @@ $sql = '';
 if ($sql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
 	$i = 0;
 	$resql = $db->query($sql);
@@ -757,7 +771,7 @@ if ($sql) {
 }
 
 
-print '</div></div>';
+print '</div></div></div>';
 
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardAccountancy', $parameters, $object); // Note that $action and $object may have been modified by hook

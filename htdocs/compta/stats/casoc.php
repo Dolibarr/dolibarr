@@ -60,7 +60,7 @@ $socid = GETPOSTINT('socid');
 // Category
 $selected_cat = GETPOSTINT('search_categ');
 if ($selected_cat == -1) {
-	$selected_cat = '';
+	$selected_cat = 0;
 }
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
@@ -421,7 +421,7 @@ if ($modecompta == "RECETTES-DEPENSES") {
 			$name[$obj->socid] = $obj->name;
 			$address_zip[$obj->socid] = '';
 			$address_town[$obj->socid] = '';
-			$address_pays[$obj->socid] = 0;
+			$address_pays[$obj->socid] = '';
 
 			$catotal += $obj->amount_ttc;
 
@@ -639,15 +639,15 @@ if (count($amount)) {
 		print '<td class="tdoverflowmax150">'.$linkname."</td>\n";
 
 		print '<td>';
-		print $address_pays($address_zip[$key]);
+		print $address_zip[$key];
 		print '</td>';
 
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_town[$key]).'">';
-		print $address_pays($address_town[$key]);
+		print $address_town[$key];
 		print '</td>';
 
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($address_pays[$key]).'">';
-		print $address_pays($address_pays[$key]);
+		print $address_pays[$key];
 		print '</td>';
 
 		// Amount w/o VAT

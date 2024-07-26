@@ -2,7 +2,7 @@
 /* Copyright (C) 2013       Antoine Iauch	        <aiauch@gpcsolutions.fr>
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
  *
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
@@ -68,6 +69,7 @@ if (!$sortfield) {
 $selected_cat = GETPOST('search_categ', 'intcomma');
 $selected_catsoc = GETPOST('search_categ_soc', 'intcomma');
 $selected_soc = GETPOST('search_soc', 'intcomma');
+$typent_id = GETPOST('typent_id', 'int');
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
@@ -207,6 +209,9 @@ if (!empty($selected_soc)) {
 if (!empty($selected_type)) {
 	$tableparams['search_type'] = $selected_type;
 }
+if (!empty($typent_id)) {
+	$tableparams['typent_id'] = $typent_id;
+}
 $tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
 
 // Adding common parameters
@@ -301,7 +306,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-
+	if ($typent_id >0) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
+	}
 	$parameters = array();
 	$hookmanager->executeHooks('printFieldListFrom', $parameters);
 	$sql .= $hookmanager->resPrint;
@@ -328,7 +335,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
 		$searchCategoryProductList = array();
 		foreach ($TListOfCats as $key => $cat) {
-			$searchCategoryProductList[] = $cat['rowid'];
+			$searchCategoryProductList[] = $cat['id'];
 		}
 	}
 	if (!empty($searchCategoryProductList)) {
@@ -393,6 +400,11 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_soc > 0) {
 		$sql .= " AND f.fk_soc = ".((int) $selected_soc);
 	}
+
+	if ($typent_id >0) {
+		$sql .= " AND soc.fk_typent = ".((int) $typent_id);
+	}
+
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 
 	$parameters = array();
@@ -457,10 +469,18 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// type filter (produit/service)
 	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
 
-	//select thirdparty
+	// Third party filter
 	print '<br>';
 	print img_picto('', 'category', 'class="pictofixedwidth"');
 	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
+
+	// Type of third party filter
+	print '&nbsp; &nbsp;';
+	$formcompany = new FormCompany($db);
+	// NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on ascending label.
+	$sortparam = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC');
+	print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, $langs->trans("ThirdPartyType"), 0, 0, '', 0, 0, 0, $sortparam, '', 1);
+
 	print '<br>';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print $form->select_company($selected_soc, 'search_soc', '', $langs->trans("ThirdParty"));

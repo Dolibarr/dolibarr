@@ -4,10 +4,11 @@
  * Copyright (C) 2004		Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012	Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2016-2023  Charlene Benke           <charlene@patas-monkey.com>
+ * Copyright (C) 2016-2023  Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW	                    <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Mélina Joum			    <melina.joum@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var Extrafields object
+	 * @var ?Extrafields object
 	 */
 	public $extrafieldsCache;
 
@@ -254,7 +255,7 @@ abstract class CommonDocGenerator
 		global $conf, $extrafields;
 
 		if ($member->photo) {
-			$logotouse = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
+			$logotouse = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $member, 'user').'/photos/'.$member->photo;
 		} else {
 			$logotouse = DOL_DOCUMENT_ROOT.'/public/theme/common/nophoto.png';
 		}
@@ -308,7 +309,7 @@ abstract class CommonDocGenerator
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
 		}
 		if (empty($mysoc->state) && !empty($mysoc->state_code)) {
-			$mysoc->state = getState($mysoc->state_code, 0);
+			$mysoc->state = getState($mysoc->state_code, '0');
 		}
 
 		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -364,7 +365,7 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$object->state = getState($object->state_code, '0');
 		}
 
 		$array_thirdparty = array(
@@ -385,11 +386,12 @@ abstract class CommonDocGenerator
 			'company_vatnumber' => $object->tva_intra,
 			'company_customercode' => $object->code_client,
 			'company_suppliercode' => $object->code_fournisseur,
-			'company_customeraccountancycode' => $object->code_compta,
+			'company_customeraccountancycode' => $object->code_compta_client,
 			'company_supplieraccountancycode' => $object->code_compta_fournisseur,
 			'company_juridicalstatus' => $object->forme_juridique,
 			'company_outstanding_limit' => $object->outstanding_limit,
 			'company_capital' => $object->capital,
+			'company_capital_formated'=> price($object->capital, 0, '', 1, -1),
 			'company_idprof1' => $object->idprof1,
 			'company_idprof2' => $object->idprof2,
 			'company_idprof3' => $object->idprof3,
@@ -429,7 +431,7 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$object->state = getState($object->state_code, '0');
 		}
 
 		$array_contact = array(
@@ -719,9 +721,9 @@ abstract class CommonDocGenerator
 	 *	Define array with couple substitution key => substitution value
 	 *  Note that vars into substitutions array are formatted.
 	 *
-	 *	@param  CommonObjectLine $line				Object line
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @param  int				$linenumber			The number of the line for the substitution of "object_line_pos"
+	 *	@param  CommonObjectLine	$line			Object line
+	 *	@param  Translate			$outputlangs    Translate object to use for output
+	 *  @param  int					$linenumber		The number of the line for the substitution of "object_line_pos"
 	 *  @return	array								Return a substitution array
 	 */
 	public function get_substitutionarray_lines($line, $outputlangs, $linenumber = 0)
@@ -901,7 +903,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Add info from $object->xxx where xxx has been loaded by fetch_origin() of shipment
-		if (!empty($object->commande) && is_object($object->commande)) {
+		if (is_object($object->commande) && !empty($object->commande->ref)) {
 			$array_shipment['order_ref'] = $object->commande->ref;
 			$array_shipment['order_ref_customer'] = $object->commande->ref_customer;
 		}
@@ -1341,9 +1343,9 @@ abstract class CommonDocGenerator
 	 *  get extrafield content for pdf writeHtmlCell compatibility
 	 *  usage for PDF line columns and object note block
 	 *
-	 *  @param	object		$object     		Common object
-	 *  @param	string		$extrafieldKey    	The extrafield key
-	 *  @param	Translate	$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
+	 *  @param	CommonObject	$object     		Common object
+	 *  @param	string			$extrafieldKey    	The extrafield key
+	 *  @param	Translate		$outputlangs		The output langs (if value is __(XXX)__ we use it to translate it).
 	 *  @return	string
 	 */
 	public function getExtrafieldContent($object, $extrafieldKey, $outputlangs = null)
@@ -1366,7 +1368,7 @@ abstract class CommonDocGenerator
 
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1406,10 +1408,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	object		$object    		line of common object
-	 *  @param 	Translate 	$outputlangs    Output language
-	 *  @param 	array 		$params    		array of additional parameters
-	 *  @return	string  					Html string
+	 *  @param	CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 			$outputlangs    Output language
+	 *  @param 	array 				$params    		array of additional parameters
+	 *  @return	string  							Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{
@@ -1420,7 +1422,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extrafields if not already done
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {
@@ -1482,9 +1484,17 @@ abstract class CommonDocGenerator
 					continue;
 				}
 
+				// Load language if required
+				if (!empty($extrafields->attributes[$object->table_element]['langfile'][$key])) {
+					$outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+				}
+
 				$field = new stdClass();
 				$field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
 				$field->content = $this->getExtrafieldContent($object, $key, $outputlangs);
+				if (isset($extrafields->attributes[$object->table_element]['langfile'][$key])) {
+					$outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+				}
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 
@@ -1706,7 +1716,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Load extra fields if they haven't been loaded already.
-		if (empty($this->extrafieldsCache)) {
+		if (is_null($this->extrafieldsCache)) {
 			$this->extrafieldsCache = new ExtraFields($this->db);
 		}
 		if (empty($this->extrafieldsCache->attributes[$object->table_element])) {

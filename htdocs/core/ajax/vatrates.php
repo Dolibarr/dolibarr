@@ -58,10 +58,10 @@ if (!empty($id) && !empty($action) && !empty($htmlname)) {
 
 	$soc->fetch($id);
 
-	if ($action == 'getSellerVATRates') {
+	if ($action == 'getSellerVATRates') {	// action = 'getSellerVATRates'
 		$seller = $mysoc;
 		$buyer = $soc;
-	} else {
+	} else {								// action = 'getBuyerVATRates'
 		$buyer = $mysoc;
 		$seller = $soc;
 	}

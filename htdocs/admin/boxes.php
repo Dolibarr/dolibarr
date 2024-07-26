@@ -51,7 +51,6 @@ $boxes = array();
  */
 
 if ($action == 'addconst') {
-	dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", GETPOSTINT("MAIN_BOXES_MAXLINES"), '', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", GETPOST("MAIN_ACTIVATE_FILECACHE", 'alpha'), 'chaine', 0, '', $conf->entity);
 }
 
@@ -211,11 +210,12 @@ if ($action == 'switch') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Boxes"));
+llxHeader('', $langs->trans("Boxes"), '', '', 0, 0, '', '', '', 'mod-admin page-boxes');
 
 print load_fiche_titre($langs->trans("Boxes"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."</span><br>\n";
+print '<br>';
 
 /*
  * Search for the default active boxes for each possible position
@@ -447,15 +447,6 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>';
-print $langs->trans("MaxNbOfLinesForBoxes");
-print '</td>'."\n";
-print '<td>';
-print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.(getDolGlobalString('MAIN_BOXES_MAXLINES')).'">';
-print '</td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)

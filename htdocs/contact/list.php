@@ -1,19 +1,19 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Eric Seigne					<erics@rycks.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2018		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2019		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ if ($contextpage == 'poslist') {
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
-if ($user->socid) {
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contact', $contactid, '');
@@ -74,7 +74,7 @@ $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('searc
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
-$search_id = GETPOSTINT("search_id");
+$search_id = GETPOST("search_id", "intcomma");
 $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
@@ -184,7 +184,7 @@ if ($type == "c") {
 	$urlfiche = "";
 }
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));
@@ -232,7 +232,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -258,7 +258,7 @@ if (isModEnabled('socialnetworks')) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
 				'checked' => 0,
-				'position' => 300
+				'position' => 299
 			);
 		}
 	}
@@ -280,9 +280,9 @@ if (($id > 0 || !empty($ref)) && $action != 'add') {
 	}
 }
 
-$permissiontoread = $user->hasRight('societe', 'lire');
-$permissiontodelete = $user->hasRight('societe', 'supprimer');
-$permissiontoadd = $user->hasRight('societe', 'creer');
+$permissiontoread = $user->hasRight('societe', 'contact', 'lire');
+$permissiontodelete = $user->hasRight('societe', 'contact', 'supprimer');
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -424,9 +424,10 @@ if (empty($reshook)) {
 if ($search_priv < 0) {
 	$search_priv = '';
 }
-// the user has not right to see other third-party than their own
+
+// The user has no rights to see other third-party than their own
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
+	$socid = $user->socid;
 }
 
 
@@ -534,7 +535,6 @@ if ($search_priv != '0' && $search_priv != '1') {
 		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
 }
-
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -766,6 +766,7 @@ $sql .= $hookmanager->resPrint;
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -818,7 +819,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-societe page-contact-list bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -1630,7 +1631,7 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);

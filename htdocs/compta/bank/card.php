@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -65,7 +65,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankcard', 'globalcard'));
 
 // Security check
@@ -128,8 +128,10 @@ if (empty($reshook)) {
 
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
-		$object->courant = GETPOSTINT("type");
-		$object->clos = GETPOSTINT("clos");
+		$object->type = GETPOSTINT("type");
+		$object->courant = $object->type;	// deprecated
+		$object->status = GETPOSTINT("clos");
+		$object->clos = $object->status;	// deprecated
 		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
 		$object->url = trim(GETPOST("url", 'alpha'));
 
@@ -142,8 +144,8 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->domiciliation = trim(GETPOST("account_address", "alphanohtml"));	// deprecated
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
+		$object->domiciliation = $object->address;	// deprecated
 
 		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
@@ -167,8 +169,8 @@ if (empty($reshook)) {
 			$object->fk_accountancy_journal = $fk_accountancy_journal;
 		}
 
-		$object->solde = GETPOSTFLOAT("solde");
 		$object->balance = GETPOSTFLOAT("solde");
+		$object->solde = $object->balance;	// deprecated
 		$object->date_solde = dol_mktime(12, 0, 0, GETPOSTINT("remonth"), GETPOSTINT('reday'), GETPOSTINT("reyear"));
 
 		$object->currency_code = trim(GETPOST("account_currency_code"));
@@ -182,7 +184,7 @@ if (empty($reshook)) {
 
 		$object->fk_user_author = $user->id;
 
-		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
+		if (getDolGlobalInt('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED') && empty($object->account_number)) {
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
 			$action = 'create'; // Force chargement page en mode creation
 			$error++;
@@ -243,8 +245,10 @@ if (empty($reshook)) {
 
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
-		$object->courant = GETPOSTINT("type");
-		$object->clos = GETPOSTINT("clos");
+		$object->type = GETPOSTINT("type");
+		$object->courant = $object->type; // deprecated
+		$object->status = GETPOSTINT("clos");
+		$object->clos = $object->status; // deprecated
 		$object->rappro = (GETPOST("norappro", 'alpha') ? 0 : 1);
 		$object->url = trim(GETPOST("url", 'alpha'));
 
@@ -289,7 +293,7 @@ if (empty($reshook)) {
 		$object->min_desired = GETPOSTFLOAT("account_min_desired");
 		$object->comment = trim(GETPOST("account_comment", 'restricthtml'));
 
-		if ($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED && empty($object->account_number)) {
+		if (getDolGlobalInt('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED') && empty($object->account_number)) {
 			setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("AccountancyCode")), null, 'errors');
 			$action = 'edit'; // Force chargement page en mode creation
 			$error++;
@@ -371,6 +375,7 @@ if ($action == 'create') {
 } elseif (!empty($object->ref)) {
 	$title = $object->ref." - ".$langs->trans("Card");
 }
+
 llxHeader("", $title, $help_url);
 
 // Creation
@@ -431,7 +436,7 @@ if ($action == 'create') {
 	// Status
 	print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
 	print '<td>';
-	print $form->selectarray("clos", $object->status, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->clos), 0, 0, 0, '', 0, 0, 0, '', 'maxwidth150onsmartphone');
+	print $form->selectarray("clos", $object->labelStatus, (GETPOSTINT('clos') != '' ? GETPOSTINT('clos') : $object->status), 0, 0, 0, '', 0, 0, 0, '', 'minwidth100 maxwidth150onsmartphone');
 	print '</td></tr>';
 
 	// Country
@@ -480,7 +485,7 @@ if ($action == 'create') {
 	// Tags-Categories
 	if (isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 3);
 
 		$arrayselected = array();
 		$c = new Categorie($db);
@@ -499,7 +504,7 @@ if ($action == 'create') {
 	print '<td>';
 	// Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ? GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '90%');
+	$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ? GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 
@@ -777,7 +782,7 @@ if ($action == 'create') {
 		if ($object->type == Account::TYPE_SAVINGS || $object->type == Account::TYPE_CURRENT) {
 			print '<table class="border tableforfield centpercent">';
 
-			print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("BankName").'</td>';
+			print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("BankName").'</td>';
 			print '<td>'.$object->bank.'</td></tr>';
 
 			$ibankey = FormBank::getIBANLabel($object);
@@ -793,7 +798,7 @@ if ($action == 'create') {
 				if (!checkIbanForAccount($object)) {
 					print img_picto($langs->trans("IbanNotValid"), 'warning');
 				} else {
-					print img_picto($langs->trans("IbanValid"), 'info');
+					print img_picto($langs->trans("IbanValid"), 'tick');
 				}
 			}
 			print '</td></tr>';
@@ -805,7 +810,7 @@ if ($action == 'create') {
 				if (!checkSwiftForAccount($object)) {
 					print img_picto($langs->trans("SwiftNotValid"), 'warning');
 				} else {
-					print img_picto($langs->trans("SwiftValid"), 'info');
+					print img_picto($langs->trans("SwiftValid"), 'tick');
 				}
 			}
 			print '</td></tr>';
@@ -850,7 +855,7 @@ if ($action == 'create') {
 			}
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
-			print dol_escape_htmltag($object->proprio);
+			print dol_escape_htmltag($object->owner_name);
 			print "</td></tr>\n";
 
 			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
@@ -1040,7 +1045,7 @@ if ($action == 'create') {
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 3);
 
 			$arrayselected = array();
 			$c = new Categorie($db);
@@ -1059,7 +1064,7 @@ if ($action == 'create') {
 		print '<td>';
 		// Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ? GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '95%');
+		$doleditor = new DolEditor('account_comment', (GETPOST("account_comment") ? GETPOST("account_comment") : $object->comment), '', 90, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_4, '95%');
 		$doleditor->Create();
 		print '</td></tr>';
 
@@ -1147,19 +1152,19 @@ if ($action == 'create') {
 				$content = '';
 				if ($val == 'BankCode') {
 					$name = 'code_banque';
-					$css = 'with100';
+					$css = 'width100';
 					$content = $object->code_banque;
 				} elseif ($val == 'DeskCode') {
 					$name = 'code_guichet';
-					$css = 'with100';
+					$css = 'width100';
 					$content = $object->code_guichet;
 				} elseif ($val == 'BankAccountNumber') {
 					$name = 'number';
-					$css = 'with200';
+					$css = 'width200';
 					$content = $object->number;
 				} elseif ($val == 'BankAccountNumberKey') {
 					$name = 'cle_rib';
-					$css = 'with50';
+					$css = 'width50';
 					$content = $object->cle_rib;
 				}
 

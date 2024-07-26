@@ -20,12 +20,11 @@
 
 create table llx_element_contact
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,  
-  datecreate      datetime NULL, 			-- date de creation de l'enregistrement
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datecreate      datetime NULL, 			-- date of creation of record
   statut          smallint DEFAULT 5, 		-- 5 inactif, 4 actif
-  
-  element_id		int NOT NULL, 		    -- la reference de l'element.
-  fk_c_type_contact	int NOT NULL,	        -- nature du contact.
-  fk_socpeople      integer NOT NULL
-)ENGINE=innodb;
 
+  element_id		int NOT NULL, 		    -- ID of element.
+  fk_c_type_contact	int NOT NULL,	        -- nature of contact.
+  fk_socpeople      integer NOT NULL        -- ID of contact
+)ENGINE=innodb;

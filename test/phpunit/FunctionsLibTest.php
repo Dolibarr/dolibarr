@@ -216,6 +216,11 @@ class FunctionsLibTest extends CommonClassTest
 	{
 		global $conf, $langs, $db;
 
+		// Test using like
+		$filter = "(lastname:like:'%aaa%') OR (firstname:like:'%bbb%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((lastname LIKE '%aaa%') OR (firstname LIKE '%bbb%'))", $sql);
+
 		// Test on NOW
 		$filter = "(client:!=:8) AND (datefin:>=:'__NOW__')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
@@ -240,7 +245,6 @@ class FunctionsLibTest extends CommonClassTest
 		$filter = "(t.fieldstring:=:'aaa ttt')";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
 		$this->assertEquals(" AND ((t.fieldstring = 'aaa ttt'))", $sql);
-
 
 		// Check that parenthesis are NOT allowed inside the last operand. Very important.
 		$filter = "(t.fieldint:=:(1,2))";
@@ -1102,10 +1106,10 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
-	* testDolEscapeHtmlTag
-	*
-	* @return	void
-	*/
+	 * testDolEscapeHtmlTag
+	 *
+	 * @return	void
+	 */
 	public function testDolEscapeHtmlTag()
 	{
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
@@ -1115,6 +1119,22 @@ class FunctionsLibTest extends CommonClassTest
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1);
 		$this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;', $result);
+
+		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
+		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
+
+
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		</div>';
+
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
 	}
 
 
@@ -1174,19 +1194,19 @@ class FunctionsLibTest extends CommonClassTest
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code);
-		$this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+		$this->assertEquals('<span class="paddingright">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
-		$this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+		$this->assertEquals('<span class="paddingright">1234567890</span>', $phone, 'Phone for FR 2');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+		$this->assertEquals('<span class="paddingright">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
 
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
 	}
 
 

@@ -5,6 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -328,7 +329,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	$keyforsql = md5($sqlfile);
 	foreach ($arraysql as $i => $sql) {
 		if ($sql) {
-			// Test if th SQL is allowed SQL
+			// Test if the SQL is allowed SQL
 			if ($onlysqltoimportwebsite) {
 				$newsql = str_replace(array("\'"), '__BACKSLASHQUOTE__', $sql);	// Replace the \' char
 
@@ -372,6 +373,22 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 						$qualified = 1;
 					}
 				}
+
+				// We also check content
+				$extractphp = dolKeepOnlyPhpCode($sql);
+				$extractphpold = '';
+
+				// Security analysis
+				$errorphpcheck = checkPHPCode($extractphpold, $extractphp);	// Contains the setEventMessages
+				if ($errorphpcheck) {
+					$error++;
+					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";
+					//print "newsqlclean = ".$newsqlclean."<br>\n";
+					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." contains PHP code and checking this code returns errorphpcheck='.$errorphpcheck.'", LOG_WARNING);
+					dol_syslog("sql=".$sql, LOG_DEBUG);
+					break;
+				}
+
 
 				if (!$qualified) {
 					$error++;
@@ -544,7 +561,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 	if ($error == 0) {
 		$ok = 1;
 	} else {
-		$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$ok = 0;
 	}
 
 	return $ok;
@@ -711,7 +728,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
  */
 function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodulesnotautoenabled)
 {
-	global $langs, $conf, $user, $form;
+	global $langs, $form;
 
 	$desc = $langs->trans("ModulesDesc", '{picto}');
 	$desc = str_replace('{picto}', img_picto('', 'switch_off'), $desc);
@@ -858,13 +875,15 @@ function security_prepare_head()
 		dol_print_error($db);
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
-	$head[$h][1] = $langs->trans("DefaultRights");
-	if ($nbPerms > 0) {
-		$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+	if (getDolGlobalString('MAIN_SECURITY_USE_DEFAULT_PERMISSIONS')) {
+		$head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
+		$head[$h][1] = $langs->trans("DefaultRights");
+		if ($nbPerms > 0) {
+			$head[$h][1] .= (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
+		}
+		$head[$h][2] = 'default';
+		$h++;
 	}
-	$head[$h][2] = 'default';
-	$h++;
 
 	return $head;
 }
@@ -1048,7 +1067,7 @@ function listOfSessions()
 /**
  * 	Purge existing sessions
  *
- * 	@param		int		$mysessionid		To avoid to try to delete my own session
+ * 	@param		string	$mysessionid		To avoid to try to delete my own session
  * 	@return		int							>0 if OK, <0 if KO
  */
 function purgeSessions($mysessionid)
@@ -1658,9 +1677,9 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array<string,array{type:string,label:string}>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int<2,3>		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
- *  @param  string  $helptext       Tooltip help to use for the column name of values
- *  @param	string	$text			Text to use for the column name of values
+ *	@param	int<2,3>	$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
+ *  @param  string  	$helptext       Tooltip help to use for the column name of values
+ *  @param	string		$text			Text to use for the column name of values
  *	@return	void
  */
 function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Value')
@@ -1807,7 +1826,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
-					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1);
+					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1, false, 0, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);

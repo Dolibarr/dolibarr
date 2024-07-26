@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tiketit
 Module56000Desc=Tiketti järjestelmä ongelmille tai tukipyyntöjen hallinnalle
-
 Permission56001=Katso tikettejä
-Permission56002=Muokkaa lippuja
+Permission56002=Muokkaa tikettejä
 Permission56003=Poista tiketit
-Permission56004=Hallitse lippuja
+Permission56004=Hallitse tikettejä
 Permission56005=Katso kaikkien kolmansien osapuolten liput (ei koske ulkopuolisia käyttäjiä, rajoita aina kolmansiin osapuoliin, joista he ovat riippuvaisia)
-Permission56006=Vie lippuja
-
+Permission56006=Vie tiketit
 Tickets=Tiketit
-TicketDictType=Lippu - tyypit
-TicketDictCategory=Lippu - Ryhmät
-TicketDictSeverity=Lippu - vakavuus
-TicketDictResolution=Lippu - Resoluutio
-
+TicketDictType=Tiketti - tyypit
+TicketDictCategory=Tiketti - Ryhmät
+TicketDictSeverity=Tiketti - vakavuus
+TicketDictResolution=Tiketti - Ratkaistu
 TicketTypeShortCOM=Kaupallinen kysymys
 TicketTypeShortHELP=Pyydä toiminnallista apua
 TicketTypeShortISSUE=Ongelma tai bugi
@@ -41,329 +33,300 @@ TicketTypeShortPROBLEM=Ongelma
 TicketTypeShortREQUEST=Muutos- tai parannuspyyntö
 TicketTypeShortPROJET=Hanke
 TicketTypeShortOTHER=Muu
-
 TicketSeverityShortLOW=Matala
 TicketSeverityShortNORMAL=Normaali
 TicketSeverityShortHIGH=Korkea
-TicketSeverityShortBLOCKING=Kriittinen, esto
-
+TicketSeverityShortBLOCKING=Kriittinen, estävä
 TicketCategoryShortOTHER=Muu
-
 ErrorBadEmailAddress=Kohta '%s' on väärin
 MenuTicketMyAssign=Minun tiketit
-MenuTicketMyAssignNonClosed=Avoimet liput
-MenuListNonClosed=Avaa liput
-
+MenuTicketMyAssignNonClosed=Minun avoimet tiketit
+MenuListNonClosed=Avoimet tiketit
 TypeContact_ticket_internal_CONTRIBUTOR=Avustaja
-TypeContact_ticket_internal_SUPPORTTEC=Määritetty käyttäjä
+TypeContact_ticket_internal_SUPPORTTEC=Määritetty henkilö
 TypeContact_ticket_external_SUPPORTCLI=Asiakaskontaktien/tapahtumien seuranta
 TypeContact_ticket_external_CONTRIBUTOR=Ulkoinen avustaja
-
-OriginEmail=Toimittajan sähköposti
-Notify_TICKET_SENTBYMAIL=Lähetä lippuviesti sähköpostilla
-
+OriginEmail=Ilmoittajan sähköposti
+EmailReplyto=Vastaa sähköpostiin
+EmailReferences=Referenssit sähköposteissa
+Notify_TICKET_SENTBYMAIL=Lähetä tiketin tiedot sähköpostilla
 ExportDataset_ticket_1=Tiketit
-
 # Status
 Read=Luettu
 Assigned=Määrätty
-NeedMoreInformation=Toimittajan palautetta odotellessa
-NeedMoreInformationShort=Palautetta odotellessa
-TicketAnswered=Answered
-Waiting=Odotus
+NeedMoreInformation=Odottaa ilmoittajan palautetta
+NeedMoreInformationShort=Odottaa palautetta
+Waiting=Odottaa
 SolvedClosed=Ratkaistu
 Deleted=Poistettu
-
 # Dict
-Type=Tyyppi
 Severity=Vakavuus
-TicketGroupIsPublic=ryhmä on julkinen
-TicketGroupIsPublicDesc=Jos lippu ryhmä on julkinen, se näkyy lomakkeessa luotaessa lippua julkisesta käyttöliittymästä
-
+TicketGroupIsPublic=Ryhmä on julkinen
+TicketGroupIsPublicDesc=Jos tiketin ryhmä on julkinen, se näkyy lomakkeella luotaessa tikettiä julkisesta käyttöliittymästä
 # Email templates
-MailToSendTicketMessage=Sähköpostin lähettäminen lipun viestistä
-
-#
+MailToSendTicketMessage=Lähetä sähköposti tiketin tiedoista
 # Admin page
-#
-TicketSetup=Lippumoduulin asetukset
+TicketSetup=Tikettimoduulin asetukset
 TicketSettings=Asetukset
 TicketPublicAccess=Julkinen käyttöliittymä, joka ei vaadi tunnistamista, on saatavilla seuraavasta URL-osoitteesta
-TicketSetupDictionaries=Lipun tyyppi, vakavuus ja analyyttiset koodit ovat määritettävissä sanakirjoista
+TicketSetupDictionaries=Tiketin tyyppi, vakavuus ja analyyttiset koodit ovat määriteltävissä sanakirjassa
 TicketParamModule=Moduulimuuttujien asetukset
 TicketParamMail=Sähköpostin asetukset
-TicketEmailNotificationFrom=Lähetä ilmoitus vastauksista sähköpostitse
+TicketEmailNotificationFrom=Lähettäjän sähköposti ilmoituksien lähettämiseksi
 TicketEmailNotificationFromHelp=Lähettäjän sähköposti, jota käytetään ilmoitussähköpostin lähettämiseen, kun vastaus on annettu taustatoimiston sisällä. Esimerkiksi noreply@example.com
-TicketEmailNotificationTo=Ilmoita lipun luomisesta tähän sähköpostiosoitteeseen
-TicketEmailNotificationToHelp=Jos se on olemassa, tähän sähköpostiosoitteeseen ilmoitetaan lipun luomisesta
-TicketNewEmailBodyLabel=Tekstiviesti lähetetty lipun luomisen jälkeen
-TicketNewEmailBodyHelp=Tässä määritetty teksti lisätään sähköpostiin, joka vahvistaa uuden lipun luomisen julkisesta käyttöliittymästä. Tiedot lipun kuulemisesta lisätään automaattisesti.
+TicketEmailNotificationTo=Ilmoita tiketin luomisesta tähän sähköpostiosoitteeseen
+TicketEmailNotificationToHelp=MIkäli asetettu, tähän sähköpostiosoitteeseen ilmoitetaan tiketin luomisesta
+TicketNewEmailBodyLabel=Tekstiviesti lähetetään tiketin luomisen jälkeen
+TicketNewEmailBodyHelp=Tässä määritetty teksti lisätään sähköpostiin, joka ilmoittaa uuden tiketin luomisen julkisesta käyttöliittymästä. Tiedot tiketin tiedoista lisätään automaattisesti.
 TicketParamPublicInterface=Julkisen käyttöliittymän asetukset
-TicketsEmailMustExist=Vaadi olemassa oleva sähköpostiosoite luo lipun saamiseksi
-TicketsEmailMustExistHelp=Julkisessa käyttöliittymässä sähköpostiosoitteen täytyy olla jo tietokannassa uuden lipun luomiseksi.
-TicketsShowProgression=Näytä lipun edistyminen julkisessa käyttöliittymässä
-TicketsShowProgressionHelp=Ota tämä vaihtoehto käyttöön piilottaaksesi lipun edistymisen julkisilla käyttöliittymäsivuilla
-TicketCreateThirdPartyWithContactIfNotExist=Kysy nimeltä ja Yritys nimi tuntemattomille sähköpostiviesteille.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Tarkista, onko syötetylle sähköpostille olemassa kolmas osapuoli tai yhteyshenkilö. Jos ei, kysy ja Yritys nimeä luo kolmannelle osapuoli kontaktin kanssa.
+TicketsEmailMustExist=Tiketin luomiseksi vaaditaan olemassa oleva sähköpostiosoite
+TicketsEmailMustExistHelp=Tiketin luomiseksi julkisessa käyttöliittymässä vaaditaan tietokannassa oleva sähköpostiosoite
+TicketsShowProgression=Näytä tiketin edistyminen julkisessa käyttöliittymässä
+TicketsShowProgressionHelp=Ota tämä vaihtoehto käyttöön piilottaaksesi tiketin edistymisen julkisilla käyttöliittymäsivuilla
+TicketCreateThirdPartyWithContactIfNotExist=Kysy nimi ja yrityksen nimi tuntemattomilta sähköpostiosoitteilta
+TicketCreateThirdPartyWithContactIfNotExistHelp=Tarkista, onko syötetylle sähköpostille olemassa kolmas osapuoli tai yhteyshenkilö. Jos ei, kysy nimi ja yrityksen nimi luodaksesi uuden kolmannen osapuolen ja yhteystiedot
 PublicInterface=Julkinen käyttöliittymä
 TicketPublicInterfaceTextHomeLabelAdmin=Julkisen käyttöliittymän tervetuloteksti
-TicketPublicInterfaceTextHome=Voit luo tukilipun tai tarkastella olemassa olevaa sen tunnisteen seurantalipusta.
+TicketPublicInterfaceTextHome=Voit luoda tiketin tai tarkastella olemassa olevaa tikettiä sen tunnisteella.
 TicketPublicInterfaceTextHomeHelpAdmin=Tässä määritetty teksti näkyy julkisen käyttöliittymän kohdassa Kotisivu.
 TicketPublicInterfaceTopicLabelAdmin=Käyttöliittymän otsikko
 TicketPublicInterfaceTopicHelp=Tämä teksti näkyy julkisen käyttöliittymän otsikona.
 TicketPublicInterfaceTextHelpMessageLabelAdmin=Ohjeteksti viestin syöttämiseen
 TicketPublicInterfaceTextHelpMessageHelpAdmin=Tämä teksti näkyy käyttäjän viestin syöttöalueen yläpuolella.
-ExtraFieldsTicket=Ylimääräisiä ominaisuuksia
+ExtraFieldsTicket=Lisäominaisuudet
 TicketCkEditorEmailNotActivated=HTML-editori ei ole aktivoitu. Aseta FCKEDITOR_ENABLE_MAIL-sisältö 1:ksi saadaksesi sen.
-TicketsDisableEmail=Älä lähetä sähköpostiviestejä lipun luomiseen tai viestien tallentamiseen
-TicketsDisableEmailHelp=oletus lähettää sähköpostit, kun uusia lippuja tai viestejä luodaan. Ota tämä asetus käyttöön, jos haluat poistaa käytöstä *kaikki* sähköpostit Ilmoitukset
+TicketsDisableEmail=Älä lähetä sähköpostiviestejä tikettien luonnista tai viestin tallennuksesta
+TicketsDisableEmailHelp=Oletuksena lähetatään sähköposti, kun uusia tikettejä tai viestejä luodaan. Ota tämä asetus käyttöön, jos haluat poistaa käytöstä *kaikki* sähköposti Ilmoitukset
 TicketsLogEnableEmail=Ota Loki käyttöön sähköpostitse
-TicketsLogEnableEmailHelp=Jokaisesta muutoksesta lähetetään sähköposti **jokaiselle lippuun liittyvälle yhteyshenkilölle**.
+TicketsLogEnableEmailHelp=Jokaisesta muutoksesta lähetetään sähköposti **jokaiselle tikettiin liittyvälle henkilölle**.
 TicketParams=Parametrit
 TicketsShowModuleLogo=Näytä moduulin logo julkisessa käyttöliittymässä
 TicketsShowModuleLogoHelp=Ota tämä vaihtoehto käyttöön piilottaaksesi logomoduulin julkisen käyttöliittymän sivuilta
-TicketsShowCompanyLogo=Näytä kohteen Yritys logo julkisessa käyttöliittymässä
-TicketsShowCompanyLogoHelp=Ota tämä asetus käyttöön, jos haluat näyttää päälogon Yritys julkisen käyttöliittymän sivuilla
-TicketsShowCompanyFooter=Näytä Yritys alatunniste julkisessa käyttöliittymässä
-TicketsShowCompanyFooterHelp=Ota tämä asetus käyttöön, jos haluat näyttää päätunnisteen Yritys alatunnisteen julkisen käyttöliittymän sivuilla
+TicketsShowCompanyLogo=Näytä Yrityksen logo julkisessa käyttöliittymässä
+TicketsShowCompanyLogoHelp=Ota tämä asetus käyttöön, jos haluat näyttää pää Yrityksen logon julkisen käyttöliittymän sivuilla
+TicketsShowCompanyFooter=Näytä Yrityksen alatunniste julkisessa käyttöliittymässä
+TicketsShowCompanyFooterHelp=Ota tämä asetus käyttöön, jos haluat näyttää pääyrityksen alatunnisteen  julkisen käyttöliittymän sivuilla
 TicketsEmailAlsoSendToMainAddress=Lähetä myös ilmoitus pääsähköpostiosoitteeseen
 TicketsEmailAlsoSendToMainAddressHelp=Ota tämä vaihtoehto käyttöön, jos haluat lähettää sähköpostin myös määrityksessä %s (katso välilehti %s) määritettyyn osoitteeseen.
-TicketsLimitViewAssignedOnly=Rajoita näyttö nykyiselle käyttäjälle määritettyihin lippuihin (ei koske ulkopuolisia käyttäjiä, rajoita aina kolmanteen osapuoleen, josta he ovat riippuvaisia)
-TicketsLimitViewAssignedOnlyHelp=Vain nykyiselle käyttäjälle määritetyt liput näkyvät. Ei koske käyttäjää, jolla on lippujen hallintaoikeudet.
+TicketsLimitViewAssignedOnly=Rajoita näyttö nykyiselle käyttäjälle määritettyihin tiketteihin (ei koske ulkopuolisia käyttäjiä, rajoita aina kolmanteen osapuoleen, josta he ovat riippuvaisia)
+TicketsLimitViewAssignedOnlyHelp=Vain nykyiselle käyttäjälle määritetyt tiketit näkyvät. Ei koske käyttäjää, jolla on tikettien hallintaoikeudet.
 TicketsActivatePublicInterface=Aktivoi julkinen käyttöliittymä
-TicketsActivatePublicInterfaceHelp=Julkisen käyttöliittymän avulla kaikki vierailijat voivat luo lippuja.
-TicketsAutoAssignTicket=Määritä automaattisesti lipun luonut käyttäjä
-TicketsAutoAssignTicketHelp=Lippua luotaessa käyttäjä voidaan määrittää automaattisesti lippuun.
+TicketsActivatePublicInterfaceHelp=Julkisen käyttöliittymän avulla kuka tahansa voi luoda tikettejä.
+TicketsAutoAssignTicket=Määritä automaattisesti tiketin luonut käyttäjä
+TicketsAutoAssignTicketHelp=Tikettiä luotaessa käyttäjä voidaan määrittää automaattisesti tiketille.
 TicketNumberingModules=Lippujen numerointimoduuli
-TicketsModelModule=Lippujen asiakirjamallit
+TicketsModelModule=Tikettien asiakirjamallit
 TicketNotifyTiersAtCreation=Ilmoita kolmannelle osapuolelle luomisen yhteydessä
-TicketsDisableCustomerEmail=Poista aina sähköpostit käytöstä, kun lippu luodaan julkisesta käyttöliittymästä
-TicketsPublicNotificationNewMessage=Lähetä sähköposti(t), kun lippuun lisätään uusi viesti/kommentti
+TicketsDisableCustomerEmail=Poista aina sähköpostit käytöstä, kun tiketti luodaan julkisesta käyttöliittymästä
+TicketsPublicNotificationNewMessage=Lähetä sähköposti(t), kun tiketille lisätään uusi viesti/kommentti
 TicketsPublicNotificationNewMessageHelp=Lähetä sähköposti(t), kun uusi viesti lisätään julkisesta käyttöliittymästä (määritetylle käyttäjälle tai Ilmoitukset sähköpostiin osoitteeseen (päivitys) ja/tai Ilmoitukset sähköposti osoitteeseen)
 TicketPublicNotificationNewMessageDefaultEmail=Ilmoitukset sähköposti osoitteeseen (päivitys)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Lähetä sähköposti tähän osoitteeseen jokaisesta uudesta viestistä Ilmoitukset, jos lipulle ei ole määritetty käyttäjää tai jos käyttäjällä ei ole tunnettua sähköpostiosoitetta.
-TicketsAutoReadTicket=Merkitse lippu automaattisesti luetuksi (kun se on luotu back officesta)
-TicketsAutoReadTicketHelp=Merkitse lippu automaattisesti luetuksi, kun se on luotu taustatoimistosta. Kun lippu on luo julkisesta käyttöliittymästä, lippu pysyy tilassa "Ei luettu".
-TicketsDelayBeforeFirstAnswer=Uuteen lippuun pitäisi saada ensimmäinen vastaus ennen (tuntia):
-TicketsDelayBeforeFirstAnswerHelp=Jos uuteen lippuun ei ole vastattu tämän ajanjakson jälkeen (tunteina), listanäkymässä näkyy tärkeä varoituskuvake.
-TicketsDelayBetweenAnswers=Ratkaisematon lippu ei saa olla passiivinen (tuntia):
-TicketsDelayBetweenAnswersHelp=Jos ratkaisematon lippu, joka on jo saanut vastauksen, ei ole saanut lisätoimia tämän ajanjakson jälkeen (tunteina), luettelonäkymässä näkyy varoituskuvake.
-TicketsAutoNotifyClose=Ilmoita automaattisesti kolmannelle osapuolelle lipun sulkemisesta
-TicketsAutoNotifyCloseHelp=Kun suljet lipun, sinua kehotetaan lähettämään viesti jollekin kolmannen osapuolen yhteyshenkilöstä. Joukkosulkemisen yhteydessä lähetetään viesti lippuun linkitetyn kolmannen osapuolen yhdelle yhteyshenkilölle.
-TicketWrongContact=Annettu yhteystieto ei ole osa nykyisiä lippujen yhteystietoja. Sähköpostia ei lähetetty.
-TicketChooseProductCategory=Lipputuen tuoteluokka
-TicketChooseProductCategoryHelp=Valitse lipputuen tuoteluokka. Tätä käytetään sopimuksen automaattiseen linkittämiseen lippuun.
-TicketUseCaptchaCode=Käytä graafista koodia (CAPTCHA) lippua luodessasi
-TicketUseCaptchaCodeHelp=Lisää CAPTCHA-vahvistuksen uutta lippua luotaessa.
-TicketsAllowClassificationModificationIfClosed=Salli muuttaa suljettujen lippujen luokitusta
-TicketsAllowClassificationModificationIfClosedHelp=Salli muokata luokitusta (tyyppi, lippu ryhmä, vakavuus), vaikka liput olisivat kiinni.
-
-#
+TicketPublicNotificationNewMessageDefaultEmailHelp=Lähetä sähköposti tähän osoitteeseen jokaisesta uudesta viestistä Ilmoitukset, jos tiketille ei ole määritetty käyttäjää tai jos käyttäjällä ei ole tunnettua sähköpostiosoitetta.
+TicketsAutoReadTicket=Merkitse tiketti automaattisesti luetuksi (kun se on luotu back officesta)
+TicketsAutoReadTicketHelp=Merkitse tiketti automaattisesti luetuksi, kun se on luotu taustatoimistosta. Kun tiketti on luotu julkisesta käyttöliittymästä, tiketti pysyy tilassa "Ei luettu".
+TicketsDelayBeforeFirstAnswer=Uuteen tikettiin pitäisi saada ensimmäinen vastaus ennen (tuntia):
+TicketsDelayBeforeFirstAnswerHelp=Jos uuteen tikettiin ei ole vastattu tämän ajanjakson jälkeen (tunteina), listanäkymässä näkyy tärkeä varoituskuvake.
+TicketsDelayBetweenAnswers=Ratkaisematon tiketti ei saa olla passiivinen (tuntia):
+TicketsDelayBetweenAnswersHelp=Jos ratkaisematon tiketti, joka on jo saanut vastauksen, ei ole saanut lisätoimia tämän ajanjakson jälkeen (tunteina), luettelonäkymässä näkyy varoituskuvake.
+TicketsAutoNotifyClose=Ilmoita automaattisesti kolmannelle osapuolelle tiketin sulkemisesta
+TicketsAutoNotifyCloseHelp=Kun suljet tiketin, sinua kehotetaan lähettämään viesti jollekin kolmannen osapuolen yhteyshenkilöstä. Joukkosulkemisen yhteydessä lähetetään viesti tikettiin linkitetyn kolmannen osapuolen yhdelle yhteyshenkilölle.
+TicketWrongContact=Annettu yhteystieto ei ole osa nykyisen tiketin yhteystietoja. Sähköpostia ei lähetetty.
+TicketChooseProductCategory=Tuotekategoria tiketeille
+TicketChooseProductCategoryHelp=Valitse tiketin tuoteluokka. Tätä käytetään sopimuksen automaattiseen linkittämiseen tikettiin.
+TicketUseCaptchaCode=Käytä graafista koodia (CAPTCHA) tikettiä luotaessa
+TicketUseCaptchaCodeHelp=Käytö CAPTCHA-vahvistusta uutta tikettiä luotaessa.
+TicketsAllowClassificationModificationIfClosed=Salli muuttaa suljettujen tikettien luokitusta
+TicketsAllowClassificationModificationIfClosedHelp=Salli muokata luokitusta (tyyppi, tiketin ryhmä, vakavuus), vaikka tiketti olisi suljettu.
 # Index & list page
-#
-TicketsIndex=Lippujen alue
-TicketList=Lista lipuista
-TicketAssignedToMeInfos=Tällä sivulla näytetään nykyisen käyttäjän luoma tai tälle määritetty lippuluettelo
+TicketsIndex=Tikettien alue
+TicketList=Tikettilista
+TicketAssignedToMeInfos=Tällä sivulla näytetään nykyisen käyttäjän luoma tai tälle määritetty tikettiluettelo
 NoTicketsFound=Tikettiä ei löytynyt
-NoUnreadTicketsFound=Lukemattomia lippuja ei löytynyt
-TicketViewAllTickets=Katso kaikki liput
-TicketViewNonClosedOnly=Näytä vain avoimet liput
-TicketStatByStatus=Liput tilan mukaan
-OrderByDateAsc=Lajittele nousevaan järjestykseen päiväys
-OrderByDateDesc=Lajittele laskevan järjestyksen mukaan päiväys
+NoUnreadTicketsFound=Lukemattomia tikettejä ei löytynyt
+TicketViewAllTickets=Katso kaikki tiketit
+TicketViewNonClosedOnly=Näytä vain avoimet tiketit
+TicketStatByStatus=Tiketit tilan mukaan
+OrderByDateAsc=Lajittele nousevaan järjestykseen päiväyksen mukaan
+OrderByDateDesc=Lajittele laskevaan järjestykseen päiväyksen mukaan.
 ShowAsConversation=Näytä keskusteluluettelona
 MessageListViewType=Näytä taulukkoluettelona
-ConfirmMassTicketClosingSendEmail=Lähetä sähköpostit automaattisesti, kun suljet liput
-ConfirmMassTicketClosingSendEmailQuestion=Haluatko ilmoittaa kolmansille osapuolille, kun suljet nämä liput?
-
-#
+ConfirmMassTicketClosingSendEmail=Lähetä sähköpostit automaattisesti, kun tiketti suljetaan
+ConfirmMassTicketClosingSendEmailQuestion=Haluatko ilmoittaa kolmansille osapuolille, kun suljet nämä tiketit?
 # Ticket card
-#
 Ticket=Tiketti
-TicketCard=Lippukortti
-CreateTicket=luo lippu
+TicketCard=Tikettikortti
+CreateTicket=Luo tiketti
 EditTicket=Muokkaa tikettiä
 TicketsManagement=Tikettien Hallinta
 CreatedBy=Luonut
-NewTicket=Uusi lippu
-SubjectAnswerToTicket=Vastaus lippuun
+NewTicket=Uusi tiketti
+SubjectAnswerToTicket=Vastaus tikettiin
 TicketTypeRequest=Pyynnön tyyppi
-TicketCategory=Lippu ryhmä
-SeeTicket=Katso lippu
-TicketMarkedAsRead=Lippu on merkitty luetuksi
+TicketCategory=Tiketti ryhmä
+SeeTicket=Katso tiketti
+TicketMarkedAsRead=Tiketti on merkitty luetuksi
 TicketReadOn=Jatka lukemista
-TicketCloseOn=Suljettu
-MarkAsRead=Merkitse lippu luetuksi
+TicketCloseOn=Sulkemis päivä
+MarkAsRead=Merkitse tiketti luetuksi
 TicketHistory=Tiketti historia
 AssignUser=Määritä käyttäjälle
-TicketAssigned=Lippu on nyt varattu
+TicketAssigned=Tiketti on nyt määritetty
 TicketChangeType=Vaihda tyyppiä
 TicketChangeCategory=Muuta analyyttistä koodia
 TicketChangeSeverity=Vaihda vakavuus
 TicketAddMessage=Lisää tai lähetä viesti
 TicketAddPrivateMessage=Lisää yksityisviesti
-MessageSuccessfullyAdded=Lippu lisätty
-TicketMessageSuccessfullyAdded=Viesti on onnistuneesti lisätty
+MessageSuccessfullyAdded=Tiketti lisätty
+TicketMessageSuccessfullyAdded=Viesti lisätty onnistuneesti
 TicketMessagesList=Viestiluettelo
-NoMsgForThisTicket=Ei viestiä tälle lipulle
+NoMsgForThisTicket=Ei viestejä tällä tiketillä
 TicketProperties=Luokittelu
-LatestNewTickets=Uusimmat %s uusimmat liput (ei luettu)
+LatestNewTickets=Viimeiset %s uusimmat tiketit (ei luettu)
 TicketSeverity=Vakavuus
-ShowTicket=Katso lippu
+ShowTicket=Katso tiketti
 RelatedTickets=Liittyvät tiketit
-TicketAddIntervention=luo väliintulo
+TicketAddIntervention=luo työmääräin
 CloseTicket=Sulje|Ratkaise
-AbandonTicket=Luopua
+AbandonTicket=Hylkää
 CloseATicket=Sulje|Ratkaise lippu
-ConfirmCloseAticket=Vahvista lipun sulkeminen
-ConfirmAbandonTicket=Vahvistatko lipun sulkemisen tilaan "Hylätty"
-ConfirmDeleteTicket=Vahvista lipun poistaminen
-TicketDeletedSuccess=Lippu poistettu onnistuneesti
-TicketMarkedAsClosed=Lippu merkitty suljetuksi
+ConfirmCloseAticket=Vahvista tiketin sulkeminen
+ConfirmAbandonTicket=Vahvistatko tiketin sulkemisen tilaan "Hylätty"
+ConfirmDeleteTicket=Vahvista tiketin poistaminen
+TicketDeletedSuccess=Tiketti poistettu onnistuneesti
+TicketMarkedAsClosed=Tiketti merkitty suljetuksi
 TicketDurationAuto=Laskettu kesto
-TicketDurationAutoInfos=Kesto lasketaan automaattisesti interventioon liittyvästä
-TicketUpdated=Lippu päivitetty
-SendMessageByEmail=Lähetä viesti sähköpostilla
+TicketDurationAutoInfos=Kesto lasketaan automaattisesti työmääräimeltä
+TicketUpdated=Tiketti päivitetty
+SendMessageByEmail=Lähetä sähköposti
 TicketNewMessage=Uusi viesti
-ErrorMailRecipientIsEmptyForSendTicketMessage=Vastaanottaja on tyhjä. Ei sähköpostin lähetystä
+ErrorMailRecipientIsEmptyForSendTicketMessage=Vastaanottaja on tyhjä. Sähköpostia ei lähetetä
 TicketGoIntoContactTab=Mene "Yhteystiedot"-välilehteen valitaksesi ne
 TicketMessageMailIntro=Viestin otsikko
-TicketMessageMailIntroHelp=Tämä teksti lisätään vain sähköpostin alkuun ja ei tallenneta.
-TicketMessageMailIntroText=Hei<br>Lippuun, jota seuraat, on lisätty uusi vastaus. Tässä on viesti:<br>
-TicketMessageMailIntroHelpAdmin=Tämä teksti lisätään ennen vastausta, kun vastaat Dolibarrin lippuun
+TicketMessageMailIntroHelp=Tämä teksti lisätään vain sähköpostin alkuun ja sitä ei tallenneta.
+TicketMessageMailIntroText=Hei, tiketille <br> , jota seuraat, on lisätty uusi vastaus. Tässä lisätty viesti:<br>
+TicketMessageMailIntroHelpAdmin=Tämä teksti lisätään ennen vastausta, kun vastaat tikettiin Dolibarrissa
 TicketMessageMailFooter=Viestin alatunniste
-TicketMessageMailFooterHelp=Tämä teksti lisätään vain sähköpostilla lähetetyn viestin loppuun ja, ei tallenneta.
-TicketMessageMailFooterText=Viestin lähetti <b>%s</b> Dolibarrin kautta
-TicketMessageMailFooterHelpAdmin=Tämä teksti lisätään vastaus viestin jälkeen.
-TicketMessageHelp=Vain tämä teksti tallennetaan lippukortin viestilistaan.
+TicketMessageMailFooterHelp=Tämä teksti lisätään vain sähköpostilla lähetetyn viestin loppuun ja sitä ei tallenneta.
+TicketMessageMailFooterText=Viesti lähetettiin automaattisesti <b>%s</b> puolesta
+TicketMessageMailFooterHelpAdmin=Tämä teksti lisätään viestiin vastaksen perään.
+TicketMessageHelp=Vain tämä teksti tallennetaan tikettikortin viestilistaan.
 TicketMessageSubstitutionReplacedByGenericValues=Korvausmuuttujat korvataan yleisillä arvoilla.
-ForEmailMessageWillBeCompletedWith=Ulkoisille käyttäjille lähetetyissä sähköpostiviesteissä viesti täydennetään
-TimeElapsedSince=Aikaa kului siitä
+ForEmailMessageWillBeCompletedWith=Ulkoisille käyttäjille lähetetyssä sähköpostissa viesti täydennetään
+TimeElapsedSince=Aikaa kulunut
 TicketTimeToRead=Aikaa kului ennen lukemista
-TicketTimeElapsedBeforeSince=Aika kulunut ennen / jälkeen
-TicketContacts=Yhteystiedot lippu
-TicketDocumentsLinked=Lippuun liitetyt dokumentit
-ConfirmReOpenTicket=Vahvista tämän lipun avaaminen uudelleen?
-TicketMessageMailIntroAutoNewPublicMessage=Lipulle lähetettiin uusi viesti aiheella %s:
-TicketAssignedToYou=Lippu määrätty
-TicketAssignedEmailBody=%s on antanut sinulle lipun #%s
-TicketAssignedCustomerEmail=Lippusi on määrätty käsiteltäväksi.
-TicketAssignedCustomerBody=Tämä on automaattinen sähköpostiviesti, joka vahvistaa, että lippusi on määrätty käsittelyyn.
+TicketTimeElapsedBeforeSince=Aikaa kulunut ennen / jälkeen
+TicketContacts=Tiketin yhteystiedot
+TicketDocumentsLinked=Tikettiin liitetyt dokumentit
+ConfirmReOpenTicket=Haluatko varmasti avata tiketin uudelleen?
+TicketMessageMailIntroAutoNewPublicMessage=Tiketille lähetettiin uusi viesti otsikolla %s:
+TicketAssignedToYou=Tiketti määrätty
+TicketAssignedEmailBody=Sinulle on määrärätty tiketti %s määrääjä on %s
+TicketAssignedCustomerEmail=Tikettisi on määrätty käsittelyyn.
+TicketAssignedCustomerBody=Tämä on automaattinen sähköpostiviesti. Tikettisi on määrätty käsittelyyn.
 MarkMessageAsPrivate=Merkitse viesti yksityiseksi
 TicketMessageSendEmailHelp=Kaikille määritetyille yhteyshenkilöille lähetetään sähköposti
-TicketMessageSendEmailHelp2a=(sisäiset yhteystiedot, mutta myös ulkoiset yhteystiedot paitsi jos vaihtoehto "%s" on valittuna)
-TicketMessageSendEmailHelp2b=(sisäiset, mutta myös ulkoiset kontaktit)
+TicketMessageSendEmailHelp2a=(sisäisille henkilöille ja ulkoisille henkilöille. Estä ulkoiset henkilöt valitsemalla "%s")
+TicketMessageSendEmailHelp2b=(sisäiset ja ulkoiset henkilöt)
 TicketMessagePrivateHelp=Tämä viesti ei näy ulkoisille käyttäjille
-TicketMessageRecipientsHelp=Vastaanottaja Kenttä täydennetty lippuun linkitetyillä aktiivisilla yhteystiedoilla
-TicketEmailOriginIssuer=Lippujen alkuperän myöntäjä
+TicketMessageRecipientsHelp=Vastaanottajat kenttä täydennetty tikettiin linkitetyillä aktiivisilla henkilöillä
+TicketEmailOriginIssuer=Tiketin alkuperäinen kirjaaja
 InitialMessage=Aloitusviesti
-LinkToAContract=Linkki sopimukseen
+LinkToAContract=Linkitä tiketti sopimukseen
 TicketPleaseSelectAContract=Valitse sopimus
-UnableToCreateInterIfNoSocid=Ei voi luo puuttua, kun kolmatta osapuolta ei ole määritetty
-TicketMailExchanges=Postin vaihto
+UnableToCreateInterIfNoSocid=Et voi luoda työmääräintä, kun kolmatta osapuolta ei ole määritetty
+TicketMailExchanges=Sähköpostit
 TicketInitialMessageModified=Alkuperäistä viestiä muokattu
 TicketMessageSuccesfullyUpdated=Viesti päivitetty onnistuneesti
-TicketChangeStatus=Vaihda tila
+TicketChangeStatus=Vaihda tilaa
 TicketConfirmChangeStatus=Vahvista tilamuutos: %s ?
-TicketLogStatusChanged=Tila muutettu: %s tilaksi %s
-TicketNotNotifyTiersAtCreate=Älä ilmoita Yritys osoitteessa luo
-NotifyThirdpartyOnTicketClosing=Yhteystiedot, joille ilmoitetaan lipun sulkemisen yhteydessä
-TicketNotifyAllTiersAtClose=Kaikki asiaan liittyvät yhteystiedot
-TicketNotNotifyTiersAtClose=Ei asiaan liittyvää yhteyttä
+TicketLogStatusChanged=Tila muutettu tilasta: %s tilaksi %s
+TicketNotNotifyTiersAtCreate=Yrtykselle ei tehdä ilmoitusta uudesta tiketistä
+NotifyThirdpartyOnTicketClosing=Henkilöt, joille ilmoitetaan tiketin sulkemisesta
+TicketNotifyAllTiersAtClose=Kaikki liittyvät yhteystiedot
+TicketNotNotifyTiersAtClose=Ei liittyviä yhteystietoja
 Unread=Lukematon
-TicketNotCreatedFromPublicInterface=Ei saatavilla. Lippua ei luotu julkisesta käyttöliittymästä.
-ErrorTicketRefRequired=Lippuviitteen nimi vaaditaan
-TicketsDelayForFirstResponseTooLong=Liian paljon aikaa kului lipun avaamisesta ilman vastausta.
-TicketsDelayFromLastResponseTooLong=Liian paljon aikaa kului tämän lipun viimeisestä vastauksesta.
-TicketNoContractFoundToLink=Mitään sopimusta ei löytynyt automaattisesti linkitetyksi tähän lippuun. Linkitä sopimus manuaalisesti.
-TicketManyContractsLinked=Monet sopimukset on liitetty automaattisesti tähän lippuun. Varmista, että kumpi kannattaa valita.
-TicketRefAlreadyUsed=Viite [%s] on jo käytössä, uusi viitteesi on [%s]
-
-#
+TicketNotCreatedFromPublicInterface=Tiketti ei saatavilla. Tikettiä ei ole luotu julkisesta käyttöliittymästä.
+ErrorTicketRefRequired=Tiketin viite vaaditaan
+TicketsDelayForFirstResponseTooLong=Liian paljon aikaa kulunut tiketin avaamisesta ilman, että on annettu vastausta.
+TicketsDelayFromLastResponseTooLong=Liian paljon aikaa kulunut tiketin edellisestä vastauksesta.
+TicketNoContractFoundToLink=Mitään sopimusta ei löytynyt automaattisesti linkitettäväksi tähän tikettiin. Linkitä sopimus manuaalisesti.
+TicketManyContractsLinked=Useita sopimuksia linkitettiin automaattisesti tähän tikettiin. Varmista oikea sopimus.
+TicketRefAlreadyUsed=Viite [%s] on jo käytössä, luotiin uusi viite [%s]
 # Logs
-#
-TicketLogMesgReadBy=Lippu %s lukija %s
-NoLogForThisTicket=Tälle lipulle ei vielä ole Loki
-TicketLogAssignedTo=Lippu %s määrätty käyttäjälle %s
-TicketLogPropertyChanged=Lippu %s muokattu: luokitus arvosta %s arvoon %s
-TicketLogClosedBy=Lippu %s sulki %s
-TicketLogReopen=Lippu %s avataan uudelleen
-
-#
+TicketLogMesgReadBy=Tiketti %s lukija %s
+NoLogForThisTicket=Tälle tiketille ei ole lokitietoja
+TicketLogAssignedTo=Tiketti %s määrätty käyttäjälle %s
+TicketLogPropertyChanged=Tikettiä %s muokattu: luokitus arvosta %s arvoon %s
+TicketLogClosedBy=Tiketin %s sulki %s
+TicketLogReopen=Tiketti %s avattu uudelleen
 # Public pages
-#
-TicketSystem=Lippujärjestelmä
-ShowListTicketWithTrackId=Näytä lippuluettelo kappaletunnuksesta
-ShowTicketWithTrackId=Näytä lippu kappaletunnuksesta
-TicketPublicDesc=Voit luo tukilipun tai tarkistaa olemassa olevan tunnuksen.
-YourTicketSuccessfullySaved=Lippu on tallennettu onnistuneesti!
-MesgInfosPublicTicketCreatedWithTrackId=Uusi lippu on luotu tunnuksella %s ja Viite %s.
-PleaseRememberThisId=Säilytä lähetystunnus, jotta voimme pyytää sinua myöhemmin.
-TicketNewEmailSubject=Lipun luomisen vahvistus – viite %s (julkinen lipun tunnus %s)
-TicketNewEmailSubjectCustomer=Uusi tukitiketti
-TicketNewEmailBody=Tämä on automaattinen sähköpostiviestin varmenne, että uusi tikettisi on rekistöröity.
-TicketNewEmailBodyCustomer=Tämä on automaattinen sähköpostiviesti, joka vahvistaa, että tilillesi on juuri luotu uusi lippu.
-TicketNewEmailBodyInfosTicket=Tietoja lipun valvontaa varten
-TicketNewEmailBodyInfosTrackId=Lippu lähetystunnus: %s
-TicketNewEmailBodyInfosTrackUrl=Voit seurata lipun etenemistä napsauttamalla seuraavaa linkkiä
-TicketNewEmailBodyInfosTrackUrlCustomer=Voit tarkastella lipun etenemistä tietyssä käyttöliittymässä napsauttamalla seuraavaa linkkiä
-TicketCloseEmailBodyInfosTrackUrlCustomer=Voit tutustua tämän lipun historiaan napsauttamalla seuraavaa linkkiä
-TicketEmailPleaseDoNotReplyToThisEmail=Älä vastaa suoraan tähän sähköpostiin! Käytä linkkiä vastataksesi käyttöliittymään.
-TicketPublicInfoCreateTicket=Tällä lomakkeella voit tallentaa tukilipun hallintajärjestelmäämme.
-TicketPublicPleaseBeAccuratelyDescribe=Kuvaile pyyntösi tarkasti. Anna mahdollisimman paljon tietoja, jotta voimme tunnistaa pyyntösi oikein.
-TicketPublicMsgViewLogIn=Anna lippujen seurantatunnus
-TicketTrackId=Julkinen seurantatunnus
-OneOfTicketTrackId=Yksi seurantatunnuksestasi
-ErrorTicketNotFound=Lippua seurantatunnuksella %s ei löytynyt!
+TicketSystem=Tikettijärjestelmä
+ShowListTicketWithTrackId=Näytä tikettiluettelo seuratatunnuksella
+ShowTicketWithTrackId=Näytä tiketti seurantatunnuksella
+TicketPublicDesc=Voit luoda tiketin tai tarkistaa olemassa olevat.
+YourTicketSuccessfullySaved=Tiketti tallennettu onnistuneesti!
+MesgInfosPublicTicketCreatedWithTrackId=Uusi tiketti tunnuksella %s luotu viitteellä: %s.
+PleaseRememberThisId=Säilytä tiketin viitenumero, numeroa tarvitaan tikettien seuraamiseksi.
+TicketNewEmailSubject=Uusi tiketti luotu – viitteellä: %s (tiketin seurantatunnus %s)
+TicketNewEmailSubjectCustomer=Uusi tiketti
+TicketNewEmailBody=Tämä on automaattinen sähköposti. Tikettisi on rekisteröity järjestelmään.
+TicketNewEmailBodyCustomer=Tämä on automaattinen sähköposti. Tilillesi luotiin juuri uusi tiketti.
+TicketNewEmailBodyInfosTicket=Tietoja tiketin seurantaa varten
+TicketNewEmailBodyInfosTrackId=Tiketin seurantanumero: %s
+TicketNewEmailBodyInfosTrackUrl=Voit seurata tiketin etenemistä klikkaamalla linkkiä
+TicketNewEmailBodyInfosTrackUrlCustomer=Voit seurata tiketin etenemistä portaalissa napsauttamalla seuraavaa linkkiä
+TicketCloseEmailBodyInfosTrackUrlCustomer=Voit katsoa tiketin historiatietoja klikkaaamalla seuraavaa linkkiä
+TicketEmailPleaseDoNotReplyToThisEmail=Älä vastaa suoraan tähän sähköpostiin! Käytä linkkiä vastataksesi tähän postiin.
+TicketPublicInfoCreateTicket=Tällä lomakkeella voit tehdä tiketin järjestelmään.
+TicketPublicPleaseBeAccuratelyDescribe=Kuvaile pyyntösi tarkasti. Anna mahdollisimman paljon tietoja, jotta voimme tunnistaa pyyntösi oikein.\nOle hyvä ja kirjoita tarkka kuvaus pyynnöstäsi mahdollisimman kattavasti.
+TicketPublicMsgViewLogIn=Anna tiketin seurantatunnus
+TicketTrackId=Seurantatunnus
+OneOfTicketTrackId=Syötä yksi seurantatunnuksestasi
+ErrorTicketNotFound=Tikettiä seurantatunnuksella %s ei löytynyt!
 Subject=Aihe
-ViewTicket=Katso lippu
-ViewMyTicketList=Katso minun tiketti listaa
-ErrorEmailMustExistToCreateTicket=Virhe: sähköpostiosoitetta ei löydy tietokanta
-TicketNewEmailSubjectAdmin=Uusi lippu luotu – viite %s (julkinen lipun tunnus %s)
-TicketNewEmailBodyAdmin=<p>Lippu on juuri luotu tunnuksella #%s, katso tiedot:</p> >
-SeeThisTicketIntomanagementInterface=Katso lippu hallintaliittymästä
-TicketPublicInterfaceForbidden=Lippujen julkinen käyttöliittymä ei ollut käytössä
-ErrorEmailOrTrackingInvalid=Huono arvo seurantatunnukselle tai sähköpostille
+ViewTicket=Näytä tiketti
+ViewMyTicketList=Katso omat tiketit
+ErrorEmailMustExistToCreateTicket=Virhe: sähköpostiosoitetta ei löydy järjestelmästä
+TicketNewEmailSubjectAdmin=Uusi tiketti luotu – viitteelllä %s (julkinen seurantatunnus %s)
+TicketNewEmailBodyAdmin=<p>Tiketti luotiin tunnuksella %s, katso tiedot:</p> >
+SeeThisTicketIntomanagementInterface=Katso tiketti hallintaliittymässä
+TicketPublicInterfaceForbidden=Tikettien julkista käyttöliittymää ei ole aktivoitu
+ErrorEmailOrTrackingInvalid=Seurantatunnus tai sähköposti väärin
 OldUser=Vanha käyttäjä
 NewUser=Uusi käyttäjä
-NumberOfTicketsByMonth=Lippujen määrä kuukaudessa
-NbOfTickets=Lippujen määrä
-ExternalContributors=Ulkopuoliset avustajat
-AddContributor=Lisää ulkoinen avustaja
-
+NumberOfTicketsByMonth=Tikettejä kuukaudessa
+NbOfTickets=Tikettejä
+ExternalContributors=Ulkopuoliset käsittelijät
+AddContributor=Lisää ulkopuolinen käsittelijä
 # notifications
-TicketCloseEmailSubjectCustomer=Lippu suljettu
-TicketCloseEmailBodyCustomer=Tämä on automaattinen viesti, joka ilmoittaa, että lippu %s on juuri suljettu.
-TicketCloseEmailSubjectAdmin=Lippu suljettu – Réf %s (julkinen lipun tunnus %s)
-TicketCloseEmailBodyAdmin=Lippu tunnuksella #%s on juuri suljettu, katso tiedot:
-TicketNotificationEmailSubject=Lippu %s päivitetty
-TicketNotificationEmailBody=Tämä on automaattinen viestimuistutus sinulle, että tikettisi %s tila on juuri päivitetty
+TicketCloseEmailSubjectCustomer=Tiketti suljettu
+TicketCloseEmailBodyCustomer=Tämä on automaattinen sähköposti. Tikettisi %s on juuri suljettu.
+TicketCloseEmailSubjectAdmin=Tiketti %s suljettu (julkinen tiketin tunnus %s)
+TicketCloseEmailBodyAdmin=Tiketti tunnuksella %s on suljettu, katso tiedot:
+TicketNotificationEmailSubject=Tiketti %s on päivitetty
+TicketNotificationEmailBody=Tämä on automaattinen sähköposti. Tikettisi %s tila on juuri päivitetty
 TicketNotificationRecipient=Ilmoituksen vastaanottaja
 TicketNotificationLogMessage=Loki viesti
-TicketNotificationEmailBodyInfosTrackUrlinternal=Näytä lippu käyttöliittymään
+TicketNotificationEmailBodyInfosTrackUrlinternal=Näytä tiketti käyttöliittymässä
 TicketNotificationNumberEmailSent=Ilmoitussähköposti lähetetty: %s
-
-ActionsOnTicket=Tapahtumat lipulla
-
-#
+ActionsOnTicket=Tiketin tapahtumat
 # Boxes
-#
-BoxLastTicket=Viimeksi luodut liput
-BoxLastTicketDescription=Viimeisimmät %s luodut liput
+BoxLastTicket=Uusimmat tiketit
+BoxLastTicketDescription=Uusimmat %s luodut tiketit
 BoxLastTicketContent=
-BoxLastTicketNoRecordedTickets=Ei viimeaikaisia lukemattomia lippuja
-BoxLastModifiedTicket=Viimeksi muokatut liput
-BoxLastModifiedTicketDescription=Viimeisimmät %s muokatut liput
+BoxLastTicketNoRecordedTickets=Ei uusia lukemattomia tikettejä
+BoxLastModifiedTicket=Viimeksi muokatut tiketit
+BoxLastModifiedTicketDescription=Viimeisimmät %s muokatut tiketit
 BoxLastModifiedTicketContent=
-BoxLastModifiedTicketNoRecordedTickets=Ei äskettäin muokattuja lippuja
-BoxTicketType=Avointen lippujen jakautuminen tyypeittäin
-BoxTicketSeverity=Avointen lippujen määrä vakavuuden mukaan
-BoxNoTicketSeverity=Lippuja ei avattu
-BoxTicketLastXDays=Uusien lippujen määrä päivinä viimeisten %s päivän aikana
-BoxTicketLastXDayswidget = Uusien lippujen määrä päivinä viimeisen X päivän aikana
-BoxNoTicketLastXDays=Ei uusia lippuja viimeisen %s päivän aikana
-BoxNumberOfTicketByDay=Uusien lippujen määrä päivässä
-BoxNewTicketVSClose=Lippujen määrä verrattuna suljettuihin lippuihin (tänään)
-TicketCreatedToday=Lippu tehty tänään
-TicketClosedToday=Lippu suljettu tänään
-KMFoundForTicketGroup=Löysimme aiheita ja UKK, jotka saattavat vastata kysymykseesi, kiitos, että tarkistamme ne ennen lipun lähettämistä
+BoxLastModifiedTicketNoRecordedTickets=Ei äskettäin muokattuja tikettejä
+BoxTicketType=Avointen tikettien jakautuminen tyypeittäin
+BoxTicketSeverity=Avointen tikettien määrä vakavuuden mukaan
+BoxNoTicketSeverity=Ei avattuja tikettejä
+BoxTicketLastXDays=Uusien tikettien määrä päivittäin viimeisten %s päivän aikana
+BoxTicketLastXDayswidget = Uusien tikettien määrä päivittäin viimeisen X päivän aikana
+BoxNoTicketLastXDays=Ei uusia tikettejä viimeisen %s päivän aikana
+BoxNumberOfTicketByDay=Uusien tikettien määrä päivittäin
+BoxNewTicketVSClose=Avoimien tikettien määrä suhteessa suljettuihin tiketteihin tänään
+TicketCreatedToday=Tiketti luotu tänään
+TicketClosedToday=Tiketti suljettu tänään
+KMFoundForTicketGroup=Löysimme ohjeita ja vastauksia usein kysyttyihin kysymyksiin jotka saattavat liittyä aiheeseesi. Katso löydätkö niistä vastauksen asiaasi, kiitos!

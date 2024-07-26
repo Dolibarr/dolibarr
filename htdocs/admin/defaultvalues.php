@@ -73,7 +73,7 @@ $urlpage = GETPOST('urlpage', 'alphanohtml');
 $key = GETPOST('key', 'alphanohtml');
 $value = GETPOST('value', 'restricthtml');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));
 
 
@@ -201,7 +201,7 @@ $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-defaultvalues');
 
 $param = '&mode='.$mode;
 

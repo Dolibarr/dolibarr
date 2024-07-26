@@ -825,7 +825,7 @@ class Members extends DolibarrApi
 	 * @param int $id   member type ID
 	 * @return array
 	 *
-	 * @url GET /types/{id}
+	 * @url DELETE /types/{id}
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
@@ -838,7 +838,7 @@ class Members extends DolibarrApi
 		}
 		$membertype = new AdherentType($this->db);
 		$result = $membertype->fetch($id);
-		if (!$result) {
+		if ($result < 1) {
 			throw new RestException(404, 'member type not found');
 		}
 

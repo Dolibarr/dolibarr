@@ -4,7 +4,7 @@
  * Copyright (C) 2010-2011	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015-2017	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2022	Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -63,17 +63,17 @@ class FormMail extends Form
 	public $frommail;
 
 	/**
-	 * @var string user, company, robot
+	 * @var string 	user, company, robot
 	 */
 	public $fromtype;
 
 	/**
-	 * @var int from ID
+	 * @var int 	from ID
 	 */
 	public $fromid;
 
 	/**
-	 * @var int also from robot
+	 * @var int 	Add also the robot email as possible senders
 	 */
 	public $fromalsorobot;
 
@@ -93,7 +93,7 @@ class FormMail extends Form
 	public $replytoname;
 
 	/**
-	 * @var string replyto email
+	 * @var string 	Reply-to email
 	 */
 	public $replytomail;
 
@@ -499,7 +499,7 @@ class FormMail extends Form
 
 			$modelmail_array = array();
 			if ($this->param['models'] != 'none') {
-				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
+				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);	// Fill $this->lines_model
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
@@ -726,7 +726,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtouser;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiveruser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
@@ -775,7 +775,7 @@ class FormMail extends Form
 				// multiselect array convert html entities into options tags, even if we don't want this, so we encode them a second time
 				$tmparray = $this->withtoccuser;
 				foreach ($tmparray as $key => $val) {
-					$tmparray[$key] = dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+					$tmparray[$key] = dol_htmlentities($tmparray[$key], 0, 'UTF-8', true);
 				}
 				$withtoselected = GETPOST("receiverccuser", 'array'); // Array of selected value
 				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
@@ -859,8 +859,9 @@ class FormMail extends Form
 						foreach ($listofpaths as $key => $val) {
 							$relativepathtofile = substr($val, (strlen(DOL_DATA_ROOT) - strlen($val)));
 
-							if ($conf->entity > 1) {
-								$relativepathtofile = str_replace('/'.$conf->entity.'/', '/', $relativepathtofile);
+							$entity = (isset($this->param['object_entity']) ? $this->param['object_entity'] : $conf->entity);
+							if ($entity > 1) {
+								$relativepathtofile = str_replace('/'.$entity.'/', '/', $relativepathtofile);
 							}
 							// Try to extract data from full path
 							$formfile_params = array();
@@ -870,7 +871,8 @@ class FormMail extends Form
 							// Preview of attachment
 							$out .= img_mime($listofnames[$key]).$listofnames[$key];
 
-							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
+							$out .= ' '.$formfile->showPreview(array(), $formfile_params[2], $formfile_params[4], 0, ($entity == 1 ? '' : 'entity='.((int) $entity)));
+
 							if (!$this->withfilereadonly) {
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile input-nobottom" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 								//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).'&id=removedfile_'.$key.'">'.img_delete($langs->trans("Remove"), 'id="removedfile_'.$key.'" name="removedfile_'.$key.'"', 'removedfile input-nobottom').'</a>';
@@ -1005,57 +1007,19 @@ class FormMail extends Form
 				$out .= '<td class="tdtop">';
 				$out .= $form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
 				$out .= '</td>';
-				$out .= '<td>';
+				$out .= '<td class="tdtop">';
 
-				// Add link to add layout
-				if ($this->withlayout && $this->withfckeditor) {
-					$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
-					$out .= img_picto($langs->trans("FillMessageWithALayout"), 'layout', 'class="paddingrightonly"');
-					$out .= $langs->trans("FillMessageWithALayout").'...';
-					$out .= '</a> &nbsp; &nbsp; ';
+				$formmail = $this;
+				$showlinktolayout = $formmail->withlayout && $formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT');
+				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+				$formatforouput = '';
+				$htmlname = 'message';
 
-					$out .= '<script>
-						$(document).ready(function() {
-  							$("#linkforlayouttemplates").click(function() {
-								console.log("We click on linkforlayouttemplates");
-								event.preventDefault();
-								jQuery("#template-selector").toggle();
-								//jQuery("#template-selector").attr("style", "aaa");
-								jQuery("#ai_input").hide();
-							});
-						});
-					</script>
-					';
-				}
-				// Add link to add AI content
-				if ($this->withaiprompt && isModEnabled('ai')) {
-					$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
-					$out .= img_picto($langs->trans("FillMessageWithAIContent"), 'ai', 'class="paddingrightonly"');
-					$out .= $langs->trans("FillMessageWithAIContent").'...';
-					$out .= '</a>';
+				// Fill $out
+				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
-					$out .= '<script>
-						$(document).ready(function() {
-  							$("#linkforaiprompt").click(function() {
-								console.log("We click on linkforaiprompt");
-								event.preventDefault();
-								jQuery("#ai_input").toggle();
-								jQuery("#template-selector").hide();
-								if (!jQuery("ai_input").is(":hidden")) {
-									console.log("Set focus on input field");
-									jQuery("#ai_instructions").focus();
-								}
-							});
-						});
-					</script>
-					';
-				}
-				if ($this->withfckeditor) {
-					$out .= $this->getModelEmailTemplate();
-				}
-				if ($this->withaiprompt && isModEnabled('ai')) {
-					$out .= $this->getSectionForAIPrompt($this->withaiprompt);
-				}
 				$out .= '</td>';
 				$out .= '</tr>';
 
@@ -1442,52 +1406,55 @@ class FormMail extends Form
 	/**
 	 * Return Html code for AI instruction of message and autofill result
 	 *
+	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
 	 * @param	string		$format			Format for output ('', 'html', ...)
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field
 	 * @return 	string      				HTML code to ask AI instruction and autofill result
 	 */
-	public function getSectionForAIPrompt($format = '', $htmlContent = 'message')
+	public function getSectionForAIPrompt($function = 'textgeneration', $format = '', $htmlContent = 'message')
 	{
 		global $langs;
 
-		$out = '<tr id="ai_input" class="hidden">';
-		$out .= '<td>';
-		//$out .= $form->textwithpicto($langs->trans('HelpWithAI'), $langs->trans("YouCanMakeSomeInstructionForEmail"));
-		$out .= '</td>';
+		$langs->load("other");
 
-		$out .= '<td>';
-		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
-		$out .= '<input id="generate_button" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
-		$out .= '<div id="ai_status_message" class="fieldrequired hideobject marginrightonly">';
-		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw"></i>'.$langs->trans("AIProcessingPleaseWait");
+		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
+
+		$out = '<div id="ai_input'.$htmlContent.'" class="hidden">';
+		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
+		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
+		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
+		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 		$out .= '</div>';
-		$out .= "</td></tr>\n";
+
+		$out .= "</div>\n";
 
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
 				// for keydown
-				$('#ai_instructions').keydown(function(event) {
+				$('#ai_instructions".$htmlContent."').keydown(function(event) {
 					if (event.keyCode === 13) {
 						event.preventDefault();
-						$('#generate_button').click();
+						$('#generate_button".$htmlContent."').click();
 					}
 				});
 
-				$('#generate_button').click(function() {
-					var instructions = $('#ai_instructions').val();
+				$('#generate_button".$htmlContent."').click(function() {
+					console.log('We click on generate_button".$htmlContent." ai button');
+
+					var instructions = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
 
-					$('#ai_status_message').show();
+					$('#ai_status_message".$htmlContent."').show();
 					$('.icon-container .loader').show();
 					setTimeout(function() {
 						timeoutfinished = 1;
 						if (apicallfinished) {
-							$('#ai_status_message').hide();
+							$('#ai_status_message".$htmlContent."').hide();
 						}
 					}, 2000);
 
-					//editor on readonly
+					// set editor in readonly
         			if (CKEDITOR.instances.".$htmlContent.") {
 						CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 					}
@@ -1498,31 +1465,41 @@ class FormMail extends Form
 						type: 'POST',
 						contentType: 'application/json',
 						data: JSON.stringify({
-							'format': '".dol_escape_js($format)."',
-							'instructions': instructions,
+							'format': '".dol_escape_js($format)."',			/* the format for output */
+							'function': '".dol_escape_js($function)."',		/* the AI feature to call */
+							'instructions': instructions,					/* the prompt string */
 						}),
 						success: function(response) {
-							console.log('Add response into field ".$htmlContent.": '+response);
+							console.log('Add response into field \'#".$htmlContent."\': '+response);
 
-							jQuery('#".$htmlContent."').val(response);
+							jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
+							jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
+							//jQuery('#".$htmlContent."preview').val(response);
 
-							if (CKEDITOR.instances && CKEDITOR.instances.".$htmlContent." && ".getDolGlobalInt('FCKEDITOR_ENABLE_MAIL', 0).") {
-								CKEDITOR.instances.".$htmlContent.".setReadOnly(0);
-								CKEDITOR.instances.".$htmlContent.".setData(response);
+							if (CKEDITOR.instances) {
+								var editorInstance = CKEDITOR.instances.".$htmlContent.";
+								if (editorInstance) {
+									editorInstance.setReadOnly(0);
+									editorInstance.setData(response);
+								}
+								//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
+								//if (editorInstancepreview) {
+								//	editorInstancepreview.setData(response);
+								//}
 							}
 
 							// remove readonly
-							$('#ai_instructions').val('');
+							$('#ai_instructions".$htmlContent."').val('');
 
 							apicallfinished = 1;
 							if (timeoutfinished) {
-								$('#ai_status_message').hide();
+								$('#ai_status_message".$htmlContent."').hide();
 							}
 						},
 						error: function(xhr, status, error) {
 							alert(error);
 							console.error('error ajax', status, error);
-							$('#ai_status_message').hide();
+							$('#ai_status_message".$htmlContent."').hide();
 						}
 
 					});
@@ -1536,7 +1513,7 @@ class FormMail extends Form
 	/**
 	 * Return HTML code for selection of email layout
 	 *
-	 * @param   string      $htmlContent    HTML name of WYSIWIG field to fill
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field to fill
 	 * @return 	string      				HTML for model email boxes
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
@@ -1547,10 +1524,12 @@ class FormMail extends Form
 		$templates = array(
 			'empty' => 'empty',
 			'basic' => 'basic',
-			'news'  => 'news',
-			'commerce' => 'commerce',
-			//'text' => 'text'
 		);
+		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
+			$templates['news'] = 'news';
+			$templates['commerce'] = 'commerce';
+			//$templates['text'] = 'text';
+		//}
 
 		foreach ($templates as $template => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($template);
@@ -1565,11 +1544,13 @@ class FormMail extends Form
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {
-						console.log("We choose a layout for email");
+						var template = $(this).data("template");
+
+						console.log("We choose a layout for email template "+template);
+
 						$(".template-option").removeClass("selected");
 						$(this).addClass("selected");
 
-						var template = $(this).data("template");
 						var contentHtml = $(this).data("content");
 
 						jQuery("#'.$htmlContent.'").val(contentHtml);
@@ -1610,7 +1591,7 @@ class FormMail extends Form
 			return -1;
 		}
 
-		$ret = new ModelMail();
+		$ret = new ModelMail($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1620,7 +1601,7 @@ class FormMail extends Form
 			$languagetosearchmain = '';
 		}
 
-		$sql = "SELECT rowid, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
+		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
 		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1643,6 +1624,7 @@ class FormMail extends Form
 		if ($id == -1) {
 			$sql .= " AND position = 0";
 		}
+		$sql .= " AND entity IN(".getEntity('c_email_templates', 1).")";
 		if ($languagetosearch) {
 			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		} else {
@@ -1769,7 +1751,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Find if template exists and are available for current user, then set them into $this->lines_module.
+	 *      Find if template exists and are available for current user, then set them into $this->lines_model.
 	 *      Search into table c_email_templates
 	 *
 	 * 		@param	string		$type_template		Get message for key module
@@ -1780,7 +1762,7 @@ class FormMail extends Form
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
-		global $conf;
+		global $db, $conf;
 
 		$sql = "SELECT rowid, module, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
@@ -1807,7 +1789,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail();
+				$line = new ModelMail($db);
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;
 				$line->lang = $obj->lang;
@@ -2005,13 +1987,61 @@ class FormMail extends Form
 }
 
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+
 /**
- * ModelMail
- *
  * Object of table llx_c_email_templates
+ *
+ * TODO Move this class into a file cemailtemplate.class.php
  */
-class ModelMail
+class ModelMail extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object.
+	 */
+	public $element = 'email_template';
+
+	/**
+	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
+	 */
+	public $table_element = 'c_email_templates';
+
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"-1",),
+		"module" => array("type"=>"varchar(32)", "label"=>"Module", "enabled"=>"1", 'position'=>20, 'notnull'=>0, "visible"=>"-1",),
+		"type_template" => array("type"=>"varchar(32)", "label"=>"Typetemplate", "enabled"=>"1", 'position'=>25, 'notnull'=>0, "visible"=>"-1",),
+		"lang" => array("type"=>"varchar(6)", "label"=>"Lang", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"-1",),
+		"private" => array("type"=>"smallint(6)", "label"=>"Private", "enabled"=>"1", 'position'=>35, 'notnull'=>1, "visible"=>"-1",),
+		"fk_user" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"Fkuser", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
+		"datec" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1",),
+		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>50, 'notnull'=>1, "visible"=>"-1",),
+		"label" => array("type"=>"varchar(255)", "label"=>"Label", "enabled"=>"1", 'position'=>55, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "csslist"=>"tdoverflowmax150",),
+		"position" => array("type"=>"smallint(6)", "label"=>"Position", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"active" => array("type"=>"integer", "label"=>"Active", "enabled"=>"1", 'position'=>65, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
+		"topic" => array("type"=>"text", "label"=>"Topic", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"content" => array("type"=>"mediumtext", "label"=>"Content", "enabled"=>"1", 'position'=>75, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"content_lines" => array("type"=>"text", "label"=>"Contentlines", "enabled"=>"1", 'position'=>80, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"enabled" => array("type"=>"varchar(255)", "label"=>"Enabled", "enabled"=>"1", 'position'=>85, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"joinfiles" => array("type"=>"varchar(255)", "label"=>"Joinfiles", "enabled"=>"1", 'position'=>90, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"email_from" => array("type"=>"varchar(255)", "label"=>"Emailfrom", "enabled"=>"1", 'position'=>95, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"email_to" => array("type"=>"varchar(255)", "label"=>"Emailto", "enabled"=>"1", 'position'=>100, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"email_tocc" => array("type"=>"varchar(255)", "label"=>"Emailtocc", "enabled"=>"1", 'position'=>105, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"email_tobcc" => array("type"=>"varchar(255)", "label"=>"Emailtobcc", "enabled"=>"1", 'position'=>110, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"defaultfortype" => array("type"=>"smallint(6)", "label"=>"Defaultfortype", "enabled"=>"1", 'position'=>115, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+	);
+	public $rowid;
+	public $type_template;
+	public $datec;
+	public $tms;
+	public $active;
+	public $enabled;
+	public $defaultfortype;
+
 	/**
 	 * @var int ID
 	 */
@@ -2059,4 +2089,71 @@ class ModelMail
 	 * @var int Position of template in a combo list
 	 */
 	public $position;
+	// END MODULEBUILDER PROPERTIES
+
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		global $langs;
+
+		$this->db = $db;
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
+
+		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+			$this->fields['rowid']['visible'] = 0;
+		}
+		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
+			$this->fields['entity']['enabled'] = 0;
+		}
+
+		// Example to show how to set values of fields definition dynamically
+		/*if ($user->hasRight('test', 'mailtemplate', 'read')) {
+		 $this->fields['myfield']['visible'] = 1;
+		 $this->fields['myfield']['noteditable'] = 0;
+		 }*/
+
+		// Unset fields that are disabled
+		foreach ($this->fields as $key => $val) {
+			if (isset($val['enabled']) && empty($val['enabled'])) {
+				unset($this->fields[$key]);
+			}
+		}
+
+		// Translate some data of arrayofkeyval
+		if (is_object($langs)) {
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
+						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Load object in memory from the database
+	 *
+	 * @param 	int    	$id   			Id object
+	 * @param 	string 	$ref  			Ref
+	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
+	{
+		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
+			$this->fetchLines($noextrafields);
+		}
+		return $result;
+	}
 }

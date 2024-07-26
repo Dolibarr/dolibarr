@@ -548,7 +548,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Best
 
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_massstomove');
 
 print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 

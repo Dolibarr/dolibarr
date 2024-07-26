@@ -126,7 +126,10 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("TokenManager"));
+$title = $langs->trans("TokenManager");
+$help_url = 'EN:Module_OAuth|FR:Module_OAuth_FR|ES:Módulo_OAuth_ES';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-oauthlogintokens');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'), $linkback, 'title_setup');
@@ -159,7 +162,7 @@ if ($mode == 'setup' && $user->admin) {
 
 	$oauthstateanticsrf = bin2hex(random_bytes(128 / 8));
 
-	// $list is defined into oauth.lib.php to the list of supporter OAuth providers.
+	// $list is defined into oauth.lib.php to the list of supported OAuth providers.
 	if (!empty($listinsetup)) {
 		foreach ($listinsetup as $key) {
 			$supported = 0;
@@ -228,7 +231,7 @@ if ($mode == 'setup' && $user->admin) {
 				// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 				print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
 				$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
-				//print $storage->token.'<br>';
+				print '<!-- data stored into field token: '.$storage->token.' -->';
 				//print $tokenobj->getExtraParams()['id_token'].'<br>';
 				//print $tokenobj->getAccessToken().'<br>';
 			} catch (Exception $e) {
@@ -291,7 +294,7 @@ if ($mode == 'setup' && $user->admin) {
 			print "</tr>\n";
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("OAuthIDSecret").'</td>';
 			print '<td>';
@@ -310,7 +313,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '</td></tr>';
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("IsTokenGenerated");
 			print '</td>';
@@ -351,7 +354,7 @@ if ($mode == 'setup' && $user->admin) {
 			print '</tr>';
 
 			print '<tr class="oddeven">';
-			print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+			print '<td>';
 			//var_dump($key);
 			print $langs->trans("Token").'</td>';
 			print '<td colspan="2">';
@@ -372,7 +375,7 @@ if ($mode == 'setup' && $user->admin) {
 			if (is_object($tokenobj)) {
 				// Token refresh
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_REFRESH");
 				print '</td>';
@@ -383,7 +386,7 @@ if ($mode == 'setup' && $user->admin) {
 
 				// Token expired
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_EXPIRED");
 				print '</td>';
@@ -394,7 +397,7 @@ if ($mode == 'setup' && $user->admin) {
 
 				// Token expired at
 				print '<tr class="oddeven">';
-				print '<td'.(empty($key['required']) ? '' : ' class="required"').'>';
+				print '<td>';
 				//var_dump($key);
 				print $langs->trans("TOKEN_EXPIRE_AT");
 				print '</td>';

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('contractindex'));
 
 // Load translation files required by the page
@@ -75,9 +76,9 @@ $productstatic = new Product($db);
 $now = dol_now();
 
 $title = $langs->trans("ContractsArea");
-$help_url = '';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-index');
 
 print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 
@@ -285,10 +286,11 @@ if (isModEnabled('contract') && $user->hasRight('contrat', 'lire')) {
 				$staticcompany->id = $obj->socid;
 				$staticcompany->name = $obj->name;
 				$staticcompany->name_alias = $obj->name_alias;
-				$staticcompany->photo = 1;
+				$staticcompany->logo = $obj->logo;
 				$staticcompany->code_client = $obj->code_client;
 				$staticcompany->code_fournisseur = $obj->code_fournisseur;
 				$staticcompany->code_compta = $obj->code_compta;
+				$staticcompany->code_compta_client = $obj->code_compta;
 				$staticcompany->code_compta_fournisseur = $obj->code_compta_fournisseur;
 				$staticcompany->client = $obj->client;
 				$staticcompany->fournisseur = $obj->fournisseur;

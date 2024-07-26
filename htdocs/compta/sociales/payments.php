@@ -45,14 +45,14 @@ if (isModEnabled('accounting')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 $year = GETPOSTINT("year");
-$search_sc_type = GETPOSTINT('search_sc_type');
+$search_sc_type = GETPOST('search_sc_type', 'intcomma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

@@ -45,12 +45,6 @@ class Holiday extends CommonObject
 	public $table_element = 'holiday';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_holiday';
@@ -201,6 +195,8 @@ class Holiday extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 
@@ -451,8 +447,8 @@ class Holiday extends CommonObject
 				$this->date_debut_gmt = $this->db->jdate($obj->date_debut, 1);
 				$this->date_fin_gmt = $this->db->jdate($obj->date_fin, 1);
 				$this->halfday = $obj->halfday;
-				$this->statut = $obj->status;
 				$this->status = $obj->status;
+				$this->statut = $obj->status;	// deprecated
 				$this->fk_validator = $obj->fk_validator;
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->fk_user_valid = $obj->fk_user_valid;
@@ -759,7 +755,7 @@ class Holiday extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
 
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -880,10 +876,9 @@ class Holiday extends CommonObject
 	 */
 	public function approve($user = null, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -896,9 +891,7 @@ class Holiday extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
-
 		$sql .= " description= '".$this->db->escape($this->description)."',";
-
 		if (!empty($this->date_debut)) {
 			$sql .= " date_debut = '".$this->db->idate($this->date_debut)."',";
 		} else {
@@ -1013,7 +1006,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -1307,7 +1300,7 @@ class Holiday extends CommonObject
 				}
 
 				// We found a record, user is on holiday by default, so is not available is true.
-				$isavailablemorning = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$isavailablemorning = true;
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_start'] && $record['halfday'] == 2) {
 						continue;
@@ -1318,7 +1311,7 @@ class Holiday extends CommonObject
 					$isavailablemorning = false;
 					break;
 				}
-				$isavailableafternoon = true;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$isavailableafternoon = true;
 				foreach ($arrayofrecord as $record) {
 					if ($timestamp == $record['date_end'] && $record['halfday'] == 2) {
 						continue;
@@ -2284,6 +2277,7 @@ class Holiday extends CommonObject
 		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
+		$sql .= " AND entity IN (".getEntity('c_holiday_types').")";
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}

@@ -5,6 +5,7 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2021	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,14 +83,14 @@ class modStock extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "STOCK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "standard";
+		$this->const[$r][2] = "standard_stock";
 		$this->const[$r][3] = 'Name of PDF model of stock';
 		$this->const[$r][4] = 0;
 
 		$r++;
 		$this->const[$r][0] = "MOUVEMENT_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "stdmovement";
+		$this->const[$r][2] = "standard_movement_stock";
 		$this->const[$r][3] = 'Name of PDF model of stock movement';
 		$this->const[$r][4] = 0;
 
@@ -203,7 +204,7 @@ class modStock extends DolibarrModules
 
 		// Exports
 		//--------
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Export warehouses
 		$r++;
@@ -277,7 +278,7 @@ class modStock extends DolibarrModules
 		$this->export_dependencies_array[$r] = array('stock' => array('p.rowid', 'e.rowid')); // We must keep this until the aggregate_array is used. To have a unique key, if we ask a field of a child, to avoid the DISTINCT to discard them.
 		$keyforselect = 'product';
 		$keyforelement = 'product';
-		$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 		$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('ps.reel' => 'Stock'));
 
@@ -336,7 +337,7 @@ class modStock extends DolibarrModules
 			$this->export_dependencies_array[$r] = array('stockbatch' => array('pb.rowid'), 'batch' => array('pb.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 			$keyforselect = 'product_lot';
 			$keyforelement = 'batch';
-			$keyforaliasextra = 'extra';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$keyforaliasextra = 'extra';
 			include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 			$this->export_sql_start[$r] = 'SELECT DISTINCT ';
@@ -394,6 +395,59 @@ class modStock extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'stock_mouvement as sm, '.MAIN_DB_PREFIX.'entrepot as e';
 		$this->export_sql_end[$r] .= ' WHERE p.rowid = sm.fk_product AND sm.fk_entrepot = e.rowid';
 		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
+
+		// Export inventory
+
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_inventory';
+		$this->export_label[$r] = "Inventories"; // Translation key (used only if key ExportDataset_xxx_z not found)
+		$this->export_icon[$r] = "inventory";
+		$this->export_permission[$r] = array(array("stock", "lire"));
+		$this->export_fields_array[$r] = array(
+			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
+			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated', 'id.fk_warehouse' => 'InventoryEntrepot',
+			'id.batch' => 'Lotserial',
+			'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
+			'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
+			'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
+		);
+		if (isModEnabled('barcode')) {
+			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode' => 'BarCode'));
+		}
+		$this->export_TypeFields_array[$r] = array(
+			'id.rowid' => 'Numeric',
+			'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.description' => 'Text', 'e.lieu' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
+			'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
+			'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date',
+			'i.rowid' => 'Numeric', 'i.ref' => 'Text', 'i.date_inventory' => 'Date', 'i.status' => 'Numeric', 'i.title' => 'Text',
+			'id.qty_view' => 'Numeric', 'id.qty_stock' => 'Numeric', 'id.batch' => 'Text',
+			'id.qty_regulated' => 'Numeric', 'id.fk_warehouse' => 'Numeric',
+		);
+		if (isModEnabled('barcode')) {
+			$this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode' => 'Text'));
+		}
+		$this->export_entities_array[$r] = array(
+			'e.rowid' => 'warehouse', 'e.ref' => 'warehouse', 'e.description' => 'warehouse', 'e.lieu' => 'warehouse', 'e.address' => 'warehouse', 'e.zip' => 'warehouse', 'e.town' => 'warehouse',
+			'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
+			'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product", 'p.datec' => 'product', 'p.tms' => 'product'
+		);	// We define here only fields that use another icon that the one defined into export_icon
+		if (isModEnabled('productbatch')) {
+			$this->export_fields_array[$r]['id.batch'] = 'Batch';
+			$this->export_TypeFields_array[$r]['id.batch'] = 'Text';
+			$this->export_entities_array[$r]['id.batch'] = 'movement';
+		}
+		if (isModEnabled('barcode')) {
+			$this->export_entities_array[$r] = array_merge($this->export_entities_array[$r], array('p.barcode' => 'product'));
+		}
+		$this->export_aggregate_array[$r] = array('sm.value' => 'SUM'); // TODO Not used yet
+		$this->export_dependencies_array[$r] = array('movement' => array('sm.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
+
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'inventory as i, '.MAIN_DB_PREFIX.'inventorydet as id, '.MAIN_DB_PREFIX.'entrepot as e';
+		$this->export_sql_end[$r] .= ' WHERE p.rowid = id.fk_product AND id.fk_inventory = i.rowid AND id.fk_warehouse = e.rowid';
+		$this->export_sql_end[$r] .= ' AND e.entity IN ('.getEntity('stock').')';
+
+
 
 		// Imports
 		//--------

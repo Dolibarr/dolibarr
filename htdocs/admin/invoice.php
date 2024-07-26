@@ -8,6 +8,7 @@
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 /**
  *      \file       htdocs/admin/invoice.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoice module
  */
 
@@ -276,7 +277,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura');
+llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura', '', 0, 0, '', '', '', 'mod-admin page-invoice');
 
 $form = new Form($db);
 
@@ -462,6 +463,7 @@ print '</div>';
 /*
  *  Document templates generators
  */
+
 print '<br>';
 print load_fiche_titre($langs->trans("BillsPDFModules"), '', '');
 
@@ -478,7 +480,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -529,6 +533,9 @@ foreach ($dirmodels as $reldir) {
 								$modulequalified = 0;
 							}
 							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+								$modulequalified = 0;
+							}
+							if ($module->version == 'disabled') {
 								$modulequalified = 0;
 							}
 
@@ -822,6 +829,7 @@ print $form->textwithpicto('', $langs->trans("InvoiceCheckPosteriorDateHelp"), 1
 print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_CHECK_POSTERIOR_DATE');
 print '</td></tr>';
+
 
 // Allow external download
 print '<tr class="oddeven">';

@@ -41,9 +41,11 @@ $toselect = GETPOST('toselect', 'array');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref = GETPOST("search_ref", 'alpha');
-$search_type = GETPOSTINT("search_type");
+$search_type = GETPOST("search_type", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
-$type = GETPOSTINT("type");
+$mode = GETPOST('mode', 'aZ');
+
+$type = GETPOST("type", 'int');
 
 $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -80,7 +82,7 @@ if ((string) $type == '0') {
 	}
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object = new IntracommReport($db);
 $hookmanager->initHooks(array('intracommreportlist'));
 $extrafields = new ExtraFields($db);
@@ -104,13 +106,6 @@ if (!empty($canvas)) {
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('product', 'list', $canvas);
 }
-
-// Security check
-/*
-if ($search_type=='0') $result=restrictedArea($user, 'produit', '', '', '', '', '', $objcanvas);
-elseif ($search_type=='1') $result=restrictedArea($user, 'service', '', '', '', '', '', $objcanvas);
-else $result=restrictedArea($user, 'produit|service', '', '', '', '', '', $objcanvas);
-*/
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -356,7 +351,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -436,7 +431,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';

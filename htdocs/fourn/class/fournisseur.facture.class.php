@@ -37,7 +37,7 @@
  *  \brief      File of class to manage suppliers invoices
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -68,6 +68,10 @@ class FactureFournisseur extends CommonInvoice
 	public $table_element_line = 'facture_fourn_det';
 
 	/**
+	 * @var string	Name of class line
+	 */
+	public $class_element_line = 'SupplierInvoiceLine';
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture_fourn';
@@ -76,12 +80,6 @@ class FactureFournisseur extends CommonInvoice
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'supplier_invoice';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -243,7 +241,7 @@ class FactureFournisseur extends CommonInvoice
 
 	/**
 	 * Invoice lines
-	 * @var SupplierInvoiceLine[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 
@@ -378,6 +376,8 @@ class FactureFournisseur extends CommonInvoice
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -660,7 +660,7 @@ class FactureFournisseur extends CommonInvoice
 							(!empty($this->lines[$i]->info_bits) ? $this->lines[$i]->info_bits : ''),
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->remise_percent,
-							false,
+							0,
 							$this->lines[$i]->date_start,
 							$this->lines[$i]->date_end,
 							$this->lines[$i]->array_options,
@@ -788,7 +788,7 @@ class FactureFournisseur extends CommonInvoice
 						'HT',
 						0,
 						$_facrec->lines[$i]->rang,
-						false,
+						0,
 						$_facrec->lines[$i]->array_options,
 						$_facrec->lines[$i]->fk_unit,
 						0,
@@ -2763,6 +2763,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$datas = [];
 		$moretitle = $params['moretitle'] ?? '';
+
 		$picto = $this->picto;
 		if ($this->type == self::TYPE_REPLACEMENT) {
 			$picto .= 'r'; // Replacement invoice
@@ -2774,7 +2775,7 @@ class FactureFournisseur extends CommonInvoice
 			$picto .= 'd'; // Deposit invoice
 		}
 
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
+		$datas['picto'] = img_picto('', $picto).' <u class="paddingrightonly">'.$langs->trans("SupplierInvoice").'</u>';
 		if ($this->type == self::TYPE_REPLACEMENT) {
 			$datas['picto'] .= '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
 		} elseif ($this->type == self::TYPE_CREDIT_NOTE) {
@@ -2784,8 +2785,8 @@ class FactureFournisseur extends CommonInvoice
 		}
 		if (isset($this->status)) {
 			$alreadypaid = -1;
-			if (isset($this->alreadypaid)) {
-				$alreadypaid = $this->alreadypaid;
+			if (isset($this->totalpaid)) {
+				$alreadypaid = $this->totalpaid;
 			}
 
 			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
@@ -2882,6 +2883,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->type == self::TYPE_DEPOSIT) {
 			$picto .= 'd'; // Deposit invoice
 		}
+
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
@@ -2919,7 +2921,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($picto ? $picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= ($max ? dol_trunc($ref, $max) : $ref);
@@ -3350,10 +3352,21 @@ class FactureFournisseur extends CommonInvoice
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
+		$picto = $this->picto;
+		if ($this->type == self::TYPE_REPLACEMENT) {
+			$picto .= 'r'; // Replacement invoice
+		}
+		if ($this->type == self::TYPE_CREDIT_NOTE) {
+			$picto .= 'a'; // Credit note
+		}
+		if ($this->type == self::TYPE_DEPOSIT) {
+			$picto .= 'd'; // Deposit invoice
+		}
+
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
+		$return .= img_picto('', $picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
@@ -3737,6 +3750,16 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $table_element = 'facture_fourn_det';
 
 	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'facture_fourn';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_facture_fourn';
+
+	/**
 	 * @var static
 	 */
 	public $oldline;
@@ -3821,12 +3844,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 	public $skip_update_total; // Skip update price total for special lines
 
 	/**
-	 * @var int 	Situation progress percentage
+	 * @var float 	Situation progress percentage
 	 */
 	public $situation_percent;
 
 	/**
-	 * @var int Previous situation line id reference
+	 * @var int 	Previous situation line id reference
 	 */
 	public $fk_prev_id;
 
@@ -3856,7 +3879,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Quantity
-	 * @var double
+	 * @var float
 	 */
 	public $qty;
 

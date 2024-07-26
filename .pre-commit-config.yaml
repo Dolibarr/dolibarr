@@ -43,6 +43,7 @@ repos:
       - id: end-of-file-fixer
       # Check that there are no completely merged file conflicts
       - id: check-merge-conflict
+        stages: [pre-commit, pre-rebase, pre-commit, pre-merge-commit]
       # Check that files with shebangs have the executable bit set (in git)
       - id: check-executables-have-shebangs
       # Check that shell files are executables
@@ -130,6 +131,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
           ]
       - alias: php-cs-with-cache
         id: php-cs
@@ -140,6 +142,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
             --cache=.cache/pre-commit/dolibarr-php-cs.cache,
             .,
           ]
@@ -231,3 +234,27 @@ repos:
     hooks:
       - id: shellcheck
         args: [-W, "100"]
+
+  # Check sql file syntax
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.0.4
+    hooks:
+      - id: sqlfluff-lint
+        stages: [pre-commit, manual]  # manual needed for ci
+        exclude: (?x)^
+          (dev/initdemo/mysqldump_.*\.sql
+          |htdocs/core/menus/init_menu_auguria\.sql
+          |htdocs/includes/.*
+          |htdocs/install/doctemplates/websites/.*_template
+          |htdocs/install/doctemplates/websites/website_template.*\.sql
+          |htdocs/install/mysql/data/llx_20_c_departements\.sql
+          |htdocs/install/mysql/data/llx_accounting_account_.*\.sql
+          |htdocs/install/mysql/migration/3\..*\.sql
+          |htdocs/install/mysql/migration/(1[0-5]|[456789])\.0\.0-.*\.sql
+          |htdocs/install/mysql/migration/repair\.sql
+          |htdocs/install/mysql/tables/llx_bookcal_availabilities-bookcal\.sql
+          |htdocs/install/mysql/tables/llx_categorie.*\.key\.sql
+          |htdocs/install/mysql/tables/llx_rights_def\.key\.sql
+          |htdocs/install/pgsql/functions/functions.*\.sql
+          |htdocs/modulebuilder/template/sql/.*\.sql
+          )$

@@ -428,10 +428,10 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 }
 
 /**
- * Get list of existing objects from directory
+ * Get list of existing objects from a directory
  *
  * @param	string      $destdir		Directory
- * @return 	array|int                    Return integer <=0 if KO, array if OK
+ * @return 	array|int                   Return integer <=0 if KO, array if OK
  */
 function dolGetListOfObjectClasses($destdir)
 {
@@ -460,10 +460,10 @@ function dolGetListOfObjectClasses($destdir)
 }
 
 /**
- * Function to check if comment begin an end exist in modMyModule class
+ * Function to check if comment BEGIN and END exists in modMyModule class
  *
  * @param  string  $file    	Filename or path
- * @param  int     $number   	0 = For Menus,1 = For permissions, 2 = For Dictionaries
+ * @param  int     $number   	0 = For Menus, 1 = For permissions, 2 = For Dictionaries
  * @return int     				1 if OK , -1 if KO
  */
 function checkExistComment($file, $number)
@@ -475,10 +475,12 @@ function checkExistComment($file, $number)
 	$content = file_get_contents($file);
 	if ($number === 0) {
 		$ret = 0;
-		if (strpos($content, '/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */') !== false) {
+		if (strpos($content, '/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */') !== false
+			|| strpos($content, '/* BEGIN MODULEBUILDER TOPMENU */') !== false) {
 			$ret++;
 		}
-		if (strpos($content, '/* END MODULEBUILDER TOPMENU MYOBJECT */') !== false) {
+		if (strpos($content, '/* END MODULEBUILDER TOPMENU MYOBJECT */') !== false
+			|| strpos($content, '/* END MODULEBUILDER TOPMENU */') !== false) {
 			$ret++;
 		}
 		if (strpos($content, '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */') !== false) {
@@ -844,29 +846,43 @@ function deletePropsAndPermsFromDoc($file, $objectname)
 /**
  * Search a string and return all lines needed from file. Does not include line $start nor $end
  *
- * @param  string  $file    file for searching
- * @param  string  $start   start line if exist
- * @param  string  $end     end line if exist
- * @return string           return the content needed
+ * @param  	string  $file    		file for searching
+ * @param  	string  $start   		start line if exist
+ * @param  	string  $end     		end line if exist
+ * @param	string	$excludestart 	Ignore if start line is $excludestart
+ * @param	int  	$includese		Include start and end line
+ * @return 	string           		Return the lines between first line with $start and $end. "" if not found.
  */
-function getFromFile($file, $start, $end)
+function getFromFile($file, $start, $end, $excludestart = '', $includese = 0)
 {
-	$i = 1;
 	$keys = array();
-	$lines = file($file);
-	// Search for start and end lines
-	foreach ($lines as $i => $line) {
-		if (strpos($line, $start) !== false) {
-			// Copy lines until the end on array
-			while (($line = $lines[++$i]) !== false) {
-				if (strpos($line, $end) !== false) {
-					break;
+
+	//$lines = file(dol_osencode($file));
+	$fhandle = fopen(dol_osencode($file), 'r');
+	if ($fhandle) {
+		// Search for start and end lines
+		//foreach ($lines as $i => $line) {
+		while ($line = fgets($fhandle)) {
+			if (strpos($line, $start) !== false && (empty($excludestart) || strpos($line, $excludestart) === false)) {
+				if ($includese) {
+					$keys[] = $line;
 				}
-				$keys[] = $line;
+				// Copy lines until we reach the end
+				while (($line = fgets($fhandle)) !== false) {
+					if (strpos($line, $end) !== false) {
+						if ($includese) {
+							$keys[] = $line;
+						}
+						break;
+					}
+					$keys[] = $line;
+				}
+				break;
 			}
-			break;
 		}
 	}
+	fclose($fhandle);
+
 	$content = implode("", $keys);
 	return $content;
 }
@@ -1093,10 +1109,10 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 /**
  * @param	string         $file       path of filename
- * @param	array<int,array{fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>		$menus      all menus for module
+ * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>		$menus      all menus for module
  * @param	mixed|null     $menuWantTo  menu get for do actions
  * @param	int|null       $key        key for the concerned menu
- * @param	int<-1,2>      $action     for specify what action (0 = delete, 1 = add, 2 = update, -1 = when delete object)
+ * @param	int<-1,2>      $action     for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
  * @return	int<-1,1>					1 if OK, -1 if KO
  */
 function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
@@ -1106,6 +1122,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 	if (!file_exists($file)) {
 		return -1;
 	}
+
 	if ($action == 0 && !empty($key)) {
 		// delete menu manually
 		array_splice($menus, array_search($menus[$key], $menus), 1);
@@ -1144,19 +1161,23 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 		$errors++;
 	}
 	if (!$errors) {
-		// delete All LEFT Menus
-		$beginMenu = '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */';
-		$endMenu = '/* END MODULEBUILDER LEFTMENU MYOBJECT */';
-		$allMenus = getFromFile($file, $beginMenu, $endMenu);
-		dolReplaceInFile($file, array($allMenus => ''));
+		// delete All LEFT Menus (except for commented template MYOBJECT)
+		$beginMenu = '/* BEGIN MODULEBUILDER LEFTMENU';
+		$excludeBeginMenu = '/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT';
+		$endMenu = '/* END MODULEBUILDER LEFTMENU';
+		$protection = 0;
+		while ($protection <= 1000 && $allMenus = getFromFile($file, $beginMenu, $endMenu, $excludeBeginMenu, 1)) {
+			$protection++;
+			dolReplaceInFile($file, array($allMenus => ''));
+		}
 
-		//prepare each menu and stock them in string
+		// forge the menu code in a string
 		$str_menu = "";
 		foreach ($menus as $index => $menu) {
 			$menu['position'] = "1000 + \$r";
 			if ($menu['type'] === 'left') {
-				$start = "\t\t".'/* LEFTMENU '.strtoupper($menu['titre']).' */';
-				$end   = "\t\t".'/* END LEFTMENU '.strtoupper($menu['titre']).' */';
+				$start = "\t\t".'/* BEGIN MODULEBUILDER LEFTMENU '.strtoupper(empty($menu['object']) ? $menu['titre'] : $menu['object']).' */';
+				$end   = "\t\t".'/* END MODULEBUILDER LEFTMENU '.strtoupper(empty($menu['object']) ? $menu['titre'] : $menu['object']).' */';
 
 				$val_actuel = $menu;
 				$next_val = empty($menus[$index + 1]) ? null : $menus[$index + 1];
@@ -1176,6 +1197,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 				$str_menu .= "\t\t\t 'perms' => '".dol_escape_php($menu['perms'], 1)."',\n";
 				$str_menu .= "\t\t\t 'target' => '".dol_escape_php($menu['target'], 1)."',\n";
 				$str_menu .= "\t\t\t 'user' => ".((int) $menu['user']).",\n";
+				$str_menu .= "\t\t\t 'object' => '".dol_escape_php($menu['object'], 1)."',\n";
 				$str_menu .= "\t\t);\n";
 
 				if (is_null($next_val) || $val_actuel['leftmenu'] !== $next_val['leftmenu']) {
@@ -1184,7 +1206,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
 			}
 		}
 
-		dolReplaceInFile($file, array($beginMenu => $beginMenu."\n".$str_menu."\n"));
+		dolReplaceInFile($file, array('/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */' => $str_menu."\n\t\t/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */"));
 		return 1;
 	}
 	return -1;
@@ -1215,7 +1237,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 		if ($key === 'tabcond') {
 			$conditions = array_map(
 				/**
-				 * @param bool|int|string $val
+				 * @param mixed $val
 				 * @return string|int
 				 */
 				function ($val) use ($module) {
@@ -1265,11 +1287,11 @@ function updateDictionaryInFile($module, $file, $dicts)
  * for creating a new dictionary table in Dolibarr. It generates the necessary SQL code to define the table structure,
  * including columns such as 'rowid', 'code', 'label', 'position', 'use_default', 'active', etc. The table name is constructed based on the provided $namedic parameter.
  *
- * @param string $modulename The lowercase name of the module for which the dictionary table is being created.
- * @param string $file The file path to the Dolibarr module builder file where the dictionaries are defined.
- * @param string $namedic The name of the dictionary, which will also be used as the base for the table name.
- * @param array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
- * @return int<-1,-1>|void Return int < 0 if error, return nothing on success
+ * @param 	string 		$modulename 	The lowercase name of the module for which the dictionary table is being created.
+ * @param 	string 		$file 			The file path to the Dolibarr module builder file where the dictionaries are defined.
+ * @param 	string 		$namedic 		The name of the dictionary, which will also be used as the base for the table name.
+ * @param 	array<string,string|array<string,int|string>>	$dictionnaires An optional array containing pre-existing dictionary data, including 'tabname', 'tablib', 'tabsql', etc.
+ * @return 	int<-1,-1> 					Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)
 {
@@ -1277,7 +1299,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 
 	if (empty($namedic)) {
 		setEventMessages($langs->trans("ErrorEmptyNameDic"), null, 'errors');
-		return;
+		return -1;
 	}
 	if (!file_exists($file)) {
 		return -1;
@@ -1297,7 +1319,6 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 		'active' => array('type' => 'integer', 'value' => 3)
 	);
 
-
 	$primaryKey = 'rowid';
 	foreach ($columns as $key => $value) {
 		if ($key === 'rowid') {
@@ -1314,7 +1335,7 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($namedic));
 	if ($checkTable && $db->num_rows($checkTable) > 0) {
 		setEventMessages($langs->trans("ErrorTableExist", $namedic), null, 'errors');
-		return;
+		return -1;
 	} else {
 		$_results = $db->DDLCreateTable(MAIN_DB_PREFIX.strtolower($namedic), $columns, $primaryKey, "");
 		if ($_results < 0) {
@@ -1342,6 +1363,8 @@ function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = nul
 	if ($writeInfile > 0) {
 		setEventMessages($langs->trans("DictionariesCreated", ucfirst(substr($namedic, 2))), null);
 	}
+
+	return -1;
 }
 
 /**

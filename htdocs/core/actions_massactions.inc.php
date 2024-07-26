@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021 Nicolas ZABOURI	<info@inovea-conseil.com>
- * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
- * Copyright (C) 2019 	   Ferran Marcet  <fmarcet@2byte.es>
- * Copyright (C) 2019-2024 Frédéric France <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -761,7 +761,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	foreach ($listofobjectref as $tmppdf) {
 		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
 	}
-	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, true);
+	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
 
 	// build list of files with full path
 	$files = array();
@@ -1150,7 +1150,7 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->default_lang)) {
 				$newlang = $objecttmp->default_lang; // for thirdparty
 			}
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && empty($objecttmp->thirdparty)) { //load lang from thirdparty
 				$objecttmp->fetch_thirdparty();
 				$newlang = $objecttmp->thirdparty->default_lang; // for proposal, order, invoice, ...
 			}
@@ -1595,16 +1595,17 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
-			if ($objecttmp->statut != Holiday::STATUS_VALIDATED) {
+			if ($objecttmp->status != Holiday::STATUS_VALIDATED) {
 				setEventMessages($langs->trans('StatusOfRefMustBe', $objecttmp->ref, $langs->transnoentitiesnoconv('Validated')), null, 'warnings');
 				continue;
 			}
 			if ($user->id == $objecttmp->fk_validator) {
-				$objecttmp->oldcopy = dol_clone($objecttmp);
+				$objecttmp->oldcopy = dol_clone($objecttmp, 2);
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
-				$objecttmp->statut = Holiday::STATUS_APPROVED;
+				$objecttmp->status = Holiday::STATUS_APPROVED;
+				$objecttmp->statut = $objecttmp->status;	// deprecated
 
 				$verif = $objecttmp->approve($user);
 

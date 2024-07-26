@@ -65,7 +65,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$search_rowid = GETPOSTINT("search_rowid");
+$search_rowid = GETPOST("search_rowid", "intcomma");
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
@@ -199,7 +199,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
  */
 
 $title = $langs->trans("Audit");
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-tools_listevents');
 
 $form = new Form($db);
 

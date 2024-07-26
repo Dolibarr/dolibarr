@@ -52,13 +52,6 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 0;
-
-
 	public $fk_soc;
 	public $date;
 	public $type;
@@ -127,6 +120,8 @@ class Deplacement extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -179,7 +179,7 @@ if ($action == 'validatehistory') {
  */
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-expensereport page-list');
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
 $textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';
@@ -203,7 +203,6 @@ print_barre_liste(img_picto('', 'unlink', 'class="paddingright fa-color-unset"')
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
-print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
@@ -265,12 +264,12 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
+			//print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
-			print length_accountg($row[0]);
+			print length_accountg($row[0]).' - ';
 		}
-		print '</td>';
-		print '<td>';
+		//print '</td>';
+		//print '<td>';
 		if ($row[0] == 'tobind') {
 			$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			if ($startmonth > 12) {
@@ -311,7 +310,7 @@ if ($resql) {
 	$db->free($resql);
 
 	if ($num == 0) {
-		print '<tr class="oddeven"><td colspan="16">';
+		print '<tr class="oddeven"><td colspan="15">';
 		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 		print '</td></tr>';
 	}
@@ -332,7 +331,6 @@ print_barre_liste(img_picto('', 'link', 'class="paddingright fa-color-unset"').$
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="minwidth100">'.$langs->trans("Account").'</td>';
-print '<td>'.$langs->trans("Label").'</td>';
 for ($i = 1; $i <= 12; $i++) {
 	$j = $i + getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1) - 1;
 	if ($j > 12) {
@@ -375,13 +373,12 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print '<td>';
 		if ($row[0] == 'tobind') {
-			print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
+			//print '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		} else {
-			print length_accountg($row[0]);
+			print length_accountg($row[0]).' - ';
 		}
-		print '</td>';
-
-		print '<td>';
+		//print '</td>';
+		//print '<td>';
 		if ($row[0] == 'tobind') {
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.((int) $y), $langs->transnoentitiesnoconv("ToBind"));
 		} else {
@@ -399,7 +396,7 @@ if ($resql) {
 	$db->free($resql);
 
 	if ($num == 0) {
-		print '<tr class="oddeven"><td colspan="16">';
+		print '<tr class="oddeven"><td colspan="15">';
 		print '<span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span>';
 		print '</td></tr>';
 	}

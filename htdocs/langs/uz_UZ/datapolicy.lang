@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Ma'lumotlar maxfiyligi siyosati
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Ma'lumotlar maxfiyligini boshqarish moduli (GDPRga muvofiqlik)
-
-#
 # Administration page
-#
 datapolicySetup = Modul maʼlumotlarining maxfiylik siyosatini oʻrnatish
 Deletion = Ma'lumotlarni o'chirish
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = Mamlakatlaringiz qonunlariga qarab (misol <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPRning 5-moddasi</a>), shaxsiy maʼlumotlar bir muddat saqlanishi kerak maʼlumotlar yigʻilgan maqsad uchun zarur boʻlgan muddatdan oshmasligi, arxiv maqsadlari bundan mustasno.<br>Oʻchirish maʼlum bir vaqtdan soʻng hodisalarsiz avtomatik ravishda amalga oshiriladi (davomiylik). Siz quyida ko'rsatgan bo'lasiz).
 NB_MONTHS = %s oy
 ONE_YEAR = 1 yil
 NB_YEARS = %s yil
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Na istiqbolli / na mijoz
 DATAPOLICY_CONTACT_FOURNISSEUR = Yetkazib beruvchi
 DATAPOLICY_ADHERENT = A'zo
 DATAPOLICY_Tooltip_SETUP = Kontakt turi - har bir tur uchun tanlovingizni ko'rsating.
-DATAPOLICYMail = Elektron pochta xabarlarini sozlash
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = Elektron pochtaning mazmuni
-DATAPOLICYSUBSITUTION = Siz o'z elektron pochtangizda quyidagi o'zgaruvchilardan foydalanishingiz mumkin (LINKACCEPT shaxsning kelishuvini qayd qiluvchi havola yaratish imkonini beradi, LINK REFUSED shaxsning rad etishini qayd etish imkonini beradi):
-DATAPOLICYACCEPT = Kelishuvdan keyin xabar
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Siz GDPR elektron pochta xabarini barcha tegishli kontaktlaringizga yuborishingiz mumkin (ular hali elektron pochta xabarini olmagan va siz GDPR shartnomasi haqida hech narsa ro'yxatdan o'tmagan). Buning uchun quyidagi tugmani ishlating.
 SendAgreement = Elektron pochta xabarlarini yuboring
 AllAgreementSend = Barcha elektron pochta xabarlari yuborildi
 TXTLINKDATAPOLICYACCEPT = "Shartnoma" havolasi uchun matn
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = "Ixtilof" havolasi uchun matn
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Shaxsiy ma'lumotlarni qayta ishlash
 DATAPOLICY_consentement = Shaxsiy ma'lumotlarni qayta ishlash uchun olingan rozilik
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Uchinchi tomonni anonimlashtirish
-DATAPOLICY_POPUP_ANONYME_TEXTE = Bu kontaktni Dolibarr’dan o‘chira olmaysiz, chunki tegishli elementlar mavjud. GDPRga muvofiq, siz o'z majburiyatlaringizni hurmat qilish uchun ushbu ma'lumotlarning barchasini anonim qilib qo'yasiz. Davom etishni xohlaysizmi?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portativlik GDPR
-DATAPOLICY_PORTABILITE_TITLE = Shaxsiy ma'lumotlarni eksport qilish
-DATAPOLICY_PORTABILITE_CONFIRMATION = Siz ushbu kontaktning shaxsiy ma'lumotlarini eksport qilmoqchisiz. Ishonchingiz komilmi ?
-
-#
+DATAPOLICY_opposition_traitement = Uning shaxsiy ma'lumotlarini qayta ishlashga qarshi
+DATAPOLICY_opposition_prospection = Uning shaxsiy ma'lumotlarini qidiruv maqsadlarida qayta ishlashga qarshi
 # Notes added during an anonymization
-#
-ANONYMISER_AT = %s anonimlashtirildi
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = GDPR e-pochtasini yuboring
+DATAPOLICY_date = Kelishuv/kelishmovchilik sanasi GDPR
+DATAPOLICY_send = Kelishuv sanasi e-pochta orqali yuborildi
 MailSent = Email yuborildi
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = O'chirishdan oldingi oylar soni

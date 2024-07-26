@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/salaries/list.php
+ *	    \file       htdocs/salaries/payments.php
  *      \ingroup    salaries
  *		\brief     	List of salaries payments
  */
@@ -67,7 +67,7 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new PaymentSalary($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
@@ -94,24 +94,21 @@ $search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('search_date_endmonth'), GE
 $search_dateep_start = dol_mktime(0, 0, 0, GETPOSTINT('search_dateep_startmonth'), GETPOSTINT('search_dateep_startday'), GETPOSTINT('search_dateep_startyear'));
 $search_dateep_end = dol_mktime(23, 59, 59, GETPOSTINT('search_dateep_endmonth'), GETPOSTINT('search_dateep_endday'), GETPOSTINT('search_dateep_endyear'));
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_account = GETPOSTINT('search_account');
-$search_fk_bank = GETPOSTINT('search_fk_bank');
-$search_chq_number = GETPOSTINT('search_chq_number');
+$search_account = GETPOST('search_account', 'alpha');
+$search_fk_bank = GETPOST('search_fk_bank', 'alpha');
+$search_chq_number = GETPOST('search_chq_number', 'alpha');
 
-$filtre = GETPOST("filtre", 'restricthtml');
-
-$search_type_id = '';
-if (!GETPOSTINT('search_type_id')) {
+$search_type_id = GETPOST('search_type_id', 'int');
+if (!$search_type_id) {	// fallback on filtre (deprecated)
+	$filtre = GETPOST("filtre", 'restricthtml');
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
 	foreach ($filterarray as $val) {
 		$part = explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') {
-			$search_type_id = $part[1];
+			$search_type_id = (int) $part[1];
 		}
 	}
-} else {
-	$search_type_id = GETPOSTINT('search_type_id');
 }
 
 $childids = $user->getAllChildIds(1);
@@ -142,7 +139,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -329,7 +326,7 @@ if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -371,13 +368,13 @@ if ($search_account) {
 	$param .= '&search_account='.urlencode((string) ($search_account));
 }
 if ($search_date_start) {
-	$param .= '&search_date_startday='.urlencode((string) (GETPOSTINT('search_date_startday'))).'&search_date_startmonth='.urlencode((string) (GETPOSTINT('search_date_startmonth'))).'&search_date_startyear='.urlencode((string) (GETPOSTINT('search_date_startyear')));
+	$param .= '&search_date_startday='.GETPOSTINT('search_date_startday').'&search_date_startmonth='.GETPOSTINT('search_date_startmonth').'&search_date_startyear='.GETPOSTINT('search_date_startyear');
 }
 if ($search_dateep_start) {
-	$param .= '&search_dateep_startday='.urlencode((string) (GETPOSTINT('search_dateep_startday'))).'&search_dateep_startmonth='.urlencode((string) (GETPOSTINT('search_dateep_startmonth'))).'&search_dateep_startyear='.urlencode((string) (GETPOSTINT('search_dateep_startyear')));
+	$param .= '&search_dateep_startday='.GETPOSTINT('search_dateep_startday').'&search_dateep_startmonth='.GETPOSTINT('search_dateep_startmonth').'&search_dateep_startyear='.GETPOSTINT('search_dateep_startyear');
 }
 if ($search_date_end) {
-	$param .= '&search_date_endday='.urlencode((string) (GETPOSTINT('search_date_endday'))).'&search_date_endmonth='.urlencode((string) (GETPOSTINT('search_date_endmonth'))).'&search_date_endyear='.urlencode((string) (GETPOSTINT('search_date_endyear')));
+	$param .= '&search_date_endday='.GETPOSTINT('search_date_endday').'&search_date_endmonth='.GETPOSTINT('search_date_endmonth').'&search_date_endyear='.GETPOSTINT('search_date_endyear');
 }
 if ($search_dateep_end) {
 	$param .= '&search_dateep_endday='.urlencode((string) (GETPOSTINT('search_dateep_endday'))).'&search_dateep_endmonth='.urlencode((string) (GETPOSTINT('search_dateep_endmonth'))).'&search_dateep_endyear='.urlencode((string) (GETPOSTINT('search_dateep_endyear')));

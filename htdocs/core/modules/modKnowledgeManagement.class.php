@@ -390,7 +390,7 @@ class modKnowledgeManagement extends DolibarrModules
 		/* END MODULEBUILDER EXPORT KNOWLEDGERECORD */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT KNOWLEDGERECORD */
 		/*
 		 $langs->load("knowledgemanagement");

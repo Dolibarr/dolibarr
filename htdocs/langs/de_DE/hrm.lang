@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-Mail, um HRM externen Service zu verhindern
 Establishments=Einrichtungen
@@ -24,7 +23,7 @@ SkillsManagement=Kompetenzmanagement
 HRM_MAXRANK=Maximale Anzahl von Stufen, um eine Kompetenz einzustufen
 HRM_DEFAULT_SKILL_DESCRIPTION=Standardbeschreibung der Qualifikationsstufen beim Erstellen einer Kompetenz
 deplacement=Schicht
-DateEval=Bewertungstag
+DateEval=Datum der Kompetenzbewertung
 JobCard=Position – Übersicht
 NewJobProfile=Neues Stellenprofil
 JobProfile=Stellenbeschreibung
@@ -41,12 +40,12 @@ Skill=Kompetenz
 Skills=Kompetenzen
 SkillCard=Kompetenzüberblick
 EmployeeSkillsUpdated=Mitarbeiterkompetenzen wurden aktualisiert (siehe Registerkarte "Kompetenzen" der Mitarbeiterkarte)
-Eval=Bewertung
-Evals=Bewertungen
-NewEval=Neue Bewertung
-ValidateEvaluation=Bewertung freigeben
-ConfirmValidateEvaluation=Möchten Sie diese Bewertung mit der Referenz <b>%s</b> wirklich freigeben?
-EvaluationCard=Bewertungskarte
+Eval=Kompetenzbewertung
+Evals=Kompetenzbewertungen
+NewEval=Neue Kompetenzbeurteilung
+ValidateEvaluation=Kompetenzbewertung freigeben
+ConfirmValidateEvaluation=Sind Sie sicher, dass Sie die Kompetenzbewertung mit der Referenz <b>%s</b> freigeben wollen?
+EvaluationCard=Kompetenzbewertung
 RequiredRank=Erforderliche Qualifikationsstufe für das Stellenprofil
 RequiredRankShort=Erforderliche Stufe
 PositionsWithThisProfile=Positionen mit diesen Stellenprofilen
@@ -90,8 +89,9 @@ SaveAddSkill = Kompetenz(en) hinzugefügt
 SaveLevelSkill = Kompetenzstufe gespeichert
 DeleteSkill = Kompetenz entfernt
 SkillsExtraFields=Ergänzende Attribute (Kompetenzen)
-JobsExtraFields=Ergänzende Attribute (Stellenprofil)
-EvaluationsExtraFields=Ergänzende Attribute (Beurteilungen)
+JobsExtraFields=Ergänzende Attribute (Stellenprofile)
+EvaluationsExtraFields=Ergänzende Attribute (Kompetenzbewertungen)
 NeedBusinessTravels=Geschäftsreisen erforderlich
 NoDescription=Keine Beschreibung
 TheJobProfileHasNoSkillsDefinedFixBefore=Für das ausgewertete Stellenprofil dieses Mitarbeiters ist keine Fähigkeit definiert. Bitte fügen Sie Fähigkeiten hinzu, löschen Sie die Auswertung und starten Sie die diese neu.
+PDFStandardHrmEvaluation=Standardvorlage PDF-Dokument für eine Kompetenzbewertung

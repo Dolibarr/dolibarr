@@ -10,8 +10,8 @@
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
--- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
+-- To drop a foreign key or constraint:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
+-- To create a unique index:              ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
 -- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex ON llx_table;
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex;
 -- To make pk to be auto increment (mysql):
@@ -49,6 +49,9 @@ UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTr
 
 DELETE FROM llx_boxes WHERE box_id IN (SELECT rowid FROM llx_boxes_def WHERE file = 'box_members.php');
 DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
+
+UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
 
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
@@ -186,7 +189,8 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN price_label varchar(255) A
 ALTER TABLE llx_product_customer_price ADD COLUMN price_label varchar(255) AFTER fk_user;
 ALTER TABLE llx_product ADD COLUMN price_label varchar(255) AFTER price_base_type;
 
-
+ALTER TABLE llx_fichinter_rec ADD COLUMN status smallint DEFAULT 0;
+ALTER TABLE llx_fichinter_rec CHANGE COLUMN titre title varchar(50) NOT NULL;
 CREATE TABLE llx_product_thirdparty
 (
     rowid                               integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -227,6 +231,8 @@ ALTER TABLE llx_product DROP COLUMN onportal;
 
 ALTER TABLE llx_product ADD COLUMN last_main_doc varchar(255);
 
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
+
 ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtext;
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME TO llx_receptiondet_batch_extrafields;
@@ -237,6 +243,14 @@ UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_C
 
 ALTER TABLE llx_fichinter ADD COLUMN signed_status smallint DEFAULT NULL AFTER duree;
 ALTER TABLE llx_contrat ADD COLUMN signed_status smallint DEFAULT NULL AFTER date_contrat;
+ALTER TABLE llx_expedition ADD COLUMN signed_status smallint DEFAULT NULL AFTER billed;
+
+ALTER TABLE llx_fichinter ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_fichinter ADD COLUMN online_sign_name varchar(64);
+ALTER TABLE llx_contrat ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_contrat ADD COLUMN online_sign_name varchar(64);
+ALTER TABLE llx_expedition ADD COLUMN online_sign_ip	varchar(48);
+ALTER TABLE llx_expedition ADD COLUMN online_sign_name varchar(64);
 
 ALTER TABLE llx_mailing ADD COLUMN messtype	varchar(16) DEFAULT 'email' after rowid;
 
@@ -283,18 +297,21 @@ ALTER TABLE llx_ticket ADD CONSTRAINT llx_ticket_fk_product_barcode_type FOREIGN
 
 ALTER TABLE llx_socpeople ADD COLUMN fk_parent integer NULL;
 
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_product integer;
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_element integer;
-ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'order' NOT NULL;
+ALTER TABLE llx_expeditiondet ADD COLUMN element_type varchar(50) DEFAULT 'commande' NOT NULL;
 ALTER TABLE llx_expeditiondet CHANGE COLUMN fk_origin_line fk_elementdet integer;
 ALTER TABLE llx_expeditiondet DROP INDEX idx_expeditiondet_fk_origin_line;
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_elementdet (fk_elementdet);
 
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commande fk_element integer;
 ALTER TABLE llx_receptiondet_batch CHANGE COLUMN fk_commandefourndet fk_elementdet integer;
+ALTER TABLE llx_receptiondet_batch ADD INDEX idx_receptiondet_batch_fk_element (fk_element);
 
 ALTER TABLE llx_supplier_proposaldet MODIFY ref_fourn VARCHAR(128) NULL;
 
 ALTER TABLE llx_projet ADD COLUMN ref_ext varchar(50) after ref;
+ALTER TABLE llx_projet ADD COLUMN email_date datetime after email_msgid;
 
 -- bookcal
 ALTER TABLE llx_bookcal_calendar ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
@@ -303,3 +320,92 @@ ALTER TABLE llx_rights_def ADD COLUMN module_origin varchar(64) AFTER module;
 ALTER TABLE llx_rights_def ADD COLUMN enabled text NULL AFTER bydefault;
 
 DELETE FROM llx_c_action_trigger WHERE code = 'BILLREC_AUTOCREATEBILL';
+
+
+-- VMYSQL4.3 ALTER TABLE llx_element_contact DROP FOREIGN KEY idx_element_contact_fk_c_type_contact;
+-- VMYSQL4.3 ALTER TABLE llx_element_contact DROP FOREIGN KEY fk_element_contact_fk_c_type_contact;
+-- VMYSQL4.3 ALTER TABLE llx_societe_contacts DROP FOREIGN KEY fk_societe_contacts_fk_c_type_contact;
+-- VMYSQL4.3 ALTER TABLE llx_c_type_contact CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- VMYSQL4.3 ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)     REFERENCES llx_c_type_contact(rowid);
+-- VMYSQL4.3 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_contact FOREIGN KEY (fk_c_type_contact)  REFERENCES llx_c_type_contact(rowid);
+
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active) values ('thirdparty', 'internal', 'SALESREPTHIRD',  'Sales Representative', 1);
+
+
+DELETE FROM llx_societe_commerciaux WHERE fk_soc NOT IN (SELECT rowid FROM llx_societe);
+DELETE FROM llx_societe_commerciaux WHERE fk_user NOT IN (SELECT rowid FROM llx_user);
+
+ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32) NOT NULL DEFAULT 'SALESREPTHIRD';
+
+-- VMYSQL4.1 DROP INDEX uk_societe_commerciaux ON llx_societe_commerciaux;
+-- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
+ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
+ALTER TABLE llx_c_type_contact ADD INDEX idx_c_type_contact_code (code);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
+ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
+
+
+-- element_element, see https://github.com/Dolibarr/dolibarr/pull/29329
+
+ALTER TABLE llx_element_element ADD COLUMN relationtype	varchar(64) DEFAULT NULL AFTER targettype;
+
+ALTER TABLE llx_ecm_files DROP column keyword;
+
+ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
+UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
+--UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
+UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
+
+UPDATE llx_c_type_container SET position = 100 WHERE position = 0;
+
+INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('service', 1, 'Service (ajax or api)', 1, 'system', 300, 'library');
+INSERT INTO llx_c_type_container(code, entity, label, active, module, position, typecontainer) VALUES ('library', 1, 'Library (functions)', 1, 'system', 400, 'library');
+
+UPDATE llx_mrp_production SET disable_stock_change = 0 WHERE disable_stock_change IS NULL;
+
+ALTER TABLE llx_socpeople ADD COLUMN url varchar(255);
+
+-- knowledgemanagement module
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CREATE','Knowledgerecord created','Executed when a knowledgerecord is created','knowledgemanagement',57001);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_MODIFY','Knowledgerecord modified','Executed when a knowledgerecord is modified','knowledgemanagement',57002);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_VALIDATE','Knowledgerecord Evaluation validated','Executed when an evaluation is validated','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_REOPEN','Knowledgerecord reopen','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_UNVALIDATE','Knowledgerecord unvalidated','Executed when an evaluation is back to draft','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_CANCEL','Knowledgerecord cancel','Executed when an evaluation to cancel','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_SENTBYMAIL','Mails sent from knowledgerecord file','knowledgerecord when you send email from knowledgerecord file','knowledgemanagement',57004);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('KNOWLEDGERECORD_DELETE','Knowledgerecord deleted','Executed when a knowledgerecord is deleted','knowledgemanagement',57006);
+
+-- table chargesociales indexes
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_type (fk_type);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_account (fk_account);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_mode_reglement (fk_mode_reglement);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_author (fk_user_author);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user_valid (fk_user_valid);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_projet (fk_projet);
+ALTER TABLE llx_chargesociales ADD INDEX idx_chargesociales_fk_user (fk_user);
+
+-- table paiementcharge indexes
+ALTER TABLE llx_paiementcharge ADD INDEX idx_paiementcharge_fk_charge (fk_charge);
+
+ALTER TABLE llx_product ADD INDEX idx_product_entity_fk_product_type (entity, fk_product_type);
+
+ALTER TABLE llx_element_categorie ADD INDEX idx_element_categorie_fk_categorie (fk_categorie);
+
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1021, 102, 1.2, 'percent', 'Συντελεστής 1,2 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1022, 102, 2.4, 'percent', 'Συντελεστής 2,4 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1023, 102, 3.6, 'percent', 'Συντελεστής 3,6 %', 1);
+INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active) values (1024, 102, 1.0, 'fixed', 'Λοιπές περιπτώσεις Χαρτοσήμου', 1);
+
+ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+
+ALTER TABLE llx_menu MODIFY COLUMN url TEXT NOT NULL;
+
+UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';
+
+-- missing entity field
+ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
+ALTER TABLE llx_c_holiday_types ADD COLUMN entity	integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);

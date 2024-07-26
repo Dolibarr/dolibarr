@@ -325,12 +325,36 @@ class Products extends DolibarrApi
 			throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
 		}
 
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$key_max = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			for ($key = 1; $key <= $key_max ; $key++) {
+				$newvat = $this->product->multiprices_tva_tx[$key];
+				$newnpr = 0;
+				$newvatsrccode = $this->product->default_vat_code;
+				$newprice = $this->product->multiprices[$key];
+				$newpricemin = $this->product->multiprices_min[$key];
+				$newbasetype = $this->product->multiprices_base_type[$key];
+				if (empty($newbasetype) || $newbasetype == '') {
+					$newbasetype = $this->product->price_base_type;
+				}
+				if ($newbasetype == 'TTC') {
+					$newprice = $this->product->multiprices_ttc[$key];
+					$newpricemin = $this->product->multiprices_min_ttc[$key];
+				}
+				if ($newprice > 0) {
+					$result = $this->product->updatePrice($newprice, $newbasetype, DolibarrApiAccess::$user, $newvat, $newpricemin, $key, $newnpr, 0, 0, array(), $newvatsrccode);
+				}
+			}
+		}
+
 		return $this->product->id;
 	}
 
 	/**
 	 * Update product.
-	 * Price will be updated by this API only if option is set on "One price per product". See other APIs for other price modes.
+	 * Price will be updated by this API only if option is set on "One price per product" or
+	 * if PRODUIT_MULTIPRICES is set (1 price per segment)
+	 * See other APIs for other price modes.
 	 *
 	 * @param  	int   	$id           		Id of product to update
 	 * @param  	array 	$request_data 		Datas
@@ -354,7 +378,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product);
+		$oldproduct = dol_clone($this->product, 2);
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -431,6 +455,42 @@ class Products extends DolibarrApi
 				}
 
 				$result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
+			}
+		}
+
+		if ($result > 0 && getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$key_max = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			for ($key = 1; $key <= $key_max ; $key++) {
+				$pricemodified = false;
+				if ($this->product->multiprices_base_type[$key] != $oldproduct->multiprices_base_type[$key]) {
+					$pricemodified = true;
+				} else {
+					if ($this->product->multiprices_tva_tx[$key] != $oldproduct->multiprices_tva_tx[$key]) $pricemodified = true;
+					if ($this->product->multiprices_base_type[$key] == 'TTC') {
+						if ($this->product->multiprices_ttc[$key] != $oldproduct->multiprices_ttc[$key]) $pricemodified = true;
+						if ($this->product->multiprices_min_ttc[$key] != $oldproduct->multiprices_min_ttc[$key]) $pricemodified = true;
+					} else {
+						if ($this->product->multiprices[$key] != $oldproduct->multiprices[$key]) $pricemodified = true;
+						if ($this->product->multiprices_min[$key] != $oldproduct->multiprices[$key]) $pricemodified = true;
+					}
+				}
+				if ($pricemodified && $result > 0) {
+					$newvat = $this->product->multiprices_tva_tx[$key];
+					$newnpr = 0;
+					$newvatsrccode = $this->product->default_vat_code;
+					$newprice = $this->product->multiprices[$key];
+					$newpricemin = $this->product->multiprices_min[$key];
+					$newbasetype = $this->product->multiprices_base_type[$key];
+					if (empty($newbasetype) || $newbasetype == '') {
+						$newbasetype = $this->product->price_base_type;
+					}
+					if ($newbasetype == 'TTC') {
+						$newprice = $this->product->multiprices_ttc[$key];
+						$newpricemin = $this->product->multiprices_min_ttc[$key];
+					}
+
+					$result = $this->product->updatePrice($newprice, $newbasetype, DolibarrApiAccess::$user, $newvat, $newpricemin, $key, $newnpr, 0, 0, array(), $newvatsrccode);
+				}
 			}
 		}
 
@@ -1699,7 +1759,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->product->fetch('', $ref);
+		$result = $this->product->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}
@@ -1821,7 +1881,7 @@ class Products extends DolibarrApi
 			}
 		}
 
-		$result = $this->product->fetch('', trim($ref));
+		$result = $this->product->fetch(0, trim($ref));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}

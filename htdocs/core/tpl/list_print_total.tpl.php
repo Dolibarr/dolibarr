@@ -17,7 +17,7 @@ if (isset($totalarray['pos'])) {
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if (!empty($totalarray['pos'][$i])) {
-			printTotalValCell($totalarray['type'][$i] ?? '', $totalarray['val'][$totalarray['pos'][$i]]);
+			printTotalValCell($totalarray['type'][$i] ?? '', empty($totalarray['val'][$totalarray['pos'][$i]]) ? 0 : $totalarray['val'][$totalarray['pos'][$i]]);
 		} else {
 			if ($i == 1) {
 				if ((is_null($limit) || $num < $limit) && empty($offset)) {

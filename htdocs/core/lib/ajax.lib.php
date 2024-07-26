@@ -26,9 +26,9 @@
 
 
 /**
- * Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajax/ajaxcompanies.php).
+ * Generic function that return javascript to add to transform a common input text or select field into an autocomplete field by calling an Ajax page (ex: /societe/ajax/ajaxcompanies.php).
  * The HTML field must be an input text with id=search_$htmlname.
- * This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
+ * This use the jQuery "autocomplete" function. If we want to use the select2, we must instead use input select into functions that call this method.
  *
  * @param string	$selected 			Preselected value
  * @param string	$htmlname 			HTML name of input field
@@ -119,6 +119,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						    }
                     });
 
+					// Activate the autocomplete to execute the GET
     				$("input#search_'.$htmlnamejquery.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { "'.str_replace('.', '_', $htmlname).'": request.term }, function(data){
@@ -162,18 +163,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_ttc: item.price_ttc,
 												 price_unit_ht: item.price_unit_ht,
 												 price_unit_ht_locale: item.price_unit_ht_locale,
-		';
-	if (isModEnabled('multicurrency')) {
-		$script .= '
-												multicurrency_code: item.multicurrency_code,
-												multicurrency_unitprice: item.multicurrency_unitprice,
-		';
-	}
-	$script .= '
+												 multicurrency_code: item.multicurrency_code,
+												 multicurrency_unitprice: item.multicurrency_unitprice,
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
-												 default_vat_code: item.default_vat_code
+												 default_vat_code: item.default_vat_code,
+												 supplier_ref: item.supplier_ref
 										}
 									}));
 								} else {
@@ -183,11 +179,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 						},
 						dataType: "json",
     					minLength: '.((int) $minLength).',
-    					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
+    					select: function( event, ui ) {		// Function ran once a new value has been selected into the javascript combo
     						console.log("We will trigger change on input '.$htmlname.' because of the select definition of autocomplete code for input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
 
-							console.log("Propagate before some properties retrieved by ajax into data-xxx properties of #'.$htmlnamejquery.' component");
+							console.log("Before, we propagate some properties, retrieved by the ajax of the get, into the data-xxx properties of the component #'.$htmlnamejquery.'");
 							//console.log(ui.item);
 
 							// For supplier price and customer when price by quantity is off
@@ -200,18 +196,16 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-ref-customer", ui.item.ref_customer);
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
-	';
-	if (isModEnabled('multicurrency')) {
-		$script .= '
+							$("#'.$htmlnamejquery.'").attr("data-supplier-ref", ui.item.supplier_ref);	// supplier_ref of price
+
 							// For multi-currency values
 							$("#'.$htmlnamejquery.'").attr("data-multicurrency-code", ui.item.multicurrency_code);
 							$("#'.$htmlnamejquery.'").attr("data-multicurrency-unitprice", ui.item.multicurrency_unitprice);
 		';
-	}
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
-							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");
+							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, so we propagate also prices by quantity into data-pbqxxx properties");
 							$("#'.$htmlnamejquery.'").attr("data-pbq", ui.item.pbq);
 							$("#'.$htmlnamejquery.'").attr("data-pbqup", ui.item.price_ht);
 							$("#'.$htmlnamejquery.'").attr("data-pbqbase", ui.item.pricebasetype);
@@ -221,7 +215,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	}
 	$script .= '
 							// A new value has been selected, we trigger the handlers on #htmlnamejquery
-							console.log("Trigger changes on #'.$htmlnamejquery.'");
+							console.log("Now, we trigger changes on #'.$htmlnamejquery.'");
 							$("#'.$htmlnamejquery.'").val(ui.item.id).trigger("change");	// Select new value
 
 							// Complementary actions
@@ -243,13 +237,13 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     						}
 
     						if (options.disabled) {
-    							console.log("Make action disabled on each "+options.option_disabled)
+    							console.log("Make action \'disabled\' on each "+options.option_disabled)
     							$.each(options.disabled, function(key, value) {
 									$("#" + value).prop("disabled", true);
     							});
     						}
     						if (options.show) {
-    							console.log("Make action show on each "+options.show)
+    							console.log("Make action \'show\' on each "+options.show)
     							$.each(options.show, function(key, value) {
     								$("#" + value).show().trigger("show");
     							});
@@ -257,7 +251,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
     						// Update an input
     						if (ui.item.update) {
-    							console.log("Make action update on each ui.item.update (if there is)")
+    							console.log("Make action \'update\' on each ui.item.update (if there is)")
     							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
 									console.log("Set value "+value+" into #"+key);
@@ -265,7 +259,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     							});
     						}
     						if (ui.item.textarea) {
-    							console.log("Make action textarea on each ui.item.textarea (if there is)")
+    							console.log("Make action \'textarea\' on each ui.item.textarea (if there is)")
     							$.each(ui.item.textarea, function(key, value) {
     								if (typeof CKEDITOR == "object" && typeof CKEDITOR.instances != "undefined" && CKEDITOR.instances[key] != "undefined") {
     									CKEDITOR.instances[key].setData(value);
@@ -295,7 +289,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 }
 
 /**
- *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: core/ajax/ziptown.php).
+ *	Generic function that return javascript to add to a page to transform a common input text field into an autocomplete field by calling an Ajax page (ex: core/ajax/ziptown.php).
  *  The Ajax page can also returns several values (json format) to fill several input fields.
  *  The HTML field must be an input text with id=$htmlname.
  *  This use the jQuery "autocomplete" function.
@@ -318,6 +312,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 					var autoselect = '.$autoselect.';
 					//alert(fields + " " + nboffields);
 
+					// Activate the autocomplete to execute the GET
     				jQuery("input#'.$htmlname.'").autocomplete({
     					dataType: "json",
     					minLength: '.$minLength.',
@@ -417,8 +412,6 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
  */
 function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
-	global $langs;
-
 	$newtitle = dol_textishtml($title) ? dol_string_nohtmltag($title, 1) : $title;
 	$msg = '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
 	$msg .= $message;
@@ -604,9 +597,11 @@ function ajax_event($htmlname, $events)
 									}
 								}
 							});
+
+							console.log("Replace HTML content of select#"+htmlname);
 							$("select#" + htmlname).html(response.value);
 							if (response.num) {
-								var selecthtml_str = response.value;
+								var selecthtml_str = response.value;	/* response.value is the HTML string with list of options */
 								var selecthtml_dom=$.parseHTML(selecthtml_str);
 								if (typeof(selecthtml_dom[0][0]) !== \'undefined\') {
 									$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
@@ -633,15 +628,16 @@ function ajax_event($htmlname, $events)
  * 	@param  array       $input                  Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
  * 	@param  int|null    $entity                 Entity. Current entity is used if null.
  *  @param  int         $revertonoff            1=Revert on/off
- *  @param  int	        $strict                 Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param  int	        $strict                 0=Default, 1=Only the complementary actions "disabled and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
  *  @param  int         $forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  *  @param  int         $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
  *  @param  int	        $forcenoajax            1 = Force to use a ahref link instead of ajax code.
- *  @param  int         $setzeroinsteadofdel    1 = Set constantto '0' instead of deleting it
- *  @param  string      $suffix                 Suffix to use on the name of the switch_on picto. Example: '', '_red'
+ *  @param  int         $setzeroinsteadofdel    1 = Set constant to '0' instead of deleting it when $input is empty.
+ *  @param  string      $suffix                 Suffix to use on the name of the switch picto when option is on. Example: '', '_red'
  *  @param  string      $mode                   Add parameter &mode= to the href link (Used for href link)
  *  @param  string      $morecss                More CSS
  * 	@return string
+ *  @see ajax_object_onoff() to update the status of an object
  */
 function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2, $forcenoajax = 0, $setzeroinsteadofdel = 0, $suffix = '', $mode = '', $morecss = 'inline-block')
 {
@@ -701,8 +697,8 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 		</script>'."\n";
 
 		$out .= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.(!empty($conf->global->$code) ? 'hideobject' : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
-		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.(!empty($conf->global->$code) ? '' : 'hideobject').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="set_'.$code.'" class="valignmiddle inline-block linkobject '.(getDolGlobalString($code) ? 'hideobject' : '').'">'.($revertonoff ? img_picto($langs->trans("Enabled"), 'switch_on', '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="del_'.$code.'" class="valignmiddle inline-block linkobject '.(getDolGlobalString($code) ? '' : 'hideobject').'">'.($revertonoff ? img_picto($langs->trans("Disabled"), 'switch_off'.$suffix, '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on'.$suffix, '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
 		$out .= "\n";
 	}
 
@@ -723,6 +719,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
  *  @param	string	$htmlname	Name of HTML component. Keep '' or use a different value if you need to use this component several time on the same page for the same field.
  *  @param	int		$forcenojs	Force the component to work as link post (without javascript) instead of ajax call
  *  @return string              html for button on/off
+ *  @see ajax_constantonoff() to update that value of a constant
  */
 function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array(), $morecss = '', $htmlname = '', $forcenojs = 0)
 {
@@ -735,7 +732,7 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input =
 
 	$out = '';
 
-	if (!empty($conf->use_javascript_ajax)) {
+	if (!empty($conf->use_javascript_ajax) && empty($forcenojs)) {
 		$out .= '<script>
         $(function() {
             var input = '.json_encode($input).';

@@ -13,7 +13,6 @@ TypeContact_ticket_external_SUPPORTCLI=Contacto con el cliente / seguimiento de 
 Notify_TICKET_SENTBYMAIL=Enviar mensaje de Ticket por correo electrónico
 Read=Leer
 Waiting=Esperando
-Type=Tipo
 MailToSendTicketMessage=Para enviar un correo electrónico desde un mensaje de ticket
 TicketSetupDictionaries=El tipo de ticket, severidad y códigos analíticos son configurables desde los diccionarios.
 TicketParamMail=Configuración de correo electrónico

@@ -108,7 +108,7 @@ class mod_contract_olive extends ModelNumRefContracts
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_CONTRACT_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}

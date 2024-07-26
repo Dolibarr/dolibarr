@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tickets
 Module56000Desc=Sistema de tickets para gerenciamento de problemas ou solicitações
-
 Permission56001=Ver tickets
 Permission56002=Modificar tickets
 Permission56003=Eliminar tickets
 Permission56004=Gerir tickets
 Permission56005=Veja tickets de todos os terceiros (não é eficaz para usuários externos, limite-se sempre ao terceiro do qual dependem)
 Permission56006=Exportar ingressos
-
 Tickets=Tickets
 TicketDictType=Bilhete - Tipos
 TicketDictCategory=Bilhete - Grupos
 TicketDictSeverity=Ticket - Gravidades
 TicketDictResolution=Bilhete - Resolução
-
 TicketTypeShortCOM=Questão comercial
 TicketTypeShortHELP=Pedido de ajuda funcional
 TicketTypeShortISSUE=Problema ou bug
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problema
 TicketTypeShortREQUEST=Solicitação de alteração ou melhoria
 TicketTypeShortPROJET=Projeto
 TicketTypeShortOTHER=Outro
-
 TicketSeverityShortLOW=Baixo
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alto
 TicketSeverityShortBLOCKING=Crítico, Bloqueio
-
 TicketCategoryShortOTHER=Outro
-
 ErrorBadEmailAddress=Campo '%s' incorreto
 MenuTicketMyAssign=Os meus tickets
 MenuTicketMyAssignNonClosed=Os meus pedidos abertos
 MenuListNonClosed=Abrir pedidos
-
 TypeContact_ticket_internal_CONTRIBUTOR=Colaborador
 TypeContact_ticket_internal_SUPPORTTEC=Usuário atribuído
 TypeContact_ticket_external_SUPPORTCLI=Contato com o cliente / acompanhamento de incidentes
 TypeContact_ticket_external_CONTRIBUTOR=Colaborador externo
-
 OriginEmail=E-mail do repórter
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Enviar mensagem de ticket por e-mail
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=Ler
 Assigned=Atribuído
 NeedMoreInformation=Aguardando feedback do repórter
 NeedMoreInformationShort=Aguardando feedback
-TicketAnswered=Answered
 Waiting=Em espera
 SolvedClosed=Resolvido
 Deleted=Excluído
-
 # Dict
-Type=Tipo
 Severity=Severidade
 TicketGroupIsPublic=O grupo é público
 TicketGroupIsPublicDesc=Se um grupo de tickets for público, ele ficará visível em formulário ao criar um ticket na interface pública
-
 # Email templates
 MailToSendTicketMessage=Para enviar email da mensagem do ticket
-
-#
 # Admin page
-#
 TicketSetup=Configuração do módulo Ticket
 TicketSettings=Definições
 TicketPublicAccess=Uma interface pública que não requer identificação está disponível no seguinte url
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Use Código gráfico (CAPTCHA) ao criar um ticket
 TicketUseCaptchaCodeHelp=Adiciona verificação CAPTCHA ao criar um novo ticket.
 TicketsAllowClassificationModificationIfClosed=Permitir modificar classificação de tickets fechados
 TicketsAllowClassificationModificationIfClosedHelp=Permitir a classificação modificar (tipo, grupo de tickets, gravidade) mesmo se os tickets estiverem fechados.
-
-#
 # Index & list page
-#
 TicketsIndex=Ingressos área
 TicketList=Lista de tickets
 TicketAssignedToMeInfos=Esta página exibe a lista de tickets criada ou atribuída ao utilizador atual
@@ -175,10 +152,7 @@ ShowAsConversation=Mostrar como lista de conversas
 MessageListViewType=Mostrar como lista de tabelas
 ConfirmMassTicketClosingSendEmail=automaticamente envia e-mails ao fechar tickets
 ConfirmMassTicketClosingSendEmailQuestion=Deseja avisar terceiros ao fechar esses tickets?
-
-#
 # Ticket card
-#
 Ticket=Bilhete
 TicketCard=Ficha do ticket
 CreateTicket=Criar ticket
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Muito tempo se passou desde a última respos
 TicketNoContractFoundToLink=Nenhum Contrato foi encontrado automaticamente vinculado a este ticket. Por favor hiperligação, conexão a Contrato manualmente.
 TicketManyContractsLinked=Muitos contratos foram automaticamente vinculados a este ticket. Certifique-se de verificar qual deve ser escolhido.
 TicketRefAlreadyUsed=A referência [%s] já está em uso, sua nova referência é [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Bilhete %s lido por %s
 NoLogForThisTicket=Ainda não há registro para este ticket
 TicketLogAssignedTo=Tíquete %s atribuído a %s
 TicketLogPropertyChanged=Ticket %s modificado: classificação de %s a %s
 TicketLogClosedBy=Tíquete %s fechado por %s
 TicketLogReopen=Bilhete %s re-abrir
-
-#
 # Public pages
-#
 TicketSystem=Sistema de tickets
 ShowListTicketWithTrackId=Exibir lista de tickets do ID da faixa
 ShowTicketWithTrackId=Exibir ticket do ID da faixa
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Este é um email automático para confirmar que um no
 TicketNewEmailBodyInfosTicket=Informações para monitorar o ticket
 TicketNewEmailBodyInfosTrackId=Número de rastreamento do ticket: %s
 TicketNewEmailBodyInfosTrackUrl=Você pode ver o andamento do ticket clicando no seguinte hiperligação, conexão
-TicketNewEmailBodyInfosTrackUrlCustomer=Você pode ver o progresso do ticket na interface específica clicando no seguinte link
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Você pode consultar o histórico deste ticket clicando no seguinte hiperligação, conexão
 TicketEmailPleaseDoNotReplyToThisEmail=Por favor, não responda diretamente a este e-mail! Use o link para responder na interface.
 TicketPublicInfoCreateTicket=Este formulário permite que você registre um ticket de suporte em nosso sistema de gerenciamento.
 TicketPublicPleaseBeAccuratelyDescribe=Descreva com precisão sua solicitação. Forneça o máximo de informações possíveis para nos permitir identificar corretamente sua solicitação.
 TicketPublicMsgViewLogIn=Insira o código de acompanhamento do bilhete
-TicketTrackId=Acompanhamento público Id.
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Um de seus rastreamentos Id.
 ErrorTicketNotFound=Ticket com rastreamento Id. %s não encontrado!
 Subject=Assunto
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Número de ingressos por mês
 NbOfTickets=Número de ingressos
 ExternalContributors=Contribuidores externos
 AddContributor=Adicionar colaborador externo
-
 # notifications
 TicketCloseEmailSubjectCustomer=Bilhete fechado
 TicketCloseEmailBodyCustomer=Esta é uma mensagem automática para notificá-lo de que o ticket %s acabou de ser fechado.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Destinatário da notificação
 TicketNotificationLogMessage=Mensagem de log
 TicketNotificationEmailBodyInfosTrackUrlinternal=Visualizar ticket na interface
 TicketNotificationNumberEmailSent=E-mail de notificação enviado: %s
-
 ActionsOnTicket=Eventos com ingresso
-
-#
 # Boxes
-#
 BoxLastTicket=Últimos ingressos criados
 BoxLastTicketDescription=Últimos %s criado ingressos
 BoxLastTicketContent=

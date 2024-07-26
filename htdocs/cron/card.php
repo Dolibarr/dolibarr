@@ -230,7 +230,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
-		$objectutil = dol_clone($object, 1); // To avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use native clone to keep this->db valid.
+		$objectutil = dol_clone($object, 1); // We clone to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use the native clone to keep this->db valid.
 
 		$result = $objectutil->createFromClone($user, (($object->id > 0) ? $object->id : $id));
 		if (is_object($result) || $result > 0) {
@@ -481,9 +481,22 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		$input .= ' />';
 	}
-	$input .= "<label for=\"frequency_month\">".$langs->trans('Months')."</label>";
+	$input .= '<label for="frequency_month">'.$langs->trans('Months')."</label>";
 	print $input;
 
+	print "</td>";
+	print "<td>";
+	print "</td>";
+	print "</tr>\n";
+
+	// Priority
+	print "<tr><td>";
+	print $langs->trans('CronPriority')."</td>";
+	$priority = 0;
+	if (!empty($object->priority)) {
+		$priority = $object->priority;
+	}
+	print '<td><input type="text" class="width50" name="priority" value="'.$priority.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -508,18 +521,6 @@ if (($action == "create") || ($action == "edit")) {
 	} else {
 		print $form->selectDate(-1, 'dateend', 1, 1, 1, "cronform");
 	}
-	print "</td>";
-	print "<td>";
-	print "</td>";
-	print "</tr>\n";
-
-	print "<tr><td>";
-	print $langs->trans('CronPriority')."</td>";
-	$priority = 0;
-	if (!empty($object->priority)) {
-		$priority = $object->priority;
-	}
-	print '<td><input type="text" class="width50" name="priority" value="'.$priority.'" /> ';
 	print "</td>";
 	print "<td>";
 	print "</td>";
@@ -680,6 +681,12 @@ if (($action == "create") || ($action == "edit")) {
 	}
 	print "</td></tr>";
 
+	// Priority
+	print "<tr><td>";
+	print $langs->trans('CronPriority')."</td>";
+	print "<td>".$object->priority;
+	print "</td></tr>";
+
 	print '<tr><td>';
 	print $langs->trans('CronDtStart')."</td><td>";
 	if (!empty($object->datestart)) {
@@ -692,11 +699,6 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->dateend)) {
 		print $form->textwithpicto(dol_print_date($object->dateend, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	}
-	print "</td></tr>";
-
-	print "<tr><td>";
-	print $langs->trans('CronPriority')."</td>";
-	print "<td>".$object->priority;
 	print "</td></tr>";
 
 	print "<tr><td>";
@@ -721,7 +723,7 @@ if (($action == "create") || ($action == "edit")) {
 	} elseif (!empty($object->datenextrun)) {
 		print img_picto('', 'object_calendarday').' '.$form->textwithpicto(dol_print_date($object->datenextrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		print '<span class="opacitymedium">'.$langs->trans('CronNone').'</span>';
 	}
 	if ($object->status == Cronjob::STATUS_ENABLED) {
 		if ($object->maxrun && $object->nbrun >= $object->maxrun) {
@@ -746,7 +748,7 @@ if (($action == "create") || ($action == "edit")) {
 	if (!empty($object->datelastrun)) {
 		print $form->textwithpicto(dol_print_date($object->datelastrun, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
-		print $langs->trans('CronNone');
+		print '<span class="opacitymedium">'.$langs->trans('CronNotYetRan').'</span>';
 	}
 	print "</td></tr>";
 
@@ -756,7 +758,7 @@ if (($action == "create") || ($action == "edit")) {
 		print $form->textwithpicto(dol_print_date($object->datelastresult, 'dayhoursec'), $langs->trans("CurrentTimeZone"));
 	} else {
 		if (empty($object->datelastrun)) {
-			print $langs->trans('CronNone');
+			print '<span class="opacitymedium">'.$langs->trans('CronNotYetRan').'</span>';
 		} else {
 			// In progress
 		}

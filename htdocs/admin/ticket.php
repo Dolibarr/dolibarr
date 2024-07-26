@@ -4,6 +4,7 @@
  * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 /**
  *     \file        htdocs/admin/ticket.php
  *     \ingroup     ticket
- *     \brief       Page to setup module ticket
+ *     \brief       Page to setup the module ticket
  */
 
 // Load Dolibarr environment
@@ -241,7 +242,7 @@ $formcategory = new FormCategory($db);
 // Page Header
 $help_url = 'EN:Module_Ticket|FR:Module_Ticket_FR';
 $page_name = 'TicketSetup';
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -381,7 +382,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -611,21 +614,6 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswers
 print '</td>';
 print '</tr>';
 
-// Allow classification modification even if the ticket is closed
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAllowClassificationModificationIfClosed").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED", $arrval, getDolGlobalString('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED'));
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsAllowClassificationModificationIfClosedHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
 print '</table><br>';
 
 print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
@@ -695,7 +683,6 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 // Message header
-//$mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 $mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
@@ -708,7 +695,6 @@ print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailIntroHelp
 print '</td></tr>';
 
 // Message footer
-//$mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailFooterText'));
 $mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';

@@ -406,7 +406,7 @@ class modPartnership extends DolibarrModules
 		/* END MODULEBUILDER EXPORT PARTNERSHIP */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT PARTNERSHIP */
 		/*
 		 $langs->load("partnership");

@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *	Parent class for barcode document models
+ *	Parent class for barcode document generators (image)
  */
 abstract class ModeleBarCode
 {
@@ -46,6 +46,21 @@ abstract class ModeleBarCode
 	public function isEnabled()
 	{
 		return true;
+	}
+
+	/**
+	 *	Save an image file on disk (with no output)
+	 *
+	 *	@param	   string	    $code		      Value to encode
+	 *	@param	   string	    $encoding	      Mode of encoding ('QRCODE', 'EAN13', ...)
+	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   integer		$scale			  Scale (not used with this engine)
+	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
+	 *	@return	   int			                  Return integer <0 if KO, >0 if OK
+	 */
+	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
+	{
+		return -1;	// Error by default, this method must be implemented by the driver
 	}
 }
 
@@ -82,8 +97,6 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$s = '';

@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/compta/payment_vat/card.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Onglet payment of a social contribution
  *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
  */

@@ -400,7 +400,7 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			$keyforforeignMAIN_MAX_DECIMALS_UNIT = 'MAIN_MAX_DECIMALS_UNIT_'.$multicurrency_code;
 			$keyforforeignMAIN_MAX_DECIMALS_TOT = 'MAIN_MAX_DECIMALS_TOT_'.$multicurrency_code;
 			$keyforforeignMAIN_ROUNDING_RULE_TOT = 'MAIN_ROUNDING_RULE_TOT_'.$multicurrency_code;
-			if (!empty($conf->global->$keyforforeignMAIN_ROUNDING_RULE_TOT)) {
+			if (getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT)) {
 				$conf->global->MAIN_MAX_DECIMALS_UNIT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_UNIT);
 				$conf->global->MAIN_MAX_DECIMALS_TOT = getDolGlobalString($keyforforeignMAIN_MAX_DECIMALS_TOT);
 				$conf->global->MAIN_ROUNDING_RULE_TOT = getDolGlobalString($keyforforeignMAIN_ROUNDING_RULE_TOT);
@@ -412,9 +412,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 		if ($multicurrency_code) {
 			// Restore setup of currency accurency
-			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savMAIN_MAX_DECIMALS_UNIT;  // @phan-ignore-current-line PhanPossiblyUndeclaredVariable
-			$conf->global->MAIN_MAX_DECIMALS_TOT = $savMAIN_MAX_DECIMALS_TOT;  // @phan-ignore-current-line PhanPossiblyUndeclaredVariable
-			$conf->global->MAIN_ROUNDING_RULE_TOT = $savMAIN_ROUNDING_RULE_TOT;  // @phan-ignore-current-line PhanPossiblyUndeclaredVariable
+			$conf->global->MAIN_MAX_DECIMALS_UNIT = $savMAIN_MAX_DECIMALS_UNIT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			$conf->global->MAIN_MAX_DECIMALS_TOT = $savMAIN_MAX_DECIMALS_TOT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
+			$conf->global->MAIN_ROUNDING_RULE_TOT = $savMAIN_ROUNDING_RULE_TOT;  // @phan-suppress-current-line PhanPossiblyUndeclaredVariable
 		}
 
 		$result[16] = $newresult[0];
@@ -438,8 +438,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$result[22] = $result[6];
 		$result[23] = $result[7];
 		$result[24] = $result[8];
-		$result[25] = $result[9];   // @phan-ignore-current-line PhanTypePossiblyInvalidDimOffset
-		$result[26] = $result[10];  // @phan-ignore-current-line PhanTypePossiblyInvalidDimOffset
+		$result[25] = $result[9];
+		$result[26] = $result[10];
 	}
 	dol_syslog('Price.lib::calcul_price_total MAIN_ROUNDING_RULE_TOT='.getDolGlobalString('MAIN_ROUNDING_RULE_TOT').' pu='.$pu.' qty='.$qty.' price_base_type='.$price_base_type.' total_ht='.$result[0].'-total_vat='.$result[1].'-total_ttc='.$result[2]);
 

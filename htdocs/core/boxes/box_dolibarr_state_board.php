@@ -299,7 +299,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 				$this->info_box_contents[0][0] = array(
 					'tr' => 'class="nohover"',
-					'td' => 'class="tdwidgetstate"',
+					'td' => 'class="tdwidgetstate center"',
 					'textnoformat' => $boxstat
 				);
 			}

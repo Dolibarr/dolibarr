@@ -46,7 +46,7 @@ if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('commercialindex'));
 
@@ -111,17 +111,20 @@ llxHeader("", $langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"), '', 'commercial');
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 $tmp = getCustomerProposalPieChart($socid);
 if ($tmp) {
 	print $tmp;
-	print '<br>';
 }
 $tmp = getCustomerOrderPieChart($socid);
 if ($tmp) {
 	print $tmp;
-	print '<br>';
 }
 
 /*
@@ -178,6 +181,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				$propalstatic->total_tva = $obj->total_tva;
 				$propalstatic->total_ttc = $obj->total_ttc;
 				$propalstatic->statut = $obj->status;
+				$propalstatic->statut = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->name;
@@ -194,7 +198,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">'.$propalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax125">'.$propalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price((getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc)).'</td>';
 				print '</tr>';
@@ -291,7 +295,7 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">'.$supplierproposalstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax125">'.$supplierproposalstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
@@ -389,7 +393,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">'.$orderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax125">'.$orderstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
@@ -490,7 +494,7 @@ if ((isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="nowraponall tdoverflowmax100">'.$supplierorderstatic->getNomUrl(1).'</td>';
+				print '<td class="nowraponall tdoverflowmax125">'.$supplierorderstatic->getNomUrl(1).'</td>';
 				print '<td class="nowrap tdoverflowmax100">'.$companystatic->getNomUrl(1, 'supplier').'</td>';
 				print '<td class="nowrap right tdamount amount">'.price(getDolGlobalString('MAIN_DASHBOARD_USE_TOTAL_HT') ? $obj->total_ht : $obj->total_ttc).'</td>';
 				print '</tr>';
@@ -577,7 +581,7 @@ if (isModEnabled('intervention')) {
 				$companystatic->canvas = $obj->canvas;
 
 				print '<tr class="oddeven">';
-				print '<td class="tdoverflowmax100">';
+				print '<td class="tdoverflowmax125">';
 				print $fichinterstatic->getNomUrl(1);
 				print "</td>";
 				print '<td class="tdoverflowmax100">';
@@ -598,7 +602,9 @@ if (isModEnabled('intervention')) {
 	}
 }
 
-print '</div><div class="fichetwothirdright">';
+
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
+
 
 /*
  * Last modified customers or prospects
@@ -711,7 +717,7 @@ if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
  */
 
 if (isModEnabled('propal')) {
-	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, date_cloture as datec, c.tms as datem,";
+	$sql = "SELECT c.rowid, c.entity, c.ref, c.fk_statut as status, c.tms as datem,";
 	$sql .= " s.nom as socname, s.rowid as socid, s.canvas, s.client, s.email, s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as c,";
 	$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -751,6 +757,7 @@ if (isModEnabled('propal')) {
 
 				$propalstatic->id = $obj->rowid;
 				$propalstatic->ref = $obj->ref;
+				$propalstatic->status = $obj->status;
 
 				$companystatic->id = $obj->socid;
 				$companystatic->name = $obj->socname;
@@ -758,6 +765,7 @@ if (isModEnabled('propal')) {
 				$companystatic->canvas = $obj->canvas;
 				$companystatic->email = $obj->email;
 				$companystatic->code_compta = $obj->code_compta;
+				$companystatic->code_compta_client = $obj->code_compta;
 
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
@@ -775,7 +783,7 @@ if (isModEnabled('propal')) {
 				print '</table>';
 				print '</td>';
 
-				print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '<td class="tdoverflowmax100">'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 				$datem = $db->jdate($obj->datem);
 				print '<td class="center" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'">';
@@ -1317,6 +1325,7 @@ if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 	}
 }
 
+print '</div>';
 print '</div>';
 print '</div>';
 

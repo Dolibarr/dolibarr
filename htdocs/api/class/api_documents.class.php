@@ -33,13 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 class Documents extends DolibarrApi
 {
 	/**
-	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
-	 */
-	public static $DOCUMENT_FIELDS = array(
-		'modulepart'
-	);
-
-	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -596,8 +589,10 @@ class Documents extends DolibarrApi
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
-						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) {
-							$filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+						foreach ($ecmfile->lines as $line) {
+							if ($filearray[$i]['name'] == $line->filename) {
+								$filearray[$i] = array_merge($filearray[$i], (array) $line);
+							}
 						}
 					}
 				}
@@ -992,26 +987,5 @@ class Documents extends DolibarrApi
 		}
 
 		throw new RestException(403);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
-	 * @throws  RestException
-	 */
-	private function _validate_file($data)
-	{
-		// phpcs:enable
-		$result = array();
-		foreach (Documents::$DOCUMENT_FIELDS as $field) {
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$result[$field] = $data[$field];
-		}
-		return $result;
 	}
 }

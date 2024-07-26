@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("companies");
 
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager = new HookManager($db);
 $hookmanager->initHooks(array('thirdpartiesindex'));
 
@@ -49,7 +49,7 @@ if ($user->socid) {
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', 0, '', '', '', '');
+$result = restrictedArea($user, 'societe|contact', 0, '', '', '', '');
 
 $thirdparty_static = new Societe($db);
 $contact_static = new Contact($db);
@@ -178,8 +178,9 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$thirdpartygraph .= $dolgraph->show();
 	$thirdpartygraph .= '</td></tr>'."\n";
 } else {
+	$statstring = '';
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS')) {
-		$statstring = "<tr>";
+		$statstring .= "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
 		$statstring .= "</tr>";
 	}
@@ -190,7 +191,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	}
 	$statstring2 = '';
 	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS')) {
-		$statstring2 = "<tr>";
+		$statstring2 .= "<tr>";
 		$statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
 		$statstring2 .= "</tr>";
 	}
@@ -334,8 +335,8 @@ if ($result) {
 
 		$lastmodified .= '<tr class="liste_titre"><th colspan="2">';
 		//$lastmodified .= img_picto('', 'company', 'class="pictofixedwidth"');
-		$lastmodified .= $transRecordedType;
-		$lastmodified .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">';
+		$lastmodified .= '<span class="valignmiddle">'.$transRecordedType.'</span>';
+		$lastmodified .= '<a class="marginleftonlyshort" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
 		$lastmodified .= '</a>';
 		$lastmodified .= '</th>';
@@ -457,8 +458,8 @@ if ($result) {
 
 		$lastmodifiedcontact .= '<tr class="liste_titre"><th colspan="2">';
 		//$lastmodifiedcontact .= img_picto('', 'contact', 'class="pictofixedwidth"');
-		$lastmodifiedcontact .= $transRecordedType;
-		$lastmodifiedcontact .= '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=s.tms&sortorder=DESC">';
+		$lastmodifiedcontact .= '<span class="valignmiddle">'.$transRecordedType.'</div>';
+		$lastmodifiedcontact .= '<a class="marginleftonlyshort" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
 		//$lastmodifiedcontact .= img_picto($langs->trans("FullList"), 'contact');
 		$lastmodifiedcontact .= '<span class="badge marginleftonlyshort">...</span>';
 		$lastmodifiedcontact .= '</th>';

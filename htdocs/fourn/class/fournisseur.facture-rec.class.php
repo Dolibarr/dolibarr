@@ -26,7 +26,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/class/fournisseur.facture-rec.class.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File for class to manage invoice templates
  */
 
@@ -86,6 +86,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $socid;
 
 	/**
+	 * @var int
 	 * @deprecated
 	 */
 	public $fk_soc;
@@ -137,24 +138,32 @@ class FactureFournisseurRec extends CommonInvoice
 	public $unit_frequency;
 	public $date_when;
 	public $date_last_gen;
-	public $nb_gen_done;
-	public $nb_gen_max;
-	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
-	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
-	public $model_pdf;
+	/**
+	 * @var int nb generation done
+	 */
+	public $nb_gen_done;
+
+	/**
+	 * @var int nb generation max
+	 */
+	public $nb_gen_max;
+
+	/**
+	 * @var int<0,1> auto validate 0 to create in draft, 1 to create and validate the new invoice
+	 */
+	public $auto_validate; //
+	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
 
 	/**
 	 * Invoice lines
-	 * @var FactureFournisseurLigneRec[]
+	 * @var CommonInvoiceLine[]
 	 */
 	public $lines = array();
 
 
 	/* Override fields in CommonObject
 	public $entity;
-	public $date_creation;
-	public $date_modification;
 	public $total_ht;
 	public $total_tva;
 	public $total_ttc;
@@ -1580,7 +1589,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1599,7 +1608,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1618,7 +1627,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1640,7 +1649,7 @@ class FactureFournisseurRec extends CommonInvoice
 					$statusType = 'status6';
 					$labelStatus = $langs->transnoentitiesnoconv('Disabled');
 				} else {
-					$statusType = 'status0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$statusType = 'status0';
 					$labelStatus = $langs->transnoentitiesnoconv('Draft');
 				}
 			}
@@ -1995,7 +2004,7 @@ class FactureFournisseurRec extends CommonInvoice
  *	Class to manage supplier invoice lines of templates.
  *  Saved into database table llx_facture_fourn_det_rec
  */
-class FactureFournisseurLigneRec extends CommonObjectLine
+class FactureFournisseurLigneRec extends CommonInvoiceLine
 {
 	/**
 	 * @var string ID to identify managed object
@@ -2018,6 +2027,10 @@ class FactureFournisseurLigneRec extends CommonObjectLine
 	public $description;
 	public $pu_ht;
 	public $pu_ttc;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $remise_percent;
 	public $fk_remise_except;

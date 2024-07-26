@@ -199,19 +199,24 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border centpercent margintable margintable">';
+		print '<table class="border centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
 		if ($user->hasRight("ticket", "manage")) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			if ($action != 'edit_message_init') {
+				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			} else {
+				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+				print ' <input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'">';
+			}
 		}
 		print '</td></tr>';
 
 		print '<tr>';
 		print '<td colspan="2">';
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
-			// MESSAGE
+			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
@@ -222,8 +227,7 @@ class ActionsTicket extends CommonHookActions
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
-			print '<div class="longmessagecut">';
-			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
+			print '<div class="longmessagecut small">';
 			print dolPrintHTML($object->message);
 			print '</div>';
 			/*print '<div class="clear center">';
@@ -231,12 +235,6 @@ class ActionsTicket extends CommonHookActions
 			print '</div>';*/
 
 			//print '<div>' . $object->message . '</div>';
-		}
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
-			print '<div class="center">';
-			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -418,7 +416,7 @@ class ActionsTicket extends CommonHookActions
 
 			foreach ($object->cache_msgs_ticket as $id => $arraymsgs) {
 				if (!$arraymsgs['private']
-				|| ($arraymsgs['private'] == "1" && $show_private)
+					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					print '<div class="cd-timeline-block">';
 					print '<div class="cd-timeline-img">';
@@ -481,7 +479,7 @@ class ActionsTicket extends CommonHookActions
 
 		foreach ($object->labelStatusShort as $status => $status_label) {
 			if (!in_array($status, $exclude_status)) {
-				print '<div class="inline-block center marginbottomonly">';
+				print '<div class="inline-block center margintoponly marginbottomonly">';
 
 				if ($status == 1) {
 					$urlforbutton = $_SERVER['PHP_SELF'].'?track_id='.$object->track_id.'&action=set_read&token='.newToken(); // To set as read, we use a dedicated action

@@ -337,7 +337,7 @@ class modWorkstation extends DolibarrModules
 		/* END MODULEBUILDER EXPORT WORKSTATION */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT WORKSTATION */
 		/*
 		 $langs->load("workstation@workstation");
