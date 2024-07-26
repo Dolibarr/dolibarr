@@ -1627,7 +1627,9 @@ class Account extends CommonObject
 			$error++;
 			$this->error = 'IBANNotValid';
 		}
-		if (!checkSwiftForAccount($this) or !(empty($this->bic) && getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
+		// Call function to check Swift/BIC.
+		// A non valid BIC/Swift is a problem if: it is not empty or always a problem if WITHDRAWAL_WITHOUT_BIC is not set).
+		if (!checkSwiftForAccount($this) && (!empty($this->bic) || !getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC'))) {
 			$error++;
 			$this->error = 'SwiftNotValid';
 		}
