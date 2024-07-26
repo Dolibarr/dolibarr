@@ -2667,7 +2667,7 @@ class Form
 			// mode=1 means customers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=1&status=' . $status . '&status_purchase=' . $status_purchase . '&finished=' . $finished . '&hidepriceinlabel=' . $hidepriceinlabel . '&warehousestatus=' . $warehouseStatus;
 			if ((int) $warehouseId>0) {
-				$urloption .= '&warehouseId=' . $warehouseId;
+				$urloption .= '&warehouseid=' . (int) $warehouseId;
 			}
 			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
@@ -2991,7 +2991,7 @@ class Form
 				$sql .= ' AND e.statut IN (' . $this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))) . ')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
 			}
 			if (((int) $warehouseId) > 0) {
-					$sql .= " AND e.rowid = " . (int) $warehouseIds . ")";
+					$sql .= " AND e.rowid = " . (int) $warehouseId . " AND ps.reel>0";
 			}
 		}
 
