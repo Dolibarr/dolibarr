@@ -142,6 +142,39 @@ class BankAccountTest extends CommonClassTest
 		print __METHOD__." checkIbanForAccount(".$localobject2->iban.") = ".$result."\n";
 		$this->assertTrue($result);
 
+		return $localobject;
+	}
+
+	/**
+	 * testCheckSwiftForAccount
+	 *
+	 * @param   Account  $localobject    Account
+	 * @return  int
+	 *
+	 * @depends testBankAccountOther
+	 * The depends says test is run only if previous is ok
+	 */
+	public function testCheckSwiftForAccount($localobject)
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		$localobject->bic = 'PSSTFRPPMARBIDON';
+
+		$result = checkSwiftForAccount($localobject);
+		print __METHOD__." checkSwiftForAccount ".$localobject->bic." = ".$result."\n";
+		$this->assertFalse($result);
+
+
+		$localobject->bic = 'PSSTFRPPMAR';
+
+		$result = checkSwiftForAccount($localobject);
+		print __METHOD__." checkSwiftForAccount ".$localobject->bic." = ".$result."\n";
+		$this->assertTrue($result);
+
 		return $localobject->id;
 	}
 
@@ -151,7 +184,7 @@ class BankAccountTest extends CommonClassTest
 	 * @param   int $id     Id of contract
 	 * @return  int
 	 *
-	 * @depends testBankAccountOther
+	 * @depends testCheckSwiftForAccount
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testBankAccountDelete($id)
