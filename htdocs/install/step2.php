@@ -537,7 +537,7 @@ if ($action == "set") {
 					}
 
 					// Replace __ENTITY__ tag with 1 (master entity), this is only for dictionaries.
-					$buffer = preg_replace('/__ENTITY__/i', 1, $buffer);
+					$buffer = preg_replace('/__ENTITY__/i', '1', $buffer);
 
 					//dolibarr_install_syslog("step2: request: " . $buffer);
 					$resql = $db->query($buffer, 1);
