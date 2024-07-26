@@ -32,9 +32,12 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
--- V18 forgotten
+-- V18 and - forgotten
 
 UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
+
+ALTER TABLE llx_c_holiday_types ADD COLUMN block_if_negative integer NOT NULL DEFAULT 0 AFTER fk_country;
+ALTER TABLE llx_c_holiday_types ADD COLUMN sortorder smallint;
 
 
 -- V19 forgotten
