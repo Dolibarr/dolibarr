@@ -135,7 +135,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
  */
 $form = new Form($db);
 
-llxHeader('', $langs->trans("FaitDiversSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-dict');
+llxHeader('', $langs->trans("FediverseSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-dict');
 
 $head = socialnetwork_prepare_head();
 
@@ -285,6 +285,7 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+print dol_get_fiche_end();
 
 llxFooter();
 $db->close();

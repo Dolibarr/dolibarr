@@ -1262,9 +1262,11 @@ $title = $langs->trans("DictionarySetup");
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
 
-$head = socialnetwork_prepare_head();
+if (GETPOST('id')) {
+	$head = socialnetwork_prepare_head();
+	print dol_get_fiche_head($head, 'dict', $langs->trans('MenuDict'), -1, 'user');
+}
 
-print dol_get_fiche_head($head, 'dict', $langs->trans('MenuDict'), -1, 'user');
 
 $linkback = '';
 if ($id && empty($from)) {
