@@ -176,11 +176,11 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					$res = $userstat->fetch($object->fk_user_assign);
 					if ($res > 0) {
 						// Send email to notification email
-						if (getDolGlobalString($conf->global->TICKET_DISABLE_ALL_MAILS)) {
+						if (getDolGlobalString('TICKET_DISABLE_ALL_MAILS')) {
 							// Send email to assigned user
 							$sendto = $userstat->email;
 
-							if (!getDolGlobalString($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
@@ -189,7 +189,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 								$this->composeAndSendAssigneeMessage($sendto, $subject_assignee, $body_assignee, $see_ticket_assignee, $object, $langs);
 							}
 
-							if (!getDolUserString($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
+							if (!getDolUserString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 							}
 						}
