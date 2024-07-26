@@ -218,7 +218,7 @@ class MouvementStock extends CommonObject
 				}
 				return $reshook;
 			} elseif ($reshook > 0) {
-				return $hookmanager->resPrint;
+				return $reshook;
 			}
 		}
 		// end hook at beginning
