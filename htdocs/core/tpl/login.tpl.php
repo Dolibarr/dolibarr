@@ -99,6 +99,29 @@ if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disablenofollow = 0;
 }
 
+// If OpenID Connect is set as an authentication
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
+	// Set a cookie to transfer rollback page information
+
+	$prefix = dol_getprefix('');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"]))
+		setcookie('DOL_rollback_url_' . dol_getprefix(''), $_SERVER['REQUEST_URI'], time() + 3600, '/');
+
+	// Auto redirect if OpenID Connect is the only authentication
+	if ($conf->file->main_authentication === 'openid_connect') {
+		// Avoid redirection hell
+		if (empty(GETPOST('openid_mode'))) {
+			dol_include_once('/core/lib/openid_connect.lib.php');
+			header("Location: " . openid_connect_get_url(), true, 302);
+		} elseif (!empty($_SESSION['dol_loginmesg'])) {
+			// Show login error without the login form
+			print '<div class="center login_main_message"><div class="error">' . dol_escape_htmltag($_SESSION['dol_loginmesg']) . '</div></div>';
+		}
+		// We shouldn't continue executing this page
+		exit();
+	}
+}
+
 top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
 
 
@@ -335,12 +358,17 @@ if ($forgetpasslink || $helpcenterlink) {
 
 if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
 	$langs->load("users");
+	dol_include_once('/core/lib/openid_connect.lib.php');
 
 	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+	if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && empty(getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL'))) {
+		$url = openid_connect_get_url();
+	} else {
+		$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state=' . openid_connect_get_state();
+	}
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
