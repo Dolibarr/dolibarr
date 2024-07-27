@@ -885,7 +885,7 @@ if ($action == 'create' || $action == 'presend') {
 		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
 
 		$morehtmlref = '<div class="refidno">';
-		$morehtmlref .= $object->subject;
+		$morehtmlref .= dolPrintLabel($object->subject);
 		// Author
 		$createdbyshown = 0;
 		if ($object->fk_user_create > 0) {

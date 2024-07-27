@@ -210,7 +210,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!GETPOST("subject", "restricthtml")) {
+		if (!GETPOST("subject", "alphanohtml")) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 			$action = '';
@@ -272,7 +272,7 @@ if (empty($reshook)) {
 
 			$object->db->begin();
 
-			$object->subject = GETPOST("subject", "restricthtml");
+			$object->subject = GETPOST("subject", "alphanohtml");
 			$object->message = GETPOST("message", "restricthtml");
 			$object->origin_email = $origin_email;
 
