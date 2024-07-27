@@ -510,7 +510,7 @@ if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 
 $arrayofjs = array();
 
-$arrayofcss = array('/opensurvey/css/style.css', getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
