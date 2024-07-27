@@ -8744,7 +8744,7 @@ class Form
 					}
 				} else {
 					$id = (string) $id; // if $id = 0, then $id = '0'
-					if ($id != '' && ($id == $key || ($id == 'ifone' && count($array) == 1)) && !$disabled) {
+					if ($id != '' && (($id == (string) $key) || ($id == 'ifone' && count($array) == 1)) && !$disabled) {
 						$out .= ' selected'; // To preselect a value
 					}
 				}
