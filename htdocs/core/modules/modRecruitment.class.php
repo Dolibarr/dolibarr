@@ -257,7 +257,7 @@ class modRecruitment extends DolibarrModules
 		$this->menu[$r++] = array(
 			'fk_menu'=>'fk_mainmenu=hrm', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left', // This is a Top menu entry
-			'titre'=>'Recruitment',
+			'titre'=>'recruitment',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
 			'mainmenu'=>'hrm',
 			'leftmenu'=>'recruitmentjobposition',
