@@ -404,7 +404,10 @@ INSERT INTO llx_c_revenuestamp(rowid,fk_pays,taux,revenuestamp_type,note,active)
 
 ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
 
+-- Erreur SQL DB_ERROR_1170 BLOB/TEXT column 'url' used in key specification without a key length
+ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
 ALTER TABLE llx_menu MODIFY COLUMN url TEXT NOT NULL;
+ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, entity);
 
 UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';
 
