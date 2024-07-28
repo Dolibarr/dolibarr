@@ -149,7 +149,7 @@ if (empty($reshook)) {
 
 	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		$error = 0;
-		$origin_email = GETPOST('email', 'alpha');
+		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
@@ -275,6 +275,7 @@ if (empty($reshook)) {
 			$object->subject = GETPOST("subject", "alphanohtml");
 			$object->message = GETPOST("message", "restricthtml");
 			$object->origin_email = $origin_email;
+			$object->email_from = $origin_email;
 
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
@@ -541,7 +542,7 @@ if ($action != "infos_success") {
 		print '</div>';
 	} else {
 		//print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm(0, 'edit', 1, $with_contact, '', $object);
+		$formticket->showForm(0, ($action ? $action : 'create'), 1, $with_contact, '', $object);
 	}
 }
 

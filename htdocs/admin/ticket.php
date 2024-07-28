@@ -583,6 +583,7 @@ if (isModEnabled('product')) {
 	$htmlname = "product_category_id";
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
 	print '<td class="left">';
+	print img_picto('', 'category', 'class="pictofixedwidth"');
 	$formcategory->selectProductCategory(getDolGlobalString('TICKET_PRODUCT_CATEGORY'), $htmlname);
 	if ($conf->use_javascript_ajax) {
 		print ajax_combobox('select_'.$htmlname);
@@ -635,9 +636,11 @@ print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 
 print '</form>';
 
+
 /*
  * Notification
  */
+
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"), '', '');
 
