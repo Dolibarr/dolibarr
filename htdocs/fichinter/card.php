@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2014-2024	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2024	Frédéric France				<frederic.france@free.fr>
@@ -54,6 +54,7 @@ if (getDolGlobalString('FICHEINTER_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/co
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'interventions', 'stocks'));
@@ -459,6 +460,10 @@ if (empty($reshook)) {
 					$result = $object->create($user);
 					if ($result > 0) {
 						$id = $result; // Force raffraichissement sur fiche venant d'etre cree
+
+						// Category association
+						$categories = GETPOST('categories', 'array');
+						$object->setCategories($categories);
 					} else {
 						$langs->load("errors");
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -484,6 +489,10 @@ if (empty($reshook)) {
 		$result = $object->update($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			// Category association
+			$categories = GETPOST('categories', 'array');
+			$object->setCategories($categories);
 		}
 	} elseif ($action == 'classin' && $user->hasRight('ficheinter', 'creer')) {
 		// Set into a project
@@ -733,6 +742,12 @@ if (empty($reshook)) {
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.$lineid);
 		exit;
+	} elseif ($action == 'set_categories' && $user->hasRight('ficheinter', 'creer')) {
+		$result = $object->setCategories(GETPOST('categories', 'array'));
+
+		$url = 'card.php?id='.$object->id;
+		header("Location: ".$url);
+		exit();
 	}
 
 	// Actions when printing a doc from card
@@ -1318,6 +1333,46 @@ if ($action == 'create') {
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield centpercent">';
+
+
+	// Categories
+	if (isModEnabled('categorie')) {
+		print '<tr>';
+		print '<td class="valignmiddle titlefield">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="titlefield">';
+		print $langs->trans("Categories");
+		if ($action != 'categories' && !$user->socid) {
+			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=categories&amp;id='.$object->id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+		}
+		print '</table>';
+		print '</td>';
+
+		if ($usercancreate && $action == 'categories') {
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_FICHINTER, '', 'parent', 64, 0, 1);
+			if (is_array($cate_arbo)) {
+				// Categories
+				print '<td colspan="3">';
+				print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				print '<input type="hidden" name="action" value="set_categories">';
+				$category = new Categorie($db);
+				$cats = $category->containing($object->id, 'fichinter');
+				$arrayselected = array();
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print '<input type="submit" class="button button-edit small" value="'.$langs->trans('Save').'">';
+				print '</form>';
+				print "</td>";
+			}
+		} else {
+			print '<td colspan="3">';
+			print $form->showCategories($object->id, Categorie::TYPE_FICHINTER, 1);
+			print "</td></tr>";
+		}
+	}
 
 	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 		// Duration in time

@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
- * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2024	Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -52,6 +52,10 @@ if (isModEnabled('project')) {
 }
 if (isModEnabled('contract')) {
 	$langs->load("contracts");
+}
+if (isModEnabled('categorie')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 }
 
 $action = GETPOST('action', 'aZ09');
@@ -128,6 +132,18 @@ if (getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 	unset($fieldstosearchall['fd.description']);
 }
 
+$searchCategoryFichinterOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryFichinterOperator = GETPOSTINT('search_category_fichinter_operator');
+} elseif (!empty($conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT)) {
+	$searchCategoryFichinterOperator = $conf->global->MAIN_SEARCH_CAT_OR_BY_DEFAULT;
+}
+$searchCategoryFichinterList = GETPOST('search_category_fichinter_list', 'array');
+$catid = GETPOST('catid', 'int');
+if (!empty($catid) && empty($searchCategoryFichinterList)) {
+	$searchCategoryFichinterList = array($catid);
+}
+
 // Definition of fields for list
 $arrayfields = array(
 	'f.ref' => array('label' => 'Ref', 'checked' => 1),
@@ -196,6 +212,8 @@ if (empty($reshook)) {
 		$search_contrat_ref = "";
 		$search_desc = "";
 		$search_status = "";
+		$searchCategoryFichinterOperator = 0;
+		$searchCategoryFichinterList = array();
 		$search_date_startday = '';
 		$search_date_startmonth = '';
 		$search_date_startyear = '';
@@ -324,6 +342,34 @@ if ($search_desc) {
 		$sql .= natural_search(array('f.description'), $search_desc);
 	}
 }
+// Search for tag/category ($searchCategoryFichinterList is an array of ID)
+if (!empty($searchCategoryFichinterList)) {
+	$searchCategoryProductSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+		if (intval($searchCategoryFichinter) == -2) {
+			$searchCategoryFichinterSqlList[] = "NOT EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter)";
+		} elseif (intval($searchCategoryFichinter) > 0) {
+			if ($searchCategoryFichinterOperator == 0) {
+				$searchCategoryFichinterSqlList[] = " EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter AND ck.fk_categorie = ".((int) $searchCategoryFichinter).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryFichinter);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryFichinterSqlList[] = " EXISTS (SELECT ck.fk_fichinter FROM ".MAIN_DB_PREFIX."categorie_fichinter as ck WHERE f.rowid = ck.fk_fichinter AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryFichinterOperator == 1) {
+		if (!empty($searchCategoryFichinterSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryFichinterSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryFichinterSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryFichinterSqlList).")";
+		}
+	}
+}
 if ($search_status != '' && $search_status >= 0) {
 	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
 }
@@ -411,6 +457,11 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 
 // Output page
 // --------------------------------------------------------------------
+$paramsCat = '';
+foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+	$paramsCat .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
+}
+
 
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fichinter page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
@@ -440,6 +491,12 @@ if ($search_all) {
 }
 if ($socid) {
 	$param .= "&socid=".urlencode((string) ($socid));
+}
+if ($searchCategoryFichinterOperator == 1) {
+	$param .= "&search_category_fichinter_operator=".urlencode($searchCategoryFichinterOperator);
+}
+foreach ($searchCategoryFichinterList as $searchCategoryFichinter) {
+	$param .= "&search_category_fichinter_list[]=".urlencode($searchCategoryFichinter);
 }
 if ($search_ref) {
 	$param .= "&search_ref=".urlencode($search_ref);
@@ -496,7 +553,12 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
+
+if (isModEnabled('category') && $user->hasRight($rightskey, 'creer')) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag'))) {
+
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -535,6 +597,14 @@ $objecttmp = new Fichinter($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
+if (!empty($catid)) {
+	print "<div id='ways'>";
+	$c = new Categorie($db);
+	$ways = $c->print_all_ways(' &gt; ', 'fichinter/list.php');
+	print " &gt; ".$ways[0]."<br>\n";
+	print "</div><br>";
+}
+
 if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
@@ -546,6 +616,12 @@ if ($search_all) {
 }
 
 $moreforfilter = '';
+// Filter on categories
+$moreforfilter = '';
+if (isModEnabled('categorie') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_FICHINTER, $searchCategoryFichinterList, 'minwidth300', $searchCategoryFichinterOperator ? $searchCategoryFichinterOperator : 0);
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
