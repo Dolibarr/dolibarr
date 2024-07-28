@@ -921,7 +921,7 @@ class FormTicket
 					if ($format == 3) {
 						print '<option value="'.$id.'"';
 					}
-					var_dump($selected.' '.$id.' '.$arraycategories['use_default'].' '.$empty);
+
 					// If selected is text, we compare with code, otherwise with id
 					if (isset($selected) && preg_match('/[a-z]/i', $selected) && $selected == $arraycategories['code']) {
 						print ' selected="selected"';
