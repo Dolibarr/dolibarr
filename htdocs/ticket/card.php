@@ -890,7 +890,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editsubject&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetTitle'), 0).'</a> ';
 		}
 		if ($action != 'editsubject') {
-			$morehtmlref .= $object->subject;
+			$morehtmlref .= dolPrintLabel($object->subject);
 		} else {
 			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
