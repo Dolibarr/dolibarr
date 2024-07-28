@@ -90,3 +90,4 @@ ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime aft
 
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
+ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
