@@ -1497,7 +1497,7 @@ InvoiceOptionCategoryOfOperationsYes2=Yes, in the lower left-hand corner
 InvoiceClassifyBilledSupplierOrderWithoutInvoice=Disallow the classification of an order as billed without invoice.
 InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified as billed by default. If this conf is set to true, it will be not.
 ##### Supplier Orders #####
-SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a supplier order as billed without invoice.
+SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
 SupplierOrderClassifyBilledWithoutInvoiceHelp=A supplier order can be classified as billed by default. If this conf is set to true, it will be not.
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
