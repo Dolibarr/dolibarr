@@ -155,7 +155,8 @@ $arrayfields = array(
 	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => -1,'position' => 30),
 	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => 1,'position' => 40),
 	'type' => array('label' => $langs->trans("Type"), 'checked' => 1,'position' => 50),
-	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 1,'position' => 60),
+	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 0,'position' => 60),
+	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 65),
 	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => 1, 'position' => 70),
 	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? 0 : 1), 'position' => 80),
 	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 90),
@@ -164,7 +165,6 @@ $arrayfields = array(
 	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 120),
 	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => 1, 'position' => 130),
 	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => $object->rappro, 'checked' => ($action == 'reconcile' ? 1 : 0), 'position' => 140),
-	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 150),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -1131,6 +1131,7 @@ if ($resql) {
 	if (!empty($arrayfields['b.datev']['checked'])) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
+	// Type
 	if (!empty($arrayfields['type']['checked'])) {
 		print '<td class="liste_titre center">';
 		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
@@ -1140,7 +1141,11 @@ if ($resql) {
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
 		print '<td class="liste_titre center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
-	// Checked
+	// Bordereau
+	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+		print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'"></td>';
+	}
+	// Thirdparty
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty_user).'"></td>';
 	}
@@ -1185,10 +1190,6 @@ if ($resql) {
 		print '<td class="liste_titre center parentonrightofpage">';
 		print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1, 1, 'search_status onrightofpage width75');
 		print '</td>';
-	}
-	// Bordereau
-	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-		print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_fk_bordereau" value="'.dol_escape_htmltag($search_fk_bordereau).'"></td>';
 	}
 	// Action edit/delete and select
 	print '<td class="nowraponall center"></td>';
@@ -1238,6 +1239,10 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['b.num_chq']['label'], $_SERVER['PHP_SELF'], 'b.num_chq', '', $param, '', $sortfield, $sortorder, "center ");
 		$totalarray['nbfield']++;
 	}
+	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+		print_liste_field_titre($arrayfields['b.fk_bordereau']['label'], $_SERVER['PHP_SELF'], 'b.fk_bordereau', '', $param, '', $sortfield, $sortorder, "center ");
+		$totalarray['nbfield']++;
+	}
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
@@ -1268,10 +1273,6 @@ if ($resql) {
 	}
 	if (!empty($arrayfields['b.conciliated']['checked'])) {
 		print_liste_field_titre($arrayfields['b.conciliated']['label'], $_SERVER['PHP_SELF'], 'b.rappro', '', $param, '', $sortfield, $sortorder, "center ");
-		$totalarray['nbfield']++;
-	}
-	if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-		print_liste_field_titre($arrayfields['b.fk_bordereau']['label'], $_SERVER['PHP_SELF'], 'b.fk_bordereau', '', $param, '', $sortfield, $sortorder, "center ");
 		$totalarray['nbfield']++;
 	}
 
@@ -1418,6 +1419,7 @@ if ($resql) {
 					}
 					print '</td>';
 				}
+
 				if (!empty($arrayfields['b.num_releve']['checked'])) {
 					print '<td></td>';
 				}
@@ -1653,12 +1655,15 @@ if ($resql) {
 
 		// Payment type
 		if (!empty($arrayfields['type']['checked'])) {
-			print '<td class="tdoverflowmax100">';
-			$labeltype = ($langs->trans("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->trans("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
+			$labeltype = ($langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
+			if (empty($arrayfields['b.num_chq']['checked'])) {
+				$labeltype .= ($objp->num_chq ? ' - '.$objp->num_chq : '');
+			}
+			print '<td class="tdoverflowmax100" title="'.dolPrintLabel($labeltype).'">';
 			if ($labeltype == 'SOLD') {
 				print '&nbsp;'; //$langs->trans("InitialBankBalance");
 			} else {
-				print $labeltype;
+				print dolPrintLabel($labeltype);
 			}
 			print "</td>\n";
 			if (!$i) {
@@ -1669,6 +1674,17 @@ if ($resql) {
 		// Num cheque
 		if (!empty($arrayfields['b.num_chq']['checked'])) {
 			print '<td class="tdoverflowmax100 center" title="'.($objp->num_chq ? dolPrintLabel($objp->num_chq) : "").'">'.($objp->num_chq ? dolPrintLabel($objp->num_chq) : "")."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Cheque
+		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
+			$bordereaustatic->fetch($objp->fk_bordereau);
+			print '<td class="nowraponall center">';
+			print $bordereaustatic->getNomUrl();
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1832,19 +1848,10 @@ if ($resql) {
 			}
 		}
 
+		// Conciliated
 		if (!empty($arrayfields['b.conciliated']['checked'])) {
 			print '<td class="nowraponall center">';
 			print yn($objp->conciliated);
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
-
-		if (!empty($arrayfields['b.fk_bordereau']['checked'])) {
-			$bordereaustatic->fetch($objp->fk_bordereau);
-			print '<td class="nowraponall center">';
-			print $bordereaustatic->getNomUrl();
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
