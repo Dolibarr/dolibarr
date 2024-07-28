@@ -6506,12 +6506,40 @@ div#ecm-layout-center {
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
 }
+.jnotify-container .jnotify-close {
+	top: 4px !important;
+	font-size: 1.6em !important;
+}
 
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
 	-webkit-box-shadow: 2px 2px 4px #8888 !important;
 	box-shadow: 2px 2px 4px #8888 !important;
+}
+
+/* jnotify for the login page */
+.bodylogin .jnotify-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100000;
+	max-width: unset;
+	padding-left: unset !important;
+	padding-right: unset !important;
+	padding-top: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification {
+	margin: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-background {
+	border-radius: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-message {
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
 }
 
 
