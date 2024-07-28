@@ -1861,6 +1861,7 @@ select.flat.selectlimit {
 	overflow-y: hidden;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+
 /* Style used for most tables */
 div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
@@ -1872,13 +1873,20 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 .div-table-responsive {
 	line-height: var(--heightrow);
 }
+
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
-div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-	overflow-x: auto;
-}
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+	overflow-x: auto;
+}
+
+/* Style used for table in public ticket */
+div.ticketpublicarealist>form>div.div-table-responsive {
+	min-height: 392px;
+}
+
 
 .display-flex {
 	display: flex;

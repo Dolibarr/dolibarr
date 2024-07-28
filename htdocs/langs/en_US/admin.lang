@@ -2030,6 +2030,7 @@ MinimumNoticePeriod=Minimum notice period (Your leave request must be done befor
 NbAddedAutomatically=Number of days added to counters of users (automatically) each month
 EnterAnyCode=This field contains a reference to identify the line. Enter any value of your choice, but without special characters.
 Enter0or1=Enter 0 or 1
+EnterYesOrNo=Enter Yes or No
 UnicodeCurrency=Enter here between braces, list of byte number that represent the currency symbol. For example: for $, enter [36] - for brazil real R$ [82,36] - for €, enter [8364]
 ColorFormat=The RGB color is in HEX format, eg: FF0000
 PictoHelp=Icon name in format:<br>- image.png for an image file into the current theme directory<br>- image.png@module if file is into the directory /img/ of a module<br>- fa-xxx for a FontAwesome fa-xxx picto<br>- fontawesome_xxx_fa_color_size for a FontAwesome fa-xxx picto (with prefix, color and size set)
