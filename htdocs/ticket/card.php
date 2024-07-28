@@ -1018,7 +1018,7 @@ if ($action == 'create' || $action == 'presend') {
 				$object->ref = $object->id;
 				print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'track_id');
 			} else {
-				print $object->track_id;
+				print dolPrintLabel($object->track_id);
 			}
 		} else {
 			print $langs->trans('None');
