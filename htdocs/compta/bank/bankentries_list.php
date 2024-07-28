@@ -1619,7 +1619,7 @@ if ($resql) {
 
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
-			print '<td class="nowrap center">';
+			print '<td class="nowraponall center">';
 			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">'.dol_print_date($db->jdate($objp->do), "dayreduceformat")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
@@ -1636,7 +1636,7 @@ if ($resql) {
 
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
-			print '<td class="nowrap center">';
+			print '<td class="nowraponall center">';
 			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">'.dol_print_date($db->jdate($objp->dv), "dayreduceformat")."</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
@@ -1668,7 +1668,7 @@ if ($resql) {
 
 		// Num cheque
 		if (!empty($arrayfields['b.num_chq']['checked'])) {
-			print '<td class="nowrap center">'.($objp->num_chq ? dol_escape_htmltag($objp->num_chq) : "")."</td>\n";
+			print '<td class="tdoverflowmax100 center" title="'.($objp->num_chq ? dolPrintLabel($objp->num_chq) : "").'">'.($objp->num_chq ? dolPrintLabel($objp->num_chq) : "")."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1755,7 +1755,7 @@ if ($resql) {
 
 		// Debit
 		if (!empty($arrayfields['b.debit']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">';
+			print '<td class="nowraponall right"><span class="amount">';
 			if ($objp->amount < 0) {
 				print price($objp->amount * -1);
 				$totalarray['totaldeb'] += $objp->amount;
@@ -1771,7 +1771,7 @@ if ($resql) {
 
 		// Credit
 		if (!empty($arrayfields['b.credit']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">';
+			print '<td class="nowraponall right"><span class="amount">';
 			if ($objp->amount > 0) {
 				print price($objp->amount);
 				$totalarray['totalcred'] += $objp->amount;
