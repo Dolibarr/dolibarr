@@ -759,6 +759,12 @@ if ($id > 0 || !empty($ref)) {
 
 		print $formfile->showdocuments('project_task', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf);
 
+		// Show links to link elements
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('project_task'));
+
+		$compatibleImportElementsList = false;
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
+
 		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
