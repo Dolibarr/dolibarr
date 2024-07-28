@@ -2095,15 +2095,15 @@ class Form
 	/**
 	 * Return the HTML select list of users
 	 *
-	 * @param string $selected Id user preselected
-	 * @param string $htmlname Field name in form
-	 * @param int<0,1> $show_empty 0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 * @param int[] $exclude Array list of users id to exclude
-	 * @param int<0,1> $disabled If select list must be disabled
-	 * @param int[]|string $include Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * @param int[]|int $enableonly Array list of users id to be enabled. All other must be disabled
-	 * @param string $force_entity '0' or Ids of environment to force
-	 * @return    void
+	 * @param 	string 			$selected 		Id user preselected
+	 * @param 	string 			$htmlname 		Field name in form
+	 * @param 	int<0,1> 		$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 * @param 	int[] 			$exclude 		Array list of users id to exclude
+	 * @param 	int<0,1> 		$disabled 		If select list must be disabled
+	 * @param 	int[]|string 	$include 		Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param 	int[]|int 		$enableonly 	Array list of users id to be enabled. All other must be disabled
+	 * @param 	string 			$force_entity 	'0' or Ids of environment to force
+	 * @return	void
 	 * @deprecated        Use select_dolusers instead
 	 * @see select_dolusers()
 	 */
@@ -2128,11 +2128,11 @@ class Form
 	 * @param string 			$force_entity 	'0' or list of Ids of environment to force, separated by a coma, or 'default' = do no extend to all entities allowed to superadmin.
 	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 * @param string 			$morefilter 	Add more filters into sql request (Example: 'employee = 1'). This value must not come from user input.
+	 * @param string 			$morefilter 	Add more filters into sql request (Example: '(employee:=:1)'). This value must not come from user input.
 	 * @param integer 			$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
 	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 			$morecss 		More css
-	 * @param int<0,1> 			$notdisabled 	Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 * @param int<0,1> 			$notdisabled 	Show only active users (note: this will also happen, whatever is this option, if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
 	 * @param int<0,2>			$outputmode 	0=HTML select string, 1=Array, 2=Detailed array
 	 * @param bool 				$multiple 		add [] in the name of element and add 'multiple' attribute
 	 * @param int<0,1> 			$forcecombo 	Force the component to be a simple combo box without ajax
@@ -8754,6 +8754,9 @@ class Form
 
 				if (is_array($tmpvalue)) {
 					foreach ($tmpvalue as $keyforvalue => $valueforvalue) {
+						if ($keyforvalue == 'labelhtml') {
+							$keyforvalue = 'data-html';
+						}
 						if (preg_match('/^data-/', $keyforvalue)) {	// The best solution if you want to use HTML values into the list is to use data-html.
 							$out .= ' '.dol_escape_htmltag($keyforvalue).'="'.dol_escape_htmltag($valueforvalue).'"';
 						}
