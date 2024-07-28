@@ -5979,6 +5979,7 @@ class Product extends CommonObject
 			}
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
+		// Include supplier order lines
 		if (isModEnabled("supplier_order")) {
 			$filterStatus = getDolGlobalString('SUPPLIER_ORDER_STATUS_FOR_VIRTUAL_STOCK', '3,4');
 			if (isset($includedraftpoforvirtual)) {
@@ -5990,7 +5991,8 @@ class Product extends CommonObject
 			}
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
-		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && empty($conf->reception->enabled)) {
+		// Include reception lines (when module reception is NOT used)
+		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && !isModEnabled('reception')) {
 			// Case module reception is not used
 			$filterStatus = '4';
 			if (isset($includedraftpoforvirtual)) {
@@ -6002,6 +6004,7 @@ class Product extends CommonObject
 			}
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
+		// Include reception lines (when module reception is used)
 		if ((isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && isModEnabled("reception")) {
 			// Case module reception is used
 			$filterStatus = '4';
@@ -6014,6 +6017,7 @@ class Product extends CommonObject
 			}
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
+		// Include manufacturing
 		if (isModEnabled('mrp')) {
 			$result = $this->load_stats_inproduction(0, '1,2', 1, $dateofvirtualstock);
 			if ($result < 0) {
