@@ -971,6 +971,7 @@ function getSocialNetworkSharingLinks($socialnetworks = '')
 			$out .= '<a href="https://www.facebook.com/sharer/sharer.php?u='.urlencode($fullurl).'">';
 			$out .= '<span class="dol-social-share-fbl-span">Facebook</span>';
 			$out .= '</a>';
+			$out .= '</div>';
 		}
 
 		$out .= "\n</div>\n";
