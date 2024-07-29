@@ -783,6 +783,10 @@ class Documents extends DolibarrApi
 				$modulepart = 'contrat';
 				require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 				$object = new Contrat($this->db);
+			} elseif ($modulepart == 'mrp') {
+				$modulepart = 'mrp';
+				require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+				$object = new Mo($this->db);
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
