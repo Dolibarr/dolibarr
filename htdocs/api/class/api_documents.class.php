@@ -574,6 +574,17 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->projet->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
+		} elseif ($modulepart == 'mrp' || $modulepart == "mo") {
+			$modulepart = 'mrp';
+			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+
+			$object = new Mo($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'MO not found');
+			}
+
+			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
