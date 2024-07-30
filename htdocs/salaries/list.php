@@ -222,7 +222,7 @@ if ($massaction == 'withdrawrequest') {
 				}
 
 				if ($numprlv > 0) {
-					$error++;
+					//$error++;		// Not an error, a simple warning we can ignore
 					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				} elseif (!empty($objecttmp->type_payment_code) && $objecttmp->type_payment_code != 'VIR') {
 					$langs->load("errors");
@@ -234,6 +234,7 @@ if ($massaction == 'withdrawrequest') {
 			}
 		}
 
+		// Now process all record not in error
 		if (!$error && !empty($listofSalries)) {
 			$nbwithdrawrequestok = 0;
 			foreach ($listofSalries as $salary) {
