@@ -144,6 +144,8 @@ $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write');
 $permissiontodelete = $user->hasRight('salaries', 'delete');
 
+$error = 0;
+
 // Security check
 $socid = GETPOSTINT("socid");
 if ($user->socid) {
@@ -197,10 +199,10 @@ if ($massaction == 'withdrawrequest') {
 
 				if ($objecttmp->status == Salary::STATUS_PAID || $objecttmp->resteapayer == 0) {
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 				} elseif ($resteapayer < 0) {
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
 				}
 
 				$rsql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -221,17 +223,18 @@ if ($massaction == 'withdrawrequest') {
 
 				if ($numprlv > 0) {
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
-				} elseif (!empty($objecttmp->type_payment) && $objecttmp->type_payment != '2') {
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
+				} elseif (!empty($objecttmp->type_payment_code) && $objecttmp->type_payment_code != 'VIR') {
+					$langs->load("errors");
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("ErrorThisPaymentModeIsNotCreditTransfer"), $objecttmp->errors, 'errors');
 				} else {
 					$listofSalries[] = $objecttmp;
 				}
 			}
 		}
 
-		if (!empty($listofSalries)) {
+		if (!$error && !empty($listofSalries)) {
 			$nbwithdrawrequestok = 0;
 			foreach ($listofSalries as $salary) {
 				$db->begin();
@@ -498,7 +501,7 @@ $arrayofmassactions = array(
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('prelevement') && $user->hasRight('prelevement', 'bons', 'creer')) {
+if (isModEnabled('paymentbybanktransfer') && $user->hasRight('paymentbybanktransfer', 'create')) {
 	$langs->load("withdrawals");
 	$arrayofmassactions['withdrawrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
 }
