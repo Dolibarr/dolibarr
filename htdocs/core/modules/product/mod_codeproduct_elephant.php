@@ -94,6 +94,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4c");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';

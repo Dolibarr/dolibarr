@@ -70,6 +70,7 @@ class mod_contract_magre extends ModelNumRefContracts
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcontract" value="'.getDolGlobalString("CONTRACT_MAGRE_MASK").'">', $tooltip, 1, 1).'</td>';

@@ -71,6 +71,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

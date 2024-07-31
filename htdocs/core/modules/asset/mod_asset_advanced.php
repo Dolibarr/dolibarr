@@ -76,6 +76,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Asset"), $langs->transnoentities("Asset"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';

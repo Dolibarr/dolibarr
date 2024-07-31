@@ -76,6 +76,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Setting the prefix
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</span></td>';

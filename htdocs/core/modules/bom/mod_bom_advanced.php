@@ -77,6 +77,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

@@ -79,6 +79,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskexpedition" value="'.getDolGlobalString('EXPEDITION_RIBERA_MASK').'">', $tooltip, 1, 1).'</td>';

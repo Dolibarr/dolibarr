@@ -77,6 +77,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Evaluation"), $langs->transnoentities("Evaluation"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

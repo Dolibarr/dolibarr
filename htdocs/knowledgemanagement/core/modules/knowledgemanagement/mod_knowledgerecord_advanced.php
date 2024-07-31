@@ -76,6 +76,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("KnowledgeRecord"), $langs->transnoentities("KnowledgeRecord"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

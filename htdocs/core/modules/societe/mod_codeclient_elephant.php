@@ -97,13 +97,17 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
+		$tooltip .= $langs->trans("GenericMaskCodes2b").'<br>';
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4b");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 1, '', 0, 3, 'tooltipelephantcutomer').'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
@@ -111,7 +115,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1, '', 0, 3, 'tooltipelephantsupplier').'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';

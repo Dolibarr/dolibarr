@@ -70,6 +70,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Holiday"), $langs->transnoentities("Holiday"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskholiday" value="'.getDolGlobalString('HOLIDAY_IMMACULATE_MASK').'">', $tooltip, 1, 1).'</td>';

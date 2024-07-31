@@ -103,6 +103,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
 		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
 		//$tooltip.=$langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';

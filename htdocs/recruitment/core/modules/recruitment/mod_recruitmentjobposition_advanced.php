@@ -77,6 +77,7 @@ class mod_recruitmentjobposition_advanced extends ModeleNumRefRecruitmentJobPosi
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("RecruitmentJobPosition"), $langs->transnoentities("RecruitmentJobPosition"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

@@ -77,6 +77,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';

@@ -91,6 +91,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= $langs->trans("GenericMaskCodes5b");
 
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").')';
