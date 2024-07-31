@@ -135,7 +135,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	 *
 	 *  @param	Societe			$objsoc	    Object thirdparty
 	 *  @param  Productlot		$object		Object we need next value for
-	 *  @return string|int<0>      			Value if OK, 0 if KO
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

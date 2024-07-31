@@ -130,7 +130,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe			$objsoc     	Object third party
 	 *  @param  Delivery		$object			Object delivery
-	 *  @return string|int<0>      				Value if OK, 0 if KO
+	 *  @return string|int      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -157,7 +157,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe			$objsoc     Object third party
 	 * 	@param	Delivery		$objforref	Object for number to search
-	 *  @return string|int<0>      			Next free value, 0 if KO
+	 *  @return string|int      			Next free value, 0 if KO
 	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
