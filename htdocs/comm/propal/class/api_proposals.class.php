@@ -579,8 +579,8 @@ class Proposals extends DolibarrApi
 	 * Add a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $contactid      Id of contact or user to add
-	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param int    $contactid      Id of external or internal contact to add
+	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
 	 * @param string $source         Source of the contact (internal, external)
 	 * @return array
 	 *
