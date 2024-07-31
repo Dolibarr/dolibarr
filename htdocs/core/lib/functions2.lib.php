@@ -1895,7 +1895,7 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
- * 	@return	array|int			    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
