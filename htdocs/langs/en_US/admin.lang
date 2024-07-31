@@ -2540,3 +2540,4 @@ MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr 
 BlackListWords=Black list of words
 AddBlackList=Add to black list
 AnOwnerMustBeSetIfEmailTemplateIsPrivate=An owner must be set if the email template is set as private
+ContactsDefaultRoles=For third parties of the "individual" type, a contact can be created simultaneously. Define here the roles that will be systematically assigned to this contact.
