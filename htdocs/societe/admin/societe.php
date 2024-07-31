@@ -120,7 +120,6 @@ if ($action == 'updateoptions') {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
-
 }
 
 // Activate a document generator module
