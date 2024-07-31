@@ -370,8 +370,8 @@ class ProductAttribute extends CommonObject
 	 * Updates a product attribute
 	 *
 	 * @param   User            $user           User who updates the attribute
-	 * @param   0|1             $notrigger      1 = Do not execute trigger (0 by default)
-	 * @return 	int<min,-1>|1                   <0 if KO, 1 if OK
+	 * @param   int        		$notrigger      1 = Do not execute trigger (0 by default)
+	 * @return 	int								<0 if KO, 1 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -832,7 +832,7 @@ class ProductAttribute extends CommonObject
 	/**
 	 * Test if this attribute is used by a Product
 	 *
-	 * @return -1|0|1			Return -1 if KO, 0 if not used, 1 if used
+	 * @return 	int			Return -1 if KO, 0 if not used, 1 if used
 	 */
 	public function isUsed()
 	{

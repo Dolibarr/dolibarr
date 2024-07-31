@@ -1119,6 +1119,7 @@ class FormSetupItem
 		if ($this->picto) {
 			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
 		}
+
 		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
 
 		return $s;

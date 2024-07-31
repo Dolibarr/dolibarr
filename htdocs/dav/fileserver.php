@@ -57,7 +57,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
 
 $user = new User($db);
 if (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != '') {
-	$user->fetch('', $_SERVER['PHP_AUTH_USER']);
+	$user->fetch(0, $_SERVER['PHP_AUTH_USER']);
 	$user->getrights();
 }
 

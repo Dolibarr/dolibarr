@@ -295,7 +295,7 @@ class ActionsTicket extends CommonHookActions
 					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					//print '<tr>';
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven nohover">';
 					print '<td><strong>';
 					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
@@ -316,13 +316,14 @@ class ActionsTicket extends CommonHookActions
 								print $arraymsgs['fk_contact_author'];
 							}
 						} else {
-							print $langs->trans('Customer');
+							print '<span class="opacitymedium">'.$langs->trans('Unknown').'</span>';
 						}
 						print '</td>';
 					}
-					print '</td>';
-					print '<tr class="oddeven">';
-					print '<td colspan="2">';
+					print '</tr>';
+
+					print '<tr class="oddeven nohover">';
+					print '<td'.($show_user ? ' colspan="2"' : '').'>';
 					print $arraymsgs['message'];
 
 					//attachment
