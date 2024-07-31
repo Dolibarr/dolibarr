@@ -69,7 +69,7 @@ if ($action == 'setcodecompta') {
 }
 
 if ($action == 'updateoptions') {
-	if (GETPOST('COMPANY_USE_SEARCH_TO_SELECT')) {
+	if (GETPOSTISSET('COMPANY_USE_SEARCH_TO_SELECT')) {
 		$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -82,7 +82,7 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('CONTACT_USE_SEARCH_TO_SELECT')) {
+	if (GETPOSTISSET('CONTACT_USE_SEARCH_TO_SELECT')) {
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -95,7 +95,7 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
+	if (GETPOSTISSET('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
 		$customertypedefault = GETPOSTINT('defaultcustomertype');
 		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -108,8 +108,8 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('CONTACTS_DEFAULT_ROLES')) {
-		$rolessearch = GETPOST('activate_CONTACTS_DEFAULT_ROLES', 'array');
+	if (GETPOSTISARRAY('CONTACTS_DEFAULT_ROLES')) {
+		$rolessearch = GETPOST('activate_CONTACTS_DEFAULT_ROLES', 'array:aZ09');
 		$res = dolibarr_set_const($db, "CONTACTS_DEFAULT_ROLES", implode(',', $rolessearch), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
