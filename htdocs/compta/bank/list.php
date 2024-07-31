@@ -708,7 +708,7 @@ foreach ($accounts as $key => $type) {
 			print '<td class="tdoverflowmax250">';
 			if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $objecttmp->account_number, 1);
+				$accountingaccount->fetch(0, $objecttmp->account_number, 1);
 				print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 				print '</span>';

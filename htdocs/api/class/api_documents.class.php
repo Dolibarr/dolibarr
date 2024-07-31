@@ -707,7 +707,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$object = new Task($this->db);
 
-				$task_result = $object->fetch('', $ref);
+				$task_result = $object->fetch(0, $ref);
 
 				// Fetching the tasks project is required because its out_dir might be a sub-directory of the project
 				if ($task_result > 0) {
@@ -759,7 +759,7 @@ class Documents extends DolibarrApi
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
-					$result = $object->fetch('', $ref);
+					$result = $object->fetch(0, $ref);
 				}
 
 				if ($result == 0) {
