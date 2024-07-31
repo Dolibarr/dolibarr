@@ -30,7 +30,7 @@
  *	Check if a value is empty with some options
  *
  * @author	Michael - https://www.php.net/manual/fr/function.empty.php#90767
- * @param	mixed		$var			Value to test
+ * @param	?mixed		$var			Value to test
  * @param	boolean     $allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
  * @param	boolean     $allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
  * @return	boolean				  		True of False
