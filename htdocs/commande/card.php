@@ -1954,7 +1954,7 @@ if ($action == 'create' && $usercancreate) {
 		}
 
 		// Source / Channel - What trigger creation
-		print '<tr><td>'.$langs->trans('Channel').'</td><td>';
+		print '<tr><td>'.$langs->trans('Source').'</td><td>';
 		print img_picto('', 'question', 'class="pictofixedwidth"');
 		$form->selectInputReason((GETPOSTISSET('demand_reason_id') ? GETPOST('demand_reason_id') : $demand_reason_id), 'demand_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
