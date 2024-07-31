@@ -78,6 +78,7 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Workstation"), $langs->transnoentities("Workstation"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -124,8 +125,8 @@ class mod_workstation_advanced extends ModeleNumRefWorkstation
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Workstation	$object		Object we need next value for
-	 *  @return string|0      		    Next value if OK, 0 if KO
+	 *  @param  Workstation		$object		Object we need next value for
+	 *  @return string|int<0>      		    Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

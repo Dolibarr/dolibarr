@@ -77,6 +77,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("MyObject"), $langs->transnoentities("MyObject"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -97,7 +98,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 */
 	public function getExample()
 	{
-		global $conf, $db, $langs, $mysoc;
+		global $db, $langs;
 
 		$object = new MyObject($db);
 		$object->initAsSpecimen();
@@ -121,8 +122,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|0      	        Next value if OK, 0 if KO
+	 *  @param  Object			$object		Object we need next value for
+	 *  @return string|int<0>      	        Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
