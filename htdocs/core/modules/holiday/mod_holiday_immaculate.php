@@ -31,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
  */
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
-
 	// variables inherited from ModelNumRefHolidays class
 	public $name = 'Immaculate';
 	public $version = 'dolibarr';
@@ -85,7 +84,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return numbering example
 	 *
-	 *	@return     string|int<0>      Example
+	 *	@return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{
