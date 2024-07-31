@@ -82,7 +82,7 @@ class mod_task_universal extends ModeleNumRefTask
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		$tooltip .= $langs->trans("GenericMaskCodes5b");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

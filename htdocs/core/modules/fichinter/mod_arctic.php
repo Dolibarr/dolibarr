@@ -83,7 +83,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		//$tooltip .= $langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

@@ -80,7 +80,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		//$tooltip .= $langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

@@ -103,7 +103,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4b");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		//$tooltip .= $langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';

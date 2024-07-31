@@ -87,7 +87,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Project"), $langs->transnoentities("Project"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		$tooltip .= $langs->trans("GenericMaskCodes5b");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Prefix settings
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';

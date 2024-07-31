@@ -78,7 +78,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$tooltip .= $langs->trans('GenericMaskCodes3');
 		$tooltip .= $langs->trans('GenericMaskCodes4a', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
 		$tooltip .= $langs->trans('GenericMaskCodes5');
-		//$tooltip .= $langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 		$tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
 
 		// Setting up the prefix

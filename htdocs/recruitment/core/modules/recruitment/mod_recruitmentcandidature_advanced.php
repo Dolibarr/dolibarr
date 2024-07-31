@@ -77,7 +77,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("RecruitmentCandidature"), $langs->transnoentities("RecruitmentCandidature"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		//$tooltip .= $langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
