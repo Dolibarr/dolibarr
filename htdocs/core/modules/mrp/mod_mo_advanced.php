@@ -126,7 +126,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 *
 	 *  @param	Product			$objprod    Object product
 	 *  @param  Mo				$object		Object we need next value for
-	 *  @return string|int<0>      			Value if OK, 0 if KO
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

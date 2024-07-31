@@ -124,7 +124,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  Commande		$object		Object we need next value for
-	 *  @return string|int<0>      			Next value if OK, 0 if KO
+	 *  @return string|int      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
