@@ -100,7 +100,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
@@ -119,13 +119,13 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Commande	$object		Object we need next value for
-	 *  @return string|0      			Next value if OK, 0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  Commande		$object		Object we need next value for
+	 *  @return string|int<0>      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

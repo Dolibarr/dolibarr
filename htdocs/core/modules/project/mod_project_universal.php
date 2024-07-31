@@ -126,9 +126,9 @@ class mod_project_universal extends ModeleNumRefProjects
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe		$objsoc		Object third party
-	 *  @param   Project		$project	Object project
-	 *  @return  string|0					Value if OK, 0 if KO
+	 *  @param   Societe			$objsoc		Object third party
+	 *  @param   Project			$project	Object project
+	 *  @return  string|int<0>					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{

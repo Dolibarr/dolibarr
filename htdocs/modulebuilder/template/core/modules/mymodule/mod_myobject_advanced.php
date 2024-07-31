@@ -98,7 +98,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	 */
 	public function getExample()
 	{
-		global $conf, $db, $langs, $mysoc;
+		global $db, $langs;
 
 		$object = new MyObject($db);
 		$object->initAsSpecimen();
@@ -122,8 +122,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|0      	        Next value if OK, 0 if KO
+	 *  @param  Object			$object		Object we need next value for
+	 *  @return string|int<0>      	        Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

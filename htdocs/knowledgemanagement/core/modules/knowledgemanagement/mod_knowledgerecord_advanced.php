@@ -58,7 +58,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 	 */
 	public function info()
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -99,7 +99,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 	 */
 	public function getExample()
 	{
-		global $conf, $db, $langs, $mysoc;
+		global $db, $langs;
 
 		$object = new KnowledgeRecord($db);
 		$object->initAsSpecimen();
@@ -123,12 +123,12 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|0      			Next value if OK, 0 if KO
+	 *  @param  Object			$object		Object we need next value for
+	 *  @return string|int<0>      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

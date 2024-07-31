@@ -94,7 +94,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -112,11 +112,11 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string|0      				Next value if OK, 0 if KO
+	 *  @return string|int<0>  				Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

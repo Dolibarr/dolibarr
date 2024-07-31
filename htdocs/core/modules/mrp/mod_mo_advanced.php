@@ -101,7 +101,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
@@ -120,13 +120,13 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product		$objprod    Object product
-	 *  @param  Mo			$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	Product			$objprod    Object product
+	 *  @param  Mo				$object		Object we need next value for
+	 *  @return string|int<0>      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

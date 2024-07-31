@@ -89,7 +89,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$old_login = $user->login;
 		$user->login = 'UUUUUUU';
@@ -105,13 +105,13 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Holiday		$holiday	holiday object
-	 *	@return string|0      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     third party object
+	 *	@param	Holiday			$holiday	holiday object
+	 *	@return string|int<0>      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

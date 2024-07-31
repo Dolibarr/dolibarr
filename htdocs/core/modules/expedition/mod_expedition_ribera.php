@@ -98,7 +98,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
@@ -117,13 +117,13 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Expedition	$shipment	Shipment object
-	 *	@return string|0      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     Third party object
+	 *	@param	Expedition		$shipment	Shipment object
+	 *	@return string|int<0>      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
