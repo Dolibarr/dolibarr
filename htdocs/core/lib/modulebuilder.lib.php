@@ -1217,7 +1217,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
  *
  * @param string $module The name of the module.
  * @param string $file The path to the module descriptor file.
- * @param array<string,string|array<string,int|string>> $dicts The dictionary data to be updated.
+ * @param array<string,bool|string|array<string,int|string>> $dicts The dictionary data to be updated.
  * @return int Returns the number of replacements made in the file.
  */
 function updateDictionaryInFile($module, $file, $dicts)
@@ -1237,7 +1237,7 @@ function updateDictionaryInFile($module, $file, $dicts)
 		if ($key === 'tabcond') {
 			$conditions = array_map(
 				/**
-				 * @param mixed $val
+				 * @param bool|string|int $val
 				 * @return string|int
 				 */
 				function ($val) use ($module) {
