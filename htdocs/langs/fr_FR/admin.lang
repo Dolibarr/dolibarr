@@ -2507,3 +2507,4 @@ SendToUrl=Envoyer à l'URL
 WebsiteTemplateWasCopied=Le(s) modèle(s) de site Web "%s" fournis par ce module ont été enregistrés dans le répertoire des modèles de sites Web (/doctemplates/websites) et est prêt à être importé en tant que nouveau site Web.
 EnabledByDefaultAtInstall=Activé par défaut lors de l'installation
 VulnerableToRCEAttack=Vous êtes vulnérable aux attaques de type RCE en utilisant la fonction personnalisée dol_json_decode
+ContactsDefaultRoles=Pour les les tiers de type "particulier" un contact peut-être créé simultanément. Définissez ici les rôles qui seront systématiquement attribués à ce contact.
