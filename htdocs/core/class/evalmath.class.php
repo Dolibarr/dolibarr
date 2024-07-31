@@ -1,6 +1,5 @@
 <?php
-/*
- * ================================================================================
+/* ================================================================================
  *
  * EvalMath - PHP Class to safely evaluate math expressions
  * Copyright (C) 2005 Miles Kaufmann <http://www.twmagic.com/>
@@ -500,7 +499,7 @@ class EvalMathStack
 	/**
 	 * pop
 	 *
-	 * @return mixed Stack
+	 * @return mixed|null 	Stack element
 	 */
 	public function pop()
 	{
