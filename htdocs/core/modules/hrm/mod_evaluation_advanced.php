@@ -125,7 +125,7 @@ class mod_evaluation_advanced extends ModeleNumRefEvaluation
 	 * 	Return next free value
 	 *
 	 *  @param  Evaluation		$object		Object we need next value for
-	 *  @return string|int<0>      			Value if OK, 0 if KO
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

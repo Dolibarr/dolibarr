@@ -153,7 +153,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	 * @param	Societe				$objsoc     Object third party
 	 * @param  	FactureFournisseur	$object		Object invoice
 	 * @param	string				$mode       'next' for next value or 'last' for last value
-	 * @return 	string|int<0>  					Value if OK, 0 if KO
+	 * @return 	string|int  					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{

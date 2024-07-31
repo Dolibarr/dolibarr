@@ -123,7 +123,7 @@ class mod_task_universal extends ModeleNumRefTask
 	 *
 	 *  @param	Societe|string	$objsoc		Object third party
 	 *  @param	Task|string		$object	    Object task
-	 *  @return string|int<0>				Value if OK, 0 if KO
+	 *  @return string|int				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = '', $object = '')
 	{

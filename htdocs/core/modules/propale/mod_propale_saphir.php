@@ -128,7 +128,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	 *
 	 *  @param	Societe			$objsoc     Object third party
 	 * 	@param	Propal			$propal		Object commercial proposal
-	 *  @return string|int<0>      			Value if OK, 0 if KO
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $propal)
 	{

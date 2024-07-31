@@ -120,7 +120,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	 *
 	 *  @param  Societe 		$objsoc     Object third party
 	 *  @param  Ticket  		$ticket 	Object ticket
-	 *  @return string|int<0>   			Next value if OK, 0 if KO
+	 *  @return string|int   			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{

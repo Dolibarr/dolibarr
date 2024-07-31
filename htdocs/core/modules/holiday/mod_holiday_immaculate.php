@@ -107,7 +107,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	 *
 	 *	@param	Societe			$objsoc     third party object
 	 *	@param	Holiday			$holiday	holiday object
-	 *	@return string|int<0>      			Value if OK, 0 if KO
+	 *	@return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
