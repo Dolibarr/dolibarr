@@ -83,6 +83,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CommRequest"), $langs->transnoentities("CommRequest"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$mask = getDolGlobalString('SUPPLIER_PROPOSAL_SAPHIR_MASK');
 
@@ -125,7 +126,7 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	 *
 	 *  @param	Societe				$objsoc     			Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string|0      								Value if OK, 0 if KO
+	 *  @return string|int  								Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{

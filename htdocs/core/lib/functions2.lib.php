@@ -1777,7 +1777,14 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 	foreach ($tab as $key => $value) {
 		// Set new parameters
-		if ($value) {
+		$forcevalue = 0;
+		if (is_array($value)) {
+			if ($value["forcevalue"] == 1) {
+				$forcevalue = 1;
+			}
+			$value = $value["value"];
+		}
+		if ($forcevalue == 1 || $value) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
 			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";

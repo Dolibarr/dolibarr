@@ -6688,7 +6688,7 @@ abstract class CommonObject
 								if (is_numeric($value)) {
 									$res = $object->fetch($value); // Common case
 								} else {
-									$res = $object->fetch('', $value); // For compatibility
+									$res = $object->fetch(0, $value); // For compatibility
 								}
 
 								if ($res > 0) {
@@ -7154,7 +7154,7 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-								else $res = $object->fetch('', $value);					// For compatibility
+								else $res = $object->fetch(0, $value);					// For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -8263,7 +8263,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {

@@ -16,4 +16,4 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_bank_class ADD UNIQUE INDEX uk_bank_class_lineid (lineid, fk_categ);
+ALTER TABLE llx_category_bankline ADD UNIQUE INDEX uk_category_bankline_lineid (lineid, fk_categ);

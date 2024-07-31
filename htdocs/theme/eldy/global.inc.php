@@ -1705,7 +1705,11 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	overflow-y: hidden;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+
 /* Style used for most tables */
+div.fiche>div.tabBar>form>div.div-table-responsive {
+	min-height: 392px;
+}
 .div-table-responsive, .div-table-responsive-no-min {
 	overflow-x: auto;
 	min-height: 0.01%;
@@ -1713,19 +1717,20 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .div-table-responsive {
 	line-height: var(--heightrow);
 }
+
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
-div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-	overflow-x: auto;
-}
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
-div.fiche>div.tabBar>form>div.div-table-responsive {
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+	overflow-x: auto;
+}
+
+/* Style used for table in public ticket */
+div.ticketpublicarealist>form>div.div-table-responsive {
 	min-height: 392px;
 }
-div.fiche {
-	/* text-align: justify; */
-}
+
 
 .display-flex {
 	display: flex;
@@ -6530,12 +6535,40 @@ div#ecm-layout-center {
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
 }
+.jnotify-container .jnotify-close {
+	top: 4px !important;
+	font-size: 1.6em !important;
+}
 
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
 	-webkit-box-shadow: 2px 2px 4px #8888 !important;
 	box-shadow: 2px 2px 4px #8888 !important;
+}
+
+/* jnotify for the login page */
+.bodylogin .jnotify-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100000;
+	max-width: unset;
+	padding-left: unset !important;
+	padding-right: unset !important;
+	padding-top: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification {
+	margin: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-background {
+	border-radius: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-message {
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
 }
 
 
