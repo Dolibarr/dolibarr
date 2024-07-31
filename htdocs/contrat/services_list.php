@@ -90,22 +90,22 @@ $socid = GETPOSTINT('socid');
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');
 
 $op1month = GETPOSTINT('op1month');
 $op1day = GETPOSTINT('op1day');
 $op1year = GETPOSTINT('op1year');
-$filter_op1 = GETPOST('filter_op1', 'alpha');
+$filter_op1 = GETPOST('filter_op1', 'alphawithlgt');
 
 $op2month = GETPOSTINT('op2month');
 $op2day = GETPOSTINT('op2day');
 $op2year = GETPOSTINT('op2year');
-$filter_op2 = GETPOST('filter_op2', 'alpha');
+$filter_op2 = GETPOST('filter_op2', 'alphawithlgt');
 
 $opcloturemonth = GETPOSTINT('opcloturemonth');
 $opclotureday = GETPOSTINT('opclotureday');
 $opclotureyear = GETPOSTINT('opclotureyear');
-$filter_opcloture = GETPOST('filter_opcloture', 'alpha');
+$filter_opcloture = GETPOST('filter_opcloture', 'alphawithlgt');
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context

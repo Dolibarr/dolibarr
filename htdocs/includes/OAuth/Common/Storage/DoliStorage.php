@@ -137,8 +137,8 @@ class DoliStorage implements TokenStorageInterface
 		if ($obj) {
 			// update
 			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-			$sql.= " SET token = '".$this->db->escape(dolEncrypt($serializedToken))."'";
-			$sql.= " WHERE rowid = ".((int) $obj['rowid']);
+			$sql .= " SET token = '".$this->db->escape(dolEncrypt($serializedToken))."'";
+			$sql .= " WHERE rowid = ".((int) $obj['rowid']);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				dol_print_error($this->db);
@@ -147,7 +147,7 @@ class DoliStorage implements TokenStorageInterface
 			// save
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity, datec)";
 			$sql .= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape(dolEncrypt($serializedToken))."', ".((int) $conf->entity).", ";
-			$sql .= " '".$this->db->idate(dol_now())."'";
+			$sql .= "'".$this->db->idate(dol_now())."'";
 			$sql .= ")";
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -299,13 +299,15 @@ class DoliStorage implements TokenStorageInterface
 		if ($obj) {
 			// update
 			$sql = "UPDATE ".MAIN_DB_PREFIX."oauth_token";
-			$sql.= " SET state = '".$this->db->escape($newstate)."'";
-			$sql.= " WHERE rowid = ".((int) $obj['rowid']);
+			$sql .= " SET state = '".$this->db->escape($newstate)."'";
+			$sql .= " WHERE rowid = ".((int) $obj['rowid']);
 			$resql = $this->db->query($sql);
 		} else {
 			// insert (should not happen)
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, state, entity)";
-			$sql.= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).")";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, state, entity, datec)";
+			$sql .= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).", ";
+			$sql .= "'".$this->db->idate(dol_now())."'";
+			$sql .= ")";
 			$resql = $this->db->query($sql);
 		}
 

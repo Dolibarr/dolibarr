@@ -144,8 +144,6 @@ print '<div class="underbanner clearboth"></div>';
 
 $linkback = '';
 
-
-print '<br>';
 $object->info($id);
 dol_print_object_info($object, 1);
 

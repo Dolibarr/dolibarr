@@ -2657,10 +2657,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$fields = array('name', 'lib', 'sql', 'sqlsort', 'field', 'fieldvalue', 'fieldinsert', 'rowid', 'cond', 'help', 'fieldcheck');
 
 		foreach ($fields as $field) {
-			if (!empty($dictionaryArray[$field])) {
+			if (isset($dictionaryArray[$field])) {
 				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
 			}
 		}
-		if ($langs && !in_array($langs, $this->dictionaries[$langs])) $this->dictionaries['langs'][] = $langs;
+		if ($langs && !in_array($langs, $this->dictionaries[$langs])) {
+			$this->dictionaries['langs'][] = $langs;
+		}
 	}
 }

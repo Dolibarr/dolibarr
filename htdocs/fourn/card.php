@@ -562,7 +562,7 @@ if ($object->id > 0) {
 
 
 	/*
-	 * List of products
+	 * List of products prices
 	 */
 	if (isModEnabled("product") || isModEnabled("service")) {
 		$langs->load("products");
@@ -627,6 +627,8 @@ if ($object->id > 0) {
 				print '</td>';
 				print '</tr>';
 			}
+		} else {
+			print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoProductPriceDefinedForThisSupplier").'</span></td></tr>';
 		}
 
 		print '</table>';

@@ -813,6 +813,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$error++;
 				$action = 'editline';
+				$_GET['rowid'] = GETPOST('elrowid');
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 			}
 		}
@@ -2196,6 +2197,7 @@ if ($action == 'create') {
 					);
 				}
 				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
+					$langs->load("suppliers");
 					$arrayofcreatebutton[] = array(
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddSupplierInvoice'),

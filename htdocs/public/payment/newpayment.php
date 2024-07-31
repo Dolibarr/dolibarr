@@ -1522,6 +1522,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 	$member = new Adherent($db);
 	$adht = new AdherentType($db);
+	$subscription = new Subscription($db);
 
 	$result = $member->fetch('', $ref);
 	if ($result <= 0) {
@@ -1529,7 +1530,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 		$error++;
 	} else {
 		$member->fetch_thirdparty();
-		$subscription = new Subscription($db);
 
 		$adht->fetch($member->typeid);
 	}
@@ -1538,7 +1538,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	if ($action != 'dopayment') { // Do not change amount if we just click on first dopayment
 		$amount = $subscription->total_ttc;
 		if (GETPOST("amount", 'alpha')) {
-			$amount = GETPOST("amount", 'alpha');
+			$amount = price2num(GETPOST("amount", 'alpha'), 'MT', 2);
 		}
 		// If amount still not defined, we take amount of the type of member
 		if (empty($amount)) {
@@ -1618,16 +1618,22 @@ if ($source == 'member' || $source == 'membersubscription') {
 		}
 	}
 
+	$amountbytype = $adht->amountByType(1);
+
+	$typeid = $adht->id;
+	$caneditamount = $adht->caneditamount;
+
 	if ($member->type) {
 		$oldtypeid = $member->typeid;
 		$newtypeid = (int) (GETPOSTISSET("typeid") ? GETPOSTINT("typeid") : $member->typeid);
+		if (getDolGlobalString('MEMBER_ALLOW_CHANGE_OF_TYPE')) {
+			$typeid = $newtypeid;
+			$adht->fetch($typeid);	// Reload with the new type id
+		}
+
+		$caneditamount = $adht->caneditamount;
 
 		if (getDolGlobalString('MEMBER_ALLOW_CHANGE_OF_TYPE')) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-			$adht = new AdherentType($db);
-			// Amount by member type
-			$amountbytype = $adht->amountByType(1);
-
 			// Last member type
 			print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("LastMemberType");
 			print '</td><td class="CTableRow2">'.dol_escape_htmltag($member->type);
@@ -1639,7 +1645,8 @@ if ($source == 'member' || $source == 'membersubscription') {
 
 			// list member type
 			if (!$action) {
-				// Set amount for the subscription
+				// Set amount for the subscription.
+				// If we change the type, we use the amount of the new type and not the amount of last subscription.
 				$amount = (!empty($amountbytype[$member->typeid])) ? $amountbytype[$member->typeid] : $member->last_subscription_amount;
 
 				print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("NewSubscription");
@@ -1659,6 +1666,20 @@ if ($source == 'member' || $source == 'membersubscription') {
 		}
 	}
 
+	// Set amount for the subscription from the the type and options:
+	// - First check the amount of the member type if not previous payment.
+	$amount = ($member->last_subscription_amount ? $member->last_subscription_amount : (empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid]));
+	// - If not found, take the default amount
+	if (empty($amount) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
+		$amount = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
+	}
+	// - If not set, we accept to have amount defined as parameter (for backward compatibility).
+	//if (empty($amount)) {
+	//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+	//}
+	// - If a min is set, we take it into account
+	$amount = max(0, (float) $amount, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
+
 	// Amount
 	print '<tr class="CTableRow2"><td class="CTableRow2">'.$langs->trans("Amount");
 	// This place no longer allows amount edition
@@ -1666,9 +1687,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 		print ' - <a href="' . getDolGlobalString('MEMBER_EXT_URL_SUBSCRIPTION_INFO').'" rel="external" target="_blank" rel="noopener noreferrer">'.$langs->trans("SeeHere").'</a>';
 	}
 	print '</td><td class="CTableRow2">';
-	if (getDolGlobalString('MEMBER_MIN_AMOUNT') && $amount) {
-		$amount = max(0, getDolGlobalString('MEMBER_MIN_AMOUNT'), $amount);
-	}
+
 	$caneditamount = $adht->caneditamount;
 	$minimumamount = !getDolGlobalString('MEMBER_MIN_AMOUNT') ? $adht->amount : max(getDolGlobalString('MEMBER_MIN_AMOUNT'), $adht->amount, $amount);
 

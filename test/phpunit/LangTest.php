@@ -107,9 +107,8 @@ class LangTest extends CommonClassTest
 	 * testLang
 	 * @dataProvider langDataProvider
 	 *
-	 * @param $code Language code for which to verify translations
-	 *
-	 * @return void
+	 * @param 	string	$code 	Language code for which to verify translations
+	 * @return 	void
 	 */
 	public function testLang($code): void
 	{
@@ -234,7 +233,6 @@ class LangTest extends CommonClassTest
 	 * @param string  $key         Key for translation
 	 * @param ?string $param1      Parameter 1 for translation
 	 * @param ?string $param2      Parameter 2 for translation
-	 *
 	 * @return string
 	 */
 	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = null, $param2 = null)

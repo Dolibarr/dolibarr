@@ -552,7 +552,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 }
 
 input {
-	line-height: 17px;
+	line-height: 1.3em;
 	padding: 5px;
 	padding-left: 5px;
 }
@@ -762,14 +762,18 @@ span.amount {
 td.actionbuttons a {
 	padding-left: 6px;
 }
-select.flat, form.flat select, .pageplusone, .divadvancedsearchfieldcompinput, {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
+}
+select.flat, form.flat select, .divadvancedsearchfieldcompinput {
 	height: 2em;
 }
-input.pageplusone, .divadvancedsearchfieldcompinput, {
+input.pageplusone, .divadvancedsearchfieldcompinput {
 	padding-bottom: 4px;
 	padding-top: 4px;
+	margin-right: 4px;
+	margin-left: 3px;
 }
 
 .saturatemedium {
@@ -802,6 +806,10 @@ input.pageplusone, .divadvancedsearchfieldcompinput, {
 }
 .colorblack {
 	color: var(--colorblack);
+}
+.colorblack.totalnboflines {
+	font-size: 95%;
+	opacity: 0.5;
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -1258,12 +1266,12 @@ td.wordbreak img, td.wordbreakimp img {
 }
 /* CSS used for extrafield text */
 .shortmessagecut {
-	max-height: 125px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
 .longmessagecut {
-	max-height: 250px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
@@ -1598,9 +1606,9 @@ input > ul.attendees {
 	vertical-align: middle;
 }
 select.flat.selectlimit {
-	max-width: 62px;
+	max-width: 75px;
 }
-.selectlimit, .marginrightonly {
+.marginrightonly {
 	margin-<?php echo $right; ?>: 10px !important;
 }
 .marginleftonly {
@@ -1850,6 +1858,7 @@ select.flat.selectlimit {
 	overflow-y: hidden;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+
 /* Style used for most tables */
 div.fiche>div.tabBar>form>div.div-table-responsive {
 	min-height: 392px;
@@ -1861,13 +1870,20 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
 .div-table-responsive {
 	line-height: var(--heightrow);
 }
+
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
-div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-	overflow-x: auto;
-}
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+	overflow-x: auto;
+}
+
+/* Style used for table in public ticket */
+div.ticketpublicarealist>form>div.div-table-responsive {
+	min-height: 392px;
+}
+
 
 .display-flex {
 	display: flex;
@@ -1953,7 +1969,7 @@ tr.nobottom td {
 .minwidth75  { min-width: 75px; }
 .nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
+@media only screen and (min-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -3584,7 +3600,11 @@ a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
+	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal;
+	color: var(--colortextbackvmenu);
+	margin: 1px 1px 1px 8px;
+}
 span.vsmenudisabled:not(.spanlilevel0), font.vsmenudisabled:not(.spanlilevel0) {
 	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
 }
@@ -5932,6 +5952,10 @@ div.jPicker table.jPicker {
 	padding-right: 20px;
 	padding-left: 20px;
 }
+table.jPicker tr:first-of-type td {
+	height: 2px !important;
+	line-height: 2px;
+}
 .jPicker .Move {
 	background: unset !important;
 	border: unset !important;
@@ -5958,6 +5982,12 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
+}
+.jPicker td.Text input {
+	height: 1em !important;
+}
+.jPicker .Preview div {
+	height: 36px !important;
 }
 
 A.color, A.color:active, A.color:visited {
@@ -6600,7 +6630,8 @@ input.select2-input {
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-	border: 1px solid #e4e4e4;
+	/* border: 1px solid #e4e4e4; */
+	border: none;
 }
 
 .blockvmenusearch .select2-container--default .select2-selection--single,
@@ -6678,6 +6709,13 @@ input.select2-input {
 	border-left: none;
 	border-right: none;
 	border-radius: 0 !important;
+	line-height: normal;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	line-height: 1.4em;
+}
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+	margin-top: 4px !important;
 }
 .select2-selection--multiple input.select2-search__field {
 	border-bottom: none !important;
@@ -8064,7 +8102,7 @@ table.jPicker {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1') ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 		max-width: 56px;	/* size of viewport */
@@ -8093,7 +8131,7 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2', round($nbtopmenuentries * 69, 0) + 130); ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
