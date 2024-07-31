@@ -1748,7 +1748,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
  *      @param	string			   $module		   You can add module name here if elementtype in table llx_actioncomm is objectkey@module
- *      @return	string|void				           Return html part or void if noprint is 1
+ *      @return	string					           Return html part or nothing if noprint is 1
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
