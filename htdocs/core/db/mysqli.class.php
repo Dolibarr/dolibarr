@@ -854,7 +854,7 @@ class DoliDBMysqli extends DoliDB
 				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
 			}
 			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute'], 0, 0, 1);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute'], 0, 0, 1);	// Allow space to accept attributes like "ON UPDATE CURRENT_TIMESTAMP"
 			}
 			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
