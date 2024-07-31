@@ -950,7 +950,7 @@ if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 	} else {
 		print '<td width="60" class="right">';
 		$contact = new Contact($db);	// InfraS add
-		$contactType = $contact->listeTypeContacts('external', '', 1);
+		$contactType = $contact->listeTypeContacts('external', 0, 1);
 		$selected = explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
 		print $form->multiselectarray('activate_CONTACTS_DEFAULT_ROLES', $contactType, $selected, 0, 0, 'minwidth75imp');
 		print '</td><td class="right">';
