@@ -48,11 +48,11 @@ $substitutionarrayfortest = array(
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	'__LASTNAME__' => 'RecipientLastname',
 	'__FIRSTNAME__' => 'RecipientFirstname',
-	'__ADDRESS__'=> 'RecipientAddress',
-	'__ZIP__'=> 'RecipientZip',
-	'__TOWN_'=> 'RecipientTown',
-	'__COUNTRY__'=> 'RecipientCountry',
-	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+	'__ADDRESS__' => 'RecipientAddress',
+	'__ZIP__' => 'RecipientZip',
+	'__TOWN_' => 'RecipientTown',
+	'__COUNTRY__' => 'RecipientCountry',
+	'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
@@ -732,7 +732,7 @@ if ($action == 'edit') {
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, '', '', '', '', $trackid, $sendcontext);
+		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 
 		$result = $mail->check_server_port($server, $port);
 		if ($result) {
