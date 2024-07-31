@@ -1,4 +1,25 @@
 <?php
+/* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file      htdocs/core/ajax/mailtemplate.php
+ *       \ingroup	core
+ *       \brief     File to return Ajax response on location_incoterms request
+ */
 
 // Just for display errors in editor
 ini_set('display_errors', 1);
@@ -23,9 +44,21 @@ require_once '../lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// There is no permission test on this component for the moment. Test will be added when knowing which data it read.
+
+// TODO $selectedPosts is not initialised, i set it to '' but this is surely a bug and not the expected behaviour.
+// Should be set to list of last news...
+$selectedPosts = '';
+
+
+/*
+ * View
+ */
+
 top_httphead();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
+// TODO Replace with ID of template
+if (GETPOSTISSET('content')) {
 	$content = GETPOST('content');
 
 	if (!empty($selectedPosts)) {

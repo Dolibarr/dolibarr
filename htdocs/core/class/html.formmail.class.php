@@ -1567,8 +1567,8 @@ class FormMail extends Form
 						url: "/core/ajax/mailtemplate.php",
 						data: { content: contentHtml, token: csrfToken },
 						success: function(response) {
-							jQuery("#'.$htmlContent.'").val(response);
-							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
+							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
 							if (editorInstance) {
 								editorInstance.setData(response);
 							}
