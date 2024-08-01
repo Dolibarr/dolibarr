@@ -1122,6 +1122,7 @@ class CMailFile
 					$storage = new DoliStorage($db, $conf, $keyforprovider);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
@@ -1140,17 +1141,17 @@ class CMailFile
 							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
 							// We have to save the token because Google give it only once
 							$refreshtoken = $tokenobj->getRefreshToken();
-							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService
-							   || $apiService instanceof OAuth\OAuth1\Service\AbstractService
-							) {
+
+							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
 								$tokenobj->setRefreshToken($refreshtoken);
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 							}
+
+							$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						}
 
-						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
@@ -1284,6 +1285,7 @@ class CMailFile
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
@@ -1301,16 +1303,18 @@ class CMailFile
 							// ex service is Google-Emails we need only the first part Google
 							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
 							$refreshtoken = $tokenobj->getRefreshToken();
-							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService
-							   || $apiService instanceof OAuth\OAuth1\Service\AbstractService
-							) {
+
+							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
 								// We must save the token because Google provides it only once
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
 								$tokenobj->setRefreshToken($refreshtoken);
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+								$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 							}
 						}
+
 						if (is_object($tokenobj)) {
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
