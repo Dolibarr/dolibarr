@@ -371,7 +371,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 * @param   User            $user           User who updates the attribute
 	 * @param   int        		$notrigger      1 = Do not execute trigger (0 by default)
-	 * @return 	int								<0 if KO, 1 if OK
+	 * @return 	int								Return <0 if KO, 1 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
