@@ -92,9 +92,13 @@ if ($showlinktolayout) {
 	} else {
 		$out .= $formmail->getModelEmailTemplate($htmlname);
 	}
+} else {
+	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to 1, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
 	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+} else {
+	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }
 
 ?>
