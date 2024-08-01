@@ -57,6 +57,7 @@ if ($id > 0 || !empty($ref)) {
 }
 
 $result = restrictedArea($user, 'facture', $object->id);
+$hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
 
 $usercancreate = $user->hasRight("facture", "creer");
 

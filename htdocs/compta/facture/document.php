@@ -80,6 +80,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'facture', $object->id, '');
+$hookmanager->initHooks(array('invoicedocument', 'globalcard'));
 
 $usercancreate = $user->hasRight("facture", "creer");
 
