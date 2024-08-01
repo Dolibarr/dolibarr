@@ -97,7 +97,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 *  Return an example of numbering
 	 *
-	 *  @return     string|int<0>      Example
+	 *  @return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{
