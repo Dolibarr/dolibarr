@@ -81,6 +81,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -121,7 +122,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  PaiementFourn	$object		Object we need next value for
-	 *  @return string|0      				Next value if OK, 0 if KO
+	 *  @return string|int  				Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

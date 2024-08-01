@@ -347,7 +347,7 @@ if ($mode == 'setup' && $user->admin) {
 				}
 				// Check remote access
 				if ($urltocheckperms) {
-					print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
+					print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a class="reposition" href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
 				}
 			}
 			print '</td>';
@@ -356,10 +356,20 @@ if ($mode == 'setup' && $user->admin) {
 			print '<tr class="oddeven">';
 			print '<td>';
 			//var_dump($key);
-			print $langs->trans("Token").'</td>';
+			print $langs->trans("TokenRawValue").'</td>';
 			print '<td colspan="2">';
+			if (is_object($tokenobj)) {
+				print '<textarea class="quatrevingtpercent small" rows="'.ROWS_5.'">'.var_export($tokenobj, true).'</textarea><br>'."\n";
+			}
+			print '</td>';
+			print '</tr>'."\n";
 
 			if (is_object($tokenobj)) {
+				print '<tr class="oddeven">';
+				print '<td>';
+				//var_dump($key);
+				print $langs->trans("AccessToken").'</td>';
+				print '<td colspan="2">';
 				$tokentoshow = $tokenobj->getAccessToken();
 				print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span><br>';
 				//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
@@ -368,11 +378,9 @@ if ($mode == 'setup' && $user->admin) {
 				/*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
 				 print ''.join(',',$tokenobj->getExtraParams());
 				 print '</textarea>';*/
-			}
-			print '</td>';
-			print '</tr>'."\n";
+				print '</td>';
+				print '</tr>'."\n";
 
-			if (is_object($tokenobj)) {
 				// Token refresh
 				print '<tr class="oddeven">';
 				print '<td>';
@@ -392,16 +400,10 @@ if ($mode == 'setup' && $user->admin) {
 				print '</td>';
 				print '<td colspan="2">';
 				print yn($expire);
-				print '</td>';
-				print '</tr>';
 
-				// Token expired at
-				print '<tr class="oddeven">';
-				print '<td>';
-				//var_dump($key);
-				print $langs->trans("TOKEN_EXPIRE_AT");
-				print '</td>';
-				print '<td colspan="2">';
+				print '<span class="opacitymedium"> &nbsp; - &nbsp; ';
+				print $langs->trans("TOKEN_EXPIRE_AT").': ';
+				print '</span>';
 				print $expiredat;
 				print '</td>';
 				print '</tr>';

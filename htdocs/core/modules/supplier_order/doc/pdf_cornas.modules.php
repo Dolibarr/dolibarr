@@ -1248,6 +1248,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref);
+		if ($object->status == $object::STATUS_DRAFT) {
+			$pdf->SetTextColor(128, 0, 0);
+			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 		$posy += 1;
 
@@ -1289,12 +1293,15 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
-		} else {
+		}
+		// no point in having this here this a document sent to supplier
+		/*} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
-		}
+		}*/
+
 
 		$pdf->SetTextColor(0, 0, 60);
 		$usehourmin = 'day';

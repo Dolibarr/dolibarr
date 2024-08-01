@@ -84,6 +84,7 @@ class mod_propale_saphir extends ModeleNumRefPropales
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Proposal"), $langs->transnoentities("Proposal"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -128,9 +129,9 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Propal		$propal		Object commercial proposal
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	Societe			$objsoc     Object third party
+	 * 	@param	Propal			$propal		Object commercial proposal
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $propal)
 	{
