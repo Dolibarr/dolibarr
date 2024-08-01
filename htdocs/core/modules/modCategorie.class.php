@@ -664,7 +664,7 @@ class modCategorie extends DolibarrModules
 	 * @param string	$class			Class of the linked object
 	 * @param string	$enabled		Condition to enable this export
 	 * @param string	$permission		Permission to export the linked object
-	 * @param array		$fields_list	Additionnal fields of the linked object to export
+	 * @param array		$fields_list	Additional fields of the linked object to export
 	 *
 	 * @return void
 	 */
