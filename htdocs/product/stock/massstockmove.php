@@ -691,7 +691,7 @@ if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
-print $form->select_produits((isset($id_product)?$id_product:0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1, -1, 1);
+print $form->select_produits((isset($id_product)?$id_product:0), 'productid', $filtertype, $limit, 0, -1, 2, '', 1, array(), 0, '1', 0, 'minwidth200imp maxwidth300', 1, '', null, 1);
 print '</td>';
 // Batch number
 if (isModEnabled('productbatch')) {
