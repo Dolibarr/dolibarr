@@ -4732,7 +4732,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$poscursor = array('x' => GETPOST('htmlheader_x'), 'y' => GETPOST('htmlheader_y'));
-	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '', $poscursor);
+	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', 120, 'ace', 'In', true, false, 'ace', ROWS_3, '100%', 0, $poscursor);
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
 
