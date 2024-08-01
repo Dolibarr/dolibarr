@@ -81,6 +81,9 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('propaldocument', 'globalcard'));
+
 restrictedArea($user, 'propal', $object->id);
 
 $usercancreate = $user->hasRight("propal", "creer");

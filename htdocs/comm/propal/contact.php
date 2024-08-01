@@ -26,12 +26,12 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
+require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'propal', 'orders', 'sendings', 'companies'));
@@ -58,7 +58,7 @@ if ($id > 0 || !empty($ref)) {
 if (!$error) {
 	$object->fetch_thirdparty();
 } else {
-	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
+	header('Location: ' . DOL_URL_ROOT . '/comm/propal/list.php');
 	exit;
 }
 
@@ -67,7 +67,8 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-restrictedArea($user, 'propal', $object->id);
+$result = restrictedArea($user, 'propal', $object->id);
+$hookmanager->initHooks(array('proposalcontactcard', 'globalcard'));
 
 $usercancreate = $user->hasRight("propal", "creer");
 
@@ -76,6 +77,7 @@ $usercancreate = $user->hasRight("propal", "creer");
  * Add a new contact
  */
 
+// Add new contact
 if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
 	if ($object->id > 0) {
 		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
@@ -84,7 +86,7 @@ if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
 	}
 
 	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -104,18 +106,17 @@ if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
 	$result = $object->delete_contact($lineid);
 
 	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
 }
 
-
 /*
  * View
  */
-$title = $object->ref." - ".$langs->trans('ContactsAddresses');
+$title = $object->ref . " - " . $langs->trans('ContactsAddresses');
 $help_url = "EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos";
 
 llxHeader('', $title, $help_url);
@@ -131,7 +132,7 @@ if ($object->id > 0) {
 
 	// Proposal card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 
 	$morehtmlref = '<div class="refidno">';
@@ -139,7 +140,7 @@ if ($object->id > 0) {
 	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
+	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'customer');
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
@@ -147,16 +148,16 @@ if ($object->id > 0) {
 		if (0) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
 				$morehtmlref .= $proj->getNomUrl(1);
 				if ($proj->title) {
-					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+					$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
 				}
 			}
 		}
@@ -171,7 +172,7 @@ if ($object->id > 0) {
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir) {
-		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
+		$res = @include dol_buildpath($reldir . '/contacts.tpl.php');
 		if ($res) {
 			break;
 		}
