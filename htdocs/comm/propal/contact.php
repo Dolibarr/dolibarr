@@ -67,7 +67,6 @@ $socid = '';
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-
 restrictedArea($user, 'propal', $object->id);
 $hookmanager->initHooks(array('proposalcontactcard', 'globalcard'));
 
