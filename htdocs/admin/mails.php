@@ -63,7 +63,7 @@ $substitutionarrayfortest = array(
 	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("Recipient").')',
 	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("Recipient").')',
 	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("Recipient").')',
-	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+	'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
@@ -138,7 +138,7 @@ $triggersendname = ''; // Disable triggers
 $paramname = 'id';
 $mode = 'emailfortest';
 $trackid = ($action == 'send' ? GETPOST('trackid', 'aZ09') : $action);
-$sendcontext = '';
+$sendcontext = 'standard';
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'test') {
