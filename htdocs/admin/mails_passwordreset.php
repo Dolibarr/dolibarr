@@ -84,7 +84,7 @@ if ($action == 'update' && !$cancel) {
 	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER_PASSWORDRESET", GETPOST("MAIN_MAIL_SMTP_SERVER_PASSWORDRESET"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID_PASSWORDRESET", GETPOST("MAIN_MAIL_SMTPS_ID_PASSWORDRESET"), 'chaine', 0, '', $conf->entity);
 	if (GETPOSTISSET("MAIN_MAIL_SMTPS_PW_PASSWORDRESET")) {
-		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW_PASSWORDRESET", GETPOST("MAIN_MAIL_SMTPS_PW_PASSWORDRESET", 'none'), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW_PASSWORDRESET", GETPOST("MAIN_MAIL_SMTPS_PW_PASSWORDRESET", 'password'), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET("MAIN_MAIL_SMTPS_AUTH_TYPE_PASSWORDRESET")) {
 		dolibarr_set_const($db, "MAIN_MAIL_SMTPS_AUTH_TYPE_PASSWORDRESET", GETPOST("MAIN_MAIL_SMTPS_AUTH_TYPE_PASSWORDRESET", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
