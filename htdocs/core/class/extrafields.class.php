@@ -473,7 +473,7 @@ class ExtraFields
 						if ($result < 0) {
 							$this->error = $this->db->lasterror();
 							$this->errors[] = $this->db->lasterror();
-							$error++;
+							$result = -2;
 						}
 					}
 				}
