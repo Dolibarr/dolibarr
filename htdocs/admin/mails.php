@@ -138,7 +138,7 @@ $triggersendname = ''; // Disable triggers
 $paramname = 'id';
 $mode = 'emailfortest';
 $trackid = ($action == 'send' ? GETPOST('trackid', 'aZ09') : $action);
-$sendcontext = '';
+$sendcontext = 'standard';
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 if ($action == 'presend' && GETPOST('trackid', 'alphanohtml') == 'test') {

@@ -2601,7 +2601,7 @@ class User extends CommonObject
 		}
 
 		$trackid = 'use'.$this->id;
-		$sendcontext = 'password';
+		$sendcontext = 'passwordreset';
 
 		$mailfile = new CMailFile(
 			$subject,
