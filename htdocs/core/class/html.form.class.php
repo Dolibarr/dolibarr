@@ -3047,7 +3047,7 @@ class Form
 		}
 
 		if ((int) $warehouseId > 0) {
-			$sql .= " AND p.rowid IN (SELECT psw.fk_product FROM " . $this->db->prefix() . "product_stock as psw WHERE psw.reel>0 AND psw.fk_entrepot=".(int) $warehouseId.")";
+			$sql .= " AND EXISTS (SELECT psw.fk_product FROM " . $this->db->prefix() . "product_stock as psw WHERE psw.reel>0 AND psw.fk_entrepot=".(int) $warehouseId." AND psw.fk_product = p.rowid)";
 		}
 
 		// Add where from hooks
