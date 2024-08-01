@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
- * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
+/* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +119,7 @@ class ProductCombination2ValuePair
 	 * Create a ProductCombination2ValuePair
 	 *
 	 * @param	User		$user		User that creates		//not used
-	 * @return 	int<-1,1>				1 if OK, -1 if KO
+	 * @return 	int<-1,1>				Return 1 if OK, -1 if KO
 	 */
 	public function create($user)
 	{
