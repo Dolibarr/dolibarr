@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2023  Alexandre Spangaro  <aspangaro@easya.solutions>
+/* Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 $action = GETPOST('action', 'aZ09');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -58,7 +58,7 @@ static $tmpstatut2label = array(
 		'1' => 'CloseFiscalYear'
 );
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fiscalyear($db);
 $hookmanager->initHooks(array('fiscalyearlist'));
 
@@ -87,7 +87,7 @@ $fiscalyearstatic = new Fiscalyear($db);
 
 $title = $langs->trans('AccountingPeriods');
 
-$help_url = "EN:Module_Double_Entry_Accounting";
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
 llxHeader('', $title, $help_url);
 

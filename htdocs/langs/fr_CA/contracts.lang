@@ -2,7 +2,6 @@
 ContractsArea=Zone de contrats
 ContractStatusNotRunning=Ne pas courrir
 ContractStatusValidated=Validée
-ContractStatusClosed=Fermées
 ServiceStatusInitial=Ne pas courrir
 ServiceStatusRunning=Fonctionnement
 ServiceStatusNotLate=En cours d'exécution, pas expiré

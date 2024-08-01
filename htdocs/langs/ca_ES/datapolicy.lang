@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Política de privadesa de dades
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Mòdul de gestió de la privadesa de dades (conformitat amb el GDPR)
-
-#
 # Administration page
-#
 datapolicySetup = Configuració de la política de privadesa de dades del mòdul
 Deletion = Supressió de dades
-datapolicySetupPage = Depenent de les lleis dels vostres països (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Article 5 </a> del GDPR), les dades personals s'han de conservar durant un període no superior al necessari per a les finalitats per a les quals van ser recollides, excepte per a finalitats d'arxiu. <br> L'eliminació es farà automàticament després d'un temps determinat sense esdeveniment (la durada que hauràs indicat a continuació).
+datapolicySetupPage = En funció de les lleis dels vostres països (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> del RGPD), les dades personals s'han de conservar durant un període. sense excedir la durada que les dades siguin necessàries per a la finalitat per a la qual van ser recollides, excepte per a finalitats d'arxiu.<br>L'eliminació es farà automàticament després d'un cert temps sense esdeveniments (la durada que haureu indicat a continuació).
 NB_MONTHS = %s mesos
 ONE_YEAR = 1 any
 NB_YEARS = %s anys
@@ -39,54 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni prospecte/Ni client
 DATAPOLICY_CONTACT_FOURNISSEUR = Proveïdor
 DATAPOLICY_ADHERENT = Soci
 DATAPOLICY_Tooltip_SETUP = Tipus de contacte: indiqueu les vostres opcions per a cada tipus.
-DATAPOLICYMail = Configuració de correus electrònics
-DATAPOLICYSUBJECTMAIL = Assumpte del correu electrònic
-DATAPOLICYCONTENTMAIL = Contingut del correu electrònic
-DATAPOLICYSUBSITUTION = Pots utilitzar les variables següents al teu correu electrònic (LINKACCEPT permet crear un enllaç registrant l'acord de la persona, LINKREFUSED permet registrar la negativa de la persona):
-DATAPOLICYACCEPT = Missatge després de l'acord
-DATAPOLICYREFUSE = Missatge després del desacord
 SendAgreementText = Podeu enviar un correu electrònic de GDPR a tots els vostres contactes rellevants (que encara no han rebut cap correu electrònic i per als quals no heu registrat res sobre el seu acord de GDPR). Per a fer-ho, utilitzeu el botó següent.
 SendAgreement = Envieu correus electrònics
 AllAgreementSend = S'han enviat tots els correus electrònics
 TXTLINKDATAPOLICYACCEPT = Text per a l'enllaç "acord"
-TXTLINKDATAPOLICYREFUSE = Text per a l'enllaç "desacord"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = Text per a l'enllaç «desacord»
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Tractament de dades personals
 DATAPOLICY_consentement = Consentiment obtingut per al tractament de dades personals
 DATAPOLICY_opposition_traitement = S'oposa al tractament de les seves dades personals
 DATAPOLICY_opposition_prospection = S'oposa al tractament de les seves dades personals amb finalitats de prospecció
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anònim a un tercer
-DATAPOLICY_POPUP_ANONYME_TEXTE = No podeu eliminar aquest contacte de Dolibarr perquè hi ha elements relacionats. D'acord amb el GDPR, farà que totes aquestes dades siguin anònimes per a respectar les seves obligacions. T'agradaria continuar?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portabilitat GDPR
-DATAPOLICY_PORTABILITE_TITLE = Exportació de dades personals
-DATAPOLICY_PORTABILITE_CONFIRMATION = Voleu exportar les dades personals d'aquest contacte?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = S'ha anonimitzat l'%s
-
-# V2
-DATAPOLICYReturn = Validació GDPR
 DATAPOLICY_date = Data de l'acord/desacord GDPR
 DATAPOLICY_send = Data d'enviament del correu electrònic de l'acord
-DATAPOLICYReturn = Validació GDPR
-DATAPOLICY_SEND = Envieu un correu electrònic GDPR
 MailSent = Email ha estat enviat
-
-# ERROR
-ErrorSubjectIsRequired = Error: l'assumpte del correu electrònic és obligatori. Indiqueu-ho a la configuració del mòdul
-=A causa d'un problema tècnic, no hem pogut registrar la vostra elecció. Demanem disculpes per això. Contacta amb nosaltres per a enviar-nos la teva elecció.
-NUMBER_MONTH_BEFORE_DELETION = Nombre de mes abans de la supressió
+NUMBER_MONTH_BEFORE_DELETION = Nombre de mesos abans de la supressió

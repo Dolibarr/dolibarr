@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Érvényesített
 StatusSendingProcessedShort=Feldolgozva
 SendingSheet=Szállítási lap
 ConfirmDeleteSending=Biztosan törölni szeretné ezt a szállítmányt?
-ConfirmValidateSending=Biztosan érvényesíteni szeretné ezt a szállítmányt a következő hivatkozással: <b>%s</b>?
+ConfirmValidateSending=Biztosan érvényesíteni kívánja ezt a szállítmányt a következő hivatkozással: <b>%s</b>?
 ConfirmCancelSending=Biztosan törölni szeretné ezt a szállítmányt?
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Figyelem, nincsenek szállításra váró termékek.
@@ -48,7 +48,7 @@ DateDeliveryPlanned=A szállítás tervezett dátuma
 RefDeliveryReceipt=Szállítási visszaigazolás
 StatusReceipt=Kézbesítési nyugta állapota
 DateReceived=Kézbesítés beérkezésének dátuma
-ClassifyReception=Classify Received
+ClassifyReception=Besorolás beérkezett
 SendShippingByEMail=Szállítmány küldése e-mailben
 SendShippingRef=Szállítmány benyújtása %s
 ActionsOnShipping=Események a szállítás során
@@ -62,6 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Termékmennyiség a már beérkezet
 NoProductToShipFoundIntoStock=Nem található szállítandó termék a(z) <b>%s</b> raktárban. Javítsa ki a készletet, vagy menjen vissza egy másik raktár kiválasztásához.
 WeightVolShort=Súly/térfogat.
 ValidateOrderFirstBeforeShipment=Elõször érvényesítenie kell a rendelést, mielõtt kiszállítást végezhet.
+NoLineGoOnTabToAddSome=Nincs sor, lépjen a „%s” lapra a hozzáadáshoz
+CreateInvoiceForThisCustomerFromSendings=Számlaküldések
+IfValidateInvoiceIsNoSendingStayUnbilled=Ha a számla ellenőrzése „Nem”, akkor a küldés „Nem számlázva” állapotú marad mindaddig, amíg a számla nem érvényesül.
+OptionToSetSendingBilledNotEnabled=A Munkafolyamat modul opciója, hogy a küldést automatikusan "Számlázva" értékre állítsa, amikor a számla érvényesítve van, nincs engedélyezve, ezért manuálisan kell a küldések állapotát "Számlázva"-ra állítania. a számla létrejött.
 
 # Sending methods
 # ModelDocument
@@ -70,12 +74,12 @@ DocumentModelStorm=Teljesebb dokumentummodell a kézbesítési elismervényekhez
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Állandó EXPEDITION_ADDON_NUMBER nincs megadva
 SumOfProductVolumes=Termékmennyiségek összege
 SumOfProductWeights=Terméksúlyok összege
-
 # warehouse details
 DetailWarehouseNumber= Raktár adatai
 DetailWarehouseFormat= W:%s (Menny.: %d)
-
-ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Jelenítse meg a készletezés utolsó dátumát a szállítmány létrehozásakor a sorozatszám vagy a tétel esetében
+CreationOptions=Rendelkezésre álló lehetőségek a szállítmány létrehozása során
+ShipmentDistribution=Szállítmány elosztása
+ErrorTooManyCombinationBatchcode=Nem történt feladás a %s sorhoz, mivel túl sok raktár, termék és kötegkód kombináció található (%s).
+ErrorNoCombinationBatchcode=Nem sikerült elmenteni a %s sort a warehouse-product-lot/serial kombinációjaként (%s, %s, %s) nem található raktáron.
+ErrorTooMuchShipped=A kiszállított mennyiség nem lehet nagyobb, mint a %s sorhoz rendelt mennyiség

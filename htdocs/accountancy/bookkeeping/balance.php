@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2016       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2016       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2016-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +51,8 @@ if ($type == 'sub') {
 }
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
 $show_subgroup = GETPOST('show_subgroup', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+$search_date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha');
 if ($search_accountancy_code_start == - 1) {
@@ -64,10 +65,10 @@ if ($search_accountancy_code_end == - 1) {
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -81,7 +82,7 @@ if ($sortfield == "") {
 	$sortfield = "t.numero_compte";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array($contextpage));  // Note that conf->hooks_modules contains array
 
@@ -95,12 +96,12 @@ if (empty($search_date_start) && !GETPOSTISSET('formfilteraction')) {
 	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
 
-	if ($res->num_rows > 0) {
+	if ($db->num_rows($res) > 0) {
 		$fiscalYear = $db->fetch_object($res);
 		$search_date_start = strtotime($fiscalYear->date_start);
 		$search_date_end = strtotime($fiscalYear->date_end);
 	} else {
-		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
+		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$year_start = dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
@@ -131,7 +132,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
  */
 
 $param = '';
-
+$urlparam = '';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -161,15 +162,15 @@ if (empty($reshook)) {
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
-		$param .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
+		$param .= '&date_startmonth=' . GETPOSTINT('date_startmonth') . '&date_startday=' . GETPOSTINT('date_startday') . '&date_startyear=' . GETPOSTINT('date_startyear');
 	}
 	if (!empty($search_date_end)) {
 		$filter['t.doc_date<='] = $search_date_end;
-		$param .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
+		$param .= '&date_endmonth=' . GETPOSTINT('date_endmonth') . '&date_endday=' . GETPOSTINT('date_endday') . '&date_endyear=' . GETPOSTINT('date_endyear');
 	}
 	if (!empty($search_doc_date)) {
 		$filter['t.doc_date'] = $search_doc_date;
-		$param .= '&doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&doc_dateday=' . GETPOST('doc_dateday', 'int') . '&doc_dateyear=' . GETPOST('doc_dateyear', 'int');
+		$param .= '&doc_datemonth=' . GETPOSTINT('doc_datemonth') . '&doc_dateday=' . GETPOSTINT('doc_dateday') . '&doc_dateyear=' . GETPOSTINT('doc_dateyear');
 	}
 	if (!empty($search_accountancy_code_start)) {
 		if ($type == 'sub') {
@@ -206,7 +207,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
 
 	$filename = 'balance';
 	$type_export = 'balance';
@@ -238,6 +239,7 @@ if ($action == 'export_csv') {
 	exit;
 }
 
+
 /*
  * View
  */
@@ -248,7 +250,9 @@ if ($type == 'sub') {
 	$title_page = $langs->trans("AccountBalance");
 }
 
-llxHeader('', $title_page);
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
+
+llxHeader('', $title_page, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-'.(($type == 'sub') ? 'sub' : '').'balance');
 
 
 if ($action != 'export_csv') {
@@ -289,6 +293,7 @@ if ($action != 'export_csv') {
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
+	$url_param = '';
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -376,7 +381,7 @@ if ($action != 'export_csv') {
 	}
 	$moreforfilter .= '</div>';
 
-	if (!empty($conf->global->ACCOUNTING_ENABLE_LETTERING)) {
+	if (getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$moreforfilter .= '<label for="notreconciled">'.$langs->trans('NotReconciled').'</label>: ';
 		$moreforfilter .= '<input type="checkbox" name="search_not_reconciled" id="notreconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>';
@@ -393,7 +398,7 @@ if ($action != 'export_csv') {
 	}
 
 
-	$colspan = (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE) ? 5 : 4);
+	$colspan = (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE') ? 5 : 4);
 
 	print '<table class="liste '.($moreforfilter ? "listwithfilterbefore" : "").'">';
 
@@ -432,15 +437,15 @@ if ($action != 'export_csv') {
 	//if ($type == 'sub') {
 	//	print_liste_field_titre("Type", $_SERVER['PHP_SELF'], "t.type", "", $param, "", $sortfield, $sortorder);
 	//}
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		print_liste_field_titre("OpeningBalance", $_SERVER['PHP_SELF'], "", $param, "", 'class="right"', $sortfield, $sortorder);
 	}
-	print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AccountingDebit", $_SERVER['PHP_SELF'], "t.debit", "", $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("AccountingCredit", $_SERVER['PHP_SELF'], "t.credit", "", $param, 'class="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Balance", $_SERVER["PHP_SELF"], "", $param, "", 'class="right"', $sortfield, $sortorder);
 
 	// Hook fields
-	$parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
@@ -461,7 +466,7 @@ if ($action != 'export_csv') {
 
 	// TODO Debug - This feature is dangerous, it takes all the entries and adds all the accounts
 	// without time and class limits (Class 6 and 7 accounts ???) and does not take into account the "a-nouveau" journal.
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		$sql = "SELECT t.numero_compte, (SUM(t.debit) - SUM(t.credit)) as opening_balance";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as t";
 		$sql .= " WHERE t.entity = " . $conf->entity;        // Never do sharing into accounting features
@@ -469,11 +474,17 @@ if ($action != 'export_csv') {
 		$sql .= " GROUP BY t.numero_compte";
 
 		$resql = $db->query($sql);
-		$nrows = $resql->num_rows;
 		$opening_balances = array();
-		for ($i = 0; $i < $nrows; $i++) {
-			$arr = $resql->fetch_array();
-			$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+		if ($resql) {
+			$nrows = $db->num_rows($resql);
+			for ($i = 0; $i < $nrows; $i++) {
+				$arr = $db->fetch_array($resql);
+				if (is_array($arr)) {
+					$opening_balances["'" . $arr['numero_compte'] . "'"] = $arr['opening_balance'];
+				}
+			}
+		} else {
+			dol_print_error($db);
 		}
 	}
 
@@ -481,9 +492,10 @@ if ($action != 'export_csv') {
 		// reset before the fetch (in case of the fetch fails)
 		$accountingaccountstatic->id = 0;
 		$accountingaccountstatic->account_number = '';
+		$accounting_account = '';
 
 		if ($type != 'sub') {
-			$accountingaccountstatic->fetch(null, $line->numero_compte, true);
+			$accountingaccountstatic->fetch(0, $line->numero_compte, true);
 			if (!empty($accountingaccountstatic->account_number)) {
 				$accounting_account = $accountingaccountstatic->getNomUrl(0, 1, 1);
 			} else {
@@ -508,13 +520,13 @@ if ($action != 'export_csv') {
 			$link = '<a class="editfielda reposition" href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=update&token=' . newToken() . '&id=' . $accountingaccountstatic->id . '">' . img_edit() . '</a>';
 		} elseif ($accounting_account == 'NotDefined') {
 			$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
-		} elseif (empty($tmparrayforrootaccount['label'])) {
+		} /* elseif (empty($tmparrayforrootaccount['label'])) {
 			// $tmparrayforrootaccount['label'] not defined = the account has not parent with a parent.
 			// This is useless, we should not create a new account when an account has no parent, we must edit it to fix its parent.
 			// BUG 1: Accounts on level root or level 1 must not have a parent 2 level higher, so should not show a link to create another account.
 			// BUG 2: Adding a link to create a new accounting account here is useless because it is not add as parent of the orphelin.
 			//$link = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/card.php?action=create&token=' . newToken() . '&accountingaccount=' . length_accountg($line->numero_compte) . '">' . img_edit_add() . '</a>';
-		}
+		} */
 
 		if (!empty($show_subgroup)) {
 			// Show accounting account
@@ -523,23 +535,28 @@ if ($action != 'export_csv') {
 				if ($displayed_account != "") {
 					print '<tr class="liste_total">';
 					print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+					if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print '<td></td>';
+					}
+					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 						print '<td class="right nowraponall amount">'.price($sous_total_opening_balance).'</td>';
 					}
 					print '<td class="right nowraponall amount">'.price($sous_total_debit).'</td>';
 					print '<td class="right nowraponall amount">'.price($sous_total_credit).'</td>';
-					if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+					if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit)).'</td>';
 					} else {
 						print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
 					}
-					print "<td></td>\n";
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+						print "<td></td>\n";
+					}
 					print '</tr>';
 				}
 
 				// Show first line of a break
 				print '<tr class="trforbreak">';
-				print '<td colspan="'.($colspan+1).'" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
+				print '<td colspan="'.($colspan + 1).'" class="tdforbreak">'.$root_account_number.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
 
 				$displayed_account = $root_account_number;
@@ -571,7 +588,7 @@ if ($action != 'export_csv') {
 		//	print '<td></td>';
 		//}
 
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance, 'MT')).'</td>';
 		}
 
@@ -580,20 +597,20 @@ if ($action != 'export_csv') {
 			if ($line->subledger_account) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&search_accountancy_code_start=' . urlencode($line->subledger_account) . '&search_accountancy_code_end=' . urlencode($line->subledger_account);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . GETPOST('date_startmonth', 'int') . '&search_date_startday=' . GETPOST('date_startday', 'int') . '&search_date_startyear=' . GETPOST('date_startyear', 'int');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTINT('date_startmonth') . '&search_date_startday=' . GETPOSTINT('date_startday') . '&search_date_startyear=' . GETPOSTINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . GETPOST('date_endmonth', 'int') . '&search_date_endday=' . GETPOST('date_endday', 'int') . '&search_date_endyear=' . GETPOST('date_endyear', 'int');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTINT('date_endmonth') . '&search_date_endday=' . GETPOSTINT('date_endday') . '&search_date_endyear=' . GETPOSTINT('date_endyear');
 				}
 			}
 		} else {
 			if ($line->numero_compte) {
 				$urlzoom = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . urlencode($line->numero_compte) . '&search_accountancy_code_end=' . urlencode($line->numero_compte);
 				if (GETPOSTISSET('date_startmonth')) {
-					$urlzoom .= '&search_date_startmonth=' . GETPOST('date_startmonth', 'int') . '&search_date_startday=' . GETPOST('date_startday', 'int') . '&search_date_startyear=' . GETPOST('date_startyear', 'int');
+					$urlzoom .= '&search_date_startmonth=' . GETPOSTINT('date_startmonth') . '&search_date_startday=' . GETPOSTINT('date_startday') . '&search_date_startyear=' . GETPOSTINT('date_startyear');
 				}
 				if (GETPOSTISSET('date_endmonth')) {
-					$urlzoom .= '&search_date_endmonth=' . GETPOST('date_endmonth', 'int') . '&search_date_endday=' . GETPOST('date_endday', 'int') . '&search_date_endyear=' . GETPOST('date_endyear', 'int');
+					$urlzoom .= '&search_date_endmonth=' . GETPOSTINT('date_endmonth') . '&search_date_endday=' . GETPOSTINT('date_endday') . '&search_date_endyear=' . GETPOSTINT('date_endyear');
 				}
 			}
 		}
@@ -602,7 +619,7 @@ if ($action != 'export_csv') {
 		// Credit
 		print '<td class="right nowraponall amount"><a href="'.$urlzoom.'">'.price(price2num($line->credit, 'MT')).'</a></td>';
 
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">'.price(price2num($opening_balance + $line->debit - $line->credit, 'MT')).'</td>';
 		} else {
 			print '<td class="right nowraponall amount">'.price(price2num($line->debit - $line->credit, 'MT')).'</td>';
@@ -630,12 +647,12 @@ if ($action != 'export_csv') {
 			print "<td></td>\n";
 		}
 		print '<td class="right">'.$langs->trans("SubTotal").':</td>';
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">'.price(price2num($sous_total_opening_balance, 'MT')).'</td>';
 		}
 		print '<td class="right nowraponall amount">'.price(price2num($sous_total_debit, 'MT')).'</td>';
 		print '<td class="right nowraponall amount">'.price(price2num($sous_total_credit, 'MT')).'</td>';
-		if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_opening_balance + $sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
 		} else {
 			print '<td class="right nowraponall amount">' . price(price2num($sous_total_debit - $sous_total_credit, 'MT')) . '</td>';
@@ -653,12 +670,12 @@ if ($action != 'export_csv') {
 		print "<td></td>\n";
 	}
 	print '<td class="right">'.$langs->trans("AccountBalance").':</td>';
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		print '<td class="nowrap right">'.price(price2num($total_opening_balance, 'MT')).'</td>';
 	}
 	print '<td class="right nowraponall amount">'.price(price2num($total_debit, 'MT')).'</td>';
 	print '<td class="right nowraponall amount">'.price(price2num($total_credit, 'MT')).'</td>';
-	if (!empty($conf->global->ACCOUNTANCY_SHOW_OPENING_BALANCE)) {
+	if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
 		print '<td class="right nowraponall amount">' . price(price2num($total_opening_balance + $total_debit - $total_credit, 'MT')) . '</td>';
 	} else {
 		print '<td class="right nowraponall amount">' . price(price2num($total_debit - $total_credit, 'MT')) . '</td>';
@@ -668,6 +685,37 @@ if ($action != 'export_csv') {
 		print "<td></td>\n";
 	}
 	print '</tr>';
+
+	// Accounting result
+	if (getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT')) {
+		print '<tr class="liste_total">';
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print "<td></td>\n";
+		}
+		print '<td class="right">' . $langs->trans("AccountingResult") . ':</td>';
+		if (getDolGlobalString('ACCOUNTANCY_SHOW_OPENING_BALANCE')) {
+			print '<td></td>';
+		}
+
+		$accountingResult = $object->accountingResult($search_date_start, $search_date_end);
+		if ($accountingResult < 0) {
+			$accountingResultDebit = price(abs((float) price2num($accountingResult, 'MT')));
+			$accountingResultCredit = '';
+			$accountingResultClassCSS = ' error';
+		} else {
+			$accountingResultDebit = '';
+			$accountingResultCredit = price(price2num($accountingResult, 'MT'));
+			$accountingResultClassCSS = ' green';
+		}
+		print '<td class="right nowraponall amount' . $accountingResultClassCSS . '">' . $accountingResultDebit . '</td>';
+		print '<td class="right nowraponall amount' . $accountingResultClassCSS . '">' . $accountingResultCredit . '</td>';
+
+		print '<td></td>';
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print "<td></td>\n";
+		}
+		print '</tr>';
+	}
 
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

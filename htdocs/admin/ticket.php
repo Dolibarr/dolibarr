@@ -3,6 +3,8 @@
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
  * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
 /**
  *     \file        htdocs/admin/ticket.php
  *     \ingroup     ticket
- *     \brief       Page to setup module ticket
+ *     \brief       Page to setup the module ticket
  */
 
 // Load Dolibarr environment
@@ -45,7 +47,7 @@ $action = GETPOST('action', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $label = GETPOST('label', 'alpha');
-$scandir = GETPOST('scandir', 'alpha');
+$scandir = GETPOST('scan_dir', 'alpha');
 $type = 'ticket';
 
 $error = 0;
@@ -86,8 +88,8 @@ if ($action == 'updateMask') {
 	}
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
-	$value = GETPOSTISSET($code) ? GETPOST($code, 'int') : 1;
-	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && $conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	$value = GETPOSTISSET($code) ? GETPOSTINT($code) : 1;
+	if ($code == 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS' && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -152,20 +154,20 @@ if ($action == 'updateMask') {
 	}
 
 	if (GETPOSTISSET('product_category_id')) {
-		$param_ticket_product_category = GETPOST('product_category_id', 'int');
+		$param_ticket_product_category = GETPOSTINT('product_category_id');
 		$res = dolibarr_set_const($db, 'TICKET_PRODUCT_CATEGORY', $param_ticket_product_category, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
 	}
 
-	$param_delay_first_response = GETPOST('delay_first_response', 'int');
+	$param_delay_first_response = GETPOSTINT('delay_first_response');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
 
-	$param_delay_between_responses = GETPOST('delay_between_responses', 'int');
+	$param_delay_between_responses = GETPOSTINT('delay_between_responses');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_SINCE_LAST_RESPONSE', $param_delay_between_responses, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -219,7 +221,7 @@ if ($action == 'updateMask') {
 	}
 
 	// For compatibility when javascript is not enabled
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2 && empty($conf->use_javascript_ajax)) {
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 && empty($conf->use_javascript_ajax)) {
 		$param_notification_also_main_addressemail = GETPOST('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -240,7 +242,7 @@ $formcategory = new FormCategory($db);
 // Page Header
 $help_url = 'EN:Module_Ticket|FR:Module_Ticket_FR';
 $page_name = 'TicketSetup';
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -288,14 +290,15 @@ foreach ($dirmodels as $reldir) {
 
 					include_once $dir.'/'.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
+					'@phan-var-force ModeleNumRefTicket $module';
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
 
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
@@ -379,7 +382,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -408,6 +413,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -422,18 +428,19 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force CommonDocGenerator $module';
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -473,8 +480,6 @@ foreach ($dirmodels as $reldir) {
 								}
 								print '</td>';
 
-								print "</tr>\n";
-
 								// Info
 								$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 								$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
@@ -494,6 +499,8 @@ foreach ($dirmodels as $reldir) {
 								print '<td class="center">';
 								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
 								print '</td>';
+
+								print "</tr>\n";
 							}
 						}
 					}
@@ -576,6 +583,7 @@ if (isModEnabled('product')) {
 	$htmlname = "product_category_id";
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketChooseProductCategory").'</td>';
 	print '<td class="left">';
+	print img_picto('', 'category', 'class="pictofixedwidth"');
 	$formcategory->selectProductCategory(getDolGlobalString('TICKET_PRODUCT_CATEGORY'), $htmlname);
 	if ($conf->use_javascript_ajax) {
 		print ajax_combobox('select_'.$htmlname);
@@ -607,30 +615,17 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswers
 print '</td>';
 print '</tr>';
 
-// Allow classification modification even if the ticket is closed
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAllowClassificationModificationIfClosed").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED", $arrval, getDolGlobalString('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED'));
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsAllowClassificationModificationIfClosedHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
 print '</table><br>';
 
 print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 
 print '</form>';
 
+
 /*
  * Notification
  */
+
 // Admin var of module
 print load_fiche_titre($langs->trans("Notification"), '', '');
 
@@ -646,7 +641,7 @@ print '<td colspan="2">'.$langs->trans("Email").'</td>';
 print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
-if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
+if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print '<tr>';
 	print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
 	print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
@@ -667,14 +662,14 @@ print '</tr>';
 // Email for notification of TICKET_CREATE
 print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
 print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
+print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') ? $conf->global->TICKET_NOTIFICATION_EMAIL_TO : '').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
 // Also send to TICKET_NOTIFICATION_EMAIL_TO for responses (not only creation)
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven"><td>'.$langs->trans("TicketsEmailAlsoSendToMainAddress").'</td>';
 	print '<td class="left">';
 	if ($conf->use_javascript_ajax) {
@@ -691,7 +686,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
 }
 
 // Message header
-//$mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', $langs->trans('TicketMessageMailIntroText'));
 $mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
@@ -704,7 +698,6 @@ print $formcategory->textwithpicto('', $langs->trans("TicketMessageMailIntroHelp
 print '</td></tr>';
 
 // Message footer
-//$mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailFooterText'));
 $mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';

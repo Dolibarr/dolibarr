@@ -37,7 +37,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm')) || !in_array($argv[2], array('thirdparties', 'contacts'))) {
@@ -47,7 +47,7 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add param delay (nb of days), only services with expired date < today + delay are included.\n";
 	print "If you add param after (nb of days), only services with expired date >= today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 $targettype = $argv[2];
@@ -60,6 +60,9 @@ $langs->loadLangs(array('main', 'contracts'));
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -181,7 +184,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "contracts", "bills", "products"));
 
 			if (dol_strlen($newemail)) {
-				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
+				$message .= $outputlangs->trans("Contract")." ".$obj->ref.": ".$outputlangs->trans("Service")." ".dol_concatdesc($obj->plabel, $obj->description)." (".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)."), ".$outputlangs->trans("DateEndPlannedShort")." ".dol_print_date($db->jdate($obj->date_fin_validite), 'day')."\n\n";
 				dol_syslog("email_expire_services_to_customers.php: ".$newemail." ".$message);
 				$foundtoprocess++;
 			}
@@ -224,7 +227,7 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_expire_services_to_customers.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**
@@ -248,7 +251,7 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 	}
 
 	$newlangs = new Translate('', $conf);
-	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
+	$newlangs->setDefaultLang(empty($userlang) ? getDolGlobalString('MAIN_LANG_DEFAULT', 'auto') : $userlang);
 	$newlangs->load("main");
 	$newlangs->load("contracts");
 
@@ -262,35 +265,35 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");
 	}
 
-	$subject = (empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT) ? $title : $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT);
+	$subject = getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_SUBJECT', $title);
 	$sendto = $oldemail;
-	$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$errorsto = $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	$errorsto = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+	$msgishtml = -1;
 
 	print "- Send email to '".$oldtarget."' (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_expire_services_to_customers.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
+	if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER'))) {
 		$usehtml += 1;
 	}
-	if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER)) {
+	if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER'))) {
 		$usehtml += 1;
 	}
 
 	$allmessage = '';
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER;
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_HEADER');
 	} else {
 		$allmessage .= "Dear customer".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= "Please, find a summary of the services contracted by you that are about to expire.".($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
 	// $allmessage.= $langs->trans("Total")." = ".price($total,0,$userlang,0,0,-1,$conf->currency).($usehtml?"<br>\n":"\n");
-	if (!empty($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER');
+		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_EXPIRE_SERVICES_CUSTOMERS_FOOTER'))) {
 			$usehtml += 1;
 		}
 	}

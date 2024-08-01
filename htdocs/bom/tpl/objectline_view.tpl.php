@@ -6,6 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
  * $forceall (0 by default, 1 for supplier invoices/orders)
- * $element     (used to test $user->rights->$element->creer)
- * $permtoedit  (used to replace test $user->rights->$element->creer)
+ * $element     (used to test $user->hasRight($element, 'creer'))
+ * $permtoedit  (used to replace test $user->hasRight($element, 'creer'))
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
@@ -34,18 +35,28 @@
  * $type, $text, $description, $line
  */
 
-/** var ObjectLine $line */
+/**
+ * @var CommonObjectLine $line
+ * @var int $num
+ */
+'@phan-var-force CommonObjectLine $line
+ @phan-var-force int $num
+ @phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
+
 global $filtertype;
-if (empty($filtertype))	$filtertype = 0;
+if (empty($filtertype)) {
+	$filtertype = 0;
+}
 
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
@@ -67,8 +78,11 @@ if (empty($outputalsopricetotalwithtax)) {
 }
 
 // add html5 elements
-if ($filtertype == 1) $domData  = ' data-element="'.$line->element.'service"';
-else $domData  = ' data-element="'.$line->element.'"';
+if ($filtertype == 1) {
+	$domData  = ' data-element="'.$line->element.'service"';
+} else {
+	$domData  = ' data-element="'.$line->element.'"';
+}
 
 $domData .= ' data-id="'.$line->id.'"';
 $domData .= ' data-qty="'.$line->qty.'"';
@@ -78,17 +92,17 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 $objectline = new BOMLine($object->db);
 
 $coldisplay = 0;
-print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_view.tpl.php -->\n";
 print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.' >';
 
 // Line nb
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 	print '<td class="linecolnum center">'.($i + 1).'</td>';
 	$coldisplay++;
 }
 
 // Product
-print '<td class="linecoldescription minwidth300imp">';
+print '<td class="linecoldescription bomline minwidth300imp tdoverflowmax300">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
@@ -100,7 +114,7 @@ if ($tmpbom->id > 0) {
 	print ' '.$langs->trans("or").' ';
 	print $tmpbom->getNomUrl(1);
 	print ' <a class="collapse_bom" id="collapse-'.$line->id.'" href="#">';
-	print (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT) ? img_picto('', 'folder') : img_picto('', 'folder-open'));
+	print(!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT') ? img_picto('', 'folder') : img_picto('', 'folder-open'));
 	print '</a>';
 } else {
 	print $tmpproduct->getNomUrl(1);
@@ -122,56 +136,63 @@ print '</td>';
 // Qty
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
-echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
-if ($filtertype != 1) {
-	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit nowrap left">';
-		$label = $tmpproduct->getLabelOfUnit('long');
+if ($filtertype != 1) { // Product
+	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
+		print '<td class="linecoluseunit nowrap">';
+		$label = measuringUnitString($line->fk_unit, '', '', 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
 		print '</td>';
 	}
-
-	print '<td class="linecolqtyfrozen nowrap right">';
-	$coldisplay++;
-	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
-	print '</td>';
-	print '<td class="linecoldisablestockchange nowrap right">';
-	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formating role of function price
-	print '</td>';
-
-	print '<td class="linecolefficiency nowrap right">';
-	$coldisplay++;
-	echo $line->efficiency;
-	print '</td>';
-} else {
-	// Unit
-	print '<td class="linecolunit nowrap right">';
+} else { // Service
+	// Unit											// For services, units are always enabled
+	print '<td class="linecolunit nowrap">';
 	$coldisplay++;
 
 	if (!empty($line->fk_unit)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$unit = new CUnits($this->db);
 		$unit->fetch($line->fk_unit);
-		print (isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
+		print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 	}
 
 	print '</td>';
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
+	// Qty frozen
+	print '<td class="linecolqtyfrozen nowrap right">';
+	$coldisplay++;
+	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
+	print '</td>';
 
-	// Work station
-	if (isModEnabled('workstation')) {
-		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($line->fk_default_workstation);
+	// Disable stock change
+	print '<td class="linecoldisablestockchange nowrap right">';
+	$coldisplay++;
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
+	print '</td>';
 
-		print '<td class="linecolworkstation nowrap right">';
-		$coldisplay++;
-		if ($res > 0) echo $workstation->getNomUrl();
-		print '</td>';
+	// Efficiency
+	print '<td class="linecolefficiency nowrap right">';
+	$coldisplay++;
+	echo $line->efficiency;
+	print '</td>';
+}
+
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
+	$workstation = new Workstation($object->db);
+	$res = $workstation->fetch($line->fk_default_workstation);
+
+	print '<td class="linecolworkstation nowrap">';
+	$coldisplay++;
+	if ($res > 0) {
+		echo $workstation->getNomUrl(1);
 	}
+	print '</td>';
 }
 
 // Cost
@@ -180,7 +201,7 @@ $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
 if (!empty($line->fk_bom_child)) {
-	echo '<span class="amount">'.price($tmpbom->total_cost * $line->qty).'</span>';
+	echo '<span class="amount">'.price($tmpbom->total_cost * (float) $line->qty).'</span>';
 } else {
 	echo '<span class="amount">'.price($line->total_cost).'</span>';
 }
@@ -237,9 +258,9 @@ if ($action == 'selectlines') {
 print '</tr>';
 
 // Select of all the sub-BOM lines
-// From this pont to the end of the file, we only take care of sub-BOM lines
+// From this point to the end of the file, we only take care of sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
-$sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
+$sql .= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $object->db->query($sql);
 
 if ($resql) {
@@ -257,7 +278,7 @@ if ($resql) {
 		$sub_bom_line->fetch($obj->rowid);
 
 		//If hidden conf is set, we show directly all the sub-BOM lines
-		if (empty($conf->global->BOM_SHOW_ALL_BOM_BY_DEFAULT)) {
+		if (!getDolGlobalString('BOM_SHOW_ALL_BOM_BY_DEFAULT')) {
 			print '<tr style="display:none" class="sub_bom_lines" parentid="'.$line->id.'">';
 		} else {
 			print '<tr class="sub_bom_lines" parentid="'.$line->id.'">';
@@ -278,17 +299,21 @@ if ($resql) {
 		$label = $sub_bom_product->getLabelOfUnit('long');
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') print $langs->trans($label);
+				if ($label !== '') {
+					print $langs->trans($label);
+				}
 				print '</td>';
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
-			if (!empty($conf->global->PRODUCT_USE_UNITS)) {
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * (float) $line->qty, 0, '', 0, 0).'</td>';
+			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
-				if ($label !== '') print $langs->trans($label);
+				if ($label !== '') {
+					print $langs->trans($label);
+				}
 				print '</td>';
 			}
 
@@ -308,39 +333,42 @@ if ($resql) {
 		// Cost
 		if (!empty($sub_bom->id)) {
 			$sub_bom->calculateCosts();
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
-			$total_cost+= $sub_bom->total_cost * $sub_bom_line->qty * $line->qty;
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom->total_cost * $sub_bom_line->qty * (float) $line->qty, 'MT')).'</span></td>';
+			$total_cost += $sub_bom->total_cost * $sub_bom_line->qty * (float) $line->qty;
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
 			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
 			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);
-			if ($res > 0) $sub_bom_line->total_cost = price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+			if ($res > 0) {
+				$sub_bom_line->total_cost = (float) price2num($qty * ($workstation->thm_operator_estimated + $workstation->thm_machine_estimated), 'MT');
+			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
 			$this->total_cost += $line->total_cost;
 		} elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
-			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
-			$total_cost+= $sub_bom_product->cost_price * $sub_bom_line->qty * $line->qty;
+			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * (float) $line->qty, 'MT')).'</span></td>';
+			$total_cost += $sub_bom_product->cost_price * $sub_bom_line->qty * (float) $line->qty;
 		} elseif ($sub_bom_product->pmp > 0) {	// PMP if cost price isn't defined
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
-			print '<span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * $line->qty, 'MT')).'</span></td>';
-			$total_cost.= $sub_bom_product->pmp * $sub_bom_line->qty * $line->qty;
+			print '<span class="amount">'.price(price2num($sub_bom_product->pmp * $sub_bom_line->qty * (float) $line->qty, 'MT')).'</span></td>';
+			$total_cost .= $sub_bom_product->pmp * $sub_bom_line->qty * (float) $line->qty;
 		} else {	// Minimum purchase price if cost price and PMP aren't defined
-			$sql_supplier_price = 'SELECT MIN(price) AS min_price, quantity AS qty FROM '.MAIN_DB_PREFIX.'product_fournisseur_price';
-			$sql_supplier_price.= ' WHERE fk_product = '. (int) $sub_bom_product->id;
+			$sql_supplier_price = "SELECT MIN(price) AS min_price, quantity AS qty FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql_supplier_price .= " WHERE fk_product = ". (int) $sub_bom_product->id;
+			$sql_supplier_price .= " GROUP BY quantity ORDER BY quantity ASC";
 			$resql_supplier_price = $object->db->query($sql_supplier_price);
 			if ($resql_supplier_price) {
-				$obj = $object->db->fetch_object($resql_supplier_price);
+				$obj = $object->db->fetch_object($resql_supplier_price);	// Take first value so the ref with the smaller minimum quantity
 				if (!empty($obj->qty) && !empty($sub_bom_line->qty) && !empty($line->qty)) {
-					$line_cost = $obj->min_price/$obj->qty * $sub_bom_line->qty * $line->qty;
+					$line_cost = $obj->min_price / $obj->qty * $sub_bom_line->qty * (float) $line->qty;
 				} else {
 					$line_cost = $obj->min_price;
 				}
 				print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price2num($line_cost, 'MT').'</span></td>';
-				$total_cost+= $line_cost;
+				$total_cost += $line_cost;
 			}
 		}
 

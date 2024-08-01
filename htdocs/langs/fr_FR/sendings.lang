@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validée
 StatusSendingProcessedShort=Traitée
 SendingSheet=Fiche expédition
 ConfirmDeleteSending=Êtes-vous sûr de vouloir supprimer cette expédition ?
-ConfirmValidateSending=Êtes-vous sûr de vouloir valider cette expédition sous la référence <b>%s</b>?
+ConfirmValidateSending=Êtes-vous sûr de vouloir valider cet envoi avec la référence <b>%s</b> ?
 ConfirmCancelSending=Êtes-vous sûr de vouloir annuler cette expédition ?
 DocumentModelMerou=Modèle Merou A5
 WarningNoQtyLeftToSend=Alerte, aucun produit en attente d'expédition.
@@ -62,6 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Quantité de produit déjà reçu e
 NoProductToShipFoundIntoStock=Aucun produit à expédier n'a été trouvé dans l'entrepôt <b>%s</b>. Corrigez le stock ou choisissez un autre entrepôt.
 WeightVolShort=Poids/vol.
 ValidateOrderFirstBeforeShipment=Vous devez d'abord valider la commande pour pouvoir créer une expédition.
+NoLineGoOnTabToAddSome=Aucune ligne, allez sur l'onglet "%s" pour en ajouter
+CreateInvoiceForThisCustomerFromSendings=Envois de factures
+IfValidateInvoiceIsNoSendingStayUnbilled=Si la validation de la facture est "Non", l'envoi restera à l'état "Non facturé" jusqu'à ce que la facture soit validée.
+OptionToSetSendingBilledNotEnabled=L'option du module Workflow, qui permet de définir l'envoi comme "facturé" automatiquement lorsque la facture est validée, n'est pas activée. Vous devrez donc définir manuellement l'état des envois comme "facturé" après que la facture a été générée.
 
 # Sending methods
 # ModelDocument
@@ -70,15 +74,12 @@ DocumentModelStorm=Modèle de document plus complet des fiches expéditions et c
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER non définie
 SumOfProductVolumes=Somme des volumes des produits
 SumOfProductWeights=Somme des poids des produits
-
 # warehouse details
 DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock à la création d'une expédition pour les numéros de séries et lots
-CreationOptions=Options disponibles à la création d'une expédition
-
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock lors de la création de l'expédition pour les numéros de série ou les lots
+CreationOptions=Options disponibles lors de la création de l'expédition
 ShipmentDistribution=Répartition des expéditions
-
 ErrorTooManyCombinationBatchcode=Pas de répartition pour la ligne %s car trop de combinaisons entrepôt, produit, code de lot ont été trouvées (%s).
-ErrorNoCombinationBatchcode=Impossible d'enregistrer la ligne %s car la combinaison entrepôt-produit-lot/série (%s, %s, %s) n'a pas été trouvée en stock.
-
+ErrorNoCombinationBatchcode=Impossible d'enregistrer la ligne %s car aucune combinaison entrepôt, produit, code de lot ( %s, %s, %s) n'a pas été trouvé en stock.
+ErrorTooMuchShipped=La quantité expédiée ne doit pas être supérieure à la quantité commandée pour la ligne %s

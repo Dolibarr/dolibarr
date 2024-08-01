@@ -24,6 +24,7 @@ create table llx_product_association
   fk_product_fils       integer NOT NULL DEFAULT 0, -- id du sous-produit
   qty                   double NULL,
   incdec                integer DEFAULT 1, -- when set to 1 changing stock of product will change stock of linked product too
-  rang                  integer DEFAULT 0
+  rang                  integer DEFAULT 0,
+  import_key            varchar(14) DEFAULT NULL
 )ENGINE=innodb;
 

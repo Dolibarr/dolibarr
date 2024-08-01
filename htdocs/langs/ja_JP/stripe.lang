@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任
 ToOfferALinkForOnlinePaymentOnMemberSubscription=構成員サブスクリプションの%sオンライン支払ページを提供するURL
 ToOfferALinkForOnlinePaymentOnDonation=寄付の支払のために%sオンライン支払ページを提供するURL
 YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して(オブジェクトにリンクされていない支払にのみ必須)、独自の支払コメントタグを追加することもできる。 <br>既存のオブジェクトがない支払のURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる(一部の支払モードでは、このパラメータがないと、異なるリンクごとに支払が1に制限される場合がある)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証済なら支払が自動的に作成されるように、URL <b> %s</b>を使用してStripeを設定する。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
@@ -71,9 +72,19 @@ ToOfferALinkForTestWebhook=IPNを呼び出すためのStripeWebHookの設定へ�
 ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookの設定へのリンク(ライブモード)
 PaymentWillBeRecordedForNextPeriod=支払は次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客 認証する ルールにより、カードの作成は Stripe バックオフィスから行う必要がある。ここをクリックして Stripe 顧客レコードをオンにできる: %s
 STRIPE_CARD_PRESENT=ストライプ端末のカードプレゼント
 TERMINAL_LOCATION=Stripe 端末の場所 (アドレス)
 RequestDirectDebitWithStripe=Stripe で口座振替をリクエストする
+RequesCreditTransferWithStripe=Stripe でクレジット転送をリクエストする
 STRIPE_SEPA_DIRECT_DEBIT=Stripe による口座振替の支払いを有効にする
-
+STRIPE_KLARNA=Klarnaを使った支払いを有効化
+STRIPE_BANCONTACT=BANCONTACTを使用した支払いを有効化
+STRIPE_IDEAL=IDEALを使用した支払いを有効化
+STRIPE_GIROPAY=GIROPAYを使用した支払いを有効化
+STRIPE_SOFORT=SOFORTを使用した支払いを有効化
+StripeConnect_Mode=ストライプ接続モード
+ExampleOnlyForBECustomers=ベルギーのお客様のみ
+ExampleOnlyForDECustomers=ドイツのお客様のみ
+ExampleOnlyForNLCustomers=オランダのお客様のみ
+ExampleOnlyForATBEDEITNLESCustomers=オーストリア、ベルギー、ドイツ、イタリア、オランダ、スペインのお客様のみ

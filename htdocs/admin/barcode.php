@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 if ($action == 'setbarcodeproducton') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
-	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)) {
+	if ($barcodenumberingmodule == 'mod_barcode_product_standard' && !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
 		$res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodeproductoff') {
@@ -61,7 +62,7 @@ if ($action == 'setbarcodeproducton') {
 if ($action == 'setbarcodethirdpartyon') {
 	$barcodenumberingmodule = GETPOST('value', 'alpha');
 	$res = dolibarr_set_const($db, "BARCODE_THIRDPARTY_ADDON_NUM", $barcodenumberingmodule, 'chaine', 0, '', $conf->entity);
-	if ($barcodenumberingmodule == 'mod_barcode_thirdparty_standard' && empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
+	if ($barcodenumberingmodule == 'mod_barcode_thirdparty_standard' && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
 		$res = dolibarr_set_const($db, "BARCODE_STANDARD_THIRDPARTY_MASK", '04{0000000000}', 'chaine', 0, '', $conf->entity);
 	}
 } elseif ($action == 'setbarcodethirdpartyoff') {
@@ -70,7 +71,7 @@ if ($action == 'setbarcodethirdpartyon') {
 
 if ($action == 'setcoder') {
 	$coder = GETPOST('coder', 'alpha');
-	$code_id = GETPOST('code_id', 'int');
+	$code_id = GETPOSTINT('code_id');
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
 	$sqlp .= " SET coder = '".$db->escape($coder)."'";
 	$sqlp .= " WHERE rowid = ".((int) $code_id);
@@ -136,7 +137,7 @@ $form = new Form($db);
 $formbarcode = new FormBarCode($db);
 
 $help_url = 'EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra|DE:Modul_Barcode';
-llxHeader('', $langs->trans("BarcodeSetup"), $help_url);
+llxHeader('', $langs->trans("BarcodeSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-barcode');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BarcodeSetup"), $linkback, 'title_setup');
@@ -162,7 +163,7 @@ foreach ($dirbarcode as $reldir) {
 	$handle = @opendir($newdir);
 	if (is_resource($handle)) {
 		while (($file = readdir($handle)) !== false) {
-			if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS') {
+			if (substr($file, 0, 1) != '.' && substr($file, 0, 3) != 'CVS') {
 				if (is_readable($newdir.$file)) {
 					if (preg_match('/(.*)\.modules\.php$/i', $file, $reg)) {
 						$filebis = $reg[1];
@@ -173,15 +174,15 @@ foreach ($dirbarcode as $reldir) {
 						$module = new $classname($db);
 
 						// Show modules according to features level
-						if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
 						}
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 							continue;
 						}
 
 						if ($module->isEnabled()) {
-							$barcodelist[$filebis] = $module->info();
+							$barcodelist[$filebis] = $module->info($langs);
 						}
 					}
 				}
@@ -189,7 +190,7 @@ foreach ($dirbarcode as $reldir) {
 		}
 	}
 }
-
+'@phan-var-force array<string,ModeleBarCode> $barcodelist';
 
 
 // Select barcode numbering module
@@ -224,6 +225,7 @@ if (isModEnabled('product')) {
 					}
 
 					$modBarCode = new $file();
+					'@phan-var-force ModeleNumRefBarCode $modBarCode';
 
 					print '<tr class="oddeven">';
 					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
@@ -231,7 +233,7 @@ if (isModEnabled('product')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM) && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -292,7 +294,7 @@ if (isModEnabled('societe')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (!empty($conf->global->BARCODE_THIRDPARTY_ADDON_NUM) && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodethirdpartyoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -356,8 +358,8 @@ if ($resql) {
 		print dol_escape_htmltag($obj->label);
 		print "</td><td>\n";
 		print $langs->trans('BarcodeDesc'.$obj->encoding);
-		//print "L'EAN se compose de 8 caracteres, 7 chiffres plus une cle de controle.<br>";
-		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupres d'organisme tel que GENCOD.<br>";
+		//print "L'EAN se compose de 8 characters, 7 chiffres plus une cle de verification.<br>";
+		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement aupres d'organismes comme GENCOD.<br>";
 		//print "Codes numeriques utilises exclusivement a l'identification des produits susceptibles d'etre vendus au grand public.";
 		print '</td>';
 
@@ -443,9 +445,9 @@ if (!isset($_SERVER['WINDIR'])) {
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" class="center">';
 	print '<input type="text" size="40" name="GENBARCODE_LOCATION" value="'.getDolGlobalString('GENBARCODE_LOCATION').'">';
-	if (!empty($conf->global->GENBARCODE_LOCATION) && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
+	if (getDolGlobalString('GENBARCODE_LOCATION') && !@file_exists($conf->global->GENBARCODE_LOCATION)) {
 		$langs->load("errors");
-		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", $conf->global->GENBARCODE_LOCATION).'</span>';
+		print '<br><span class="error">'.$langs->trans("ErrorFileNotFound", getDolGlobalString('GENBARCODE_LOCATION')).'</span>';
 	}
 	print '</td>';
 	print '<td>&nbsp;</td>';
@@ -457,7 +459,7 @@ if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE, "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE'), "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
@@ -468,7 +470,7 @@ if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY, "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY'), "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';

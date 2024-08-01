@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2010  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,14 +80,15 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
-		$coyymm = ''; $max = '';
+		$coyymm = '';
+		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
@@ -100,7 +103,10 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
+			if ($row) {
+				$coyymm = substr($row[0], 0, 6);
+				$max = $row[0];
+			}
 		}
 		if ($coyymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			$langs->load("errors");
@@ -114,8 +120,8 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param  StockTransfer	$object		Object we need next value for
+	 *  @return string|-1     	 			Value if OK, -1 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -135,8 +141,11 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
-			if ($obj) $max = intval($obj->max);
-			else $max = 0;
+			if ($obj) {
+				$max = intval($obj->max);
+			} else {
+				$max = 0;
+			}
 		} else {
 			dol_syslog("mod_stocktransfer_standard::getNextValue", LOG_DEBUG);
 			return -1;
@@ -144,10 +153,13 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 
 		//$date=time();
 		$date = $object->date_creation;
-		$yymm = strftime("%y%m", $date);
+		$yymm = dol_print_date($date, "%y%m");
 
-		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max + 1);
+		if ($max >= (pow(10, 4) - 1)) {
+			$num = $max + 1;
+		} else { // If counter > 9999, we do not format on 4 chars, we take number as it is
+			$num = sprintf("%04d", $max + 1);
+		}
 
 		dol_syslog("mod_stocktransfer_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;

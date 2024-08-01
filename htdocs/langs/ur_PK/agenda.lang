@@ -8,8 +8,6 @@ LocalAgenda=ڈیفالٹ کیلنڈر
 ActionsOwnedBy=ایونٹ کی ملکیت
 ActionsOwnedByShort=مالک
 AffectedTo=مقرر کیا، مقرر کرنا
-Event=تقریب
-Events=تقریبات
 EventsNb=واقعات کی تعداد
 ListOfActions=واقعات کی فہرست
 EventReports=واقعہ کی رپورٹس
@@ -23,7 +21,6 @@ MenuDoneMyActions=میرے ختم شدہ واقعات
 ListOfEvents=واقعات کی فہرست (پہلے سے طے شدہ کیلنڈر)
 ActionsAskedBy=واقعات کی اطلاع بذریعہ
 ActionsToDoBy=ایونٹس تفویض کیے گئے۔
-ActionsDoneBy=کے ذریعہ کئے گئے واقعات
 ActionAssignedTo=تقریب تفویض کی گئی۔
 ViewCal=مہینے کا نظارہ
 ViewDay=دن کا نظارہ
@@ -45,7 +42,7 @@ CONTRACT_DELETEInDolibarr=معاہدہ %s حذف کر دیا گیا۔
 PropalClosedSignedInDolibarr=تجویز %s پر دستخط کیے گئے۔
 PropalClosedRefusedInDolibarr=تجویز %s سے انکار کر دیا گیا۔
 PropalValidatedInDolibarr=تجویز %s کی توثیق کر دی گئی۔
-PropalBackToDraftInDolibarr=Proposal %s go back to draft status
+PropalBackToDraftInDolibarr=تجویز %s ڈرافٹ کی حیثیت پر واپس جائیں
 PropalClassifiedBilledInDolibarr=تجویز %s کلاسیفائیڈ بل
 InvoiceValidatedInDolibarr=انوائس %s کی توثیق ہو گئی۔
 InvoiceValidatedInDolibarrFromPos=انوائس %s POS سے تصدیق شدہ
@@ -57,19 +54,19 @@ MemberValidatedInDolibarr=ممبر %s کی توثیق کر دی گئی۔
 MemberModifiedInDolibarr=ممبر %s میں ترمیم کی گئی۔
 MemberResiliatedInDolibarr=رکن %s ختم کر دیا گیا۔
 MemberDeletedInDolibarr=رکن %s حذف کر دیا گیا۔
-MemberExcludedInDolibarr=Member %s excluded
+MemberExcludedInDolibarr=ممبر %s کو خارج کر دیا گیا
 MemberSubscriptionAddedInDolibarr=رکن %s کے لیے رکنیت %s شامل کی گئی
 MemberSubscriptionModifiedInDolibarr=رکن %s کے لیے سبسکرپشن %s میں ترمیم کی گئی
 MemberSubscriptionDeletedInDolibarr=رکن %s کی رکنیت %s کو حذف کر دیا گیا
 ShipmentValidatedInDolibarr=کھیپ %s کی توثیق کر دی گئی۔
-ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
+ShipmentClassifyClosedInDolibarr=کھیپ %s درجہ بند بند
 ShipmentUnClassifyCloseddInDolibarr=کھیپ %s دوبارہ کھولنے کی درجہ بندی
 ShipmentBackToDraftInDolibarr=کھیپ %s ڈرافٹ اسٹیٹس پر واپس جائیں۔
 ShipmentDeletedInDolibarr=کھیپ %s حذف کر دی گئی۔
 ShipmentCanceledInDolibarr=کھیپ %s منسوخ کر دی گئی۔
 ReceptionValidatedInDolibarr=استقبالیہ %s توثیق شدہ
-ReceptionDeletedInDolibarr=Reception %s deleted
-ReceptionClassifyClosedInDolibarr=Reception %s classified closed
+ReceptionDeletedInDolibarr=استقبالیہ %s حذف کر دیا گیا
+ReceptionClassifyClosedInDolibarr=استقبالیہ %s درجہ بند بند
 OrderCreatedInDolibarr=آرڈر %s بنایا گیا۔
 OrderValidatedInDolibarr=آرڈر %s کی توثیق ہو گئی۔
 OrderDeliveredInDolibarr=آرڈر %s کلاسیفائیڈ ڈیلیور کر دیا گیا۔
@@ -88,7 +85,9 @@ SupplierInvoiceSentByEMail=وینڈر انوائس %s ای میل کے ذریع�
 ShippingSentByEMail=کھیپ %s ای میل کے ذریعے بھیجی گئی۔
 ShippingValidated= کھیپ %s کی توثیق کر دی گئی۔
 InterventionSentByEMail=مداخلت %s ای میل کے ذریعے بھیجی گئی۔
-ProjectSentByEMail=Project %s sent by email
+ProjectSentByEMail=پروجیکٹ %s بذریعہ ای میل بھیجا گیا
+ProjectDeletedInDolibarr=Project %s deleted
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=تجویز حذف کر دی گئی۔
 OrderDeleted=آرڈر حذف کر دیا گیا۔
 InvoiceDeleted=رسید حذف کر دی گئی۔
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO نے تیار کیا۔
 MRP_MO_DELETEInDolibarr=MO حذف کر دیا گیا۔
 MRP_MO_CANCELInDolibarr=MO منسوخ کر دیا گیا۔
 PAIDInDolibarr=%s ادا کیا گیا۔
+ENABLEDISABLEInDolibarr=صارف فعال یا غیر فعال
+CANCELInDolibarr=Canceled
 ##### End agenda events #####
 AgendaModelModule=تقریب کے لیے دستاویز کے سانچے
 DateActionStart=شروع کرنے کی تاریخ
 DateActionEnd=آخری تاریخ
 AgendaUrlOptions1=آپ فلٹر آؤٹ پٹ میں درج ذیل پیرامیٹرز بھی شامل کر سکتے ہیں:
-AgendaUrlOptions3= <b> logina=%s </b> آؤٹ پٹ کو کسی صارف کی ملکیت والی کارروائیوں تک محدود کرنے کے لیے
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b> آؤٹ پٹ کو ان کارروائیوں تک محدود کرنے کے لیے جو صارف کی ملکیت نہیں ہیں
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b> صارف کو تفویض کردہ کارروائیوں تک آؤٹ پٹ کو محدود کرنے کے لیے
 AgendaUrlOptionsProject= <b> پروجیکٹ=__PROJECT_ID__ </b> پروجیکٹ سے منسلک کارروائیوں تک آؤٹ پٹ کو محدود کرنے کے لیے <b> __PROJECT_ID__ </b> ۔
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b> خودکار واقعات کو خارج کرنے کے لیے۔
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> تعطیلات کے واقعات شامل کرنے کے لیے
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=رابطوں کی سالگرہ
 AgendaHideBirthdayEvents=رابطوں کی سالگرہ چھپائیں۔
 Busy=مصروف
@@ -162,7 +165,7 @@ DateActionBegin=ایونٹ کی تاریخ شروع کریں۔
 ConfirmCloneEvent=کیا آپ واقعی <b> %s </b> ایونٹ کا کلون کرنا چاہتے ہیں؟
 RepeatEvent=واقعہ کو دہرائیں۔
 OnceOnly=صرف ایک بار
-EveryDay=Every day
+EveryDay=ہر روز
 EveryWeek=ہر ہفتے
 EveryMonth=ہر مہینے
 DayOfMonth=مہینے کا دن
@@ -177,7 +180,28 @@ ReminderType=کال بیک کی قسم
 AddReminder=اس ایونٹ کے لیے ایک خودکار یاد دہانی کی اطلاع بنائیں
 ErrorReminderActionCommCreation=اس ایونٹ کے لیے یاد دہانی کی اطلاع بنانے میں خرابی۔
 BrowserPush=براؤزر پاپ اپ نوٹیفکیشن
-Reminders=Reminders
+Reminders=یاد دہانیاں
 ActiveByDefault=بطور ڈیفالٹ فعال
-Until=until
-DataFromWasMerged=Data from %s was merged
+Until=جب تک
+DataFromWasMerged=%s کا ڈیٹا ملا دیا گیا
+AgendaShowBookcalCalendar=بکنگ کیلنڈر: %s
+MenuBookcalIndex=آن لائن ملاقات
+BookcalLabelAvailabilityHelp=دستیابی کی حد کا لیبل۔ مثال کے طور پر:<br>عام دستیابی<br>کرسمس کی چھٹیوں کے دوران دستیابی
+DurationOfRange=حدود کا دورانیہ
+BookCalSetup = آن لائن اپائنٹمنٹ سیٹ اپ
+BookCalSetupPage = آن لائن اپائنٹمنٹ سیٹ اپ صفحہ
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = انٹرفیس کا عنوان
+BookCalAbout = BookCal کے بارے میں
+BookCalAboutPage = صفحہ کے بارے میں بک کیل
+Calendars=کیلنڈرز
+Availabilities=دستیابی
+NewAvailabilities=نئی دستیابیاں
+NewCalendar=نیا کیلنڈر
+ThirdPartyBookCalHelp=اس کیلنڈر میں بک کردہ ایونٹ خود بخود اس تھرڈ پارٹی سے منسلک ہو جائے گا۔
+AppointmentDuration = ملاقات کا دورانیہ : %s
+BookingSuccessfullyBooked=آپ کی بکنگ محفوظ ہو گئی ہے۔
+BookingReservationHourAfter=ہم تاریخ %s پر اپنی میٹنگ کی ریزرویشن کی تصدیق کرتے ہیں۔
+BookcalBookingTitle=آن لائن ملاقات
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

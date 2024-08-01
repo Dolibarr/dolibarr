@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +20,14 @@
 /**
  *	\file       htdocs/core/modules/project/mod_project_universal.php
  *	\ingroup    project
- *	\brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
+ *	\brief      Fichier contenant la class du modele de numerotation de reference de projet Universal
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
 
 /**
- * 	Classe du modele de numerotation de reference de projet Universal
+ * 	Class du modele de numerotation de reference de projet Universal
  */
 class mod_task_universal extends ModeleNumRefTask
 {
@@ -81,6 +82,7 @@ class mod_task_universal extends ModeleNumRefTask
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -119,11 +121,11 @@ class mod_task_universal extends ModeleNumRefTask
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc		Object third party
-	 *  @param   Task		$object	    Object task
-	 *  @return  string					Value if OK, 0 if KO
+	 *  @param	Societe|string	$objsoc		Object third party
+	 *  @param	Task|string		$object	    Object task
+	 *  @return string|int				Value if OK, 0 if KO
 	 */
-	public function getNextValue($objsoc, $object)
+	public function getNextValue($objsoc = '', $object = '')
 	{
 		global $db, $conf;
 
@@ -136,24 +138,9 @@ class mod_task_universal extends ModeleNumRefTask
 			return 0;
 		}
 
-		$date = empty($object->date_c) ?dol_now() : $object->date_c;
+		$date = empty($object->date_c) ? dol_now() : $object->date_c;
 		$numFinal = get_next_value($db, $mask, 'projet_task', 'ref', '', (is_object($objsoc) ? $objsoc->code_client : ''), $date);
 
 		return  $numFinal;
-	}
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next reference not yet used as a reference
-	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 *  @param  Task		$object	    Object task
-	 *  @return string      			Next not used reference
-	 */
-	public function project_get_num($objsoc = 0, $object = '')
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $object);
 	}
 }

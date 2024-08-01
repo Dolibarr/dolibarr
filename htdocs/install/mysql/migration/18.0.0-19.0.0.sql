@@ -34,7 +34,13 @@
 
 -- v18
 
+-- VPGSQL8.2 ALTER SEQUENCE llx_projet_task_time_rowid_seq RENAME TO llx_element_time_rowid_seq;
 
+ALTER TABLE llx_product_perentity ADD COLUMN pmp double(24,8);
+
+ALTER TABLE llx_projet_task ADD COLUMN fk_user_modif integer after fk_user_creat;
+
+UPDATE llx_paiement SET ref = rowid WHERE ref IS NULL OR ref = '';
 
 
 -- v19
@@ -87,9 +93,13 @@ ALTER TABLE llx_adherent DROP COLUMN whatsapp;
 
 ALTER TABLE llx_societe DROP COLUMN skype;
 
+ALTER TABLE llx_user ADD COLUMN email_oauth2 varchar(255);
+ALTER TABLE llx_user ADD COLUMN last_main_doc varchar(255);
+
 ALTER TABLE llx_prelevement_demande ADD INDEX idx_prelevement_demande_ext_payment_id (ext_payment_id);
 
-ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_availability integer DEFAULT NULL;
+ALTER TABLE llx_actioncomm CHANGE COLUMN fk_bookcal_availability fk_bookcal_calendar integer;
+ALTER TABLE llx_actioncomm ADD COLUMN fk_bookcal_calendar integer DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_entity (entity);
 
@@ -134,8 +144,79 @@ insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALU
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '5.2', 'Πιστωτικό Τιμολόγιο / Μη Συσχετιζόμενο', 1);
 insert into llx_c_invoice_subtype (entity, fk_country, code, label, active) VALUES (1, 102, '11.4', 'Πιστωτικό Στοιχ. Λιανικής', 1);
 
+-- Product/service managed in stock
+ALTER TABLE llx_product ADD COLUMN stockable_product integer DEFAULT 1 NOT NULL;
+UPDATE llx_product set stockable_product = 0 WHERE fk_product_type = 1;
+
 ALTER TABLE llx_prelevement_lignes ADD COLUMN fk_user integer NULL;
 
+ALTER TABLE llx_hrm_evaluation ADD COLUMN last_main_doc varchar(255);
 ALTER TABLE llx_hrm_evaluationdet ADD COLUMN comment TEXT;
 
-	
+ALTER TABLE llx_resource ADD COLUMN address varchar(255) DEFAULT NULL AFTER fk_code_type_resource;
+ALTER TABLE llx_resource ADD COLUMN zip varchar(25) DEFAULT NULL AFTER address;
+ALTER TABLE llx_resource ADD COLUMN town varchar(50) DEFAULT NULL AFTER zip;
+ALTER TABLE llx_resource ADD COLUMN photo_filename varchar(255) DEFAULT NULL AFTER town;
+ALTER TABLE llx_resource ADD COLUMN max_users integer DEFAULT NULL AFTER photo_filename;
+ALTER TABLE llx_resource ADD COLUMN phone varchar(255) DEFAULT NULL AFTER max_users;
+ALTER TABLE llx_resource ADD COLUMN email varchar(255) DEFAULT NULL AFTER phone;
+ALTER TABLE llx_resource ADD COLUMN url varchar(255) DEFAULT NULL AFTER email;
+ALTER TABLE llx_resource ADD COLUMN fk_state integer DEFAULT NULL AFTER fk_country;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_state (fk_state);
+--ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_state FOREIGN KEY (fk_state) REFERENCES llx_c_departements (rowid);
+
+
+ALTER TABLE llx_mailing ADD COLUMN note_private text;
+ALTER TABLE llx_mailing ADD COLUMN note_public text;
+
+ALTER TABLE llx_user_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_bank_account ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+ALTER TABLE llx_societe_rib ADD COLUMN bic_intermediate varchar(11) AFTER bic;
+
+UPDATE llx_menu SET url = '/fourn/paiement/list.php?mainmenu=billing&leftmenu=suppliers_bills_payment' WHERE leftmenu = 'suppliers_bills_payment';
+
+ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_datec(datec);
+
+ALTER TABLE llx_facturedet ADD COLUMN batch varchar(128) NULL;		-- To store the batch to consume in stock when using a POS module
+ALTER TABLE llx_facturedet ADD COLUMN fk_warehouse integer NULL;	-- To store the warehouse where to consume stock when using a POS module
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN rate_indirect double DEFAULT 0;
+
+ALTER TABLE llx_mrp_production ADD COLUMN fk_unit integer DEFAULT NULL;
+-- VMYSQL4.1 UPDATE llx_mrp_production as mp INNER JOIN llx_bom_bomline as bbl ON mp.origin_id = bbl.rowid SET mp.fk_unit = bbl.fk_unit WHERE mp.origin_type = 'bomline' AND mk.fk_unit IS NULL;
+-- VMYSQL4.1 UPDATE llx_bom_bomline as bbl INNER JOIN llx_product as p ON p.rowid = bbl.fk_product SET bbl.fk_unit = p.fk_unit WHERE bbl.fk_unit IS NULL;
+
+ALTER TABLE llx_facture_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
+ALTER TABLE llx_facture_fourn_rec ADD COLUMN subtype smallint DEFAULT NULL AFTER entity;
+
+CREATE TABLE llx_mrp_production_extrafields
+(
+    rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+    tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object                 integer NOT NULL,
+    import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_production_extrafields ADD INDEX idx_mrp_production_fk_object(fk_object);
+
+ALTER TABLE llx_salary ADD COLUMN ref_ext varchar(255);
+ALTER TABLE llx_salary ADD COLUMN note_public text;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN element_type varchar(50) DEFAULT 'supplier_order' NOT NULL;
+
+-- VMYSQL4.1 DROP INDEX idx_expensereport_fk_refuse ON llx_expensereport;
+-- VPGSQL8.2 DROP INDEX idx_expensereport_fk_refuse;
+
+ALTER TABLE llx_expensereport ADD INDEX idx_expensereport_fk_user_refuse(fk_user_refuse);
+
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle) VALUES (1,'66','Société publique locale');
+
+ALTER TABLE llx_prelevement_lignes ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+ALTER TABLE llx_bom_bomline ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+UPDATE llx_c_type_contact SET element = 'stocktransfer' WHERE element = 'StockTransfer';
+
+UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
+
+UPDATE llx_c_tva SET taux = 3, note = 'Νήσων υπερμειωμένος Φ.Π.Α.' WHERE fk_pays = 102 AND taux = 16;

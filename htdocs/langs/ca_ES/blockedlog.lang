@@ -1,5 +1,4 @@
 BlockedLog=Registres inalterables
-Field=Camp
 BlockedLogDesc=Aquest mòdul fa un seguiment d'alguns esdeveniments en un registre inalterable (que no es pot modificar una vegada registrat) en una cadena de blocs, en temps real. Aquest mòdul ofereix compatibilitat amb els requisits de les lleis d'alguns països (com França amb la llei Finances 2016 - Norma NF525).
 Fingerprints=Esdeveniments arxivats i empremtes digitals
 FingerprintsDesc=Aquesta és l'eina per a explorar o extreure els registres inalterables. Els registres inalterables es generen i s'arxiven localment en una taula dedicada, en temps real quan es registra un esdeveniment de negoci. Podeu utilitzar aquesta eina per a exportar aquest arxiu i desar-lo en un suport extern (alguns països, com França, demanen que ho feu cada any). Tingueu en compte que, no hi ha cap funció per a purgar aquest registre i tots els canvis que s'hagin intentat fer directament en aquest registre (per exemple, un hacker) es comunicaran amb una empremta digital no vàlida. Si realment necessiteu purgar aquesta taula perquè heu utilitzat la vostra aplicació per a un propòsit de demostració / prova i voleu netejar les vostres dades per a iniciar la vostra producció, podeu demanar al vostre distribuïdor o integrador que restableixi la vostra base de dades (totes les vostres dades seran eliminades).
@@ -13,16 +12,13 @@ OkCheckFingerprintValidity=El registre del registre arxivat és vàlid. Les dade
 OkCheckFingerprintValidityButChainIsKo=El registre arxivat sembla ser vàlid en comparació amb l'anterior, però la cadena s'ha corromput prèviament.
 AddedByAuthority=Emmagatzemat a l'autoritat remota
 NotAddedByAuthorityYet=Encara no emmagatzemat a l'autoritat remota
-ShowDetails=Mostra els detalls emmagatzemats
 BlockedLogBillDownload=Descarrega la factura del client
 BlockedLogBillPreview=Previsualització de la factura del client
 BlockedlogInfoDialog=Detalls del registre
 ListOfTrackedEvents=Llista d'esdeveniments seguits
 Fingerprint=Empremtes dactilars
 DownloadLogCSV=Exporta els registres arxivats (CSV)
-logDOC_PREVIEW=Vista prèvia d'un document validat per a imprimir o descarregar
-logDOC_DOWNLOAD=Descàrrega d'un document validat per a imprimir o enviar
-DataOfArchivedEvent=Dades completes d'esdeveniments arxivats
+DataOfArchivedEvent=Dades completes de l'esdeveniment arxivat
 ImpossibleToReloadObject=Objecte original (tipus %s, identificador %s) no enllaçat (vegeu la columna "Dades completes" per a obtenir dades desades inalterables)
 BlockedLogAreRequiredByYourCountryLegislation=El mòdul de registres inalterables pot ser requerit per la legislació del vostre país. La desactivació d'aquest mòdul pot fer que qualsevol transacció futura sigui invàlida pel que fa a la llei i l'ús del programari legal, ja que no es pot validar mitjançant una auditoria fiscal.
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=El mòdul de registres inalterables s'ha activat a causa de la legislació del vostre país. La desactivació d'aquest mòdul pot fer que qualsevol transacció futura sigui invàlida pel que fa a la llei i l'ús del programari legal, ja que no es pot validar mitjançant una auditoria fiscal.
@@ -33,6 +29,7 @@ RestrictYearToExport=Restringeix el mes / any per a exportar
 BlockedLogEnabled=S'ha habilitat el sistema per a fer el seguiment d'esdeveniments en registres inalterables
 BlockedLogDisabled=El sistema per a fer el seguiment d'esdeveniments en registres inalterables s'ha desactivat després de fer algunes gravacions. Hem desat una empremta digital especial per a fer un seguiment de la cadena com a trencada
 BlockedLogDisabledBis=S'ha desactivat el sistema per a fer el seguiment d'esdeveniments en registres inalterables. Això és possible perquè encara no s'ha fet cap registre.
+LinkHasBeenDisabledForPerformancePurpose=A efectes de rendiment, l'enllaç directe al document no es mostra després de la línia 100.
 
 ## logTypes
 logBILL_DELETE=S'ha suprimit la factura del client lògicament

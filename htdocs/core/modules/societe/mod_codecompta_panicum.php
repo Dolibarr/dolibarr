@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,11 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	public $name = 'Panicum';
 
 	/**
+	 * @var string
+	 */
+	public $code;
+
+	/**
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
@@ -66,12 +72,12 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	/**
 	 *  Return an example of result returned by getNextValue
 	 *
-	 *  @param	Translate	$langs		Object langs
-	 *  @param	Societe		$objsoc		Object thirdparty
-	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 *  @return	string					Example
+	 *  @param	Translate		$langs		Object langs
+	 *  @param	Societe|string	$objsoc		Object thirdparty
+	 *  @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 *  @return	string						Example
 	 */
-	public function getExample($langs, $objsoc = 0, $type = -1)
+	public function getExample($langs, $objsoc = '', $type = -1)
 	{
 		return '';
 	}
@@ -82,7 +88,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *
 	 *  @param	DoliDB	$db              Database handler
 	 *  @param  Societe	$societe         Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
+	 *  @param  string	$type			'customer' or 'supplier'
 	 *  @return	int						>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')

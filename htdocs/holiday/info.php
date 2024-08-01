@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 /**
  * 	\file       htdocs/holiday/info.php
  * 	\ingroup    holiday
- * 	\brief      Page to show a leave information
+ * 	\brief      Page to show leave information
  */
 
 // Load Dolibarr environment
@@ -32,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 // Load translation files required by the page
 $langs->load("holiday");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 
 $childids = $user->getAllChildIds(1);
 
 $morefilter = '';
-if (!empty($conf->global->HOLIDAY_HIDE_FOR_NON_SALARIES)) {
+if (getDolGlobalString('HOLIDAY_HIDE_FOR_NON_SALARIES')) {
 	$morefilter = 'AND employee = 1';
 }
 
@@ -80,8 +81,9 @@ $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 $form = new Form($db);
 
 $title = $langs->trans("Leave")." - ".$langs->trans("Info");
-$helpurl = "";
-llxHeader("", $title, $helpurl);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_info');
 
 if ($id > 0 || !empty($ref)) {
 	$object = new Holiday($db);

@@ -6,7 +6,7 @@ AllSendings=Toate livrările
 Shipment=Livrare
 Shipments=Livrări
 ShowSending=Arată Livrări
-Receivings=Documente de livrare 
+Receivings=Documente de livrare
 SendingsArea=Livrări
 ListOfSendings=Listă livrări
 SendingMethod=Metodă de livrare
@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validată
 StatusSendingProcessedShort=Procesată
 SendingSheet=Aviz de expediţie
 ConfirmDeleteSending=Sigur doriți să ștergeți această livrare?
-ConfirmValidateSending=Sigur doriți să validați această livrare cu referința <b>%s</b>?
+ConfirmValidateSending=Ești sigur că vrei să validezi această expediere-livrare cu referința <b>%s</b>?
 ConfirmCancelSending=Sigur doriți să anulați livrarea?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Atenţie, nu sunt produse care aşteaptă să fie livrate.
@@ -56,12 +56,16 @@ LinkToTrackYourPackage=Link pentru urmărirea coletului
 ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unei noi livrări se face din fişa comenzii de vânzări.
 ShipmentLine=Linie de livrare
 ProductQtyInCustomersOrdersRunning=Cantitatea de produs din comenzile de vânzare deschise
-ProductQtyInSuppliersOrdersRunning=Cantitatea de produs din comenzile de achiziţie deschise 
+ProductQtyInSuppliersOrdersRunning=Cantitatea de produs din comenzile de achiziţie deschise
 ProductQtyInShipmentAlreadySent=Cantitatea de produse din comanda de vânzare deschisă a fost deja trimisă
 ProductQtyInSuppliersShipmentAlreadyRecevied=Cantitatea de produs care a fost recepţionată din comenzile de achiziție deschise
 NoProductToShipFoundIntoStock=Nu există niciun produs de livrat în depozitul <b>%s</b>. Corectați stocul sau reveniți pentru a alege un alt depozit.
 WeightVolShort=Greutate/Volum.
 ValidateOrderFirstBeforeShipment=Mai întâi trebuie să validezi comanda de vânzare înainte de a putea face livrări.
+NoLineGoOnTabToAddSome=Nicio linie/articol, mergi în fila "%s" pentru adăugare
+CreateInvoiceForThisCustomerFromSendings=Facturare expediții
+IfValidateInvoiceIsNoSendingStayUnbilled=Dacă validarea facturii este 'Nu', expedierea/livrarea va rămâne în starea 'Nefacturată' până când factura este validată.
+OptionToSetSendingBilledNotEnabled= Opțiunea din modulul Flux de lucru, pentru a seta automat trimiterea la 'Facturat' atunci când factura este validată, nu este activată, așa că va trebui să setezi manual starea trimiterilor la 'Facturat' după generarea facturii.
 
 # Sending methods
 # ModelDocument
@@ -70,12 +74,12 @@ DocumentModelStorm=Modele de documente mult mai complete pentru avize de expedi�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constanta EXPEDITION_ADDON_NUMBER nu este definită
 SumOfProductVolumes=Volumul total al produselor
 SumOfProductWeights=Greutatea totală a produselor
-
 # warehouse details
 DetailWarehouseNumber= Detalii depozit
 DetailWarehouseFormat= Greutate: %s (Cantitate: %d)
-
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afișează ultima dată de intrare în stoc în timpul creării expedierii pentru numărul de serie sau lot
+CreationOptions=Opțiuni disponibile în timpul creării expedierii
 ShipmentDistribution=Expediere distribuție
-
-ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s , deoarece au fost găsite prea multe combinații de depozit, produs, lot (%s).
-ErrorNoCombinationBatchcode=Nicio expediere pentru linia %s, deoarece nu a fost găsită nicio combinație de depozit, produs, lot. 
+ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s, deoarece au fost găsite prea multe combinații de cod de depozit, produs, lot (%s).
+ErrorNoCombinationBatchcode=Nu s-a putut salva linia %s deoarece combinația depozit-produs-lot/serial (%s, %s, %s) nu a fost găsită în stoc.
+ErrorTooMuchShipped=Cantitatea livrată nu ar trebui să fie mai mare decât cea comandată pentru linia/articolul %s

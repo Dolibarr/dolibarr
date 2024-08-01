@@ -88,10 +88,10 @@ if ($action == 'redirect') {
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
-	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public');
+if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
 	// HTTP/1.0
 	header('Pragma: token=public');
 } else {
@@ -129,7 +129,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 	$searchform .= '<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
 } else {
 	$usedbyinclude = 1; // Used into next include
-	$showtitlebefore = GETPOST('showtitlebefore', 'int');
+	$showtitlebefore = GETPOSTINT('showtitlebefore');
 	$arrayresult = array();
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
@@ -146,6 +146,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 			$accesskeyalreadyassigned[$accesskey] = $accesskey;
 		}
 
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$searchform .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, $val['img'], $showtitlebefore, ($i > 0 ? 0 : 1));
 
 		$i++;
@@ -164,31 +165,34 @@ if (empty($reshook)) {
 
 $searchform .= '<br>';
 
-// Add search on URL
-$ret = '';
-$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
-$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
-$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
-$ret .= '<input type="hidden" name="action" value="redirect">';
-$ret .= '<div class="tagtd">';
-$ret .= img_picto('', 'url', '', false, 0, 0, '', 'paddingright width20');
-$ret .= '<input type="text" class="flat minwidth200"';
-$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
-$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
-$ret .= ' name="url" id="url" />';
-$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
-$ret .= '<span class="fa fa-search"></span>';
-$ret .= '</button>';
-$ret .= '</div>';
-$ret .= "</form>\n";
 
-$searchform .= $ret;
+// Add search on URL
+if ($conf->dol_use_jmobile) {
+	$ret = '';
+	$ret .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="searchform nowraponall tagtr">';
+	$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
+	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
+	$ret .= '<input type="hidden" name="action" value="redirect">';
+	$ret .= '<div class="tagtd">';
+	$ret .= img_picto('', 'url', '', false, 0, 0, '', 'paddingright width20');
+	$ret .= '<input type="text" class="flat minwidth200"';
+	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
+	$ret .= ' placeholder="'.strip_tags($langs->trans("OrPasteAnURL")).'"';
+	$ret .= ' name="url" id="url" />';
+	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<span class="fa fa-search"></span>';
+	$ret .= '</button>';
+	$ret .= '</div>';
+	$ret .= "</form>\n";
+
+	$searchform .= $ret;
+}
 
 
 // Show all forms
 print "\n";
 print "<!-- Begin SearchForm -->\n";
-print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $searchform;

@@ -1,40 +1,40 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = የኢንትራኮም ሪፖርት
+Module68000Desc = Intracomm ሪፖርት አስተዳደር (የፈረንሳይ DEB/DES ቅርጸት ድጋፍ)
+IntracommReportSetup = ሞጁል ማዋቀር ኢንትራኮምምሪፖርት
+IntracommReportAbout = ስለ ኢንትራኮም ሪፖርት
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=d'acteur ይተይቡ
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'ግዴታ ሱር Les መግቢያዎች
 INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
+INTRACOMMREPORT_CATEG_FRAISDEPORT=ምድብ ደ አገልግሎቶች ዓይነት "Frais de port"
 
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de Declarant
 
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=List
+MenuIntracommReport=ኢንትራኮም ሪፖርት
+MenuIntracommReportNew=አዲስ መግለጫ
+MenuIntracommReportList=ዝርዝር
 
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
+NewDeclaration=አዲስ መግለጫ
+Declaration=መግለጫ
+AnalysisPeriod=የትንታኔ ጊዜ
+TypeOfDeclaration=የመግለጫ አይነት
+DEB=የሸቀጦች ልውውጥ መግለጫ (DEB)
+DES=የአገልግሎት ልውውጥ መግለጫ (DES)
 
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
+IntracommReportTitle=የኤክስኤምኤል ፋይል በProDouane ቅርጸት ማዘጋጀት
 
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
+IntracommReportList=የመነጩ መግለጫዎች ዝርዝር
+IntracommReportNumber=የመግለጫ ቁጥር
+IntracommReportPeriod=የመተንተን ጊዜ
+IntracommReportTypeDeclaration=የመግለጫ አይነት
+IntracommReportDownload=የኤክስኤምኤል ፋይል ያውርዱ
 
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=የመጓጓዣ ሁነታ

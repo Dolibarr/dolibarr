@@ -80,6 +80,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -118,9 +119,9 @@ class mod_payment_ant extends ModeleNumRefPayments
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string      			Value if KO, <0 if KO
+	 *  @param	Societe			$objsoc     Object thirdparty
+	 *  @param  Object			$object		Object we need next value for
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -148,7 +149,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	string		$objforref	Object for number to search
-	 *  @return string      			Next free value
+	 *  @return string|0      			Next free value, 0 if KO
 	 */
 	public function commande_get_num($objsoc, $objforref)
 	{

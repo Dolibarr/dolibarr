@@ -49,7 +49,7 @@ BoxOldestActions=Matukio ya zamani zaidi ya kufanya
 BoxLastExpiredServices=Hivi karibuni %s anwani za zamani zaidi zilizo na huduma zinazotumika ambazo muda wake umeisha
 BoxTitleLastActionsToDo=Hivi karibuni %s vitendo vya kufanya
 BoxTitleOldestActionsToDo=Kongwe zaidi %s matukio ya kufanya, haijakamilika
-BoxTitleFutureActions=<span class='notranslate'>%s</span> inayofuata\n matukio yajayo
+BoxTitleFutureActions=The next %s upcoming events
 BoxTitleLastContracts=Hivi karibuni %s mikataba ambayo ilifanyiwa marekebisho
 BoxTitleLastModifiedDonations=Hivi karibuni %s michango ambayo ilibadilishwa
 BoxTitleLastModifiedExpenses=Hivi karibuni %s ripoti za gharama ambazo zilibadilishwa
@@ -100,7 +100,7 @@ BoxTitleLatestModifiedCandidatures=Hivi karibuni %s maombi ya kazi yaliyorekebis
 ForCustomersInvoices=ankara za wateja
 ForCustomersOrders=Wateja maagizo
 ForProposals=Mapendekezo
-LastXMonthRolling=<span class='notranslate'>%s</span> ya hivi punde zaidi\n mwezi rolling
+LastXMonthRolling=The latest %s month rolling
 ChooseBoxToAdd=Ongeza wijeti kwenye dashibodi yako
 BoxAdded=Wijeti iliongezwa kwenye dashibodi yako
 BoxTitleUserBirthdaysOfMonth=Siku za kuzaliwa za mwezi huu (watumiaji)
@@ -112,10 +112,10 @@ BoxTitleSuspenseAccount=Idadi ya mistari ambayo haijatengwa
 NumberOfLinesInSuspenseAccount=Idadi ya mstari katika akaunti ya mashaka
 SuspenseAccountNotDefined=Akaunti ya mashaka haijafafanuliwa
 BoxLastCustomerShipments=Usafirishaji wa mwisho wa mteja
-BoxTitleLastCustomerShipments=Hivi karibuni %s usafirishaji wa wateja
+BoxTitleLastCustomerShipments=Latest %s modified customer shipments
 BoxTitleLastLeaveRequests=Hivi karibuni %s maombi ya likizo yaliyorekebishwa
 NoRecordedShipments=Hakuna usafirishaji wa mteja uliorekodiwa
-BoxCustomersOutstandingBillReached=Wateja walio na kikomo ambacho hakijalipwa wamefikiwa
+BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 # Pages
 UsersHome=Watumiaji wa nyumbani na vikundi
 MembersHome=Uanachama wa Nyumbani

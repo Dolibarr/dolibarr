@@ -53,18 +53,18 @@ $result = restrictedArea($user, 'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
-$id_product = GETPOST('productid', 'int');
-$id_sw = GETPOST('id_sw', 'int');
-$id_tw = GETPOST('id_tw', 'int');
+$id_product = GETPOSTINT('productid');
+$id_sw = GETPOSTINT('id_sw');
+$id_tw = GETPOSTINT('id_tw');
 $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -195,7 +195,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 			$dlc = -1; // They are loaded later from serial
 			$dluo = -1; // They are loaded later from serial
 
-			if (!$error && $id_sw <> $id_tw && is_numeric($qty) && $id_product) {
+			if (!$error && $id_sw != $id_tw && is_numeric($qty) && $id_product) {
 				$result = $product->fetch($id_product);
 
 				$product->load_stock('novirtual'); // Load array product->stock_warehouse
@@ -296,7 +296,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 					}
 				}
 			} else {
-				// dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error(null,"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -308,7 +308,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 		$db->commit();
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php'); // Redirect to avoid pb when using back
 		exit;
 	} else {
 		$db->rollback();
@@ -321,12 +321,17 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 	$fullpath = $conf->stock->dir_temp."/".$user->id.'-csvfiletotimport.csv';
-	if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
+	$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
+	if (is_numeric($resultupload) && $resultupload > 0) {
 		dol_syslog("File ".$fullpath." was added for import");
 	} else {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		if ($resultupload === 'ErrorDirNotWritable') {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile").' - '.$langs->trans($resultupload, $fullpath), null, 'errors');
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		}
 	}
 
 	if (!$error) {
@@ -345,51 +350,114 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 			$productstatic = new Product($db);
 			$warehousestatics = new Entrepot($db);
 			$warehousestatict = new Entrepot($db);
+
+			// Loop on each line in CSV file
 			while (($i < $nblinesrecord) && !$error) {
-				$data[] = $importcsv->import_read_record();
+				$newrecord = $importcsv->import_read_record();
+
+				$data[$i] = $newrecord;
 				if (count($data[$i]) == 1) {
 					// Only 1 empty line
 					unset($data[$i]);
 					$i++;
 					continue;
 				}
-				//var_dump($data);
+
 				$tmp_id_sw = $data[$i][0]['val'];
 				$tmp_id_tw = $data[$i][1]['val'];
 				$tmp_id_product = $data[$i][2]['val'];
 				$tmp_qty = $data[$i][3]['val'];
 				$tmp_batch = $data[$i][4]['val'];
 
-				if (!is_numeric($tmp_id_product)) {
-					$result = fetchref($productstatic, $tmp_id_product);
-					$tmp_id_product = $result;
-					$data[$i][2]['val'] = $result;
+				$errorforproduct = 0;
+				$isidorref = 'ref';
+				if (!is_numeric($tmp_id_product) && $tmp_id_product != '' && preg_match('/^id:/i', $tmp_id_product)) {
+					$isidorref = 'id';
 				}
-				if (!($tmp_id_product > 0)) {
+				$tmp_id_product = preg_replace('/^(id|ref):/i', '', $tmp_id_product);
+
+				if ($isidorref === 'ref') {
+					$tmp_id_product = preg_replace('/^ref:/', '', $tmp_id_product);
+					$result = fetchref($productstatic, $tmp_id_product);
+					if ($result === -2) {
+						$error++;
+						$errorforproduct = 1;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorMultipleRecordFoundFromRef", $tmp_id_product), null, 'errors');
+					} elseif ($result <= 0) {
+						$error++;
+						$errorforproduct = 1;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorRefNotFound", $tmp_id_product), null, 'errors');
+					}
+					$tmp_id_product = $result;
+				}
+				$data[$i][2]['val'] = $tmp_id_product;
+				if (!$errorforproduct && !($tmp_id_product > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 				}
 
-				if (!is_numeric($tmp_id_sw)) {
-					$result = fetchref($warehousestatics, $tmp_id_sw);
-					$tmp_id_sw = $result;
-					$data[$i][0]['val'] = $result;
-				}
-				if (!($tmp_id_sw > 0)) {
-					$error++;
-					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+				if ($tmp_id_sw !== '') {
+					// For source, we allow empty value
+					$errorforwarehouses = 0;
+					$isidorref = 'ref';
+					if (!is_numeric($tmp_id_sw) && $tmp_id_sw != '' && preg_match('/^id:/i', $tmp_id_sw)) {
+						$isidorref = 'id';
+					}
+					$tmp_id_sw = preg_replace('/^(id|ref):/i', '', $tmp_id_sw);
+					if ($isidorref === 'ref') {
+						$tmp_id_sw = preg_replace('/^ref:/', '', $tmp_id_sw);
+						$result = fetchref($warehousestatics, $tmp_id_sw);
+						if ($result === -2) {
+							$error++;
+							$errorforwarehouses = 1;
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorMultipleRecordFoundFromRef", $tmp_id_sw), null, 'errors');
+						} elseif ($result <= 0) {
+							$error++;
+							$errorforwarehouses = 1;
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorRefNotFound", $tmp_id_sw), null, 'errors');
+						}
+						$tmp_id_sw = $result;
+					}
+					$data[$i][0]['val'] = $tmp_id_sw;
+					if (!$errorforwarehouses && !($tmp_id_sw > 0)) {
+						$error++;
+						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+					}
 				}
 
-				if (!is_numeric($tmp_id_tw)) {
-					$result = fetchref($warehousestatict, $tmp_id_tw);
-					$tmp_id_tw = $result;
-					$data[$i][1]['val'] = $result;
+				$errorforwarehouset = 0;
+				$isidorref = 'ref';
+				if (!is_numeric($tmp_id_tw) && $tmp_id_tw != '' && preg_match('/^id:/i', $tmp_id_tw)) {
+					$isidorref = 'id';
 				}
-				if (!($tmp_id_tw > 0)) {
+				$tmp_id_tw = preg_replace('/^(id|ref):/i', '', $tmp_id_tw);
+				if ($isidorref === 'ref') {
+					$tmp_id_tw = preg_replace('/^ref:/', '', $tmp_id_tw);
+					$result = fetchref($warehousestatict, $tmp_id_tw);
+					if ($result === -2) {
+						$error++;
+						$errorforwarehouset = 1;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorMultipleRecordFoundFromRef", $tmp_id_tw), null, 'errors');
+					} elseif ($result <= 0) {
+						$error++;
+						$errorforwarehouset = 1;
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorRefNotFound", $tmp_id_tw), null, 'errors');
+					}
+					$tmp_id_tw = $result;
+				}
+				$data[$i][1]['val'] = $tmp_id_tw;
+				if (!$errorforwarehouset && !($tmp_id_tw > 0)) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
 				}
 
+				// If a source is provided and same than target
 				if ($tmp_id_sw > 0 && $tmp_id_tw == $tmp_id_sw) {
 					$error++;
 					$langs->load("errors");
@@ -433,6 +501,9 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 			}
 		}
 	}
+	if ($error) {
+		$listofdata = array();
+	}
 
 	$_SESSION['massstockmove'] = json_encode($listofdata);
 }
@@ -448,14 +519,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		$param .= '&endatlinenb='.urlencode($endatlinenb);
 	}
 
-	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 
@@ -477,7 +548,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Best
 
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_massstomove');
 
 print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
@@ -510,11 +581,11 @@ if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
+$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
-if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
@@ -611,13 +682,13 @@ print '</td>';
 // Product
 print '<td class="nowraponall">';
 $filtertype = 0;
-if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
-	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
@@ -638,28 +709,29 @@ print '<td class="right"><input type="submit" class="button" name="addline" valu
 print '</tr>';
 
 foreach ($listofdata as $key => $val) {
+	$productstatic->id = 0;
 	$productstatic->fetch($val['id_product']);
 
 	$warehousestatics->id = 0;
-	$warehousestatict->id = 0;
 	if ($val['id_sw'] > 0) {
 		$warehousestatics->fetch($val['id_sw']);
 	}
+	$warehousestatict->id = 0;
 	if ($val['id_tw'] > 0) {
 		$warehousestatict->fetch($val['id_tw']);
 	}
 
 	if ($productstatic->id <= 0) {
 		$error++;
-		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("Product")), null, 'errors');
+		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("Product").' (id='.$val['id_product'].')'), null, 'errors');
 	}
 	if ($warehousestatics->id < 0) {	// We accept 0 for source warehouse id
 		$error++;
-		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
+		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseSource").' (id='.$val['id_sw'].')'), null, 'errors');
 	}
 	if ($warehousestatict->id <= 0) {
 		$error++;
-		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseTarget")), null, 'errors');
+		setEventMessages($langs->trans("ObjectNotFound", $langs->transnoentitiesnoconv("WarehouseTarget").' (id='.$val['id_tw'].')'), null, 'errors');
 	}
 
 	if (!$error) {
@@ -750,13 +822,14 @@ function startsWith($haystack, $needle)
  *
  * @param Object $static_object static object to fetch
  * @param string $tmp_ref ref of the object to fetch
- * @return int <0 if Ko or Id of object
+ * @return int Return integer <0 if Ko or Id of object
  */
 function fetchref($static_object, $tmp_ref)
 {
 	if (startsWith($tmp_ref, 'ref:')) {
 		$tmp_ref = str_replace('ref:', '', $tmp_ref);
 	}
+	$static_object->id = 0;
 	$static_object->fetch('', $tmp_ref);
 	return $static_object->id;
 }

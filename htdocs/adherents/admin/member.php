@@ -1,14 +1,17 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2021	Frédéric France      		<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,15 +106,17 @@ if ($action == 'set_default') {
 	}
 } elseif ($action == 'updatemainoptions') {
 	$db->begin();
-	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = $res7 = 0;
+	$res1 = $res2 = $res3 = $res4 = $res5 = $res6 = $res7 = $res8 = $res9 = 0;
 	$res1 = dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha') ? 0 : 1, 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res3 = dolibarr_set_const($db, 'ADHERENT_CREATE_EXTERNAL_USER_LOGIN', GETPOST('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res4 = dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res7 = dolibarr_set_const($db, 'MEMBER_PUBLIC_ENABLED', GETPOST('MEMBER_PUBLIC_ENABLED', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res8 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', GETPOST('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF', 'alpha'), 'chaine', 0, '', $conf->entity);
+	$res9 = dolibarr_set_const($db, 'MEMBER_SUBSCRIPTION_START_AFTER', GETPOST('MEMBER_SUBSCRIPTION_START_AFTER', 'alpha'), 'chaine', 0, '', $conf->entity);
 	// Use vat for invoice creation
-	if (isModEnabled('facture')) {
+	if (isModEnabled('invoice')) {
 		$res4 = dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		$res5 = dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (isModEnabled("product") || isModEnabled("service")) {
@@ -215,9 +220,10 @@ if ($action == 'unset') {
 
 $form = new Form($db);
 
+$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -266,12 +272,12 @@ foreach ($dirModMember as $dirroot) {
 					dol_syslog($e->getMessage(), LOG_ERR);
 					continue;
 				}
-				$modCodeMember = new $file;
+				$modCodeMember = new $file();
 				// Show modules according to features level
-				if ($modCodeMember->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+				if ($modCodeMember->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 					continue;
 				}
-				if ($modCodeMember->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+				if ($modCodeMember->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 					continue;
 				}
 
@@ -283,6 +289,7 @@ foreach ($dirModMember as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+'@phan-var-force array<string,ModeleNumRefMembers> $arrayofmodules';
 
 foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
@@ -317,115 +324,10 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 print '</table>';
 print '</div>';
 
+
+
 print "<br>";
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updatemainoptions">';
-
-
-// Main options
-
-print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-// Mail required for members
-print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
-print $form->selectyesno('ADHERENT_MAIL_REQUIRED', (!empty($conf->global->ADHERENT_MAIL_REQUIRED) ? $conf->global->ADHERENT_MAIL_REQUIRED : 0), 1);
-print "</td></tr>\n";
-
-// Login/Pass required for members
-print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("AdherentLoginRequired"), $langs->trans("AdherentLoginRequiredDesc"));
-print '</td><td>';
-print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (!empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED) ? 0 : 1), 1);
-print "</td></tr>\n";
-
-// Send mail information is on by default
-print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
-print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', (!empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL) ? $conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL : 0), 1);
-print "</td></tr>\n";
-
-// Create an external user login for each new member subscription validated
-print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
-print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', (!empty($conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN) ? $conf->global->ADHERENT_CREATE_EXTERNAL_USER_LOGIN : 0), 1);
-print "</td></tr>\n";
-
-// Create an external user login for each new member subscription validated
-$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.$conf->entity : '');
-print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
-print $form->selectyesno('MEMBER_PUBLIC_ENABLED', (!empty($conf->global->MEMBER_PUBLIC_ENABLED) ? $conf->global->MEMBER_PUBLIC_ENABLED : 0), 1);
-print "</td></tr>\n";
-
-// Allow members to change type on renewal forms
-/* To test during next beta
-print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
-print $form->selectyesno('MEMBER_ALLOW_CHANGE_OF_TYPE', (!empty($conf->global->MEMBER_ALLOW_CHANGE_OF_TYPE) ? 0 : 1), 1);
-print "</td></tr>\n";
-*/
-
-// Insert subscription into bank account
-print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
-$arraychoices = array('0'=>$langs->trans("None"));
-if (isModEnabled("banque")) {
-	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
-}
-if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
-	$arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
-}
-if (isModEnabled("banque") && isModEnabled("societe") && isModEnabled('facture')) {
-	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
-}
-print '<td>';
-print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, getDolGlobalString('ADHERENT_BANK_USE'), 0);
-if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' || getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice') {
-	print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
-}
-print '</td>';
-print "</tr>\n";
-
-// Use vat for invoice creation
-if (isModEnabled('facture')) {
-	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
-	if (isModEnabled("banque")) {
-		print '<td>';
-		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0'=>$langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) ? '0' : $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
-		print '</td>';
-	} else {
-		print '<td class="right">';
-		print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
-		print '</td>';
-	}
-	print "</tr>\n";
-
-	if (isModEnabled("product") || isModEnabled("service")) {
-		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
-		print '<td>';
-		$selected = (empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) ? '' : $conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-		print img_picto('', 'product', 'class="pictofixedwidth"');
-		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0);
-		print '</td>';
-	}
-	print "</tr>\n";
-}
-
-print '</table>';
-print '</div>';
-
-print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-print '</div>';
-
-print '</form>';
-
-
-print '<br>';
 
 
 // Document templates for documents generated from member record
@@ -473,6 +375,7 @@ foreach ($dirmodels as $reldir) {
 		if (is_dir($dir)) {
 			$handle = opendir($dir);
 			if (is_resource($handle)) {
+				$filelist = array();
 				while (($file = readdir($handle)) !== false) {
 					$filelist[] = $file;
 				}
@@ -488,16 +391,16 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							$modulequalified = 1;
-							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
 							if ($modulequalified) {
 								print '<tr class="oddeven"><td width="100">';
-								print (empty($module->name) ? $name : $module->name);
+								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
 									print $module->info($langs);
@@ -519,7 +422,7 @@ foreach ($dirmodels as $reldir) {
 									print "</td>";
 								}
 
-								// Defaut
+								// Default
 								print '<td class="center">';
 								if (getDolGlobalString('MEMBER_ADDON_PDF_ODT') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
@@ -566,6 +469,138 @@ print '</table>';
 print '</div>';
 
 
+print '<br>';
+
+
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updatemainoptions">';
+print '<input type="hidden" name="page_y" value="">';
+
+
+// Main options
+
+print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="soixantepercent">'.$langs->trans("Value").'</td>';
+print "</tr>\n";
+
+// Delay to start the new membership ([+/-][0-99][Y/m/d], for instance, with "+4m", the subscription will start in 4 month.)
+print '<tr class="oddeven drag" id="startfirstdayof"><td>';
+print $form->textwithpicto($langs->trans("MemberSubscriptionStartAfter"), $langs->trans("MemberSubscriptionStartAfterDesc").'<br>'.$langs->trans("MemberSubscriptionStartAfterDesc2"));
+print '</td><td>';
+print '<input type="text" class="right width50" id="MEMBER_SUBSCRIPTION_START_AFTER" name="MEMBER_SUBSCRIPTION_START_AFTER" value="'.getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER').'">';
+print "</td></tr>\n";
+
+// Start date of new membership
+$startpoint = array();
+$startpoint[0] = $langs->trans("NoCorrection");
+$startpoint["m"] = $langs->trans("Month");
+$startpoint["Y"] = $langs->trans("Year");
+print '<tr class="oddeven drag" id="startfirstdayof"><td>';
+print $langs->trans("MemberSubscriptionStartFirstDayOf");
+print '</td><td>';
+$startfirstdayof = !getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') ? 0 : getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF');
+print $form->selectarray("MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF", $startpoint, $startfirstdayof, 0);
+print "</td></tr>\n";
+
+// Mail required for members
+print '<tr class="oddeven"><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
+print $form->selectyesno('ADHERENT_MAIL_REQUIRED', getDolGlobalInt('ADHERENT_MAIL_REQUIRED'), 1, false, 0, 1);
+print "</td></tr>\n";
+
+// Login/Pass required for members
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("AdherentLoginRequired"), $langs->trans("AdherentLoginRequiredDesc"));
+print '</td><td>';
+print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') ? 0 : 1), 1, false, 0, 1);
+print "</td></tr>\n";
+
+// Create an external user login after an online payment of a membership subscription
+// TODO Move this into the validate() method of the member.
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
+print "</td></tr>\n";
+
+// Send mail information is on by default
+print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
+print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', getDolGlobalInt('ADHERENT_DEFAULT_SENDINFOBYMAIL'), 1, false, 0, 1);
+print "</td></tr>\n";
+
+// Publish member information on public annuary
+$linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.((int) $conf->entity) : '');
+print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
+print $form->selectyesno('MEMBER_PUBLIC_ENABLED', getDolGlobalInt('MEMBER_PUBLIC_ENABLED'), 1, false, 0, 1);
+print "</td></tr>\n";
+
+// Allow members to change type on renewal forms
+/* To test during next beta
+print '<tr class="oddeven"><td>'.$langs->trans("MemberAllowchangeOfType").'</td><td>';
+print $form->selectyesno('MEMBER_ALLOW_CHANGE_OF_TYPE', (getDolGlobalInt('MEMBER_ALLOW_CHANGE_OF_TYPE') ? 0 : 1), 1);
+print "</td></tr>\n";
+*/
+
+// Insert subscription into bank account
+print '<tr class="oddeven"><td>'.$langs->trans("MoreActionsOnSubscription").'</td>';
+$arraychoices = array('0' => $langs->trans("None"));
+if (isModEnabled("bank")) {
+	$arraychoices['bankdirect'] = $langs->trans("MoreActionBankDirect");
+}
+if (isModEnabled("bank") && isModEnabled("societe") && isModEnabled('invoice')) {
+	$arraychoices['invoiceonly'] = $langs->trans("MoreActionInvoiceOnly");
+}
+if (isModEnabled("bank") && isModEnabled("societe") && isModEnabled('invoice')) {
+	$arraychoices['bankviainvoice'] = $langs->trans("MoreActionBankViaInvoice");
+}
+print '<td>';
+print $form->selectarray('ADHERENT_BANK_USE', $arraychoices, getDolGlobalString('ADHERENT_BANK_USE'), 0);
+if (getDolGlobalString('ADHERENT_BANK_USE') == 'bankdirect' || getDolGlobalString('ADHERENT_BANK_USE') == 'bankviainvoice') {
+	print '<br><div style="padding-top: 5px;"><span class="opacitymedium">'.$langs->trans("ABankAccountMustBeDefinedOnPaymentModeSetup").'</span></div>';
+}
+print '</td>';
+print "</tr>\n";
+
+// Use vat for invoice creation
+if (isModEnabled('invoice')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("VATToUseForSubscriptions").'</td>';
+	if (isModEnabled("bank")) {
+		print '<td>';
+		print $form->selectarray('ADHERENT_VAT_FOR_SUBSCRIPTIONS', array('0' => $langs->trans("NoVatOnSubscription"), 'defaultforfoundationcountry' => $langs->trans("Default")), getDolGlobalString('ADHERENT_VAT_FOR_SUBSCRIPTIONS', '0'), 0);
+		print '</td>';
+	} else {
+		print '<td class="right">';
+		print $langs->trans("WarningModuleNotActive", $langs->transnoentities("Module85Name"));
+		print '</td>';
+	}
+	print "</tr>\n";
+
+	if (isModEnabled("product") || isModEnabled("service")) {
+		print '<tr class="oddeven"><td>'.$langs->trans("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS").'</td>';
+		print '<td>';
+		$selected = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
+		print img_picto('', 'product', 'class="pictofixedwidth"');
+		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
+		print '</td>';
+	}
+	print "</tr>\n";
+}
+
+print '</table>';
+print '</div>';
+
+print '<div class="center">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Update").'" name="Button">';
+print '</div>';
+
+print '</form>';
+
+
+print '<br>';
+
 
 
 // Generation of cards for members
@@ -573,6 +608,7 @@ print '</div>';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatememberscards">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 
@@ -585,7 +621,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print '<td class="soixantepercent">'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
 print "</tr>\n";
 
 // Format of cards page
@@ -628,18 +664,20 @@ print '</table>';
 print '</div>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Update").'" name="Button">';
 print '</div>';
 
 print '</form>';
 
 print '<br>';
 
+
 // Membership address sheet
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updatememberstickets">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersTickets"), '', '');
 
@@ -652,7 +690,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
+print '<td class="soixantepercent">'.$form->textwithpicto($langs->trans("Value"), $helptext, 1, 'help', '', 0, 2, 'idhelptext').'</td>';
 print "</tr>\n";
 
 // Format of labels page
@@ -678,7 +716,7 @@ print '</table>';
 print '</div>';
 
 print '<div class="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Update").'" name="Button">';
 print '</div>';
 
 print '</form>';

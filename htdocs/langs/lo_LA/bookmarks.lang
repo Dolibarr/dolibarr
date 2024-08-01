@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=ເພີ່ມ ໜ້າ ປັດຈຸບັນໃສ່ບຸກມາກ
-Bookmark=ບຸກມາກ
-Bookmarks=ບຸກມາກ
-ListOfBookmarks=ລາຍຊື່ບຸກມາກ
-EditBookmarks=ລາຍການ/ແກ້ໄຂບຸກມາກ
-NewBookmark=ບຸກມາກໃ່
-ShowBookmark=ສະແດງບຸກມາກ
-OpenANewWindow=ເປີດແຖບໃ່
-ReplaceWindow=ແທນທີ່ແຖບປັດຈຸບັນ
-BookmarkTargetNewWindowShort=ແຖບ​ໃຫມ່
-BookmarkTargetReplaceWindowShort=ແຖບປັດຈຸບັນ
-BookmarkTitle=ຊື່ບຸກມາກ
-UrlOrLink=URL
-BehaviourOnClick=ພຶດຕິ ກຳ ເມື່ອ URL ບຸກມາກຖືກເລືອກ
-CreateBookmark=ສ້າງບຸກມາກ
-SetHereATitleForLink=ຕັ້ງຊື່ໃຫ້ກັບບຸກມາກ
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=ເລືອກວ່າ ໜ້າ ທີ່ເຊື່ອມໂຍງຄວນຈະເປີດຢູ່ໃນແຖບປັດຈຸບັນຫຼືແຖບໃnew່
-BookmarksManagement=ການຈັດການ bookmarks
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = ເພີ່ມ ໜ້າ ປັດຈຸບັນໃສ່ບຸກມາກ
+BehaviourOnClick = ພຶດຕິກໍາເມື່ອ URL ບຸກມາກຖືກເລືອກ
+Bookmark = ບຸກມາກ
+Bookmarks = ບຸກມາກ
+BookmarkTargetNewWindowShort = ແຖບ​ໃຫມ່
+BookmarkTargetReplaceWindowShort = ແຖບປັດຈຸບັນ
+BookmarkTitle = ຊື່ບຸກມາກ
+BookmarksManagement = ການຈັດການ bookmarks
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = ເລືອກວ່າ ໜ້າ ທີ່ເຊື່ອມໂຍງຄວນຈະເປີດຢູ່ໃນແຖບປັດຈຸບັນຫຼືແຖບໃnew່
+CreateBookmark = ສ້າງບຸກມາກ
+EditBookmarks = ລາຍການ/ແກ້ໄຂບຸກມາກ
+ListOfBookmarks = ລາຍຊື່ບຸກມາກ
+NewBookmark = ບຸກມາກໃ່
+NoBookmarkFound = ບໍ່ພົບບຸກມາກ
+NoBookmarks = ບໍ່ມີບຸກມາກທີ່ກຳນົດໄວ້
+OpenANewWindow = ເປີດແຖບໃ່
+ReplaceWindow = ແທນທີ່ແຖບປັດຈຸບັນ
+SetHereATitleForLink = ຕັ້ງຊື່ໃຫ້ກັບບຸກມາກ
+ShowBookmark = ສະແດງບຸກມາກ
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = ໃຊ້ການເຊື່ອມຕໍ່ພາຍນອກ/absolute (https://externalurl.com) ຫຼືການເຊື່ອມຕໍ່ພາຍໃນ/relative (/mypage.php). ທ່ານຍັງສາມາດໃຊ້ໂທລະສັບເຊັ່ນ: tel: 0123456.

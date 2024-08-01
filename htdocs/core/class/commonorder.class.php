@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,11 +64,33 @@ abstract class CommonOrder extends CommonObject
 			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<div class="info-box-status margintoponly">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+		return $return;
+	}
+
+	/** return nb of fines of order where products or services that can be buyed
+	 *
+	 * @param	boolean		$ignoreFree		Ignore free lines
+	 * @return	int							number of products or services on buy in a command
+	 */
+	public function getNbLinesProductOrServiceOnBuy($ignoreFree = false)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$product = new Product($this->db);
+		$return = 0;
+		foreach ($this->lines as $line) {
+			if (empty($line->fk_product) && !$ignoreFree) {
+				$return ++;
+			} elseif ((int) $line->fk_product > 0) {
+				if ($product->fetch($line->fk_product) > 0) {
+					if ($product->status_buy) $return ++;
+				}
+			}
+		}
 		return $return;
 	}
 
@@ -132,7 +155,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Product description
 	 * @var string
 	 */
-	 public $product_desc;
+	public $product_desc;
 
 	/**
 	 * Product use lot
@@ -218,6 +241,9 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
 	public $fk_multicurrency;

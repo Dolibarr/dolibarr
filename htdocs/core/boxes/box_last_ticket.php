@@ -30,20 +30,10 @@ require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
  */
 class box_last_ticket extends ModeleBoxes
 {
-
 	public $boxcode = "box_last_ticket";
 	public $boximg  = "ticket";
 	public $boxlabel;
 	public $depends = array("ticket");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $info_box_head = array();
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor
@@ -75,7 +65,7 @@ class box_last_ticket extends ModeleBoxes
 
 		$text = $langs->trans("BoxLastTicketDescription", $max);
 		$this->info_box_head = array(
-			'text' => $text,
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/ticket/list.php?sortfield=t.datec&sortorder=DESC"><span class="badge">...</span></a>',
 			'limit' => dol_strlen($text),
 		);
 

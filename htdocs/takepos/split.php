@@ -57,8 +57,8 @@ if (!$user->hasRight('takepos', 'run')) {
  */
 
 if ($action=="split") {
-	$line = GETPOST('line', 'int');
-	$split = GETPOST('split', 'int');
+	$line = GETPOSTINT('line');
+	$split = GETPOSTINT('split');
 	if ($split==1) { // Split line
 		$invoice = new Facture($db);
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-SPLIT)');
@@ -87,7 +87,9 @@ if ($action=="split") {
 		$db->query($sql);
 	} elseif ($split==0) { // Unsplit line
 		$invoice = new Facture($db);
-		if ($place=="SPLIT") $place="0"; // Avoid move line to the same place (from SPLIT to SPLIT place)
+		if ($place=="SPLIT") {
+			$place="0";
+		} // Avoid move line to the same place (from SPLIT to SPLIT place)
 		$ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 		if ($ret > 0) {
 			$placeid = $invoice->id;

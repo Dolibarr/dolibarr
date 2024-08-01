@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tiquets
 Module56000Desc=Sistema de tiquets per a la gestió de sol·licituds o incidències
-
 Permission56001=Veure tiquets
 Permission56002=Modifica tiquets
 Permission56003=Esborrar tiquets
 Permission56004=Gestiona els tiquets
 Permission56005=Veure els tiquets de tots els tercers (no efectiu per als usuaris externs, sempre estarà limitat al tercer del qual depenen)
 Permission56006=Exportar tiquets
-
 Tickets=Tiquets
 TicketDictType=Tiquet - Tipus
-TicketDictCategory=Tiquet - Grups
+TicketDictCategory=Entrada - Grups
 TicketDictSeverity=Tiquet - Severitats
 TicketDictResolution=Tiquet - Resolució
-
 TicketTypeShortCOM=Qüestió comercial
 TicketTypeShortHELP=Sol·licitud d'ajuda funcional
 TicketTypeShortISSUE=Incidència o error
@@ -41,60 +33,47 @@ TicketTypeShortPROBLEM=Problema
 TicketTypeShortREQUEST=Sol·licitud de canvi o millora
 TicketTypeShortPROJET=Projecte
 TicketTypeShortOTHER=Altres
-
 TicketSeverityShortLOW=Baix
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Alt
 TicketSeverityShortBLOCKING=Crític, bloqueig
-
 TicketCategoryShortOTHER=Altres
-
 ErrorBadEmailAddress=Camp '%s' incorrecte
 MenuTicketMyAssign=Els meus tiquets
 MenuTicketMyAssignNonClosed=Els meus tiquets oberts
 MenuListNonClosed=Tiquets oberts
-
 TypeContact_ticket_internal_CONTRIBUTOR=Participant
 TypeContact_ticket_internal_SUPPORTTEC=Usuari assignat
 TypeContact_ticket_external_SUPPORTCLI=Contacte de clients / seguiment d'incidents
 TypeContact_ticket_external_CONTRIBUTOR=Col·laborador extern
-
 OriginEmail=Correu electrònic del reporter
+EmailReplyto=Respon al correu electrònic
+EmailReferences=Referències als correus electrònics
 Notify_TICKET_SENTBYMAIL=Envia el missatge del tiquet per correu electrònic
-
 ExportDataset_ticket_1=Tiquets
-
 # Status
 Read=Llegit
 Assigned=Assignat
 NeedMoreInformation=Esperant el comentari de l'informador
 NeedMoreInformationShort=Esperant comentaris
-Answered=Respost
 Waiting=En espera
 SolvedClosed=Resolt
 Deleted=Esborrat
-
 # Dict
-Type=Tipus
 Severity=Gravetat
 TicketGroupIsPublic=El grup és públic
 TicketGroupIsPublicDesc=Si un grup de tiquets és públic, serà visible al formulari en crear un tiquet des de la interfície pública
-
 # Email templates
 MailToSendTicketMessage=Per a enviar correus electrònics des del missatge de tiquet
-
-#
 # Admin page
-#
 TicketSetup=Configuració del mòdul de tiquets
 TicketSettings=Configuració
-TicketSetupPage=
 TicketPublicAccess=Una interfície pública que no necessita identificació està disponible a la següent URL
 TicketSetupDictionaries=El tipus de tiquet, gravetat i codis analítics es poden configurar des dels diccionaris
 TicketParamModule=Configuració del mòdul de variables
 TicketParamMail=Configuració de correu electrònic
 TicketEmailNotificationFrom=Correu electrònic del remitent per a la notificació de les respostes
-TicketEmailNotificationFromHelp=Correu electrònic del remitent que s'utilitzarà per a enviar el correu electrònic de notificació quan es proporcioni una resposta dins del backoffice. Per exemple noreply@example.com
+TicketEmailNotificationFromHelp=Correu electrònic del remitent que s'utilitzarà per enviar el correu electrònic de notificació quan es proporcioni una resposta dins del back office. Per exemple noreply@example.com
 TicketEmailNotificationTo=Notifiqueu la creació del tiquet a aquesta adreça de correu electrònic
 TicketEmailNotificationToHelp=Si està present, aquesta adreça de correu electrònic serà notificada de la creació d'un tiquet
 TicketNewEmailBodyLabel=Missatge de text enviat després de crear un tiquet
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=A la interfície pública, l'adreça de correu electr�
 TicketsShowProgression=Mostra el progrés del tiquet a la interfície pública
 TicketsShowProgressionHelp=Activeu aquesta opció per a ocultar el progrés del tiquet a les pàgines de la interfície pública
 TicketCreateThirdPartyWithContactIfNotExist=Demaneu nom i nom de l'empresa per correus electrònics desconeguts.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Comproveu si existeix un tercer o un contacte per al correu electrònic introduït. Si no, demaneu un nom i un nom d'empresa per a crear un tercer amb contacte.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Comproveu si existeix un tercer o un contacte per al correu electrònic introduït. Si no, demaneu un nom i un nom d'empresa per crear un tercer amb contacte.
 PublicInterface=Interfície pública
-TicketUrlPublicInterfaceLabelAdmin=URL alternatiu per a la interfície pública
-TicketUrlPublicInterfaceHelpAdmin=És possible definir un àlies al servidor web i, per tant, posar a disposició la interfície pública amb una altra URL (el servidor ha d'actuar com a proxy en aquest nou URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Text de benvinguda de la interfície pública
 TicketPublicInterfaceTextHome=Podeu crear un tiquet d'assistència o visualitzar existents a partir del seu identificador de traça del tiquet.
 TicketPublicInterfaceTextHomeHelpAdmin=El text definit aquí apareixerà a la pàgina d'inici de la interfície pública.
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Envieu correu(s) electrònic(s) quan s'afege
 TicketsPublicNotificationNewMessageHelp=Envia correus electrònics quan s'afegeixi un missatge nou des de la interfície pública (a l'usuari assignat o al correu electrònic de notificacions a (actualitzar) i/o al correu electrònic de notificacions)
 TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Envieu un correu electrònic a aquesta adreça per a cada notificació de missatge nou si el tiquet no té un usuari assignat o si l'usuari no té cap correu electrònic conegut.
-TicketsAutoReadTicket=Marca automàticament el tiquet com a llegit (quan es crea des del backoffice)
-TicketsAutoReadTicketHelp=Marca automàticament el tiquet com a llegit quan es crea des del backoffice. Quan el tiquet es crea des de la interfície pública, el tiquet es manté amb l'estat «No llegit».
+TicketsAutoReadTicket=Marqueu automàticament el bitllet com a llegit (quan es creï des del back office)
+TicketsAutoReadTicketHelp=Marqueu automàticament el bitllet com a llegit quan es creï des del back office. Quan el bitllet es crea des de la interfície pública, el bitllet es manté amb l'estat "No llegit".
 TicketsDelayBeforeFirstAnswer=Un tiquet nou hauria de rebre una primera resposta abans (hores):
 TicketsDelayBeforeFirstAnswerHelp=Si un nou tiquet no ha rebut resposta després d'aquest període de temps (en hores), es mostrarà una icona d'advertència important a la vista de llista.
 TicketsDelayBetweenAnswers=Un tiquet no resolt no hauria d'estar inactiu durant (hores):
 TicketsDelayBetweenAnswersHelp=Si un tiquet no resolt que ja ha rebut una resposta no ha tingut més interacció després d'aquest període de temps (en hores), es mostrarà una icona d'advertència a la vista de llista.
-TicketsAutoNotifyClose=Aviseu automàticament a tercers quan tanqueu un tiquet
-TicketsAutoNotifyCloseHelp=Quan tanqueu un tiquet, se us proposarà enviar un missatge a un dels contactes de tercers. En el tancament massiu, s'enviarà un missatge a un contacte del tercer vinculat al tiquet.
+TicketsAutoNotifyClose=Aviseu automàticament al tercer quan tanqueu un bitllet
+TicketsAutoNotifyCloseHelp=Quan tanqueu un bitllet, se us proposarà que envieu un missatge a un dels contactes de tercers. En el tancament massiu, s'enviarà un missatge a un contacte del tercer vinculat al bitllet.
 TicketWrongContact=El contacte sempre que no formi part dels contactes actuals de les entrades. Correu electrònic no enviat.
 TicketChooseProductCategory=Categoria de producte per al suport de tiquets
 TicketChooseProductCategoryHelp=Seleccioneu la categoria de producte de suport de tiquets. S'utilitzarà per a enllaçar automàticament un contracte amb un tiquet.
 TicketUseCaptchaCode=Utilitzeu el codi gràfic (CAPTCHA) quan creeu un tiquet
 TicketUseCaptchaCodeHelp=Afegeix la verificació CAPTCHA quan es crea un tiquet nou.
-
-#
+TicketsAllowClassificationModificationIfClosed=Permet modificar la classificació de les entrades tancades
+TicketsAllowClassificationModificationIfClosedHelp=Permet modificar la classificació (tipus, grup de bitllets, gravetat) encara que els bitllets estiguin tancats.
 # Index & list page
-#
 TicketsIndex=Àrea de tiquets
 TicketList=Llista de tiquets
 TicketAssignedToMeInfos=Aquesta pàgina mostra la llista de butlletes creada per o assignada a l'usuari actual
@@ -176,10 +152,7 @@ ShowAsConversation=Mostrar com a llista de converses
 MessageListViewType=Mostra com a llista de taula
 ConfirmMassTicketClosingSendEmail=Envieu correus electrònics automàticament quan tanqueu els tiquets
 ConfirmMassTicketClosingSendEmailQuestion=Voleu notificar als tercers quan tanqueu aquests tiquets?
-
-#
 # Ticket card
-#
 Ticket=Tiquet
 TicketCard=Targeta de tiquets
 CreateTicket=Crea un tiquet
@@ -239,9 +212,9 @@ TicketMessageMailFooterHelpAdmin=Aquest text s'inserirà després del missatge d
 TicketMessageHelp=Només aquest text es guardarà a la llista de missatges de la targeta de tiquet.
 TicketMessageSubstitutionReplacedByGenericValues=Les variables de substitució es reemplacen per valors genèrics.
 ForEmailMessageWillBeCompletedWith=Per als missatges de correu electrònic enviats a usuaris externs, el missatge es completarà amb
-TimeElapsedSince=Temps transcorregut des de 
+TimeElapsedSince=Temps transcorregut des de
 TicketTimeToRead=Temps transcorregut abans de llegir
-TicketTimeElapsedBeforeSince=Temps transcorregut abans / després 
+TicketTimeElapsedBeforeSince=Temps transcorregut abans / després
 TicketContacts=Tiquet de contactes
 TicketDocumentsLinked=Documents vinculats al tiquet
 ConfirmReOpenTicket=Confirmeu la reobertura d'aquest tiquet?
@@ -279,23 +252,17 @@ TicketsDelayFromLastResponseTooLong=Ha passat massa temps des de l'última respo
 TicketNoContractFoundToLink=No s'ha trobat cap contracte vinculat automàticament a aquest tiquet. Enllaceu un contracte manualment.
 TicketManyContractsLinked=Molts contractes s'han vinculat automàticament a aquest tiquet. Assegureu-vos de verificar quina s'ha de triar.
 TicketRefAlreadyUsed=La referència [%s] ja s'utilitza, la vostra referència nova és [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Entrada %s llegit per %s
 NoLogForThisTicket=Encara no hi ha 'log' per aquest tiquet
 TicketLogAssignedTo=Tiquet %s assignat a %s
 TicketLogPropertyChanged=Tiquet %s modificat: classificació de %s a %s
 TicketLogClosedBy=Tiquet %s tancat per %s
 TicketLogReopen=El tiquet %s s'ha reobert
-
-#
 # Public pages
-#
 TicketSystem=Sistema de tiquets
-ShowListTicketWithTrackId=Mostra la llista d'entrades a partir de l'identificador de traça 
-ShowTicketWithTrackId=Mostra tiquets de l'identificador de traça 
+ShowListTicketWithTrackId=Mostra la llista d'entrades a partir de l'identificador de traça
+ShowTicketWithTrackId=Mostra tiquets de l'identificador de traça
 TicketPublicDesc=Podeu crear un tiquet d'assistència o consultar des d'una identificació (ID) existent.
 YourTicketSuccessfullySaved=S'ha desat el tiquet amb èxit!
 MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un tiquet nou amb l'ID %s i la ref. %s.
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per a con
 TicketNewEmailBodyInfosTicket=Informació per al seguiment del tiquet
 TicketNewEmailBodyInfosTrackId=Número de seguiment de tiquet: %s
 TicketNewEmailBodyInfosTrackUrl=Podeu consultar el progrés de l'entrada fent clic al següent enllaç
-TicketNewEmailBodyInfosTrackUrlCustomer=Podeu veure el progrés del tiquet a la interfície específica fent clic al següent enllaç
+TicketNewEmailBodyInfosTrackUrlCustomer=Podeu consultar l'evolució de l'entrada al portal públic d'entrades fent clic al següent enllaç
 TicketCloseEmailBodyInfosTrackUrlCustomer=Podeu consultar l'historial d'aquest tiquet fent clic al següent enllaç
 TicketEmailPleaseDoNotReplyToThisEmail=No respongueu directament a aquest correu electrònic. Utilitzeu l'enllaç per a respondre des de la interfície.
 TicketPublicInfoCreateTicket=Aquest formulari us permet registrar un tiquet de suport al nostre sistema de gestió.
-TicketPublicPleaseBeAccuratelyDescribe=Descriu la teva pregunta amb precisió. Proporcioneu la màxima informació possible que ens permeti identificar correctament la vostra sol·licitud.
+TicketPublicPleaseBeAccuratelyDescribe=Descriu amb precisió la teva sol·licitud. Proporcioneu la màxima informació possible que ens permeti identificar correctament la vostra sol·licitud.
 TicketPublicMsgViewLogIn=Introduïu l'identificador de traça dels tiquets (ID)
-TicketTrackId=ID de seguiment públic
+TicketTrackId=Identificador de seguiment
 OneOfTicketTrackId=Un dels vostres ID de seguiment
 ErrorTicketNotFound=No s'ha trobat cap tiquet amb identificació de traça %s.
 Subject=Assumpte
@@ -331,7 +298,6 @@ NumberOfTicketsByMonth=Nombre d’entrades mensuals
 NbOfTickets=Nombre d’entrades
 ExternalContributors=Col·laboradors externs
 AddContributor=Afegeix un col·laborador extern
-
 # notifications
 TicketCloseEmailSubjectCustomer=Tiquet tancat
 TicketCloseEmailBodyCustomer=Aquest és un missatge automàtic per a notificar-vos que el tiquet %s s'acaba de tancar.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=Destinatari de la notificació
 TicketNotificationLogMessage=Missatges de 'log' (registre d'activitat)
 TicketNotificationEmailBodyInfosTrackUrlinternal=Veure el tiquet a la interfície
 TicketNotificationNumberEmailSent=Correu electrònic de notificació enviat : %s
-
 ActionsOnTicket=Esdeveniments en tiquets
-
-#
 # Boxes
-#
 BoxLastTicket=Últims tiquets creats
 BoxLastTicketDescription=Últims %s tiquets creats
 BoxLastTicketContent=

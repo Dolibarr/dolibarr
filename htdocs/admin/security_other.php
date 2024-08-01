@@ -48,7 +48,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0) {
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
@@ -56,13 +56,17 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 } elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
-		Header("Location: ".$_SERVER["PHP_SELF"]);
+		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	} else {
 		dol_print_error($db);
 	}
 } elseif ($action == 'updateform') {
-	$res1 = 1; $res2 = 1; $res3 = 1; $res4 = 1; $res5 = 1;
+	$res1 = 1;
+	$res2 = 1;
+	$res3 = 1;
+	$res4 = 1;
+	$res5 = 1;
 	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
@@ -92,7 +96,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Miscellaneous"), $wikihelp);
+llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_other');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -126,7 +130,7 @@ if (function_exists("imagecreatefrompng")) {
 	if (!empty($conf->use_javascript_ajax)) {
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
 	} else {
-		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA)) {
+		if (!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -145,7 +149,7 @@ print '<td class="right">';
 if (!empty($conf->use_javascript_ajax)) {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
 } else {
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
@@ -168,7 +172,7 @@ print "</tr>\n";
 
 
 $sessiontimeout = ini_get("session.gc_maxlifetime");
-if (empty($conf->global->MAIN_SESSION_TIMEOUT)) {
+if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 	$conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 }
 print '<tr class="oddeven">';

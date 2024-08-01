@@ -1,3 +1,9 @@
 # Dolibarr language file - Source file is en_US - website
 NoPageYet=Sin páginas aun
 GrabImagesInto=Insertar también las imágenes encontradas en CSS y página.
+WebPortalAccessHidden=Oculto
+WebPortalPropalListMenu=Cotizaciones
+WebPortalPropalListTitle=Cotizaciones
+WebPortalPropal=Cotización
+removeFilter=Remover filtro
+requiredField=Campo requerido

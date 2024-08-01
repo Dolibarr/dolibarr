@@ -32,7 +32,7 @@ require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
 
-$setuplang = GETPOST('selectlang', 'aZ09', 3) ?GETPOST('selectlang', 'aZ09', 3) : (empty($argv[1]) ? 'auto' : $argv[1]);
+$setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[1]) ? 'auto' : $argv[1]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
@@ -48,7 +48,7 @@ if (@file_exists($forcedfile)) {
 	include_once $forcedfile;
 }
 
-dolibarr_install_syslog("- step4: entering step4.php page");
+dolibarr_install_syslog("--- step4: entering step4.php page");
 
 $error = 0;
 $ok = 0;
@@ -87,13 +87,13 @@ if ($db->ok) {
 	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8"></td></tr>';
 	print '</table>';
 
-	if (isset($_GET["error"]) && $_GET["error"] == 1) {
+	if (GETPOSTINT("error") == 1) {
 		print '<br>';
 		print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
 		$error = 0; // We show button
 	}
 
-	if (isset($_GET["error"]) && $_GET["error"] == 2) {
+	if (GETPOSTINT("error") == 2) {
 		print '<br>';
 		print '<div class="error">';
 		print $langs->trans("PleaseTypePassword");
@@ -101,7 +101,7 @@ if ($db->ok) {
 		$error = 0; // We show button
 	}
 
-	if (isset($_GET["error"]) && $_GET["error"] == 3) {
+	if (GETPOSTINT("error") == 3) {
 		print '<br>';
 		print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
 		$error = 0; // We show button
@@ -114,7 +114,7 @@ if ($error && isset($argv[1])) {
 }
 dolibarr_install_syslog("Exit ".$ret);
 
-dolibarr_install_syslog("- step4: end");
+dolibarr_install_syslog("--- step4: end");
 
 pFooter($error, $setuplang);
 

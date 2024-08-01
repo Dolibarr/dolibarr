@@ -40,7 +40,7 @@ class modMultiCurrency extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -111,7 +111,7 @@ class modMultiCurrency extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -150,7 +150,21 @@ class modMultiCurrency extends DolibarrModules
 		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 
 		$this->cronjobs = array(
-			0 =>array('priority'=>61, 'label'=>'MutltiCurrencyAutoUpdateCurrencies', 'jobtype'=>'method', 'class'=>'multicurrency/class/multicurrency.class.php', 'objectname'=>'MultiCurrency', 'method'=>'syncRates',             'parameters'=>'0,0,cron',      'comment'=>'Update all the currencies using the currencylayer API. An APi key needs to be given in the multi-currency module config on constant MULTICURRENCY_APP_ID', 'frequency'=>1, 'unitfrequency'=>2678400, 'status'=>$statusatinstall, 'test'=>'isModEnabled("cron")', 'datestart'=>$datestart),
+			0 => array(
+				'priority'=>61,
+				'label'=>'MutltiCurrencyAutoUpdateCurrencies',
+				'jobtype'=>'method',
+				'class'=>'multicurrency/class/multicurrency.class.php',
+				'objectname'=>'MultiCurrency',
+				'method'=>'syncRates',
+				'parameters'=>'0,0,cron',
+				'comment'=>'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page',
+				'frequency'=>1,
+				'unitfrequency'=>2678400,
+				'status'=>$statusatinstall,
+				'test'=>'isModEnabled("cron")',
+				'datestart'=>$datestart
+			),
 		);
 
 		// Permissions

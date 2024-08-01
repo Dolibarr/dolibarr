@@ -19,7 +19,7 @@
 /**
  *      \file       htdocs/comm/action/info.php
  *      \ingroup    agenda
- *		\brief      Page des informations d'une action
+ *		\brief      Page des information d'une action
  */
 
 // Load Dolibarr environment
@@ -37,9 +37,9 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->load("commercial");
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 // Security check
@@ -72,30 +72,44 @@ $object->info($object->id);
 $head = actions_prepare_head($object);
 print dol_get_fiche_head($head, 'info', $langs->trans("Action"), -1, 'action');
 
-$linkback = img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="hideonsmartphone pictoactionview"');
-$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php">'.$langs->trans("BackToList").'</a>';
-
 // Link to other agenda views
-$out = '';
-$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="hideonsmartphone pictoactionview"');
-$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewPerUser").'</a>';
-$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="hideonsmartphone pictoactionview"');
-$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewCal").'</a>';
-$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone pictoactionview"');
-$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewWeek").'</a>';
-$out .= '</li><li class="noborder litext">'.img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone pictoactionview"');
-$out .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">'.$langs->trans("ViewDay").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1">';
+$linkback .= img_picto($langs->trans("BackToList"), 'object_calendarlist', 'class="pictoactionview pictofixedwidth"');
+$linkback .= '<span class="hideonsmartphone">'.$langs->trans("BackToList").'</span>';
+$linkback .= '</a>';
+$linkback .= '</li>';
+$linkback .= '<li class="noborder litext">';
+$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+$linkback .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictoactionview pictofixedwidth"');
+$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewCal").'</span>';
+$linkback .= '</a>';
+$linkback .= '</li>';
+$linkback .= '<li class="noborder litext">';
+$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+$linkback .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview pictofixedwidth"');
+$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewWeek").'</span>';
+$linkback .= '</a>';
+$linkback .= '</li>';
+$linkback .= '<li class="noborder litext">';
+$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+$linkback .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview pictofixedwidth"');
+$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewDay").'</span>';
+$linkback .= '</a>';
+$linkback .= '</li>';
+$linkback .= '<li class="noborder litext">';
+$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+$linkback .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview pictofixedwidth"');
+$linkback .= '<span class="hideonsmartphone">'.$langs->trans("ViewPerUser").'</span>';
+$linkback .= '</a>';
 
 // Add more views from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('addCalendarView', $parameters, $object, $action);
 if (empty($reshook)) {
-	$out .= $hookmanager->resPrint;
+	$linkback .= $hookmanager->resPrint;
 } elseif ($reshook > 1) {
-	$out = $hookmanager->resPrint;
+	$linkback = $hookmanager->resPrint;
 }
-
-$linkback .= $out;
 
 $morehtmlref = '<div class="refidno">';
 // Project

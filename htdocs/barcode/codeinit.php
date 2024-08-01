@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ $thirdpartytmp = new Societe($db);
 $modBarCodeProduct = '';
 $modBarCodeThirdparty = '';
 
-$maxperinit = empty($conf->global->BARCODE_INIT_MAX) ? 1000 : $conf->global->BARCODE_INIT_MAX;
+$maxperinit = !getDolGlobalString('BARCODE_INIT_MAX') ? 1000 : $conf->global->BARCODE_INIT_MAX;
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -67,7 +68,7 @@ if (empty($user->admin)) {
  */
 
 // Define barcode template for third-party
-if (!empty($conf->global->BARCODE_THIRDPARTY_ADDON_NUM)) {
+if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 
 	foreach ($dirbarcodenum as $dirroot) {
@@ -86,6 +87,7 @@ if (!empty($conf->global->BARCODE_THIRDPARTY_ADDON_NUM)) {
 					}
 
 					$modBarCodeThirdparty = new $file();
+					'@phan-var-force ModeleNumRefBarCode $module';
 					break;
 				}
 			}
@@ -108,6 +110,7 @@ if ($action == 'initbarcodethirdparties') {
 		$nbok = 0;
 		if (!empty($eraseallthirdpartybarcode)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql .= " AND entity IN (".getEntity('societe').")";
 			$sql .= " SET barcode = NULL";
 			$resql = $db->query($sql);
 			if ($resql) {
@@ -120,6 +123,7 @@ if ($action == 'initbarcodethirdparties') {
 			$sql = "SELECT rowid";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
+			$sql .= " AND entity IN (".getEntity('societe').")";
 			$sql .= $db->order("datec", "ASC");
 			$sql .= $db->plimit($maxperinit);
 
@@ -128,7 +132,8 @@ if ($action == 'initbarcodethirdparties') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				$i = 0; $nbok = $nbtry = 0;
+				$i = 0;
+				$nbok = $nbtry = 0;
 				while ($i < min($num, $maxperinit)) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
@@ -167,7 +172,7 @@ if ($action == 'initbarcodethirdparties') {
 }
 
 // Define barcode template for products
-if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
+if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 	$dirbarcodenum = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
 
 	foreach ($dirbarcodenum as $dirroot) {
@@ -179,7 +184,7 @@ if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					if ($file == $conf->global->BARCODE_PRODUCT_ADDON_NUM) {
+					if ($file == getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						try {
 							dol_include_once($dirroot.$file.'.php');
 						} catch (Exception $e) {
@@ -187,6 +192,7 @@ if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM)) {
 						}
 
 						$modBarCodeProduct = new $file();
+						'@phan-var-force ModeleNumRefBarCode $module';
 						break;
 					}
 				}
@@ -211,6 +217,7 @@ if ($action == 'initbarcodeproducts') {
 		if (!empty($eraseallproductbarcode)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql .= " SET barcode = NULL";
+			$sql .= " WHERE entity IN (".getEntity('product').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
@@ -222,6 +229,7 @@ if ($action == 'initbarcodeproducts') {
 			$sql = "SELECT rowid, ref, fk_product_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
+			$sql .= " AND entity IN (".getEntity('product').")";
 			$sql .= $db->order("datec", "ASC");
 			$sql .= $db->plimit($maxperinit);
 
@@ -230,7 +238,8 @@ if ($action == 'initbarcodeproducts') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				$i = 0; $nbok = $nbtry = 0;
+				$i = 0;
+				$nbok = $nbtry = 0;
 				while ($i < min($num, $maxperinit)) {
 					$obj = $db->fetch_object($resql);
 					if ($obj) {
@@ -278,7 +287,7 @@ if ($action == 'initbarcodeproducts') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("MassBarcodeInit"));
+llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
 print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
@@ -322,6 +331,7 @@ if (isModEnabled('societe')) {
 	}
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
+	$sql .= " WHERE entity IN (".getEntity('societe').")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -376,6 +386,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	$sql = "SELECT count(rowid) as nb, fk_product_type, datec";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product";
 	$sql .= " WHERE barcode IS NULL OR barcode = ''";
+	$sql .= " AND entity IN (".getEntity('product').")";
 	$sql .= " GROUP BY fk_product_type, datec";
 	$sql .= " ORDER BY datec";
 	$resql = $db->query($sql);
@@ -394,6 +405,7 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	}
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
+	$sql .= " WHERE entity IN (".getEntity('product').")";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);

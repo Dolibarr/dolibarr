@@ -49,13 +49,13 @@ $toselect = GETPOST('toselect', 'array');
 
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
 
 $object = new Societe($db);
@@ -92,7 +92,7 @@ if (in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete', 'preaffecttag', 'preenable', 'preclose'))) {
 	$arrayofmassactions = array();
 }
 
@@ -119,14 +119,11 @@ if ($socid) {
 	$result = $object->fetch($socid);
 
 	$title = $langs->trans("Projects");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
 	llxHeader('', $title);
 
-	if (isModEnabled('notification')) {
-		$langs->load("mails");
-	}
 	$head = societe_prepare_head($object);
 
 	print dol_get_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
@@ -146,7 +143,7 @@ if ($socid) {
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 
@@ -173,7 +170,6 @@ if ($socid) {
 	}
 
 	print '</table>';
-
 	print '</div>';
 
 	print dol_get_fiche_end();
@@ -194,7 +190,10 @@ if ($socid) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 	$result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
-	print '</form>';
+
+	if (empty($conf->dol_optimize_smallscreen)) {
+		print '</form>';
+	}
 }
 
 // End of page

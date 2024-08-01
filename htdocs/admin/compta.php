@@ -56,7 +56,7 @@ $list = array(
  * Actions
  */
 
-$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
+$accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'RECETTES-DEPENSES');
 
 if ($action == 'update') {
 	$error = 0;
@@ -124,7 +124,7 @@ if ($action == 'update') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-compta');
 
 $form = new Form($db);
 
@@ -177,14 +177,14 @@ foreach ($list as $key) {
 print '<tr class="oddeven value">'."\n";
 print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_VARPAY">'.$langs->trans('IncludeVarpaysInResults').'</label></td>'."\n";
 print '<td class="center">'."\n";
-print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_VARPAY', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY)));
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_VARPAY', (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_VARPAY')));
 print '</td></tr>';
 
 // Option to include loan in results
 print '<tr class="oddeven value">'."\n";
 print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_LOAN">'.$langs->trans('IncludeLoansInResults').'</label></td>'."\n";
 print '<td class="center">'."\n";
-print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_LOAN', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN)));
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_LOAN', (getDolGlobalString('ACCOUNTING_REPORTS_INCLUDE_LOAN')));
 print '</td></tr>';
 
 print "</table>\n";

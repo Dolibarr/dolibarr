@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,17 +62,26 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
 abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 {
 	/**
+	 * Constructor
+	 *
+	 *  @param DoliDB       $db     Database object
+	 */
+	abstract public function __construct($db);
+
+
+	/**
 	 *  Return next value available
 	 *
-	 *	@param	Societe		$objsoc		Object thirdparty
-	 *	@param	int			$type		Type
-	 *  @return string      			Value
+	 *	@param	Societe|string	$objsoc		Object thirdparty
+	 *	@param	int				$type		Type
+	 *  @return string      				Value
 	 */
-	public function getNextValue($objsoc = 0, $type = -1)
+	public function getNextValue($objsoc = '', $type = -1)
 	{
 		global $langs;
 		return $langs->trans("Function_getNextValue_InModuleNotWorking");
 	}
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -101,6 +112,7 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		return $list;
 	}
 
+
 	/**
 	 *  Return description of module parameters
 	 *
@@ -117,23 +129,21 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 
 		$strikestart = '';
 		$strikeend = '';
-		if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) {
+		if (getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED') && !empty($this->code_null)) {
 			$strikestart = '<strike>';
 			$strikeend = '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 		}
 
 		$s = '';
 		if ($type == -1) {
-			$s .= $langs->trans("Name").': <b>'.$this->getNom($langs).'</b><br>';
-		} elseif ($type == -1) {
-			$s .= $langs->trans("Version").': <b>'.$this->getVersion().'</b><br>';
+			$s .= $langs->trans("Name").': <b>'.$this->getName($langs).'</b><br>';
 		} elseif ($type == 0) {
 			$s .= $langs->trans("CustomerCodeDesc").'<br>';
 		} elseif ($type == 1) {
 			$s .= $langs->trans("SupplierCodeDesc").'<br>';
 		}
 		if ($type != -1) {
-			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+			$s .= $langs->trans("ValidityControledByModule").': <b>'.$this->getName($langs).'</b><br>';
 		}
 		$s .= '<br>';
 		$s .= '<u>'.$langs->trans("ThisIsModuleRules").':</u><br>';
@@ -193,6 +203,11 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 {
 	/**
+	 * @var string
+	 */
+	public $code;
+
+	/**
 	 *  Return description of module parameters
 	 *
 	 *  @param	Translate	$langs      Output language
@@ -239,14 +254,15 @@ abstract class ModeleAccountancyCode extends CommonNumRefGenerator
 	 *
 	 *  @param	DoliDB	$db             Database handler
 	 *  @param  Societe	$societe        Third party object
-	 *  @param  int		$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
+	 *  @param  string	$type			'customer' or 'supplier'
+	 *  @return	int<-1,1>				>=0 if success, -1 if failure
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
 		// phpcs:enable
 		global $langs;
 
-		return $langs->trans("NotAvailable");
+		dol_syslog(get_class($this)."::get_code".$langs->trans("NotAvailable"), LOG_ERR);
+		return -1;
 	}
 }

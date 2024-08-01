@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,11 +70,11 @@ class ModelePDFLabels
  *	@param  DoliDB		$db					Database handler
  *	@param  array		$arrayofrecords		Array of records
  *	@param	string		$modele				Force le modele a utiliser ('' to not force)
- *	@param	Translate	$outputlangs		Objet lang a utiliser pour traduction
+ *	@param	Translate	$outputlangs		Object lang a utiliser pour traduction
  *	@param	string		$outputdir			Output directory
  *  @param  string      $template           pdf generenate document class to use default 'standardlabel'
  *  @param  string      $filename           Short file name of PDF output file
- *	@return int        						<0 if KO, >0 if OK
+ *	@return int        						Return integer <0 if KO, >0 if OK
  */
 function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir = '', $template = 'standardlabel', $filename = 'tmp_address_sheet.pdf')
 {
@@ -94,8 +95,8 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->ADHERENT_ETIQUETTE_TYPE)) {
-			$code = $conf->global->ADHERENT_ETIQUETTE_TYPE;
+		if (getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')) {
+			$code = getDolGlobalString('ADHERENT_ETIQUETTE_TYPE');
 		} else {
 			$code = $modele;
 		}
@@ -117,7 +118,6 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -126,21 +126,20 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 		foreach (array('doc', 'pdf') as $prefix) {
 			$file = $prefix."_".$template.".class.php";
 
-			// On verifie l'emplacement du modele
+			// Determine the model path and validate that it exists
 			$file = dol_buildpath($reldir."core/modules/printsheet/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
-	// Charge le modele
-	if ($filefound) {
+	// Load the model
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);
@@ -157,7 +156,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			clearstatcache();
 
 			$attachment = true;
-			if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+			if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 				$attachment = false;
 			}
 			$type = dol_mimetype($filename);
@@ -185,7 +184,7 @@ function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outp
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
 }

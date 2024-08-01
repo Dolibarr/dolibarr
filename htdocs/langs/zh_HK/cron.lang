@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = 讀取預定作業
 Permission23102 = 創建/更新預定作業
 Permission23103 = 刪除預定作業
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=命令行檢查並啟動合格的 cron 作業
 CronExplainHowToRunUnix=在 Unix 環境中，您應該使用以下 crontab 條目每 5 分鐘運行一次命令行
 CronExplainHowToRunWin=在 Microsoft(tm) Windows 環境中，您可以使用計劃任務工具每 5 分鐘運行一次命令行
 CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
+CronMethodNotAllowed=Method %s of class %s is in blocklist of forbidden methods
 CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
 CronJobProfiles=List of predefined cron job profiles
 # Menu
@@ -30,7 +29,8 @@ CronExecute=立即啟動
 CronConfirmExecute=您確定要立即執行這些預定作業嗎？
 CronInfo=計劃作業模塊允許計劃作業以自動執行它們。也可以手動啟動作業。
 CronTask=工作
-CronNone=沒有任何
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=之前沒有
 CronDtEnd=不之後
 CronDtNextLaunch=下次執行
@@ -49,8 +49,8 @@ CronEach=每一個
 JobFinished=工作啟動並完成
 Scheduled=Scheduled
 #Page card
-CronAdd= 添加職位
-CronEvery=執行每個作業
+CronAdd=添加職位
+CronEvery=Run job every
 CronObject=要創建的實例/對象
 CronArgs=參數
 CronSaveSucess=保存成功
@@ -63,11 +63,11 @@ CronStatusInactiveBtn=禁用
 CronTaskInactive=該作業已禁用（未安排）
 CronId=ID
 CronClassFile=帶類的文件名
-CronModuleHelp=Dolibarr 模塊目錄的名稱（也適用於外部 Dolibarr 模塊）。 <BR>  例如調用 Dolibarr Product 對象 /htdocs/ <span class='notranslate'><u></span> 的 fetch 方法\n 產品</u> /class/product.class.php，模塊的值為<br>  <i> 產品</i> 
-CronClassFileHelp=要加載的相對路徑和文件名（路徑相對於 Web 服務器根目錄）。 <BR>  例如調用 Dolibarr Product 對象 htdocs/product/class/ <span class='notranslate'><u></span> 的 fetch 方法\n 產品.class.php </u> ，類文件名的值為 <br>  <i> 產品/類/product.class.php </i> 
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=要加載的對象名稱。 <BR>  例如調用 Dolibarr Product 對象 /htdocs/product/class/product.class.php 的 fetch 方法，類文件名的值為 <br>  <i> 產品</i> 
 CronMethodHelp=要啟動的對象方法。 <BR>  例如調用 Dolibarr Product 對象 /htdocs/product/class/product.class.php 的 fetch 方法，method 的值為 <br>  <i> 獲取</i> 
-CronArgsHelp=方法參數。 <BR>  例如調用 Dolibarr Product 對象 /htdocs/product/class/product.class.php 的 fetch 方法，參數值可以是 <br>  <i> 0、ProductRef </i> 
+CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for parameters can be<br><i>0, ProductRef</i>
 CronCommandHelp=要執行的系統命令行。
 CronCreateJob=Create new Scheduled Job
 CronFrom=From
@@ -91,6 +91,7 @@ WarningCronDelayed=Attention, for performance purpose, whatever is next date of 
 DATAPOLICYJob=Data cleaner and anonymizer
 JobXMustBeEnabled=Job %s must be enabled
 EmailIfError=Email for warning on error
+JobNotFound=Job %s not found in list of jobs (try to disable/enabled module)
 ErrorInBatch=Error when running the job %s
 
 # Cron Boxes
