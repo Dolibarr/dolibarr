@@ -1117,10 +1117,10 @@ class MyObject extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/mymodule/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = $mybool || @include_once $dir.$file;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}

@@ -2366,7 +2366,7 @@ class Product extends CommonObject
 	 * @param  string $newpricebase      HT or TTC
 	 * @param  User   $user              Object user that make change
 	 * @param  ?double $newvat           New VAT Rate (For example 8.5. Should not be a string)
-	 * @param  double $newminprice       New price min
+	 * @param  double|int $newminprice       New price min
 	 * @param  int    $level             0=standard, >0 = level if multilevel prices
 	 * @param  int    $newnpr            0=Standard vat rate, 1=Special vat rate for French NPR VAT
 	 * @param  int    $newpbq            1 if it has price by quantity
@@ -2431,7 +2431,7 @@ class Product extends CommonObject
 				$price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
-				if ($newminprice !== '' || $newminprice === 0) {
+				if ($newminprice !== '' || $newminprice == 0) {
 					$price_min = price2num($newminprice, 'MU');
 					$price_min_ttc = (float) price2num($newminprice) * (1 + ($newvat / 100));
 					$price_min_ttc = price2num($price_min_ttc, 'MU');

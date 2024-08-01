@@ -370,8 +370,8 @@ class ProductAttribute extends CommonObject
 	 * Updates a product attribute
 	 *
 	 * @param   User            $user           User who updates the attribute
-	 * @param   int        		$notrigger      1 = Do not execute trigger (0 by default)
-	 * @return 	int								Return <0 if KO, 1 if OK
+	 * @param   int        		  $notrigger      1 = Do not execute trigger (0 by default)
+	 * @return 	int								              Return <0 if KO, 1 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -520,7 +520,7 @@ class ProductAttribute extends CommonObject
 	 * Load array lines
 	 *
 	 * @param	string		$filters	Filter on other fields
-	 * @return	int						Return integer <0 if KO, >0 if OK
+	 * @return	int						    Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_lines($filters = '')
 	{
