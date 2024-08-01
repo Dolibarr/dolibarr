@@ -82,13 +82,16 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltiporchidee').'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -130,7 +133,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe|string		$objsoc     Object third party
 	 *  @param  CommandeFournisseur	$object		Object
-	 *  @return string|0      					Value if OK, 0 if KO
+	 *  @return string|int  					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

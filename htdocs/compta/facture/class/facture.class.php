@@ -2574,13 +2574,13 @@ class Facture extends CommonInvoice
 	/**
 	 *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
 	 *
-	 *    @param     int	$idremise	Id of absolute discount
+	 *    @param     int	$idremise	Id of absolute discount from table llx_societe_remise_except
 	 *    @return    int          		>0 if OK, <0 if KO
 	 */
 	public function insert_discount($idremise)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';

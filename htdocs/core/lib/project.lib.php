@@ -2585,10 +2585,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= " AND p.fk_statut = ".(int) $status;
 	}
 	if (getDolGlobalString('PROJECT_LIMIT_YEAR_RANGE')) {
-		$project_year_filter = GETPOST("project_year_filter");
+		$project_year_filter = GETPOST("project_year_filter", 'alpha');	// '*' seems allowed
 		//Check if empty or invalid year. Wildcard ignores the sql check
 		if ($project_year_filter != "*") {
-			if (empty($project_year_filter) || !ctype_digit($project_year_filter)) {
+			if (empty($project_year_filter) || !is_numeric($project_year_filter)) {
 				$project_year_filter = date("Y");
 			}
 			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter, 12, false)).")";

@@ -135,7 +135,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-		llxHeader('', $title, $helpurl);
+		llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_contact');
 
 		$head = facturefourn_prepare_head($object);
 

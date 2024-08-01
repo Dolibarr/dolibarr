@@ -9,7 +9,7 @@
  * Copyright (C) 2014-2020	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2021	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -815,6 +815,7 @@ if (empty($reshook)) {
 			if ($result < 0) {
 				$error++;
 				$action = 'editline';
+				$_GET['rowid'] = GETPOST('elrowid');
 				setEventMessages($objectline->error, $objectline->errors, 'errors');
 			}
 		}
@@ -1264,13 +1265,13 @@ if ($action == 'create') {
 	}
 
 	print '<tr><td>'.$langs->trans("NotePublic").'</td><td class="tdtop">';
-	$doleditor = new DolEditor('note_public', $note_public, '', '100', 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+	$doleditor = new DolEditor('note_public', $note_public, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 	print $doleditor->Create(1);
 	print '</td></tr>';
 
 	if (empty($user->socid)) {
 		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td class="tdtop">';
-		$doleditor = new DolEditor('note_private', $note_private, '', '100', 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_private', $note_private, '', 100, 'dolibarr_notes', 'In', 1, true, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 	}
@@ -2197,6 +2198,7 @@ if ($action == 'create') {
 					);
 				}
 				if (isModEnabled('supplier_invoice') && $object->status > 0 && $soc->fournisseur == 1) {
+					$langs->load("suppliers");
 					$arrayofcreatebutton[] = array(
 						'url' => '/fourn/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddSupplierInvoice'),

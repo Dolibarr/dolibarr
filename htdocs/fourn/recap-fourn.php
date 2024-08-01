@@ -49,7 +49,7 @@ $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 $form = new Form($db);
 $userstatic = new User($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-fourn page-recap-fourn');
 
 if ($socid > 0) {
 	$societe = new Societe($db);

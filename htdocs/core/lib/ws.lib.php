@@ -53,7 +53,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 	}
 
 	if (!$error) {
-		$result = $fuser->fetch('', $authentication['login'], '', 0);
+		$result = $fuser->fetch(0, $authentication['login'], '', 0);
 		if ($result < 0) {
 			$error++;
 			$errorcode = 'ERROR_FETCH_USER';

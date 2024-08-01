@@ -579,7 +579,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte";
 
-llxHeader("", $title, $help_url);
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card');
 
 $titleboth = $langs->trans("LeadsOrProjects");
 $titlenew = $langs->trans("NewLeadOrProject"); // Leads and opportunities by default
@@ -1444,7 +1444,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print dol_htmlentitiesbr($object->description);
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($object->description);
+		print '</div>';
 		print '</td></tr>';
 
 		// Categories

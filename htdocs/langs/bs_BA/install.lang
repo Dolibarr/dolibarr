@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Koristili ste Dolibarr čarobnjak za postavljanje iz Linux 
 KeepDefaultValuesMamp=Koristili ste Dolibarr čarobnjak za podešavanje iz DoliMamp-a, tako da su vrijednosti koje su ovdje predložene već optimizirane. Promijenite ih samo ako znate šta radite.
 KeepDefaultValuesProxmox=Koristili ste Dolibarr čarobnjak za podešavanje sa Proxmox virtuelnog uređaja, tako da su vrednosti koje su ovde predložene već optimizovane. Promijenite ih samo ako znate šta radite.
 UpgradeExternalModule=Pokrenite namjenski proces nadogradnje vanjskog modula
-SetAtLeastOneOptionAsUrlParameter=Postavite barem jednu opciju kao parametar u URL-u. Na primjer: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Ništa za čišćenje/brisanje
 NothingToDo=Ništa za raditi
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Aplikacija je pokušala samonadograditi, ali str
 YouTryUpgradeDisabledByMissingFileUnLock=Aplikacija je pokušala samostalno nadograditi, ali proces nadogradnje trenutno nije dozvoljen.<br>
 ClickHereToGoToApp=Kliknite ovdje da odete na svoju aplikaciju
 ClickOnLinkOrRemoveManualy=Ako je nadogradnja u toku, pričekajte. Ako ne, kliknite na sljedeću vezu. Ako uvijek vidite istu stranicu, morate ukloniti/preimenovati datoteku install.lock u direktoriju dokumenata.
-ClickOnLinkOrCreateUnlockFileManualy=Ako je nadogradnja u toku, pričekajte... Ako nije, morate ukloniti datoteku install.lock ili kreirati datoteku upgrade.unlock u direktoriju Dolibarr dokumenata.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Napunjeno
 FunctionTest=Funkcionalni test
 NodoUpgradeAfterDB=Eksterni moduli ne zahtijevaju nikakvu radnju nakon nadogradnje baze podataka

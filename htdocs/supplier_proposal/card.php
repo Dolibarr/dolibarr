@@ -1166,7 +1166,7 @@ if ($action == 'create') {
 }
 $help_url = 'EN:Ask_Price_Supplier|FR:Demande_de_prix_fournisseur';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplierproposal page-card');
 
 $form = new Form($db);
 $formother = new FormOther($db);

@@ -15,6 +15,10 @@ ListOfBOMs=Materiaaliluettelot - BOM
 ListOfManufacturingOrders=Valmistustilaukset
 NewBOM=Uusi lasku Materiaalit
 ProductBOMHelp=Product to create (or disassemble) with this BOM.<br>Note: Products with the property 'Nature of product' = 'Raw material' are not visible into this list.
+CloneDefBomProduct=Clone the default BOM to use to manufacture the product
+CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
+BOMofRef=BOM of %s
+ErrorProductCloneBom=Error: Failed to clone a BOM
 BOMsNumberingModules=Tuoteluettelon numerointimallit
 BOMsModelModule=BOM-asiakirjamallit
 MOsNumberingModules=MO numerointimallit
@@ -100,6 +104,7 @@ WorkstationSetup = Työasemien asetukset
 WorkstationSetupPage = Työasemien asetussivu
 WorkstationList=Työasemaluettelo
 WorkstationCreate=Lisää uusi työasema
+NewWorkstation=Uusi työpiste
 ConfirmEnableWorkstation=Haluatko varmasti ottaa käyttöön työaseman <b>%s</b>?
 EnableAWorkstation=Ota työasema käyttöön
 ConfirmDisableWorkstation=Haluatko varmasti poistaa käytöstä työaseman <b>%s</b>?
@@ -130,9 +135,8 @@ Manufacturing=Valmistus
 Disassemble=Pura
 ProducedBy=Tuottanut
 QtyTot=Määrä yhteensä
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Määrää ei voi jakaa
 NoRemainQtyToDispatch=Jaettavaa määrää ei ole jäljellä
-
 THMOperatorEstimatedHelp=Operaattorin arvioitu tuntihinta. Käytetään tätä työasemaa käyttävän tuoteluettelon kustannusten arvioimiseen.
 THMMachineEstimatedHelp=Arvioitu koneen hinta per tunti. Käytetään tätä työasemaa käyttävän tuoteluettelon kustannusten arvioimiseen.

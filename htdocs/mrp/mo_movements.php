@@ -264,9 +264,10 @@ $productlot = new Productlot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
+$title = $langs->trans('Mo');
 $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
-llxHeader('', $langs->trans('Mo'), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-card_movements');
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {

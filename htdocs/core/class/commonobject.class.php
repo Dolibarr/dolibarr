@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
+ * Copyright (C) 2016      Bahfir abbes         <bafbes@gmail.com>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
@@ -139,13 +139,14 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
 	/**
 	 * @var array<string,array<string,string>>	Array to store alternative languages values of object
-	 * 											Note: call fetchValuesForExtraLanguages() before using this
+	 *
+	 * Note: call fetchValuesForExtraLanguages() before using this
 	 */
 	public $array_languages = null; // Value is array() when load already tried
 
@@ -3358,7 +3359,7 @@ abstract class CommonObject
 	 *
 	 * 	@param	int			$id				Id of parent line
 	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
-	 * 	@return	int[]			            Array with list of children lines id
+	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
@@ -3375,13 +3376,14 @@ abstract class CommonObject
 		$sql .= " ORDER BY " . $fieldposition . " ASC";
 
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql) > 0) {
 				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
-					if ($includealltree) {
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree));
+					if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
+						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
 					}
 				}
 			}
@@ -6687,7 +6689,7 @@ abstract class CommonObject
 								if (is_numeric($value)) {
 									$res = $object->fetch($value); // Common case
 								} else {
-									$res = $object->fetch('', $value); // For compatibility
+									$res = $object->fetch(0, $value); // For compatibility
 								}
 
 								if ($res > 0) {
@@ -7153,7 +7155,7 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-								else $res = $object->fetch('', $value);					// For compatibility
+								else $res = $object->fetch(0, $value);					// For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -7202,9 +7204,9 @@ abstract class CommonObject
 			//var_dump('linealreadyfound='.$linealreadyfound.' sql='.$sql); exit;
 			if ($linealreadyfound) {
 				if ($this->array_options["options_".$key] === null) {
-					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = null";
+					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
 				} else {
-					$sql = "UPDATE ".$this->db->prefix().$this->table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
+					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
 
@@ -8242,7 +8244,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+			if (count($InfoFieldList) > 2 && !empty($InfoFieldList[2])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -8262,7 +8264,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -8279,7 +8281,7 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$filter_categorie) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -8592,7 +8594,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey])) {
+		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
@@ -8914,7 +8916,7 @@ abstract class CommonObject
 									$value = $getposttemp;
 								}
 							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
-								$value =( !empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0' ) ? $this->array_options["options_".$key] : '';
+								$value = (!empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0') ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}

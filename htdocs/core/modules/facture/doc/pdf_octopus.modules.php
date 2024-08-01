@@ -1811,7 +1811,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 				// Revenue stamp
-				if (price2num($object->revenuestamp) != 0) {
+				if (price2num($object->revenuestamp, 'MT') != 0) {
 					$index++;
 					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RevenueStamp").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RevenueStamp", $mysoc->country_code) : ''), $useborder, 'L', 1);
@@ -1964,6 +1964,13 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->SetFont('', '', $default_font_size - 2);
 
 		if (empty($hidetop)) {
+			// Show category of operations
+			if (getDolGlobalInt('INVOICE_CATEGORY_OF_OPERATION') == 1 && $this->categoryOfOperation >= 0) {
+				$categoryOfOperations = $outputlangs->transnoentities("MentionCategoryOfOperations") . ' : ' . $outputlangs->transnoentities("MentionCategoryOfOperations" . $this->categoryOfOperation);
+				$pdf->SetXY($this->marge_gauche, $tab_top - 4);
+				$pdf->MultiCell(($pdf->GetStringWidth($categoryOfOperations)) + 4, 2, $categoryOfOperations);
+			}
+
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
@@ -2603,20 +2610,20 @@ class pdf_octopus extends ModelePDFFactures
 			$derniere_situation = 0;
 		}
 
-		// Colonne "Pourcentage Progression précédente"
+		// Column 'Previous progression'
 		$rank = $rank + 10;
 		$this->cols['prev_progress'] = array(
 			'rank' => $rank,
 			'width' => 10, // in mm
 			'status' => false,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('SituationInvoiceProgressColTitle', $derniere_situation->situation_counter)
+				'textkey' => $outputlangs->transnoentities('ProgressShort')
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => $outputlangs->transnoentities('SituationInvoiceDate', $derniere_situation->situation_counter, dol_print_date($derniere_situation->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
+				'textkey' => 'S'.$derniere_situation->situation_counter . ' - ' . dol_print_date($derniere_situation->date, "%d/%m/%Y"),
 				'align' => 'C',
-				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
 				'width' => 10+15 //current width + amount cell width
 			),
 		);
@@ -2631,7 +2638,7 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => 15, // in mm
 			'status' => false,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('SituationInvoiceAmountColTitle', $derniere_situation->situation_counter)
+				'textkey' => $outputlangs->transnoentities('Amount')
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -2646,13 +2653,13 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => 10, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('SituationInvoiceProgressColTitle', $object->situation_counter)
+				'textkey' => $outputlangs->transnoentities('ProgressShort')
 			),
 			'border-left' => true, // add left line separator
 			'overtitle' => array(
-				'textkey' => $outputlangs->transnoentities('SituationInvoiceDate', $object->situation_counter, dol_print_date($object->date, "%d/%m/%Y")), // use lang key is useful in somme case with module
+				'textkey' => 'S'.$object->situation_counter . ' - ' . dol_print_date($object->date, "%d/%m/%Y"),
 				'align' => 'C',
-				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+				'padding' => array(0.5,0.2,0.5,0.2), // Like css 0 => top, 1 => right, 2 => bottom, 3 => left
 				'width' => 10+15
 			),
 		);
@@ -2664,7 +2671,7 @@ class pdf_octopus extends ModelePDFFactures
 			'width' => 15, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => $outputlangs->transnoentities('SituationInvoiceAmountColTitle', $object->situation_counter)
+				'textkey' => $outputlangs->transnoentities('Amount')
 			),
 			'border-left' => true, // add left line separator
 		);
@@ -3449,7 +3456,9 @@ class pdf_octopus extends ModelePDFFactures
 				$force_to_zero = true;
 			}
 
-			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref. ' '.$invoice->ref. ' '. $outputlangs->transnoentities("InvoiceDateUsed", dol_print_date($invoice->date, "%d/%m/%Y", false, $outputlangs)), 0, 'L', 0);
+			$ref.= ' - '. $invoice->ref;
+			$ref.= ' ('.dol_print_date($invoice->date, "%d/%m/%Y", false, $outputlangs).')';
+			$pdf->MultiCell($this->page_largeur-($this->marge_droite+$this->marge_gauche), 3, $ref, 0, 'L', 0);
 
 			$pdf->SetFont('', '', $default_font_size - 1);
 

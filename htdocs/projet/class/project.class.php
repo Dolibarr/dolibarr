@@ -1635,7 +1635,7 @@ class Project extends CommonObject
 	 * @param 	int		$mode			0=All project I have permission on (assigned to me or public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
 	 * @param 	int		$list			0=Return array, 1=Return string list
 	 * @param	int		$socid			0=No filter on third party, id of third party
-	 * @param	string	$filter			additional filter on project (statut, ref, ...)
+	 * @param	string	$filter			additional filter on project (statut, ref, ...). TODO Use USF syntax here.
 	 * @return 	array|string			Array of projects id, or string with projects id separated with "," if list is 1
 	 */
 	public function getProjectsAuthorizedForUser($user, $mode = 0, $list = 0, $socid = 0, $filter = '')
@@ -2466,7 +2466,8 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *  Function sending an email to the current member with the text supplied in parameter.
+	 *  Function sending an email to the current project with the text supplied in parameter.
+	 *  TODO When this is used ?
 	 *
 	 *  @param	string	$text				Content of message (not html entities encoded)
 	 *  @param	string	$subject			Subject of message
@@ -2484,11 +2485,11 @@ class Project extends CommonObject
 	 */
 	public function sendEmail($text, $subject, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = -1, $errors_to = '', $moreinheader = '')
 	{
-		global $conf, $langs;
 		// TODO EMAIL
 
 		return 1;
 	}
+
 	/**
 	 *	Return clicable link of object (with eventually picto)
 	 *
@@ -2540,11 +2541,16 @@ class Project extends CommonObject
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_end, 'day').'</span>';
 		}*/
 		if (property_exists($this, 'thirdparty') && !is_null($this->thirdparty) && is_object($this->thirdparty) && $this->thirdparty instanceof Societe) {
-			$return .= '<br><div class="info-box-ref tdoverflowmax150 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
+			$return .= '<br><div class="info-box-ref tdoverflowmax125 inline-block valignmiddle">'.$this->thirdparty->getNomUrl(1);
 			$return .= '</div>';
 			if (!empty($this->thirdparty->phone)) {
 				$return .= '<div class="inline-block valignmiddle">';
-				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'marginleftonly');
+				$return .= dol_print_phone($this->thirdparty->phone, $this->thirdparty->country_code, 0, $this->thirdparty->id, 'tel', 'hidenum', 'phone', $this->thirdparty->phone, 0, 'paddingleft paddingright');
+				$return .= '</div>';
+			}
+			if (!empty($this->thirdparty->email)) {
+				$return .= '<div class="inline-block valignmiddle">';
+				$return .= dol_print_email($this->thirdparty->email, 0, $this->thirdparty->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
 				$return .= '</div>';
 			}
 		}

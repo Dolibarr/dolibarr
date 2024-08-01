@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Bạn đã sử dụng trình hướng dẫn thiết lập 
 KeepDefaultValuesMamp=Bạn đã sử dụng trình hướng dẫn thiết lập Dolibarr từ DoliMamp, vì vậy các giá trị được đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn đang làm.
 KeepDefaultValuesProxmox=Bạn đã sử dụng trình hướng dẫn thiết lập Dolibarr từ thiết bị ảo Proxmox, vì vậy các giá trị được đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn đang làm.
 UpgradeExternalModule=Chạy quy trình nâng cấp chuyên dụng của mô-đun bên ngoài
-SetAtLeastOneOptionAsUrlParameter=Đặt ít nhất một tùy chọn làm tham số trong URL. Ví dụ: '... repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Không có gì để làm sạch / xóa
 NothingToDo=Không có gì làm
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Ứng dụng đã cố gắng tự nâng cấp, 
 YouTryUpgradeDisabledByMissingFileUnLock=Ứng dụng đã cố gắng tự nâng cấp nhưng quá trình nâng cấp hiện không được phép.<br>
 ClickHereToGoToApp=Nhấn vào đây để đi đến ứng dụng của bạn
 ClickOnLinkOrRemoveManualy=Nếu quá trình nâng cấp đang diễn ra, vui lòng đợi. Nếu không, hãy nhấp vào liên kết sau. Nếu bạn luôn nhìn thấy cùng một trang này, bạn phải xóa/đổi tên tệp install.lock trong thư mục tài liệu.
-ClickOnLinkOrCreateUnlockFileManualy=Nếu quá trình nâng cấp đang được tiến hành, vui lòng đợi... Nếu không, bạn phải xóa tệp install.lock hoặc tạo tệp nâng cấp.unlock vào thư mục tài liệu Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Đã tải
 FunctionTest=Thử nghiệm chức năng
 NodoUpgradeAfterDB=Không có hành động nào được yêu cầu bởi các mô-đun bên ngoài sau khi nâng cấp cơ sở dữ liệu

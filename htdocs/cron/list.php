@@ -240,7 +240,7 @@ $cronjob = new Cronjob($db);
 
 $title = $langs->trans("CronList");
 
-llxHeader('', $title, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $TTestNotAllowed = array();
 $sqlTest = 'SELECT rowid, test FROM '.MAIN_DB_PREFIX.'cronjob';
@@ -731,7 +731,7 @@ if ($num > 0) {
 		}
 		if ($user->hasRight('cron', 'execute')) {
 			if (!empty($obj->status)) {
-				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute';
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=execute&token='.newToken();
 				print(!getDolGlobalString('CRON_KEY') ? '' : '&securitykey=' . getDolGlobalString('CRON_KEY'));
 				print($sortfield ? '&sortfield='.$sortfield : '');
 				print($sortorder ? '&sortorder='.$sortorder : '');

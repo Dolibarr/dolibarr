@@ -381,8 +381,9 @@ if (empty($reshook)) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
+						$langs->load("errors");
 						$error++;
-						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+						setEventMessages($objecttmp->ref.' '.$langs->trans("ErrorThisPaymentModeIsNotCreditTransfer"), $objecttmp->errors, 'errors');
 					} else {
 						$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 					}
@@ -812,7 +813,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-facture page-list');
 
 if ($socid) {
 	$soc = new Societe($db);
@@ -2006,7 +2007,7 @@ while ($i < $imaxinloop) {
 
 		// Date creation
 		if (!empty($arrayfields['f.datec']['checked'])) {
-			print '<td class="center nowraponll">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {

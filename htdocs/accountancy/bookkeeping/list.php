@@ -601,7 +601,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'unletteringmanual' && $confirm == "yes") {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->deleteLettering($toselect);
-			if ($result < 0) {
+			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');

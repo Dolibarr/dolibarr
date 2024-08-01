@@ -1454,7 +1454,7 @@ class FormFile
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0) {
 							if ($useinecm == 5 || $useinecm == 6) {
-								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
+								$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this for better performance.
 							} else {
 								$smallfile = getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
 							}
@@ -1469,7 +1469,7 @@ class FormFile
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
-								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
 								print '<a href="'.$urlforhref.'" class="aphoto" target="_blank" rel="noopener noreferrer">';
 							} else {
 								print '<a href="'.$urlforhref['url'].'" class="'.$urlforhref['css'].'" target="'.$urlforhref['target'].'" mime="'.$urlforhref['mime'].'">';
@@ -1481,7 +1481,11 @@ class FormFile
 								//print ' style="max-height: '.$maxheightmini.'px"';
 								print ' style="max-height: 24px"';
 							}
-							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
+							print ' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$smallfile);
+							if (!empty($filearray[$key]['date'])) {	// We know the date of file, we can use it as cache key so URL will be in browser cache as long as file date is not modified.
+								print '&cache='.urlencode((string) $filearray[$key]['date']);
+							}
+							print '" title="">';
 							print '</a>';
 						}
 						print '</td>';
@@ -1919,7 +1923,7 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch('', $ref))) {
+							if (!($result = $object_instance->fetch(0, $ref))) {
 								//fetchOneLike looks for objects with wildcards in its reference.
 								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?
