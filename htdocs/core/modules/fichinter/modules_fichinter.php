@@ -150,6 +150,8 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 		$obj = new $classname($db);
 
+		'@phan-var-force ModelePDFFicheinter $obj';
+
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
