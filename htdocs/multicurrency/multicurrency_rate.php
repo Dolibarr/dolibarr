@@ -134,7 +134,7 @@ if ($action == "create") {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Currency")), null, "errors");
 		$error++;
 	}
-	if ($rateinput === '0') {
+	if ($rateinput == 0) {
 		setEventMessages($langs->trans('NoEmptyRate'), null, "errors");
 		$error++;
 	} elseif (empty($rateinput)) {
