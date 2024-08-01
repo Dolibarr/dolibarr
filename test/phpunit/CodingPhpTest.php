@@ -505,8 +505,7 @@ class CodingPhpTest extends CommonClassTest
 			if (!in_array($val[1], array(
 				"'content'", "'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'", "'WEBSITE_LICENSE'",
 					'"mysqldump"', '"postgresqldump"',
-					"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'",
-					'"MAIN_MAIL_SMTPS_PW"', '"MAIN_MAIL_SMTPS_PW_EMAILING"', '"MAIN_MAIL_SMTPS_PW_TICKET"', '"MAIN_MAIL_SMTPS_PW_PASSWORDRESET"'))) {
+					"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'"))) {
 				$ok = false;
 				break;
 			}
