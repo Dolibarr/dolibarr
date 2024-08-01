@@ -5781,8 +5781,16 @@ abstract class CommonObject
 		$obj = new $classname($this->db);
 
 		// TODO: Check the following classes that seem possible for $obj, but removed for compatibility:
-		//  ModeleBankAccountDoc|ModeleExpenseReport|ModelePDFBom|ModelePDFCommandes|
-		'@phan-var-force ModelePDFMember|ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+		//  ModeleBankAccountDoc|ModeleExpenseReport|ModelePDFBom|ModelePDFCommandes|ModelePDFContract|
+		//  ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|
+		//  ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|
+		//  ModelePDFRecruitmentJobPosition|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|
+		//  ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePdfExpedition|ModelePdfReception|
+		//  ModelePDFStock|ModelePDFStockTransfer|
+		//  ModeleDon|ModelePDFTask|
+		//  ModelePDFAsset|ModelePDFTicket|ModelePDFUserGroup|ModeleThirdPartyDoc|ModelePDFUser
+		//  Has no write_file: ModeleBarCode|ModeleImports|ModeleExports|
+		'@phan-var-force ModelePDFMember $obj';
 
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
