@@ -1084,6 +1084,7 @@ class CMailFile
 					$storage = new DoliStorage($db, $conf, $keyforprovider);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
@@ -1105,9 +1106,10 @@ class CMailFile
 							$tokenobj = $apiService->refreshAccessToken($tokenobj);
 							$tokenobj->setRefreshToken($refreshtoken);
 							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+							$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						}
 
-						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
@@ -1241,6 +1243,7 @@ class CMailFile
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
@@ -1262,7 +1265,10 @@ class CMailFile
 							$tokenobj = $apiService->refreshAccessToken($tokenobj);
 							$tokenobj->setRefreshToken($refreshtoken);
 							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+							$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						}
+
 						if (is_object($tokenobj)) {
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
