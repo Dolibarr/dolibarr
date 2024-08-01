@@ -13628,7 +13628,7 @@ function dolForgeCriteriaCallback($matches)
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
-		} elseif (ctype_digit((string) $tmpescaped)) {
+		} elseif (is_numeric((string) $tmpescaped)) {
 			$tmpescaped = (int) $tmpescaped;
 		} else {
 			$tmpescaped = (float) $tmpescaped;
