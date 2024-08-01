@@ -1481,7 +1481,7 @@ class DoliDBSqlite3 extends DoliDB
 	 * param 	int		$year				Year
 	 * param 	int		$month				Month
 	 * param 	int		$day				Day
-	 * param 	int		$week_behaviour		Week behaviour, bit masks: WEEK_MONDAY_FIRST, WEEK_YEAR, WEEK_FIRST_WEEKDEY
+	 * param 	int		$week_behaviour		Week behaviour, bit masks: WEEK_MONDAY_FIRST, WEEK_YEAR, WEEK_FIRST_WEEKDAY
 	 * param 	int		$calc_year			??? Year where the week started
 	 * return	int							??? Week number in year
 	 */
