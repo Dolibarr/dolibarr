@@ -88,8 +88,8 @@ unset($objectwebsiteaccount->fields['fk_soc']); // Remove this field, we are alr
 
 // Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
-$search = array();
 /** @var array<string[]|string> $search */
+$search = array();
 foreach ($objectwebsiteaccount->fields as $key => $val) {
 	$value = GETPOST('search_'.$key, 'alpha');
 	if ($value) {
