@@ -96,7 +96,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	/**
 	 *  Return an example of numbering
 	 *
-	 *  @return     string|int<0>      Example
+	 *  @return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{

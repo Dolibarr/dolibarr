@@ -85,7 +85,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return numbering example
 	 *
-	 *	@return     string|int<0>      Example
+	 *	@return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{

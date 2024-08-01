@@ -1206,7 +1206,7 @@ class CMailFile
 					$secure = 'tls';
 				}
 
-				$this->transport = new Swift_SmtpTransport($server, getDolGlobalString($keyforsmtpport), $secure);
+				$this->transport = new Swift_SmtpTransport($server, getDolGlobalInt($keyforsmtpport), $secure);
 
 				if (getDolGlobalString($keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
