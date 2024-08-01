@@ -480,8 +480,10 @@ class EvalMath
  */
 class EvalMathStack
 {
+	/** @var mixed[] */
 	public $stack = array();
 
+	/** @var int */
 	public $count = 0;
 
 	/**
@@ -499,7 +501,7 @@ class EvalMathStack
 	/**
 	 * pop
 	 *
-	 * @return mixed|null 	Stack element
+	 * @return ?mixed	Stack element
 	 */
 	public function pop()
 	{
