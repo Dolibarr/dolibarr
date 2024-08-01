@@ -193,7 +193,7 @@ $arrayfields = array(
 	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled("shipping")),
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
-	'c.fk_input_reason' => array('label' => "Channel", 'checked' => -1, 'position' => 69),
+	'c.fk_input_reason' => array('label' => "Origin", 'checked' => -1, 'position' => 69),
 	'c.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 75),
 	'c.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 80),
 	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 85),
