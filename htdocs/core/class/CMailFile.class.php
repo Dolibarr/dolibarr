@@ -34,7 +34,6 @@
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
-
 /**
  *	Class to send emails (with attachments or not)
  *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
@@ -42,34 +41,60 @@ use OAuth\Common\Consumer\Credentials;
  */
 class CMailFile
 {
+	/** @var string Context of mail ('standard', 'emailing', 'ticket', 'password') */
 	public $sendcontext;
+	/** @var string Send mode of mail ('mail', 'smtps', 'swiftmailer', ...) */
 	public $sendmode;
+	/**
+	 * @var mixed
+	 * @deprecated Seems unused, update if used
+	 */
 	public $sendsetup;
 
 	/**
 	 * @var string Subject of email
 	 */
 	public $subject;
-	public $addr_from; // From:		Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to).
-	// Sender:      Who send the email ("Sender" has sent emails on behalf of "From").
-	//              Use it when the "From" is an email of a domain that is a SPF protected domain, and the sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
+	/** @var string  From: Label and EMail of sender (must include '<>'). For example '<myemail@example.com>' or 'John Doe <myemail@example.com>' or '<myemail+trackingid@example.com>'). Note that with gmail smtps, value here is forced by google to account (but not the reply-to). */
+	/**
+	 *  @var string Sender email
+	 * Sender:      Who sends the email ("Sender" has sent emails on behalf of "From").
+	 *              Use it when the "From" is an email of a domain that is a SPF protected domain, and the sending smtp server is not this domain. In such case, add Sender field with an email of the protected domain.
+	 */
+	public $addr_from;
+
 	// Return-Path: Email where to send bounds.
-	public $reply_to; // Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined)
-	public $errors_to; // Errors-To:	Email where to send errors.
+
+	/** @var string   Reply-To:	Email where to send replies from mailer software (mailer use From if reply-to not defined, Gmail use gmail account if reply-to not defined) */
+	public $reply_to;
+	/** @var string Errors-To:	Email where to send errors. */
+	public $errors_to;
+	/** @var string Comma separates list of destination emails */
 	public $addr_to;
+	/** @var string Comma separates list of cc emails */
 	public $addr_cc;
+	/** @var string Comma separates list of bcc emails */
 	public $addr_bcc;
+	/** @var string Tracking code */
 	public $trackid;
 
+	/** @var string Mixed Boundary */
 	public $mixed_boundary;
+	/** @var string Related Boundary */
 	public $related_boundary;
+	/** @var string Alternative Boundary */
 	public $alternative_boundary;
+	/** @var int<0,1> When 1, request delivery receipt */
 	public $deliveryreceipt;
 
+	/** @var ?int<1,1> When 1, there is at least one file */
 	public $atleastonefile;
 
+	/** @var string $msg Message to send */
 	public $msg;
+	/** @var string $msg End of line sequence */
 	public $eol;
+	/** @var string $msg End of line sequence (header ?) */
 	public $eol2;
 
 	/**
@@ -102,12 +127,12 @@ class CMailFile
 	public $logger;
 
 	/**
-	 * @var string CSS
+	 * @var string|array<string,string> CSS
 	 */
 	public $css;
-	//! Defined css style for body background
+	/** @var ?string Defined css style for body background */
 	public $styleCSS;
-	//! Defined background directly in body tag
+	/** @var ?string Defined background directly in body tag */
 	public $bodyCSS;
 
 	/**
@@ -125,33 +150,44 @@ class CMailFile
 	 */
 	public $references;
 
+	/**
+	 * @var string Headers
+	 */
 	public $headers;
 
+	/**
+	 * @var string Message
+	 */
 	public $message;
 
 	/**
-	 * @var array fullfilenames list (full path of filename on file system)
+	 * @var ?string[] fullfilenames list (full path of filename on file system)
 	 */
 	public $filename_list = array();
 	/**
-	 * @var array mimetypes of files list (List of MIME type of attached files)
+	 * @var ?string[] mimetypes of files list (List of MIME type of attached files)
 	 */
 	public $mimetype_list = array();
 	/**
-	 * @var array filenames list (List of attached file name in message)
+	 * @var ?string[] filenames list (List of attached file name in message)
 	 */
 	public $mimefilename_list = array();
 	/**
-	 * @var array filenames cid
+	 * @var ?string[] filenames cid
 	 */
 	public $cid_list = array();
 
-	// Image
+	/** @var string HTML content */
 	public $html;
+	/** @var int<0,1> */
 	public $msgishtml;
+	/** @var string */
 	public $image_boundary;
+	/** @var int<0,1> */
 	public $atleastoneimage = 0; // at least one image file with file=xxx.ext into content (TODO Debug this. How can this case be tested. Remove if not used).
+	/** @var array<array{type:string,fullpath:string,content_type?:string,name:string,cid:string}> */
 	public $html_images = array();
+	/** @var array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}> */
 	public $images_encoded = array();
 	public $image_types = array(
 		'gif'  => 'image/gif',
@@ -172,15 +208,15 @@ class CMailFile
 	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
 	 *	@param 	string	$from                Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
 	 *	@param 	string	$msg                 Message
-	 *	@param 	array	$filename_list       List of files to attach (full path of filename on file system)
-	 *	@param 	array	$mimetype_list       List of MIME type of attached files
-	 *	@param 	array	$mimefilename_list   List of attached file name in message
+	 *	@param 	?string[]	$filename_list       List of files to attach (full path of filename on file system)
+	 *	@param 	?string[]	$mimetype_list       List of MIME type of attached files
+	 *	@param 	?string[]	$mimefilename_list   List of attached file name in message
 	 *	@param 	string	$addr_cc             Email cc (Example: 'abc@def.com, ghk@lmn.com')
 	 *	@param 	string	$addr_bcc            Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
-	 *	@param 	int		$deliveryreceipt     Ask a delivery receipt
-	 *	@param 	int		$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
+	 *	@param 	int<0,1>	$deliveryreceipt     Ask a delivery receipt
+	 *	@param 	int<-1,1>	$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
 	 *	@param 	string	$errors_to      	 Email for errors-to
-	 *	@param	string	$css                 Css option
+	 *	@param	string|array<string,string>	$css                 Css option (should be array, legacy: empty string if none)
 	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
 	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" at end of each line
 	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
@@ -617,7 +653,9 @@ class CMailFile
 			$this->msgid = time().'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
-			$msgid->setId($headerID);
+			if ($msgid instanceof Swift_Mime_Headers_IdentificationHeader) {
+				$msgid->setId($headerID);
+			}
 
 			// Add 'In-Reply-To:' header
 			if (!empty($this->in_reply_to)) {
@@ -1102,9 +1140,14 @@ class CMailFile
 							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
 							// We have to save the token because Google give it only once
 							$refreshtoken = $tokenobj->getRefreshToken();
-							$tokenobj = $apiService->refreshAccessToken($tokenobj);
-							$tokenobj->setRefreshToken($refreshtoken);
-							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService
+							   || $apiService instanceof OAuth\OAuth1\Service\AbstractService
+							) {
+								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+								$tokenobj = $apiService->refreshAccessToken($tokenobj);
+								$tokenobj->setRefreshToken($refreshtoken);
+								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+							}
 						}
 
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1206,7 +1249,7 @@ class CMailFile
 					$secure = 'tls';
 				}
 
-				$this->transport = new Swift_SmtpTransport($server, getDolGlobalString($keyforsmtpport), $secure);
+				$this->transport = new Swift_SmtpTransport($server, getDolGlobalInt($keyforsmtpport), $secure);
 
 				if (getDolGlobalString($keyforsmtpid)) {
 					$this->transport->setUsername($conf->global->$keyforsmtpid);
@@ -1257,11 +1300,16 @@ class CMailFile
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// ex service is Google-Emails we need only the first part Google
 							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
-							// We have to save the token because Google give it only once
 							$refreshtoken = $tokenobj->getRefreshToken();
-							$tokenobj = $apiService->refreshAccessToken($tokenobj);
-							$tokenobj->setRefreshToken($refreshtoken);
-							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService
+							   || $apiService instanceof OAuth\OAuth1\Service\AbstractService
+							) {
+								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+								// We must save the token because Google provides it only once
+								$tokenobj = $apiService->refreshAccessToken($tokenobj);
+								$tokenobj->setRefreshToken($refreshtoken);
+								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+							}
 						}
 						if (is_object($tokenobj)) {
 							$this->transport->setAuthMode('XOAUTH2');
@@ -1340,11 +1388,13 @@ class CMailFile
 			}
 
 			// Now we delete image files that were created dynamically to manage data inline files
+			/* Note: dol_delete call was disabled, so code commented to not trigger empty if body
 			foreach ($this->html_images as $val) {
 				if (!empty($val['type']) && $val['type'] == 'cidfromdata') {
 					//dol_delete($val['fullpath']);
 				}
 			}
+			*/
 
 			$parameters = array('sent' => $res);
 			$action = '';
@@ -1619,8 +1669,8 @@ class CMailFile
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
-	 * @param	array	$filename_list			Array of filenames
-	 * @param 	array	$mimefilename_list		Array of mime types
+	 * @param	string[]	$filename_list			Array of filenames
+	 * @param 	string[]	$mimefilename_list		Array of mime types
 	 * @return	string							mime headers
 	 */
 	public function write_mimeheaders($filename_list, $mimefilename_list)
@@ -1742,10 +1792,10 @@ class CMailFile
 	/**
 	 * Attach file to email (mode = 'mail')
 	 *
-	 * @param	array	$filename_list		Tableau
-	 * @param	array	$mimetype_list		Tableau
-	 * @param 	array	$mimefilename_list	Tableau
-	 * @param	array	$cidlist			Array of CID if file must be completed with CID code
+	 * @param	string[]	$filename_list		Tableau
+	 * @param	string[]	$mimetype_list		Tableau
+	 * @param 	string[]	$mimefilename_list	Tableau
+	 * @param	string[]	$cidlist			Array of CID if file must be completed with CID code
 	 * @return	string|int						String with files encoded
 	 */
 	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
@@ -1793,7 +1843,7 @@ class CMailFile
 	/**
 	 * Attach an image to email (mode = 'mail')
 	 *
-	 * @param	array	$images_list	Array of array image
+	 * @param	array<array{name:string,fullpath:string,content_type:string,cid:string,image_encoded:string}>	$images_list	Array of array image
 	 * @return	string					Chaine images encodees
 	 */
 	public function write_images($images_list)
@@ -1994,7 +2044,6 @@ class CMailFile
 							$regs = array();
 							preg_match('/([A-Za-z0-9_-]+[\.]?[A-Za-z0-9]+)?$/i', $img["name"], $regs);
 							$imgName = $regs[1];
-
 							$this->images_encoded[$i]['name'] = $imgName;
 							$this->images_encoded[$i]['fullpath'] = $fullpath;
 							$this->images_encoded[$i]['content_type'] = $img["content_type"];
@@ -2188,8 +2237,8 @@ class CMailFile
 	/**
 	 * Return a formatted array of address string for SMTP protocol
 	 *
-	 * @param   string      $address        Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
-	 * @return  array                       array(email => name)
+	 * @param   string	$address		Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
+	 * @return  array<string,?string>		array(email => name)
 	 * @see getValidAddress()
 	 */
 	public static function getArrayAddress($address)
