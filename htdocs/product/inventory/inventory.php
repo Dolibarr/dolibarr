@@ -1089,10 +1089,11 @@ if ($resql) {
 
 				//PMP Real
 				print '<td class="right">';
-
-
-				if (!empty($obj->pmp_real)) $pmp_real = $obj->pmp_real;
-				else $pmp_real = $product_static->pmp;
+				if (!empty($obj->pmp_real) || (string) $obj->pmp_real === '0') {
+					$pmp_real = $obj->pmp_real;
+				} else {
+					$pmp_real = $product_static->pmp;
+				}
 				$pmp_valuation_real = $pmp_real * $qty_view;
 				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
 				print '</td>';
@@ -1306,6 +1307,7 @@ function updateTotalValuation() {
 		maximumFractionDigits: currencyFractionDigits
 	}));
 }
+
 
 </script>
 	<?php

@@ -944,7 +944,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("PdfTitle");
-		if (getDolGlobalInt('MAIN_ODT_AS_PDF') && is_object($outputlangsbis)) {
+		if (getDolGlobalString('MAIN_ODT_AS_PDF') && is_object($outputlangsbis)) {
 			$title .= ' - ';
 			$title .= $outputlangsbis->transnoentities("PdfTitle");
 		}
