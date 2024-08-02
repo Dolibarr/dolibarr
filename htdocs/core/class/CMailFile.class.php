@@ -1139,13 +1139,14 @@ class CMailFile
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
 							// ex service is Google-Emails we need only the first part Google
 							$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
-							// We have to save the token because Google give it only once
+
+							// We have to save the refresh token because Google give it only once
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
-								$tokenobj->setRefreshToken($refreshtoken);
+								$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 							}
 
