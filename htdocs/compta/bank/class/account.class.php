@@ -903,6 +903,14 @@ class Account extends CommonObject
 			}
 
 			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$resql = $this->db->query($sql);
+				if (!$resql) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->oldref);
 				$newref = dol_sanitizeFileName($this->ref);
@@ -912,8 +920,6 @@ class Account extends CommonObject
 					dol_syslog(get_class($this)."::update rename dir ".$dirsource." into ".$dirdest, LOG_DEBUG);
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok", LOG_DEBUG);
-					} else {
-						$error++;
 					}
 				}
 			}
