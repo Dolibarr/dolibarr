@@ -266,6 +266,11 @@ class Account extends CommonObject
 	 */
 	public $ics_transfer;
 
+	/**
+	 * @var string The previous ref in case of rename on update to rename attachment folders
+	 */
+	public $oldref;
+
 
 
 	/**
@@ -894,6 +899,22 @@ class Account extends CommonObject
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
+				}
+			}
+
+			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
+				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				$oldref = dol_sanitizeFileName($this->oldref);
+				$newref = dol_sanitizeFileName($this->ref);
+				$dirsource = $conf->bank->dir_output.'/'.$oldref;
+				$dirdest = $conf->bank->dir_output.'/'.$newref;
+				if (file_exists($dirsource)) {
+					dol_syslog(get_class($this)."::update rename dir ".$dirsource." into ".$dirdest, LOG_DEBUG);
+					if (@rename($dirsource, $dirdest)) {
+						dol_syslog("Rename ok", LOG_DEBUG);
+					} else {
+						$error++;
+					}
 				}
 			}
 
