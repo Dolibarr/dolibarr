@@ -336,3 +336,4 @@ LatestModifiedWarehouses=Latest %s modified warehouses
 LatestStockMovements=Latest %s stock movements
 QtyCurrentlyKnownInStock=System estimated quantity you have in stock. As long as the inventory is not closed, this is a realtime value and it may change if you continue to make stock movement during the inventory (not recommended).
 QtyInStockWhenInventoryWasValidated=System estimated quantity you had in stock when the inventory was validated (before the stock correction)
+StockTransferProForma=StockTransferProFormat
