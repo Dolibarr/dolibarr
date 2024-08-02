@@ -2019,7 +2019,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if (!empty($reinitadminperms) && !empty($user->admin)) {  // Reload permission for current user if defined
 					// We reload permissions
 					$user->clearrights();
-					$user->getrights();
+					$user->loadRights();
 				}
 			}
 			$this->db->free($resql);
@@ -2606,9 +2606,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	}
 
 	/**
-	 * Check for module update
-	 * TODO : store results for $this->url_last_version and $this->needUpdate
-	 * Add a cron task to monitor for updates
+	 * Check for module update.
+	 * Get URL content of $this->url_last_version and set $this->lastVersion and$this->needUpdate
+	 * TODO Store result in DB.
+	 * TODO Add a cron task to monitor for updates.
 	 *
 	 * @return int Return integer <0 if Error, 0 == no update needed,  >0 if need update
 	 */
@@ -2657,10 +2658,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$fields = array('name', 'lib', 'sql', 'sqlsort', 'field', 'fieldvalue', 'fieldinsert', 'rowid', 'cond', 'help', 'fieldcheck');
 
 		foreach ($fields as $field) {
-			if (!empty($dictionaryArray[$field])) {
+			if (isset($dictionaryArray[$field])) {
 				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
 			}
 		}
-		if ($langs && !in_array($langs, $this->dictionaries[$langs])) $this->dictionaries['langs'][] = $langs;
+		if ($langs && !in_array($langs, $this->dictionaries[$langs])) {
+			$this->dictionaries['langs'][] = $langs;
+		}
 	}
 }

@@ -38,17 +38,17 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 class BookKeeping extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string 	Id to identify managed objects
 	 */
 	public $element = 'accountingbookkeeping';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 	Name of table without prefix where object is stored
 	 */
 	public $table_element = 'accounting_bookkeeping';
 
 	/**
-	 * @var int Entity
+	 * @var int 	Entity
 	 */
 	public $entity;
 
@@ -58,52 +58,52 @@ class BookKeeping extends CommonObject
 	public $lines = array();
 
 	/**
-	 * @var int ID
+	 * @var int 	ID
 	 */
 	public $id;
 
 	/**
-	 * @var int	Date of source document, in db date NOT NULL
+	 * @var int		Date of source document, in db date NOT NULL
 	 */
 	public $doc_date;
 
 	/**
-	 * @var int Deadline for payment
+	 * @var int 	Deadline for payment
 	 */
 	public $date_lim_reglement;
 
 	/**
-	 * @var string doc_type
+	 * @var string 	Doc type
 	 */
 	public $doc_type;
 
 	/**
-	 * @var string doc_ref
+	 * @var string 	Doc ref
 	 */
 	public $doc_ref;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID
 	 */
 	public $fk_doc;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID
 	 */
 	public $fk_docdet;
 
 	/**
-	 * @var string thirdparty code
+	 * @var string 	Thirdparty code
 	 */
 	public $thirdparty_code;
 
 	/**
-	 * @var string subledger account
+	 * @var string|null 	Subledger account
 	 */
 	public $subledger_account;
 
 	/**
-	 * @var string subledger label
+	 * @var string|null 	Subledger label
 	 */
 	public $subledger_label;
 
@@ -1089,6 +1089,7 @@ class BookKeeping extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {

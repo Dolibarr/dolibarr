@@ -1462,6 +1462,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
+					//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
+
 					if ((getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced')
 						|| (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == 'mod_sn_advanced')) {
 						print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
@@ -1606,6 +1608,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 				print '<label for="mandatoryperiod">';
 				$htmltooltip = $langs->trans("mandatoryHelper");
+				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
+					$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
+				}
 				print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 				print '</label>';
 
@@ -2059,6 +2064,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 							$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 							$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5");
+							//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
+
 							print '<tr><td id="mask_option">'.$langs->trans("ManageLotMask").'</td>';
 							$mask = '';
 							if ($object->status_batch == '1' && getDolGlobalString('PRODUCTBATCH_LOT_USE_PRODUCT_MASKS') && getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == 'mod_lot_advanced') {
@@ -2162,7 +2169,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Description (used in invoice, propal...)
 				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 
-				// We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+				// We use dolibarr_details as type of DolEditor here, because we must not accept images, as description is included into PDF and external links are not accepted by TCPDF.
 				$doleditor = new DolEditor('desc', GETPOSTISSET('desc') ? GETPOST('desc', 'restricthtml') : $object->description, '', 160, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_4, '90%');
 				$doleditor->Create();
 
@@ -2230,6 +2237,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '<input type="checkbox" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
 					print '<label for="mandatoryperiod">';
 					$htmltooltip = $langs->trans("mandatoryHelper");
+					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
+						$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
+					}
 					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 					print '</label>';
 
@@ -2694,7 +2704,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Description
-				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreakimp wrapimp">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</td></tr>';
+				print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+				print '<td class="wordbreakimp wrapimp"><div class="longmessagecut">'.(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true)).'</div></td></tr>';
 
 				// Public URL
 				if (!getDolGlobalString('PRODUCT_DISABLE_PUBLIC_URL')) {
@@ -2766,6 +2777,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print ' &nbsp; &nbsp; &nbsp; ';
 					}
 					$htmltooltip = $langs->trans("mandatoryHelper");
+					if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
+						$htmltooltip .= '<br>'.$langs->trans("mandatoryHelper2");
+					}
 					print '<input type="checkbox" class="" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').' disabled>';
 					print $form->textwithpicto($langs->trans("mandatoryperiod"), $htmltooltip, 1, 0);
 

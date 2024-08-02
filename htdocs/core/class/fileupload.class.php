@@ -20,7 +20,7 @@
  *       \file      htdocs/core/class/fileupload.class.php
  *       \brief     File to return the ajax response of core/ajax/fileupload.php for common file upload.
  *       			Security is check by the ajax component.
- *       			For large files, see flowjs-server.php
+ *       			For large files upload, see flowjs-server.php
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -156,9 +156,8 @@ class FileUpload
 			$this->options = array_replace_recursive($this->options, $options);
 		}
 
-		// At this point we should have a valid upload_dir in options
-		//if ($pathname === null && $filename === null) { // OR or AND???
-		if ($pathname === null || $filename === null) {
+		// At this point we should have a valid upload_dir in this->options
+		if (empty($pathname) || empty($filename)) {
 			if (!array_key_exists("upload_dir", $this->options)) {
 				setEventMessage('If $fk_element = null or $element = null you must specify upload_dir on $options', 'errors');
 				throw new Exception('If $fk_element = null or $element = null you must specify upload_dir on $options');

@@ -1344,7 +1344,7 @@ function unActivateModule($value, $requiredby = 1)
  */
 function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
 {
-	global $db, $modules, $conf, $langs;
+	global $db, $langs;
 
 	dol_syslog("complete_dictionary_with_modules Search external modules to complete the list of dictionary tables", LOG_DEBUG, 1);
 
@@ -1462,7 +1462,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 									$tmptablename = preg_replace('/'.MAIN_DB_PREFIX.'/', '', $tabnamerelwithkey[$key]);
 									$nbtabcond++;
 									$tabcond[] = $val;
-									$tabcomplete[$tmptablename]['rowid'] = $val;
+									$tabcomplete[$tmptablename]['cond'] = $val;
 								}
 								if (!empty($objMod->dictionaries['tabhelp'])) {
 									foreach ($objMod->dictionaries['tabhelp'] as $key => $val) {
@@ -2092,9 +2092,16 @@ function email_admin_prepare_head()
 			$head[$h][2] = 'common_ticket';
 			$h++;
 		}
+
+		if (getDolGlobalString('MAIN_MAIL_ALLOW_CUSTOM_SENDING_METHOD_FOR_PASSWORD_RESET')) {
+			$head[$h][0] = DOL_URL_ROOT."/admin/mails_passwordreset.php";
+			$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing", $langs->transnoentitiesnoconv("PasswordReset"));
+			$head[$h][2] = 'common_passwordreset';
+			$h++;
+		}
 	}
 
-	// admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
+	// Admin and non admin can view this menu entry, but it is not shown yet when we on user menu "Email templates"
 	if (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates') {
 		$head[$h][0] = DOL_URL_ROOT."/admin/mails_senderprofile_list.php";
 		$head[$h][1] = $langs->trans("EmailSenderProfiles");
