@@ -634,7 +634,7 @@ if (empty($reshook)) {
 			}
 
 			// managed_in_stock
-			$object->stockable_product = ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) ? 1 : 0;
+			$object->stockable_product = ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) ? true : false;
 
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
@@ -817,7 +817,7 @@ if (empty($reshook)) {
 				}
 
 				// managed_in_stock
-				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
+				$object->stockable_product   = (bool) GETPOSTISSET('stockable_product');
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -2204,7 +2204,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					*/
 
 					print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
-					$checked = $object->stockable_product == 1 ? "checked" : "";
+					$checked = $object->stockable_product == true ? "checked" : "";
 					$disabled = (!empty($object->stockable_product) && !empty($object->status_batch)) ? 'disabled title="'.$langs->trans('ProductWithBatchMustBeManagedInStock').'"' : '';
 					print '<td><input type="checkbox" id="stockable_product'.$disabled.'" name="stockable_product'.$disabled.'" '. $checked . ' '.$disabled.'/>';
 					if ($disabled) print '<input type="hidden" id="stockable_product" name="stockable_product" '. $checked .'/>';
@@ -2247,7 +2247,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 					if (!empty($conf->stock->enabled) && !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 						print '<tr><td valign="top">' . $langs->trans("StockableProduct") . '</td>';
-						$checked = $object->stockable_product == 1 ? "checked" : "";
+						$checked = $object->stockable_product == true ? "checked" : "";
 						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked . ' /></td></tr>';
 					}
 				} else {
@@ -2736,7 +2736,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// View stockable_product
 				if (($object->isProduct() || ($object->isService() && !empty($conf->global->STOCK_SUPPORTS_SERVICES))) && !empty($conf->stock->enabled)) {
 					print '<tr><td valign="top">' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
-					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
+					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == true ? 'checked' : '').'></td></tr>';
 				}
 
 				// Parent product.
