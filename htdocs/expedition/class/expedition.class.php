@@ -2837,9 +2837,9 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
 	 *
-	 * @var int
+	 * @var bool
 	 */
-	public $stockable_product = 1;
+	public $stockable_product = true;
 
 	// Invoicing
 	public $remise_percent;
