@@ -121,11 +121,7 @@ class BlockedLog
 	public $ref_object = '';
 
 	/**
-<<<<<<< HEAD
 	 * @var ?stdClass
-=======
-	 * @var ?Object|bool|int|float|string|mixed[]
->>>>>>> 09b427957c5 (Qual: Fix PhanTypeMismatchProperty and some other phan notices)
 	 */
 	public $object_data = null;
 
@@ -841,15 +837,9 @@ class BlockedLog
 	/**
 	 * Encode data
 	 *
-<<<<<<< HEAD
-	 * @param	stdClass	$data	Data to serialize, an object (stdClass)
-	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
-	 * @return 	string		Value serialized
-=======
 	 * @param	string		$data	Data to serialize
 	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
 	 * @return 	string				Value serialized, an object (stdClass)
->>>>>>> 09b427957c5 (Qual: Fix PhanTypeMismatchProperty and some other phan notices)
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
 	{

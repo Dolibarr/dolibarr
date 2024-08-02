@@ -204,7 +204,6 @@ return [
         'htdocs/bom/bom_document.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/bom/bom_list.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/bom/class/api_boms.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType'],
-        'htdocs/bom/class/bom.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPossiblyNullTypeMismatchProperty', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/bom/tpl/linkedobjectblock.tpl.php' => ['PhanPluginUnknownObjectMethodCall'],
         'htdocs/bom/tpl/objectline_create.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/bom/tpl/objectline_edit.tpl.php' => ['PhanTypeExpectedObjectPropAccessButGotNull', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
