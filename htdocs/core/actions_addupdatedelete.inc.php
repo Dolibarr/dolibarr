@@ -178,7 +178,7 @@ if ($action == 'add' && !empty($permissiontoadd)) {
 
 	// Special field
 	$model_pdf = GETPOST('model');
-	if (!empty($model_pdf) && property_exists($this, 'model_pdf')) {
+	if (!empty($model_pdf) && property_exists($object, 'model_pdf')) {
 		$object->model_pdf = $model_pdf;
 	}
 
