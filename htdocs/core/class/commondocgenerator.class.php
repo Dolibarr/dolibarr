@@ -366,7 +366,8 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, '0');
+			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
+			$object->state = getState($state_id, '0');
 		}
 
 		$array_thirdparty = array(
@@ -432,7 +433,8 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, '0');
+			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
+			$object->state = getState($state_id, '0');
 		}
 
 		$array_contact = array(
