@@ -844,21 +844,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '</td>';
 		}
 
-		print '<td>';
-
+		// Warehouse source
+		print '<td class="tdoverflowmax150">';
 		if ($action === 'editline' && $line->id == $lineid) {
 			print $formproduct->selectWarehouses($line->fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 		} else {
 			print $warehousestatics->getNomUrl(1);
 		}
 		print '</td>';
-		print '<td>';
+
+		// Warehouse target
+		print '<td class="tdoverflowmax150">';
 		if ($action === 'editline' && $line->id == $lineid) {
 			print $formproduct->selectWarehouses($line->fk_warehouse_destination, 'fk_warehouse_destination', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200');
 		} else {
 			print $warehousestatict->getNomUrl(1);
 		}
 		print '</td>';
+
 		if ($action === 'editline' && $line->id == $lineid) {
 			print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" value="'.$line->qty.'"></td>';
 		} else {
@@ -877,9 +880,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<td class="center">';
 		print price($line->pmp, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
+
 		print '<td class="center">';
 		print price($line->pmp * $line->qty, 0, '', 1, -1, -1, $conf->currency);
 		print '</td>';
+
 		if (empty($object->status) && $permissiontoadd) {
 			if ($action === 'editline' && $line->id == $lineid) {
 				//print '<td class="right" colspan="2"><input type="submit" class="button" name="addline" value="' . dol_escape_htmltag($langs->trans('Save')) . '"></td>';
@@ -967,14 +972,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 		}
 
-		// On vide le tableau pour qu'il se charge tout seul lors de l'appel à la fonction select_warehouses
+		// We clean array. It is filled automatically when calling function select_warehouses
 		$formproduct->cache_warehouses = array();
 		// In warehouse
 		print '<td>';
 		print $formproduct->selectWarehouses(empty($fk_warehouse_source) ? $object->fk_warehouse_source : $fk_warehouse_source, 'fk_warehouse_source', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'minwidth200imp maxwidth200', $TExcludedWarehouseSource);
 		print '</td>';
 
-		// On vide le tableau pour qu'il se charge tout seul lors de l'appel à la fonction select_warehouses
+		// We clean array. It is filled automatically when calling function select_warehouses
 		$formproduct->cache_warehouses = array();
 		// Out warehouse
 		print '<td>';
@@ -983,18 +988,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Qty
 		print '<td class="center"><input type="text" class="flat maxwidth50" name="qty" '.(!empty($error) ? 'value="'.$qty.'"' : '').'></td>';
+
 		// PMP
 		print '<td></td>';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			// Unité
 			print '<td></td>';
 		}
+
 		// PMP * Qty
 		print '<td></td>';
+
 		// Button to add line
 		print '<td class="right" colspan="2"><input type="submit" class="button" name="addline" value="' . dol_escape_htmltag($langs->trans('Add')) . '"></td>';
+
 		// Grad and drop lines
 		print '<td></td>';
+
 		print '</tr>';
 	}
 
