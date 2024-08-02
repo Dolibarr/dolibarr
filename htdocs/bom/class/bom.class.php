@@ -587,7 +587,7 @@ class BOM extends CommonObject
 	 * @param	int 		$fk_unit				Unit
 	 * @param	array		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
-	 * @return	int<-2,max>							Return integer <0 if KO, Id of created object if OK
+	 * @return	int<-3,max>							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
@@ -690,11 +690,11 @@ class BOM extends CommonObject
 	 * @param	float		$qty_frozen				Frozen quantity
 	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
 	 * @param	float		$efficiency				Efficiency in MO
-	 * @param	int<0,max>	$position				Position of BOM-Line in BOM-Lines
+	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
 	 * @param	string		$import_key				Import Key
 	 * @param	int			$fk_unit				Unit of line
 	 * @param	array		$array_options			extrafields array
-	 * @param	int			$fk_default_workstation	Default workstation
+	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>						Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
 	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
@@ -807,7 +807,7 @@ class BOM extends CommonObject
 	 *	@param  User		$user       User that delete
 	 *  @param	int			$idline		Id of line to delete
 	 *  @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int<-1,-1>|int<1,1>	>0 if OK, <0 if KO
+	 *  @return int<-2,-1>|int<1,1>	>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -1071,7 +1071,7 @@ class BOM extends CommonObject
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}
+	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1801,7 +1801,7 @@ class BOMLine extends CommonObjectLine
 	public $fk_unit;
 
 	/**
-	 * @var int Service Workstation
+	 * @var ?int Service Workstation
 	 */
 	public $fk_default_workstation;
 
@@ -1811,7 +1811,7 @@ class BOMLine extends CommonObjectLine
 	public $position;
 
 	/**
-	 * @var ?string import key
+	 * @var string import key
 	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
