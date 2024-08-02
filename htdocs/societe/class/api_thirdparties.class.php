@@ -1241,6 +1241,12 @@ class Thirdparties extends DolibarrApi
 
 		$notification->event = $this->db->fetch_row($result)[0];
 		foreach ($request_data as $field => $value) {
+			if ($field === 'event') {
+				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains event key');
+			}
+			if ($field === 'fk_action') {
+				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
+			}
 			$notification->$field = $value;
 		}
 
