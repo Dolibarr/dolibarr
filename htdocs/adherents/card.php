@@ -471,7 +471,7 @@ if (empty($reshook)) {
 		$pass = GETPOST("password", 'password');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
 		$morphy = GETPOST("morphy", 'alphanohtml');
-		$public = GETPOST("public", 'alphanohtml');
+		$public = GETPOSTINT("public");
 
 		$userid = GETPOSTINT("userid");
 		$socid = GETPOSTINT("socid");

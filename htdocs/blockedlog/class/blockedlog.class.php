@@ -66,7 +66,7 @@ class BlockedLog
 	public $signature_line = '';
 
 	/**
-	 * @var ?float
+	 * @var ?float|?string
 	 */
 	public $amounts = null;
 
@@ -121,7 +121,11 @@ class BlockedLog
 	public $ref_object = '';
 
 	/**
+<<<<<<< HEAD
 	 * @var ?stdClass
+=======
+	 * @var ?Object|bool|int|float|string|mixed[]
+>>>>>>> 09b427957c5 (Qual: Fix PhanTypeMismatchProperty and some other phan notices)
 	 */
 	public $object_data = null;
 
@@ -157,7 +161,7 @@ class BlockedLog
 	/**
 	 * Load list of tracked events into $this->trackedevents.
 	 *
-	 * @return int			Always 1
+	 * @return int<1,1>		Always 1
 	 */
 	public function loadTrackedEvents()
 	{
@@ -256,7 +260,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		}
 		if ($this->element === 'invoice_supplier') {
@@ -266,7 +270,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'payment') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -275,7 +279,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'payment_supplier') {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
@@ -284,7 +288,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'payment_donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
@@ -293,7 +297,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'payment_various') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
@@ -302,7 +306,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'don' || $this->element === 'donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -311,7 +315,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'subscription') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
@@ -320,7 +324,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'cashcontrol') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
@@ -329,7 +333,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'stockmouvement') {
 			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
@@ -338,7 +342,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->element === 'project') {
 			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -347,7 +351,7 @@ class BlockedLog
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
 			} else {
-				$this->error++;
+				$this->error = (string) (((int) $this->error) + 1);
 			}
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
@@ -363,7 +367,8 @@ class BlockedLog
 	}
 
 	/**
-	 *      try to retrieve user author
+	 * Try to retrieve user author
+	 *
 	 * @return string
 	 */
 	public function getUser()
@@ -395,7 +400,7 @@ class BlockedLog
 	 *	@param	string			$action		action
 	 *	@param	float|int		$amounts	amounts
 	 *	@param	?User			$fuser		User object (forced)
-	 *	@return	int							>0 if OK, <0 if KO
+	 *	@return	int<-1,-1>|int<1,1>			>0 if OK, <0 if KO
 	 */
 	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
@@ -413,21 +418,26 @@ class BlockedLog
 		$this->amounts = $amounts;
 		// date
 		if ($object->element == 'payment' || $object->element == 'payment_supplier') {
+			'@phan-var-force Paiement|PaiementFourn $object';
 			$this->date_object = empty($object->datepaye) ? $object->date : $object->datepaye;
 		} elseif ($object->element == 'payment_salary') {
+			'@phan-var-force PaymentSalary $object';
 			$this->date_object = $object->datev;
 		} elseif ($object->element == 'payment_donation' || $object->element == 'payment_various') {
+			'@phan-var-force PaymentDonation $object';
 			$this->date_object = empty($object->datepaid) ? $object->datep : $object->datepaid;
 		} elseif ($object->element == 'subscription') {
+			'@phan-var-force Subscription $object';
 			$this->date_object = $object->dateh;
 		} elseif ($object->element == 'cashcontrol') {
+			'@phan-var-force CashControl $object';
 			$this->date_object = $object->date_creation;
 		} elseif (property_exists($object, 'date')) {
 			// Generic case
-			$this->date_object = $object->date;
+			$this->date_object = $object->date; // @phan-suppress-current-line PhanUndeclaredProperty
 		} elseif (property_exists($object, 'datem')) {
 			// Generic case (second chance, for example for stock movement)
-			$this->date_object = $object->datem;
+			$this->date_object = $object->datem; // @phan-suppress-current-line PhanUndeclaredProperty
 		}
 
 		// ref
@@ -517,6 +527,7 @@ class BlockedLog
 
 		// Field specific to object
 		if ($this->element == 'facture') {
+			'@phan-var-force Facture $object';
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
@@ -555,6 +566,7 @@ class BlockedLog
 				$this->object_data->ref = $object->newref;
 			}
 		} elseif ($this->element == 'invoice_supplier') {
+			'@phan-var-force FactureFournisseur $object';
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
@@ -573,6 +585,7 @@ class BlockedLog
 				$this->object_data->ref = $object->newref;
 			}
 		} elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation' || $this->element == 'payment_various') {
+			'@phan-var-force Paiement|PaiementFourn|PaymentDonation|PaymentVarious $object';
 			$datepayment = $object->datepaye ? $object->datepaye : ($object->datepaid ? $object->datepaid : $object->datep);
 			$paymenttypeid = $object->paiementid ? $object->paiementid : ($object->paymenttype ? $object->paymenttype : $object->type_payment);
 
@@ -704,12 +717,14 @@ class BlockedLog
 				$this->object_data->ref = $object->newref;
 			}
 		} elseif ($this->element == 'payment_salary') {
+			'@phan-var-force PaymentSalary $object';
 			$this->object_data->amounts = array($object->amount);
 
 			if (!empty($object->newref)) {
 				$this->object_data->ref = $object->newref;
 			}
 		} elseif ($this->element == 'subscription') {
+			'@phan-var-force Subscription $object';
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
@@ -728,6 +743,7 @@ class BlockedLog
 				$this->object_data->ref = $object->newref;
 			}
 		} elseif ($this->element == 'stockmouvement') {
+			'@phan-var-force StockTransfer $object';
 			foreach ($object as $key => $value) {
 				if (in_array($key, $arrayoffieldstoexclude)) {
 					continue; // Discard some properties
@@ -763,7 +779,7 @@ class BlockedLog
 	 *	Get object from database
 	 *
 	 *	@param      int		$id       	Id of object to load
-	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
+	 *	@return     int<-1,1>			>0 if OK, <0 if KO, 0 if not found
 	 */
 	public function fetch($id)
 	{
@@ -825,9 +841,15 @@ class BlockedLog
 	/**
 	 * Encode data
 	 *
+<<<<<<< HEAD
 	 * @param	stdClass	$data	Data to serialize, an object (stdClass)
 	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
 	 * @return 	string		Value serialized
+=======
+	 * @param	string		$data	Data to serialize
+	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
+	 * @return 	string				Value serialized, an object (stdClass)
+>>>>>>> 09b427957c5 (Qual: Fix PhanTypeMismatchProperty and some other phan notices)
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
 	{
@@ -847,7 +869,7 @@ class BlockedLog
 	 *
 	 * @param	string	$data	Data to unserialize
 	 * @param	int		$mode	0=unserialize, 1=json_decode
-	 * @return 	object			Value unserialized, an object (stdClass)
+	 * @return 	Object			Value unserialized, an object (stdClass)
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
 	{
@@ -881,8 +903,8 @@ class BlockedLog
 	 *	Create blocked log in database.
 	 *
 	 *	@param	User	$user      			Object user that create
-	 *  @param	string		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
-	 *	@return	int							Return integer <0 if KO, >0 if OK
+	 *  @param	string	$forcesignature		Force signature (for example '0000000000' when we disabled the module)
+	 *	@return	int<-3,-1>|int<1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $forcesignature = '')
 	{
@@ -1008,8 +1030,8 @@ class BlockedLog
 	 *	Check if current signature still correct compared to the value in chain
 	 *
 	 *	@param	string			$previoushash		If previous signature hash is known, we can provide it to avoid to make a search of it in database.
-	 *  @param	int				$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Boolean
-	 *	@return	boolean|array						True if OK, False if KO
+	 *  @param	int<0,2>		$returnarray		1=Return array of details, 2=Return array of details including keyforsignature, 0=Boolean
+	 *	@return	boolean|array{checkresult:bool,calculatedsignature:string,previoushash:string,keyforsignature?:string}	True if OK, False if KO
 	 */
 	public function checkSignature($previoushash = '', $returnarray = 0)
 	{
@@ -1063,9 +1085,9 @@ class BlockedLog
 	/**
 	 *	Get previous signature/hash in chain
 	 *
-	 *	@param int	$withlock		1=With a lock
-	 *	@param int	$beforeid		ID of a record
-	 *  @return	string				Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
+	 *	@param int<0,1>	$withlock		1=With a lock
+	 *	@param int		$beforeid		ID of a record
+	 *  @return	string					Hash of previous record (if beforeid is defined) or hash of last record (if beforeid is 0)
 	 */
 	public function getPreviousHash($withlock = 0, $beforeid = 0)
 	{
@@ -1103,18 +1125,18 @@ class BlockedLog
 	/**
 	 *	Return array of log objects (with criteria)
 	 *
-	 *	@param	string 	$element      	element to search
-	 *	@param	int 	$fk_object		id of object to search
-	 *	@param	int 	$limit      	max number of element, 0 for all
-	 *	@param	string 	$sortfield     	sort field
-	 *	@param	string 	$sortorder     	sort order
-	 *	@param	int 	$search_fk_user id of user(s)
-	 *	@param	int 	$search_start   start time limit
-	 *	@param	int 	$search_end     end time limit
-	 *  @param	string	$search_ref		search ref
-	 *  @param	string	$search_amount	search amount
-	 *  @param	string	$search_code	search code
-	 *	@return	BlockedLog[]|int<-2,-1>	Array of object log or <0 if error
+	 *	@param	string 		$element      	element to search
+	 *	@param	int		 	$fk_object		id of object to search
+	 *	@param	int<0,max> 	$limit      	max number of element, 0 for all
+	 *	@param	string 		$sortfield     	sort field
+	 *	@param	string 		$sortorder     	sort order
+	 *	@param	int 		$search_fk_user id of user(s)
+	 *	@param	int 		$search_start   start time limit
+	 *	@param	int 		$search_end     end time limit
+	 *  @param	string		$search_ref		search ref
+	 *  @param	string		$search_amount	search amount
+	 *  @param	string		$search_code	search code
+	 *	@return	BlockedLog[]|int<-2,-1>		Array of object log or <0 if error
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
 	{
@@ -1221,7 +1243,7 @@ class BlockedLog
 	/**
 	 * Check if module was already used or not for at least one recording.
 	 *
-	 * @param   int     $ignoresystem       Ignore system events for the test
+	 * @param   int<0,1>	$ignoresystem       Ignore system events for the test
 	 * @return  bool
 	 */
 	public function alreadyUsed($ignoresystem = 0)
