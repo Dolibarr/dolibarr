@@ -4441,6 +4441,10 @@ class Societe extends CommonObject
 		$this->idprof4 = getDolGlobalString('MAIN_INFO_RCS');
 		$this->idprof5 = getDolGlobalString('MAIN_INFO_PROFID5');
 		$this->idprof6 = getDolGlobalString('MAIN_INFO_PROFID6');
+		$this->idprof7 = getDolGlobalString('MAIN_INFO_PROFID7');
+		$this->idprof8 = getDolGlobalString('MAIN_INFO_PROFID8');
+		$this->idprof9 = getDolGlobalString('MAIN_INFO_PROFID9');
+		$this->idprof10 = getDolGlobalString('MAIN_INFO_PROFID10');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
 		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : 0;
