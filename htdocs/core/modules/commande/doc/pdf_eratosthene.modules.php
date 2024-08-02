@@ -1127,7 +1127,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 		$this->atleastoneratenotnull = 0;
 		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT')) {
-			$tvaisnull = ((!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000'])) ? true : false);
+			$tvaisnull = (!empty($this->tva) && count($this->tva) == 1 && isset($this->tva['0.000']) && is_float($this->tva['0.000']));
 			if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL') && $tvaisnull) {
 				// Nothing to do
 			} else {
@@ -1783,7 +1783,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->cols['position'] = array(
 			'rank' => $rank,
 			'width' => 10,
-			'status' => getDolGlobalInt('PDF_ERATOSHTENE_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
+			'status' => getDolGlobalInt('PDF_ERATOSHTENE_ADD_POSITION') ? true : ((bool) getDolGlobalInt('PDF_ADD_POSITION')),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in somme case with module
 				'align' => 'C',
@@ -1915,7 +1915,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_ORDER_HIDE_PRICE_EXCL_TAX') ? true : false,
+			'status' => !getDolGlobalString('PDF_ORDER_HIDE_PRICE_EXCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalHTShort'
 			),
@@ -1926,7 +1926,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_ORDER_SHOW_PRICE_INCL_TAX') ? false : true,
+			'status' => !(!getDolGlobalString('PDF_ORDER_SHOW_PRICE_INCL_TAX')),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),
