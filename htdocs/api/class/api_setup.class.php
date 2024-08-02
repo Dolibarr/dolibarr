@@ -55,6 +55,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number {@min 0}
 	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
@@ -64,7 +66,7 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of action triggers
 	 */
-	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $elementtype = '', $sqlfilters = '')
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -90,6 +92,15 @@ class Setup extends DolibarrApi
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
+
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit, $offset);
+		}
 
 		$result = $this->db->query($sql);
 		if ($result) {
