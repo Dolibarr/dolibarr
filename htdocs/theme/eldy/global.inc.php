@@ -1241,7 +1241,7 @@ span.fa.fa-plus-circle.paddingleft {
 	font-size: 1em;
 }
 .listofinvoicetype {
-	height: 28px;
+	height: 2.2em;
 	vertical-align: middle;
 }
 .divsocialnetwork:not(:last-child) {
@@ -2046,7 +2046,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 40px !important;
 	}
 	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
-		height: 28px !important;
+		height: 2.2em !important;
 	}
 
 
@@ -4018,7 +4018,7 @@ table.borderplus {
 .border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 28px;
+	height: 2.2em;
 }
 
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
@@ -4611,7 +4611,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 28px;
+	height: 2.2em;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -5701,7 +5701,7 @@ span[phptag] {
 	/* display: inline-block; */
 	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
-	line-height: 28px;
+	line-height: 2.2em;
 }
 .websiteselectionsection {
 	font-size: 0.85em;
@@ -6203,7 +6203,7 @@ div.cke_notifications_area .cke_notification_warning {
 		right: 0;
 		bottom: 0;
 		background-color: #ebebeb;
-		height: 28px;
+		height: 2.2em;
 		line-height: 2.2em;
 }
 .ace_status-indicator {
@@ -6720,7 +6720,7 @@ input.select2-input {
 	color: #FFF !important;
 }
 .select2-container .select2-selection--multiple {
-	min-height: 28px !important;
+	min-height: 2.2em !important;
 }
 .tableforfield .select2-container .select2-selection--single {
 	height: 25px;
@@ -7035,7 +7035,7 @@ select.multiselectononeline {
 	padding: 0;
 	vertical-align: middle;
 	min-height: unset;
-	height: 28px !important;
+	height: 2.2em !important;
 	opacity: 0;
 	/* width: 1px !important; */
 }
@@ -7621,7 +7621,7 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 
 .ticketpublictable td {
-	height: 28px;
+	height: 2.2em;
 }
 
 .ticketpublicarea {
