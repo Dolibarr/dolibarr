@@ -69,7 +69,7 @@ $now = dol_now();
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 }
 
 $permissiontoadd = (($object->id == $user->id) || ($user->hasRight('user', 'user', 'lire')));
@@ -141,7 +141,7 @@ $form = new Form($db);
 
 $object = new User($db);
 $result = $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notification");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {

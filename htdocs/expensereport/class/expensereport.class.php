@@ -2743,7 +2743,7 @@ class ExpenseReport extends CommonObject
 
 		$currentUser = new User($db);
 		$currentUser->fetch($this->fk_user);
-		$currentUser->getrights('expensereport');
+		$currentUser->loadRights('expensereport');
 		//Clean
 		$qty = (float) price2num($qty);
 

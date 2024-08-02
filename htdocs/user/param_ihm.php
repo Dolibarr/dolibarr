@@ -69,7 +69,7 @@ $dirleft = "../core/menus/standard";
 // Charge utilisateur edite
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // Liste des zone de recherche permanentes supportees
 /* deprecated

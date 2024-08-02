@@ -40,7 +40,7 @@ if ($user->socid) {
 $result = restrictedArea($user, 'ecm', '');
 
 // Load permissions
-$user->getrights('ecm');
+$user->loadRights('ecm');
 
 // Get parameters
 $socid = GETPOSTINT('socid');

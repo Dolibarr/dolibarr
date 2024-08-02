@@ -80,7 +80,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($result <= 0) {
 		accessforbidden('User not found');
 	}
-	$object->getrights();
+	$object->loadRights();
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
