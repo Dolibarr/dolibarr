@@ -1299,7 +1299,7 @@ class User extends CommonObject
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = gr.fk_id";
-			// @FIXME Very strange business rules. Must be alays the same than into user->getrights() user/perms.php and user/group/perms.php
+			// @FIXME Very strange business rules. Must be always the same than into user->loadRights() user/perms.php and user/group/perms.php
 			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " AND gu.entity IN (0,".$conf->entity.")";
@@ -1443,11 +1443,12 @@ class User extends CommonObject
 
 	/**
 	 *	Load permissions granted to a user->id into object user->rights
-	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject.
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject and was replaced in v20 with loadRights()
 	 *
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
+	 *  @deprecated
 	 *
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 *  @phpstan-ignore-next-line

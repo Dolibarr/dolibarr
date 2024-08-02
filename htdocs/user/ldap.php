@@ -47,7 +47,7 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'userldap', 'globalcard'));

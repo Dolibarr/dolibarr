@@ -71,7 +71,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 // and permission, so we can later calculate number of top menu ($nbtopmenuentries) according to user profile.
 if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 	$user->fetch('', $_SESSION['dol_login'], '', 1);
-	$user->getrights();
+	$user->loadRights();
 	//$user->loadPersonalConf();
 
 	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.

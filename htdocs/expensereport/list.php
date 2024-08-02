@@ -271,7 +271,7 @@ $user_id = $user->id;
 if ($id > 0) {
 	// Charge utilisateur edite
 	$fuser->fetch($id, '', '', 1);
-	$fuser->getrights();
+	$fuser->loadRights();
 	$user_id = $fuser->id;
 
 	$search_user = $user_id;

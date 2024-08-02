@@ -34,7 +34,7 @@ require_once dirname(__FILE__).'/../../htdocs/mymodule/class/myobject.class.php'
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 

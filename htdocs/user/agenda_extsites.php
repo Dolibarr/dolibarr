@@ -59,7 +59,7 @@ if (!isset($id) || empty($id)) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // Security check
 $socid = 0;
