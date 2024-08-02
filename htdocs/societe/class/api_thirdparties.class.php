@@ -1200,6 +1200,9 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$event = $notification->event;
+		if (!$event) {
+			throw new RestException(500, 'Error creating Thirdparty Notification, request_data missing event');
+		}
 		$socid = $notification->socid;
 		$contact_id = $notification->contact_id;
 
