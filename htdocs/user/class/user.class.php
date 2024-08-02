@@ -1238,14 +1238,17 @@ class User extends CommonObject
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = ur.fk_id";
 			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
-				// on old version, we use entity defined into table r only
+				// On old version, we used entity defined into table r only
+				// @FIXME Test on MULTICOMPANY_BACKWARD_COMPATIBILITY is a very strange business rules because the select should be always the
+				// same than into user->loadRights() in user/perms.php and user/group/perms.php
+				// We should never use and remove this case.
 				$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").$conf->entity.")";
 			} else {
-				// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
+				// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and inserted during module activation.
 				// So we must include the filter on entity on both table r. and ur.
 				$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
 			}
-			$sql .= " AND ur.fk_user= ".((int) $this->id);
+			$sql .= " AND ur.fk_user = ".((int) $this->id);
 			$sql .= " AND r.perms IS NOT NULL";
 			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
@@ -1275,12 +1278,12 @@ class User extends CommonObject
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 										$this->rights->$module->$perms = new stdClass();
 									}
-									if (empty($this->rights->$module->$perms->$subperms)) {
+									if (empty($this->rights->$module->$perms->$subperms)) {	// if not already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms->$subperms = 1;
 								} else {
-									if (empty($this->rights->$module->$perms)) {
+									if (empty($this->rights->$module->$perms)) {			// if not already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms = 1;
@@ -1299,8 +1302,10 @@ class User extends CommonObject
 			$sql .= " ".$this->db->prefix()."usergroup_user as gu,";
 			$sql .= " ".$this->db->prefix()."rights_def as r";
 			$sql .= " WHERE r.id = gr.fk_id";
-			// @FIXME Very strange business rules. Must be alays the same than into user->getrights() user/perms.php and user/group/perms.php
 			if (getDolGlobalString('MULTICOMPANY_BACKWARD_COMPATIBILITY')) {
+				// @FIXME Test on MULTICOMPANY_BACKWARD_COMPATIBILITY is a very strange business rules because the select should be always the
+				// same than into user->loadRights() in user/perms.php and user/group/perms.php
+				// We should never use and remove this case.
 				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 				} else {
@@ -1318,6 +1323,9 @@ class User extends CommonObject
 			$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 			$sql .= " AND gu.fk_user = ".((int) $this->id);
 			$sql .= " AND r.perms IS NOT NULL";
+			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+				$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+			}
 			if ($moduletag) {
 				$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 			}
@@ -1343,16 +1351,16 @@ class User extends CommonObject
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 										$this->rights->$module->$perms = new stdClass();
 									}
-									if (empty($this->rights->$module->$perms->$subperms)) {	// already counted
+									if (empty($this->rights->$module->$perms->$subperms)) {	// if not already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms->$subperms = 1;
 								} else {
-									if (empty($this->rights->$module->$perms)) {			// already counted
-										$this->nb_rights++;
-									}
 									// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+										if (empty($this->rights->$module->$perms)) {			// if not already counted
+											$this->nb_rights++;
+										}
 										$this->rights->$module->$perms = 1;
 									}
 								}

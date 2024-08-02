@@ -208,7 +208,7 @@ class CMailFile
 
 		$this->sendcontext = $sendcontext;
 
-		// Define this->sendmode ('mail', 'smtps', 'swiftmailer', ...) according to $sendcontext ('standard', 'emailing', 'ticket', 'password')
+		// Define this->sendmode ('mail', 'smtps', 'swiftmailer', ...) according to $sendcontext ('standard', 'emailing', 'ticket', 'passwordreset')
 		$this->sendmode = '';
 		if (!empty($this->sendcontext)) {
 			$smtpContextKey = strtoupper($this->sendcontext);
@@ -1084,6 +1084,7 @@ class CMailFile
 					$storage = new DoliStorage($db, $conf, $keyforprovider);
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
@@ -1092,9 +1093,9 @@ class CMailFile
 						// Token expired so we refresh it
 						if (is_object($tokenobj) && $expire) {
 							$credentials = new Credentials(
-								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_ID'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1105,9 +1106,10 @@ class CMailFile
 							$tokenobj = $apiService->refreshAccessToken($tokenobj);
 							$tokenobj->setRefreshToken($refreshtoken);
 							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+							$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						}
 
-						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						if (is_object($tokenobj)) {
 							$this->smtps->setToken($tokenobj->getAccessToken());
 						} else {
@@ -1241,6 +1243,7 @@ class CMailFile
 
 					try {
 						$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 						$expire = false;
 						// Is token expired or will token expire in the next 30 seconds
 						if (is_object($tokenobj)) {
@@ -1249,9 +1252,9 @@ class CMailFile
 						// Token expired so we refresh it
 						if (is_object($tokenobj) && $expire) {
 							$credentials = new Credentials(
-								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_ID'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE').'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1262,7 +1265,10 @@ class CMailFile
 							$tokenobj = $apiService->refreshAccessToken($tokenobj);
 							$tokenobj->setRefreshToken($refreshtoken);
 							$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+							$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 						}
+
 						if (is_object($tokenobj)) {
 							$this->transport->setAuthMode('XOAUTH2');
 							$this->transport->setPassword($tokenobj->getAccessToken());
