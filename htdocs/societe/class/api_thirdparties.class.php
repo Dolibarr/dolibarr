@@ -1131,7 +1131,7 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 
-		$sql = "SELECT rowid as id, fk_action, fk_action as event, fk_soc, fk_soc as socid, fk_contact, fk_contact as target, type, datec, tms";
+		$sql = "SELECT rowid as id, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 		if ($id) {
 			$sql .= " WHERE fk_soc  = ".((int) $id);
@@ -1157,7 +1157,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'No notifications found');
 		}
 
-		$fields = array('id', 'socid', 'fk_soc', 'fk_action', 'event', 'fk_contact', 'target', 'datec', 'tms', 'type');
+		$fields = array('id', 'socid', 'event', 'contact_id', 'datec', 'tms', 'type');
 
 		$returnNotifications = array();
 
