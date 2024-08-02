@@ -1233,15 +1233,19 @@ class Thirdparties extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
 		$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
-		$result = $this->db->query($sql);
-		$notification->fk_user = $result;
 
+		$result = $this->db->query($sql);
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Action Trigger code not found');
+		}
+
+		$notification->event = $this->db->fetch_row($result)[0];
 		foreach ($request_data as $field => $value) {
 			$notification->$field = $value;
 		}
 
 		if ($notification->create(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(500, 'Error creating Thirdparty Notification');
+			throw new RestException(500, 'Error creating Thirdparty Notification, are request_data well formed?');
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {
