@@ -1241,11 +1241,11 @@ class User extends CommonObject
 				// on old version, we use entity defined into table r only
 				$sql .= " AND r.entity IN (0,".(isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') ? "1," : "").$conf->entity.")";
 			} else {
-				// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and insert during module activation.
+				// On table r=rights_def, the unique key is (id, entity) because id is hard coded into module descriptor and inserted during module activation.
 				// So we must include the filter on entity on both table r. and ur.
 				$sql .= " AND r.entity = ".((int) $conf->entity)." AND ur.entity = ".((int) $conf->entity);
 			}
-			$sql .= " AND ur.fk_user= ".((int) $this->id);
+			$sql .= " AND ur.fk_user = ".((int) $this->id);
 			$sql .= " AND r.perms IS NOT NULL";
 			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
@@ -1275,12 +1275,12 @@ class User extends CommonObject
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 										$this->rights->$module->$perms = new stdClass();
 									}
-									if (empty($this->rights->$module->$perms->$subperms)) {
+									if (empty($this->rights->$module->$perms->$subperms)) {	// if not already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms->$subperms = 1;
 								} else {
-									if (empty($this->rights->$module->$perms)) {
+									if (empty($this->rights->$module->$perms)) {			// if not already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms = 1;
@@ -1318,6 +1318,9 @@ class User extends CommonObject
 			$sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 			$sql .= " AND gu.fk_user = ".((int) $this->id);
 			$sql .= " AND r.perms IS NOT NULL";
+			if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+				$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
+			}
 			if ($moduletag) {
 				$sql .= " AND r.module = '".$this->db->escape($moduletag)."'";
 			}
@@ -1343,16 +1346,16 @@ class User extends CommonObject
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
 										$this->rights->$module->$perms = new stdClass();
 									}
-									if (empty($this->rights->$module->$perms->$subperms)) {	// already counted
+									if (empty($this->rights->$module->$perms->$subperms)) {	// if not already counted
 										$this->nb_rights++;
 									}
 									$this->rights->$module->$perms->$subperms = 1;
 								} else {
-									if (empty($this->rights->$module->$perms)) {			// already counted
-										$this->nb_rights++;
-									}
 									// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
 									if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) {
+										if (empty($this->rights->$module->$perms)) {			// if not already counted
+											$this->nb_rights++;
+										}
 										$this->rights->$module->$perms = 1;
 									}
 								}
