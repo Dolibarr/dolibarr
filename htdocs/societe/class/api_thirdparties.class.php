@@ -1244,6 +1244,21 @@ class Thirdparties extends DolibarrApi
 			$notification->$field = $value;
 		}
 
+		$event = $notification->event;
+		$socid = $notification->socid;
+		$contact_id = $notification->contact_id;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape($event)."'";
+		$exists_sql .= " AND fk_soc = '".$this->db->escape($socid)."'";
+		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_sql) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
 		if ($notification->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating Thirdparty Notification, are request_data well formed?');
 		}
