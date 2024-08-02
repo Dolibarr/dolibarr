@@ -2224,7 +2224,7 @@ class Project extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if (!empty($obj->element_date)) {
 					$date = explode('-', $obj->element_date);
-					$week_number = getWeekNumber($date[2], $date[1], $date[0]);
+					$week_number = getWeekNumber((int) $date[2], (int) $date[1], (int) $date[0]);
 				}
 				'@phan-var-force int $week_number';  // Needed because phan considers it might be null
 				if (empty($weekalreadyfound[$week_number])) {

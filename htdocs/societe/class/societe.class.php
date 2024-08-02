@@ -4384,7 +4384,7 @@ class Societe extends CommonObject
 		$state_code = $state_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
-			$state_id = $tmp[0];
+			$state_id = (int) $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
