@@ -1813,7 +1813,7 @@ class BOMLine extends CommonObjectLine
 	public $position;
 
 	/**
-	 * @var ?string import key
+	 * @var string import key
 	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
