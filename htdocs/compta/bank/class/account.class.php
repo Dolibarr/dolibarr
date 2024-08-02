@@ -911,7 +911,7 @@ class Account extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+				// We rename directory in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->oldref);
 				$newref = dol_sanitizeFileName($this->ref);
 				$dirsource = $conf->bank->dir_output.'/'.$oldref;
