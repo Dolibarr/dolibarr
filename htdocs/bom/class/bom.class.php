@@ -808,7 +808,7 @@ class BOM extends CommonObject
 	 *	@param  User		$user       User that delete
 	 *  @param	int			$idline		Id of line to delete
 	 *  @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int<-2,-1>|int<1,1>	>0 if OK, <0 if KO
+	 *  @return int<-2,-1>|int<1,1>		>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -1813,7 +1813,7 @@ class BOMLine extends CommonObjectLine
 	public $position;
 
 	/**
-	 * @var string import key
+	 * @var ?string import key
 	 */
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
