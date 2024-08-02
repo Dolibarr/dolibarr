@@ -479,8 +479,8 @@ class StockTransferLine extends CommonObjectLine
 					return $result;
 				}
 			} else {
-				$this->error=$langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl());
-				$this->errors[]= $this->error;
+				$this->error = $langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl());
+				$this->errors[] = $this->error;
 				return -1;
 			}
 		}
@@ -912,7 +912,7 @@ class StockTransferLine extends CommonObjectLine
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
