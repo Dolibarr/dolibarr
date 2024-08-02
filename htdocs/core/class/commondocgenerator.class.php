@@ -309,7 +309,8 @@ abstract class CommonDocGenerator
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
 		}
 		if (empty($mysoc->state) && !empty($mysoc->state_code)) {
-			$mysoc->state = getState($mysoc->state_code, '0');
+			$country_id = dol_getIdFromCode($this->db, $mysoc->state_code, 'c_country', 'code', 'rowid');
+			$mysoc->state = getState($country_id, '0');
 		}
 
 		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
