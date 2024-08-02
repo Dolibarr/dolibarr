@@ -784,12 +784,12 @@ class PaiementFourn extends Paiement
 
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file)) {
-					$mybool = (include_once $dir.$file) || $mybool;
+					$mybool = ((bool) @include_once $dir.$file) || $mybool;
 				}
 			}
 
 			// For compatibility
-			if ($mybool === false) {
+			if (!$mybool) {
 				$file = getDolGlobalString('SUPPLIER_PAYMENT_ADDON') . ".php";
 				$classname = "mod_supplier_payment_" . getDolGlobalString('SUPPLIER_PAYMENT_ADDON');
 				$classname = preg_replace('/\-.*$/', '', $classname);
@@ -799,12 +799,12 @@ class PaiementFourn extends Paiement
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool = (include_once $dir.$file) || $mybool;
+						$mybool = ((bool) @include_once $dir.$file) || $mybool;
 					}
 				}
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
