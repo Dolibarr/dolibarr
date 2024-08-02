@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2021	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,7 +322,7 @@ class Ldap
 		$this->error = '';
 		$this->connectedServer = '';
 
-		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+		$ldapdebug = !((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false"));
 
 		if ($ldapdebug) {
 			dol_syslog(get_class($this)."::connectBind");
