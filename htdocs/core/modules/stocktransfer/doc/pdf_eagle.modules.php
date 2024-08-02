@@ -120,7 +120,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		// Get source company
 		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) {
+		if (empty($this->emetteur->country_code)) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2);
 		}
 
@@ -192,7 +192,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		// Load traductions files required by page
+		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
 
 		global $outputlangsbis;
@@ -264,7 +264,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 
 		if ($conf->stocktransfer->dir_output) {
-			// Definition de $dir et $file
+			// Definition of $dir and $file
 			if ($object->specimen) {
 				$dir = $conf->stocktransfer->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
@@ -325,10 +325,10 @@ class pdf_eagle extends ModelePDFStockTransfer
 				}
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Shipment"));
+				$pdf->SetSubject($outputlangs->transnoentities("StockTransfer"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Shipment"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("StockTransfer"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -755,7 +755,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				return 0;
 			}
 		} else {
-			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "EXP_OUTPUTDIR");
+			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "STOCKTRANSFER_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -1010,14 +1010,15 @@ class pdf_eagle extends ModelePDFStockTransfer
 		// phpcs:enable
 		global $conf, $langs;
 
-		$langs->load("orders");
+		// Load traductions files required by page
+		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && (getDolGlobalString('SHIPPING_DRAFT_WATERMARK'))) {
+		if ($object->statut == 0 && (getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK'))) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->SHIPPING_DRAFT_WATERMARK);
 		}
 
@@ -1272,6 +1273,6 @@ class pdf_eagle extends ModelePDFStockTransfer
 	{
 		// phpcs:enable
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'SHIPPING_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'STOCKTRANSFER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 }
