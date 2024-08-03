@@ -506,7 +506,7 @@ class AssetModel extends CommonObject
 		if (!empty($this->fields['date_validation'])) {
 			$sql .= ", date_validation = '" . $this->db->idate($now) . "'";
 		}
-		if (!empty($this->fields['fk_user_valid'])) {
+		if (!empty($this->fields['fk_user_valid'] ?? null)) {
 			$sql .= ", fk_user_valid = " . ((int) $user->id);
 		}
 		$sql .= " WHERE rowid = " . ((int) $this->id);
