@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,17 +215,17 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$nvpstr = $nvpstr."&RETURNURL=".urlencode($returnURL);
 	$nvpstr = $nvpstr."&CANCELURL=".urlencode($cancelURL);
 	if (getDolGlobalString('PAYPAL_ALLOW_NOTES')) {
-		$nvpstr = $nvpstr."&ALLOWNOTE=0";
+		$nvpstr .= "&ALLOWNOTE=0";
 	}
 	if (!getDolGlobalString('PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS')) {
-		$nvpstr = $nvpstr."&NOSHIPPING=1"; // An empty or not complete shipping address will be accepted
+		$nvpstr .= "&NOSHIPPING=1"; // An empty or not complete shipping address will be accepted
 	} else {
-		$nvpstr = $nvpstr."&NOSHIPPING=0"; // A valid shipping address is required (full required fields mandatory)
+		$nvpstr .= "&NOSHIPPING=0"; // A valid shipping address is required (full required fields mandatory)
 	}
-	$nvpstr = $nvpstr."&SOLUTIONTYPE=".urlencode($solutionType);
-	$nvpstr = $nvpstr."&LANDINGPAGE=".urlencode($landingPage);
+	$nvpstr .= "&SOLUTIONTYPE=".urlencode($solutionType);
+	$nvpstr .= "&LANDINGPAGE=".urlencode($landingPage);
 	if (getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')) {
-		$nvpstr = $nvpstr."&CUSTOMERSERVICENUMBER=".urlencode(getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')); // Hotline phone number
+		$nvpstr .= "&CUSTOMERSERVICENUMBER=".urlencode(getDolGlobalString('PAYPAL_CUSTOMER_SERVICE_NUMBER')); // Hotline phone number
 	}
 
 	$paypalprefix = 'PAYMENTREQUEST_0_';
