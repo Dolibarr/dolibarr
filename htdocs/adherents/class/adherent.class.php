@@ -1621,7 +1621,7 @@ class Adherent extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 
 
-		$this->partnerships[] = array();
+		$this->partnerships = array();
 
 		return 1;
 	}
