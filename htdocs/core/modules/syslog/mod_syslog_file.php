@@ -168,7 +168,6 @@ class mod_syslog_file extends LogHandler
 				LOG_WARNING => 'WARNING',
 				LOG_NOTICE => 'NOTICE',
 				LOG_INFO => 'INFO',
-			) + array(
 				LOG_DEBUG => 'DEBUG'
 			);
 
