@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +178,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$i++;
 				}
 				$this->db->free($resql);
-				$ponderated_opp_amount = $ponderated_opp_amount / 100;
+				$ponderated_opp_amount /= 100;
 
 				$stringtoprint = '';
 				$stringtoprint .= '<div class="div-table-responsive-no-min ">';
