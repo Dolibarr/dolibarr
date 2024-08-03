@@ -166,7 +166,7 @@ function get_server_name()
 	$url = $urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
-		$url = $url."/";
+		$url .= "/";
 	}
 
 	return $url;
