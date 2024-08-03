@@ -435,7 +435,7 @@ class User extends CommonObject
 
 	/**
 	 *	Load a user from database with its id or ref (login).
-	 *  This function does not load permissions, only user properties. Use getrights() for this just after the fetch.
+	 *  This function does not load permissions, only user properties. Use loadRights() for this just after the fetch.
 	 *
 	 *	@param	int		$id		       		If defined, id to used for search
 	 * 	@param  string	$login       		If defined, login to used for search
@@ -767,7 +767,7 @@ class User extends CommonObject
 	 *  @param  string	$permlevel1		Permission level1 (Example: 'read', 'write', 'delete')
 	 *  @param  string	$permlevel2		Permission level2
 	 *  @return int						1 if user has permission, 0 if not.
-	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 *  @see	clearrights(), delrights(), loadRights(), hasRight()
 	 */
 	public function hasRight($module, $permlevel1, $permlevel2 = '')
 	{
@@ -922,7 +922,7 @@ class User extends CommonObject
 	 *  @param	int		$entity			Entity to use
 	 *  @param  int	    $notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @return int						> 0 if OK, < 0 if KO
-	 *  @see	clearrights(), delrights(), getrights(), hasRight()
+	 *  @see	clearrights(), delrights(), loadRights(), hasRight()
 	 */
 	public function addrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -1065,7 +1065,7 @@ class User extends CommonObject
 	 *  @param	int|string	$entity		Entity to use. Example: '1', or '0,1', or '2,3'
 	 *  @param  int	    	$notrigger	1=Does not execute triggers, 0=Execute triggers
 	 *  @return int         			> 0 if OK, < 0 if OK
-	 *  @see	clearrights(), addrights(), getrights(), hasRight()
+	 *  @see	clearrights(), addrights(), loadRights(), hasRight()
 	 */
 	public function delrights($rid, $allmodule = '', $allperms = '', $entity = 0, $notrigger = 0)
 	{
@@ -1183,7 +1183,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
-	 *  @see	getrights(), hasRight()
+	 *  @see	loadRights(), hasRight()
 	 */
 	public function clearrights()
 	{
@@ -1456,7 +1456,7 @@ class User extends CommonObject
 	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
 	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
-	 *  @deprecated
+	 *  @deprecated Use getRights
 	 *
 	 *  @see	clearrights(), delrights(), addrights(), hasRight()
 	 *  @phpstan-ignore-next-line
