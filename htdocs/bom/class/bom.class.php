@@ -339,7 +339,8 @@ class BOM extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		$object->ref = empty($this->fields['ref']['default']) ? $langs->trans("copy_of_").$object->ref : $this->fields['ref']['default'];
+		$default_ref = $this->fields['ref']['default'] ?? null;
+		$object->ref = empty($default_ref) ? $langs->trans("copy_of_").$object->ref : $default_ref;
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
 		// ...
@@ -617,7 +618,7 @@ class BOM extends CommonObject
 				$fk_bom_child = null;
 			}
 			if (empty($import_key)) {
-				$import_key = null;
+				$import_key = '';
 			}
 			if (empty($position)) {
 				$position = -1;
@@ -691,7 +692,7 @@ class BOM extends CommonObject
 	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
 	 * @param	float		$efficiency				Efficiency in MO
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
-	 * @param	string		$import_key				Import Key
+	 * @param	?string		$import_key				Import Key
 	 * @param	int			$fk_unit				Unit of line
 	 * @param	array		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
@@ -722,7 +723,7 @@ class BOM extends CommonObject
 				$efficiency = 1.0;
 			}
 			if (empty($import_key)) {
-				$import_key = null;
+				$import_key = '';
 			}
 			if (empty($position)) {
 				$position = -1;
@@ -1654,12 +1655,13 @@ class BOM extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
+		$arrayofkeyval = $this->fields['bomtype']['arrayofkeyval'] ?? null;
+		if (!empty($arrayofkeyval)) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
 			if ($this->bomtype == 0) {
-				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][0].'</span>';
+				$return .= '<span class="info-box-label">'.$arrayofkeyval[0].'</span>';
 			} else {
-				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
+				$return .= '<span class="info-box-label">'.$arrayofkeyval[1].'</span>';
 			}
 		}
 		if (!empty($arraydata['prod'])) {
