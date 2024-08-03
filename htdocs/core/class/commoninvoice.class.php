@@ -1203,7 +1203,7 @@ abstract class CommonInvoice extends CommonObject
 					$arrayzerounitcurrency = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
 					$amountstripe = $amounttopay;
 					if (!in_array($currency, $arrayzerounitcurrency)) {
-						$amountstripe = $amountstripe * 100;
+						$amountstripe *= 100;
 					}
 
 					$fk_bank_account = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');		// Bank account used for SEPA direct debit or credit transfer. Must be the Stripe account in Dolibarr.
