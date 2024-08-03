@@ -489,11 +489,11 @@ class Tickets extends DolibarrApi
 	/**
 	 * Clean sensitive data from object
 	 *
-	 * @template T of \CommonObject
+	 * @template T of Object
 	 * @param   T  $object     Object to clean
-	 * @phan-param CommonObject  $object
+	 * @phan-param Object  $object
 	 * @return  T              Object with cleaned properties
-	 * @phan-return CommonObject
+	 * @phan-return Object
 	 *
 	 * @todo use an array for properties to clean
 	 *
