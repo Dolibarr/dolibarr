@@ -190,17 +190,17 @@ class ICal
 
 				switch ($text) { // search special string
 					case "BEGIN:VTODO":
-						$this->todo_count = $this->todo_count + 1; // new to do begin
+						$this->todo_count += 1; // new to do begin
 						$type = "VTODO";
 						break;
 
 					case "BEGIN:VEVENT":
-						$this->event_count = $this->event_count + 1; // new event begin
+						$this->event_count +=  1; // new event begin
 						$type = "VEVENT";
 						break;
 
 					case "BEGIN:VFREEBUSY":
-						$this->freebusy_count = $this->freebusy_count + 1; // new event begin
+						$this->freebusy_count += 1; // new event begin
 						$type = "VFREEBUSY";
 						break;
 
@@ -241,7 +241,7 @@ class ICal
 						} elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value)) {
 							if (preg_match('/=$/', $value)) {
 								$tmpkey = $key;
-								$tmpvalue = $tmpvalue.preg_replace('/=$/', "", $value); // We must wait to have next line to have complete message
+								$tmpvalue .= preg_replace('/=$/', "", $value); // We must wait to have next line to have complete message
 							} else {
 								$value = quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
 							}
