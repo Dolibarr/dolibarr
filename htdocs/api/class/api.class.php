@@ -135,6 +135,7 @@ class DolibarrApi
 	 * @param   string  $properties		Comma separated list of properties names
 	 * @return	T						Object with cleaned properties
 	 * @phan-return Object
+	 * @suppress PhanTemplateTypeNotUsedInFunctionReturn
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{
