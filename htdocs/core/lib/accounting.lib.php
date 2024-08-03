@@ -4,6 +4,7 @@
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
  * Copyright (C) 2021-2024 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,7 +306,7 @@ function getDefaultDatesForTransfer()
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 			$year_start = dol_print_date(dol_now(), '%Y');
 			if ($month_start > dol_print_date(dol_now(), '%m')) {
-				$year_start = $year_start - 1;
+				$year_start -= 1;
 			}
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
@@ -377,7 +378,7 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
 		}
 		$year_start = $now_arr['year'];
 		if ($conf_fiscal_month_start > $now_arr['mon']) {
-			$year_start = $year_start - 1;
+			$year_start -= 1;
 		}
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;
