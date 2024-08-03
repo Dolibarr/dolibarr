@@ -423,16 +423,16 @@ if (empty($reshook)) {
 								$maxPrevSituationPercent = max($maxPrevSituationPercent, $prevLine->situation_percent);
 
 								//$line->subprice  = $line->subprice - $prevLine->subprice;
-								$line->total_ht  = $line->total_ht - $prevLine->total_ht;
-								$line->total_tva = $line->total_tva - $prevLine->total_tva;
-								$line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
-								$line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
-								$line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+								$line->total_ht  -= $prevLine->total_ht;
+								$line->total_tva -= $prevLine->total_tva;
+								$line->total_ttc -= $prevLine->total_ttc;
+								$line->total_localtax1 -= $prevLine->total_localtax1;
+								$line->total_localtax2 -= $prevLine->total_localtax2;
 
-								$line->multicurrency_subprice  = $line->multicurrency_subprice - $prevLine->multicurrency_subprice;
-								$line->multicurrency_total_ht  = $line->multicurrency_total_ht - $prevLine->multicurrency_total_ht;
-								$line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
-								$line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+								$line->multicurrency_subprice  -= $prevLine->multicurrency_subprice;
+								$line->multicurrency_total_ht  -= $prevLine->multicurrency_total_ht;
+								$line->multicurrency_total_tva -= $prevLine->multicurrency_total_tva;
+								$line->multicurrency_total_ttc -= $prevLine->multicurrency_total_ttc;
 							}
 						}
 
