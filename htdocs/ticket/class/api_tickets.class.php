@@ -494,6 +494,7 @@ class Tickets extends DolibarrApi
 	 * @phan-param Object  $object
 	 * @return  T              Object with cleaned properties
 	 * @phan-return Object
+	 * @suppress PhanTemplateTypeNotUsedInFunctionReturn
 	 *
 	 * @todo use an array for properties to clean
 	 *
