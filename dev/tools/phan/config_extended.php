@@ -94,6 +94,9 @@ $config['suppress_issue_types'] = [
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
+
+		'PhanPluginUnknownArrayMethodParamType',	// this option costs more time to be supported than it solves time
+		'PhanPluginUnknownArrayMethodReturnType',	// this option costs more time to be supported than it solves time
 ];
 
 return $config;
