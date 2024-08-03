@@ -676,9 +676,9 @@ class Categories extends DolibarrApi
 	 *
 	 * @template T of \Categorie
 	 * @param   T  $object		Object to clean
-	 * @phan-param CommonObject  $object
+	 * @phan-param Object  $object
 	 * @return  T     			Object with cleaned properties
-	 * @phan-return CommonObject
+	 * @phan-return Object
 	 */
 	protected function _cleanObjectDatas($object)
 	{

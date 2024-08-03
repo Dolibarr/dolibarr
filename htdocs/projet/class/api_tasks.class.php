@@ -465,7 +465,8 @@ class Tasks extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);;
+					$this->task->array_options[$index] = $this->_checkValForAPI($field, $val, $this->task);
+					;
 				}
 				continue;
 			}
@@ -682,11 +683,11 @@ class Tasks extends DolibarrApi
 	/**
 	 * Clean sensitive data from object
 	 *
-	 * @template T of \CommonObject
+	 * @template T of Object
 	 * @param   T  $object     Object to clean
-	 * @phan-param CommonObject  $object
+	 * @phan-param Object  $object
 	 * @return  T              Object with cleaned properties
-	 * @phan-return CommonObject
+	 * @phan-return Object
 	 */
 	protected function _cleanObjectDatas($object)
 	{

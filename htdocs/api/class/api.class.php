@@ -131,10 +131,10 @@ class DolibarrApi
 	 *
 	 * @template T of object
 	 * @param   T		$object			Object to clean
-	 * @phan-param CommonObject		$object
+	 * @phan-param Object		$object
 	 * @param   string  $properties		Comma separated list of properties names
 	 * @return	T						Object with cleaned properties
-	 * @phan-return CommonObject
+	 * @phan-return Object
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{

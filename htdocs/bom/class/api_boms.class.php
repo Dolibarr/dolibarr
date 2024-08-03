@@ -496,11 +496,11 @@ class Boms extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @template T of CommonObject
+	 * @template T of Object
 	 * @param   T  $object     Object to clean
-	 * @phan-param CommonObject  $object
+	 * @phan-param Object  $object
 	 * @return  T              Object with cleaned properties
-	 * @phan-return CommonObject
+	 * @phan-return Object
 	 */
 	protected function _cleanObjectDatas($object)
 	{
