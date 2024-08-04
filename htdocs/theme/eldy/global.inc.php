@@ -2197,8 +2197,12 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
-	table-layout: fixed;
+	width: 100%;
+	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
+		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+	<?php } ?>
+	/* table-layout: fixed; */
+
 }
 #id-right, #id-left {
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
@@ -2386,6 +2390,8 @@ div.vmenu, td.vmenu {
 	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
+		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		table-layout: fixed;
 		width: 100%;
 	}
 	.side-nav {
@@ -3459,7 +3465,6 @@ div.vmenu, td.vmenu {
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 1px;
-	width: <?php echo $leftmenuwidth; ?>px;
 }
 
 .vmenu {
@@ -8471,11 +8476,6 @@ table.jPicker {
 
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
-	}
-
-
-	div.fichehalfright {
-		margin-top: 30px;
 	}
 
 
