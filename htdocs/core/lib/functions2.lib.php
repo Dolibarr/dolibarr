@@ -2246,7 +2246,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 
 /**
- * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
+ * Clean corrupted database tree (orphelins linked to a not existing parent), record linked to themself, and also child-parent loop
  *
  * @param	DoliDB	$db					Database handler
  * @param	string	$tabletocleantree	Table to clean
@@ -2309,6 +2309,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 					$listofidtoclean[$cursor] = $id;
 					break;
 				}
+				// @phpstan-ignore-next-line PHPStan thinks this line is never reached
 				$cursor = $listofparentid[$cursor];
 			}
 
@@ -2317,8 +2318,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
 		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -2334,9 +2335,9 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		//else dol_print_error($db);
 
 		// Check and clean orphelins
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
+		$sql .= " WHERE ".$db->sanitize($fieldfkparent)." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);

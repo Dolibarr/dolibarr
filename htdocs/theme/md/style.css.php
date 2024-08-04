@@ -6953,11 +6953,11 @@ select.multiselectononeline {
 @media only screen and (min-width: 767px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 240px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 240px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
