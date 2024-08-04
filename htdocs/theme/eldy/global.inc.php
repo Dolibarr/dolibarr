@@ -8423,11 +8423,6 @@ table.jPicker {
 	}
 
 
-	div.fichehalfright {
-		margin-top: 30px;
-	}
-
-
 	.underbanner.underbanner-before-box {
 		border-bottom: none;
 	}
