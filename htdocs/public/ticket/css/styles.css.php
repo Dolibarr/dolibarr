@@ -16,7 +16,7 @@
  */
 
 /**
- *		\file       htdocs/ticket/css/styles.css.php
+ *		\file       htdocs/public/ticket/css/styles.css.php
  *		\brief      File for CSS style sheet for ticket module
  */
 
@@ -45,7 +45,7 @@ if (!defined('NOREQUIREAJAX')) {
 
 session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+require_once '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Define css type
@@ -62,15 +62,6 @@ if (empty($dolibarr_nocache)) {
 html {
 	min-height: 100%; height: 100%;
 }
-
-html {
-<?php
-if (getDolGlobalString('TICKET_SHOW_MODULE_LOGO')) {
-	print 'background: url("../public/img/bg_ticket.png") no-repeat 95% 90%;';
-}
-?>
-}
-
 
 div.ticketform {
 	font-family: arial;
@@ -129,5 +120,12 @@ div.ticketform .index_create, div.ticketform .index_display {
 	{
 		margin-left: 0;
 		margin-right: 0;
+	}
+}
+
+.ticketform {
+	a.butAction {
+		box-shadow: 3px 3px 10px #ddd;
+		/* background-color: #666; */
 	}
 }

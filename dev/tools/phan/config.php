@@ -11,6 +11,7 @@ $sanitizeRegex
 		array(
 			// Documented:
 			'none',
+			'password',
 			'array',
 			'int',
 			'intcomma',
@@ -22,24 +23,15 @@ $sanitizeRegex
 			'aZ09',
 			'aZ09arobase',
 			'aZ09comma',
+			'email',
 			'san_alpha',
 			'restricthtml',
 			'nohtml',
 			'custom',
 			// Not documented:
-			'email',
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
-			'restricthtmlnolink',
-			//'ascii',
-			//'categ_id',
-			//'chaine',
-
-			//'html',
-			//'boolean',
-			//'double',
-			//'float',
-			//'string',
+			'restricthtmlnolink'
 		)
 	).')*$/';
 
@@ -421,6 +413,7 @@ return [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
 		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
 		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
 		'PhanTypeObjectUnsetDeclaredProperty',

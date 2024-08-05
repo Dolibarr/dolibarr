@@ -489,9 +489,16 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="soixantepercent">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
+// Delay to start the new membership ([+/-][0-99][Y/m/d], for instance, with "+4m", the subscription will start in 4 month.)
+print '<tr class="oddeven drag" id="startfirstdayof"><td>';
+print $form->textwithpicto($langs->trans("MemberSubscriptionStartAfter"), $langs->trans("MemberSubscriptionStartAfterDesc").'<br>'.$langs->trans("MemberSubscriptionStartAfterDesc2"));
+print '</td><td>';
+print '<input type="text" class="right width50" id="MEMBER_SUBSCRIPTION_START_AFTER" name="MEMBER_SUBSCRIPTION_START_AFTER" value="'.getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER').'">';
+print "</td></tr>\n";
+
 // Start date of new membership
 $startpoint = array();
-$startpoint[0] = $langs->trans("SubscriptionPayment");
+$startpoint[0] = $langs->trans("NoCorrection");
 $startpoint["m"] = $langs->trans("Month");
 $startpoint["Y"] = $langs->trans("Year");
 print '<tr class="oddeven drag" id="startfirstdayof"><td>';
@@ -499,13 +506,6 @@ print $langs->trans("MemberSubscriptionStartFirstDayOf");
 print '</td><td>';
 $startfirstdayof = !getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') ? 0 : getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF');
 print $form->selectarray("MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF", $startpoint, $startfirstdayof, 0);
-print "</td></tr>\n";
-
-// Delay to start the new membership ([+/-][0-99][Y/m/d], for instance, with "+4m", the subscription will start in 4 month.)
-print '<tr class="oddeven drag" id="startfirstdayof"><td>';
-print $langs->trans("MemberSubscriptionStartAfter");
-print '</td><td>';
-print '<input type="text" class="right width50" id="MEMBER_SUBSCRIPTION_START_AFTER" name="MEMBER_SUBSCRIPTION_START_AFTER" value="'.getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER').'">';
 print "</td></tr>\n";
 
 // Mail required for members
@@ -520,17 +520,18 @@ print '</td><td>';
 print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') ? 0 : 1), 1, false, 0, 1);
 print "</td></tr>\n";
 
+// Create an external user login after an online payment of a membership subscription
+// TODO Move this into the validate() method of the member.
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
+print "</td></tr>\n";
+
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', getDolGlobalInt('ADHERENT_DEFAULT_SENDINFOBYMAIL'), 1, false, 0, 1);
 print "</td></tr>\n";
 
-// Create an external user login for each new member subscription validated
-print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
-print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
-print "</td></tr>\n";
-
-// Create an external user login for each new member subscription validated
+// Publish member information on public annuary
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.((int) $conf->entity) : '');
 print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
 print $form->selectyesno('MEMBER_PUBLIC_ENABLED', getDolGlobalInt('MEMBER_PUBLIC_ENABLED'), 1, false, 0, 1);

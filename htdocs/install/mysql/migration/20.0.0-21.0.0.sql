@@ -32,6 +32,16 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- Previous version instruction forgotten
+
+-- missing entity field
+ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
+ALTER TABLE llx_c_holiday_types ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+
+-- V21 migration
+
 DROP TABLE llx_contratdet_log;
 
 
@@ -76,5 +86,8 @@ UPDATE llx_c_hrm_public_holiday SET entity = 1 WHERE entity = 0;
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(entity, code);
 ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
 
+ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime after date_previous_login;
+
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
+ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;

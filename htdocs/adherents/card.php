@@ -300,7 +300,7 @@ if (empty($reshook)) {
 			$object->gender      = trim(GETPOST("gender", 'alphanohtml'));
 			$object->login       = trim(GETPOST("login", 'alphanohtml'));
 			if (GETPOSTISSET('pass')) {
-				$object->pass        = trim(GETPOST("pass", 'none'));	// For password, we must use 'none'
+				$object->pass        = trim(GETPOST("pass", 'password'));	// For password, we must use 'none'
 			}
 
 			$object->societe     = trim(GETPOST("societe", 'alphanohtml')); // deprecated
@@ -465,10 +465,10 @@ if (empty($reshook)) {
 		$phone = GETPOST("phone", 'alpha');
 		$phone_perso = GETPOST("phone_perso", 'alpha');
 		$phone_mobile = GETPOST("phone_mobile", 'alpha');
-		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'alpha'));
+		$email = preg_replace('/\s+/', '', GETPOST("member_email", 'aZ09arobase'));
 		$url = trim(GETPOST('url', 'custom', 0, FILTER_SANITIZE_URL));
 		$login = GETPOST("member_login", 'alphanohtml');
-		$pass = GETPOST("password", 'none');	// For password, we use 'none'
+		$pass = GETPOST("password", 'password');	// For password, we use 'none'
 		$photo = GETPOST("photo", 'alphanohtml');
 		$morphy = GETPOST("morphy", 'alphanohtml');
 		$public = GETPOST("public", 'alphanohtml');
@@ -1230,7 +1230,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Password
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'none', 2) : '').'"></td></tr>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td><td><input type="password" name="pass" class="minwidth300" maxlength="50" value="'.dol_escape_htmltag(GETPOSTISSET("pass") ? GETPOST("pass", 'password', 2) : '').'"></td></tr>';
 		}
 
 		// Type
