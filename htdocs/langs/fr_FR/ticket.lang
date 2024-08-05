@@ -137,6 +137,10 @@ TicketUseCaptchaCode=Utiliser le code graphique (CAPTCHA) lors de la création d
 TicketUseCaptchaCodeHelp=Ajoute la vérification CAPTCHA lors de la création d'un nouveau ticket.
 TicketsAllowClassificationModificationIfClosed=Autoriser la modification de la classification des tickets fermés
 TicketsAllowClassificationModificationIfClosedHelp=Permet de modifier la classification (type, groupe de ticket, gravité) même si les tickets sont fermés.
+TicketAutoCheckNotifyThirdParty=Avertir automatiquement le tiers lors de la création d'un ticket
+TicketAssignContactToMessage=Assigner un contact externe à un message
+TicketAssignContactToMessageHelp=Lorsqu'un contact connu répond à un message, son nom est associé à celui-ci.
+
 # Index & list page
 TicketsIndex=Espace tickets
 TicketList=Liste des tickets

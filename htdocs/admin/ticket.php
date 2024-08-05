@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2013-2018  Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
- * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2018  Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2022-2023  Udo Tamm            	<dev@dolibit.de>
+ * Copyright (C) 2023       Alexandre Spangaro  	<aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -576,6 +577,36 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Check "Notify thirdparty" on ticket creation
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Assign contact to a message
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAssignContactToMessage").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_ASSIGN_CONTACT_TO_MESSAGE');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_ASSIGN_CONTACT_TO_MESSAGE", $arrval, getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAssignContactToMessageHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
