@@ -1601,8 +1601,7 @@ class FormMail extends Form
 							console.error("An error occurred: " + xhr.responseText);
 						}
 					});
-				}
-			});
+				}); 
 
 			$("#blogpost-select").change(function() {
 				var selectedIds = $(this).val();
@@ -1650,7 +1649,8 @@ class FormMail extends Form
 						console.error("An error occurred: " + xhr.responseText);
 					}
 				});
-			});
+			}
+		});
 		</script>';
 		return $out;
 	}
