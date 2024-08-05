@@ -1301,7 +1301,7 @@ if ($action == 'create') {
 			// Discounts for third party
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
 
-			$absolute_discount = $soc->getAvailableDiscounts('', '', 0, 1);
+			$absolute_discount = $soc->getAvailableDiscounts(null, '', 0, 1);
 
 			$thirdparty = $soc;
 			$discount_type = 1;
@@ -1660,8 +1660,8 @@ if ($action == 'create') {
 
 		print '<tr><td class="titlefield">'.$langs->trans('Discounts').'</td><td>';
 
-		$absolute_discount = $soc->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $soc->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+		$absolute_discount = $soc->getAvailableDiscounts(null, $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $soc->getAvailableDiscounts(null, $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
