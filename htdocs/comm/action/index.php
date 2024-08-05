@@ -134,7 +134,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
@@ -168,7 +168,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');

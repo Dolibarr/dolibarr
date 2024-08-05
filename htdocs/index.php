@@ -121,7 +121,7 @@ if (getDolGlobalString('MAIN_MOTD')) {
 if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
 	$langs->loadLangs(array("admin"));
 	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org'));
-	print "<br>";
+	//print "<br>";
 }
 
 /*

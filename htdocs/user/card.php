@@ -95,7 +95,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $socialnetworks = getArrayOfSocialNetworks();
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
 $error = 0;
@@ -349,8 +349,8 @@ if (empty($reshook)) {
 			$id = $object->create($user);
 			if ($id > 0) {
 				$resPass = 0;
-				if (GETPOST('password', 'none')) {
-					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
+				if (GETPOST('password', 'password')) {
+					$resPass = $object->setPassword($user, GETPOST('password', 'password'));
 				}
 				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
@@ -438,7 +438,7 @@ if (empty($reshook)) {
 				}
 				$object->gender = GETPOST("gender", 'aZ09');
 				if ($caneditpasswordandsee) {
-					$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
+					$object->pass = GETPOST("password", 'password');
 				}
 				if ($caneditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
 					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
@@ -658,10 +658,10 @@ if (empty($reshook)) {
 
 				$object->fetch($id);
 
-				if (GETPOST("password", "none")) {	// If pass is empty, we do not change it.
+				if (GETPOST("password", "password")) {	// If pass is empty, we do not change it.
 					$object->oldcopy = clone $object;
 
-					$ret = $object->setPassword($user, GETPOST("password", "none"));
+					$ret = $object->setPassword($user, GETPOST("password", "password"));
 					if (is_int($ret) && $ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
@@ -1437,7 +1437,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		// Check if user has rights
 		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$object->getrights();
+			$object->loadRights();
 			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) {
 				setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 			}
@@ -1959,18 +1959,18 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 				print '</td></tr>';
 			}
-
-			print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
-			print '<td>';
-			if ($object->datepreviouslogin) {
-				print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+			if ((getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) || (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 1 && $object->id == $user->id)) {
+				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
+				print '<td>';
+				if ($object->datepreviouslogin) {
+					print dol_print_date($object->datepreviouslogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Previous").')</span>, ';
+				}
+				if ($object->datelastlogin) {
+					print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			if ($object->datelastlogin) {
-				print dol_print_date($object->datelastlogin, "dayhour", "tzuserrel").' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
-			}
-			print '</td>';
-			print "</tr>\n";
-
 			print '</table>';
 			print '</div>';
 

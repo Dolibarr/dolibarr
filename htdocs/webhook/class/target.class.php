@@ -114,7 +114,6 @@ class Target extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -471,6 +470,9 @@ class Target extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
+		// Clean trigger_codes
+		$this->trigger_codes = preg_replace('/[\r\n\s]/', '', $this->trigger_codes);
+
 		return $this->updateCommon($user, $notrigger);
 	}
 

@@ -85,7 +85,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Ticket($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->ticket->dir_output.'/temp/massgeneration/'.$user->id;
@@ -147,7 +147,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);

@@ -110,16 +110,7 @@ class CashControl extends CommonObject
 	public $cheque;
 	public $card;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 	public $fk_user_creat;
-
-	/**
-	 * @var integer|string $date_modification
-	 */
-	public $date_modification;
 
 	/**
 	 * @var integer|string $date_valid

@@ -5,9 +5,9 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2024 Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2023		William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023		William Mead		    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,7 +265,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -911,7 +911,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param  CommandeFournisseur	$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
@@ -1248,6 +1248,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$title = $outputlangs->transnoentities("SupplierOrder")." ".$outputlangs->convToOutputCharset($object->ref);
+		if ($object->status == $object::STATUS_DRAFT) {
+			$pdf->SetTextColor(128, 0, 0);
+			$title .= ' - '.$outputlangs->transnoentities("NotValidated");
+		}
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 		$posy += 1;
 
@@ -1289,12 +1293,15 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($object->date_commande, "day", false, $outputlangs, true), '', 'R');
-		} else {
+		}
+		// no point in having this here this a document sent to supplier
+		/*} else {
 			$posy += 5;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(255, 0, 0);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
-		}
+		}*/
+
 
 		$pdf->SetTextColor(0, 0, 60);
 		$usehourmin = 'day';
@@ -1406,7 +1413,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 100;
@@ -1465,7 +1472,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	CommandeFournisseur	$object    	common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc

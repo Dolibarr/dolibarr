@@ -1188,7 +1188,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1455,7 +1455,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);

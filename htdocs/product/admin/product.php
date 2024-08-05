@@ -61,11 +61,11 @@ $select_pricing_rules = array(
 	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 }
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 }
 

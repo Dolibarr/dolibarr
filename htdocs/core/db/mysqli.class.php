@@ -5,7 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -853,7 +854,7 @@ class DoliDBMysqli extends DoliDB
 				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
 			}
 			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute'], 0, 0, 1);	// Allow space to accept attributes like "ON UPDATE CURRENT_TIMESTAMP"
 			}
 			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {

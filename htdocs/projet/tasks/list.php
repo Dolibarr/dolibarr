@@ -108,7 +108,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tasklist';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Task($db);
 $hookmanager->initHooks(array('tasklist'));
 $extrafields = new ExtraFields($db);
@@ -596,7 +596,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-project project-tasks page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -704,7 +704,7 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -1099,7 +1099,7 @@ $parameters = array(
 	'sortorder' => $sortorder,
 	'totalarray' => &$totalarray,
 );
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['t.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');

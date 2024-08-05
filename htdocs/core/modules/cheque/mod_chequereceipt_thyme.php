@@ -53,7 +53,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -71,6 +71,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("CheckReceiptShort"), $langs->transnoentities("CheckReceiptShort"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -93,16 +94,22 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$remise = new RemiseCheque($db);
+		$remise->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $remise);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
@@ -111,11 +118,11 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string|0      				Next value if OK, 0 if KO
+	 *  @return string|int  				Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

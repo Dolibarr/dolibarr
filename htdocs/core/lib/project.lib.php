@@ -5,7 +5,8 @@
  * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -691,6 +692,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$taskstatic->planned_workload = $lines[$i]->planned_workload;
 				$taskstatic->duration_effective = $lines[$i]->duration_effective;
 				$taskstatic->budget_amount = $lines[$i]->budget_amount;
+				$taskstatic->billable = $lines[$i]->billable;
 
 				// Action column
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -928,6 +930,17 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								$ifisrt = 0;
 							}
 						}
+					}
+					print '</td>';
+				}
+
+				// Billable
+				if (count($arrayfields) > 0 && !empty($arrayfields['t.billable']['checked'])) {
+					print '<td class="center">';
+					if ($lines[$i]->billable) {
+						print '<span>'.$langs->trans('Yes').'</span>';
+					} else {
+						print '<span>'.$langs->trans('No').'</span>';
 					}
 					print '</td>';
 				}
@@ -2572,10 +2585,10 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= " AND p.fk_statut = ".(int) $status;
 	}
 	if (getDolGlobalString('PROJECT_LIMIT_YEAR_RANGE')) {
-		$project_year_filter = GETPOST("project_year_filter");
+		$project_year_filter = GETPOST("project_year_filter", 'alpha');	// '*' seems allowed
 		//Check if empty or invalid year. Wildcard ignores the sql check
 		if ($project_year_filter != "*") {
-			if (empty($project_year_filter) || !ctype_digit($project_year_filter)) {
+			if (empty($project_year_filter) || !is_numeric($project_year_filter)) {
 				$project_year_filter = date("Y");
 			}
 			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter, 12, false)).")";

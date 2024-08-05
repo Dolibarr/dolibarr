@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Nouvelle immobilisation
 AccountancyCodeAsset=Code comptable (immobilisation)
 AccountancyCodeDepreciationAsset=Code comptable (compte d'amortissement)
@@ -25,50 +21,34 @@ DeleteType=Supprimer
 DeleteAnAssetType=Supprimer un modèle d'immobilisation
 ConfirmDeleteAssetType=Êtes-vous sûr de vouloir supprimer ce modèle d'immobilisation ?
 ShowTypeCard=Afficher le modèle '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Immobilisations
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Module de suivi des immobilisations
-
-#
 # Admin page
-#
 AssetSetup=Configuration du module immobilisations
 AssetSetupPage=Page de configuration des immobilisations
 ExtraFieldsAssetModel=Attributs complémentaires (modèle d'immobilisation)
-
 AssetsType=Modèle d'immobilisation
 AssetsTypeId=ID du modèle d'immobilisation
 AssetsTypeLabel=Libellé du modèle d'immobilisation
 AssetsTypes=Modèles d'immobilisation
 ASSET_ACCOUNTANCY_CATEGORY=Groupe de comptabilité des immobilisations
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Période proportionnelle en jours pour le calcul de l'amortissement sur un an
 # Menu
-#
 MenuAssets=Immobilisations
 MenuNewAsset=Nouvelle immobilisation
 MenuAssetModels=Modèles d'immobilisation
 MenuListAssets=Liste
 MenuNewAssetModel=Nouveau modèle d'immobilisation
 MenuListAssetModels=Liste
-
-#
 # Module
-#
 ConfirmDeleteAsset=Êtes-vous sûr de vouloir supprimer cette immobilisation ?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Options d'amortissement
 AssetAccountancyCodes=Comptes comptables
 AssetDepreciation=Dépréciation
-
-#
 # Asset
-#
 Asset=Immobilisations
 Assets=Immobilisations
 AssetReversalAmountHT=Montant de l'annulation (hors taxes)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Non amortissable
 AssetDisposal=Cession
 AssetConfirmDisposalAsk=Êtes-vous sûr de vouloir céder l'immobilisation <b> %s </b> ?
 AssetConfirmReOpenAsk=Êtes-vous sûr de vouloir rouvrir l'immobilisation <b> %s </b> ?
-
-#
 # Asset status
-#
 AssetInProgress=En cours
 AssetDisposed=Cédée
 AssetRecorded=Comptabilisé
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Date de cession
 AssetDisposalAmount=Valeur de cession
 AssetDisposalType=Type de cession
 AssetDisposalDepreciated=Amortir l'année du transfert
 AssetDisposalSubjectToVat=Cession soumise à TVA
-
-#
 # Asset model
-#
 AssetModel=Modèle d'immobilisation
 AssetModels=Modèles des immobilisations
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Amortissement économique
 AssetDepreciationOptionAcceleratedDepreciation=Dérogatoire (fiscal)
 AssetDepreciationOptionDepreciationType=Type d'amortissement
@@ -131,10 +99,7 @@ AssetDepreciationOptionRate=Taux (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Base amortissable (HT)
 AssetDepreciationOptionAmountBaseDeductibleHT=Base déductible (HT)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Cumul amortissement N-1 (HT)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Amortissement économique
 AssetAccountancyCodeAsset=Immobilisation
 AssetAccountancyCodeDepreciationAsset=Amortissement
@@ -148,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Amortissement dérogatoi
 AssetAccountancyCodeAcceleratedDepreciation=Compte
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=La charge d'amortissement
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Reprise/Provision
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Base d'amortissement (HT)
 AssetDepreciationBeginDate=Début de l'amortissement le
 AssetDepreciationDuration=Durée
@@ -163,10 +125,7 @@ AssetResidualHT=Valeur résiduelle (HT)
 AssetDispatchedInBookkeeping=Amortissement comptabilisé
 AssetFutureDepreciationLine=Future amortissement
 AssetDepreciationReversal=Reprise
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=L'identifiant de l'immobilisation ou du modèle trouvé n'a pas été fourni
 AssetErrorFetchAccountancyCodesForMode=Erreur lors de la récupération des comptes comptables pour le modèle d'immobilisation  '%s'
 AssetErrorDeleteAccountancyCodesForMode=Erreur lors de la suppression des comptes comptables pour le modèle d'immobilisation '%s'

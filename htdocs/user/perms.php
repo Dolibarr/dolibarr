@@ -81,11 +81,11 @@ if ($user->id != $id && !$canreaduser) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
 
 
@@ -111,12 +111,12 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -130,12 +130,12 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 }
 

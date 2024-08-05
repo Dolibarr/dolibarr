@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2005		Brice Davoleau				<brice.davoleau@gmail.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
+ * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,14 +73,14 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agendathirdparty', 'globalcard'));
 
 // Security check
 $result = restrictedArea($user, 'adherent', $id);
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Adherent($db);
 $result = $object->fetch($id);
 if ($result > 0) {
@@ -122,8 +123,9 @@ $form = new Form($db);
 
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Info');
-$help_url = '';
-llxHeader('', $title, $help_url);
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-card_messaging');
 
 $head = member_prepare_head($object);
 
@@ -144,8 +146,6 @@ print '<div class="underbanner clearboth"></div>';
 
 $linkback = '';
 
-
-print '<br>';
 $object->info($id);
 dol_print_object_info($object, 1);
 

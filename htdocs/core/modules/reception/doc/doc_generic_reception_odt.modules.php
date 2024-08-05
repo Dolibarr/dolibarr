@@ -326,7 +326,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'RECEPTION_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 

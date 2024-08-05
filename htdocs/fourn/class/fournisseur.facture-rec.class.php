@@ -164,8 +164,6 @@ class FactureFournisseurRec extends CommonInvoice
 
 	/* Override fields in CommonObject
 	public $entity;
-	public $date_creation;
-	public $date_modification;
 	public $total_ht;
 	public $total_tva;
 	public $total_ttc;

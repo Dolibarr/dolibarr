@@ -70,7 +70,7 @@ if (!$sortorder) {
 	$sortorder = 'ASC,ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admintranslation', 'globaladmin'));
 
 
@@ -569,10 +569,21 @@ if ($mode == 'searchkey') {
 		if ($limit && $i > ($offset + $limit)) {
 			break;
 		}
-		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
-		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.(!empty($langsenfileonly->tab_translate[$key]) ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
-		print '<span title="'.dol_escape_htmltag($titleforvalue).'" class="classfortooltip">';
-		print dol_escape_htmltag($val);
+		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td>';
+		print '<td class="small">';
+		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>';
+		if (!empty($langsenfileonly->tab_translate[$key])) {
+			if (substr_count($langsenfileonly->tab_translate[$key], '%s') <= 4) {	// To avoid errors when more than 4 %s.
+				$titleforvalue .= $langsenfileonly->trans($key);
+			}
+		} else {
+			$titleforvalue .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+		}
+		print '<span title="'.dolPrintHTMLForAttribute($titleforvalue).'" class="classfortooltip">';
+		print dolPrintHTML($val);
+		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 4) {
+			print '<br><div class="warning">Error, more than 4 %s in the source</div>';
+		}
 		print '</span>';
 		print '</td>';
 		print '<td class="right nowraponall">';

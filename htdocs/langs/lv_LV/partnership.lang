@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Partnerības vadība
 PartnershipDescription=Partnerības vadības modulis
 PartnershipDescriptionLong= Partnerības vadības modulis
@@ -24,17 +20,11 @@ Partnerships=Partnerības
 AddPartnership=Pievienojiet partnerību
 CancelPartnershipForExpiredMembers=Partnerība: atceļ partnerību ar abonementiem, kuriem beidzies derīguma termiņš
 PartnershipCheckBacklink=Partnerība: pārbaudiet atsauces saiti
-
-#
 # Menu
-#
 NewPartnership=Jauna partnerība
 NewPartnershipbyWeb=Jūsu partnerības pieprasījums ir veiksmīgi pievienots. Drīzumā varam ar jums sazināties...
 ListOfPartnerships=Partnerības saraksts
-
-#
 # Admin page
-#
 PartnershipSetup=Partnerības iestatīšana
 PartnershipAbout=Par partnerību
 PartnershipAboutPage=Partnerība par lapu
@@ -45,10 +35,7 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Dienu skaits pirms part
 ReferingWebsiteCheck=Vietnes atsauces pārbaude
 ReferingWebsiteCheckDesc=Varat iespējot funkciju, lai pārbaudītu, vai jūsu partneri ir pievienojuši atpakaļsaišu jūsu vietnes domēniem savā vietnē.
 PublicFormRegistrationPartnerDesc=Dolibarr var nodrošināt jums publisku URL/tīmekļa vietni, lai ārējie apmeklētāji varētu pieprasīt dalību partnerības programmā.
-
-#
 # Object
-#
 DeletePartnership=Dzēst partnerību
 PartnershipDedicatedToThisThirdParty=Partnerība, kas veltīta šai trešajai pusei
 PartnershipDedicatedToThisMember=Šim dalībniekam veltīta partnerība
@@ -68,31 +55,22 @@ PartnershipAccepted=Pieņemts
 PartnershipRefused=Atteikts
 PartnershipCanceled=Atcelts
 PartnershipManagedFor=Partneri ir
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Partnerība drīz tiks atcelta
 SendingEmailOnPartnershipRefused=Partnerība atteikta
 SendingEmailOnPartnershipAccepted=Partnerība pieņemta
 SendingEmailOnPartnershipCanceled=Partnerattiecības atceltas
-
 YourPartnershipWillSoonBeCanceledTopic=Partnerība drīz tiks atcelta
 YourPartnershipRefusedTopic=Partnerība atteikta
 YourPartnershipAcceptedTopic=Partnerība pieņemta
 YourPartnershipCanceledTopic=Partnerattiecības atceltas
-
 YourPartnershipWillSoonBeCanceledContent=Vēlamies jūs informēt, ka mūsu partnerība drīzumā tiks pārtraukta (nesaņēmām atjaunošanu vai nav izpildīts mūsu partnerības priekšnoteikums). Lūdzu, sazinieties ar mums, ja to saņēmāt kļūdas dēļ.
 YourPartnershipRefusedContent=Vēlamies jūs informēt, ka jūsu partnerības pieprasījums ir noraidīts. Priekšnosacījumi nav izpildīti. Lūdzu, sazinieties ar mums, ja jums nepieciešama papildu informācija.
 YourPartnershipAcceptedContent=Vēlamies jūs informēt, ka jūsu partnerības pieprasījums ir pieņemts.
 YourPartnershipCanceledContent=Vēlamies jūs informēt, ka mūsu partnerība ir pārtraukta. Lūdzu, sazinieties ar mums, ja jums nepieciešama papildu informācija.
-
 CountLastUrlCheckError=Kļūdu skaits pēdējā URL pārbaudē
 LastCheckBacklink=Pēdējās URL pārbaudes datums
-
 NewPartnershipRequest=Jauns partnerības pieprasījums
 NewPartnershipRequestDesc=Šī veidlapa ļauj jums pieprasīt dalību kādā no mūsu partnerības programmām. Ja jums nepieciešama palīdzība, lai aizpildītu šo veidlapu, lūdzu, sazinieties pa e-pastu <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Šajā lapā ir jābūt vismaz vienai saitei uz vienu no šiem domēniem: %s
-
 IPOfApplicant=Pretendenta IP
-

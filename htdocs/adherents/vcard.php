@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
- * Copyright (C) 2020-2021	Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2020-2021	Frédéric France				<frederic.france@netlogic.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Define variables to know what current user can do on users
 	$canadduser = ($user->admin || $user->hasRight('user', 'user', 'creer'));
-	// Define variables to know what current user can do on properties of user linked to edited member
+	// Define variables to know what the current user can do on properties of user linked to edited member
 	if ($object->user_id) {
 		// $User is the user who edits, $object->user_id is the id of the related user in the edited member
 		$caneditfielduser = ((($user->id == $object->user_id) && $user->hasRight('user', 'self', 'creer'))

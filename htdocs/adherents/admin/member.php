@@ -1,16 +1,17 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2020-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2023		Waël Almoman		<info@almoman.com>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2021	Frédéric France      		<frederic.france@netlogic.fr>
+ * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,9 +220,10 @@ if ($action == 'unset') {
 
 $form = new Form($db);
 
+$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -487,9 +489,16 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="soixantepercent">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
+// Delay to start the new membership ([+/-][0-99][Y/m/d], for instance, with "+4m", the subscription will start in 4 month.)
+print '<tr class="oddeven drag" id="startfirstdayof"><td>';
+print $form->textwithpicto($langs->trans("MemberSubscriptionStartAfter"), $langs->trans("MemberSubscriptionStartAfterDesc").'<br>'.$langs->trans("MemberSubscriptionStartAfterDesc2"));
+print '</td><td>';
+print '<input type="text" class="right width50" id="MEMBER_SUBSCRIPTION_START_AFTER" name="MEMBER_SUBSCRIPTION_START_AFTER" value="'.getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER').'">';
+print "</td></tr>\n";
+
 // Start date of new membership
 $startpoint = array();
-$startpoint[0] = $langs->trans("SubscriptionPayment");
+$startpoint[0] = $langs->trans("NoCorrection");
 $startpoint["m"] = $langs->trans("Month");
 $startpoint["Y"] = $langs->trans("Year");
 print '<tr class="oddeven drag" id="startfirstdayof"><td>';
@@ -497,13 +506,6 @@ print $langs->trans("MemberSubscriptionStartFirstDayOf");
 print '</td><td>';
 $startfirstdayof = !getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') ? 0 : getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF');
 print $form->selectarray("MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF", $startpoint, $startfirstdayof, 0);
-print "</td></tr>\n";
-
-// Delay to start the new membership ([+/-][0-99][Y/m/d], for instance, with "+4m", the subscription will start in 4 month.)
-print '<tr class="oddeven drag" id="startfirstdayof"><td>';
-print $langs->trans("MemberSubscriptionStartAfter");
-print '</td><td>';
-print '<input type="text" class="right width50" id="MEMBER_SUBSCRIPTION_START_AFTER" name="MEMBER_SUBSCRIPTION_START_AFTER" value="'.getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER').'">';
 print "</td></tr>\n";
 
 // Mail required for members
@@ -518,17 +520,18 @@ print '</td><td>';
 print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED') ? 0 : 1), 1, false, 0, 1);
 print "</td></tr>\n";
 
+// Create an external user login after an online payment of a membership subscription
+// TODO Move this into the validate() method of the member.
+print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
+print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
+print "</td></tr>\n";
+
 // Send mail information is on by default
 print '<tr class="oddeven"><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
 print $form->selectyesno('ADHERENT_DEFAULT_SENDINFOBYMAIL', getDolGlobalInt('ADHERENT_DEFAULT_SENDINFOBYMAIL'), 1, false, 0, 1);
 print "</td></tr>\n";
 
-// Create an external user login for each new member subscription validated
-print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
-print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
-print "</td></tr>\n";
-
-// Create an external user login for each new member subscription validated
+// Publish member information on public annuary
 $linkofpubliclist = DOL_MAIN_URL_ROOT.'/public/members/public_list.php'.((isModEnabled('multicompany')) ? '?entity='.((int) $conf->entity) : '');
 print '<tr class="oddeven"><td>'.$langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'), $linkofpubliclist).'</td><td>';
 print $form->selectyesno('MEMBER_PUBLIC_ENABLED', getDolGlobalInt('MEMBER_PUBLIC_ENABLED'), 1, false, 0, 1);

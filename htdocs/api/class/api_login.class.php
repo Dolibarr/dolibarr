@@ -144,7 +144,7 @@ class Login
 
 		// Renew the hash
 		if (empty($tmpuser->api_key) || $reset) {
-			$tmpuser->getrights();
+			$tmpuser->loadRights();
 			if (!$tmpuser->hasRight('user', 'self', 'creer')) {
 				if (empty($tmpuser->api_key)) {
 					throw new RestException(403, 'No API token set for this user and user need write permission on itself to reset its API token');

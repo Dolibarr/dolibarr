@@ -74,7 +74,7 @@ $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYe
 $action = GETPOST('action', 'aZ09');
 $projectid = GETPOSTINT('projectid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination

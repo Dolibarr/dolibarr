@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Rögzítette
 AUTHORPAIEMENT=Fizetett
 AddTrip=Költségjelentés készítése
@@ -13,6 +13,8 @@ byEX_EXP=sor szerint (korlátozás: %s)
 byEX_MON=hónaponként (korlátozás: %s)
 byEX_YEA=évenként (korlátozás: %s)
 CANCEL_USER=Törölte
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Számla (a Számlatervből) alapértelmezés szerint a „felhasználók” számára használatos a költségjelentésekben
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=A felhasználói kártyán meghatározott dedikált számla kizárólag Alkönyvelésre szolgál. Ez lesz a főkönyvnél, és az alkönyvi könyvelés alapértelmezett értékeként is használható, ha nincs dedikált könyvelési számla a felhasználónál.
 CarCategory=Járműkategória
 ClassifyRefunded=„Visszatérített” besorolás
 CompanyVisited=A felkeresett vállalat/szervezet
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=évenként (korlátozás nélkül)
 NoTripsToExportCSV=Nincs exportálható költségjelentés erre az időszakra.
 NOT_AUTHOR=Nem Ön ennek a költségjelentésnek a szerzője. A művelet megszakítva.
 OnExpense=Költségsor
-PDFStandardExpenseReports=Szabvány sablon PDF dokumentum generálása költségjelentéshez
+PDFStandardExpenseReports=Szabványsablon PDF-dokumentum létrehozásához költségjelentéshez
 PaidTrip=Költségjelentés fizetése
 REFUSEUR=Tagadta
 RangeIk=Kifutási tartomány
@@ -115,6 +117,10 @@ VALIDOR=Jóváhagyta
 ValidateAndSubmit=Érvényesítés és elküldés jóváhagyásra
 ValidatedWaitingApproval=Érvényesítve (jóváhagyásra vár)
 ValideTrip=Költségjelentés jóváhagyása
+ExpenseReportPayments=Költségjelentés kifizetések
+TaxUndefinedForThisCategory = Az adó ebben a kategóriában nincs meghatározva
+errorComputeTtcOnMileageExpense=Hiba a kilométerköltség kiszámításakor
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Csak a piszkozat állapotú elemek törölhetők tömeges akcióban
 
 ## Dictionary
 EX_BRE=Reggeli

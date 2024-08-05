@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Teslimat
 DeliveryRef=Teslimat Ref
-DeliveryCard=Stock receipt
+DeliveryCard=Teslimat Makbuzu
 DeliveryOrder=Teslimat Makbuzu
 DeliveryDate=Teslim tarihi
 CreateDeliveryOrder=Teslimat makbuzu oluştur
@@ -27,7 +27,7 @@ Recipient=Alıcı
 ErrorStockIsNotEnough=Yeterli stok yok
 Shippable=Sevkedilebilir
 NonShippable=Sevkedilemez
-ShowShippableStatus=Show shippable status
+ShowShippableStatus=Gönderim durumunu göster
 ShowReceiving=Teslimat Fişini göster
 NonExistentOrder=Mevcut olmayan sipariş
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Önceki satırlarda zaten tahsis edilmiş stok miktarları

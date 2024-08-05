@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ $pagenext = $page + 1;
 //if (! $sortfield) $sortfield="p.date_fin";
 //if (! $sortorder) $sortorder="DESC";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
@@ -117,7 +118,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -128,7 +129,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible <= 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -211,8 +212,7 @@ $form = new Form($db);
 
 $now = dol_now();
 
-//$help_url="EN:Module_Mo|FR:Module_Mo_FR|ES:Módulo_Mo";
-$help_url = '';
+$help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 $title = $langs->trans('ListOfManufacturingOrders');
 $morejs = array();
 $morecss = array();
@@ -369,7 +369,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-mrp page-list');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();

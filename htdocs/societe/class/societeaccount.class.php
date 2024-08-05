@@ -110,6 +110,7 @@ class SocieteAccount extends CommonObject
 		'key_account' => array('type' => 'varchar(128)', 'label' => 'KeyAccount', 'visible' => 0, 'enabled' => 1, 'position' => 48, 'notnull' => 0, 'index' => 1, 'searchall' => 1, 'comment' => 'The id of third party in the external web site (for site_account if site_account defined)',),
 		'date_last_login' => array('type' => 'datetime', 'label' => 'LastConnexion', 'visible' => 2, 'enabled' => 1, 'position' => 50, 'notnull' => 0,),
 		'date_previous_login' => array('type' => 'datetime', 'label' => 'PreviousConnexion', 'visible' => 2, 'enabled' => 1, 'position' => 51, 'notnull' => 0,),
+		'date_last_reset_password' => array('type' => 'datetime', 'label' => 'PreviousResetPassword', 'visible' => 0, 'enabled' => 1, 'position' => 53, 'notnull' => 0,),
 		//'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'visible' => -1, 'enabled' => 1, 'position' => 46, 'notnull' => -1,),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
@@ -149,14 +150,9 @@ class SocieteAccount extends CommonObject
 	 */
 	public $date_last_login;
 
-
+	public $date_last_reset_password;
 	public $date_previous_login;
 	public $note_private;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var int ID

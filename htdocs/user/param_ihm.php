@@ -26,6 +26,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -68,7 +69,7 @@ $dirleft = "../core/menus/standard";
 // Charge utilisateur edite
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // Liste des zone de recherche permanentes supportees
 /* deprecated
@@ -80,7 +81,7 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'userihm', 'globalcard'));
 
 
@@ -115,6 +116,12 @@ if (empty($reshook)) {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = GETPOSTINT("MAIN_SIZE_LISTE_LIMIT");
 			} else {
 				$tabparam["MAIN_SIZE_LISTE_LIMIT"] = '';
+			}
+
+			if (GETPOST("check_MAIN_CHECKBOX_LEFT_COLUMN") == "on") {
+				$tabparam["MAIN_CHECKBOX_LEFT_COLUMN"] = array("forcevalue" => 1, "value" => GETPOSTINT("MAIN_CHECKBOX_LEFT_COLUMN"));
+			} else {
+				$tabparam["MAIN_CHECKBOX_LEFT_COLUMN"] = '';
 			}
 
 			if (GETPOST("check_MAIN_SIZE_SHORTLIST_LIMIT") == "on") {
@@ -182,6 +189,7 @@ if (empty($reshook)) {
 			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 
 			// Clear cache of widgets (because we may have modified the length of cached widget lists)
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$cachedir = DOL_DATA_ROOT.'/users/temp/widgets';
 			dol_delete_dir_recursive($cachedir);
 
@@ -281,6 +289,7 @@ if ($reshook < 0) {
 foreach ($tmparray as $key => $val) {
 	$tmparray[$key]['data-html'] = img_picto($langs->trans($val['label']), empty($val['picto']) ? 'generic' : $val['picto'], 'class="pictofixedwidth"').$langs->trans($val['label']);
 	$tmparray[$key]['label'] = $langs->trans($val['label']);
+	$tmparray[$key]['picto'] = empty($val['picto']) ? 'generic' : $val['picto'];
 }
 
 $head = user_prepare_head($object);
@@ -322,6 +331,9 @@ if ($action == 'edit') {
                 if (jQuery("#check_MAIN_LANG_DEFAULT").prop("checked")) { jQuery("#main_lang_default").removeAttr(\'disabled\'); }
         		else { jQuery("#main_lang_default").attr(\'disabled\',\'disabled\'); }
 
+				if (jQuery("#check_MAIN_CHECKBOX_LEFT_COLUMN").prop("checked")) { jQuery("#MAIN_CHECKBOX_LEFT_COLUMN").removeAttr(\'disabled\');}
+        		else { jQuery("#MAIN_CHECKBOX_LEFT_COLUMN").attr(\'disabled\',\'disabled\');}
+
                 if (jQuery("#check_MAIN_SIZE_LISTE_LIMIT").prop("checked")) { jQuery("#MAIN_SIZE_LISTE_LIMIT").removeAttr(\'disabled\'); }
         		else { jQuery("#MAIN_SIZE_LISTE_LIMIT").attr(\'disabled\',\'disabled\'); }
 
@@ -340,6 +352,7 @@ if ($action == 'edit') {
         	init_myfunc();
         	jQuery("#check_MAIN_LANDING_PAGE").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_LANG_DEFAULT").click(function() { init_myfunc(); });
+            jQuery("#check_MAIN_CHECKBOX_LEFT_COLUMN").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_SIZE_LISTE_LIMIT").click(function() { init_myfunc(); });
             jQuery("#check_MAIN_SIZE_SHORTLIST_LIMIT").click(function() { init_myfunc(); });
             jQuery("#check_AGENDA_DEFAULT_VIEW").click(function() { init_myfunc(); });
@@ -394,6 +407,14 @@ if ($action == 'edit') {
 	$tmplist = array(''=>'&nbsp;', 'show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
 	print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, (isset($object->conf->AGENDA_DEFAULT_VIEW) ? $object->conf->AGENDA_DEFAULT_VIEW : ''), 0, 0, 0, '');
 	print '</td></tr>'."\n";
+
+	// Checkbox left menu
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_CHECKBOX_LEFT_COLUMN").'</td>';
+	print '<td>'.(getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN') ? $langs->trans("Yes") : $langs->trans("No")).'</td>';
+	print '<td class="nowrap" width="20%"><input class="oddeven" name="check_MAIN_CHECKBOX_LEFT_COLUMN" id="check_MAIN_CHECKBOX_LEFT_COLUMN" type="checkbox" '.(isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ? " checked" : "");
+	print empty($dolibarr_main_demo) ? '' : ' disabled="disabled"'; // Disabled for demo
+	print '> <label for="check_MAIN_CHECKBOX_LEFT_COLUMN">'.$langs->trans("UsePersonalValue").'</label></td>';
+	print '<td>'.$form->selectyesno("MAIN_CHECKBOX_LEFT_COLUMN", isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ? $object->conf->MAIN_CHECKBOX_LEFT_COLUMN : getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'), 1).'</td></tr>';
 
 	// Max size of lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
@@ -529,6 +550,12 @@ if ($action == 'edit') {
 		print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $object->conf->AGENDA_DEFAULT_VIEW, 0, 0, 0, '', 0, 0, 1);
 	}
 	print '</td></tr>'."\n";
+
+	// Checkbox left menu
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_CHECKBOX_LEFT_COLUMN").'</td>';
+	print '<td>'.(getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN') ? $langs->trans("Yes") : $langs->trans("No")).'</td>';
+	print '<td class="nowrap" width="20%"><input class="oddeven" type="checkbox" disabled '.(isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ? " checked" : "").'> '.$langs->trans("UsePersonalValue").'</td>';
+	print '<td>'.(isset($object->conf->MAIN_CHECKBOX_LEFT_COLUMN) ?( $object->conf->MAIN_CHECKBOX_LEFT_COLUMN == 1 ? $langs->trans("Yes") : $langs->trans("No")) : '&nbsp;').'</td></tr>';
 
 	// Max size for lists
 	print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';

@@ -289,7 +289,7 @@ function getContact($authentication, $id, $ref_ext)
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$contact = new Contact($db);
 		$result = $contact->fetch($id, null, $ref_ext);

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
- * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2016	  	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ if (!$sortorder) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancyexpensereportlist'));
 
 $formaccounting = new FormAccounting($db);
@@ -225,7 +225,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-expensereport page-list');
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-accountancy accountancy-expensereport page-list');
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");

@@ -119,7 +119,7 @@ if (GETPOST('search_actioncode', 'array:aZ09')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
@@ -146,17 +146,17 @@ if ($end_h <= $begin_h) {
 }
 
 // working days
-$tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS') ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
+$tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
 $begin_d = 1;
 $end_d = 53;
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
-	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'));
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
-	$mode = (!getDolGlobalString('AGENDA_DEFAULT_VIEW') ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_pertype');
 }
 
 // View by month
@@ -186,7 +186,7 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
@@ -313,7 +313,7 @@ if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
 if ($mode != 'show_pertype') {
-	$param .= '&mode='.urlencode($mode);
+	$param .= '&mode='.urlencode((string) $mode);
 }
 if ($begin_h != '') {
 	$param .= '&begin_h='.urlencode($begin_h);

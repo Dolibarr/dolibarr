@@ -6,9 +6,9 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2023-2024      William Mead         <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,15 +107,26 @@ class Fichinter extends CommonObject
 	public $author;
 
 	/**
-	 * Date creation record (datec)
-	 *
-	 * @var integer
+	 * @var null|int|'' Date creation record (datec)
 	 */
 	public $datec;
 
+	/**
+	 * @var null|int|'' Date record (datev)
+	 */
 	public $datev;
+	/**
+	 * @var null|int|'' Date record (dateo)
+	 */
 	public $dateo;
+	/**
+	 * @var null|int|'' Date record (datee)
+	 */
 	public $datee;
+
+	/**
+	 * @var null|int|'' Date t record (datet)
+	 */
 	public $datet;
 
 	/**
@@ -216,7 +227,7 @@ class Fichinter extends CommonObject
 
 	/**
 	 * Date delivery
-	 * @var string|int		Delivery int
+	 * @var null|int|''		Delivery int
 	 */
 	public $date_delivery;
 

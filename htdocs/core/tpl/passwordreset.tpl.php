@@ -93,7 +93,7 @@ $edituser = new User($db);
 
 // Validate parameters
 if ($setnewpassword && $username && $passworduidhash) {
-	$result = $edituser->fetch('', $username);
+	$result = $edituser->fetch(0, $username);
 	if ($result < 0) {
 		$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 	} else {

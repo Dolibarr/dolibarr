@@ -4,10 +4,12 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
- * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2021	Christophe Battarel		<christophe@altairis.fr>
+ * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +113,7 @@ if (!$sortorder) {
 
 $childids = $user->getAllChildIds(1);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 //$object = new TaskTime($db);
 $hookmanager->initHooks(array('projecttasktime', 'globalcard'));
 
@@ -139,7 +141,7 @@ if (!$user->hasRight('projet', 'lire')) {
 if ($object->fk_project > 0) {
 	restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 } else {
-	restrictedArea($user, 'projet', null, 'projet&project');
+	restrictedArea($user, 'projet', 0, 'projet&project');
 	// We check user has permission to see all tasks of all users
 	if (empty($projectid) && !$user->hasRight('projet', 'all', 'lire')) {
 		$search_user = $user->id;
@@ -883,7 +885,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_time');
 
 if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser > 0) {
 	/*
@@ -1241,7 +1243,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
-		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+		// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 		$hookmanager->initHooks(array('tasktimelist'));
 
 		$formconfirm = '';
@@ -1380,7 +1382,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Add $param from hooks
 		$parameters = array('param' => &$param);
-		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$param .= $hookmanager->resPrint;
 
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -1573,10 +1575,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.gender, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
 		$sql .= " p.fk_soc,s.name_alias,";
-		$sql .= " t.invoice_line_id";
+		$sql .= " t.invoice_line_id,";
+		$sql .= " pt.billable";
 		// Add fields from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql = preg_replace('/,\s*$/', '', $sql);
 
@@ -1593,10 +1596,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Add table from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= " WHERE elementtype = 'task'";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			// Get list of project id allowed to user (in a string list separated by comma)
+			// TODO This may generate performance trouble when list of project is very large. Solution can be to complete $filterproj with filters on project.
+			$filterproj = '';
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $user->socid > 0 ? $user->socid : 0, $filterproj);
+			$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
+		}
 		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 			// Limit on one task
 			$sql .= " AND t.fk_element =".((int) $object->id);
@@ -1676,7 +1686,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Add where from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
 		// Count total nb of records
@@ -1773,7 +1783,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 			// Hook fields
 			$parameters = array('mode' => 'create');
-			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print '<td></td>';
 			print "</tr>\n";
@@ -1856,7 +1866,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Fields from hook
 			$parameters = array('mode' => 'create');
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			print '<td class="center">';
@@ -1874,7 +1884,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$moreforfilter = '';
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$moreforfilter .= $hookmanager->resPrint;
 		} else {
@@ -1992,7 +2002,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields);
-		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2077,7 +2087,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		// Hook fields
 		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -2411,6 +2421,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 
 			// Invoiced
+			$invoiced = false;
 			if (!empty($arrayfields['valuebilled']['checked'])) {
 				print '<td class="center">'; // invoice_id and invoice_line_id
 				if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
@@ -2432,8 +2443,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 									}
 								}
 							}
+							$invoiced = true;
 						} else {
-							print $langs->trans("No");
+							if ( intval($task_time->billable) == 1) {
+								print $langs->trans("No");
+							} else {
+								print $langs->trans("Disabled");
+							}
 						}
 					} else {
 						print '<span class="opacitymedium">' . $langs->trans("NA") . '</span>';
@@ -2452,7 +2468,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			// Action column
@@ -2485,7 +2501,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 								$selected = 1;
 							}
 							print '&nbsp;';
-							print '<input id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+							// Disable select if task not billable or already invoiced
+							$disabled = (intval($task_time->billable) !=1 || $invoiced);
+							$ctrl = '<input '.($disabled?'disabled':'').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+							if ($disabled) {
+								// If disabled, a dbl-click very close outside the control
+								// will re-enable it, so that user is not blocked if needed.
+								print '<span id="cbsp'. $task_time->rowid . '">'.$ctrl.'</span>';
+								print '<script>$("#cbsp' . $task_time->rowid . '").dblclick(()=>{ $("#cb' . $task_time->rowid . '").removeAttr("disabled") })</script>';
+							} else {
+								print $ctrl;
+							}
 						}
 					}
 				}
@@ -2651,7 +2677,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split1');
-				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
 				// Action column
@@ -2817,7 +2843,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split2');
-				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
 				// Action column
@@ -2870,7 +2896,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		print "</table>";

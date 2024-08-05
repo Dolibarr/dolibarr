@@ -118,7 +118,7 @@ if ($result < 0) {
 		exit;
 	}
 }
-$user->getrights();
+$user->loadRights();
 
 $id = GETPOST('id', 'alpha'); // We accept non numeric id. We will filter later.
 
@@ -180,7 +180,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 						exit(-1);
 					}
 				}
-				$user->getrights();
+				$user->loadRights();
 			}
 		}
 

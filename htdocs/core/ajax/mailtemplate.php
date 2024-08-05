@@ -1,4 +1,26 @@
 <?php
+/* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file      htdocs/core/ajax/mailtemplate.php
+ *       \ingroup	core
+ *       \brief     File to return Ajax response on location_incoterms request
+ */
+
 
 // Just for display errors in editor
 ini_set('display_errors', 1);
@@ -20,39 +42,51 @@ if (!defined('NOREQUIRESOC')) {
 }
 require_once '../../main.inc.php';
 require_once '../lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+// There is no permission test on this component for the moment. Test will be added when knowing which data it read.
+
+// TODO $selectedPosts is not initialised, i set it to '' but this is surely a bug and not the expected behaviour.
+// Should be set to list of last news...
+$selectedPosts = '';
+
+
+/*
+ * View
+ */
 
 top_httphead();
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && GETPOSTISSET('content')) {
+// TODO Replace with ID of template
+if (GETPOSTISSET('content')) {
 	$content = GETPOST('content');
 
+	if (!empty($selectedPosts)) {
+		$newsList = '';
 
-	$content = str_replace('<!-- PHP_START -->', '<?php ', $content);
-	$content = str_replace('<!-- PHP_END -->', ' ?>', $content);
+		foreach ($selectedPosts as $post) {
+			$newsList .= '<div style="display: flex; align-items: flex-start; justify-content: flex-start; width: 100%; max-width: 800px; margin-top: 20px;margin-bottom: 50px; padding: 20px;">
+                            <div style="flex-grow: 1; margin-right: 30px; max-width: 600px; margin-left: 100px;">
+                                <h2 style="margin: 0; font-size: 1.5em;">' . htmlentities($post['title']) . '</h2>
+                                <p style="margin: 10px 0; color: #555;">' . htmlentities($post['description']) . '</p>
+                                <span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . htmlentities($post['user_fullname']) . '</strong></span>
+                                <br>
+                                <span style="display: block; color: #888;">' . dol_print_date($post['date_creation'], 'daytext', 'tzserver', $langs) . '</span>
+                            </div>
+                            <div style="flex-shrink: 0; margin-left: 100px; float: right;">
+                                ' . ($post['image'] ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . htmlentities($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '
+                            </div>
+                        </div>';
+		}
 
-	$directory = $conf->admin->dir_temp . '/mailing/email_template';
-	if (!is_dir($directory)) {
-		dol_mkdir($directory);
+		$content = str_replace('__NEWS_LIST__', $newsList, $content);
+	} else {
+		$content = str_replace('__NEWS_LIST__', 'No articles selected', $content);
 	}
 
-	$i = 0;
-	do {
-		$filePath = $directory . '/template_' . $i++ . '.php';
-	} while (file_exists($filePath));
 
-	file_put_contents($filePath, $content);
-
-	$output = '';
-
-	ob_start();
-	try {
-		include $filePath;
-		$output = ob_get_clean();
-	} finally {
-		dol_delete_file($filePath);
-	}
-
-	print $output;
+	print $content;
 } else {
 	print 'No content provided or invalid token';
 }

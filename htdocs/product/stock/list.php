@@ -68,7 +68,7 @@ if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('b
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
 }
-// Initialize technical objects
+// Initialize a technical objects
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -79,7 +79,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Entrepot($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
@@ -124,7 +124,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -403,7 +403,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_list');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-product page-stock_list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

@@ -179,11 +179,6 @@ class EmailCollector extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -2379,7 +2374,9 @@ class EmailCollector extends CommonObject
 
 						$description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
 
-						$descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $this->ref, $msgid);
+						$descriptiontitle = $langs->transnoentitiesnoconv("RecordCreatedByEmailCollector", $this->ref);
+
+						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("EmailMsgID").' : '.dol_escape_htmltag($msgid));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailDate").($langs->trans("MailDate") != 'Date' ? ' (Date)' : '').' : '.dol_escape_htmltag(dol_print_date($dateemail, "dayhourtext", "gmt")));
 						$descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
@@ -2568,7 +2565,7 @@ class EmailCollector extends CommonObject
 											dol_syslog("Third party with id=".$idtouseforthirdparty." email=".$emailtouseforthirdparty." name=".$nametouseforthirdparty." name_alias=".$namealiastouseforthirdparty." was not found");
 
 											//search into contacts of thirdparty
-											$resultContact = $contactstatic->fetch('', '', '', $emailtouseforthirdparty);
+											$resultContact = $contactstatic->fetch(0, '', '', $emailtouseforthirdparty);
 											if ($resultContact > 0) {
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
@@ -2670,7 +2667,7 @@ class EmailCollector extends CommonObject
 											// Search country by name or code
 											if (!empty($contactstatic->country)) {
 												require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-												$result = getCountry('', 3, $this->db, '', 1, $contactstatic->country);
+												$result = getCountry('', 3, $this->db, null, 1, $contactstatic->country);
 												if ($result == 'NotDefined') {
 													$errorforactions++;
 													$this->error = "Error country not found by this name '" . $contactstatic->country . "'";
@@ -2770,7 +2767,7 @@ class EmailCollector extends CommonObject
 								}
 
 								$description = $descriptiontitle;
-								$description = dol_concatdesc($description, "-----");
+
 								$description = dol_concatdesc($description, $descriptionmeta);
 								$description = dol_concatdesc($description, "-----");
 								$description = dol_concatdesc($description, $messagetext);
@@ -3061,7 +3058,7 @@ class EmailCollector extends CommonObject
 								}
 
 								$description = $descriptiontitle;
-								$description = dol_concatdesc($description, "-----");
+
 								$description = dol_concatdesc($description, $descriptionmeta);
 								$description = dol_concatdesc($description, "-----");
 								$description = dol_concatdesc($description, $messagetext);
@@ -3196,7 +3193,7 @@ class EmailCollector extends CommonObject
 								}
 
 								$description = $descriptiontitle;
-								$description = dol_concatdesc($description, "-----");
+
 								$description = dol_concatdesc($description, $descriptionmeta);
 								$description = dol_concatdesc($description, "-----");
 								$description = dol_concatdesc($description, $messagetext);
@@ -3209,9 +3206,9 @@ class EmailCollector extends CommonObject
 
 								$tickettocreate->subject = $subject;
 								$tickettocreate->message = $description;
-								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1));
-								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1));
-								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE') ? $conf->global->MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE : dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1));
+								$tickettocreate->type_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_TYPE_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_type', 'use_default', 'code', 1)));
+								$tickettocreate->category_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_CATEGORY_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_category', 'use_default', 'code', 1)));
+								$tickettocreate->severity_code = (getDolGlobalString('MAIN_EMAILCOLLECTOR_TICKET_SEVERITY_CODE', dol_getIdFromCode($this->db, 1, 'c_ticket_severity', 'use_default', 'code', 1)));
 								$tickettocreate->origin_email = $from;
 								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
 								$tickettocreate->origin_references = (!empty($headers['References']) ? $headers['References'] : null);

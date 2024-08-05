@@ -77,6 +77,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bom"), $langs->transnoentities("Bom"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -99,7 +100,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
@@ -118,13 +119,13 @@ class mod_bom_advanced extends ModeleNumRefBoms
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product		$objprod    Object product
-	 *  @param  Bom			$object		Object we need next value for
-	 *  @return string|0      			Next value if OK, 0 if KO
+	 *  @param	Product			$objprod    Object product
+	 *  @param  Bom				$object		Object we need next value for
+	 *  @return string|int      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -138,7 +139,7 @@ class mod_bom_advanced extends ModeleNumRefBoms
 
 		$date = ($object->date_bom ? $object->date_bom : $object->date);
 
-		$numFinal = get_next_value($db, $mask, 'bom_bom', 'ref', '', null, $date);
+		$numFinal = get_next_value($db, $mask, 'bom_bom', 'ref', '', '', $date);
 
 		return  $numFinal;
 	}
