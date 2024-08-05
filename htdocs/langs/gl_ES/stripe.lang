@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL para ofrecer unha páxina de pagame
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL para ofrecer unha páxina de pagamento en liña %s para unha subscrición de membro
 ToOfferALinkForOnlinePaymentOnDonation=URL para ofrecer unha páxina de pagamento en liña %s para o pagamento dunha doazón/subvención
 YouCanAddTagOnUrl=Tamén pode engadir o parámetro URL <b>&tag=<i>valore</i> </b> a calquera deses URL (obrigatorio só para o pagamento non ligado a un obxecto) para engadir a súa propia etiqueta de comentario de pagamento. <br> Para a URL de pagamentos sen ningún obxecto existente, tamén pode engadir o parámetro <strong> &noidempotency=1 </strong> para que a mesma ligazón coa mesma etiqueta poida usarse varias veces (algúns modos de pagamento poden limitar o pagamento a 1 por cada ligazón diferente sen este parámetro)
+YouCanEmbedOnWebsite=Se quere integrar a páxina de pagamento nun sitio web de Dolibarr, pode incluír os seguintes parámetros: <b>&ws=website_ref</b> .<br>, Adicionalmente dúas páxinas chamadas<b>paymentok</b> e <b>paymentko<span class='b7f8z0<b>debe crealas no sitio web para recibir a redirección despois dun pagamento en liña finalizado 
 SetupStripeToHavePaymentCreatedAutomatically=Configure o seu Stripe coa url <b>%s </b> para que o pagamento se cree automaticamente cando o valide Stripe.
 AccountParameter=Parámetros da conta
 UsageParameter=Parámetros de uso
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Localización (enderezo) para terminais Stripe
 RequestDirectDebitWithStripe=Solicite domiciliación bancaria con Stripe
 RequesCreditTransferWithStripe=Solicite transferencia bancaria con Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activa os pagamentos por domiciliación bancaria a través de Stripe
+STRIPE_KLARNA=Activa os pagamentos usando Klarna
+STRIPE_BANCONTACT=Activa os pagamentos mediante BANCONTACT
+STRIPE_IDEAL=Activa os pagamentos usando IDEAL
+STRIPE_GIROPAY=Activa os pagamentos mediante GIROPAY
+STRIPE_SOFORT=Activa os pagamentos usando SOFORT
 StripeConnect_Mode=Modo de conexión Stripe
+ExampleOnlyForBECustomers=Só para clientes de Bélxica
+ExampleOnlyForDECustomers=Só para clientes alemáns
+ExampleOnlyForNLCustomers=Só para clientes holandeses
+ExampleOnlyForATBEDEITNLESCustomers=Só para clientes de Austria, Bélxica, Alemaña, Italia, Países Baixos e España

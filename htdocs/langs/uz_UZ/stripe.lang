@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=Mavjud ob'ekti bo'lmagan har qanday miq
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Ro'yxatdan obuna uchun %s onlayn to'lov sahifasini taqdim etish uchun URL
 ToOfferALinkForOnlinePaymentOnDonation=Xayr-ehson to'lash uchun %s onlayn to'lov sahifasini taqdim etadigan URL
 YouCanAddTagOnUrl=O'zingizning to'lov izoh yorlig'ingizni qo'shish uchun url parametrini <b> & tag = <i> </i> </b> URL-ni qo'shishingiz mumkin (faqat ob'ekt bilan bog'lanmagan to'lov uchun majburiy). <br> Mavjud ob'ekti bo'lmagan to'lovlar URL manzili uchun siz <strong> & noidempotency = 1 </strong> parametrini qo'shishingiz mumkin, shuning uchun bir xil teg bilan bir xil havoladan bir necha marta foydalanish mumkin (ba'zi to'lov rejimi har bir boshqa havola uchun to'lovni 1 ga cheklashi mumkin) parametr)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe-ni url bilan sozlang <b> %s </b> Stripe tomonidan tasdiqlanganda to'lov avtomatik ravishda yaratiladi.
 AccountParameter=Hisob parametrlari
 UsageParameter=Foydalanish parametrlari
@@ -77,4 +78,13 @@ TERMINAL_LOCATION=Stripe terminallari uchun joy (manzil).
 RequestDirectDebitWithStripe=Stripe bilan to'g'ridan-to'g'ri debetni talab qiling
 RequesCreditTransferWithStripe=Stripe bilan kredit o'tkazmasini talab qiling
 STRIPE_SEPA_DIRECT_DEBIT=Stripe orqali to'g'ridan-to'g'ri debet to'lovlarini yoqing
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
 StripeConnect_Mode=Stripe Connect rejimi
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

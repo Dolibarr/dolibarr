@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@ if (!GETPOST('buttonreset', 'alpha')) {
 $dirins = DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules = 'https://www.dolistore.com/';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('adminmodules', 'globaladmin'));
 
 // Increase limit of time. Works only if we are not in safe mode
@@ -374,7 +374,7 @@ if (!dol_is_dir($dirins)) {
 $dirins_ok = (dol_is_dir($dirins));
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url, '', '', '', $morejs, $morecss, 0, 'mod-admin page-modules');
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, $morejs, $morecss, 0, 'mod-admin page-modules');
 
 
 // Search modules dirs
@@ -464,7 +464,7 @@ foreach ($modulesdir as $dir) {
 								}
 								ksort($arrayofnatures);
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								$filename[$i] = $modName;
 								$modules[$modName] = $objMod;
 
@@ -851,19 +851,15 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 			$versiontrans .= $objMod->getVersion(1);
 		}
 
-		if ($objMod->isCoreOrExternalModule() == 'external'
-			&& (
-				$action == 'checklastversion'
-				// This is a bad practice to activate a check on an external access during the building of the admin page. 1 external module can hang the application.
-				// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
-				|| getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE')
-			)
-		) {
+		if ($objMod->isCoreOrExternalModule() == 'external' && ($action == 'checklastversion' || getDolGlobalString('CHECKLASTVERSION_EXTERNALMODULE'))) {
+			// Setting CHECKLASTVERSION_EXTERNALMODULE to on is a bad practice to activate a check on an external access during the building of the admin page.
+			// 1 external module can hang the application.
+			// Adding a cron job could be a good idea: see DolibarrModules::checkForUpdate()
 			$checkRes = $objMod->checkForUpdate();
 			if ($checkRes > 0) {
-				setEventMessage($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion);
+				setEventMessages($objMod->getName().' : '.$versiontrans.' -> '.$objMod->lastVersion, null, 'warnings');
 			} elseif ($checkRes < 0) {
-				setEventMessage($objMod->getName().' '.$langs->trans('CheckVersionFail'), 'warnings');
+				setEventMessages($objMod->getName().' '.$langs->trans('CheckVersionFail'), null, 'errors');
 			}
 		}
 
@@ -1092,7 +1088,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	if ($action == 'checklastversion') {
 		if ($foundoneexternalmodulewithupdate) {
-			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'mesgs');
+			setEventMessages($langs->trans("ModuleUpdateAvailable"), null, 'warnings');
 		} else {
 			setEventMessages($langs->trans("NoExternalModuleWithUpdate"), null, 'mesgs');
 		}

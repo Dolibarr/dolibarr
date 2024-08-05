@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2015	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +58,11 @@ if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 
 if ($action == 'update') {
 	$public = GETPOST('MEMBER_ENABLE_PUBLIC');
-	$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
+	if (GETPOST('MEMBER_NEWFORM_AMOUNT') !== '') {
+		$amount = price2num(GETPOST('MEMBER_NEWFORM_AMOUNT'), 'MT', 2);
+	} else {
+		$amount = '';
+	}
 	$minamount = GETPOST('MEMBER_MIN_AMOUNT');
 	$publiccounters = GETPOST('MEMBER_COUNTERS_ARE_PUBLIC');
 	$showtable = GETPOST('MEMBER_SHOW_TABLE');
@@ -104,7 +109,8 @@ $form = new Form($db);
 
 $title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_website');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

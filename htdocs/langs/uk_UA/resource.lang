@@ -9,31 +9,30 @@ ActionsOnResource=Події на цьому ресурсі
 ResourcePageIndex=Список ресурсів
 ResourceSingular=Ресурс
 ResourceCard=Картка ресурсів
+NewResource=New resource
 AddResource=Створіть ресурс
 ResourceFormLabel_ref=Назва ресурсу
-ResourceType=Тип ресурсу
 ResourceFormLabel_description=Опис ресурсу
-
+ResourceType=Тип ресурсу
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Ресурси, пов’язані з елементом
 
 ShowResource=Показати ресурс
-
 ResourceElementPage=Ресурси елементів
 ResourceCreatedWithSuccess=Ресурс успішно створено
 RessourceLineSuccessfullyDeleted=Рядок ресурсу успішно видалено
 RessourceLineSuccessfullyUpdated=Рядок ресурсів успішно оновлено
 ResourceLinkedWithSuccess=Ресурс, пов'язаний з успіхом
-
 ConfirmDeleteResource=Підтвердьте видалення цього ресурсу
 RessourceSuccessfullyDeleted=Ресурс успішно видалено
 DictionaryResourceType=Тип ресурсів
-
 SelectResource=Виберіть ресурс
-
 IdResource=Ідентифікатор ресурсу
 AssetNumber=Серійний номер
 ResourceTypeCode=Код типу ресурсу
 ImportDataset_resource_1=Ресурси
-
 ErrorResourcesAlreadyInUse=Деякі ресурси використовуються
 ErrorResourceUseInEvent=%s використовується в події %s
+MaxUsers=Максимальна кількість користувачів (місць, місць тощо)
+MaxUsersLabel=Maximum users

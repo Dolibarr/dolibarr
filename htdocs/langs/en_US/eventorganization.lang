@@ -41,7 +41,7 @@ EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, 
 # Object
 OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= Conference Or Booth
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Manage the organization of an event
 ConferenceOrBooth = Conference Or Booth
 ConferenceOrBoothTab = Conference Or Booth
@@ -78,7 +78,7 @@ ConferenceOrBoothFormatCode=Code of conference or booth mode
 ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Attendees
 ListOfAttendeesOfEvent=List of attendees of event projects
-ListOfConfOrBoothOfEvent=List of conferences or boothes of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Download ICS link
 EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
 SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location

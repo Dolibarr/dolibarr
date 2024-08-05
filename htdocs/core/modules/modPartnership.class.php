@@ -463,9 +463,6 @@ class modPartnership extends DolibarrModules
 		$myTmpObjects['Partnership'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Partnership') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_partnerships.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

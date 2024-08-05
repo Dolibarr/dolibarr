@@ -70,6 +70,7 @@ class mod_contract_magre extends ModelNumRefContracts
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcontract" value="'.getDolGlobalString("CONTRACT_MAGRE_MASK").'">', $tooltip, 1, 1).'</td>';
@@ -88,12 +89,18 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
 	public function getExample()
 	{
-		global $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$contract = new Contrat($db);
+		$contract->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $contract);
+
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -104,9 +111,9 @@ class mod_contract_magre extends ModelNumRefContracts
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Contrat		$contract	contract object
-	 *	@return string|0      			Next value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     third party object
+	 *	@param	Contrat			$contract	contract object
+	 *	@return string|int      			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{

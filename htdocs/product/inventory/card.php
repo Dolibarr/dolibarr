@@ -48,7 +48,7 @@ if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
 // no inventory docs yet
@@ -76,7 +76,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();

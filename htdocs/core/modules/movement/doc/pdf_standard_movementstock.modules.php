@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
+/* Copyright (C) 2017 		Laurent Destailleur 		<eldy@stocks.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/movement/doc/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build PDF documents for stocks movements
  */
@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_standard extends ModelePDFMovement
+class pdf_standard_movementstock extends ModelePDFMovement
 {
 	/**
 	 * @var int     Save the name of generated file as the main doc when generating a doc with this template
@@ -196,7 +196,7 @@ class pdf_standard extends ModelePDFMovement
 
 		$pdluoid = GETPOSTINT('pdluoid');
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('movementlist'));
 		$extrafields = new ExtraFields($this->db);
 
@@ -386,7 +386,7 @@ class pdf_standard extends ModelePDFMovement
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 
 				if (class_exists('TCPDF')) {
@@ -904,7 +904,7 @@ class pdf_standard extends ModelePDFMovement
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  MouvementStock|Entrepot	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @param	string		$titlekey		Translation key to show as title of document
@@ -919,17 +919,17 @@ class pdf_standard extends ModelePDFMovement
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		if ($object->type == 1) {
-			$titlekey = 'ServiceSheet';
-		} else {
-			$titlekey = 'StockSheet';
-		}
+		// if ($object->type == 1) {
+		// 	$titlekey = 'ServiceSheet';
+		// } else {
+		// 	$titlekey = 'StockSheet';
+		// }
 
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
+		if ($object->status == 0 && getDolGlobalString('WAREHOUSE_DRAFT_WATERMARK')) {
+			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('WAREHOUSE_DRAFT_WATERMARK'));
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
@@ -1127,7 +1127,7 @@ class pdf_standard extends ModelePDFMovement
 	 *  Show footer of page. Need this->emetteur object
 	 *
 	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	Object		$object				Object to show
+	 *  @param	MouvementStock|Entrepot	$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
 	 *  @return	int								Return height of bottom margin including footer text

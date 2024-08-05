@@ -162,7 +162,7 @@ if (!isModEnabled('agenda')) {
 
 // Check config
 if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
-	$user->getrights();
+	$user->loadRights();
 
 	top_httphead();
 
@@ -172,7 +172,7 @@ if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	exit;
 }
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('agendaexport'));
 
 $reshook = $hookmanager->executeHooks('doActions', $filters); // Note that $action and $object may have been modified by some
@@ -189,7 +189,7 @@ if ($reshook < 0) {
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
-		$user->getrights();
+		$user->loadRights();
 
 		top_httphead();
 

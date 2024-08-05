@@ -309,7 +309,7 @@ abstract class CommonDocGenerator
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
 		}
 		if (empty($mysoc->state) && !empty($mysoc->state_code)) {
-			$mysoc->state = getState($mysoc->state_code, 0);
+			$mysoc->state = getState($mysoc->state_code, '0');
 		}
 
 		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -365,7 +365,7 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$object->state = getState($object->state_code, '0');
 		}
 
 		$array_thirdparty = array(
@@ -431,7 +431,7 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, 0);
+			$object->state = getState($object->state_code, '0');
 		}
 
 		$array_contact = array(
@@ -1492,6 +1492,9 @@ abstract class CommonDocGenerator
 				$field = new stdClass();
 				$field->rank = intval($extrafields->attributes[$object->table_element]['pos'][$key]);
 				$field->content = $this->getExtrafieldContent($object, $key, $outputlangs);
+				if (isset($extrafields->attributes[$object->table_element]['langfile'][$key])) {
+					$outputlangs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+				}
 				$field->label = $outputlangs->transnoentities($label);
 				$field->type = $extrafields->attributes[$object->table_element]['type'][$key];
 

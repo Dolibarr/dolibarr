@@ -1,36 +1,36 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
 Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup=Scheduled job management setup
-URLToLaunchCronJobs=URL to check and launch qualified cron jobs from a browser
-OrToLaunchASpecificJob=Or to check and launch a specific job from a browser
+URLToLaunchCronJobs=URL за проверка и стартување на квалификувани задачи за cron од прелистувач
+OrToLaunchASpecificJob=Или да проверите и стартувате одредена работа од прелистувач
 KeyForCronAccess=Security key for URL to launch cron jobs
-FileToLaunchCronJobs=Command line to check and launch qualified cron jobs
+FileToLaunchCronJobs=Командна линија за проверка и стартување на квалификувани крони работни места
 CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
-CronExplainHowToRunWin=On Microsoft(tm) Windows environment you can use Scheduled Task tools to run the command line each 5 minutes
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=Method %s of class %s is in blacklist of forbidden methods
-CronJobDefDesc=Cron job profiles are defined into the module descriptor file. When module is activated, they are loaded and available so you can administer the jobs from the admin tools menu %s.
-CronJobProfiles=List of predefined cron job profiles
+CronExplainHowToRunWin=Во околината на Microsoft(tm) на Windows, можете да ги користите алатките за распоредени задачи за да ја извршувате командната линија на секои 5 минути
+CronMethodDoesNotExists=Класата %s не содржи ниеден метод %s
+CronMethodNotAllowed=Методот %s од класата %s е во блок листата на забранети методи
+CronJobDefDesc=Профилите на Cron работни места се дефинирани во датотеката со дескриптор на модулот. Кога модулот е активиран, тие се вчитани и достапни за да можете да ги администрирате задачите од менито со алатки за администратор %s.
+CronJobProfiles=Список на предефинирани профили за работни задачи cron
 # Menu
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronLastOutput=Latest run output
-CronLastResult=Latest result code
+CronLastOutput=Последен излез
+CronLastResult=Најновиот код за резултат
 CronCommand=Command
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
-CronExecute=Launch now
+CronExecute=Стартувај сега
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronInfo=Модулот за закажана работа овозможува да се закажат задачите за да се извршуваат автоматски. Работата може да се започне и рачно.
 CronTask=Job
-CronNone=None
+CronNone=Следна серија на закажаната задача
+CronNotYetRan=Никогаш не погубен
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Next execution
@@ -43,58 +43,59 @@ CronModule=Module
 CronNoJobs=No jobs registered
 CronPriority=Priority
 CronLabel=Label
-CronNbRun=Number of launches
-CronMaxRun=Maximum number of launches
+CronNbRun=Број на лансирања
+CronMaxRun=Максимален број лансирања
 CronEach=Every
 JobFinished=Job launched and finished
-Scheduled=Scheduled
+Scheduled=Закажано
 #Page card
-CronAdd= Add jobs
-CronEvery=Execute job each
+CronAdd=Add jobs
+CronEvery=Работи секој
 CronObject=Instance/Object to create
 CronArgs=Parameters
 CronSaveSucess=Save successfully
 CronNote=Comment
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
-StatusAtInstall=Status at module installation
-CronStatusActiveBtn=Enable scheduling
+StatusAtInstall=Статус при инсталација на модулот
+CronStatusActiveBtn=Овозможи закажување
 CronStatusInactiveBtn=Disable
-CronTaskInactive=This job is disabled (not scheduled)
+CronTaskInactive=Оваа работа е оневозможена (не е закажана)
 CronId=Id
-CronClassFile=Filename with class
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
-CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronClassFile=Име на датотека со класа
+CronModuleHelp=Име на директориумот на модулите Dolibarr (исто така работи со надворешен Dolibarr модул). <BR> На пример, да се повика методот на преземање на Dolibarr производ објект /htdocs/<u>производ<span class='notranslate'87z4b0cada </span>/class/product.class.php, вредноста за модулот е<br><i>производ</i>
+CronClassFileHelp=Релативната патека и името на датотеката што треба да се вчита (патот е во однос на root директориумот на веб-серверот). <BR> На пример, да се повика методот на преземање на Dolibarr Product објект htdocs/product/class/<u>product.class.php<s class='notranslate'></u></span>, вредноста за името на датотеката на класата е<br><i>product/cla .class.php</i>
+CronObjectHelp=Името на објектот што треба да се вчита. <BR> На пример, за да го повикате методот на преземање на Dolibarr Product објектот /htdocs/product/class/product.class.php, вредноста за името на датотеката на класата е<br><i>Производ</i>
+CronMethodHelp=Методот на објект за лансирање. <BR> На пример, за да се повика методот на преземање на Dolibarr Product објект /htdocs/product/class/product.class.php, вредноста за методот е <br><i>земи</i>
+CronArgsHelp=Аргументи на методот. <BR> На пример, за да го повикате методот на преземање на Dolibarr Product објект /htdocs/product/class/product.class.php, вредноста за параметрите може да биде<br><i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
 CronFrom=From
 # Info
 # Common
 CronType=Job type
-CronType_method=Call method of a PHP Class
+CronType_method=Метод на повикување на PHP класа
 CronType_command=Shell command
-CronCannotLoadClass=Cannot load class file %s (to use class %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+CronCannotLoadClass=Не може да се вчита датотеката за класа %s (за да се користи класата %s)
+CronCannotLoadObject=Датотеката за класа %s беше вчитана, но објектот %s не беше пронајден во неа
+UseMenuModuleToolsToAddCronJobs=Одете во менито „<a href="%s">Дома - Алатки за администратор - Закажани работни места</a>" за да ги видите и уредите закажаните работи.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' or filename to build, number of backup files to keep
-MakeSendLocalDatabaseDumpShort=Send local database backup
-MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
-WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
-DATAPOLICYJob=Data cleaner and anonymizer
-JobXMustBeEnabled=Job %s must be enabled
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+MakeLocalDatabaseDump=Направете депонија за локална база на податоци. Параметрите се: компресија ('gz' или 'bz' или 'none'), тип на резервна копија ('mysql', 'pgsql', 'auto'), 1, 'auto' или име на датотека што треба да се изгради, број на резервни датотеки што треба да се чуваат
+MakeSendLocalDatabaseDumpShort=Испратете резервна копија од локалната база на податоци
+MakeSendLocalDatabaseDump=Испратете резервна копија од локалната база на податоци преку е-пошта. Параметрите се: до, од, тема, порака, име на датотека (Име на испратената датотека), филтер ('sql' само за резервна копија на базата на податоци)
+BackupIsTooLargeSend=Извинете, последната резервна датотека е преголема за да се испрати по е-пошта
+CleanUnfinishedCronjobShort=Исчистете ја незавршената круна
+CleanUnfinishedCronjob=Чистата кроњоб заглавена во обработка кога процесот повеќе не работи
+WarningCronDelayed=Внимание, за целите на изведбата, кој и да е следниот датум на извршување на овозможените задачи, вашите работни места може да бидат одложени до максимум %s часа, пред да се извршат.
+DATAPOLICYJob=Чистач на податоци и анонимизатор
+JobXMustBeEnabled=Работата %s мора да биде овозможена
+EmailIfError=Е-пошта за предупредување за грешка
+JobNotFound=Работата %s не е пронајдена во списокот со работни места (обидете се да го оневозможите/овозможите модулот)
+ErrorInBatch=Грешка при извршување на задачата %s
 
 # Cron Boxes
-LastExecutedScheduledJob=Last executed scheduled job
-NextScheduledJobExecute=Next scheduled job to execute
-NumberScheduledJobError=Number of scheduled jobs in error
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+LastExecutedScheduledJob=Последно извршено закажано работно место
+NextScheduledJobExecute=Следна закажана работа за извршување
+NumberScheduledJobError=Број на закажани работни места по грешка
+NumberScheduledJobNeverFinished=Број на закажани работи никогаш не завршени

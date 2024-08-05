@@ -9,7 +9,7 @@
  * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
@@ -1025,7 +1025,7 @@ class AccountancyExport
 					$arrayofinclusion = array();
 					// If it is a supplier invoice, we want to use last uploaded file
 					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
 					if (!empty($fileFoundList)) {
 						$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
 						foreach ($fileFoundList as $fileFound) {
@@ -1491,7 +1491,7 @@ class AccountancyExport
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
 						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
 						if (!empty($fileFoundList)) {
 							$attachmentFileNameTrunc = $line->doc_ref;
 							foreach ($fileFoundList as $fileFound) {
@@ -1703,7 +1703,7 @@ class AccountancyExport
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
 						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
-						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, true);
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
 						if (!empty($fileFoundList)) {
 							$attachmentFileNameTrunc = $line->doc_ref;
 							foreach ($fileFoundList as $fileFound) {

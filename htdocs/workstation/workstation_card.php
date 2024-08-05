@@ -59,7 +59,7 @@ $groups	    = GETPOST('groups', 'array:int');
 $resources	= GETPOST('resources', 'array:int');
 //$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Workstation($db);
 
 //$extrafields = new ExtraFields($db);
@@ -85,7 +85,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 $permissiontoread = $user->hasRight('workstation', 'workstation', 'read');

@@ -47,7 +47,7 @@ abstract class DoliDB implements Database
 	public $forcecollate = 'utf8_unicode_ci';
 
 	/** @var resource Resultset of last query */
-	private $_results;
+	private $_results; // @phpstan-ignore-line
 
 	/** @var bool true if connected, else false */
 	public $connected;

@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Jegyek
 Module56000Desc=Jegyrendszer, probléma- vagy kéréskezeléshez
-
 Permission56001=Lásd a jegyeket
 Permission56002=Jegyek módosítása
 Permission56003=Jegyek törlése
 Permission56004=Jegyek kezelése
 Permission56005=Minden harmadik fél jegyeinek megtekintése (külső felhasználókra nem érvényes, mindig csak arra a harmadik félre korlátozódjon, akitől függnek)
 Permission56006=Export jegyek
-
 Tickets=Jegyek
 TicketDictType=Jegy - típusok
 TicketDictCategory=Jegy - Csoportok
 TicketDictSeverity=Jegy – Súlyosságok
 TicketDictResolution=Jegy - Felbontás
-
 TicketTypeShortCOM=Kereskedelmi kérdés
 TicketTypeShortHELP=Funkcionális segítség kérése
 TicketTypeShortISSUE=Probléma vagy hiba
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Probléma
 TicketTypeShortREQUEST=Módosítási vagy bővítési kérelem
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Egyéb
-
 TicketSeverityShortLOW=Alacsony
 TicketSeverityShortNORMAL=Normál
 TicketSeverityShortHIGH=Magas
 TicketSeverityShortBLOCKING=Kritikus, blokkoló
-
 TicketCategoryShortOTHER=Egyéb
-
 ErrorBadEmailAddress=A '%s' mező hibás
 MenuTicketMyAssign=Jegyeim
 MenuTicketMyAssignNonClosed=Nyitott jegyeim
 MenuListNonClosed=Nyitott jegyek
-
 TypeContact_ticket_internal_CONTRIBUTOR=Közreműködő
 TypeContact_ticket_internal_SUPPORTTEC=Hozzárendelt felhasználó
 TypeContact_ticket_external_SUPPORTCLI=Ügyfél kapcsolatfelvétel/incidens nyomon követése
 TypeContact_ticket_external_CONTRIBUTOR=Külső közreműködő
-
 OriginEmail=Jelentés e-mail
+EmailReplyto=Válasz e-mailben
+EmailReferences=Referenciák az e-mailekben
 Notify_TICKET_SENTBYMAIL=Jegy üzenet küldése e-mailben
-
 ExportDataset_ticket_1=Jegyek
-
 # Status
 Read=Olvasás
 Assigned=Hozzárendelve
 NeedMoreInformation=Várakozás a riporter visszajelzésére
 NeedMoreInformationShort=Visszajelzésre vár
-TicketAnswered=Válaszolt
 Waiting=Várakozás
 SolvedClosed=Megoldva
 Deleted=Törölve
-
 # Dict
-Type=Típus
 Severity=Súlyosság
 TicketGroupIsPublic=A csoport nyilvános
 TicketGroupIsPublicDesc=Ha egy jegycsoport nyilvános, akkor látható lesz az űrlapon, amikor jegyet hoz létre a nyilvános felületről
-
 # Email templates
 MailToSendTicketMessage=E-mail küldése jegyüzenetből
-
-#
 # Admin page
-#
 TicketSetup=Jegy modul beállítása
 TicketSettings=Beállítások
 TicketPublicAccess=A következő URL-címen elérhető egy nyilvános interfész, amely nem igényel azonosítást
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Jegy létrehozásakor használjon grafikus kódot (CAPTCHA)
 TicketUseCaptchaCodeHelp=Új jegy létrehozásakor hozzáadja a CAPTCHA ellenőrzést.
 TicketsAllowClassificationModificationIfClosed=Lehetővé teszi a zárt jegyek besorolásának módosítását
 TicketsAllowClassificationModificationIfClosedHelp=Lehetővé teszi a besorolás (típus, jegycsoport, súlyosság) módosítását akkor is, ha a jegyek zárva vannak.
-
-#
 # Index & list page
-#
 TicketsIndex=Jegyek területe
 TicketList=Jegyek listája
 TicketAssignedToMeInfos=Ez az oldal az aktuális felhasználó által létrehozott vagy hozzárendelt jegylistát jeleníti meg
@@ -175,10 +152,7 @@ ShowAsConversation=Megjelenítés beszélgetési listaként
 MessageListViewType=Megjelenítés táblázatlistaként
 ConfirmMassTicketClosingSendEmail=Automatikus e-mailek küldése a jegyek lezárásakor
 ConfirmMassTicketClosingSendEmailQuestion=Értesíteni szeretné a harmadik feleket a jegyek lezárásakor?
-
-#
 # Ticket card
-#
 Ticket=Jegy
 TicketCard=Jegykártya
 CreateTicket=Jegy létrehozása
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Túl sok idő telt el az utolsó válasz ót
 TicketNoContractFoundToLink=Nem találtunk olyan szerződést, amely automatikusan kapcsolódik ehhez a jegyhez. Kérjük, kapcsolja össze a szerződést manuálisan.
 TicketManyContractsLinked=Sok szerződést automatikusan ehhez a jegyhez kapcsoltak. Ügyeljen arra, hogy ellenőrizze, melyiket válassza.
 TicketRefAlreadyUsed=A [%s] hivatkozás már használatban van, az új hivatkozás: [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=%s jegyet olvasott: %s
 NoLogForThisTicket=Még nincs napló ehhez a jegyhez
 TicketLogAssignedTo=%s jegy hozzárendelve a következőhöz: %s
 TicketLogPropertyChanged=%s jegy módosítva: besorolás %s-ról %s-ra
 TicketLogClosedBy=%s jegyet %s zárt
 TicketLogReopen=%s jegy újra nyitva
-
-#
 # Public pages
-#
 TicketSystem=Jegyrendszer
 ShowListTicketWithTrackId=Jegylista megjelenítése a számazonosítóból
 ShowTicketWithTrackId=Jegy megjelenítése a számazonosítóból
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Ez egy automatikus e-mail, amely megerősíti, hogy �
 TicketNewEmailBodyInfosTicket=Információ a jegy figyeléséhez
 TicketNewEmailBodyInfosTrackId=Jegykövetési szám: %s
 TicketNewEmailBodyInfosTrackUrl=A jegy folyamatát az alábbi linkre kattintva tekintheti meg
-TicketNewEmailBodyInfosTrackUrlCustomer=A következő linkre kattintva megtekintheti a jegy folyamatát az adott felületen
+TicketNewEmailBodyInfosTrackUrlCustomer=Az alábbi linkre kattintva megtekintheti a jegy folyamatát a nyilvános jegyportálon
 TicketCloseEmailBodyInfosTrackUrlCustomer=A jegy történetét a következő linkre kattintva tekintheti meg
 TicketEmailPleaseDoNotReplyToThisEmail=Kérjük, ne válaszoljon közvetlenül erre az e-mailre! A hivatkozás segítségével válaszoljon a felületre.
 TicketPublicInfoCreateTicket=Ez az űrlap lehetővé teszi támogatási jegy rögzítését kezelőrendszerünkben.
 TicketPublicPleaseBeAccuratelyDescribe=Kérjük, pontosan írja le kérését. Adja meg a lehető legtöbb információt, hogy helyesen azonosíthassuk kérelmét.
 TicketPublicMsgViewLogIn=Kérjük, adja meg a jegykövetési azonosítót
-TicketTrackId=Nyilvános követési azonosító
+TicketTrackId=Követési Azonosító
 OneOfTicketTrackId=Az egyik követőazonosítód
 ErrorTicketNotFound=%s nyomkövetési azonosítójú jegy nem található!
 Subject=Tárgy
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Jegyek száma havonta
 NbOfTickets=Jegyek száma
 ExternalContributors=Külső közreműködők
 AddContributor=Külső közreműködő hozzáadása
-
 # notifications
 TicketCloseEmailSubjectCustomer=Jegy lezárva
 TicketCloseEmailBodyCustomer=Ez egy automatikus üzenet, amely értesíti Önt, hogy az %s jegyet nemrég zárták le.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Értesítés címzettje
 TicketNotificationLogMessage=Naplóüzenet
 TicketNotificationEmailBodyInfosTrackUrlinternal=Jegy megtekintése a felületen
 TicketNotificationNumberEmailSent=Értesítési e-mail elküldve: %s
-
 ActionsOnTicket=Rendezvények jegyre
-
-#
 # Boxes
-#
 BoxLastTicket=Utoljára létrehozott jegyek
 BoxLastTicketDescription=A legutóbbi %s jegyek
 BoxLastTicketContent=

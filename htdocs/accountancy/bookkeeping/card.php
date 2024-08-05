@@ -180,6 +180,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+
 			$object = new BookKeeping($db);
 
 			$object->numero_compte = $accountingaccount_number;
@@ -189,7 +191,7 @@ if (empty($reshook)) {
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
-			$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+			$object->doc_date = $datedoc;
 			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 			$object->piece_num = $piece_num;
 			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
@@ -258,10 +260,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+
 			$object->label_compte = '';
 			$object->debit = 0;
 			$object->credit = 0;
-			$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			$object->doc_date = $date_start;
 			$object->doc_type = GETPOST('doc_type', 'alpha');
 			$object->piece_num = GETPOSTINT('next_num_mvt');
 			$object->doc_ref = GETPOST('doc_ref', 'alpha');
@@ -482,7 +486,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', 0, 0, 0, "setdate");
+			print $form->selectDate($object->doc_date ? $object->doc_date : -1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Tili (tilikaaviosta), jota oletus käyttää "käyttäjän" kolmansille osapuolille
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Käyttäjäkortissa määritettyä omaa tiliä käytetään vain Subledger Kirjanpito -sovelluksessa. Tätä käytetään pääkirja ja arvona oletus Subledger Kirjanpito, jos käyttäjälle ei ole määritetty erillistä Kirjanpito -tiliä.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Oletus kirjanpitotili palkkamaksuille
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Kirjoittaja oletus, jätä tyhjäksi vaihtoehto "Automaattisesti luo yhteensä maksu" kun luot palkkaa
 Salary=Palkka

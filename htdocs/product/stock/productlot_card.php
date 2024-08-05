@@ -53,7 +53,7 @@ $batch = GETPOST('batch', 'alpha');
 $productid = GETPOSTINT('productid');
 $ref = GETPOST('ref', 'alpha'); // ref is productid_batch
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -88,7 +88,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id || $ref) {
 	if ($ref) {
 		$tmp = explode('_', $ref);
@@ -105,7 +105,7 @@ if ($id || $ref) {
 	}
 }
 
-// Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
 

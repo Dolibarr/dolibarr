@@ -21,7 +21,6 @@ MenuDoneMyActions=我終止的活動
 ListOfEvents=事件列表（默認日曆）
 ActionsAskedBy=事件報告者
 ActionsToDoBy=事件分配給
-ActionsDoneBy=活動由
 ActionAssignedTo=Event assigned to
 ViewCal=月視圖
 ViewDay=日景
@@ -135,12 +134,14 @@ AgendaModelModule=Document templates for event
 DateActionStart=開始日期
 DateActionEnd=結束日期
 AgendaUrlOptions1=您還可以添加以下參數來過濾輸出：
-AgendaUrlOptions3= <b> 登錄=%s </b>  將輸出限制為用戶擁有的操作 <b> %s </b> 。
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> 登錄=%s </b>  將輸出限制為分配給用戶的操作 <b> %s </b>  （所有者和其他人）。
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=聯繫人的生日
 AgendaHideBirthdayEvents=隱藏聯繫人的生日
 Busy=忙碌的
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Your booking has been saved
 BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
 BookcalBookingTitle=Online appointment
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

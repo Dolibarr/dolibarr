@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-mail for at forhindre HRM ekstern service
 Establishments=Foretagender
@@ -24,7 +23,7 @@ SkillsManagement=Uddannelsesstyring
 HRM_MAXRANK=Maksimalt antal niveauer for at rangere en færdighed
 HRM_DEFAULT_SKILL_DESCRIPTION=Standardbeskrivelse af rækker, når færdighed er oprettet
 deplacement=Flytte
-DateEval=Evalueringsdato
+DateEval=Dato for kompetencevurdering
 JobCard=Jobkort
 NewJobProfile=Ny jobprofil
 JobProfile=Jobprofil
@@ -41,12 +40,12 @@ Skill=Færdighed
 Skills=Færdigheder
 SkillCard=Færdighedskort
 EmployeeSkillsUpdated=Medarbejdernes færdigheder er blevet opdateret (se fanen "Færdigheder" på medarbejderkortet)
-Eval=Evaluering
-Evals=Evalueringer
-NewEval=Ny evaluering
-ValidateEvaluation=Valider evaluering
-ConfirmValidateEvaluation=Er du sikker på, at du vil validere denne evaluering med referencen <b>%s</b> >?
-EvaluationCard=Evalueringskort
+Eval=Kompetencevurdering
+Evals=Kompetencevurderinger
+NewEval=Ny kompetencevurdering
+ValidateEvaluation=Validere kompetencevurdering
+ConfirmValidateEvaluation=Er du sikker på, at du vil validere denne kompetencevurdering med referencen <b>%s</b>?
+EvaluationCard=Kompetencevurdering
 RequiredRank=Påkrævet rang for jobprofilen
 RequiredRankShort=Påkrævet rang
 PositionsWithThisProfile=Stillinger med denne jobprofil
@@ -90,8 +89,9 @@ SaveAddSkill = Færdigheder tilføjet
 SaveLevelSkill = Færdighedsniveauet er gemt
 DeleteSkill = Færdighed fjernet
 SkillsExtraFields=Komplementære egenskaber (færdigheder)
-JobsExtraFields=Supplerende egenskaber (jobprofil)
-EvaluationsExtraFields=Supplerende egenskaber (evalueringer)
+JobsExtraFields=Supplerende egenskaber (jobprofiler)
+EvaluationsExtraFields=Supplerende egenskaber (kompetencevurderinger)
 NeedBusinessTravels=Har brug for forretningsrejser
 NoDescription=Ingen beskrivelse
 TheJobProfileHasNoSkillsDefinedFixBefore=Den evaluerede jobprofil for denne medarbejder har ingen færdigheder defineret. Tilføj venligst færdighed(er), slet og genstart evalueringen.
+PDFStandardHrmEvaluation=Standardskabelon til at generere et PDF-dokument til en kompetencevurdering

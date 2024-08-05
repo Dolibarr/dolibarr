@@ -47,7 +47,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects

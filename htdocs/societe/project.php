@@ -55,7 +55,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
 
 $object = new Societe($db);
