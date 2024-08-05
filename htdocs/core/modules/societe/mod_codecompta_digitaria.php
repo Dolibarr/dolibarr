@@ -253,9 +253,9 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 					}
 
 					if ($type == 'supplier') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, $widthsupplier - $a)).$i;
+						$this->code = $prefix.strtoupper((int) substr($codetouse, 0, $widthsupplier - $a)).$i;
 					} elseif ($type == 'customer') {
-						$this->code = $prefix.strtoupper(substr($codetouse, 0, $widthcustomer - $a)).$i;
+						$this->code = $prefix.strtoupper((int) substr($codetouse, 0, $widthcustomer - $a)).$i;
 					}
 					$disponibility = $this->checkIfAccountancyCodeIsAlreadyUsed($db, $this->code, $type);
 
