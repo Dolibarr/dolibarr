@@ -4,7 +4,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
- * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -2988,13 +2988,15 @@ class Ticket extends CommonObject
 				// Set status back to "In progress" if not set yet, but only if internal user and not a private message
 				// Or set status to "In progress" if the client has answered and if the ticket has started
 				// So we are sure to leave the STATUS_DRAFT, STATUS_NEED_INFO.
-				if ((empty(getDolGlobalInt('TICKET_SET_NEED_MORE_INFO_ON_SENDING_MESSAGE')) && $object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
+				if (empty(getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER')) && ($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
 					($object->status > self::STATUS_IN_PROGRESS && $public_area)
 				) {
 					$object->setStatut($object::STATUS_IN_PROGRESS);
 				}
-				if ((!empty(getDolGlobalInt('TICKET_SET_NEED_MORE_INFO_ON_SENDING_MESSAGE')) && $object->status != self::STATUS_NEED_MORE_INFO && !$user->socid && !$private)) {
-					$object->setStatut($object::STATUS_NEED_MORE_INFO);
+
+				$resultat = getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER');
+				if ((!empty(getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER')) && !$user->socid && !$private)) {
+					$object->setStatut($resultat);
 				}
 
 				return 1;

@@ -174,7 +174,7 @@ if ($action == 'updateMask') {
 	}
 
 	$param_status = GETPOST('TICKET_SET_STATUS_ON_ANSWER');
-	$res = dolibarr_set_const($db, 'TICKET_SET_STATUS_ON_ANSWER', $statuslist, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TICKET_SET_STATUS_ON_ANSWER', $param_status, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
