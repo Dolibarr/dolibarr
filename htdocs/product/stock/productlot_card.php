@@ -40,15 +40,20 @@ global $conf, $db, $langs, $user;
 $langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
-$id = GETPOSTINT('id');
-$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-// Initialize technical objects
+$id = GETPOSTINT('id');
+$lineid = GETPOSTINT('lineid');
+$batch = GETPOST('batch', 'alpha');
+$productid = GETPOSTINT('productid');
+$ref = GETPOST('ref', 'alpha'); // ref is productid_batch
+
+// Initialize a technical objects
 $object = new Productlot($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('productlotcard', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -71,10 +76,6 @@ if (empty($action) && empty($id) && empty($ref)) {
 	$action = 'view';
 }
 
-$batch = GETPOST('batch', 'alpha');
-$productid = GETPOSTINT('productid');
-$ref = GETPOST('ref', 'alpha'); // ref is productid_batch
-
 $search_entity = GETPOSTINT('search_entity');
 $search_fk_product = GETPOSTINT('search_fk_product');
 $search_batch = GETPOST('search_batch', 'alpha');
@@ -87,7 +88,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id || $ref) {
 	if ($ref) {
 		$tmp = explode('_', $ref);
@@ -104,7 +105,7 @@ if ($id || $ref) {
 	}
 }
 
-// Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
+// Initialize a technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productlotcard', 'globalcard'));
 
 
@@ -394,7 +395,7 @@ $formfile = new FormFile($db);
 $title = $langs->trans("ProductLot");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_card');
 
 $res = $object->fetch_product();
 if ($res > 0 && $object->product) {
@@ -483,6 +484,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_banner_tab($object, 'id', $linkback, $shownav, 'rowid', 'batch', $morehtmlref);
 
 	print '<div class="fichecenter">';
+	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
 
@@ -542,7 +544,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-
+	print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';

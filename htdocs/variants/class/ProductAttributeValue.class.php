@@ -2,6 +2,7 @@
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  * Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,17 +41,6 @@ class ProductAttributeValue extends CommonObjectLine
 	public $table_element = 'product_attribute_value';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
@@ -85,10 +75,35 @@ class ProductAttributeValue extends CommonObjectLine
 		'value' => array('type' => 'varchar(255)', 'label' => 'Value', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'help' => "", 'showoncombobox' => 1,),
 		'position' => array('type' => 'integer', 'label' => 'Rank', 'enabled' => 1, 'visible' => 0, 'default' => '0', 'position' => 200, 'notnull' => 1,),
 	);
+
+	/**
+	 * ID of the ProductAttributeValue
+	 * @var int
+	 */
 	public $id;
+
+	/**
+	 * ID of the parent attribute (ex: ID of the attribute "COLOR")
+	 * @var int
+	 */
 	public $fk_product_attribute;
+
+	/**
+	 * Reference of the ProductAttributeValue (ex: "BLUE_1" or "RED_3")
+	 * @var string
+	 */
 	public $ref;
+
+	/**
+	 * Label of the ProductAttributeValue (ex: "Dark blue" or "Chili Red")
+	 * @var string
+	 */
 	public $value;
+
+	/**
+	 * Sorting position of the ProductAttributeValue
+	 * @var int
+	 */
 	public $position;
 
 	/**
@@ -101,6 +116,9 @@ class ProductAttributeValue extends CommonObjectLine
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 		$this->entity = $conf->entity;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -262,8 +280,8 @@ class ProductAttributeValue extends CommonObjectLine
 	 *
 	 * @param 	int 	$prodattr_id	 	Product attribute id
 	 * @param 	bool 	$only_used 			Fetch only used attribute values
-	 * @param	int		$returnonlydata		0: return object, 1: return only data
-	 * @return 	ProductAttributeValue[]		Array of object
+	 * @param	int<0,1>	$returnonlydata		0: return object, 1: return only data
+	 * @return 	ProductAttributeValue[]|stdClass[]	Array of object
 	 */
 	public function fetchAllByProductAttribute($prodattr_id, $only_used = false, $returnonlydata = 0)
 	{

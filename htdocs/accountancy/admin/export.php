@@ -197,7 +197,7 @@ print '<input type="hidden" name="action" value="update">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans('Options').'</td>';
+print '<td colspan="2">'.$langs->trans('ExportOptions').'</td>';
 print "</tr>\n";
 
 $num = count($main_option);
@@ -207,7 +207,7 @@ if ($num) {
 
 		// Param
 		$label = $langs->trans($key);
-		print '<td width="50%">'.$label.'</td>';
+		print '<td>'.dol_escape_htmltag($label).'</td>';
 
 		// Value
 		print '<td>';
@@ -216,55 +216,29 @@ if ($num) {
 	}
 }
 
-print "</table>\n";
-
-print "<br>\n";
-
-/*
- * Export model
- */
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Modelcsv").'</td>';
-print '</tr>';
-
-
 print '<tr class="oddeven">';
-print '<td width="50%">'.$langs->trans("Selectmodelcsv").'</td>';
+print '<td>'.$langs->trans("Selectmodelcsv").'</td>';
 if (!$conf->use_javascript_ajax) {
 	print '<td class="nowrap">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 } else {
 	print '<td>';
-	$listmodelcsv = $accountancyexport->getType();
-	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listmodelcsv, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
-
+	$listofexporttemplates = $accountancyexport->getType(1);
+	print $form->selectarray("ACCOUNTING_EXPORT_MODELCSV", $listofexporttemplates, getDolGlobalString('ACCOUNTING_EXPORT_MODELCSV'), 0, 0, 0, '', 0, 0, 0, '', '', 1);
 	print '</td>';
 }
-print "</td></tr>";
-print "</table>";
+print "</tr>";
 
-print "<br>\n";
-
-/*
- *  Parameters
- */
 
 $num2 = count($model_option);
 if ($num2) {
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
-	print "</tr>\n";
-
 	foreach ($model_option as $key) {
 		print '<tr class="oddeven value">';
 
 		// Param
 		$label = $key['label'];
-		print '<td width="50%">'.$langs->trans($label).'</td>';
+		print '<td>'.$langs->trans($label).'</td>';
 
 		// Value
 		print '<td>';

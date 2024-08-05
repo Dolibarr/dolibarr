@@ -6,6 +6,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2778,9 +2779,9 @@ function migrate_project_task_actors($db, $langs, $conf)
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
  * @param	string		$table			Table name
- * @param	int			$fk_source		Id of element source
+ * @param	string		$fk_source		Id of element source (name of field)
  * @param	string		$sourcetype		Type of element source
- * @param	int			$fk_target		Id of element target
+ * @param	string		$fk_target		Id of element target
  * @param	string		$targettype		Type of element target
  * @return	void
  */
@@ -4134,7 +4135,7 @@ function migrate_delete_old_files($db, $langs, $conf)
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
 		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete) || preg_match('/\*/', $filetodelete)) {
 			//print "Process file ".$filetodelete."\n";
-			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
+			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, 0);
 			if (!$result) {
 				$langs->load("errors");
 				print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile", DOL_DOCUMENT_ROOT.$filetodelete);

@@ -35,7 +35,7 @@ DYNAMIC_KEYS_FILE=${TMP}/dynamic_keys
 MISSING_AND_UNUSED_FILE=${TMP}/missing_and_unused
 MISSING_FILE=${TMP}/missing
 UNUSED_FILE=${TMP}/unused
-EXPECTED_REGEX='(Country..|Language_.._..|MonthVeryShort\d\d|PaperFormat.*|ProfId\d(..)?|unit.*)'
+EXPECTED_REGEX='(Country..|ExportDataset_.*|Language_.._..|MonthVeryShort\d\d|PaperFormat.*||Permission.*|ProfId\d(..)?|unit.*)'
 DYNAMIC_KEYS_SRC_FILE=${MYDIR}/dynamic_translation_keys.lst
 EXCLUDE_KEYS_SRC_FILE=${MYDIR}/ignore_translation_keys.lst
 DUPLICATE_KEYS_SRC_FILE=${MYDIR}/duplicate_translation_keys.lst
@@ -50,9 +50,11 @@ GREP_OPTS="${GREP_OPTS} --exclude=*.sw? --exclude=*.json"
 # Note: using 'git grep' to restrict to version controlled files
 #       and more flexible globbing.
 
-# TODO/to ignore:
-#        transnoentities(), transnoentitiesnoconv(),
-#        formSetup->newItem()
+if [ "$1" == "--help" ]; then
+	echo "----- sanity_check_trans_missing_unused.sh -----"
+	echo "Usage: sanity_check_trans_missing_unused.sh (--help) (--showunused)"
+	exit;
+fi
 
 exit_code=0
 
@@ -71,11 +73,15 @@ sort -u \
 #
 EXTRACT_STR=""
 JOIN_STR=""
-for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' 'formSetup->newItem' ; do
+for t in '->trans' '->transnoentities' '->transnoentitiesnoconv' '->newItem' '->buttonsSaveCancel'; do
 	MATCH_STR="$MATCH_STR$JOIN_STR$t"
 	EXTRACT_STR="$EXTRACT_STR$JOIN_STR(?<=${t}\\([\"'])([^\"']+)(?=[\"']\$)"
 	JOIN_STR="|"
 done
+
+#echo "MATCH_STR=$MATCH_STR"
+#echo "EXTRACT_STR=$EXTRACT_STR"
+#echo "Generate the file EXPECTED_FILE=${EXPECTED_FILE} (contains autodetected dynamic trans and declared dynamic trans)"
 
 {
 	# Find static strings that are translated in the sources (comments stripped)
@@ -112,75 +118,82 @@ if [ 0 = 1 ] ; then
 fi
 
 
-# Produce reports on STDOUT.
-# Some output is already compatible with message extraction for github annotation (logToCs.py)
-# # Produce reports on STDOUT.
+# Produce reports on STDOUT. It generates the files with missing and unused entries with format
+# < xxx
+# > yyy
 # Some output is already compatible with message extraction for github annotation (logToCs.py)
 #
+
 diff "${AVAILABLE_FILE}" "${EXPECTED_FILE}" \
 	| grep -E "^[<>]" \
 	| grep -v -P "^< ${EXPECTED_REGEX}$" \
 	| sort \
 	> "${MISSING_AND_UNUSED_FILE}"
 
-if [ -s "${MISSING_AND_UNUSED_FILE}" ] ; then
-	echo "##[group]List Apparently Unused Translations (<) and Missing Translations (>)"
-	echo
-	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
-	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"
-	echo "##   so that they are ignored for this report."
-	echo "## :warning: Unused Translations may also be commented in the code"
-	echo "##   You can add such 'disabled' keys to $(basename "$EXCLUDE_KEYS_SRC_FILE")"
-	echo "##   so that they are ignored for this report."
-	echo
-	cat "${MISSING_AND_UNUSED_FILE}"
-	echo "##[endgroup]"
-	echo
-fi
-
+rm -f "${UNUSED_FILE}.grep" >/dev/null 2>&1
 sed -n 's@< \(.*\)@^\1\\s*=@p' \
 	< "${MISSING_AND_UNUSED_FILE}" \
 	> "${UNUSED_FILE}.grep"
 
-# Too many results, git grep is slow
-#sed -n 's@> \(.*\)@trans.["'"'"']\1["'"'"'].@p' \
-#	< "${MISSING_AND_UNUSED_FILE}" \
-#	> "${MISSING_FILE}.grep"
-#
 
 # Prepare file with exact matches for use with `git grep`, supposing " quotes
 #
 REPL_STR=""
-for t in trans transnoentities transnoentitiesnoconv ; do
+for t in trans transnoentities transnoentitiesnoconv newItem buttonsSaveCancel; do
    REPL_STR="${REPL_STR}\n->${t}(\"\\1\","
    REPL_STR="${REPL_STR}\n->${t}('\\1',"
    REPL_STR="${REPL_STR}\n->${t}(\"\\1\")"
    REPL_STR="${REPL_STR}\n->${t}('\\1')"
 done
 
+rm -f "${MISSING_FILE}.grep" >/dev/null 2>&1
 sed -n 's@> \(.*\)'"@${REPL_STR}@p" \
 	< "${MISSING_AND_UNUSED_FILE}" \
 	| grep -v -E '^$' \
 	> "${MISSING_FILE}.grep"
 
 
+exit_code=0
 
-if [ -s "${UNUSED_FILE}.grep" ] ; then
-	exit_code=1
-
-	# Report unused translation in recognizable format
-	git grep -n --column -r -f "${UNUSED_FILE}.grep" -- "${LANG_DIR}"'/*.lang' \
-		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Not used, translated; @'
-fi
 
 if [ -s "${MISSING_FILE}.grep" ] ; then
-	exit_code=1
-
 	# Report missing translation in recognizable format
+
+	echo "##[group]List missing translations (used by code but not found into lang files) - Generate CTI errors"
+
 	git grep -n --column -r -F -f "${MISSING_FILE}.grep" -- ':*.php' ':*.html' \
 		| sort -t: -k 4 \
-		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @'
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@\1 Missing translation; @' > "${MISSING_FILE}.result"
+
+	if [ -s "${MISSING_FILE}.result" ] ; then
+		exit_code=1
+		cat "${MISSING_FILE}.result"
+	fi
+
+	echo "##[endgroup]"
+fi
+
+
+if [ -s "${UNUSED_FILE}.grep" ] ; then
+	#exit_code=1	# We do not consider adding new entries for future use as an error (even if ignore_translation_keys is not filled).
+
+	# Report unused translation in recognizable format
+
+	echo
+	echo "##[group]List Apparently Unused Translations (found into a lang file but not into code) - Does NOT generate CTI errors, only warnings"
+	echo "## :warning: Unused Translations may match ->trans(\$key.'SomeString')."
+	echo "##   You can add such dynamic keys to $(basename "$DYNAMIC_KEYS_SRC_FILE")"
+	echo "##   so that they are ignored for this report."
+	echo "## :warning: Unused Translations may also be commented in the code"
+	echo "##   You can add such 'disabled' keys to $(basename "$EXCLUDE_KEYS_SRC_FILE")"
+	echo "##   so that they are ignored for this report."
+
+	git grep -n --column -r -f "${UNUSED_FILE}.grep" -- "${LANG_DIR}"'/*.lang' \
+		| sort -t: -k 4 \
+		| sed 's@^\([^:]*:[^:]*:[^:]*:\)\s*@Warning Not used, translated; @'
+
+	echo "##[endgroup]"
+	echo
 fi
 
 
@@ -193,7 +206,7 @@ diff "${AVAILABLE_FILE_NODEDUP}" "${AVAILABLE_FILE}" \
 if [ -s "${DUPLICATE_KEYS_FILE}" ] ; then
 	exit_code=1
 	echo
-	echo "##[group]List Duplicate Keys"
+	echo "##[group]List Duplicate Keys - Generate CTI errors"
 	echo "## :warning:"
 	echo "##   Duplicate keys may be expected across language files."
 	echo "##   You may want to avoid them or they could be a copy/paste mistake."

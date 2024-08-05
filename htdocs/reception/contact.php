@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,8 @@ if ($action == 'addcontact' && $user->hasRight('reception', 'creer')) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), 'EN:Customers_Orders|FR:receptions_Clients|ES:Pedidos de clientes');
+$help_url = 'EN:Customers_Orders|FR:receptions_Clients|ES:Pedidos de clientes';
+llxHeader('', $langs->trans('Reception'), $help_url, '', 0, 0, '', '', '', 'mod-reception page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

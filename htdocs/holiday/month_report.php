@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2011       François Legastelois    <flegastelois@teclib.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+/* Copyright (C) 2007-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		François Legastelois		<flegastelois@teclib.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +40,12 @@ $action      = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
 $optioncss   = GETPOST('optioncss', 'aZ');
-$socid = 0;
+
 $id = GETPOSTINT('id');
 
 $search_ref         = GETPOST('search_ref', 'alphanohtml');
-$search_employee    = GETPOSTINT('search_employee');
-$search_type        = GETPOSTINT('search_type');
+$search_employee    = GETPOST('search_employee', "intcomma");
+$search_type        = GETPOST('search_type', "intcomma");
 $search_description = GETPOST('search_description', 'alphanohtml');
 
 $limit       = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -73,7 +74,11 @@ if ($user->socid > 0) {	// Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-$result = restrictedArea($user, 'holiday', $id, '');
+$result = restrictedArea($user, 'holiday', $id);
+
+if (!$user->hasRight('holiday', 'readall')) {
+	accessforbidden();
+}
 
 
 /*
@@ -143,8 +148,9 @@ $holidaystatic = new Holiday($db);
 $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
 
 $title = $langs->trans('CPTitreMenu');
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-month_report');
 
 $search_month = GETPOSTINT("remonth") ? GETPOSTINT("remonth") : date("m", time());
 $search_year = GETPOSTINT("reyear") ? GETPOSTINT("reyear") : date("Y", time());
@@ -194,7 +200,7 @@ if (!empty($search_ref)) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
 if (!empty($search_employee)) {
-	$param .= '&search_employee='.urlencode((string) ($search_employee));
+	$param .= '&search_employee='.urlencode($search_employee);
 }
 if (!empty($search_type)) {
 	$param .= '&search_type='.urlencode($search_type);

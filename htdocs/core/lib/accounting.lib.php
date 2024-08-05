@@ -30,14 +30,14 @@
  *	Check if a value is empty with some options
  *
  * @author	Michael - https://www.php.net/manual/fr/function.empty.php#90767
- * @param	mixed		$var			Value to test
+ * @param	?mixed		$var			Value to test
  * @param	boolean     $allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
  * @param	boolean     $allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
  * @return	boolean				  		True of False
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
 		return true;
 	}
 	return false;
@@ -175,12 +175,13 @@ function length_accounta($accounta)
  *	@param 	string				$description    Description
  *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into form
+ *	@param	array				$moreparam		Array with list of params to add into hidden fields of form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
+ *	@param	array				$moreoptions	Array with list of params to add to table
  *	@return	void
  */
-function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
+function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '', $moreoptions = array())
 {
 	global $langs;
 
@@ -253,6 +254,15 @@ function journalHead($nom, $variant, $period, $periodlink, $description, $buildd
 	print '<td>'.$langs->trans("ReportDescription").'</td>';
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
+
+
+	// more options
+	foreach ($moreoptions as $key => $value) {
+		print '<tr>';
+		print '<td>'.$langs->trans($key).'</td>';
+		print '<td colspan="3">'.$value.'</td>';
+		print '</tr>';
+	}
 
 	print '</table>';
 

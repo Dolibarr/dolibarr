@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2020-2023	Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +159,7 @@ $elementtype = 'product';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -392,7 +392,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire') || $fuser->hasRight('service', 'lire')) {
@@ -1029,7 +1029,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire')) {

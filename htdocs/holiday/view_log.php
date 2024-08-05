@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
+/* Copyright (C) 2007-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,10 +53,10 @@ $optioncss          = GETPOST('optioncss', 'aZ'); // Option for the css output (
 $search_id          = GETPOST('search_id', 'alphanohtml');
 $search_month       = GETPOSTINT('search_month');
 $search_year        = GETPOSTINT('search_year');
-$search_employee    = GETPOSTINT('search_employee');
-$search_validator   = GETPOSTINT('search_validator');
+$search_employee    = GETPOST('search_employee', "intcomma");
+$search_validator   = GETPOST('search_validator', "intcomma");
 $search_description = GETPOST('search_description', 'alphanohtml');
-$search_type        = GETPOSTINT('search_type');
+$search_type        = GETPOST('search_type', "intcomma");
 $search_prev_solde  = GETPOST('search_prev_solde', 'alphanohtml');
 $search_new_solde   = GETPOST('search_new_solde', 'alphanohtml');
 
@@ -80,7 +81,7 @@ if (!$sortorder) {
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday'));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
@@ -89,7 +90,7 @@ $hookmanager->initHooks(array('leavemovementlist')); // Note that conf->hooks_mo
 $arrayfields = array();
 $arrayofmassactions = array();
 
-if (empty($conf->holiday->enabled)) {
+if (!isModEnabled('holiday')) {
 	accessforbidden('Module not enabled');
 }
 
@@ -180,7 +181,9 @@ $holidaylogstatic = new stdClass();
 $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
 $title = $langs->trans('CPTitreMenu');
-llxHeader('', $title);
+$help_url = 'EN:Module_Holiday';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-view_log');
 
 $sqlwhere = '';
 
@@ -286,7 +289,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->rights->holiday->write);
+$newcardbutton = dolGetButtonTitle($langs->trans('MenuAddCP'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/holiday/card.php?action=create', '', $user->hasRight('holiday', 'write'));
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans('LogCP'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_hrm', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -311,7 +314,8 @@ $disabled = 0;
 $include = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';

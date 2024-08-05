@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +67,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
@@ -79,7 +81,7 @@ $permissiontodelete = $user->hasRight('resource', 'delete');
  */
 
 $hookmanager->initHooks(array('resource', 'resource_card', 'globalcard'));
-$parameters = array('resource_id'=>$id);
+$parameters = array('resource_id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -216,7 +218,8 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans($action == 'create' ? 'AddResource' : 'ResourceSingular');
-llxHeader('', $title, '');
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-resource page-card');
 
 $form = new Form($db);
 $formresource = new FormResource($db);
@@ -224,7 +227,7 @@ $formresource = new FormResource($db);
 if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 	if ($action == 'create') {
 		print load_fiche_titre($title, '', 'object_resource');
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 	} else {
 		$head = resource_prepare_head($object);
 		print dol_get_fiche_head($head, 'resource', $title, -1, 'resource');
@@ -256,13 +259,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '</td></tr>';
 
 		// Zip / Town
-		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
+		print '<tr><td>'.$form->editfieldkey('Zip', 'zipcode', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
 		print $formresource->select_ziptown($object->zip, 'zipcode', array('town', 'selectcountry_id', 'state_id'), 0, 0, '', 'maxwidth100');
 		print '</td>';
 		if ($conf->browser->layout == 'phone') {
 			print '</tr><tr>';
 		}
-		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"': '').'>';
+		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td'.($conf->browser->layout == 'phone' ? ' colspan="3"' : '').'>';
 		print $formresource->select_ziptown($object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 		print '</td></tr>';
@@ -302,7 +305,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor = new DolEditor('description', ($description ?: $object->description), '', '200', 'dolibarr_notes', false);
+		$doleditor = new DolEditor('description', ($description ?: $object->description), '', 200, 'dolibarr_notes', false);
 		$doleditor->Create();
 		print '</td></tr>';
 

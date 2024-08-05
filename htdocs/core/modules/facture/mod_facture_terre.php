@@ -21,7 +21,7 @@
 
 /**
  *  \file       htdocs/core/modules/facture/mod_facture_terre.php
- *  \ingroup    facture
+ *  \ingroup    invoice
  *  \brief      File containing class for numbering module Terre
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
@@ -75,7 +75,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	{
 		global $conf, $mysoc;
 
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 16.0 && $mysoc->country_code != 'FR') {
+		if (((float) getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) >= 16.0 && $mysoc->country_code != 'FR') {
 			$this->prefixinvoice = 'IN'; // We use correct standard code "IN = Invoice"
 			$this->prefixreplacement = 'IR';
 			$this->prefixdeposit = 'ID';

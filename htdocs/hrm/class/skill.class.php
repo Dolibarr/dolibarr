@@ -57,17 +57,6 @@ class Skill extends CommonObject
 	public $table_element_line = 'skilldet';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for skill. Must be the part after the 'object_' into object_skill.png
 	 */
 	public $picto = 'shapes';
@@ -126,7 +115,6 @@ class Skill extends CommonObject
 	public $rowid;
 	public $label;
 	public $description;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $required_level;
@@ -185,6 +173,9 @@ class Skill extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -408,7 +399,7 @@ class Skill extends CommonObject
 		$this->lines = array();
 		require_once __DIR__ . '/skilldet.class.php';
 		$skilldet = new Skilldet($this->db);
-		$this->lines = $skilldet->fetchAll('ASC', '', '', '', array('fk_skill' => $this->id), '');
+		$this->lines = $skilldet->fetchAll('ASC', '', 0, 0, '(fk_skill:=:'.$this->id.')');
 
 		if (is_array($this->lines)) {
 			return (count($this->lines) > 0) ? $this->lines : array();

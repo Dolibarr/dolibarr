@@ -49,7 +49,7 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancyclosure'));
 
 $object = new BookKeeping($db);
@@ -300,7 +300,7 @@ if (!empty($current_fiscal_period)) {
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
 if (empty($current_fiscal_period)) {
-	print $langs->trans('ErrorNoFiscalPeriodActiveFound');
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
 }
 
 if (isset($current_fiscal_period)) {

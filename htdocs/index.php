@@ -5,6 +5,8 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +34,7 @@ require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
-$_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ? GETPOST('mainmenu', 'aZ09') : 'home';
+$_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ? GETPOST('mainmenu', 'aZ09') : 'home';	// Keep this ?
 $action = GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('index'));
@@ -42,17 +44,21 @@ $hookmanager->initHooks(array('index'));
  * Actions
  */
 
+// Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
-if (in_array('fckeditor', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('export', $conf->modules)) $nbmodulesnotautoenabled--;
-if (in_array('import', $conf->modules)) $nbmodulesnotautoenabled--;
+$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+foreach ($listofmodulesautoenabled as $moduleautoenable) {
+	if (in_array($moduleautoenable, $conf->modules)) {
+		$nbmodulesnotautoenabled--;
+	}
+}
 
 // Check if company name is defined (first install)
-if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || !getDolGlobalString('MAIN_INFO_SOCIETE_NOM')) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
-if ($nbmodulesnotautoenabled <= getDolGlobalString('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only user module enabled
+if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only autoenabled modules (property ->enabled_bydefault in modules) are activated
 	header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
 	exit;
 }
@@ -105,6 +111,17 @@ if (getDolGlobalString('MAIN_MOTD')) {
 		print '</td></tr></table><br>';
 		print "\n<!-- End of welcome text -->\n";
 	}
+}
+
+/*
+ * Show specific warnings
+ */
+
+// Specific warning to propose to upgrade invoice situation to progressive mode
+if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {
+	$langs->loadLangs(array("admin"));
+	print info_admin($langs->trans("WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode", 'https://partners.dolibarr.org'));
+	//print "<br>";
 }
 
 /*
@@ -522,6 +539,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				if (!empty($groupElement['lang'])) {
 					$langs->load($groupElement['lang']);
 				}
+				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$groupName = $langs->trans($groupElement['groupName']);
 				$groupKeyLowerCase = strtolower($groupKey);
 

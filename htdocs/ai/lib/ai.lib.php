@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- * \file    ai/lib/ai.lib.php
+ * \file    htdocs/ai/lib/ai.lib.php
  * \ingroup ai
  * \brief   Library files with common functions for Ai
  */

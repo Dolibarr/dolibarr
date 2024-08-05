@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2021  Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2018       Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -50,12 +50,6 @@ class AccountingAccount extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'billr';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -168,6 +162,8 @@ class AccountingAccount extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS')).")"; // Used to add a filter in Form::showrefnav method
 	}
 
@@ -770,7 +766,6 @@ class AccountingAccount extends CommonObject
 			if ($factureDet->product_type == 1) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_l = getDolGlobalString('ACCOUNTING_SERVICE_' . $const_name . '_ACCOUNT');
-					// @phan-suppress-next-line PhanPluginRedundantAssignment
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
@@ -789,7 +784,6 @@ class AccountingAccount extends CommonObject
 			} elseif ($factureDet->product_type == 0) {
 				if ($buyer->country_code == $seller->country_code || empty($buyer->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 					$code_l = getDolGlobalString('ACCOUNTING_PRODUCT_' . $const_name . '_ACCOUNT');
-					// @phan-suppress-next-line PhanPluginRedundantAssignment
 					$suggestedaccountingaccountbydefaultfor = '';
 				} else {
 					if ($isSellerInEEC && $isBuyerInEEC && $factureDet->tva_tx != 0) {    // European intravat sale, but with a VAT
@@ -880,9 +874,9 @@ class AccountingAccount extends CommonObject
 				if ($factureDet->desc == "(DEPOSIT)" || $facture->type == $facture::TYPE_DEPOSIT) {
 					$accountdeposittoventilated = new self($this->db);
 					if ($type == 'customer') {
-						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
+						$result = $accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 					} elseif ($type == 'supplier') {
-						$result = $accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
+						$result = $accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 					}
 					if (isset($result) && $result < 0) {
 						return -1;
@@ -903,9 +897,9 @@ class AccountingAccount extends CommonObject
 					if ($facture->type == $facture::TYPE_CREDIT_NOTE && $invoiceSource->type == $facture::TYPE_DEPOSIT) {
 						$accountdeposittoventilated = new self($this->db);
 						if ($type == 'customer') {
-							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
+							$accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT'), 1);
 						} elseif ($type == 'supplier') {
-							$accountdeposittoventilated->fetch('', getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
+							$accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
 						$code_l = $accountdeposittoventilated->ref;
 						$code_p = '';

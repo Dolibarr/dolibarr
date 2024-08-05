@@ -22,7 +22,7 @@
 
 /**
  *	    \file       htdocs/commande/stats/index.php
- *      \ingroup    commande
+ *      \ingroup    order
  *		\brief      Page with customers or suppliers orders statistics
  */
 
@@ -40,6 +40,8 @@ $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
+
+$hookmanager->initHooks(array('orderstats', 'globalcard'));
 
 $usercanreadcustumerstatistic = $user->hasRight('commande', 'lire');
 $usercanreadsupplierstatistic = $user->hasRight('fournisseur', 'commande', 'lire');
@@ -71,6 +73,12 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
+}
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
@@ -291,7 +299,7 @@ if ($mode == 'supplier') {
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

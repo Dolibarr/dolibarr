@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2001-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2017-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2018-2021	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018		Charlene Benke			<charlie@patas-monkey.com>
- * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+/* Copyright (C) 2001-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2017-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2021	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,10 +47,11 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'paymentlist';
+$mode = GETPOST('mode', 'alpha');
 
-$facid = GETPOSTINT('facid');
-$socid = GETPOSTINT('socid');
-$userid = GETPOSTINT('userid');
+$facid = GETPOST('facid', 'int');
+$socid = GETPOST('socid', 'int');
+$userid = GETPOST('userid', 'int');
 
 $search_ref = GETPOST("search_ref", "alpha");
 $search_date_startday = GETPOSTINT('search_date_startday');
@@ -63,13 +64,14 @@ $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_s
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_company = GETPOST("search_company", 'alpha');
 $search_paymenttype = GETPOST("search_paymenttype");
-$search_account = GETPOSTINT("search_account");
+$search_account = GETPOST("search_account", 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
+$search_noteprivate = GETPOST("search_noteprivate");
 $search_status = GETPOST('search_status', 'intcomma');
 $search_sale = GETPOSTINT('search_sale');
 
-$mode = GETPOST('mode', 'alpha');
+
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -108,12 +110,13 @@ $arrayfields = array(
 	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled("bank"))),
 	'p.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 70, 'tooltip' => "ChequeOrTransferNumber"),
 	'p.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 80),
+	'p.note'			=> array('label' => "Comment", 'checked' => -1, 'position' => 85),
 	'p.statut'			=> array('label' => "Status", 'checked' => 1, 'position' => 90, 'enabled' => (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentlist'));
 $object = new Paiement($db);
 
@@ -158,6 +161,7 @@ if (empty($reshook)) {
 		$search_paymenttype = '';
 		$search_payment_num = '';
 		$search_company = '';
+		$search_noteprivate = '';
 		$search_status = '';
 		$option = '';
 		$toselect = array();
@@ -176,12 +180,14 @@ $accountstatic = new Account($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
 
-llxHeader('', $langs->trans('ListPayment'));
+$title = $langs->trans('ListPayment');
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 if (GETPOST("orphelins", "alpha")) {
 	// Payments not linked to an invoice. Should not happen. For debug only.
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.amount, p.statut, p.num_paiement as num_payment,";
-	$sql .= " c.code as paiement_code";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount, p.note as private_note";
+	$sql .= ", c.code as paiement_code";
 
 	$sqlfields = $sql; // $sql fields to remove for count total
 
@@ -199,7 +205,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount, p.note as note_private";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
@@ -264,8 +270,11 @@ if (GETPOST("orphelins", "alpha")) {
 	if ($search_company) {
 		$sql .= natural_search('s.nom', $search_company);
 	}
+	if ($search_noteprivate) {
+		$sql .= natural_search('p.note', $search_noteprivate);
+	}
 	// Search on sale representative
-	if ($search_sale && $search_sale != '-1') {
+	if ($search_sale && $search_sale != -1) {
 		if ($search_sale == -2) {
 			$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc)";
 		} elseif ($search_sale > 0) {
@@ -282,7 +291,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount";
+	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, p.note";
 	$sql .= ", c.code";
 	$sql .= ", ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.fk_accountancy_journal";
 	$sql .= ", s.rowid, s.nom, s.email";
@@ -333,6 +342,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
 
 if (GETPOST("orphelins")) {
 	$param .= '&orphelins=1';
@@ -373,8 +385,8 @@ if ($search_account) {
 if ($search_payment_num) {
 	$param .= '&search_payment_num='.urlencode($search_payment_num);
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
+if ($search_noteprivate) {
+	$param .= '&search_noteprivate='.urlencode($search_noteprivate);
 }
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -476,7 +488,7 @@ if (!empty($arrayfields['p.num_paiement']['checked'])) {
 // Filter: Bank account
 if (!empty($arrayfields['ba.label']['checked'])) {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth125');
 	print '</td>';
 }
 
@@ -484,6 +496,13 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 if (!empty($arrayfields['p.amount']['checked'])) {
 	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
+	print '</td>';
+}
+
+// Filter: Note
+if (!empty($arrayfields['p.note']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth150" type="text" name="search_noteprivate" value="'.dol_escape_htmltag($search_noteprivate).'">';
 	print '</td>';
 }
 
@@ -555,6 +574,10 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 	print_liste_field_titre($arrayfields['p.amount']['label'], $_SERVER["PHP_SELF"], "p.amount", '', $param, 'class="right"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['p.note']['checked'])) {
+	print_liste_field_titre($arrayfields['p.note']['label'], $_SERVER["PHP_SELF"], "p.note", '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print_liste_field_titre($arrayfields['p.statut']['label'], $_SERVER["PHP_SELF"], "p.statut", '', $param, 'class="right"', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -601,6 +624,7 @@ while ($i < $imaxinloop) {
 	$object->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 	$object->date = $db->jdate($objp->datep);
 	$object->amount = $objp->amount;
+	$object->note_private = $objp->note_private;
 
 	$companystatic->id = $objp->socid;
 	$companystatic->name = $objp->name;
@@ -750,6 +774,17 @@ while ($i < $imaxinloop) {
 				$totalarray['val']['amount'] = $objp->amount;
 			} else {
 				$totalarray['val']['amount'] += $objp->amount;
+			}
+		}
+
+		// Note
+		if (!empty($arrayfields['p.note']['checked'])) {
+			$firstline = dolGetFirstLineOfText($objp->note_private, 1);
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($firstline).'">';
+			print dolPrintHTML($firstline).'</span>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 

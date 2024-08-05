@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -107,10 +108,10 @@ print '<body>'."\n";
 
 $qualified = true;
 
+// TODO Replace with GETPOST
 if (!isset($_GET["sd"])) {
 	$_GET["sd"] = "00000000";
 }
-
 if (!isset($_GET["m"]) || !isset($_GET["y"])) {
 	$qualified = false;
 }
@@ -125,7 +126,6 @@ if (isset($_GET["m"]) && isset($_GET["y"])) {
 
 // If parameters provided, we show calendar
 if ($qualified) {
-	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
 	displayBox(GETPOSTINT("sd"), GETPOSTINT("m"), GETPOSTINT("y"));
 } else {
 	dol_print_error(null, 'ErrorBadParameters');
@@ -267,7 +267,7 @@ function displayBox($selectedDate, $month, $year)
 		echo "<td class=\"".$dayclass."\"";
 		echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",parseInt('".dol_print_date($thedate, "%m")."',10),".$mydate["mday"].",tradMonths)\"";
 		echo " onClick=\"dpClickDay(".$mydate["year"].",parseInt('".dol_print_date($thedate, "%m")."',10),".$mydate["mday"].",'".$langs->trans("FormatDateShortJavaInput")."')\"";
-		echo ">".sprintf("%02s", $mydate["mday"])."</td>";
+		echo ">".sprintf("%02d", $mydate["mday"])."</td>";
 		$cols++;
 
 		if (($mydate["wday"] + 1) % 7 == $startday) {
@@ -298,7 +298,7 @@ function displayBox($selectedDate, $month, $year)
 		if ($selDate) {
 			$tempDate = dol_getdate($selDate);
 			print $langs->trans("Month".$selectMonth)." ";
-			print sprintf("%02s", $tempDate["mday"]);
+			print sprintf("%02d", $tempDate["mday"]);
 			print ", ".$selectYear;
 		} else {
 			print "Click a Date";

@@ -108,7 +108,7 @@ class modCollab extends DolibarrModules
 		$r++;*/
 
 		// Main menu entries
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 		$this->menu[$r] = array(
 			'fk_menu' => '0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type' => 'top', // This is a Left menu entry

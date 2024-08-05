@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('expensereportindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
-
-// Security check
-$socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -62,9 +55,18 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "d.date_create";
+	$sortfield = "d.tms";
 }
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expensereport', '', '');
 
 
 /*
@@ -190,8 +192,6 @@ print '</div>';
 print '</div><div class="fichetwothirdright">';
 
 
-$max = 10;
-
 $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo, u.email, u.admin,";
@@ -223,7 +223,11 @@ if ($result) {
 	print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 	print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-	print '<th>&nbsp;</th>';
+	print '<th>';
+	print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+	print img_picto($langs->trans("FullList"), 'expensereport');
+	print '</a>';
+	print '</th>';
 	print '</tr>';
 	if ($num) {
 		$total_ttc = $totalam = $total = 0;
@@ -243,7 +247,7 @@ if ($result) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->login = $obj->login;
-			$userstatic->statut = $obj->user_status;
+			$userstatic->status = $obj->user_status;
 			$userstatic->photo = $obj->photo;
 
 			print '<tr class="oddeven">';

@@ -94,6 +94,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4c");
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("ProductCodeModel").'):</td>';
@@ -256,7 +257,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		} else {

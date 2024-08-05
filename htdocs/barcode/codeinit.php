@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,6 +87,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 					}
 
 					$modBarCodeThirdparty = new $file();
+					'@phan-var-force ModeleNumRefBarCode $module';
 					break;
 				}
 			}
@@ -182,7 +184,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					if ($file == $conf->global->BARCODE_PRODUCT_ADDON_NUM) {
+					if ($file == getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						try {
 							dol_include_once($dirroot.$file.'.php');
 						} catch (Exception $e) {
@@ -190,6 +192,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						}
 
 						$modBarCodeProduct = new $file();
+						'@phan-var-force ModeleNumRefBarCode $module';
 						break;
 					}
 				}
@@ -284,7 +287,7 @@ if ($action == 'initbarcodeproducts') {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("MassBarcodeInit"));
+llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
 print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';

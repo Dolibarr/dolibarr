@@ -3,7 +3,7 @@
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -318,14 +318,14 @@ class doc_generic_task_odt extends ModelePDFTask
 		global $conf;
 
 		return array(
-		'tasktime_rowid' => $tasktime['rowid'],
-		'tasktime_task_date' => dol_print_date($tasktime['task_date'], 'day'),
-		'tasktime_task_duration' => convertSecondToTime($tasktime['task_duration'], 'all'),
-		'tasktime_note' => $tasktime['note'],
-		'tasktime_fk_user' => $tasktime['fk_user'],
-		'tasktime_user_name' => $tasktime['name'],
-		'tasktime_user_first' => $tasktime['firstname'],
-		'tasktime_fullcivname' => $tasktime['fullcivname']
+			'tasktime_rowid' => $tasktime['rowid'],
+			'tasktime_task_date' => dol_print_date($tasktime['task_date'], 'day'),
+			'tasktime_task_duration' => convertSecondToTime($tasktime['task_duration'], 'all'),
+			'tasktime_note' => $tasktime['note'],
+			'tasktime_fk_user' => $tasktime['fk_user'],
+			'tasktime_user_name' => $tasktime['lastname'],
+			'tasktime_user_first' => $tasktime['firstname'],
+			'tasktime_fullcivname' => $tasktime['fullcivname']
 		);
 	}
 
@@ -765,7 +765,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				}
 
 				// Replace tags of lines for contacts
-				$sourcearray = array('internal', 'external');  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$sourcearray = array('internal', 'external');
 				$contact_arrray = array();
 				foreach ($sourcearray as $source) {
 					$contact_temp = $project->liste_contact(-1, $source);

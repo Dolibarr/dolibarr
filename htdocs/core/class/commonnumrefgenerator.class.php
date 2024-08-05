@@ -125,7 +125,6 @@ abstract class CommonNumRefGenerator
 	 */
 	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("NoDescription");
 	}
 

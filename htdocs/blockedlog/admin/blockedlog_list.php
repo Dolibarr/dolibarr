@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2017       ATM Consulting          <contact@atm-consulting.fr>
- * Copyright (C) 2017-2018  Laurent Destailleur     <eldy@destailleur.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
+ * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -305,7 +307,7 @@ if (GETPOST('withtab', 'alpha')) {
 }
 $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Inaltérable";
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
 $MAXLINES = 10000;
 
@@ -349,25 +351,25 @@ if ($search_fk_user > 0) {
 	$param .= '&search_fk_user='.urlencode($search_fk_user);
 }
 if ($search_startyear > 0) {
-	$param .= '&search_startyear='.urlencode($search_startyear);
+	$param .= '&search_startyear='.((int) $search_startyear);
 }
 if ($search_startmonth > 0) {
-	$param .= '&search_startmonth='.urlencode($search_startmonth);
+	$param .= '&search_startmonth='.((int) $search_startmonth);
 }
 if ($search_startday > 0) {
-	$param .= '&search_startday='.urlencode($search_startday);
+	$param .= '&search_startday='.((int) $search_startday);
 }
 if ($search_endyear > 0) {
-	$param .= '&search_endyear='.urlencode((string) ($search_endyear));
+	$param .= '&search_endyear='.((int) $search_endyear);
 }
 if ($search_endmonth > 0) {
-	$param .= '&search_endmonth='.urlencode((string) ($search_endmonth));
+	$param .= '&search_endmonth='.((int) $search_endmonth);
 }
 if ($search_endday > 0) {
-	$param .= '&search_endday='.urlencode((string) ($search_endday));
+	$param .= '&search_endday='.((int) $search_endday);
 }
 if ($search_showonlyerrors > 0) {
-	$param .= '&search_showonlyerrors='.urlencode((string) ($search_showonlyerrors));
+	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -436,12 +438,12 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150');
 print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth200', 1);
+print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth150', 1);
 print '</td>';
 
 // Ref

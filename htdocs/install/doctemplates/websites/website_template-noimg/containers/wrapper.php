@@ -1,5 +1,6 @@
 <?php
-// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
+
+// BEGIN PHP File wrapper.php used to download rss, logo, shared files - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
 if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 	die("Sample file for website module. Can't be called directly.");
@@ -14,7 +15,7 @@ $encoding = '';
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
-$entity = GETPOSTINT('entity') ?GETPOSTINT('entity') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
 $limit = GETPOSTINT('limit');
@@ -61,10 +62,10 @@ $attachment = true;
 if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
 }
-if (isset($_GET["attachment"])) {
+if (GETPOSTISSET("attachment")) {
 	$attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS_WEBSITE')) {
 	$attachment = false;
 }
 
@@ -115,6 +116,8 @@ if ($rss) {
 	if (is_array($arrayofblogs)) {
 		foreach ($arrayofblogs as $blog) {
 			$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
+			$blog->image = preg_replace('/__WEBSITE_KEY__/', $websitekey, $blog->image);
+
 			$eventarray[] = $blog;
 		}
 	}
@@ -152,7 +155,8 @@ if ($rss) {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($l);
 		$outputlangs->loadLangs(array("main", "other"));
-		$title = $desc = $outputlangs->transnoentities('LatestBlogPosts');
+		$title = $outputlangs->transnoentities('LatestBlogPosts').' - '.$website->virtualhost;
+		$desc = $title.($l ? ' ('.$l.')' : '');
 
 		// Create temp file
 		$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
@@ -182,13 +186,13 @@ if ($rss) {
 
 	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';

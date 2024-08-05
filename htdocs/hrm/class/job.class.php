@@ -52,17 +52,6 @@ class Job extends CommonObject
 	public $table_element = 'hrm_job';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for job. Must be the part after the 'object_' into object_job.png
 	 */
 	public $picto = 'technic';
@@ -119,7 +108,6 @@ class Job extends CommonObject
 	public $ref;
 	public $label;
 	public $description;
-	public $date_creation;
 
 	public $deplacement;
 	public $fk_user_creat;
@@ -176,6 +164,9 @@ class Job extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1110,11 +1101,6 @@ class JobLine extends CommonObjectLine
 	// We should have a field rowid, fk_job and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1122,5 +1108,7 @@ class JobLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

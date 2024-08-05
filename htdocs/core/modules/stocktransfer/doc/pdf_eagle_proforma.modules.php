@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet       <fmarcet@2byte.es>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2021 		Gauthier VERDOL 	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -27,12 +27,12 @@
  */
 
 /**
- *	\file       htdocs/core/modules/commande/doc/pdf_eagle_proforma.modules.php
- *	\ingroup    commande
- *	\brief      File of Class to generate PDF orders with template Eagle
+ *	\file       htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
+ *	\ingroup    order
+ *	\brief      File of Class to generate PDF orders with template Proforma
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to generate PDF orders with template Eagle
  */
-class pdf_eagle_proforma extends ModelePDFCommandes
+class pdf_eagle_proforma extends ModelePDFStockTransfer
 {
 	/**
 	 * @var DoliDB Database handler
@@ -86,7 +86,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		global $langs, $mysoc;
 
 		// Translations
-		$langs->loadLangs(array("main", "bills", "products"));
+		$langs->loadLangs(array("main", "bills", "products", "stocks"));
 
 		$this->db = $db;
 		$this->name = $langs->trans("StockTransferSheetProforma");
@@ -158,14 +158,15 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+		// Load translation files required by page
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
 
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
-			global $outputlangsbis;
+		global $outputlangsbis;
+		$outputlangsbis = null;
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
-			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
+			$outputlangsbis->loadLangs(array("main", "bills", "orders", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 		}
 
 		$nblines = is_array($object->lines) ? count($object->lines) : 0;
@@ -178,7 +179,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
 		$this->atleastonephoto = false;
-		if (getDolGlobalString('MAIN_GENERATE_ORDERS_WITH_PICTURE')) {
+		if (getDolGlobalString('MAIN_GENERATE_STOCKTRANSFER_WITH_PICTURE')) {
 			$objphoto = new Product($this->db);
 
 			for ($i = 0; $i < $nblines; $i++) {
@@ -261,14 +262,18 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
+				// Set nblines with the new facture lines content after hook
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
+
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
-				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
+				$default_font_size = pdf_getPDFFontSize($outputlangs);
 				$pdf->SetAutoPageBreak(1, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
+				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -276,7 +281,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+				if (!getDolGlobalString('MAIN_DISABLE_FPDI') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
@@ -286,10 +291,10 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("PdfOrderTitle"));
+				$pdf->SetSubject($outputlangs->transnoentities("StockTransferSheetProforma"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfOrderTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("StockTransfer"));
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -298,13 +303,14 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				/// Does we have at least one line with discount $this->atleastonediscount
-				foreach ($object->lines as $line) {
-					if ($line->remise_percent) {
-						$this->atleastonediscount = true;
-						break;
+				if (is_array($object->lines)) {
+					foreach ($object->lines as $line) {
+						if ($line->remise_percent) {
+							$this->atleastonediscount = true;
+							break;
+						}
 					}
 				}
-
 
 				// New page
 				$pdf->AddPage();
@@ -323,7 +329,8 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$tab_height = 130;
 
 				// Incoterm
-				if ($conf->incoterm->enabled) {
+				$height_incoterms = 0;
+				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
 						$tab_top -= 2;
@@ -338,6 +345,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
 
 						$tab_top = $nexY + 6;
+						$height_incoterms += 4;
 					}
 				}
 
@@ -561,8 +569,8 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -681,17 +689,13 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$tvaligne = $object->lines[$i]->total_tva;
 					}
 
+					/*
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
 					$localtax2ligne = $object->lines[$i]->total_localtax2;
 					$localtax1_rate = $object->lines[$i]->localtax1_tx;
 					$localtax2_rate = $object->lines[$i]->localtax2_tx;
 					$localtax1_type = $object->lines[$i]->localtax1_type;
 					$localtax2_type = $object->lines[$i]->localtax2_type;
-
-					// TODO remise_percent is an obsolete field for object parent
-					/*if ($object->remise_percent) $tvaligne -= ($tvaligne * $object->remise_percent) / 100;
-					if ($object->remise_percent) $localtax1ligne -= ($localtax1ligne * $object->remise_percent) / 100;
-					if ($object->remise_percent) $localtax2ligne -= ($localtax2ligne * $object->remise_percent) / 100;*/
 
 					$vatrate = (string) $object->lines[$i]->tva_tx;
 
@@ -726,6 +730,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 						$this->tva[$vatrate] = 0;
 					}
 					$this->tva[$vatrate] += $tvaligne;
+					*/
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
@@ -780,14 +785,10 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				}
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
-				// Affiche zone infos
-				// ! No paiement information for this model !
-				//$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs);
-
-				// Affiche zone totaux
+				// Display total area
 				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Pied de page
+				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
 					$pdf->AliasNbPages();
@@ -947,7 +948,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 
 					$pdf->SetXY($this->marge_gauche, $posy);
 					$pdf->SetFont('', 'B', $default_font_size - 3);
-					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->proprio), 0, 'L', 0);
+					$pdf->MultiCell(100, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $account->owner_name), 0, 'L', 0);
 					$posy = $pdf->GetY() + 1;
 
 					if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
@@ -1027,9 +1028,9 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		$index = 0;
 
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 		}
 
@@ -1177,7 +1178,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
 
 		// Show Draft Watermark
-		if ($object->statut == 0 && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
+		if ($object->statut == 0 && getDolGlobalString('STOCKTRANSFER_DRAFT_WATERMARK')) {
 			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', getDolGlobalString('COMMANDE_DRAFT_WATERMARK'));
 		}
 
@@ -1187,7 +1188,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		$w = 110;
 
 		$posy = $this->marge_haute;
-		$posx = $this->page_largeur - $this->marge_droite - 100;
+		$posx = $this->page_largeur - $this->marge_droite - $w;
 
 		$pdf->SetXY($this->marge_gauche, $posy);
 
@@ -1218,21 +1219,18 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			}
 		}
 
-		$pdf->SetFont('', 'B', $default_font_size + 3);
+		$pdf->SetDrawColor(128, 128, 128);
+
+		$posx = $this->page_largeur - $w - $this->marge_droite;
+		$posy = $this->marge_haute;
+
+		$pdf->SetFont('', 'B', $default_font_size + 2);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities($titlekey);
-		$pdf->MultiCell($w, 3, $title, '', 'R');
+		$title = $outputlangs->transnoentities("StockTransferSheet").' '.$object->ref;
+		$pdf->MultiCell($w, 4, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size);
-
-		$posy += 5;
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
-
-		$posy += 1;
-		$pdf->SetFont('', '', $default_font_size - 1);
+		$pdf->SetFont('', '', $default_font_size + 1);
 
 		// Date prévue depart
 		if (!empty($object->date_prevue_depart)) {
@@ -1264,6 +1262,13 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateReelleArrivee")." : ".dol_print_date($object->date_reelle_arrivee, "day", false, $outputlangs, true), '', 'R');
+		}
+
+		if (!empty($object->thirdparty->code_client)) {
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
 		if ($object->ref_client) {
@@ -1309,7 +1314,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$posy += 4;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $langs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->trans("SalesRepresentative")." : ".$usertmp->getFullName($langs), '', 'R');
 			}
 		}
 
@@ -1368,7 +1373,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posx, $posy - 5);
-			$pdf->MultiCell(66, 5, $outputlangs->transnoentities("Sender").":", 0, 'L');
+			$pdf->MultiCell($widthrecbox, 5, $outputlangs->transnoentities("Sender").":", 0, 'L');
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFillColor(230, 230, 230);
 			$pdf->MultiCell($widthrecbox, $hautcadre, "", 0, 'R', 1);
@@ -1403,17 +1408,18 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 				$thirdparty = $object->thirdparty;
 			}
 
+			$carac_client_name = '';
 			if (!empty($thirdparty)) {
 				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 			}
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), $usecontact, 'targetwithdetails', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), ($usecontact ? 1 : 0), 'targetwithdetails', $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
 			if ($this->page_largeur < 210) {
-				$widthrecbox = 84;
-			} // To work with US executive format
+				$widthrecbox = 84;	// To work with US executive format
+			}
 			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
 			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
@@ -1450,17 +1456,17 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
-	 *      @param	Translate	$outputlangs		Object lang for output
-	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	int								Return height of bottom margin including footer text
+	 *   	@param	TCPDF			$pdf     			PDF
+	 * 		@param	StockTransfer	$object				Object to show
+	 *      @param	Translate		$outputlangs		Object lang for output
+	 *      @param	int				$hidefreetext		1=Hide free text
+	 *      @return	int									Return height of bottom margin including footer text
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		// phpcs:enable
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'ORDER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'STOCKTRANSFER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
 
 
@@ -1530,7 +1536,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 		$rank = $rank + 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
@@ -1630,7 +1636,7 @@ class pdf_eagle_proforma extends ModelePDFCommandes
 			'width' => 26, // in mm
 			'status' => true,
 			'title' => array(
-				'textkey' => 'PMPValue'
+				'textkey' => 'TotalHTShort'
 			),
 			'border-left' => true, // add left line separator
 		);

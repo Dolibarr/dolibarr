@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2020      Tobias Sekan			<tobias.sekan@startmail.com>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +60,7 @@ $mode = GETPOST('mode', 'aZ');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_number = GETPOST('search_number', 'alpha');
-$search_status = GETPOST('search_status') ? GETPOST('search_status', 'alpha') : 'opened'; // 'all' or '' means 'opened'
+$search_status = GETPOST('search_status', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $search_category_list = "";
@@ -91,7 +93,7 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('bankaccountlist'));
@@ -212,10 +214,10 @@ if (!empty($extrafields->attributes[$object->table_element]['label']) && is_arra
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 $sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
-if ($search_status == 'opened') {
+if ($search_status === 'opened') {
 	$sql .= " AND clos = 0";
 }
-if ($search_status == 'closed') {
+if ($search_status === 'closed') {
 	$sql .= " AND clos = 1";
 }
 if ($search_ref != '') {
@@ -307,7 +309,7 @@ if ($resql) {
 
 
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -334,7 +336,7 @@ if ($search_label != '') {
 if ($search_number != '') {
 	$param .= '&search_number='.urlencode($search_number);
 }
-if ($search_status != '') {
+if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($show_files) {
@@ -343,7 +345,7 @@ if ($show_files) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -425,7 +427,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -705,7 +708,7 @@ foreach ($accounts as $key => $type) {
 			print '<td class="tdoverflowmax250">';
 			if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $objecttmp->account_number, 1);
+				$accountingaccount->fetch(0, $objecttmp->account_number, 1);
 				print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 				print '</span>';

@@ -210,7 +210,7 @@ class Salaries extends DolibarrApi
 		}
 
 		if ($salary->delete(DolibarrApiAccess::$user) < 0) {
-			throw new RestException(401, 'error when deleting salary');
+			throw new RestException(500, 'error when deleting salary');
 		}
 
 		return array(
@@ -391,7 +391,7 @@ class Salaries extends DolibarrApi
 	/*public function delete($id)
 	 {
 	 if (!DolibarrApiAccess::$user->hasRight('salaries', 'delete')) {
-	 throw new RestException(401);
+	 throw new RestException(403);
 	 }
 	 $paymentsalary = new PaymentSalary($this->db);
 	 $result = $paymentsalary->fetch($id);
@@ -400,7 +400,7 @@ class Salaries extends DolibarrApi
 	 }
 
 	 if ($paymentsalary->delete(DolibarrApiAccess::$user) < 0) {
-	 throw new RestException(401, 'error when deleting paymentsalary');
+	 throw new RestException(500, 'error when deleting paymentsalary');
 	 }
 
 	 return array(

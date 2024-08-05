@@ -3,6 +3,7 @@
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,13 +45,6 @@ class ImportCsv extends ModeleImports
 	public $id;
 
 	/**
-	 * @var string label
-	 */
-	public $label;
-
-	public $extension; // Extension of files imported by driver
-
-	/**
 	 * Dolibarr version of driver
 	 * @var string
 	 */
@@ -87,12 +81,12 @@ class ImportCsv extends ModeleImports
 	 */
 	public function __construct($db, $datatoimport)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		parent::__construct();
 		$this->db = $db;
 
-		$this->separator = (GETPOST('separator') ? GETPOST('separator') : (!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE));
+		$this->separator = (GETPOST('separator') ? GETPOST('separator') : getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE', ','));
 		$this->enclosure = '"';
 		$this->escape = '"';
 
@@ -102,6 +96,14 @@ class ImportCsv extends ModeleImports
 		$this->extension = 'csv'; // Extension for generated file by this driver
 		$this->picto = 'mime/other'; // Picto
 		$this->version = '1.34'; // Driver version
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+		if (versioncompare($this->phpmin, versionphparray()) > 0) {
+			dol_syslog("Module need a higher PHP version");
+			$this->error = "Module need a higher PHP version";
+			return;
+		}
 
 		// If driver use an external library, put its name here
 		$this->label_lib = 'Dolibarr';
@@ -361,7 +363,7 @@ class ImportCsv extends ModeleImports
 					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
 				}
 
-				// Define array to convert fields ('c.ref', ...) into column index (1, ...)
+				// Define an array to convert fields ('c.ref', ...) into column index (1, ...)
 				$arrayfield = array();
 				foreach ($sort_array_match_file_to_database as $key => $val) {
 					$arrayfield[$val] = ($key - 1);
@@ -672,7 +674,7 @@ class ImportCsv extends ModeleImports
 
 							// Test regexp
 							if (!empty($objimport->array_import_regex[0][$val]) && ($newval != '')) {
-								// If test is "Must exist in a field@table or field@table:..."
+								// If test regex string is "field@table" or "field@table:..." (means must exists into table ...)
 								$reg = array();
 								if (preg_match('/^(.+)@([^:]+)(:.+)?$/', $objimport->array_import_regex[0][$val], $reg)) {
 									$field = $reg[1];
@@ -785,22 +787,25 @@ class ImportCsv extends ModeleImports
 				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0])) {
 					// Loop on each hidden fields to add them into listfields/listvalues
 					foreach ($objimport->array_import_fieldshidden[0] as $tmpkey => $tmpval) {
-						if (!preg_match('/^'.preg_quote($alias, '/').'\./', $tmpkey)) {
+						if (!preg_match('/^' . preg_quote($alias, '/') . '\./', $tmpkey)) {
 							continue; // Not a field of current table
 						}
-						if ($tmpval == 'user->id') {
-							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
+						$keyfield = preg_replace('/^' . preg_quote($alias, '/') . '\./', '', $tmpkey);
+
+						if (in_array($keyfield, $listfields)) {		// avoid duplicates in insert
+							continue;
+						} elseif ($tmpval == 'user->id') {
+							$listfields[] = $keyfield;
 							$listvalues[] = ((int) $user->id);
 						} elseif (preg_match('/^lastrowid-/', $tmpval)) {
 							$tmp = explode('-', $tmpval);
 							$lastinsertid = (isset($last_insert_id_array[$tmp[1]])) ? $last_insert_id_array[$tmp[1]] : 0;
-							$keyfield = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
 							$listfields[] = $keyfield;
 							$listvalues[] = (int) $lastinsertid;
 							//print $tmpkey."-".$tmpval."-".$listfields."-".$listvalues."<br>";exit;
 						} elseif (preg_match('/^const-/', $tmpval)) {
 							$tmp = explode('-', $tmpval, 2);
-							$listfields[] = preg_replace('/^'.preg_quote($alias, '/').'\./', '', $tmpkey);
+							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
 						} elseif (preg_match('/^rule-/', $tmpval)) {
 							$fieldname = $tmpkey;

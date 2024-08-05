@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsmo'));
 
 // Load variable for pagination
@@ -73,6 +74,8 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_year = '';
 }
 
+$socid = 0;
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 
@@ -98,7 +101,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type));
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', 'mod-product page-stats_mo');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -124,7 +127,7 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
@@ -211,7 +214,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="liste_titre liste_titre_bydiv centpercent">';
 			print '<div class="divsearchfield">';
 			print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
-			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 			print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 			print '<div style="vertical-align: middle; display: inline-block">';
 			print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';

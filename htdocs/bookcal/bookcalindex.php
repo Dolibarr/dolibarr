@@ -44,8 +44,9 @@ if (isset($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$max = 5;
 $now = dol_now();
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -136,9 +137,6 @@ if ($user->hasRight('bookcal', 'availabilities', 'read') && isModEnabled('bookca
 
 print '</div><div class="fichetwothirdright">';
 
-
-$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
 
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject

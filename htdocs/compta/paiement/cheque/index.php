@@ -177,8 +177,8 @@ foreach ($arrayofpaymentmodetomanage as $val) {
 			print '<td class="nowraponall">'.$checkdepositstatic->getNomUrl(1).'</td>';
 			print '<td>'.dol_print_date($db->jdate($objp->db), 'day').'</td>';
 			print '<td class="nowraponall">'.$accountstatic->getNomUrl(1).'</td>';
-			print '<td class="right">'.$objp->nbcheque.'</td>';
-			print '<td class="right"><span class="amount">'.price($objp->amount).'</span></td>';
+			print '<td class="right">'.dol_escape_htmltag($objp->nbcheque).'</td>';
+			print '<td class="right"><span class="amount nowraponall">'.price($objp->amount).'</span></td>';
 			print '<td class="right">'.$checkdepositstatic->LibStatut($objp->status, 3).'</td>';
 
 			print '</tr>';

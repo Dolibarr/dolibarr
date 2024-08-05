@@ -243,14 +243,11 @@ function GetFoldersAndFiles($resourceType, $currentFolder)
  */
 function CreateFolder($resourceType, $currentFolder)
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sErrorNumber = '0';
 	$sErrorMsg = '';
 
 	if (isset($_GET['NewFolderName'])) {
-		$sNewFolderName = $_GET['NewFolderName'];
+		$sNewFolderName = GETPOST('NewFolderName');
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
 		if (strpos($sNewFolderName, '..') !== false) {
@@ -266,7 +263,7 @@ function CreateFolder($resourceType, $currentFolder)
 
 				switch ($sErrorMsg) {
 					case '':
-						$sErrorNumber = '0';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$sErrorNumber = '0';
 						break;
 					case 'Invalid argument':
 					case 'No such file or directory':
@@ -394,10 +391,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 						dol_syslog("connector.lib.php IsImageValid is ko");
 						@unlink($sFilePath);
 						$sErrorNumber = '202';
-					} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true) {
-						dol_syslog("connector.lib.php DetectHtml is ko");
-						@unlink($sFilePath);
-						$sErrorNumber = '202';
+					} else {
+						$detectHtml = DetectHtml($sFilePath);
+						if ($detectHtml === true || $detectHtml == -1) {
+							// Note that is is a simple test and not reliable. Security does not rely on this.
+							dol_syslog("connector.lib.php DetectHtml is ko");
+							@unlink($sFilePath);
+							$sErrorNumber = '202';
+						}
 					}
 				}
 			} else {
@@ -741,9 +742,6 @@ function IsAllowedCommand($sCommand)
  */
 function GetCurrentFolder()
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	$sCurrentFolder = isset($_GET['CurrentFolder']) ? GETPOST('CurrentFolder', '', 1) : '/';
 
 	// Check the current folder syntax (must begin and start with a slash).
@@ -957,8 +955,8 @@ function IsHtmlExtension($ext, $formExtensions)
  * Detect HTML in the first KB to prevent against potential security issue with
  * IE/Safari/Opera file type auto detection bug.
  *
- * @param string $filePath absolute path to file
- * @return bool|-1		Returns true if the file contains insecure HTML code at the beginning, or -1 if error
+ * @param 	string 	$filePath 	Absolute path to file
+ * @return 	bool|-1				Returns true if the file contains insecure HTML code at the beginning or false, or -1 if error
  */
 function DetectHtml($filePath)
 {

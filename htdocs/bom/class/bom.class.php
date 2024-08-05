@@ -59,16 +59,6 @@ class BOM extends CommonObject
 	public $table_element = 'bom_bom';
 
 	/**
-	 * @var int  Does bom support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for bom. Must be the part after the 'object_' into object_bom.png
 	 */
 	public $picto = 'bom';
@@ -163,11 +153,6 @@ class BOM extends CommonObject
 	 * @var string description
 	 */
 	public $description;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var integer|string date_valid
@@ -267,6 +252,9 @@ class BOM extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -701,7 +689,7 @@ class BOM extends CommonObject
 	 */
 	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
-		global $mysoc, $conf, $langs, $user;
+		global $user;
 
 		$logtext = "::updateLine bomid=$this->id, qty=$qty, qty_frozen=$qty_frozen, disable_stock_change=$disable_stock_change, efficiency=$efficiency";
 		$logtext .= ", import_key=$import_key";
@@ -781,8 +769,8 @@ class BOM extends CommonObject
 					$line->array_options[$key] = $array_options[$key];
 				}
 			}
-			if ($fk_default_workstation >= 0 && $line->fk_default_workstation != $fk_default_workstation) {
-				$line->fk_default_workstation = $fk_default_workstation;
+			if ($line->fk_default_workstation != $fk_default_workstation) {
+				$line->fk_default_workstation = ($fk_default_workstation > 0 ? $fk_default_workstation : 0);
 			}
 
 			$result = $line->update($user);
@@ -1531,8 +1519,8 @@ class BOM extends CommonObject
 	/**
 	 * Get Net needs by product
 	 *
-	 * @param array	$TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
+	 * @param array<int,array{qty:float,fk_unit:?int}>	$TNetNeeds	Array of ChildBom and infos linked to
+	 * @param float										$qty		qty needed (used as a factor to produce 1 unit)
 	 * @return void
 	 */
 	public function getNetNeeds(&$TNetNeeds = array(), $qty = 0)
@@ -1544,21 +1532,24 @@ class BOM extends CommonObject
 						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
 					}
 				} else {
-					if (empty($TNetNeeds[$line->fk_product])) {
-						$TNetNeeds[$line->fk_product] = 0;
+					if (empty($TNetNeeds[$line->fk_product]['qty'])) {
+						$TNetNeeds[$line->fk_product]['qty'] = 0.0;
 					}
-					$TNetNeeds[$line->fk_product] += $line->qty * $qty;
+					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
+					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
+					$TNetNeeds[$line->fk_product]['fk_unit'] = $line->fk_unit;
+					$TNetNeeds[$line->fk_product]['qty'] += $line->qty * $qty;
 				}
 			}
 		}
 	}
 
 	/**
-	 * Get Net needs Tree by product or bom
+	 * Get/add Net needs Tree by product or bom
 	 *
-	 * @param array $TNetNeeds Array of ChildBom and infos linked to
-	 * @param float	$qty       qty needed
-	 * @param int   $level     level of recursivity
+	 * @param array<int,array{product:array,bom:BOM,parentid:int,qty:float,level:int,fk_unit:?int}> 	$TNetNeeds 	Array of ChildBom and infos linked to
+	 * @param float		$qty       qty needed (used as a factor to produce 1 unit)
+	 * @param int   	$level     level of recursivity
 	 * @return void
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
@@ -1569,11 +1560,26 @@ class BOM extends CommonObject
 					foreach ($line->childBom as $childBom) {
 						$TNetNeeds[$childBom->id]['bom'] = $childBom;
 						$TNetNeeds[$childBom->id]['parentid'] = $this->id;
+						// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
+						// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
+						//$TNetNeeds[$childBom->id]['fk_unit'] = $line->fk_unit;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
 						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
 					}
 				} else {
+					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
+					// So if unit in bom is not the same than default, we must recalculate qty after units comparisons.
+					if (!isset($TNetNeeds[$this->id]['product'])) {
+						$TNetNeeds[$this->id]['product'] = array();
+					}
+					if (!isset($TNetNeeds[$this->id]['product'][$line->fk_product])) {
+						$TNetNeeds[$this->id]['product'][$line->fk_product] = array();
+					}
+					$TNetNeeds[$this->id]['product'][$line->fk_product]['fk_unit'] = $line->fk_unit;
+					if (!isset($TNetNeeds[$this->id]['product'][$line->fk_product]['qty'])) {
+						$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] = 0.0;
+					}
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['qty'] += $line->qty * $qty;
 					$TNetNeeds[$this->id]['product'][$line->fk_product]['level'] = $level;
 				}
@@ -1678,14 +1684,14 @@ class BOMLine extends CommonObjectLine
 	public $table_element = 'bom_bomline';
 
 	/**
-	 * @var int  Does bomline support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @see CommonObjectLine
 	 */
-	public $ismultientitymanaged = 0;
+	public $parent_element = 'bom';
 
 	/**
-	 * @var int  Does bomline support extrafields ? 0=No, 1=Yes
+	 * @see CommonObjectLine
 	 */
-	public $isextrafieldmanaged = 1;
+	public $fk_parent_attribute = 'fk_bom';
 
 	/**
 	 * @var string String with name of icon for bomline. Must be the part after the 'object_' into object_bomline.png
@@ -1778,6 +1784,18 @@ class BOMLine extends CommonObjectLine
 	public $efficiency;
 
 	/**
+	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
+	 * @see measuringUnitString()
+	 * @see getLabelOfUnit()
+	 */
+	public $fk_unit;
+
+	/**
+	 * @var int Service Workstation
+	 */
+	public $fk_default_workstation;
+
+	/**
 	 * @var int position of line
 	 */
 	public $position;
@@ -1803,18 +1821,6 @@ class BOMLine extends CommonObjectLine
 	 */
 	public $childBom = array();
 
-	/**
-	 * @var int|null                ID of the unit of measurement (rowid in llx_c_units table)
-	 * @see measuringUnitString()
-	 * @see getLabelOfUnit()
-	 */
-	public $fk_unit;
-
-	/**
-	 * @var int Service Workstation
-	 */
-	public $fk_default_workstation;
-
 
 
 	/**
@@ -1824,9 +1830,13 @@ class BOMLine extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

@@ -48,12 +48,6 @@ class IntracommReport extends CommonObject
 	 */
 	public $fk_element = 'fk_intracommreport';
 
-	/**
-	 * 0 = No test on entity, 1 = Test with field entity, 2 = Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
 	public $picto = 'intracommreport';
 
 	/**
@@ -106,6 +100,8 @@ class IntracommReport extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->exporttype = 'deb';
 	}
 
@@ -150,7 +146,7 @@ class IntracommReport extends CommonObject
 	 * @param string		$mode 				'O' for create, R for regenerate (Look always 0 meant toujours 0 within the framework of XML exchanges according to documentation)
 	 * @param string		$type 				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 * @param string		$period_reference	Period of reference
-	 * @return string|false|0					Return a well-formed XML string based on SimpleXML element, false or 0 if error
+	 * @return string|false						Return a well-formed XML string based on SimpleXML element, false or 0 if error
 	 */
 	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
@@ -201,7 +197,7 @@ class IntracommReport extends CommonObject
 		if (!empty($res)) {
 			return $e->asXML();
 		} else {
-			return 0;
+			return false;
 		}
 	}
 
@@ -211,7 +207,7 @@ class IntracommReport extends CommonObject
 	 * @param int		$period_year		Year of declaration
 	 * @param int		$period_month		Month of declaration
 	 * @param string	$type_declaration	Declaration type by default - 'introduction' or 'expedition' (always 'expedition' for Des)
-	 * @return string|false|0				Return a well-formed XML string based on SimpleXML element, false or 0 if error
+	 * @return string|false					Return a well-formed XML string based on SimpleXML element, false or 0 if error
 	 */
 	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
@@ -233,7 +229,7 @@ class IntracommReport extends CommonObject
 		if (!empty($res)) {
 			return $e->asXML();
 		} else {
-			return 0;
+			return false;
 		}
 	}
 

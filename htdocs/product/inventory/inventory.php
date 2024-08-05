@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
@@ -89,7 +90,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -290,14 +291,14 @@ if (empty($reshook)) {
 				$resultupdate = 0;
 
 				if (GETPOST("id_".$lineid, 'alpha') != '') {		// If a value was set ('0' or something else)
-					$qtytoupdate = price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
+					$qtytoupdate = (float) price2num(GETPOST("id_".$lineid, 'alpha'), 'MS');
 					$result = $inventoryline->fetch($lineid);
 					if ($qtytoupdate < 0) {
 						$result = -1;
 						setEventMessages($langs->trans("FieldCannotBeNegative", $langs->transnoentitiesnoconv("RealQty")), null, 'errors');
 					}
 					if ($result > 0) {
-						$inventoryline->qty_stock = price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
+						$inventoryline->qty_stock = (float) price2num(GETPOST('stock_qty_'.$lineid, 'alpha'), 'MS');	// The new value that was set in as hidden field
 						$inventoryline->qty_view = $qtytoupdate;	// The new value we want
 						$inventoryline->pmp_real = price2num(GETPOST('realpmp_'.$lineid, 'alpha'), 'MS');
 						$inventoryline->pmp_expected = price2num(GETPOST('expectedpmp_'.$lineid, 'alpha'), 'MS');
@@ -360,7 +361,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';*/
 
 	if (GETPOST('addline', 'alpha')) {
-		$qty = (GETPOST('qtytoadd') != '' ? price2num(GETPOST('qtytoadd', 'MS')) : null);
+		$qty = (GETPOST('qtytoadd') != '' ? ((float) price2num(GETPOST('qtytoadd'), 'MS')) : null);
 		if ($fk_warehouse <= 0) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
@@ -412,7 +413,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Clear var
-				$_POST['batch'] = '';
+				$_POST['batch'] = '';		// TODO Replace this with a var
 				$_POST['qtytoadd'] = '';
 			}
 		}
@@ -430,7 +431,7 @@ $formproduct = new FormProduct($db);
 
 $help_url = '';
 
-llxHeader('', $langs->trans('Inventory'), $help_url);
+llxHeader('', $langs->trans('Inventory'), $help_url, '', 0, 0, '', '', '', 'mod-product page-inventory_inventory');
 
 // Part to show record
 if ($object->id <= 0) {
@@ -1016,7 +1017,7 @@ if ($resql) {
 	$num = $db->num_rows($resql);
 
 	if (!empty($limit != 0) || $num > $limit || $page) {
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], '&id='.$object->id.$paramwithsearch, ($num >= $limit), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], '&id='.$object->id.$paramwithsearch, ($num >= $limit ? 1 : 0), '<li class="pagination"><span>' . $langs->trans("Page") . ' ' . ($page + 1) . '</span></li>', '', $limit);
 	}
 
 	$i = 0;
@@ -1120,9 +1121,7 @@ if ($resql) {
 
 				//PMP Real
 				print '<td class="right">';
-
-
-				if (!empty($obj->pmp_real)) {
+				if (!empty($obj->pmp_real) || (string) $obj->pmp_real === '0') {
 					$pmp_real = $obj->pmp_real;
 				} else {
 					$pmp_real = $product_static->pmp;
@@ -1346,6 +1345,7 @@ function updateTotalValuation() {
 		maximumFractionDigits: currencyFractionDigits
 	}));
 }
+
 
 </script>
 	<?php

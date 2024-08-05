@@ -53,7 +53,7 @@ if (empty($usedolheader)) {
 	<!-- Includes for JQuery (Ajax library) -->
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
-	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1) ? '?dol_use_jmobile=1&dol_optimize_smallscreen=1' : ''; ?>" />
+	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo (GETPOST("dol_use_jmobile") == 1) ? '?dol_use_jmobile=1&dol_optimize_smallscreen=1' : ''; ?>" />
 	<!-- Includes JS for JQuery -->
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
 	<!-- migration fixes for removed Jquery functions -->

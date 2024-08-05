@@ -208,7 +208,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -284,7 +284,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -359,7 +359,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);

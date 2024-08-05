@@ -254,7 +254,14 @@ if ($action == 'add') {
 		$actioncomm->fk_bookcal_calendar = $id;
 		$actioncomm->userownerid = $calendar->visibility;
 		$actioncomm->contact_id = $contact->id;
-		$actioncomm->socpeopleassigned = [$contact->id];
+		$actioncomm->socpeopleassigned = [
+			$contact->id => [
+				'id' => $contact->id,
+				'mandatory' => 0,
+				'answer_status' => 0,
+				'transparency' =>0,
+			]
+		];
 
 		$result = $actioncomm->create($user);
 		if ($result < 0) {

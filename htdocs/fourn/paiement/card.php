@@ -3,6 +3,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *    \file       htdocs/fourn/paiement/card.php
- *    \ingroup    facture, fournisseur
+ *    \ingroup    invoice, fournisseur
  *    \brief      Tab to show a payment of a supplier invoice
  *    \remarks    Fichier presque identique a compta/paiement/card.php
  */
@@ -49,11 +50,11 @@ $socid = 0;
 // Initialize objects
 $object = new PaiementFourn($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');	// This also test permission on read invoice
 
@@ -309,6 +310,7 @@ if ($result > 0) {
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
 				$facturestatic->statut = $objp->status;
+				$facturestatic->status = $objp->status;
 				$facturestatic->alreadypaid = -1; // unknown
 
 				print '<tr class="oddeven">';
@@ -368,7 +370,7 @@ if ($result > 0) {
 		if ($user->socid == 0 && $object->statut == 0 && $action == '') {
 			if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")))
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate"))) {
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Valid').'</a>';
+				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=validate&token='.newToken().'">'.$langs->trans('Valid').'</a>';
 			}
 		}
 	}

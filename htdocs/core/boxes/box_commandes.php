@@ -20,7 +20,7 @@
 
 /**
  *		\file       htdocs/core/boxes/box_commandes.php
- *		\ingroup    commande
+ *		\ingroup    order
  *		\brief      Widget for latest sale orders
  */
 
@@ -72,7 +72,10 @@ class box_commandes extends ModeleBoxes
 		$societestatic = new Societe($this->db);
 		$userstatic = new User($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerOrders", $max));
+		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerOrders", $max);
+		$this->info_box_head = array(
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/commande/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
 		if ($user->hasRight('commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";

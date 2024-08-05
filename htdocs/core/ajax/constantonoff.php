@@ -72,6 +72,9 @@ if (!empty($action) && !empty($name)) {
 		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
 	} elseif ($action == 'del') {
 		dolibarr_del_const($db, $name, $entity);
+		if ($entity == 1) {	// Sometimes the param was saved in both entity 0 and 1. When we work on master entity, we should clean also if entity is 0
+			dolibarr_del_const($db, $name, 0);
+		}
 	}
 } else {
 	http_response_code(403);

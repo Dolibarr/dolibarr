@@ -5,7 +5,8 @@
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$show_files = GETPOSTINT('show_files');
+//$show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'aZ09');
@@ -49,7 +50,7 @@ $mode = GETPOST('mode', 'aZ');
 $id = GETPOSTINT('id');
 
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
-$search_categ = GETPOSTINT("search_categ");
+$search_categ = GETPOST("search_categ", 'intcomma');
 $search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
@@ -57,8 +58,8 @@ $search_task_ref = GETPOST('search_task_ref');
 $search_task_label = GETPOST('search_task_label');
 $search_task_description = GETPOST('search_task_description');
 $search_task_ref_parent = GETPOST('search_task_ref_parent');
-$search_project_user = GETPOSTINT('search_project_user');
-$search_task_user = GETPOSTINT('search_task_user');
+$search_project_user = GETPOST('search_project_user', 'intcomma');
+$search_task_user = GETPOST('search_task_user', 'intcomma');
 $search_task_progress = GETPOST('search_task_progress');
 $search_task_budget_amount = GETPOST('search_task_budget_amount');
 $search_societe = GETPOST('search_societe');
@@ -107,7 +108,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tasklist';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Task($db);
 $hookmanager->initHooks(array('tasklist'));
 $extrafields = new ExtraFields($db);
@@ -155,20 +156,20 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
+	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 50),
 	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => 0, 'position' => 70),
-	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 80),
-	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 80),
+	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 75),
 	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 80),
 	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 100),
 	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 101),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => 1, 'position' => 151),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'position' => 152),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'csslist' => 'tdoverflowmax125', 'position' => 200),
+	's.nom' => array('label' => "ThirdParty", 'checked' => -1, 'csslist' => 'tdoverflowmax125', 'position' => 200),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'csslist' => 'tdoverflowmax125', 'position' => 201),
 	'p.fk_statut' => array('label' => "ProjectStatus", 'checked' => 1, 'position' => 205),
 	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 302),
 	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 303),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 304),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => -1, 'position' => 304),
 	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 305),
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 306),
 	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 307),
@@ -264,9 +265,6 @@ if (empty($reshook)) {
 if (empty($search_projectstatus) && $search_projectstatus == '') {
 	$search_projectstatus = 1;
 }
-
-
-
 
 /*
  * View
@@ -598,7 +596,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-project project-tasks page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -705,8 +703,8 @@ foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$parameters = array('param' => &$param);
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -746,7 +744,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create', '', $permissiontocreate);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/tasks.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/projet/tasks/list.php'), '', $permissiontocreate);
 
 
 // Show description of content
@@ -818,7 +816,7 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_TASK_LIST') && isModEna
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->transnoentities('CustomersProspectsCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 1);
+	$categoriesArr = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 3);
 	$categoriesArr[-2] = '- '.$langs->trans('NotCategorized').' -';
 	$moreforfilter .= Form::multiselectarray('search_category_customer_list', $categoriesArr, $searchCategoryCustomerList, 0, 0, 'minwidth300', 0, 0, '', 'category', $tmptitle);
 	$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_customer_operator" name="search_category_customer_operator" value="1"'.($searchCategoryCustomerOperator == 1 ? ' checked="checked"' : '').'/>';
@@ -837,7 +835,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -853,14 +852,14 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print $searchpicto;
 	print '</td>';
 }
-if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
-	print '</td>';
-}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'" size="4">';
+	print '</td>';
+}
+if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_task_ref_parent" value="'.dol_escape_htmltag($search_task_ref_parent).'" size="4">';
 	print '</td>';
 }
 if (!empty($arrayfields['t.label']['checked'])) {
@@ -986,6 +985,7 @@ print '</tr>'."\n";
 
 $totalarray = array(
 	'nbfield' => 0,
+	'type' => [],
 	'val' => array(
 		't.planned_workload' => 0,
 		't.duration_effective' => 0,
@@ -999,8 +999,10 @@ $totalarray = array(
 	'totalbilledfield' => 0,
 	'totalbudget_amountfield' => 0,
 	'totalbudgetamount' => 0,
+	'totalbudget' => 0,
 	'totaltobill' => 0,
 	'totalbilled' => 0,
+	'totalizable' => [],
 );
 
 // Fields title label
@@ -1011,12 +1013,12 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
-	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
+	print_liste_field_titre($arrayfields['t.fk_task_parent']['label'], $_SERVER["PHP_SELF"], "t.fk_task_parent", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.label']['checked'])) {
@@ -1097,7 +1099,7 @@ $parameters = array(
 	'sortorder' => $sortorder,
 	'totalarray' => &$totalarray,
 );
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['t.datec']['checked'])) {
 	print_liste_field_titre($arrayfields['t.datec']['label'], $_SERVER["PHP_SELF"], "t.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
@@ -1127,7 +1129,7 @@ if (getDolGlobalString('PROJECT_TIMES_SPENT_FORMAT')) {
 // --------------------------------------------------------------------
 $i = 0;
 $savnbfield = $totalarray['nbfield'];
-$totalarray = array();
+
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
@@ -1141,7 +1143,6 @@ while ($i < $imaxinloop) {
 	$object->ref = $obj->ref;
 	$object->label = $obj->label;
 	$object->description = $obj->description;
-	$object->fk_statut = $obj->status;
 	$object->status = $obj->status;
 	$object->progress = $obj->progress;
 	$object->budget_amount = $obj->budget_amount;
@@ -1207,6 +1208,18 @@ while ($i < $imaxinloop) {
 					$totalarray['nbfield']++;
 				}
 			}
+			// Ref
+			if (!empty($arrayfields['t.ref']['checked'])) {
+				print '<td class="nowraponall">';
+				print $object->getNomUrl(1, 'withproject');
+				if ($object->hasDelay()) {
+					print img_warning("Late");
+				}
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
 			// Ref Parent
 			if (!empty($arrayfields['t.fk_task_parent']['checked'])) {
 				print '<td class="nowraponall">';
@@ -1221,18 +1234,6 @@ while ($i < $imaxinloop) {
 							print img_warning("Late");
 						}
 					}
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
-			}
-			// Ref
-			if (!empty($arrayfields['t.ref']['checked'])) {
-				print '<td class="nowraponall">';
-				print $object->getNomUrl(1, 'withproject');
-				if ($object->hasDelay()) {
-					print img_warning("Late");
 				}
 				print '</td>';
 				if (!$i) {
@@ -1351,7 +1352,7 @@ while ($i < $imaxinloop) {
 				if (!$i) {
 					$totalarray['pos'][$totalarray['nbfield']] = 't.planned_workload';
 				}
-				if (!isset($totalarray['val']['planned_workload'])) {
+				if (!isset($totalarray['val']['t.planned_workload'])) {
 					$totalarray['val']['t.planned_workload'] = 0;
 				}
 				$totalarray['val']['t.planned_workload'] += $obj->planned_workload;
@@ -1382,6 +1383,15 @@ while ($i < $imaxinloop) {
 					print '</i>';
 				} else {
 					print '</a>';
+				}
+				if (empty($arrayfields['t.progress_calculated']['checked'])) {
+					if ($obj->planned_workload || $obj->duration_effective) {
+						if ($obj->planned_workload) {
+							print ' <span class="opacitymedium">('.round(100 * $obj->duration_effective / $obj->planned_workload, 2).' %)</span>';
+						} else {
+							print $form->textwithpicto('', $langs->trans('WorkloadNotDefined'), 1, 'help');
+						}
+					}
 				}
 				print '</td>';
 				if (!$i) {
@@ -1448,9 +1458,9 @@ while ($i < $imaxinloop) {
 			// Progress summary
 			if (!empty($arrayfields['t.progress_summary']['checked'])) {
 				print '<td class="center">';
-				if ($obj->progress != '' && $obj->duration_effective) {
+				//if ($obj->progress != '') {
 					print getTaskProgressView($object, false, false);
-				}
+				//}
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -1581,6 +1591,8 @@ if (!empty($totalarray['totalizable']) && is_array($totalarray['totalizable'])) 
 	}
 }
 
+// Show total line
+//include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']) || isset($totalarray['totalprogress_calculatedfield'])
 	|| isset($totalarray['totaltobill']) || isset($totalarray['totalbilled']) || isset($totalarray['totalbudget'])) {
 	print '<tr class="liste_total">';
@@ -1588,11 +1600,23 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 	while ($i < $totalarray['nbfield']) {
 		$i++;
 		if ($i == 1) {
+			if ((is_null($limit) || $num < $limit) && empty($offset)) {
+				print '<td>'.$langs->trans("Total").'</td>';
+			} else {
+				print '<td>';
+				if (is_object($form)) {
+					print $form->textwithpicto($langs->trans("Total"), $langs->transnoentitiesnoconv("Totalforthispage"));
+				} else {
+					print $langs->trans("Totalforthispage");
+				}
+				print '</td>';
+			}
+			/*
 			if ($num < $limit && empty($offset)) {
 				print '<td class="left">'.$langs->trans("Total").'</td>';
 			} else {
 				print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
+			}*/
 		} elseif (isset($totalarray['totalplannedworkloadfield']) && $totalarray['totalplannedworkloadfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		} elseif (isset($totalarray['totaldurationeffectivefield']) && $totalarray['totaldurationeffectivefield'] == $i) {
@@ -1606,7 +1630,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		} elseif (isset($totalarray['totalbilledfield']) && $totalarray['totalbilledfield'] == $i) {
 			print '<td class="center">'.convertSecondToTime($totalarray['totalbilled'], $plannedworkloadoutputformat).'</td>';
 		} elseif (isset($totalarray['totalbudget_amountfield']) && $totalarray['totalbudget_amountfield'] == $i) {
-			print '<td class="center">'.price($totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
+			print '<td class="center">'.price((float) $totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {

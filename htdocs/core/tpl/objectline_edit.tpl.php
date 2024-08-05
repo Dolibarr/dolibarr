@@ -7,6 +7,8 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024 Alexandre Spangaro <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -130,7 +132,7 @@ $coldisplay++;
 	<?php
 	if (is_object($hookmanager)) {
 		$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOSTINT('fk_parent_line') : $line->fk_parent_line);
-		$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+		$parameters = array('line' => $line, 'fk_parent_line' => $fk_parent_line, 'var' => $var, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer);
 		$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 	}
 
@@ -171,7 +173,7 @@ $coldisplay++;
 
 	//Line extrafield
 	if (!empty($extrafields)) {
-		$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+		$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', 1, 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 			print $temps;
@@ -200,8 +202,8 @@ $coldisplay++;
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier' || $object->element == 'invoice_supplier_rec') {	// We must have same test in printObjectLines
 		$coldisplay++; ?>
 		<td class="right linecolrefsupplier"><input id="fourn_ref" name="fourn_ref" class="flat minwidth50 maxwidth100 maxwidth125onsmartphone" value="<?php echo GETPOSTISSET('fourn_ref') ? GETPOST('fourn_ref') : ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
-		<?php
-		print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
+					<?php
+					print '<input type="hidden" id="fournprice" name="fournprice"  class="" value="'.$line->fk_fournprice.'">';
 	}
 
 	// VAT Rate
@@ -220,7 +222,7 @@ $coldisplay++;
 	}
 
 	$coldisplay++;
-	print '<td class="right"><input type="text" class="flat right" size="5" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
+	print '<td class="right"><input type="text" class="flat right width50" id="price_ht" name="price_ht" value="'.(GETPOSTISSET('price_ht') ? GETPOST('price_ht', 'alpha') : (isset($line->pu_ht) ? price($line->pu_ht, 0, '', 0) : price($line->subprice, 0, '', 0))).'"';
 	if ($situationinvoicelinewithparent) {
 		print ' readonly';
 	}
@@ -228,16 +230,16 @@ $coldisplay++;
 
 	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency) {
 		$coldisplay++;
-		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_subprice" name="multicurrency_subprice" value="'.(GETPOSTISSET('multicurrency_subprice') ? GETPOST('multicurrency_subprice', 'alpha') : price($line->multicurrency_subprice)).'" /></td>';
 	}
 
 	if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 		$coldisplay++;
 		$upinctax = isset($line->pu_ttc) ? $line->pu_ttc : null;
 		if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) {
-			$upinctax = price2num($line->total_ttc / $line->qty, 'MU');
+			$upinctax = price2num($line->total_ttc / (float) $line->qty, 'MU');
 		}
-		print '<td class="right"><input type="text" class="flat right" size="5" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
+		print '<td class="right"><input type="text" class="flat right width50" id="price_ttc" name="price_ttc" value="'.(GETPOSTISSET('price_ttc') ? GETPOST('price_ttc') : (isset($upinctax) ? price($upinctax, 0, '', 0) : '')).'"';
 		if ($situationinvoicelinewithparent) {
 			print ' readonly';
 		}
@@ -297,10 +299,18 @@ $coldisplay++;
 	</td>
 
 	<?php
-	// Progession for situation invoices
+	// Progression for situation invoices
 	if ($object->situation_cycle_ref) {
 		$coldisplay++;
-		print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.(GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent).'" name="progress">%</td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$tmp_fieldv = (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent);
+			$old_fieldv = $line->get_allprev_progress($line->fk_facture);
+			$fieldv = $tmp_fieldv + $old_fieldv;
+
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="'.$fieldv.'" name="progress">%</td>';
+		} else {
+			print '<td class="nowrap right linecolcycleref"><input class="right" type="text" size="1" value="' . (GETPOSTISSET('progress') ? GETPOST('progress') : $line->situation_percent) . '" name="progress">%</td>';
+		}
 		$coldisplay++;
 		print '<td></td>';
 	}
@@ -310,13 +320,13 @@ $coldisplay++;
 			$coldisplay++; ?>
 		<td class="margininfos right">
 			<!-- For predef product -->
-			<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
+						<?php if (isModEnabled("product") || isModEnabled("service")) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
-			<?php } ?>
+						<?php } ?>
 			<!-- For free product -->
 			<input class="flat maxwidth75 right" type="text" id="buying_price" name="buying_price" class="hideobject" value="<?php echo(GETPOSTISSET('buying_price') ? GETPOST('buying_price') : price($line->pa_ht, 0, '', 0)); ?>">
 		</td>
-			<?php
+						<?php
 		}
 
 		if ($user->hasRight('margins', 'creer')) {
@@ -377,6 +387,7 @@ $coldisplay++;
 	if ($prefillDates) {
 		echo ' <span class="small"><a href="#" id="prefill_service_dates">'.$langs->trans('FillWithLastServiceDates').'</a></span>';
 	}
+
 	print '<script>';
 	if ($prefillDates) {
 		?>
@@ -405,10 +416,13 @@ $coldisplay++;
 			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
-		$res = $line->fetch_product();
-		if ($res  > 0) {
+		$res = 1;
+		if (!is_object($line->product)) {
+			$res = $line->fetch_product();		// fetch product to know its type and allow isMandatoryperiod()
+		}
+		if ($res > 0) {
 			if ($line->product->isMandatoryPeriod() && $line->product->isService()) {
-				print  'jQuery("#date_start").addClass("error");';
+				print  'jQuery("#date_start").addClass("inputmandatory");';	// Do not add tag "required", this block the cancel action when value not set
 			}
 		}
 	}
@@ -420,11 +434,13 @@ $coldisplay++;
 			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 
-		$res = $line->fetch_product();
-		// on doit fetch le product là !!! pour connaître le type
+		$res = 1;
+		if (!is_object($line->product)) {
+			$res = $line->fetch_product();		// fetch product to know its type and allow isMandatoryperiod()
+		}
 		if ($res  > 0) {
 			if ($line->product->isMandatoryperiod() && $line->product->isService()) {
-				print  'jQuery("#date_end").addClass("error");';
+				print  'jQuery("#date_end").addClass("inputmandatory");';	// Do not add tag "required", this block the cancel action when value not set
 			}
 		}
 	}

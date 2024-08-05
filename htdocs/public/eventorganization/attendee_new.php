@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +43,7 @@ if (!defined('NOIPCHECK')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -138,7 +140,7 @@ if ($securekeytocompare != $securekeyreceived) {
 // Load translation files
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -657,7 +659,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			$ishtml = dol_textishtml($texttosend); // May contain urls
 
-			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml);
+			$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, ($ishtml ? 1 : 0));
 
 			$result = $mailfile->sendfile();
 			if ($result) {
@@ -788,7 +790,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 		//print '<span class="opacitymedium">' . $langs->trans("FieldsWithAreMandatory", '*') . '</span><br>';
 		//print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-		print dol_get_fiche_head('');
+		print dol_get_fiche_head();
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function () {
@@ -916,7 +918,11 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 	}
 } else {
 	print '<br><br>';
-	print $langs->trans("ConferenceIsNotConfirmed");
+	if ($project->status == $project::STATUS_DRAFT) {
+		print $langs->trans("ConferenceIsNotConfirmed");
+	} else {
+		print $langs->trans("EventRegistrationAreClosed");
+	}
 	print '<br><br>';
 }
 

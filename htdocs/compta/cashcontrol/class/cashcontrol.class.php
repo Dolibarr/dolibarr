@@ -4,6 +4,7 @@
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,16 +40,6 @@ class CashControl extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'pos_cash_fence';
-
-	/**
-	 * @var int  Does pos_cash_fence support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does pos_cash_fence support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for pos_cash_fence. Must be the part after the 'object_' into object_pos_cash_fence.png
@@ -119,16 +110,7 @@ class CashControl extends CommonObject
 	public $cheque;
 	public $card;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 	public $fk_user_creat;
-
-	/**
-	 * @var integer|string $date_modification
-	 */
-	public $date_modification;
 
 	/**
 	 * @var integer|string $date_valid
@@ -150,6 +132,9 @@ class CashControl extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 	}
 
 

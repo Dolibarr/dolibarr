@@ -22,7 +22,7 @@
 
 /**
  *	\file       htdocs/core/modules/cheque/modules_chequereceipts.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File with parent class of check receipt document generators
  */
 

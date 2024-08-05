@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +88,7 @@ if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->reception->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptiondocument'));
 
 // Security check
@@ -122,7 +123,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-llxHeader('', $langs->trans('Reception'), '');
+llxHeader('', $langs->trans('Reception'), '', '', 0, 0, '', '', '', 'mod-reception page-card_documents');
 
 $form = new Form($db);
 

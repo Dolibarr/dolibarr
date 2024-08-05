@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +81,9 @@ if (empty($sortorder)) {
 
 $error = 0;
 
-$search_country_id = GETPOSTINT('search_country_id');
+$search_country_id = GETPOST('search_country_id', 'int');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -185,9 +187,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
+		$newid = 0;  // Initialise before if for static analysis
 		if ($tabrowid[$id]) {
 			// Get free id for insert
-			$newid = 0;
 			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") newid FROM ".$db->sanitize($tabname[$id]);
 			$result = $db->query($sql);
 			if ($result) {
@@ -274,13 +276,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
-
-//if (GETPOST('actioncancel', 'alpha'))
-//{
-//	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-//}
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	if ($tabrowid[$id]) {
@@ -362,6 +358,8 @@ $linkback = '';
 if ($id) {
 	$titre .= ' - '.$langs->trans($tablib[$id]);
 	$titlepicto = 'title_accountancy';
+} else {
+	$titlepicto = '';
 }
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
@@ -497,7 +495,7 @@ if ($id) {
 		// There is several pages
 		if ($num > $listlimit) {
 			print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 			print '</td></tr>';
 		}
 
@@ -688,11 +686,11 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- *  @param      array   $fieldlist      Array of fields
- *  @param      Object  $obj            If we show a particular record, obj is filled with record fields
- *  @param      string  $tabname        Name of SQL table
- *  @param      string  $context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
- *  @return     void
+ *  @param	string[]	$fieldlist      Array of fields
+ *  @param	Object		$obj            If we show a particular record, obj is filled with record fields
+ *  @param	string		$tabname        Name of SQL table
+ *  @param	string		$context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
+ *  @return	void
  */
 function fieldListJournal($fieldlist, $obj = null, $tabname = '', $context = '')
 {

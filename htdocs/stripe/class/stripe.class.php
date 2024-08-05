@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global e
 
 /**
  *	Stripe class
+ *  @TODO No reason to extends CommonObject
  */
 class Stripe extends CommonObject
 {
@@ -62,9 +63,13 @@ class Stripe extends CommonObject
 
 	/**
 	 * @var string
+	 * @deprecated Was used by createPaymentStripe only that is deprecated
 	 */
-	public $statut;
+	public $result;
 
+	/**
+	 * @var string
+	 */
 	public $type;
 
 	/**
@@ -1141,7 +1146,7 @@ class Stripe extends CommonObject
 
 	/**
 	 * Create charge.
-	 * This is called by page htdocs/stripe/payment.php and may be deprecated.
+	 * This was called by page htdocs/stripe/payment.php and may be deprecated.
 	 *
 	 * @param	int 	$amount									Amount to pay
 	 * @param	string 	$currency								EUR, GPB...
@@ -1154,6 +1159,7 @@ class Stripe extends CommonObject
 	 * @param	int		$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
 	 * @param	boolean	$capture								Set capture flag to true (take payment) or false (wait)
 	 * @return Stripe
+	 * @deprecated
 	 */
 	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status = 0, $usethirdpartyemailforreceiptemail = 0, $capture = true)
 	{
@@ -1351,7 +1357,7 @@ class Stripe extends CommonObject
 			if (isset($charge->id)) {
 			}
 
-			$return->statut = 'success';
+			$return->result = 'success';
 			$return->id = $charge->id;
 
 			if (preg_match('/pm_/i', $source)) {
@@ -1375,7 +1381,7 @@ class Stripe extends CommonObject
 			$body = $e->getJsonBody();
 			$err = $body['error'];
 
-			$return->statut = 'error';
+			$return->result = 'error';
 			$return->id = $err['charge'];
 			$return->type = $err['type'];
 			$return->code = $err['code'];

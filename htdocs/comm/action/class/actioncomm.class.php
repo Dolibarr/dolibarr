@@ -60,14 +60,9 @@ class ActionComm extends CommonObject
 	public $picto = 'action';
 
 	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var integer 0=Default
-	 *              1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
-	 *              2=Same than 1 but accept record if fksoc is empty
+	 * @var int<0,2> 0=Default
+	 *               1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
+	 *               2=Same than 1 but accept record if fksoc is empty
 	 */
 	public $restrictiononfksoc = 2;
 
@@ -126,23 +121,17 @@ class ActionComm extends CommonObject
 	public $label;
 
 	/**
-	 * @var string Agenda event label
-	 * @deprecated Use $label
-	 */
-	public $libelle;
-
-	/**
-	 * @var integer Date creation record (datec)
+	 * @var int Date creation record (datec)
 	 */
 	public $datec;
 
 	/**
-	 * @var integer Duration (duree)
+	 * @var int Duration (duree)
 	 */
 	public $duree;
 
 	/**
-	 * @var integer Date modification record (tms)
+	 * @var int Date modification record (tms)
 	 */
 	public $datem;
 
@@ -171,33 +160,33 @@ class ActionComm extends CommonObject
 	public $usermodid;
 
 	/**
-	 * @var integer Date action start (datep)
+	 * @var int Date action start (datep)
 	 */
 	public $datep;
 
 	/**
-	 * @var integer Date action end (datef)
+	 * @var int Date action end (datef)
 	 */
 	public $datef;
 
 	/**
-	 * @var integer This is date start action (datep) but modified to not be outside calendar view.
+	 * @var int This is date start action (datep) but modified to not be outside calendar view.
 	 */
 	public $date_start_in_calendar;
 
 	/**
-	 * @var integer This is date end action (datef) but modified to not be outside calendar view.
+	 * @var int This is date end action (datef) but modified to not be outside calendar view.
 	 */
 	public $date_end_in_calendar;
 
 	/**
-	 * @var integer Date action end (datep2)
+	 * @var int Date action end (datep2)
 	 */
 	public $datep2;
 
 	/**
 	 * @var int -1=Unknown duration
-	 * @deprecated
+	 * @deprecated Use ($datef - $datep)
 	 */
 	public $durationp = -1;
 
@@ -212,7 +201,7 @@ class ActionComm extends CommonObject
 	public $ponctuel;
 
 	/**
-	 * @var integer Percentage
+	 * @var int<-1,100> Percentage
 	 */
 	public $percentage;
 
@@ -232,7 +221,7 @@ class ActionComm extends CommonObject
 	public $priority;
 
 	/**
-	 * @var array<int,array{id:int,transparency:int}> 	Array of users
+	 * @var array<int,array{id:int,transparency:int<0,1>}> 	Array of users
 	 */
 	public $userassigned = array();
 
@@ -242,7 +231,7 @@ class ActionComm extends CommonObject
 	public $userownerid;
 
 	/**
-	 * @var int[] Array of contact ids
+	 * @var array<int,array{id:int,mandatory:int<0,1>,answer_status:int,transparency:int<0,1>}> Array of contact ids
 	 */
 	public $socpeopleassigned = array();
 
@@ -252,7 +241,7 @@ class ActionComm extends CommonObject
 	public $otherassigned = array();
 
 	/**
-	 * @var array	Array of reminders
+	 * @var array<int,ActionCommReminder>	Array of reminders
 	 */
 	public $reminders = array();
 
@@ -268,14 +257,14 @@ class ActionComm extends CommonObject
 
 
 	/**
-	 * @var Societe|null Company linked to action (optional)
+	 * @var ?Societe Company linked to action (optional)
 	 * @deprecated
 	 * @see $socid
 	 */
 	public $societe;
 
 	/**
-	 * @var Contact|null Contact linked to action (optional)
+	 * @var ?Contact Contact linked to action (optional)
 	 * @deprecated
 	 * @see $contact_id
 	 */
@@ -308,7 +297,7 @@ class ActionComm extends CommonObject
 	public $icalname;
 
 	/**
-	 * @var int<0,3> Ical color
+	 * @var string Ical color  (Hex value for color on 6 nibles)
 	 */
 	public $icalcolor;
 
@@ -318,7 +307,7 @@ class ActionComm extends CommonObject
 	public $extraparams;
 
 	/**
-	 * @var array Actions
+	 * @var array<int,array{id:int,type:string,actionparam:string,status:int}> Actions
 	 */
 	public $actions = array();
 
@@ -377,12 +366,21 @@ class ActionComm extends CommonObject
 	public $status;
 
 	/**
+	 * @var string IP address
+	 */
+	public $ip;
+
+	/*
 	 * Properties to manage the recurring events
 	 */
-	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same series */
-	public $recurrule;		/* Rule of recurring */
-	public $recurdateend;	/* Repeat until this date */
+	/** @var string	A string YYYYMMDDHHMMSS shared by allevent of same series */
+	public $recurid;
+	/** @var string Rule of recurring */
+	public $recurrule;
+	/** @var string Repeat until this date */
+	public $recurdateend;
 
+	/** @var int Duration of phone call when the event is a phone call */
 	public $calling_duration;
 
 
@@ -404,7 +402,6 @@ class ActionComm extends CommonObject
 
 	public $fields = array();
 
-
 	/**
 	 *      Constructor
 	 *
@@ -413,15 +410,17 @@ class ActionComm extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
 	 *    Add an action/event into database.
 	 *    $this->type_id OR $this->type_code must be set.
 	 *
-	 *    @param	User	$user      		Object user making action
-	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int 		        	Id of created event, < 0 if KO
+	 *    @param	User		$user      		Object user making action
+	 *    @param    int<0,1>	$notrigger		1 = disable triggers, 0 = enable triggers
+	 *    @return   int 			        	Id of created event, < 0 if KO
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -775,12 +774,12 @@ class ActionComm extends CommonObject
 	/**
 	 *  Load object from database
 	 *
-	 *  @param  int		$id     			Id of action to get
-	 *  @param  string	$ref    			Ref of action to get
-	 *  @param  string	$ref_ext			Ref ext to get
-	 *  @param	string	$email_msgid		Email msgid
-	 *  @param	int		$loadresources		1=Load also resources
-	 *  @return	int							Return integer <0 if KO, >0 if OK
+	 *  @param  int			$id     			Id of action to get
+	 *  @param  string		$ref    			Ref of action to get
+	 *  @param  string		$ref_ext			Ref ext to get
+	 *  @param	string		$email_msgid		Email msgid
+	 *  @param	int<0,1>	$loadresources		1=Load also resources
+	 *  @return	int<-1,1>						Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
@@ -926,7 +925,7 @@ class ActionComm extends CommonObject
 	/**
 	 *    Initialize $this->userassigned & this->socpeopleassigned array with list of id of user and contact assigned to event
 	 *
-	 *    @return   int				Return integer <0 if KO, >0 if OK
+	 *    @return   int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function fetchResources()
 	{
@@ -972,7 +971,7 @@ class ActionComm extends CommonObject
 	 *    Initialize this->userassigned array with list of id of user assigned to event
 	 *
 	 *    @param    bool    $override   Override $this->userownerid when empty. TODO This should be false by default. True is here to fix corrupted data.
-	 *    @return   int                 Return integer <0 if KO, >0 if OK
+	 *    @return   int<-1,1>           Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_userassigned($override = true)
 	{
@@ -1017,9 +1016,9 @@ class ActionComm extends CommonObject
 	/**
 	 *    Delete event from database
 	 *
-	 *    @param	User	$user			User making the delete
-	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int 					Return integer <0 if KO, >0 if OK
+	 *    @param	User		$user			User making the delete
+	 *    @param    int<0,1>	$notrigger		1 = disable triggers, 0 = enable triggers
+	 *    @return   int<-2,1> 					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1113,14 +1112,12 @@ class ActionComm extends CommonObject
 	 *    Update action into database
 	 *	  If percentage = 100, on met a jour date 100%
 	 *
-	 *    @param    User	$user			Object user making change
-	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
-	 *    @return   int     				Return integer <0 if KO, >0 if OK
+	 *    @param    User		$user			Object user making change
+	 *    @param    int<0,1>	$notrigger		1 = disable triggers, 0 = enable triggers
+	 *    @return   int<-2,1>   				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs, $conf, $hookmanager;
-
 		$error = 0;
 
 		// Clean parameters
@@ -1257,7 +1254,7 @@ class ActionComm extends CommonObject
 
 				if (!empty($this->socpeopleassigned)) {
 					$already_inserted = array();
-					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
+					foreach ($this->socpeopleassigned as $val) {
 						if (!is_array($val)) {	// For backward compatibility when val=id
 							$val = array('id' => $val);
 						}
@@ -1305,7 +1302,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
-	 *  @todo WARNING: This make a fetch on all records instead of making one request with a join.
+	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
@@ -1318,13 +1315,13 @@ class ActionComm extends CommonObject
 	 */
 	public function getActions($socid = 0, $fk_element = 0, $elementtype = '', $filter = '', $sortfield = 'a.datep', $sortorder = 'DESC', $limit = 0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $hookmanager;
 
 		$resarray = array();
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -1436,6 +1433,7 @@ class ActionComm extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
+			$response = null;  // Ensure the variable is defined
 			if (empty($load_state_board)) {
 				$agenda_static = new ActionComm($this->db);
 				$response = new WorkboardResponse();
@@ -1451,6 +1449,8 @@ class ActionComm extends CommonObject
 			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (empty($load_state_board)) {
+					'@phan-var-force WorkboardResponse $response
+					 @phan-var-force ActionComm $agenda_static';
 					$response->nbtodo++;
 					$agenda_static->datep = $this->db->jdate($obj->dp);
 					if ($agenda_static->hasDelay()) {
@@ -1515,8 +1515,8 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
-	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
+	 *  @param  int<0,7>	$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
+	 *  @param  int<0,1>	$hidenastatus   1=Show nothing if status is "Not applicable"
 	 *  @return string          		String with status
 	 */
 	public function getLibStatut($mode, $hidenastatus = 0)
@@ -1528,11 +1528,11 @@ class ActionComm extends CommonObject
 	/**
 	 *  Return label of action status
 	 *
-	 *  @param  int     $percent        Percent
-	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
-	 *  @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
-	 *  @param  int|string     $datestart      Date start of event
-	 *  @return string		    		Label
+	 *  @param  int<0,100>	$percent        Percent
+	 *  @param  int<0,7>	$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
+	 *  @param  int<0,1>	$hidenastatus   1=Show nothing if status is "Not applicable"
+	 *  @param  int|string	$datestart      Date start of event
+	 *  @return string			    		Label
 	 */
 	public function LibStatut($percent, $mode, $hidenastatus = 0, $datestart = '')
 	{
@@ -1563,7 +1563,7 @@ class ActionComm extends CommonObject
 
 		$statusType = 'status9';
 		if ($percent == -1 && !$hidenastatus) {
-			$statusType = 'status9';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$statusType = 'status9';
 		}
 		if ($percent == 0) {
 			$statusType = 'status1';
@@ -1580,13 +1580,14 @@ class ActionComm extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,title?:string,labeltype?:string,location?:string,transparency?:string,space?:string,mailtopic?:string,mailfrom?:string,mailto?:string,mailcc?:string,description?:string,note?:string,categories?:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $form;
+
 		$langs->load('agenda');
 
 		$datas = array();
@@ -1603,7 +1604,6 @@ class ActionComm extends CommonObject
 				$labeltype = $langs->trans('ActionAC_MANUAL');
 			}
 		}
-
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
 		if (!empty($this->ref)) {
 			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
@@ -1636,7 +1636,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b><br>';
+			$datas['description'] = '<br><hr>';
 			// Try to limit length of content
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
 			// Restrict height of content into the tooltip
@@ -1647,8 +1647,14 @@ class ActionComm extends CommonObject
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			$form = new Form($this->db);
-			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if (empty($form)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+			}
+			$tmpcategstring = $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if ($tmpcategstring) {
+				$datas['categories'] = '<br>'.$tmpcategstring;
+			}
 		}
 
 		return $datas;
@@ -1658,13 +1664,13 @@ class ActionComm extends CommonObject
 	 *  Return URL of event
 	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
 	 *
-	 *  @param	int		$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
-	 *  @param	int		$maxlength				Max number of characters into label. If negative, use the ref as label.
-	 *  @param	string	$classname				Force style class on a link
-	 *  @param	string	$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
-	 *  @param	int		$overwritepicto			1 = Overwrite picto with this one
-	 *  @param	int   	$notooltip		    	1 = Disable tooltip
-	 *  @param  int     $save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
+	 *  @param	int<0,2>	$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
+	 *  @param	int			$maxlength				Max number of characters into label. If negative, use the ref as label.
+	 *  @param	string		$classname				Force style class on a link
+	 *  @param	string		$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
+	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
+	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
+	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
@@ -1690,38 +1696,39 @@ class ActionComm extends CommonObject
 		}
 
 		$label = $this->label;
-		if (empty($label)) {
-			$label = $this->libelle; // For backward compatibility
-		}
 
 		$result = '';
 
 		// Set label of type
-		$labeltype = '';
-		if ($this->type_code) {
-			$langs->load("commercial");
-			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
-		}
-		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-			if ($this->type_code != 'AC_OTH_AUTO') {
-				$labeltype = $langs->trans('ActionAC_MANUAL');
-			}
-		}
+		$labeltype = $this->getTypeLabel(1);
 
 		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
+
+		$tooltip .= ' &nbsp; - &nbsp; '.$this->getTypePicto('pictofixedwidth paddingright valignmiddle').$labeltype;
 		if (!empty($this->ref)) {
 			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
 		if (!empty($label)) {
 			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
 		}
-		if (!empty($labeltype)) {
-			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
-		}
 		if (!empty($this->location)) {
 			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
-		if (isset($this->transparency)) {
+
+		$tooltip .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
+		if ($this->datef) {
+			$tmpa = dol_getdate($this->datep);
+			$tmpb = dol_getdate($this->datef);
+			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+					$tooltip .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
+				}
+			} else {
+				$tooltip .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
+			}
+		}
+
+		if ($this->datef && $this->datep != $this->datef && isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
 		if (!empty($this->email_msgid)) {
@@ -1740,7 +1747,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$tooltip .= '<br><hr>';
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
 			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
@@ -1851,10 +1858,8 @@ class ActionComm extends CommonObject
 	 *  @param	string		$titlealt			Title alt
 	 *  @return	string							HTML String
 	 */
-	public function getTypePicto($morecss = 'pictofixedwidth paddingright', $titlealt = '')
+	public function getTypePicto($morecss = 'pictofixedwidth paddingright valignmiddle', $titlealt = '')
 	{
-		global $conf;
-
 		$imgpicto = '';
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			$color = '';
@@ -1896,6 +1901,49 @@ class ActionComm extends CommonObject
 
 
 	/**
+	 *  Return label of type of event
+	 *
+	 *  @param	int		$mode			0=Mode short, 1=Mode long
+	 *  @return	string					HTML String
+	 */
+	public function getTypeLabel($mode = 0)
+	{
+		global $conf, $langs;
+
+		// If cache for array of types unknown, we load it
+		if (!empty($conf->cache['actioncommgetypelabel'])) {
+			$arraylist = $conf->cache['actioncommgetypelabel'];
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+			$caction = new CActionComm($this->db);
+			$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
+			$conf->cache['actioncommgetypelabel'] = $arraylist;
+		}
+
+		$labeltype = $this->type_code;
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
+			$labeltype = 'AC_OTH';
+		}
+		if (preg_match('/^TICKET_MSG/', $this->code)) {
+			$labeltype = $langs->trans("Message");
+		} else {
+			if (!empty($arraylist[$labeltype])) {
+				$labeltype = $arraylist[$labeltype];
+			}
+			if ($this->type_code == 'AC_OTH_AUTO' && ($this->type_code != $this->code) && $labeltype && !empty($arraylist[$this->code])) {
+				$labeltype .= ' - '.$arraylist[$this->code]; // Use code in priority over type_code
+			}
+		}
+
+		if ($this->type == 'systemauto' && $mode == 1) {
+			$labeltype .= ' ('.$langs->trans("auto").')';
+		}
+
+
+		return $labeltype;
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.
@@ -1903,7 +1951,7 @@ class ActionComm extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param  int[]|int 	$categories 	Category or categories IDs
-	 * @return int							Return integer <0 if KO, >0 if OK
+	 * @return int<-1,1>					Return integer <0 if KO, >0 if OK
 	 */
 	public function setCategories($categories)
 	{
@@ -1944,13 +1992,13 @@ class ActionComm extends CommonObject
 	/**
 	 * Export events from database into a cal file.
 	 *
-	 * @param string    $format         The format of the export 'vcal', 'ical/ics' or 'rss'
-	 * @param string    $type           The type of the export 'event' or 'journal'
-	 * @param integer   $cachedelay     Do not rebuild file if date older than cachedelay seconds
-	 * @param string    $filename       The name for the exported file.
-	 * @param array     $filters        Array of filters. Example array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
-	 * @param integer   $exportholiday  0 = don't integrate holidays into the export, 1 = integrate holidays into the export
-	 * @return integer                  -1 = error on build export file, 0 = export okay
+	 * @param string    $format         			The format of the export 'vcal', 'ical/ics' or 'rss'
+	 * @param string    $type           			The type of the export 'event' or 'journal'
+	 * @param integer   $cachedelay     			Do not rebuild file if date older than cachedelay seconds
+	 * @param string    $filename       			The name for the exported file.
+	 * @param array<string,int|string>	$filters	Array of filters. Example array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'actiontype'=>'systemauto', 'actioncode'=>'AC_PRODUCT_MODIFY', 'project'=>123, ...)
+	 * @param int<0,1>  $exportholiday  			0 = don't integrate holidays into the export, 1 = integrate holidays into the export
+	 * @return int<-1,1>                			-1 = error on build export file, 0 = export okay
 	 */
 	public function build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholiday = 0)
 	{
@@ -2006,19 +2054,19 @@ class ActionComm extends CommonObject
 			// Build event array
 			$eventarray = array();
 
-			if ($filters['module'] == 'project@eventorganization') {
+			if (!empty($filters['module']) && $filters['module'] == 'project@eventorganization') {
 				$sql = "SELECT p.rowid as id,";
 				$sql .= " p.date_start_event as datep,"; // Start
 				$sql .= " p.date_end_event as datep2,"; // End
 				$sql .= " p.datec, p.tms as datem,";
-				$sql .= " p.title as label, '' as code, p.note_private, p.note_public, 0 as type_id,";
+				$sql .= " p.title as label, '' as code, p.note_public, p.note_private, 0 as type_id,";
 				$sql .= " p.fk_soc,";
 				$sql .= " p.fk_user_creat as fk_user_author, p.fk_user_modif as fk_user_mod,";
 				$sql .= " 0 as fk_user_action,";
 				$sql .= " 0 as fk_contact, 100 as percentage,";
 				$sql .= " 0 as fk_element, '' as elementtype,";
 				$sql .= " 1 as priority, 0 as fulldayevent, p.location, 0 as transparency,";
-				$sql .= " u.firstname, u.lastname, u.email,";
+				$sql .= " u.firstname, u.lastname, '".$this->db->escape(getDolGlobalString("MAIN_INFO_SOCIETE_MAIL"))."' as email,";
 				$sql .= " s.nom as socname,";
 				$sql .= " 0 as type_id, '' as type_code, '' as type_label";
 				$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
@@ -2053,7 +2101,10 @@ class ActionComm extends CommonObject
 					if ($key == 'status') {
 						$sql .= " AND p.fk_statut = ".((int) $value);
 					}
+					// TODO Add filters on event code of meetings/talks only
 				}
+
+				$sql .= " ORDER by date_start_event";
 
 				$eventorganization = 'project';
 			} else {
@@ -2061,7 +2112,7 @@ class ActionComm extends CommonObject
 				$sql .= " a.datep,"; // Start
 				$sql .= " a.datep2,"; // End
 				$sql .= " a.datec, a.tms as datem,";
-				$sql .= " a.label, a.code, a.note as note_private, '' as note_public, a.fk_action as type_id,";
+				$sql .= " a.label, a.code, '' as note_public, a.note as note_private, a.fk_action as type_id,";
 				$sql .= " a.fk_soc,";
 				$sql .= " a.fk_user_author, a.fk_user_mod,";
 				$sql .= " a.fk_user_action,";
@@ -2081,7 +2132,7 @@ class ActionComm extends CommonObject
 				$sql .= $hookmanager->resPrint;
 
 				// We must filter on assignment table
-				if ($filters['logint']) {
+				if (!empty($filters['logint']) && $filters['logint']) {
 					$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 				}
 				$sql .= " WHERE a.fk_action = c.id";
@@ -2106,12 +2157,46 @@ class ActionComm extends CommonObject
 					if ($key == 'project') {
 						$sql .= " AND a.fk_project = ".(is_numeric($value) ? $value : 0);
 					}
-					if ($key == 'actiontype') {
-						$sql .= " AND c.type = '".$this->db->escape($value)."'";
-					}
-					if ($key == 'notactiontype') {
+					if ($key == 'notactiontype') {	// deprecated
 						$sql .= " AND c.type <> '".$this->db->escape($value)."'";
 					}
+					if ($key == 'actiontype') {	// 'system', 'systemauto', 'module', ...
+						$newvalue = $value;
+						$usenotin = 0;
+						if (preg_match('/^!/', $newvalue)) {
+							$newvalue = preg_replace('/^!/', '', $value);
+							$usenotin = 1;
+						}
+						$arraynewvalue = explode(',', $newvalue);
+						$newvalue = "";
+						foreach ($arraynewvalue as $tmpval) {
+							$newvalue .= ($newvalue ? "," : "")."'".$tmpval."'";
+						}
+						if ($usenotin) {
+							$sql .= " AND c.type NOT IN (".$this->db->sanitize($newvalue, 1).")";
+						} else {
+							$sql .= " AND c.type IN (".$this->db->sanitize($newvalue, 1).")";
+						}
+					}
+					if ($key == 'actioncode') {	// 'AC_COMPANY_CREATE', 'AC_COMPANY_MODIFY', ...
+						$newvalue = $value;
+						$usenotin = 0;
+						if (preg_match('/^!/', $newvalue)) {
+							$newvalue = preg_replace('/^!/', '', $value);
+							$usenotin = 1;
+						}
+						$arraynewvalue = explode(',', $newvalue);
+						$newvalue = "";
+						foreach ($arraynewvalue as $tmpval) {
+							$newvalue .= ($newvalue ? "," : "")."'".$tmpval."'";
+						}
+						if ($usenotin) {
+							$sql .= " AND a.code NOT IN (".$this->db->sanitize($newvalue, 1).")";
+						} else {
+							$sql .= " AND a.code IN (".$this->db->sanitize($newvalue, 1).")";
+						}
+					}
+
 					// We must filter on assignment table
 					if ($key == 'logint') {
 						$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
@@ -2124,7 +2209,7 @@ class ActionComm extends CommonObject
 							$condition = '<>';
 						}
 						$userforfilter = new User($this->db);
-						$result = $userforfilter->fetch('', $logina);
+						$result = $userforfilter->fetch(0, $logina);
 						if ($result > 0) {
 							$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
 						} elseif ($result < 0 || $condition == '=') {
@@ -2139,7 +2224,7 @@ class ActionComm extends CommonObject
 							$condition = '<>';
 						}
 						$userforfilter = new User($this->db);
-						$result = $userforfilter->fetch('', $logint);
+						$result = $userforfilter->fetch(0, $logint);
 						if ($result > 0) {
 							$sql .= " AND ar.fk_element = ".((int) $userforfilter->id);
 						} elseif ($result < 0 || $condition == '=') {
@@ -2165,6 +2250,11 @@ class ActionComm extends CommonObject
 
 				$sql .= " ORDER by datep";
 			}
+
+			if (!empty($filters['limit'])) {
+				$sql .= $this->db->plimit((int) $filters['limit']);
+			}
+
 			//print $sql;exit;
 
 			dol_syslog(get_class($this)."::build_exportfile select event(s)", LOG_DEBUG);
@@ -2193,7 +2283,11 @@ class ActionComm extends CommonObject
 					$duration = ($datestart && $dateend) ? ($dateend - $datestart) : 0;
 					$event['summary'] = $obj->label.($obj->socname ? " (".$obj->socname.")" : "");
 
-					$event['desc'] = $obj->note_private;
+					if (!empty($filters['module']) && $filters['module'] == 'project@eventorganization') {
+						$event['desc'] = $obj->note_public;
+					} else {
+						$event['desc'] = $obj->note_private;
+					}
 					$event['startdate'] = $datestart;
 					$event['enddate'] = $dateend; // Not required with type 'journal'
 					$event['duration'] = $duration; // Not required with type 'journal'
@@ -2205,13 +2299,13 @@ class ActionComm extends CommonObject
 					$event['category'] = $obj->type_label;
 					$event['email'] = $obj->email;
 
+					// Public URL of event
 					if ($eventorganization != '') {
-						// Define $urlwithroot
-						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-						$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-						//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-						$url = $urlwithroot.'/comm/action/card.php?id='.$obj->id;
-						$event['url'] = $url;
+						$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $obj->id).'&type=global&noregistration=1';
+						$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $obj->id), 'md5');
+						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+
+						$event['url'] = $link_subscription;
 					}
 
 					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
@@ -2288,8 +2382,8 @@ class ActionComm extends CommonObject
 						}
 
 						if (getDolGlobalString('AGENDA_EXPORT_FIX_TZ')) {
-							$timestampStart = $timestampStart - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
-							$timestampEnd   = $timestampEnd - ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampStart -= ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
+							$timestampEnd   -= ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600);
 						}
 
 						$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -2395,7 +2489,7 @@ class ActionComm extends CommonObject
 	 *  Used to build previews or test instances.
 	 *  id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	int >0 if ok
+	 *  @return	int<1,1>	 >0 if ok
 	 */
 	public function initAsSpecimen()
 	{
@@ -2486,7 +2580,7 @@ class ActionComm extends CommonObject
 	 *  @param	string	$type		Type of reminder 'browser' or 'email'
 	 *  @param	int		$fk_user	Id of user
 	 *  @param	bool	$onlypast	true = get only past reminder, false = get all reminders linked to this
-	 *  @return int         		0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @return int<-1,max>    		< if OK, else count of number of reminders
 	 */
 	public function loadReminders($type = '', $fk_user = 0, $onlypast = true)
 	{
@@ -2547,7 +2641,7 @@ class ActionComm extends CommonObject
 	 *  Send reminders by emails
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @return int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @return int<-1,1>|string     0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function sendEmailsReminder()
 	{
@@ -2589,6 +2683,7 @@ class ActionComm extends CommonObject
 		if ($resql) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
+			$to = null;  // Ensure 'to' is defined for static analysis
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$res = $actionCommReminder->fetch($obj->id);
@@ -2721,10 +2816,10 @@ class ActionComm extends CommonObject
 	/**
 	 * Update the percent value of a event with the given id
 	 *
-	 * @param int		$id			The id of the event
-	 * @param int		$percent	The new percent value for the event
-	 * @param int		$usermodid	The user who modified the percent
-	 * @return int					1 when update of the event was suscessfull, otherwise -1
+	 * @param int			$id			The id of the event
+	 * @param int<0,100>	$percent	The new percent value for the event
+	 * @param int			$usermodid	The user who modified the percent
+	 * @return int<-1,1>				1 when update of the event was successful, otherwise -1
 	 */
 	public function updatePercent($id, $percent, $usermodid = 0)
 	{

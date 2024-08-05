@@ -45,7 +45,7 @@ $error = 0;
 
 @set_time_limit(300);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_filecheck');
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 

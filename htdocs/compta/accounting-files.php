@@ -27,7 +27,7 @@
  *  \brief      Page to show portoflio and files of a thirdparty and download it
  */
 
-if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file
+if ((array_key_exists('action', $_GET) && $_GET['action'] == 'dl') || (array_key_exists('action', $_POST) && $_POST['action'] == 'dl')) {	// To not replace token when downloading file. Keep $_GET and $_POST here
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1');
 	}
@@ -74,7 +74,7 @@ $date_stop = dol_mktime(23, 59, 59, $date_stopMonth, $date_stopDay, $date_stopYe
 $action = GETPOST('action', 'aZ09');
 $projectid = GETPOSTINT('projectid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('comptafileslist', 'globallist'));
 
 // Load variable for pagination

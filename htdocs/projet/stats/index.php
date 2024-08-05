@@ -64,8 +64,7 @@ $formproject = new FormProjets($db);
 
 $includeuserlist = array();
 
-
-llxHeader('', $langs->trans('Projects'));
+llxHeader('', $langs->trans('Projects'), '', '', 0, 0, '', '', '', 'mod-project page-stats');
 
 $title = $langs->trans("ProjectsStatistics");
 $dir = $conf->project->dir_output.'/temp';
@@ -221,7 +220,7 @@ $h++;
 
 complete_head_from_modules($conf, $langs, null, $head, $h, 'project_stats');
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
+print dol_get_fiche_head($head, 'byyear', '', -1, '');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

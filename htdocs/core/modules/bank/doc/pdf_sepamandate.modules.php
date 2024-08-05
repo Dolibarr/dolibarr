@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +116,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *  Function to create pdf of company bank account sepa mandate
 	 *
-	 *	@param	CompanyBankAccount	$object   		    Object bank account to generate document for
+	 *	@param	Account				$object				CompanyBankAccount bank account to generate document for
 	 *	@param	Translate			$outputlangs	    Lang output object
 	 *  @param	string				$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param	int					$hidedetails		Do not show line details (not used for this template)
@@ -128,6 +129,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	{
 		// phpcs:enable
 		global $conf, $hookmanager, $langs, $user, $mysoc;
+
+		if (!$object instanceof CompanyBankAccount) {
+			dol_syslog(get_class($this)."::write_file object is of type ".get_class($object)." which is not expected", LOG_ERR);
+			return -1;
+		}
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -245,7 +251,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$posY = $curY;
 
-				$pdf->SetFont('', '', $default_font_size);
+				$pdf->SetFont('', '', $default_font_size - 1);
 
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY += 2;
@@ -297,7 +303,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
 				$posY += 2;
 
-				$pdf->SetFont('', '', $default_font_size);
+				$pdf->SetFont('', '', $default_font_size - 2);
 
 				$pdf->SetXY($this->marge_gauche, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFillForm"), 0, 'C');
@@ -309,7 +315,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 				$sepaname = '______________________________________________';
 				if ($thirdparty->id > 0) {
-					$sepaname = $thirdparty->name.($object->proprio ? ' ('.$object->proprio.')' : '');
+					$sepaname = $thirdparty->name.($object->owner_name ? ' ('.$object->owner_name.')' : '');
 				}
 				$posY = $pdf->GetY();
 				$posY += 3;
@@ -329,7 +335,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepavatid, 0, 'L');
 
-				$address = '______________________________________________';
+				$address = '__________________________________________________';
 				if (!empty($object->owner_address)) {
 					$address = $object->owner_address;
 				} elseif ($thirdparty->id > 0) {
@@ -344,8 +350,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
 				$pdf->SetXY(80, $posY);
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
-				if (preg_match('/_____/', $address)) {
-					$posY += 6;
+				if (preg_match('/_____/', $address)) {	// Second line ____ for address
+					$posY += 5;
 					$pdf->SetXY(80, $posY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
 				}

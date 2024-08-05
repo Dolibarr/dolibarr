@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -118,7 +118,7 @@ if ($user->hasRight('banque', 'consolidate') && $action == 'donext') {
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('banque', 'modifier')) {
 	$cat1 = GETPOSTINT("cat1");
 	if (!empty($rowid) && !empty($cat1)) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
 			dol_print_error($db);
 		}
@@ -150,7 +150,7 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		setEventMessages($langs->trans("ErrorFailedToLoadBankAccount"), null, 'errors');
 		$error++;
 	}
-	if ($actarget->courant == Account::TYPE_CASH && GETPOST('value', 'alpha') != 'LIQ') {
+	if ($actarget->type == Account::TYPE_CASH && GETPOST('value', 'alpha') != 'LIQ') {
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
 	}
@@ -201,14 +201,14 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 
 		if (!$error) {
 			$arrayofcategs = GETPOST('custcats', 'array');
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid);
 			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
 			if (count($arrayofcategs)) {
 				foreach ($arrayofcategs as $val) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
 					if (!$db->query($sql)) {
 						$error++;
 						dol_print_error($db);

@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2022-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,21 +48,19 @@ class StockTransfer extends CommonObject
 	public $table_element = 'stocktransfer_stocktransfer';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
+	 * @var string    Name of subtable line
 	 */
-	public $ismultientitymanaged = 0;
+	public $table_element_line = 'stocktransfer_stocktransferline';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * @var string    Field name which stores ID of parent key if this object has a parent
 	 */
-	public $isextrafieldmanaged = 1;
-
+	public $fk_element = 'fk_stocktransfer';
 
 	/**
-	 * @var string[] List of child tables. To know object to delete on cascade.
-	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	 * @var string[]    List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array('stocktransfer_stocktransferline');
 
@@ -78,16 +76,34 @@ class StockTransfer extends CommonObject
 	 */
 	public $ref_customer;
 
-
 	/**
 	 * @var string String with name of icon for stocktransfer. Must be the part after the 'object_' into object_stocktransfer.png
 	 */
 	public $picto = 'stock';
 
+	/**
+	 * @var null|int|'' outgoing date (sql date)
+	 */
 	public $date_prevue_depart;
+
+	/**
+	 * @var null|int|'' incoming date (sql date)
+	 */
 	public $date_prevue_arrivee;
+
+	/**
+	 * @var null|int|'' effective outgoing date (sql date)
+	 */
 	public $date_reelle_depart;
+
+	/**
+	 * @var null|int|'' effective incoming date (sql date)
+	 */
 	public $date_reelle_arrivee;
+
+	/**
+	 * @var string origin type
+	 */
 	public $origin_type;
 
 
@@ -156,18 +172,19 @@ class StockTransfer extends CommonObject
 	public $rowid;
 	public $ref;
 	public $label;
-	public $socid;
-	public $fk_soc;	// deprecated
-	public $fk_project;
 	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
+
+	/**
+	 * @var int ID of thirparty
+	 */
+	public $socid;
+
+	/**
+	 * @var int ID of thirparty
+	 * @deprecated
+	 */
+	public $fk_soc;
 	public $lead_time_for_warning;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
-	public $model_pdf;
 	public $status;
 
 	/**
@@ -175,7 +192,14 @@ class StockTransfer extends CommonObject
 	 */
 	public $lines;
 
+	/**
+	 * @var int ID of warehouse source
+	 */
 	public $fk_warehouse_source;
+
+	/**
+	 * @var int ID of warehouse destination
+	 */
 	public $fk_warehouse_destination;
 	// END MODULEBUILDER PROPERTIES
 
@@ -190,6 +214,10 @@ class StockTransfer extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
+
 		$this->origin_type = 'StockTransfer@product/stock/stocktransfer';
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
@@ -303,8 +331,7 @@ class StockTransfer extends CommonObject
 		$result = $object->createCommon($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $object->error;
-			$this->errors = $object->errors;
+			$this->setErrorsFromObject($object);
 		}
 
 		if (!$error) {
@@ -1073,27 +1100,3 @@ class StockTransfer extends CommonObject
 		return $error;
 	}
 }
-
-/**
- * Class StockTransferLine. You can also remove this and generate a CRUD class for lines objects.
- */
-//class StockTransferLine
-//{
-//	// To complete with content of an object StockTransferLine
-//	// We should have a field rowid, fk_stocktransfer and position
-//
-//	/**
-//	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-//	 */
-//	public $isextrafieldmanaged = 0;
-//
-//	/**
-//	 * Constructor
-//	 *
-//	 * @param DoliDB $db Database handler
-//	 */
-//	public function __construct(DoliDB $db)
-//	{
-//		$this->db = $db;
-//	}
-//}

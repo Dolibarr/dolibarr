@@ -46,7 +46,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new KnowledgeRecord($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->knowledgemanagement->dir_output.'/temp/massgeneration/'.$user->id;
@@ -71,7 +71,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
@@ -116,7 +116,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Update / add for lang
 	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {
@@ -166,7 +166,7 @@ $formadmin = new FormAdmin($db);
 
 $title = $langs->trans("KnowledgeRecord");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card');
 
 // Part to create
 if ($action == 'create') {
@@ -192,7 +192,7 @@ if ($action == 'create') {
 	$object->fields['answer']['enabled'] = 1;
 
 	if (isModEnabled('category')) {
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
 
 		if (count($cate_arbo)) {
 			// Categories
@@ -249,7 +249,7 @@ if (($id || $ref) && $action == 'edit') {
 	$object->fields['answer']['enabled'] = 1;
 
 	if (isModEnabled('category')) {
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
 
 		if (count($cate_arbo)) {
 			// Categories

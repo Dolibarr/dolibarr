@@ -104,6 +104,9 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 			else if (type == 'checkbox') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helpselect").show();}
 			else if (type == 'chkbxlst') { size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helpchkbxlst").show();}
 			else if (type == 'link')     { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helplink").show();}
+			else if (type == 'point')    { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helplink").show();}
+			else if (type == 'linestrg') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helplink").show();}
+			else if (type == 'polygon')  { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").show(); jQuery(".spanforparamtooltip").hide(); jQuery("#helplink").show();}
 			else if (type == 'separate') {
 				langfile.val('').prop('disabled',true);size.val('').prop('disabled', true); unique.removeAttr('checked').prop('disabled', true); required.val('').prop('disabled', true);
 				jQuery("#value_choice").show();
@@ -114,7 +117,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				unique.removeAttr('disabled');
 			}
 
-			if (type == 'separate')
+			if (type == 'separate' || type == 'point' || type == 'linestrg' || type == 'polygon')
 			{
 				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
@@ -169,7 +172,7 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 ?>
 </td></tr>
 <!-- Size -->
-<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo(GETPOST('size', 'alpha') ? GETPOST('size', 'alpha') : ''); ?>"></td></tr>
+<tr class="extra_size"><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" class="width50" value="<?php echo(GETPOST('size', 'alpha') ? GETPOST('size', 'alpha') : ''); ?>"></td></tr>
 <!-- Default Value (for select list / radio/ checkbox) -->
 <tr id="value_choice">
 <td>
@@ -191,7 +194,7 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 </td>
 </tr>
 <!-- Position -->
-<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOSTISSET('pos') ? GETPOSTINT('pos') : 100; ?>"></td></tr>
+<tr><td class="titlefield"><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" class="width50" value="<?php echo GETPOSTISSET('pos') ? GETPOSTINT('pos') : 100; ?>"></td></tr>
 <!-- Language file -->
 <tr><td class="titlefield"><?php echo $langs->trans("LanguageFile"); ?></td><td class="valeur"><input type="text" id="langfile" name="langfile" class="minwidth200" value="<?php echo dol_escape_htmltag(GETPOST('langfile', 'alpha')); ?>"></td></tr>
 <!-- Computed Value -->

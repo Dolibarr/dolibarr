@@ -8,7 +8,8 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 /**
  *	\file       htdocs/fourn/facture/list-rec.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show list of template/recurring invoices
  */
 
@@ -91,7 +92,7 @@ $search_date_when_endmonth = GETPOSTINT('search_date_when_endmonth');
 $search_date_when_endyear = GETPOSTINT('search_date_when_endyear');
 $search_date_when_start = dol_mktime(0, 0, 0, $search_date_when_startmonth, $search_date_when_startday, $search_date_when_startyear);	// Use tzserver
 $search_date_when_end = dol_mktime(23, 59, 59, $search_date_when_endmonth, $search_date_when_endday, $search_date_when_endyear);
-$search_recurring = GETPOSTINT('search_recurring');
+$search_recurring = GETPOST('search_recurring', 'intcomma');
 $search_frequency = GETPOST('search_frequency', 'alpha');
 $search_unit_frequency = GETPOST('search_unit_frequency', 'alpha');
 $search_nb_gen_done = GETPOST('search_nb_gen_done', 'alpha');
@@ -109,7 +110,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new FactureFournisseurRec($db);
 $extrafields = new ExtraFields($db);
 
@@ -120,7 +121,7 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierinvoicereclist'));
 
 // Fetch optionals attributes and labels
@@ -169,12 +170,14 @@ if ($socid > 0) {
 		$search_societe = $tmpthirdparty->name;
 	}
 }
+
 $objecttype = 'facture_fourn_rec';
 
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
 
+// Security check
 $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
 
 
@@ -375,6 +378,8 @@ if ($search_date_when_start) {
 if ($search_date_when_end) {
 	$sql .= " AND f.date_when <= '".$db->idate($search_date_when_end)."'";
 }
+// Add where from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -419,7 +424,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fourn-facture page-list-rec');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -514,7 +519,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -529,7 +534,8 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend' => $langs->trans("SendByMail"), 'builddoc' => $langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -600,19 +606,19 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['f.total_ht']['checked'])) {
 	// Amount net
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+	print '<input class="flat width50" type="text" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_tva']['checked'])) {
 	// Amount Vat
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
+	print '<input class="flat width50" type="text" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_ttc']['checked'])) {
 	// Amount
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
+	print '<input class="flat width50" type="text" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
@@ -854,7 +860,8 @@ while ($i < $imaxinloop) {
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				print $langs->trans("CreateBill").'</a>';
+				//print $langs->trans("CreateBill");
+				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 			}
@@ -1033,7 +1040,7 @@ while ($i < $imaxinloop) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
+	$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Status
@@ -1054,7 +1061,8 @@ while ($i < $imaxinloop) {
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				print $langs->trans("CreateBill").'</a>';
+				//print $langs->trans("CreateBill");
+				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 			}

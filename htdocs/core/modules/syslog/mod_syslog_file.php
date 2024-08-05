@@ -8,7 +8,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 /**
  * Class to manage logging to a file
  */
-class mod_syslog_file extends LogHandler implements LogHandlerInterface
+class mod_syslog_file extends LogHandler
 {
 	public $code = 'file';
 	public $lastTime = 0;
@@ -138,8 +138,6 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function export($content, $suffixinfilename = '')
 	{
-		global $conf, $dolibarr_main_prod;
-
 		if (getDolGlobalString('MAIN_SYSLOG_DISABLE_FILE')) {
 			return; // Global option to disable output of this handler
 		}
@@ -155,6 +153,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 
 		if (!$filefd) {
 			if (!defined('SYSLOG_FILE_NO_ERROR') || !constant('SYSLOG_FILE_NO_ERROR')) {
+				global $dolibarr_main_prod;
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));
 				print 'Failed to open log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
@@ -179,7 +178,10 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			}
 
 			// @phan-suppress-next-line PhanParamSuspiciousOrder
-			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip'])." ".($this->ident > 0 ? str_pad('', $this->ident, ' ') : '').$content['message'];
+			$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", $logLevels[$content['level']])." ".sprintf("%-15s", $content['ip']);
+			$message .= " ".sprintf("%7s", dol_trunc($content['ospid'], 7, 'right', 'UTF-8', 1));
+			$message .= " ".sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
+			$message .= " ".($this->ident > 0 ? str_pad(((string) ''), ((int) $this->ident), ((string) ' ')) : '').$content['message'];
 			fwrite($filefd, $message."\n");
 			fclose($filefd);
 			dolChmod($logfile);

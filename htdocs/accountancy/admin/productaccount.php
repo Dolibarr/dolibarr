@@ -42,31 +42,19 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
 
-// Security check
-if (!isModEnabled('accounting')) {
-	accessforbidden();
-}
-if (!$user->hasRight('accounting', 'bind', 'write')) {
-	accessforbidden();
-}
-
 // search & action GETPOST
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$codeventil_buy = GETPOST('codeventil_buy', 'array');
-$codeventil_sell = GETPOST('codeventil_sell', 'array');
-$chk_prod = GETPOST('chk_prod', 'array');
+$toselect = GETPOST('chk_prod', 'array:int');
+'@phan-var-force string[] $toselect';
 $default_account = GETPOSTINT('default_account');
-$account_number_buy = GETPOST('account_number_buy');
-$account_number_sell = GETPOST('account_number_sell');
-$changeaccount = GETPOST('changeaccount', 'array');
-$changeaccount_buy = GETPOST('changeaccount_buy', 'array');
-$changeaccount_sell = GETPOST('changeaccount_sell', 'array');
-$searchCategoryProductOperator = (GETPOSTINT('search_category_product_operator') ? GETPOSTINT('search_category_product_operator') : 0);
-$searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
+$searchCategoryProductList = GETPOST('search_category_product_list', 'array:int');
+'@phan-var-force string[] $searchCategoryProductList';
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_desc = GETPOST('search_desc', 'alpha');
@@ -78,6 +66,10 @@ if ($search_current_account_valid == '') {
 }
 $search_onsell = GETPOST('search_onsell', 'alpha');
 $search_onpurchase = GETPOST('search_onpurchase', 'alpha');
+
+if (!is_array($toselect)) {
+	$toselect = array();
+}
 
 $accounting_product_mode = GETPOST('accounting_product_mode', 'alpha');
 $btn_changetype = GETPOST('changetype', 'alpha');
@@ -138,6 +130,17 @@ if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 	$accountancy_field_name = "accountancy_code_sell_export";
 }
 
+// Security check
+if (!isModEnabled('accounting')) {
+	accessforbidden();
+}
+if (!$user->hasRight('accounting', 'bind', 'write')) {
+	accessforbidden();
+}
+
+$permissiontobind = $user->hasRight('accounting', 'bind', 'write');
+
+
 /*
  * Actions
  */
@@ -168,10 +171,11 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_onpurchase = '';
 	$search_current_account = '';
 	$search_current_account_valid = '-1';
+	$toselect = array();
 }
 
 // Sales or Purchase mode ?
-if ($action == 'update') {
+if ($action == 'update' && $permissiontobind) {
 	if (!empty($btn_changetype)) {
 		$error = 0;
 
@@ -184,20 +188,20 @@ if ($action == 'update') {
 		}
 	}
 
-	if (!empty($chk_prod) && $massaction === 'changeaccount') {
+	if (!empty($toselect) && $massaction === 'changeaccount') {
 		//$msg = '<div><span class="accountingprocessing">' . $langs->trans("Processing") . '...</span></div>';
 		$ok = 0;
 		$ko = 0;
 		$msg = '';
 		$sql = '';
-		if (!empty($chk_prod) && in_array($accounting_product_mode, $accounting_product_modes)) {
+		if (!empty($toselect) && in_array($accounting_product_mode, $accounting_product_modes)) {
 			$accounting = new AccountingAccount($db);
 
-			//$msg .= '<div><span class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
+			//$msg .= '<div><span class="accountingprocessing">' . count($toselect) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
 			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0;
-			foreach ($chk_prod as $productid) {
+			foreach ($toselect as $productid) {
 				$accounting_account_id = GETPOST('codeventil_'.$productid);
 
 				$result = 0;
@@ -467,6 +471,7 @@ if ($resql) {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	print '<input type="hidden" name="page_y" value="">';
 
 	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
 	print '<br>';
@@ -510,15 +515,27 @@ if ($resql) {
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
+	$massactionbutton = '';
+
+	$nbselected = is_array($toselect) ? count($toselect) : 0;
+	if ($massaction == 'set_default_account') {
+		if ($nbselected <= 0) {
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'warnings');
+			$action = '';
+			$massaction = '';
+		}
+	}
+
 	if ($massaction !== 'set_default_account') {
 		$arrayofmassactions = array(
-			'changeaccount' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Save")
-			,'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
+			'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount"),
+			'changeaccount' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Save")	// TODO The save action should be a button "Save"
 		);
 		$massactionbutton = $form->selectMassAction('', $arrayofmassactions, 1);
 	}
 
-	$buttonsave = '<input type="submit" class="button button-save" id="changeaccount" name="changeaccount" value="'.$langs->trans("Save").'">';
+	//$buttonsave = '<input type="submit" class="button button-save" id="changeaccount" name="changeaccount" value="'.$langs->trans("Save").'">';
 	//print '<br><div class="center">'.$buttonsave.'</div>';
 
 	$texte = $langs->trans("ListOfProductsServices");
@@ -530,7 +547,7 @@ if ($resql) {
 			'name' => 'set_default_account',
 			'label' => $langs->trans("AccountancyCode"),
 			'value' => $form->select_account('', 'default_account', 1, array(), 0, 0, 'maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone'));
-		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", count($chk_prod)), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmPreselectAccount"), $langs->trans("ConfirmPreselectAccountQuestion", $nbselected), "confirm_set_default_account", $formquestion, 1, 0, 200, 500, 1);
 	}
 
 	// Filter on categories
@@ -538,15 +555,6 @@ if ($resql) {
 	if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$formcategory = new FormCategory($db);
 		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $searchCategoryProductList, 'minwidth300', $searchCategoryProductList ? $searchCategoryProductList : 0);
-		/*
-		$moreforfilter .= '<div class="divsearchfield">';
-		$moreforfilter .= img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		$categoriesProductArr = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', '', 64, 0, 1);
-		$categoriesProductArr[-2] = '- '.$langs->trans('NotCategorized').' -';
-		$moreforfilter .= Form::multiselectarray('search_category_product_list', $categoriesProductArr, $searchCategoryProductList, 0, 0, 'minwidth300');
-		$moreforfilter .= ' <input type="checkbox" class="valignmiddle" id="search_category_product_operator" name="search_category_product_operator" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').'/> <label for="search_category_product_operator"><span class="none">'.$langs->trans('UseOrOperatorForCategories').'</span></label>';
-		$moreforfilter .= '</div>';
-		*/
 	}
 
 	// Show/hide child products. Hidden by default
@@ -591,10 +599,10 @@ if ($resql) {
 	}
 	// On sell
 	if ($accounting_product_mode == 'ACCOUNTANCY_SELL' || $accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA' || $accounting_product_mode == 'ACCOUNTANCY_SELL_EXPORT') {
-		print '<td class="liste_titre center">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectyesno('search_onsell', $search_onsell, 1, false, 1, 1).'</td>';
 	} else {
 		// On buy
-		print '<td class="liste_titre center">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectyesno('search_onpurchase', $search_onpurchase, 1, false, 1, 1).'</td>';
 	}
 	// Current account
 	print '<td class="liste_titre">';
@@ -718,8 +726,8 @@ if ($resql) {
 		}
 
 		$selected = 0;
-		if (!empty($chk_prod)) {
-			if (in_array($product_static->id, $chk_prod)) {
+		if (!empty($toselect)) {
+			if (in_array($product_static->id, $toselect)) {
 				$selected = 1;
 			}
 		}
@@ -807,7 +815,7 @@ if ($resql) {
 			if (!empty($obj->aaid)) {
 				$defaultvalue = ''; // Do not suggest default new value is code is already valid
 			}
-			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $chk_prod)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
+			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $toselect)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_INTRA') {
 			// Accounting account buy intra (In EEC)
@@ -821,7 +829,7 @@ if ($resql) {
 			if (!empty($obj->aaid)) {
 				$defaultvalue = ''; // Do not suggest default new value is code is already valid
 			}
-			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $chk_prod)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
+			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $toselect)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_BUY_EXPORT') {
 			// Accounting account buy export (Out of EEC)
@@ -835,7 +843,7 @@ if ($resql) {
 			if (!empty($obj->aaid)) {
 				$defaultvalue = ''; // Do not suggest default new value is code is already valid
 			}
-			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $chk_prod)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
+			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $toselect)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL') {
 			// Accounting account sell
@@ -849,7 +857,7 @@ if ($resql) {
 			if (!empty($obj->aaid)) {
 				$defaultvalue = ''; // Do not suggest default new value is code is already valid
 			}
-			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $chk_prod)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
+			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $toselect)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} elseif ($accounting_product_mode == 'ACCOUNTANCY_SELL_INTRA') {
 			// Accounting account sell intra (In EEC)
@@ -863,7 +871,7 @@ if ($resql) {
 			if (!empty($obj->aaid)) {
 				$defaultvalue = ''; // Do not suggest default new value is code is already valid
 			}
-			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $chk_prod)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
+			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $toselect)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		} else {
 			// Accounting account sell export (Out of EEC)
@@ -876,7 +884,7 @@ if ($resql) {
 			if (!empty($obj->aaid)) {
 				$defaultvalue = ''; // Do not suggest default new value is code is already valid
 			}
-			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $chk_prod)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
+			print $form->select_account(($default_account > 0 && $confirm === 'yes' && in_array($product_static->id, $toselect)) ? $default_account : $defaultvalue, 'codeventil_'.$product_static->id, 1, array(), 1, 0, 'maxwidth300 maxwidthonsmartphone productforselect');
 			print '</td>';
 		}
 

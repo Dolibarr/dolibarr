@@ -1,40 +1,34 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+Module68000Name = Intracomm извештај
+Module68000Desc = Управување со извештаи во Intracomm (Поддршка за француски формат DEB/DES)
+IntracommReportSetup = Поставување на модулот Intracommreport
+IntracommReportAbout = За intracommreport
 
 # Setup
 INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
+INTRACOMMREPORT_TYPE_ACTEUR=Тип d'acteur
 INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les вовед
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les експедиции
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Категорија на услуги од типот „Frais de port“
+INTRACOMMREPORT_NUM_DECLARATION=Numéro de declarant
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
-MenuIntracommReportList=List
-
+MenuIntracommReport=Intracomm извештај
+MenuIntracommReportNew=Нова декларација
+MenuIntracommReportList=Список
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
-
+NewDeclaration=Нова декларација
+Declaration=Декларација
+AnalysisPeriod=Период на анализа
+TypeOfDeclaration=Вид на декларација
+DEB=Декларација за размена на стоки (DEB)
+DES=Декларација за размена на услуги (DES)
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
-
+IntracommReportTitle=Подготовка на XML датотека во формат ProDouane
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
-
+IntracommReportList=Список на генерирани декларации
+IntracommReportNumber=Број на декларација
+IntracommReportPeriod=Период на анализа
+IntracommReportTypeDeclaration=Вид на декларација
+IntracommReportDownload=преземете XML датотека
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Транспортен режим

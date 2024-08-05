@@ -119,7 +119,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 						$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 						$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					}
-					$dataseries[] = array('label' => dol_print_date($objp->datec, 'day'), 'data' => $objp->nb);
+					$dataseries[] = array('label' => dol_print_date($this->db->jdate($objp->datec), 'day'), 'data' => $objp->nb);
 					$minimumdatec = dol_time_plus_duree($minimumdatec, $intervaltoadd, 'd');
 					$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');
 					$i++;

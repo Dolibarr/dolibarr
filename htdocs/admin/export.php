@@ -58,7 +58,7 @@ if ($action == 'save') {
 $form = new Form($db);
 
 $page_name = "ExportSetup";
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), '', '', 0, 0, '', '', '', 'mod-admin page-export');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';

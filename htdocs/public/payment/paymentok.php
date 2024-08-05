@@ -5,6 +5,7 @@
  * Copyright (C) 2021-2023	Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['e']) ? (int) $_GET['e'] : (!empty($_POST['e']) ? (int) $_POST['e'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -64,7 +65,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 // Clean parameters
 if (isModEnabled('paypal')) {
@@ -128,21 +129,27 @@ if (empty($paymentmethod)) {
 
 dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
+// Detect $ws
+$ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
+if ($ws) {
+	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
+}
 
-$validpaymentmethod = array();
-if (isModEnabled('paypal')) {
-	$validpaymentmethod['paypal'] = 'paypal';
-}
-if (isModEnabled('paybox')) {
-	$validpaymentmethod['paybox'] = 'paybox';
-}
-if (isModEnabled('stripe')) {
-	$validpaymentmethod['stripe'] = 'stripe';
-}
+$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 // Security check
 if (empty($validpaymentmethod)) {
 	httponly_accessforbidden('No valid payment mode');
+}
+
+// Common variables
+$creditor = $mysoc->name;
+$paramcreditor = 'ONLINE_PAYMENT_CREDITOR';
+$paramcreditorlong = 'ONLINE_PAYMENT_CREDITOR_'.$suffix;
+if (getDolGlobalString($paramcreditorlong)) {
+	$creditor = getDolGlobalString($paramcreditorlong);	// use label long of the seller to show
+} elseif (getDolGlobalString($paramcreditor)) {
+	$creditor = getDolGlobalString($paramcreditor);		// use label short of the seller to show
 }
 
 
@@ -162,8 +169,10 @@ $error = 0;
  * Actions and view
  */
 
-// TODO check if we have redirtodomain to do.
-$doactionsthenrediret = 0;
+// Check if we have redirtodomain to do.
+if ($ws) {
+	$doactionsthenredirect = 1;
+}
 
 
 $now = dol_now();
@@ -197,7 +206,7 @@ $conf->dol_hide_leftmenu = 1;
 
 
 // Show header
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 	llxHeader($head, $langs->trans("PaymentForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
@@ -212,7 +221,7 @@ if (empty($doactionsthenrediret)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -239,6 +248,12 @@ if (empty($doactionsthenrediret)) {
 		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
 			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
+		print '</div>';
+	} elseif ($creditor) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		print $creditor;
+		print '</div>';
 		print '</div>';
 	}
 	if (getDolGlobalString('MAIN_IMAGE_PUBLIC_PAYMENT')) {
@@ -471,19 +486,25 @@ if ($ispaymentok) {
 				if (empty($adht->caneditamount)) {	// If we didn't allow members to choose their membership amount (if the amount is allowed in edit mode, no need to check)
 					if ($object->status == $object::STATUS_DRAFT) {		// If the member is not yet validated, we check that the amount is the same as expected.
 						$typeid = $object->typeid;
+						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 
 						// Set amount for the subscription:
 						// - First check the amount of the member type.
-						$amountbytype = $adht->amountByType(1);		// Load the array of amount per type
 						$amountexpected = empty($amountbytype[$typeid]) ? 0 : $amountbytype[$typeid];
 						// - If not found, take the default amount
 						if (empty($amountexpected) && getDolGlobalString('MEMBER_NEWFORM_AMOUNT')) {
 							$amountexpected = getDolGlobalString('MEMBER_NEWFORM_AMOUNT');
 						}
+						// - If not set, we accept to have amount defined as parameter (for backward compatibility).
+						//if (empty($amount)) {
+						//	$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+						//}
+						// - If a min is set, we take it into account
+						$amountexpected = max(0, (float) $amountexpected, (float) getDolGlobalInt("MEMBER_MIN_AMOUNT"));
 
 						if ($amountexpected && $amountexpected != $FinalPaymentAmt) {
 							$error++;
-							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') differs from value expected for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
+							$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') propagated by payment page differs from the expected value for membership ('.$amountexpected.'). May be a hack to try to pay a different amount ?';
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
 							dol_syslog("Failed to validate member (bad amount check): ".$errmsg, LOG_ERR, 0, '_payment');
@@ -492,13 +513,13 @@ if ($ispaymentok) {
 				}
 
 				// Security protection:
-				if (getDolGlobalString('MEMBER_MIN_AMOUNT')) {
-					if ($FinalPaymentAmt < $conf->global->MEMBER_MIN_AMOUNT) {
+				if (getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
+					if ($FinalPaymentAmt < getDolGlobalInt('MEMBER_MIN_AMOUNT')) {
 						$error++;
 						$errmsg = 'Value of FinalPayment ('.$FinalPaymentAmt.') is lower than the minimum allowed (' . getDolGlobalString('MEMBER_MIN_AMOUNT').'). May be a hack to try to pay a different amount ?';
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
-						dol_syslog("Failed to validate member (amount lower than minimum): ".$errmsg, LOG_ERR, 0, '_payment');
+						dol_syslog("Failed to validate member (amount propagated from payment page is lower than allowed minimum): ".$errmsg, LOG_ERR, 0, '_payment');
 					}
 				}
 
@@ -524,14 +545,14 @@ if ($ispaymentok) {
 					}
 				}
 
-				// Subscription information
+				// Guess the subscription start date
 				$datesubscription = $object->datevalid; // By default, the subscription start date is the payment date
 				if ($object->datefin > 0) {
 					$datesubscription = dol_time_plus_duree($object->datefin, 1, 'd');
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER')) {
 					$datesubscription = dol_time_plus_duree($now, (int) substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), 0, -1), substr(getDolGlobalString('MEMBER_SUBSCRIPTION_START_AFTER'), -1));
 				}
-
+				// Now do a correction of the suggested date
 				if (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "m") {
 					$datesubscription = dol_get_first_day(dol_print_date($datesubscription, "%Y"), dol_print_date($datesubscription, "%m"));
 				} elseif (getDolGlobalString('MEMBER_SUBSCRIPTION_START_FIRST_DAY_OF') === "Y") {
@@ -658,8 +679,9 @@ if ($ispaymentok) {
 				}
 
 				if (!$error) {
+					// If payment using Strip, save the Stripe payment info into societe_account
 					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice') {
-						$thirdparty_id = $object->fk_soc;
+						$thirdparty_id = ($object->socid ? $object->socid : $object->fk_soc);
 
 						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_payment');
 
@@ -708,7 +730,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".((int) $object->fk_soc).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".$thirdparty_id.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -742,6 +764,42 @@ if ($ispaymentok) {
 					$db->rollback();
 				}
 
+				// Set string to use to send email info
+				$infouserlogin = '';
+
+				// Create external user
+				if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
+					$nuser = new User($db);
+					$tmpuser = dol_clone($object, 0);		// $object is type Adherent
+
+					// Check if a user login already exists for this member or not
+					$found = 0;
+					$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."user WHERE fk_member = ".((int) $object->id);
+					$resqlcount = $db->query($sql);
+					if ($resqlcount) {
+						$objcount = $db->fetch_object($resqlcount);
+						if ($objcount) {
+							$found = $objcount->nb;
+						}
+					}
+
+					if (!$found) {
+						$result = $nuser->create_from_member($tmpuser, $object->login);
+						$newpassword = $nuser->setPassword($user, '');
+
+						if ($result < 0) {
+							$outputlangs->load("errors");
+							$postactionmessages[] = 'Error in create external user : '.$nuser->error;
+						} else {
+							$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
+							$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
+						}
+					} else {
+						$outputlangs->load("errors");
+						$postactionmessages[] = 'No user created because a user linked to member already exists';
+					}
+				}
+
 				// Send email to member
 				if (!$error) {
 					dol_syslog("Send email to customer to ".$object->email." if we have to (sendalsoemail = ".$sendalsoemail.")", LOG_DEBUG, 0, '_payment');
@@ -771,22 +829,7 @@ if ($ispaymentok) {
 
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 
-						// Create external user
-						if (getDolGlobalString('ADHERENT_CREATE_EXTERNAL_USER_LOGIN')) {
-							$infouserlogin = '';
-							$nuser = new User($db);
-							$tmpuser = dol_clone($object);
-
-							$result = $nuser->create_from_member($tmpuser, $object->login);
-							$newpassword = $nuser->setPassword($user, '');
-
-							if ($result < 0) {
-								$outputlangs->load("errors");
-								$postactionmessages[] = 'Error in create external user : '.$nuser->error;
-							} else {
-								$infouserlogin = $outputlangs->trans("Login").': '.$nuser->login.' '."\n".$outputlangs->trans("Password").': '.$newpassword;
-								$postactionmessages[] = $langs->trans("NewUserCreated", $nuser->login);
-							}
+						if ($infouserlogin) {
 							$substitutionarray['__MEMBER_USER_LOGIN_INFORMATION__'] = $infouserlogin;
 						}
 
@@ -1440,7 +1483,7 @@ if ($ispaymentok) {
 
 							$trackid = 'inv'.$object->id;
 
-							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, $ishtml, '', '', $trackid, '', 'standard');
+							$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, $listofpaths, $listofmimes, $listofnames, $cc, '', 0, ($ishtml ? 1 : 0), '', '', $trackid, '', 'standard');
 
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1644,7 +1687,7 @@ if ($ispaymentok) {
 										$ishtml = dol_textishtml($texttosend); // May contain urls
 										$trackid = 'inv'.$invoice->id;
 
-										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
+										$mailfile = new CMailFile($subjecttosend, $sendto, $from, $texttosend, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 										$result = $mailfile->sendfile();
 										if ($result) {
@@ -1853,7 +1896,7 @@ if ($ispaymentok) {
 
 
 // Show result message
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
 		if ($TRANSACTIONID) {
@@ -1892,7 +1935,7 @@ if ($ispaymentok) {
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$sendto = $sendemail;
 		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
@@ -1965,7 +2008,7 @@ if ($ispaymentok) {
 		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -2000,7 +2043,7 @@ if ($ispaymentok) {
 	if ($sendemail) {
 		$companylangs = new Translate('', $conf);
 		$companylangs->setDefaultLang($mysoc->default_lang);
-		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox'));
+		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$sendto = $sendemail;
 		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
@@ -2026,7 +2069,7 @@ if ($ispaymentok) {
 		$trackid = '';
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml, '', '', $trackid, '', 'standard');
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -2044,7 +2087,7 @@ unset($_SESSION["TRANSACTIONID"]);
 
 
 // Close page content id="dolpaymentdiv"
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	print "\n</div>\n";
 
 	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
@@ -2052,7 +2095,7 @@ if (empty($doactionsthenrediret)) {
 
 
 // Show footer
-if (empty($doactionsthenrediret)) {
+if (empty($doactionsthenredirect)) {
 	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix);
 
 	llxFooter('', 'public');
@@ -2063,12 +2106,16 @@ $db->close();
 
 
 // If option to do a redirect somewhere else.
-if (empty($doactionsthenrediret)) {
+if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
-		// Do the redirect to a success page
-		// TODO
+		// Redirect to a success page
+		// Paymentok page must be created for the specific website
+		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
 	} else {
-		// Do the redirect to an error page
-		// TODO
+		// Redirect to an error page
+		// Paymentko page must be created for the specific website
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
 	}
 }

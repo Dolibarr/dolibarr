@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -85,7 +87,7 @@ if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -202,7 +204,7 @@ if (empty($reshook) && $action == 'add') {
 	// Check Captcha code if is enabled
 	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode") . "<br>\n";
@@ -327,7 +329,7 @@ $messagemandatory = '<span class="">' . $langs->trans("FieldsWithAreMandatory", 
 //print '<br><span class="opacitymedium">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {

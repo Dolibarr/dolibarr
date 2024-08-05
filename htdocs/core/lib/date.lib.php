@@ -3,9 +3,10 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
-*
+ * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2024	     MDW					        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -122,7 +123,6 @@ function getServerTimeZoneInt($refgmtdate = 'now')
  */
 function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforendofmonth = 0)
 {
-	global $conf;
 	if (empty($duration_value)) {
 		return $time;
 	}
@@ -688,8 +688,8 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
 	//print 'start_week='.$start_week.' tmparray[wday]='.$tmparray['wday'].' day offset='.$days.' seconds offset='.$seconds.'<br>';
 
 	//Get first day of week
-	$tmpdaytms = (int) date($tmparray[0]) - $seconds; // $tmparray[0] is day of parameters
-	$tmpday = (int) date("d", $tmpdaytms);
+	$tmpdaytms = (int) date((string) $tmparray['0']) - $seconds; // $tmparray[0] is day of parameters
+	$tmpday = idate("d", $tmpdaytms);
 
 	//Check first day of week is in same month than current day or not
 	if ($tmpday > $day) {
@@ -762,7 +762,7 @@ function getGMTEasterDatetime($year)
  */
 function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', $lastday = 0, $includesaturday = -1, $includesunday = -1, $includefriday = -1, $includemonday = -1)
 {
-	global $db, $conf, $mysoc;
+	global $db, $mysoc;
 
 	$nbFerie = 0;
 
@@ -775,16 +775,16 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$country_code = $mysoc->country_code;
 	}
 	if ($includemonday < 0) {
-		$includemonday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY : 0);
+		$includemonday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY', 0);
 	}
 	if ($includefriday < 0) {
-		$includefriday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY : 0);
+		$includefriday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_FRIDAY', 0);
 	}
 	if ($includesaturday < 0) {
-		$includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
+		$includesaturday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY', 1);
 	}
 	if ($includesunday < 0) {
-		$includesunday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
+		$includesunday = getDolGlobalInt('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY', 1);
 	}
 
 	$country_id = dol_getIdFromCode($db, $country_code, 'c_country', 'code', 'rowid');
@@ -897,7 +897,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				// Ascension (thursday)
 			}
 
-			if (in_array('pentecote', $specialdayrule)) {
+			if (in_array('pentecost', $specialdayrule)) {
 				// Calculation of "Pentecote" (49 days after easter day)
 				$date_paques = getGMTEasterDatetime($annee);
 				$date_pentecote = $date_paques + (3600 * 24 * 49);
@@ -1005,7 +1005,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
  *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: no, 1:yes
  *	@return    int								Number of days
- *  @see also num_public_holiday(), num_open_day()
+ *  @see num_public_holiday(), num_open_day()
  */
 function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 {
@@ -1129,6 +1129,7 @@ function monthArray($outputlangs, $short = 0)
 
 	return $montharray;
 }
+
 /**
  *	Return array of week numbers.
  *
@@ -1146,12 +1147,13 @@ function getWeekNumbersOfMonth($month, $year)
 	}
 	return $TWeek;
 }
+
 /**
  *	Return array of first day of weeks.
  *
- *	@param	string[] 	$TWeek			array of week numbers (week 1 must be '01')
+ *	@param	string[] 	$TWeek			array of week numbers we want (week 1 must be '01')
  *  @param	int			$year			Year number
- *	@return string[]					First day of week (day 1 is '01')
+ *	@return string[]					First day of each week in entry (day 1 is '01')
  */
 function getFirstDayOfEachWeek($TWeek, $year)
 {
@@ -1164,6 +1166,7 @@ function getFirstDayOfEachWeek($TWeek, $year)
 	}
 	return $TFirstDayOfWeek;
 }
+
 /**
  *	Return array of last day of weeks.
  *
@@ -1179,6 +1182,7 @@ function getLastDayOfEachWeek($TWeek, $year)
 	}
 	return $TLastDayOfWeek;
 }
+
 /**
  *	Return week number.
  *

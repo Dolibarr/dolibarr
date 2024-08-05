@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020		Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 
 /**
- * \file    bom/class/api_boms.class.php
+ * \file    htdocs/bom/class/api_boms.class.php
  * \ingroup bom
  * \brief   File for API management of BOM.
  */
@@ -196,11 +196,11 @@ class Boms extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->bom->context['caller'] = $request_data['caller'];
+				$this->bom->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->bom->$field = $value;
+			$this->bom->$field = $this->_checkValForAPI($field, $value, $this->bom);
 		}
 
 		$this->checkRefNumbering();
@@ -243,11 +243,18 @@ class Boms extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->bom->context['caller'] = $request_data['caller'];
+				$this->bom->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->bom->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->bom->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->bom);
+				}
+				continue;
+			}
+
+			$this->bom->$field = $this->_checkValForAPI($field, $value, $this->bom);
 		}
 
 		$this->checkRefNumbering();
@@ -280,7 +287,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->bom->delete(DolibarrApiAccess::$user)) {
@@ -531,6 +538,14 @@ class Boms extends DolibarrApi
 		unset($object->fk_incoterms);
 		unset($object->label_incoterms);
 		unset($object->location_incoterms);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+
 
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {

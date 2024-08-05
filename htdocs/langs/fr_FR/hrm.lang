@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Adresse email du service GRH externe à prévenir
 Establishments=Etablissements
@@ -24,7 +23,7 @@ SkillsManagement=Gestion des compétences
 HRM_MAXRANK=Nombre maximum de niveaux pour classer une compétence
 HRM_DEFAULT_SKILL_DESCRIPTION=Description par défaut des rangs lors de la création de la compétence
 deplacement=Ctrl
-DateEval=Date d'évaluation
+DateEval=Date d'évaluation des compétences
 JobCard=Fiche emploi
 NewJobProfile=Nouveau profil de poste
 JobProfile=Profil de poste
@@ -41,12 +40,12 @@ Skill=Compétence
 Skills=Compétences
 SkillCard=Fiche compétence
 EmployeeSkillsUpdated=Compétences de l'employé mises à jour (voir onglet "Compétences" de la fiche employé)
-Eval=Évaluation
-Evals=Évaluations
-NewEval=Nouvelle évaluation
-ValidateEvaluation=Valider l'évaluation
-ConfirmValidateEvaluation=Êtes-vous sûr de vouloir valider cette évaluation avec la référence <b>%s</b> ?
-EvaluationCard=Fiche évaluation
+Eval=Évaluation des compétences
+Evals=Évaluations des compétences
+NewEval=Nouvelle évaluation des compétences
+ValidateEvaluation=Valider l'évaluation des compétences
+ConfirmValidateEvaluation=Êtes-vous sûr de vouloir valider cette évaluation des compétences avec la référence <b>%s</b> ?
+EvaluationCard=Évaluation de compétences
 RequiredRank=Rang requis pour le profil de poste
 RequiredRankShort=Grade requis
 PositionsWithThisProfile=Postes avec ces profils de poste
@@ -90,8 +89,9 @@ SaveAddSkill = Compétence(s) ajoutée(s)
 SaveLevelSkill = Niveau(x) de compétence(s) enregistré(s)
 DeleteSkill = Compétence supprimée
 SkillsExtraFields=Attributs complémentaires (Compétences)
-JobsExtraFields=Attributs complémentaires (Profil de poste)
-EvaluationsExtraFields=Attributs complémentaires (Évaluations)
+JobsExtraFields=Attributs complémentaires (Profils de poste)
+EvaluationsExtraFields=Attributs complémentaires (Évaluation des compétences)
 NeedBusinessTravels=Besoin de déplacements professionnels
 NoDescription=Pas de description
 TheJobProfileHasNoSkillsDefinedFixBefore=Le profil de poste évalué de cet employé ne comporte aucune compétence définie. Veuillez ajouter des compétences, puis supprimer et relancer l'évaluation.
+PDFStandardHrmEvaluation=Modèle standard pour générer un document PDF pour une évaluation des compétences

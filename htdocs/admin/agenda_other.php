@@ -6,6 +6,7 @@
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,6 +138,7 @@ if ($action == 'set') {
 		require_once $file;
 
 		$module = new $classname($db, $commande);
+		'@phan-var-force pdf_standard_actions $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
@@ -180,11 +182,13 @@ if ($action == 'set') {
  * View
  */
 
+$form = new Form($db);
 $formactions = new FormActions($db);
+
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
-llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
+llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-agenda_other');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
@@ -200,7 +204,7 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
  *  Miscellaneous
  */
 
-// Define array def of models
+// Define an array def of models
 $def = array();
 
 $sql = "SELECT nom";
@@ -214,7 +218,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {

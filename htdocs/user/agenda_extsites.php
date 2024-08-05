@@ -59,7 +59,7 @@ if (!isset($id) || empty($id)) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // Security check
 $socid = 0;
@@ -75,7 +75,7 @@ if (($object->id != $user->id) && (!$user->hasRight('user', 'user', 'lire'))) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
 
 /*
@@ -158,7 +158,7 @@ $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firs
 $title = $person_name." - ".$langs->trans('ExtSites');
 $help_url = '';
 
-llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-user page-agenda_extsites');
 
 
 print '<form name="extsitesconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -229,7 +229,7 @@ if ($selectedvalue == 1) {
 }
 
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print "<tr class=\"liste_titre\">";

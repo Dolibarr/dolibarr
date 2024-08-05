@@ -24,6 +24,7 @@
  *	\brief		Page to print sheets with barcodes using the document templates into core/modules/printsheets
  */
 
+// Do not use GETPOST, the function does not exists yet.
 if (!empty($_POST['mode']) && $_POST['mode'] === 'label') {	// Page is called to build a PDF and output, we must not renew the token.
 	if (!defined('NOTOKENRENEWAL')) {
 		define('NOTOKENRENEWAL', '1'); // Do not roll the Anti CSRF token (used if MAIN_SECURITY_CSRF_WITH_TOKEN is on)
@@ -69,7 +70,7 @@ if (!$user->hasRight('barcode', 'read')) {
 }
 restrictedArea($user, 'barcode');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('printsheettools'));
 
 $parameters = array();
@@ -179,6 +180,7 @@ if (empty($reshook)) {
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
 			$module = new $classname($db);
+			'@phan-var-force ModeleBarCode $module';
 			if ($generator != 'tcpdfbarcode') {
 				// May be phpbarcode
 				$template = 'standardlabel';
@@ -268,9 +270,18 @@ if (empty($reshook)) {
 				if (!$mesg) {
 					$outputlangs = $langs;
 
+					$previousConf = getDolGlobalInt('TCPDF_THROW_ERRORS_INSTEAD_OF_DIE');
+					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = 1;
+
 					// This generates and send PDF to output
 					// TODO Move
-					$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+					try {
+						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+					} catch (Exception $e) {
+						$mesg = $langs->trans('ErrorGeneratingBarcode');
+					}
+
+					$conf->global->TCPDF_THROW_ERRORS_INSTEAD_OF_DIE = $previousConf;
 				}
 			}
 
@@ -295,7 +306,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("BarCodePrintsheet"));
+llxHeader('', $langs->trans("BarCodePrintsheet"), '', '', 0, 0, '', '', '', 'mod-barcode page-printsheet');
 
 print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'barcode');
 print '<br>';
@@ -326,7 +337,7 @@ foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $labeltoshow;
 }
 asort($arrayoflabels);
-print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : $conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel') ? GETPOST('modellabel') : getDolGlobalString('ADHERENT_ETIQUETTE_TYPE')), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print

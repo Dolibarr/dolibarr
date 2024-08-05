@@ -18,7 +18,7 @@
 
 /**
  *    \file       htdocs/reception/stats/month.php
- *    \ingroup    commande
+ *    \ingroup    order
  *    \brief      Page des stats receptions par mois
  */
 

@@ -61,11 +61,11 @@ $select_pricing_rules = array(
 	'PRODUIT_CUSTOMER_PRICES' => $langs->trans('PriceByCustomer'), // Different price for each customer
 );
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')'; // TODO If this is enabled, price must be hidden when price by qty is enabled, also price for quantity must be used when adding product into order/propal/invoice
 }
 $keyforparam = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || !empty($conf->global->$keyforparam)) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2 || getDolGlobalString($keyforparam)) {
 	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'] = $langs->trans('MultiPricesAbility').'+'.$langs->trans('PriceByQuantity').' ('.$langs->trans("VersionExperimental").')';
 }
 
@@ -280,7 +280,7 @@ if (!isModEnabled("product")) {
 	$tab = $langs->trans('Products');
 }
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-product page-admin_product');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title, $linkback, 'title_setup');
@@ -382,7 +382,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {

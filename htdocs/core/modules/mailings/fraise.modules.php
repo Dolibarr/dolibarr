@@ -233,7 +233,7 @@ class mailing_fraise extends MailingTargets
 	public function add_to_target($mailing_id)
 	{
 		// phpcs:enable
-		global $conf, $langs, $_POST;
+		global $conf, $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("members", "companies"));

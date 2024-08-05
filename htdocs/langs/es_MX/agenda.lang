@@ -8,7 +8,6 @@ MenuToDoActions=Todos los eventos incompletos
 MenuDoneActions=Todos los eventos finalizados
 MenuDoneMyActions=Mis eventos finalizados
 ActionsAskedBy=Eventos reportados por
-ActionsDoneBy=Eventos realizado por
 ViewCal=Vista del mes
 ViewDay=Vista de día
 ViewWeek=Vista de la semana
@@ -35,7 +34,6 @@ CANCELInDolibarr=Cancelado
 DateActionEnd=Fecha de finalización
 AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar la salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir la salida a las acciones propiedad del usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<B> logina =!%s </b> para restringir la salida a acciones que no pertenecen al usuario <b> %s </b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b>.
 ExportDataset_event1=Lista de eventos de la agenda
 DefaultWorkingDays=Rango de días laborales por defecto en una semana (Example: 1-5, 1-6)

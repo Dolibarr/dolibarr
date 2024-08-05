@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2004-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2007		Franky Van Liedekerke		<franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
  */
 
 /**
- *       \file       htdocs/contact/card.php
+ *       \file       htdocs/contact/agenda.php
  *       \ingroup    societe
- *       \brief      Card of a contact
+ *       \brief      Card agenda of a contact
  */
 
 
@@ -109,7 +109,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contactagenda', 'globalcard'));
 
 
@@ -144,12 +144,13 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+$title = $langs->trans("ContactEvents");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_Partner';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_agenda');
 
 
 if ($socid > 0) {

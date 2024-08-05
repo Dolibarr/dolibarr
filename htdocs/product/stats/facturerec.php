@@ -5,6 +5,7 @@
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2022	   Eric Seigne			<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsinvoice'));
 
 $showmessage = GETPOST('showmessage');
@@ -115,7 +116,7 @@ if ($id > 0 || !empty($ref)) {
 		$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $helpurl);
+	llxHeader('', $title, $helpurl, '', 0, 0, '', '', 'mod-product page-stats_facturerec');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -156,7 +157,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 		} elseif ($user->hasRight('facture', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
-			$sql .= "f.titre as title, f.datec, f.rowid as facid, f.suspended as suspended,";
+			$sql .= "f.rowid as facid, 0 as type, f.titre as title, f.datec, f.suspended as suspended,";
 			$sql .= " d.rowid, d.total_ht as total_ht, d.qty"; // We must keep the d.rowid here to not loose record because of the distinct used to ignore duplicate line when link on societe_commerciaux is used
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
@@ -233,7 +234,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="liste_titre liste_titre_bydiv centpercent">';
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("DateInvoice").') - ';
-				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
+				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
 				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
 				print '<div style="vertical-align: middle; display: inline-block">';
 				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -287,10 +288,10 @@ if ($id > 0 || !empty($ref)) {
 					}
 				}
 				print '<tr class="liste_total">';
-				if ($num < $limit) {
-					print '<td class="left">'.$langs->trans("Total").'</td>';
+				if ($num < $limit && empty($offset)) {
+					print '<td>'.$langs->trans("Total").'</td>';
 				} else {
-					print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
+					print '<td>'.$form->textwithpicto($langs->trans("Total"), $langs->trans("Totalforthispage")).'</td>';
 				}
 				print '<td colspan="3"></td>';
 				print '<td class="center">'.$total_qty.'</td>';

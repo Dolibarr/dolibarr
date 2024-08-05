@@ -176,6 +176,11 @@ $dolibarr_main_db_character_set='utf8';
 $dolibarr_main_db_collation='utf8_unicode_ci';
 
 
+// dolibarr_main_db_encryption
+// If setto 1, Dolibarr make a reversible encryption of data (using AES) with mysql to store key and value into the table llx_const.
+// It is deprecated and should not be used anymore.
+
+
 // dolibarr_main_db_readonly
 // =========================
 // Set this to 1 to have the application working in readonly mode. All SQL commands INSERT/UPDATE/DELETE/CREATE/ALTER/TRUNCATE/DROP will be disabled.
@@ -301,8 +306,18 @@ $dolibarr_main_prod='1';
 // Default value: 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump'
 // Examples:
 // $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
+// $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
 //
-$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump';
+$dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg_dump, pg_restore, clamdscan, clamdscan.exe';
+
+// dolibarr_main_disabled_modules
+// ==================================
+// To restrict the activation and use of certain potentially security-sensitive modules.
+// Default value: array('dav')
+// Examples:
+// $dolibarr_main_disabled_modules = array('dav');
+//
+// $dolibarr_main_disabled_modules = array('dav');
 
 // dolibarr_main_restrict_ip
 // =========================
@@ -328,7 +343,7 @@ $dolibarr_nocsrfcheck='0';
 
 // dolibarr_cron_allow_cli
 // =======================
-// If set to 1, you will be able to define some command line in the internale Job scheduler module.
+// If set to 1, you will be able to define some command line in the internal Job scheduler module.
 // Default value: '0'
 // Examples: '1'
 //

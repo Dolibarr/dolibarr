@@ -337,7 +337,7 @@ class modWorkstation extends DolibarrModules
 		/* END MODULEBUILDER EXPORT WORKSTATION */
 
 		// Imports profiles provided by this module
-		$r = 1;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 1;
 		/* BEGIN MODULEBUILDER IMPORT WORKSTATION */
 		/*
 		 $langs->load("workstation@workstation");
@@ -394,9 +394,6 @@ class modWorkstation extends DolibarrModules
 		$myTmpObjects['Workstation'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Workstation') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/workstation/template_workstations.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/workstation';

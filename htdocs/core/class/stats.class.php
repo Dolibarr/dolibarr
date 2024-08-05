@@ -106,7 +106,6 @@ abstract class Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
@@ -159,15 +158,18 @@ abstract class Stats
 			if (!dol_is_dir($conf->user->dir_temp)) {
 				dol_mkdir($conf->user->dir_temp);
 			}
-			$fp = fopen($newpathofdestfile, 'w');
-			fwrite($fp, json_encode($data));
-			fclose($fp);
+			$fp = @fopen($newpathofdestfile, 'w');
+			if ($fp) {
+				fwrite($fp, json_encode($data));
+				fclose($fp);
+			} else {
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_ERR);
+			}
 			dolChmod($newpathofdestfile);
 
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
-		// return array(array('Month',val1,val2,val3),...)
 		return $data;
 	}
 
@@ -205,7 +207,6 @@ abstract class Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
@@ -258,14 +259,15 @@ abstract class Stats
 			if (!dol_is_dir($conf->user->dir_temp)) {
 				dol_mkdir($conf->user->dir_temp);
 			}
-			$fp = fopen($newpathofdestfile, 'w');
+			$fp = @fopen($newpathofdestfile, 'w');
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				dolChmod($newpathofdestfile);
 			} else {
-				dol_syslog("Failed to write cache file", LOG_ERR);
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_ERR);
 			}
+			dolChmod($newpathofdestfile);
+
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
@@ -329,7 +331,6 @@ abstract class Stats
 		// Search in cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
@@ -366,12 +367,15 @@ abstract class Stats
 			if (!dol_is_dir($conf->user->dir_temp)) {
 				dol_mkdir($conf->user->dir_temp);
 			}
-			$fp = fopen($newpathofdestfile, 'w');
+			$fp = @fopen($newpathofdestfile, 'w');
 			if ($fp) {
 				fwrite($fp, json_encode($data));
 				fclose($fp);
-				dolChmod($newpathofdestfile);
+			} else {
+				dol_syslog("Failed to save cache file ".$newpathofdestfile, LOG_ERR);
 			}
+			dolChmod($newpathofdestfile);
+
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 

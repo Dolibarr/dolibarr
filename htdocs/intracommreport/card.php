@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
  * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ $typeOfDeclaration = array(
 	"expedition" => $langs->trans("Expedition"),
 );
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new IntracommReport($db);
 if ($id > 0) {
 	$object->fetch($id);
@@ -72,7 +73,7 @@ if ($id > 0) {
 $form = new Form($db);
 $formother = new FormOther($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('intracommcard', 'globalcard'));
 
 $error = 0;
@@ -234,7 +235,7 @@ if ($id > 0 && $action != 'edit') {
 	 */
 	//$head = intracommreport_prepare_head($object);
 
-	print dol_get_fiche_head("", 'general', $langs->trans("IntracommReport"), -1, 'user');
+	print dol_get_fiche_head(array(), 'general', $langs->trans("IntracommReport"), -1, 'user');
 
 	// Confirm remove report
 	if ($action == 'delete') {

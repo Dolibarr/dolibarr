@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('ticketsindex'));
 
 // Load translation files required by the page
@@ -69,6 +70,7 @@ if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement'
 	accessforbidden('Not enough permissions');
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -85,15 +87,15 @@ if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement'
 
 $resultboxes = FormOther::getBoxesArea($user, "11"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
-$form = new Form($db);
-
-llxHeader('', $langs->trans('TicketsIndex'), '');
+$help_url = '';
+llxHeader('', $langs->trans('TicketsIndex'), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-dashboard');
 
 $linkback = '';
 print load_fiche_titre($langs->trans('TicketsIndex'), $resultboxes['selectboxlist'], 'ticket');
 
 
 $dir = '';
+$prefix = '';
 $filenamenb = $dir."/".$prefix."ticketinyear-".$endyear.".png";
 $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=ticket&amp;file=ticketinyear-'.$endyear.'.png';
 
@@ -247,7 +249,7 @@ $stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 $stringtoshow .= '<input type="hidden" name="action" value="refresh">';
 $stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_ticket_by_status:year,shownb,showtot">';
 $stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+$stringtoshow .= '<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 $stringtoshow .= '</form>';
 $stringtoshow .= '</div>';
 
@@ -324,8 +326,6 @@ if ($user->hasRight('ticket', 'read')) {
 	 * Latest unread tickets
 	 */
 
-	$max = 10;
-
 	$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut as status, t.progress,";
 	$sql .= " type.code as type_code, type.label as type_label,";
 	$sql .= " category.code as category_code, category.label as category_label,";
@@ -362,12 +362,21 @@ if ($user->hasRight('ticket', 'read')) {
 
 		$i = 0;
 
-		$transRecordedType = $langs->trans("LatestNewTickets", $max);
+		$tmpmax = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT_LAST_MODIFIED_TICKETS', $max);
+		$transRecordedType = $langs->trans("LatestNewTickets", $tmpmax);
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="5">'.$transRecordedType.'</th>';
-		print '<th class="right" colspan="2"><a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'">'.$langs->trans("FullList").'</th>';
+		print '<tr class="liste_titre"><th colspan="5">'.$transRecordedType;
+		print '<a href="'.DOL_URL_ROOT.'/ticket/list.php?search_fk_statut[]='.Ticket::STATUS_NOT_READ.'" title="'.$langs->trans("FullList").'">';
+		print '<span class="badge marginleftonlyshort">...</span>';
+		//print $langs->trans("FullList")
+		print '</a>';
+		print '</th>';
+		print '<th>';
+		print '</th>';
+		print '<th>';
+		print '</th>';
 		print '</tr>';
 		if ($num > 0) {
 			while ($i < $num) {
@@ -388,7 +397,7 @@ if ($user->hasRight('ticket', 'read')) {
 				print "</td>\n";
 
 				// Creation date
-				print '<td class="left">';
+				print '<td class="center nowraponall">';
 				print dol_print_date($db->jdate($objp->datec), 'dayhour');
 				print "</td>";
 
@@ -405,7 +414,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 				// Category
 				print '<td class="nowrap">';
-				if (!empty($obp->category_code)) {
+				if (!empty($objp->category_code)) {
 					$s = $langs->getLabelFromKey($db, 'TicketCategoryShort'.$objp->category_code, 'c_ticket_category', 'code', 'label', $objp->category_code);
 					print '<span title="'.dol_escape_htmltag($s).'">'.$s.'</span>';
 				}
@@ -429,7 +438,7 @@ if ($user->hasRight('ticket', 'read')) {
 
 			$db->free($result);
 		} else {
-			print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</span></td></tr>';
+			print '<tr><td colspan="7"><span class="opacitymedium">'.$langs->trans('NoUnreadTicketsFound').'</span></td></tr>';
 		}
 
 		print "</table>";

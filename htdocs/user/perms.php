@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,11 +81,11 @@ if ($user->id != $id && !$canreaduser) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
 
 
@@ -92,7 +93,7 @@ $hookmanager->initHooks(array('usercard', 'userperms', 'globalcard'));
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -110,12 +111,12 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -129,12 +130,12 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 }
 
@@ -148,7 +149,7 @@ $form = new Form($db);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card_perms');
 
 $head = user_prepare_head($object);
 
@@ -193,6 +194,8 @@ foreach ($modulesdir as $dir) {
 
 $db->commit();
 
+'@phan-var-force DolibarrModules[] $modules';
+
 // Read permissions of edited user
 $permsuser = array();
 
@@ -223,7 +226,10 @@ $sql = "SELECT DISTINCT gr.fk_id, gu.entity";	// fk_id are permission id and ent
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr,";
 $sql .= " ".MAIN_DB_PREFIX."usergroup_user as gu";	// all groups of a user
 $sql .= " WHERE gr.entity = ".((int) $entity);
-$sql .= " AND gu.entity =".((int) $entity);
+// The entity on the table gu=usergroup_user should be useless and should never be used because it is already into gr and r.
+// but when using MULTICOMPANY_TRANSVERSE_MODE, we may have inserted record that make rubbish result here due to the duplicate record of
+// other entities, so we are forced to add a filter on gu here
+$sql .= " AND gu.entity IN (0,".$conf->entity.")";
 $sql .= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql .= " AND gu.fk_user = ".((int) $object->id);
 
@@ -323,7 +329,7 @@ if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
 
-$parameters = array('permsgroupbyentity'=>$permsgroupbyentity);
+$parameters = array('permsgroupbyentity' => $permsgroupbyentity);
 $reshook = $hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -586,7 +592,7 @@ if ($result) {
 		print '<tr class="oddeven trtohide_'.$obj->module.'"'.(!$isexpanded ? ' style="display:none"' : '').'>';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 		print '</td>';
 
 		// Permission and tick (2 columns)
@@ -668,6 +674,16 @@ if ($result) {
 			print '<td>';
 		}
 		print $permlabel;
+		$idtouse = $obj->id;
+		if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+			$idtouse = 122;
+		}
+		if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
+		}
+		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+		}
 		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
@@ -689,6 +705,13 @@ if ($result) {
 				print ' '.img_warning($langs->trans("AllowAnyPrivileges"));
 			}
 		}
+		// Special cas for reading bank account when you have permission to manage Chart of account
+		if ($obj->module == 'banque' && $obj->perms == 'lire') {
+			if (isModEnabled("accounting") && $object->hasRight('accounting', 'chartofaccount')) {
+				print ' '.img_warning($langs->trans("WarningReadBankAlsoAllowedIfUserHasPermission"));
+			}
+		}
+
 		print '</td>';
 
 		// Permission id

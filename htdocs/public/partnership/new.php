@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -78,7 +79,7 @@ if (!getDolGlobalString('PARTNERSHIP_ENABLE_PUBLIC')) {
 	httponly_accessforbidden("Auto subscription form for public visitors has not been enabled");
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewpartnershipcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -276,7 +277,7 @@ if (empty($reshook) && $action == 'add') {
 				$company->state_id    = GETPOSTINT('state_id');
 				$company->name_alias  = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
 
-				$resultat=$company->create($user);
+				$resultat = $company->create($user);
 				if ($resultat < 0) {
 					$error++;
 					$errmsg .= implode('<br>', $company->errors);
@@ -581,7 +582,7 @@ $messagemandatory = '<span class="">'.$langs->trans("FieldsWithAreMandatory", '*
 //print '<br><span class="opacitymedium small">'.$langs->trans("FieldsWithAreMandatory", '*').'</span><br>';
 //print $langs->trans("FieldsWithIsForPublic",'**').'<br>';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head();
 
 print '<script type="text/javascript">
 jQuery(document).ready(function () {
@@ -681,8 +682,8 @@ if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 // Logo
 //print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Other attributes
-$parameters['tdclass']='titlefieldauto';
-$parameters['tpl_context']='public';	// define template context to public
+$parameters['tdclass'] = 'titlefieldauto';
+$parameters['tpl_context'] = 'public';	// define template context to public
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';

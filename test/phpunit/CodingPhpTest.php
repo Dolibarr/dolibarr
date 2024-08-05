@@ -170,6 +170,7 @@ class CodingPhpTest extends CommonClassTest
 			}
 
 			if (preg_match('/\.class\.php$/', $file['relativename']) && ! in_array($file['relativename'], array(
+				'adherents/class/adherent.class.php',
 				'adherents/canvas/actions_adherentcard_common.class.php',
 				'contact/canvas/actions_contactcard_common.class.php',
 				'compta/facture/class/facture.class.php',
@@ -183,6 +184,7 @@ class CodingPhpTest extends CommonClassTest
 				'core/class/html.formsms.class.php',
 				'core/class/html.formticket.class.php',
 				'core/class/utils.class.php',
+				'core/class/openid.class.php',
 				'fourn/class/fournisseur.facture.class.php',
 				'societe/canvas/actions_card_common.class.php',
 				'societe/canvas/individual/actions_card_individual.class.php',
@@ -503,8 +505,7 @@ class CodingPhpTest extends CommonClassTest
 			if (!in_array($val[1], array(
 				"'content'", "'replacestring'", "'htmlheader'", "'WEBSITE_HTML_HEADER'", "'WEBSITE_CSS_INLINE'", "'WEBSITE_JS_INLINE'", "'WEBSITE_MANIFEST_JSON'", "'PAGE_CONTENT'", "'WEBSITE_README'", "'WEBSITE_LICENSE'",
 					'"mysqldump"', '"postgresqldump"',
-					"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'",
-					'"MAIN_MAIL_SMTPS_PW"', '"MAIN_MAIL_SMTPS_PW_EMAILING"', '"MAIN_MAIL_SMTPS_PW_TICKET"'))) {
+					"'db_pass_root'", "'db_pass'", '"pass"', '"pass1"', '"pass2"', '"password"', "'password'"))) {
 				$ok = false;
 				break;
 			}

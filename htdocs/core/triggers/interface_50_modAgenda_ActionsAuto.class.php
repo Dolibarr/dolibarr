@@ -1094,7 +1094,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 
 			$object->sendtoid = 0;
-			if ($object->fk_soc > 0) {
+			if (isset($object->fk_soc) && $object->fk_soc > 0) {
 				$object->socid = $object->fk_soc;
 			}
 		} elseif ($action == 'MEMBER_SUBSCRIPTION_DELETE') {
@@ -1368,8 +1368,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// TODO Merge all previous cases into this generic one
 			// $action = PASSWORD, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
-			// Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at beginning of this function).
-			// Note that these key can be set in agenda setup, only if defined into llx_c_action_trigger
+			// Note: We are here only if getDolGlobalString('MAIN_AGENDA_ACTIONAUTO_action') is on (tested at beginning of this function).
+			// Note that these activation key can be set in agenda setup (but only if defined into llx_c_action_trigger).
+
+			// If initial message not sent but found into context
 			if (!empty($object->context['actionmsg']) && empty($object->actionmsg)) {	// For description
 				$object->actionmsg = $object->context['actionmsg'];
 			}
@@ -1377,6 +1379,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				$object->actionmsg2 = $object->context['actionmsg2'];
 			}
 
+			// Set the label and message of event
 			if (empty($object->actionmsg2)) {
 				// Load translation files required by the page
 				$langs->loadLangs(array("agenda", "other"));
@@ -1399,6 +1402,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				if (isModEnabled('multicompany') && property_exists($object, 'entity') && $object->entity > 1) {
 					$object->actionmsg .= ' ('.$langs->trans("Entity").' '.$object->entity.')';
 				}
+			}
+
+			// Concat note with data from context
+			if (!empty($object->context['actionmsgmore'])) {	// For description
+				$object->actionmsg = dol_concatdesc($object->actionmsg, $object->context['actionmsgmore']);
+			}
+			if (!empty($object->context['actionmsg2more'])) {	// For label
+				$object->actionmsg2 = dol_concatdesc($object->actionmsg2, $object->context['actionmsg2more']);
 			}
 
 			if (!isset($object->sendtoid) || !is_array($object->sendtoid)) {

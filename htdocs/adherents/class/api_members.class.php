@@ -81,7 +81,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id) && $id > 0) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -108,13 +108,13 @@ class Members extends DolibarrApi
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty);
+		$result = $member->fetch(0, '', $thirdparty);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -141,19 +141,19 @@ class Members extends DolibarrApi
 		}
 
 		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $email);
 		if (!$result) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
+		$result = $member->fetch(0, '', $thirdparty->id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -180,19 +180,19 @@ class Members extends DolibarrApi
 		}
 
 		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', $barcode);
+		$result = $thirdparty->fetch(0, '', '', $barcode);
 		if (!$result) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
+		$result = $member->fetch(0, '', $thirdparty->id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($member);
@@ -301,11 +301,11 @@ class Members extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$member->context['caller'] = $request_data['caller'];
+				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$member->$field = $value;
+			$member->$field = $this->_checkValForAPI($field, $value, $member);
 		}
 		if ($member->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating member', array_merge(array($member->error), $member->errors));
@@ -337,7 +337,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -346,10 +346,15 @@ class Members extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$member->context['caller'] = $request_data['caller'];
+				$member->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$member->array_options[$index] = $val;
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class Adherent.
 			if ($field == 'statut') {
@@ -370,7 +375,7 @@ class Members extends DolibarrApi
 					}
 				}
 			} else {
-				$member->$field = $value;
+				$member->$field = $this->_checkValForAPI($field, $value, $member);
 			}
 		}
 
@@ -405,7 +410,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $member->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 
@@ -476,7 +481,6 @@ class Members extends DolibarrApi
 		}
 
 		if ($object instanceof AdherentType) {
-			unset($object->array_options);
 			unset($object->linkedObjectsIds);
 			unset($object->context);
 			unset($object->canvas);
@@ -646,7 +650,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($membertype);
@@ -745,11 +749,11 @@ class Members extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$membertype->context['caller'] = $request_data['caller'];
+				$membertype->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating member type', array_merge(array($membertype->error), $membertype->errors));
@@ -783,7 +787,7 @@ class Members extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -792,13 +796,18 @@ class Members extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$membertype->context['caller'] = $request_data['caller'];
+				$membertype->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$membertype->array_options[$index] = $val;
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 
 		// If there is no error, update() returns the number of affected rows
@@ -816,7 +825,7 @@ class Members extends DolibarrApi
 	 * @param int $id   member type ID
 	 * @return array
 	 *
-	 * @url GET /types/{id}
+	 * @url DELETE /types/{id}
 	 *
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		No Member Type found
@@ -829,12 +838,12 @@ class Members extends DolibarrApi
 		}
 		$membertype = new AdherentType($this->db);
 		$result = $membertype->fetch($id);
-		if (!$result) {
+		if ($result < 1) {
 			throw new RestException(404, 'member type not found');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('member', $membertype->id, 'adherent_type')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$res = $membertype->delete(DolibarrApiAccess::$user);

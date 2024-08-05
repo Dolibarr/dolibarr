@@ -65,6 +65,11 @@ class CommandeFournisseur extends CommonOrder
 	public $table_element_line = 'commande_fournisseurdet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'CommandeFournisseurLigne';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_commande';
@@ -73,12 +78,6 @@ class CommandeFournisseur extends CommonOrder
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'supplier_order';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
 
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -122,16 +121,6 @@ class CommandeFournisseur extends CommonOrder
 	//  		                                      -> 9=Refused  -> (reopen) 1=Validated
 	//  Note: billed or not is on another field "billed"
 
-	/**
-	 * @var array List of status
-	 */
-	public $labelStatus;
-
-	/**
-	 * @var array List of status short
-	 */
-	public $labelStatusShort;
-
 	public $billed;
 
 	/**
@@ -148,11 +137,6 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int Date
 	 */
 	public $date;
-
-	/**
-	 * @var int Date of the purchase order creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var int Date of the purchase order validation
@@ -181,7 +165,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var int Expected Delivery Date
+	 *  @var null|int|'' Expected Delivery Date
 	 */
 	public $delivery_date;
 
@@ -464,6 +448,8 @@ class CommandeFournisseur extends CommonOrder
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 
@@ -621,7 +607,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
 		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit,";
 		$sql .= " l.date_start, l.date_end,";
@@ -722,6 +708,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
 
+				$line->info_bits      	   = $objp->info_bits;
 				$line->special_code        = $objp->special_code;
 				$line->fk_parent_line      = $objp->fk_parent_line;
 
@@ -1361,7 +1348,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 
 				if ($error == 0) {
 					// Call trigger
@@ -1413,7 +1400,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 			if ($this->db->query($sql)) {
-				$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$result = 0;
 
 				// Call trigger
 				$result = $this->call_trigger('ORDER_SUPPLIER_CANCEL', $user);
@@ -1623,7 +1610,7 @@ class CommandeFournisseur extends CommonOrder
 						0,
 						$line->product_type,
 						$line->info_bits,
-						false,
+						0,
 						$line->date_start,
 						$line->date_end,
 						$line->array_options,
@@ -1865,6 +1852,7 @@ class CommandeFournisseur extends CommonOrder
 		// Clear fields
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
+
 		$this->date               = dol_now();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
@@ -3411,7 +3399,7 @@ class CommandeFournisseur extends CommonOrder
 
 	/**
 	 * Returns the rights used for this class
-	 * @return stdClass
+	 * @return int
 	 */
 	public function getRights()
 	{
@@ -3754,6 +3742,16 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	 */
 	public $table_element = 'commande_fournisseurdet';
 
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $parent_element = 'commande_fournisseur';
+
+	/**
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = 'fk_commande_fournisseur';
+
 	public $oldline;
 
 	/**
@@ -3774,6 +3772,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
 	public $fk_facture;
 
 	public $rang = 0;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
 	/**
@@ -4014,7 +4016,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$sql .= "null,";
 		}
 		$sql .= "'".$this->db->escape($this->product_type)."',";
-		$sql .= "'".$this->db->escape($this->special_code)."',";
+		$sql .= (int) $this->special_code . ",";
 		$sql .= "'".$this->db->escape($this->rang)."',";
 		$sql .= "'".$this->db->escape($this->qty)."', ";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";

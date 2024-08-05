@@ -45,6 +45,8 @@ IPP_Device
 InstallChoiceRecommanded
 IsInPackage
 MailNoChangePossible
+MailSentBy
+MaxNbOfLinesForBoxes
 ModuleBuilderDesc2
 ModulesMarketPlaceDesc
 MoveField
@@ -60,15 +62,19 @@ ResourcesLinkedToElement
 SetupDescription5
 ShowSending
 SomethingMakeInstallFromWebNotPossible2
-StatusMotif0
 StatusOrderProcessed
 SuppliersOrdersRunning
 TasksOnOpenedProject
 ThirdPartyCustomersWithIdProf12
 TicketPublicInfoCreateTicket
+Title1
+Title2
 TitreRequestCP
 UseAsciiDocFormat
+UsePassword
 ViewPageInNewTab
+WEBSITE_PAGE_EXAMPLE
+WebpageContent
 YourTicketSuccessfullySaved
 #
 # ██████╗  █████╗ ██████╗ ████████╗██████╗
@@ -102,7 +108,6 @@ Adherent
 AdherentNotLinkedToThirdParty
 AdvTgtUse
 Agents
-AllEntities
 AllFilesDidAlreadyExist
 AlreadyInV7
 AmountOfOrders
@@ -231,7 +236,6 @@ Control
 Convert
 Core
 Count
-CreateFichInter
 CreateRemoteOrder
 CreateRepeatableIntervention
 Created
@@ -311,7 +315,6 @@ Empty
 End
 EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
-EntityNameNotDefined
 Entries
 ErrSCAAuthentication
 Error sql
@@ -403,11 +406,6 @@ EventFee
 EventIntoASerie
 EventOrganizationArea
 EventParticipant
-ExampleOnlyForATBEDEITNLESCustomers
-ExampleOnlyForBECustomers
-ExampleOnlyForDECustomers
-ExampleOnlyForKlarnaCustomers
-ExampleOnlyForNLCustomers
 Expedition
 Experimental
 Expired
@@ -440,9 +438,7 @@ FileDidAlreadyExist
 FileIsNotCorrect
 Filename
 FilteredFrom
-FiscalYear
 Flashy
-ForceEmailFrom
 ForcedByGlobalSetup
 Form for public lead registration has not been enabled
 Free
@@ -518,7 +514,6 @@ MO
 MRP
 MYDATA_AADE_KEY
 MYDATA_AADE_USER
-Mailman
 MainAccountForRevenueStampSaleNotDefined
 Manual
 Map
@@ -611,7 +606,6 @@ NoTypeOfPagePleaseEditDictionary
 NoURL
 No_record_on_multicurrency_rate
 NobodyHasPermissionToValidateExpenseReport
-NotARecurringInterventionalTemplate
 NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated
 NotEnoughForAllOrders
 NotFound
@@ -675,7 +669,6 @@ PendingCreditTransferToComplete
 PendingCreditTransferToCompleteShort
 PendingDirectDebitToComplete
 PendingDirectDebitToCompleteShort
-PermissionAdvanced
 Picto
 PlanStripe
 Poll
@@ -754,18 +747,11 @@ Roles
 Rowid
 RulesPurchaseTurnoverCollectedOfExpenseAccounts
 SID
-SOAPError
-SPIP
 SQL
 SQLSort
 STATE_
 STATE_IPP_
 STRIPE_APPLICATION_FEE_PLATFORM
-STRIPE_BANCONTACT
-STRIPE_GIROPAY
-STRIPE_IDEAL
-STRIPE_KLARNA
-STRIPE_SOFORT
 ST_
 SaveFailed
 Saved
@@ -943,7 +929,6 @@ WebServiceKey
 WebServiceURL
 Website
 WebsiteMustBeSameThanClonedPageIfTranslation
-Weighted
 WelcomeOnOnlineSignaturePage
 WidgetDisabledAsModuleDisabled
 Widgets
@@ -1155,8 +1140,6 @@ XSubsriptionError
 centimes
 email
 id
-leftmenu
-message
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 ref

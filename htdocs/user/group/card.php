@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,10 +67,10 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-$object->getrights();
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+$object->loadRights();
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
 
 // Security check
@@ -256,7 +257,7 @@ if ($action == 'create') {
 	$title = $langs->trans("NewGroup");
 }
 $help_url = "";
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_card');
 
 
 $form = new Form($db);
@@ -274,7 +275,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head(array(), '', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 

@@ -210,7 +210,7 @@ class Context
 	 */
 	public function initController()
 	{
-		global $db, $conf, $langs;
+		global $db;
 
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
@@ -546,7 +546,7 @@ class Context
 			dol_syslog(__METHOD__ . ' Try to add a message in stack, but value to add is empty message', LOG_WARNING);
 		} else {
 			if (!in_array((string) $style, array('mesgs', 'warnings', 'errors'))) {
-				dol_print_error('', 'Bad parameter style=' . $style . ' for setEventMessages');
+				dol_print_error(null, 'Bad parameter style=' . $style . ' for setEventMessages');
 			}
 			if (empty($mesgs)) {
 				$this->setEventMessage($mesg, $style);

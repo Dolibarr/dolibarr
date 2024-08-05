@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022 Ferran Marcet <fmarcet@2byte.es>
+/* Copyright (C) 2019		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2022		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,8 +54,9 @@ $massaction  = GETPOST('massaction', 'aZ09');
 $lineid      = GETPOSTINT('lineid');
 
 $msid  = GETPOSTINT('msid');
-$year  = GETPOSTINT("year");
-$month = GETPOSTINT("month");
+
+$year  = GETPOST("year");		// TODO Rename into search_year
+$month = GETPOST("month");		// TODO Rename into search_month
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_movement = GETPOST("search_movement", 'alpha');
@@ -65,7 +67,7 @@ $search_inventorycode = trim(GETPOST("search_inventorycode", 'alpha'));
 $search_user = trim(GETPOST("search_user", 'alpha'));
 $search_batch = trim(GETPOST("search_batch", 'alpha'));
 $search_qty = trim(GETPOST("search_qty", 'alpha'));
-$search_type_mouvement = GETPOSTINT('search_type_mouvement');
+$search_type_mouvement = GETPOST('search_type_mouvement', "intcomma");
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $page  = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
@@ -82,7 +84,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
@@ -107,7 +109,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -151,7 +153,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissionnote = $user->hasRight('mrp', 'write'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('mrp', 'write'); // Used by the include of actions_dellink.inc.php
 $permissiontoadd = $user->hasRight('mrp', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->mrp->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('mrp', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 $permissiontoproduce = $permissiontoadd;
@@ -198,7 +200,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_user = "";
 	$search_batch = "";
 	$search_qty = '';
-	$sall = "";
+	$search_all = "";
 	$toselect = array();
 	$search_array_options = array();
 }
@@ -234,7 +236,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be 'include', not 'include_once'
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
@@ -262,9 +264,10 @@ $productlot = new Productlot($db);
 $warehousestatic = new Entrepot($db);
 $userstatic = new User($db);
 
+$title = $langs->trans('Mo');
 $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 
-llxHeader('', $langs->trans('Mo'), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-mrp page-card_movements');
 
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {

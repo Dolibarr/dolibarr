@@ -1,3 +1,4 @@
+<!-- file menu.tpl.php -->
 <?php
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -82,7 +83,7 @@ if ($context->userIsLog()) {
 		'id' => 'user_logout',
 		'rank' => 99999,
 		'url' => $context->getControllerUrl() . 'logout.php',
-		'name' => $langs->trans('Logout'),
+		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
 	);
 }
 
@@ -167,13 +168,13 @@ if (empty($reshook)) {
 }
 ?>
 <nav class="primary-top-nav container-fluid">
-	<ul>
+	<ul class="brand">
 		<li class="brand">
 		<?php
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
-			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '" >';
+			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '">';
 		} else {
 			print '<span class="brand__name">' . $brandTitle . '</span>';
 		}
@@ -181,7 +182,7 @@ if (empty($reshook)) {
 		?>
 		</li>
 	</ul>
-	<ul>
+	<ul class="menu-entries">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navMenu)) {
 		// show menu
@@ -189,7 +190,13 @@ if (empty($reshook)) {
 	}
 	?>
 	</ul>
-	<ul>
+	<ul class="menu-entries-alt">
+	<?php
+		// show menu
+	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
+	?>
+	</ul>
+	<ul class="logout">
 	<?php
 	if (empty($context->doNotDisplayMenu) && empty($reshook) && !empty($navUserMenu)) {
 		// show menu

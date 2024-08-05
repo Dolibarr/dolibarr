@@ -8,8 +8,9 @@
  * Copyright (C) 2016       Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2021-2023  Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2023      	Frédéric France      wfrederic.france@netlogic.fr>
+ * Copyright (C) 2023      	Frédéric France      wfrederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -179,7 +180,7 @@ $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
@@ -203,7 +204,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_element');
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
@@ -316,7 +317,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	if (!is_null($object->opp_amount) && strcmp($object->opp_amount, '')) {
 		print '<span class="amount">'.price($object->opp_amount, 0, $langs, 1, 0, 0, $conf->currency).'</span>';
 		if (strcmp($object->opp_percent, '')) {
-			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("Weighted").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
+			print ' &nbsp; &nbsp; &nbsp; <span title="'.dol_escape_htmltag($langs->trans('OpportunityWeightedAmount')).'"><span class="opacitymedium">'.$langs->trans("OpportunityWeightedAmountShort").'</span>: <span class="amount">'.price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency).'</span></span>';
 		}
 	}
 	print '</td></tr>';
@@ -700,6 +701,8 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 
 if (!empty($hookmanager->resArray)) {
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+} elseif ($resHook > 0 && !empty($hookmanager->resPrint)) {
+	$listofreferent = $hookmanager->resPrint;
 }
 
 if ($action == "addelement") {
@@ -988,6 +991,29 @@ print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
 print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
 
+// and the cost per attendee
+if ($object->usage_organize_event) {
+	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
+	$conforboothattendee = new ConferenceOrBoothAttendee($db);
+	$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')');
+
+	if (!is_array($result) && $result < 0) {
+		setEventMessages($conforboothattendee->error, $conforboothattendee->errors, 'errors');
+	} else {
+		$nbAttendees = count($result);
+	}
+
+	if ($nbAttendees >= 2) {
+		$costperattendee_ht = $balance_ht / $nbAttendees;
+		$costperattendee_ttc = $balance_ttc / $nbAttendees;
+		print '<tr class="liste_total">';
+		print '<td class="right" colspan="2">'.$langs->trans("ProfitPerValidatedAttendee").'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ht, 'MT')).'</td>';
+		print '<td class="right">'.price(price2num($costperattendee_ttc, 'MT')).'</td>';
+		print '</tr>';
+	}
+}
+
 // and the margin (profit / revenues)
 if ($total_revenue_ht) {
 	print '<tr class="liste_total">';
@@ -1126,6 +1152,11 @@ foreach ($listofreferent as $key => $value) {
 		print '<td style="width: 24px"></td>';
 		// Ref
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').'>'.$langs->trans("Ref").'</td>';
+		// Product and qty on stock_movement
+		if ('MouvementStock' == $classname) {
+			print '<td style="width: 200px">'.$langs->trans("Product").'</td>';
+			print '<td style="width: 50px">'.$langs->trans("Qty").'</td>';
+		}
 		// Date
 		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"' : '').' class="center">';
 		if (in_array($tablename, array('projet_task'))) {
@@ -1140,7 +1171,7 @@ foreach ($listofreferent as $key => $value) {
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
-			print ''; // if $key == 'payment_various', we don't have any thirdparty
+			print $langs->trans("Label"); // complementary info about the payment
 		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'salary'))) {
 			print $langs->trans("User");
 		} else {
@@ -1259,7 +1290,7 @@ foreach ($listofreferent as $key => $value) {
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowraponall">';
+				print '<td class="left nowraponall tdoverflowmax250">';
 				if ($tablename == 'expensereport_det') {
 					print $expensereport->getNomUrl(1);
 				} else {
@@ -1288,8 +1319,8 @@ foreach ($listofreferent as $key => $value) {
 						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
-						$filename = get_exdir($element->id, 2, 0, 0, $element, 'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filename = get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.$filename;
 					}
 
 					print '<div class="inline-block valignmiddle">';
@@ -1312,7 +1343,13 @@ foreach ($listofreferent as $key => $value) {
 					}
 				}
 				print "</td>\n";
-
+				// Product and qty on stock movement
+				if ('MouvementStock' == $classname) {
+					$mvsProd = new Product($element->db);
+					$mvsProd->fetch($element->product_id);
+					print '<td>'.$mvsProd->getNomUrl(1).'</td>';
+					print '<td>'.$element->qty.'</td>';
+				}
 				// Date or TimeSpent
 				$date = '';
 				$total_time_by_line = null;
@@ -1372,7 +1409,7 @@ foreach ($listofreferent as $key => $value) {
 				print '</td>';
 
 				// Third party or user
-				print '<td class="left">';
+				print '<td class="tdoverflowmax150">';
 				if (is_object($element->thirdparty)) {
 					print $element->thirdparty->getNomUrl(1, '', 48);
 				} elseif ($tablename == 'expensereport_det') {
@@ -1391,6 +1428,8 @@ foreach ($listofreferent as $key => $value) {
 					}
 				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
+				} elseif ($tablename == 'payment_various') {	// payment label
+					print $element->label;
 				}
 				print '</td>';
 
@@ -1439,7 +1478,7 @@ foreach ($listofreferent as $key => $value) {
 
 					print '<td class="right">';
 					if ($othermessage) {
-						print $othermessage;
+						print '<span class="opacitymedium">'.$othermessage.'</span>';
 					}
 					if (isset($total_ht_by_line)) {
 						if (!$qualifiedfortotal) {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Alice Adminson <aadminson@example.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  */
 
 /**
- * \file    bookcal/admin/setup.php
+ * \file    htdocs/bookcal/admin/setup.php
  * \ingroup bookcal
  * \brief   BookCal setup page.
  */
@@ -36,7 +37,7 @@ require_once '../lib/bookcal.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "agenda"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bookcalsetup', 'globalsetup'));
 
 // Access control

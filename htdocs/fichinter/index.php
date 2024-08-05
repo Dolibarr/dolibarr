@@ -37,7 +37,7 @@ if (!$user->hasRight('ficheinter', 'lire')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('interventionindex'));
 
 // Load translation files required by the page
@@ -50,6 +50,7 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -62,15 +63,13 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
-llxHeader("", $langs->trans("Interventions"), $help_url);
+llxHeader("", $langs->trans("Interventions"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-index');
 
 print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(f.rowid), f.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -216,8 +215,6 @@ if (isModEnabled('intervention')) {
 
 print '</div><div class="fichetwothirdright">';
 
-
-$max = 5;
 
 /*
  * Last modified interventions

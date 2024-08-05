@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,6 +108,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -162,7 +164,7 @@ $form = new Form($db);
 $help_url = '';
 $page_name = "WorkstationSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-workstation');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
@@ -225,13 +227,8 @@ if ($action == 'edit') {
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
-		/*
-		 * Orders Numbering model
-		 */
+		// Orders Numbering model
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
@@ -260,6 +257,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
+							'@phan-var-force CommonNumRefGenerator $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -337,9 +335,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 
 	if ($myTmpObjectArray['includedocgeneration']) {
-		/*
-		 * Document templates generators
-		 */
+		// Document templates generators
 		$setupnotempty++;
 		$type = strtolower($myTmpObjectKey);
 
@@ -357,7 +353,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			$num_rows = $db->num_rows($resql);
 			while ($i < $num_rows) {
 				$array = $db->fetch_array($resql);
-				array_push($def, $array[0]);
+				if (is_array($array)) {
+					array_push($def, $array[0]);
+				}
 				$i++;
 			}
 		} else {
@@ -399,6 +397,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
+									'@phan-var-force CommonDocGenerator $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

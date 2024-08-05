@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,6 +124,7 @@ if ($action == 'specimen') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force CommonDocGenerator $module';
 
 		if ($module->write_file($object, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=stock&file=SPECIMEN.pdf");
@@ -141,7 +143,7 @@ if ($action == 'specimen') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->STOCK_ADDON_PDF == "$value") {
+		if (getDolGlobalString('STOCK_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'STOCK_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -168,7 +170,7 @@ if ($action == 'specimen') {
 $form = new Form($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("StockSetup"));
+llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-stock');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
@@ -262,7 +264,7 @@ if (isModEnabled('order')) {
 print "</td>\n</tr>\n";
 $found++;
 
-//if (isModEnabled('expedition'))
+//if (isModEnabled('shipping'))
 //{
 
 print '<!-- STOCK_CALCULATE_ON_SHIPMENT -->';
@@ -291,7 +293,7 @@ if (isModEnabled("shipping")) {
 		print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE', array(), null, 0, 0, 0, 2, 1, '', '', 'reposition');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, $conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE);
+		print $form->selectarray("STOCK_CALCULATE_ON_SHIPMENT_CLOSE", $arrval, getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE'));
 	}
 } else {
 	print '<span class="opacitymedium">'.$langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")).'</span>';
@@ -492,7 +494,7 @@ if ($virtualdiffersfromphysical) {
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help', $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
+	print "<td>".$langs->trans("RuleForStockReplenishment")." ".img_help(1, $langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
 	print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 	print '</tr>'."\n";
 
@@ -541,7 +543,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -585,6 +589,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force ModelePDFStock $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -689,7 +694,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
 print $formproduct->selectWarehouses(getDolGlobalString('MAIN_DEFAULT_WAREHOUSE') ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" class="button button-edit small" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
 

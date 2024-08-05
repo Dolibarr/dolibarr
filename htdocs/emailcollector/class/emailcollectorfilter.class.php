@@ -45,16 +45,6 @@ class EmailCollectorFilter extends CommonObject
 	public $table_element = 'emailcollector_emailcollectorfilter';
 
 	/**
-	 * @var int  Does emailcollectorfilter support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does emailcollectorfilter support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for emailcollectorfilter. Must be the part after the 'object_' into object_emailcollectorfilter.png
 	 */
 	public $picto = 'emailcollectorfilter@emailcollector';
@@ -100,11 +90,6 @@ class EmailCollectorFilter extends CommonObject
 	public $type;
 	public $rulevalue;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -123,6 +108,9 @@ class EmailCollectorFilter extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;

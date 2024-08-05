@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->loadLangs(array("admin", "companies", "other"));
@@ -67,7 +69,7 @@ if ($action == 'setcodecompta') {
 }
 
 if ($action == 'updateoptions') {
-	if (GETPOST('COMPANY_USE_SEARCH_TO_SELECT')) {
+	if (GETPOSTISSET('COMPANY_USE_SEARCH_TO_SELECT')) {
 		$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -80,7 +82,7 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('CONTACT_USE_SEARCH_TO_SELECT')) {
+	if (GETPOSTISSET('CONTACT_USE_SEARCH_TO_SELECT')) {
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -93,9 +95,22 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
+	if (GETPOSTISSET('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
 		$customertypedefault = GETPOSTINT('defaultcustomertype');
 		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+		if (!$error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
+	if (GETPOSTISARRAY('CONTACTS_DEFAULT_ROLES')) {
+		$rolessearch = GETPOST('activate_CONTACTS_DEFAULT_ROLES', 'array:aZ09');
+		$res = dolibarr_set_const($db, "CONTACTS_DEFAULT_ROLES", implode(',', $rolessearch), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -535,7 +550,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -623,7 +640,7 @@ foreach ($dirsociete as $dirroot) {
 						$htmltooltip .= '<br>'.$langs->trans("Height").'/'.$langs->trans("Width").': '.$module->page_hauteur.'/'.$module->page_largeur;
 					}
 					$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraft").': '.yn((!empty($module->option_draft_watermark) ? $module->option_draft_watermark : ''), 1, 1);
+					$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraft").': '.yn((isset($module->option_draft_watermark) ? $module->option_draft_watermark : ''), 1, 1);
 
 					print '<td class="center nowrap">';
 					print $form->textwithpicto('', $htmltooltip, 1, 0);
@@ -814,7 +831,7 @@ if (!$conf->use_javascript_ajax) {
 	);
 	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
 	print '</td><td class="right">';
-	print '<input type="submit" class="button small eposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" class="button small reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
 print '</tr>';
@@ -920,6 +937,26 @@ if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	print '<td class="center">';
 	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
+	print '</tr>';
+}
+
+if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
+	print '<tr class="oddeven">';
+	print '<td width="80%">'.$langs->trans('ContactsDefaultRoles').'</td>';
+	if (!$conf->use_javascript_ajax) {
+		print '<td class="nowrap right" colspan="2">';
+		print $langs->trans("NotAvailableWhenAjaxDisabled");
+		print "</td>";
+	} else {
+		print '<td width="60" class="right">';
+		$contact = new Contact($db);	// InfraS add
+		$contactType = $contact->listeTypeContacts('external', 0, 1);
+		$selected = explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+		print $form->multiselectarray('activate_CONTACTS_DEFAULT_ROLES', $contactType, $selected, 0, 0, 'minwidth75imp');
+		print '</td><td class="right">';
+		print '<input type="submit" class="button small eposition" name="CONTACTS_DEFAULT_ROLES" value="'.$langs->trans("Modify").'">';
+		print "</td>";
+	}
 	print '</tr>';
 }
 

@@ -10,6 +10,7 @@
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ if (!$sortfield) {
 	$sortfield = "f.ref";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Fichinter($db);
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
@@ -176,7 +177,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -411,7 +412,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-fichinter page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -482,7 +483,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -564,7 +565,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -835,11 +837,12 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Picto + Ref
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print "<td>";
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
 			print $objectstatic->getNomUrl(1);
 			print '</td>';
@@ -871,8 +874,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+
+		// Customer ref
 		if (!empty($arrayfields['f.ref_client']['checked'])) {
-			// Customer ref
 			print '<td class="nowrap tdoverflowmax200">';
 			print dol_escape_htmltag($obj->ref_client);
 			print '</td>';
@@ -880,16 +884,18 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125">';
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Project ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$projetstatic->id = $obj->projet_id;
 			$projetstatic->ref = $obj->projet_ref;
 			$projetstatic->title = $obj->projet_title;
@@ -901,8 +907,9 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Contract
 		if (!empty($arrayfields['c.ref']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax150">';
 			$contratstatic->id = $obj->contrat_id;
 			$contratstatic->ref = $obj->contrat_ref;
 			$contratstatic->ref_customer = $obj->contrat_ref_customer;
@@ -930,7 +937,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['f.datec']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -939,7 +946,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date modification
 		if (!empty($arrayfields['f.tms']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -948,17 +955,16 @@ while ($i < $imaxinloop) {
 		}
 		// Note public
 		if (!empty($arrayfields['f.note_public']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_public);
-			print '</td>';
-			if (!$i) {
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_public);
+			print '</td>';if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Note private
 		if (!empty($arrayfields['f.note_private']['checked'])) {
-			print '<td class="center">';
-			print dol_string_nohtmltag($obj->note_private);
+			print '<td class="sensiblehtmlcontent center">';
+			print dolPrintHTML($obj->note_private);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -973,17 +979,24 @@ while ($i < $imaxinloop) {
 		}
 		// Fields of detail of line
 		if (!empty($arrayfields['fd.description']['checked'])) {
-			print '<td>'.dol_trunc(dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1)), 48).'</td>';
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($obj->descriptiondetail, 1));
+			print '<td>';
+			print '<div class="classfortooltip tdoverflowmax250" title="'.dol_escape_htmltag($obj->descriptiondetail, 1, 1).'">';
+			print dol_escape_htmltag($text);
+			print '</div>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Date line
 		if (!empty($arrayfields['fd.date']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Duration line
 		if (!empty($arrayfields['fd.duree']['checked'])) {
 			print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
 			if (!$i) {

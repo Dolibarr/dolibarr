@@ -118,7 +118,9 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount1->fk_user = $discount->fk_user;
 		$newdiscount2->fk_user = $discount->fk_user;
 		$newdiscount1->fk_soc = $discount->fk_soc;
+		$newdiscount1->socid = $discount->socid;
 		$newdiscount2->fk_soc = $discount->fk_soc;
+		$newdiscount2->socid = $discount->socid;
 		$newdiscount1->discount_type = $discount->discount_type;
 		$newdiscount2->discount_type = $discount->discount_type;
 		$newdiscount1->datec = $discount->datec;
@@ -142,6 +144,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
 
 		$db->begin();
+
 		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
 		// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
 		$discount->fk_invoice_supplier_source = 0;
@@ -286,7 +289,7 @@ if ($socid > 0) {
 			dol_print_error($db);
 		}
 
-		print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT");
 		if (empty($user->fk_soc)) {    // No need to show this for external users
 			print $form->textwithpicto('', $langs->trans("CustomerAbsoluteDiscountMy").': '.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT"));
@@ -315,7 +318,7 @@ if ($socid > 0) {
 			dol_print_error($db);
 		}
 
-		print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
 		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT");
 		if (empty($user->fk_soc)) {    // No need to show this for external users
 			print $form->textwithpicto('', $langs->trans("SupplierAbsoluteDiscountMy").' : '.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT"));
@@ -376,7 +379,7 @@ if ($socid > 0) {
 			// VAT
 			print '<tr><td>'.$langs->trans("VAT").'</td>';
 			print '<td>';
-			print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : 0, $mysoc, $object, 0, 0, '', 0, 1);
+			print $form->load_tva('tva_tx', (GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS', 0)), $mysoc, $object, 0, 0, '', 0, 1);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
 			print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
@@ -391,10 +394,11 @@ if ($socid > 0) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print ' &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</div>';
+			print '<br>';
 		}
 	}
 
@@ -530,7 +534,7 @@ if ($socid > 0) {
 					print '</td>';
 
 					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
-						print '<td class="center nowrap">';
+						print '<td class="center nowraponall">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
@@ -677,7 +681,7 @@ if ($socid > 0) {
 					print '</td>';
 
 					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
-						print '<td class="center nowrap">';
+						print '<td class="center nowraponall">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';

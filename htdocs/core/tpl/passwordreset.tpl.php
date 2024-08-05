@@ -84,7 +84,7 @@ $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_TOPMENU_BACK1') ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
 $colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 
@@ -93,7 +93,7 @@ $edituser = new User($db);
 
 // Validate parameters
 if ($setnewpassword && $username && $passworduidhash) {
-	$result = $edituser->fetch('', $username);
+	$result = $edituser->fetch(0, $username);
 	if ($result < 0) {
 		$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 	} else {

@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +94,7 @@ $result = restrictedArea($user, 'ecm', 0);
  *	Actions
  */
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ecmautocard', 'globalcard'));
 
 // Purge search criteria
@@ -137,7 +138,7 @@ if ($action == 'confirm_deletefile') {
 			$relativepath = '';
 		}
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
-		$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
+		$file = $upload_dir."/".GETPOST('urlfile');
 
 		$ret = dol_delete_file($file);
 		if ($ret) {
@@ -304,7 +305,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 0);
 
 
 // Add sections to manage
@@ -417,7 +418,7 @@ print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 // Confirm remove file (for non javascript users)
 if ($action == 'deletefile' && empty($conf->use_javascript_ajax)) {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels

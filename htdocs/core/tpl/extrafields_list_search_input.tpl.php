@@ -24,9 +24,11 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+					continue;
+				}
 				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 				$typeofextrafield = $extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
-
 				print '<td class="liste_titre'.($cssclass ? ' '.$cssclass : '').'">';
 				$tmpkey = preg_replace('/'.$search_options_pattern.'/', '', $key);
 				if (in_array($typeofextrafield, array('varchar', 'mail', 'ip', 'url', 'int', 'double')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) {
@@ -42,14 +44,14 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 					$morecss = '';
 					$preselectedvalues = (empty($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]);
 					// Here $preselectedvalues can be an array('start'=>int, 'end'=>int) or an int
-					echo $extrafields->showInputField($key, $preselectedvalues, '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
+					print $extrafields->showInputField($key, $preselectedvalues, '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
 				} else {
 					// for the type as 'checkbox', 'chkbxlst', 'sellist' we should use code instead of id (example: I declare a 'chkbxlst' to have a link with dictionnairy, I have to extend it with the 'code' instead 'rowid')
 					$morecss = '';
 					if (in_array($typeofextrafield, array('link', 'sellist', 'text', 'html'))) {
 						$morecss = 'maxwidth200';
 					}
-					echo $extrafields->showInputField($key, (!isset($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
+					print $extrafields->showInputField($key, (!isset($search_array_options[$search_options_pattern.$tmpkey]) ? '' : $search_array_options[$search_options_pattern.$tmpkey]), '', '', $search_options_pattern, $morecss, 0, $extrafieldsobjectkey, 1);
 				}
 				print '</td>';
 			}

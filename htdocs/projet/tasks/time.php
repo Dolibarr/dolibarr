@@ -4,10 +4,12 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019-2021  Christophe Battarel		<christophe@altairis.fr>
- * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2021	Christophe Battarel		<christophe@altairis.fr>
+ * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,8 +79,7 @@ $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear); // Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_note = GETPOST('search_note', 'alpha');
-$search_duration = GETPOSTINT('search_duration');
-$search_value = GETPOSTINT('search_value');
+$search_duration = GETPOST('search_duration', 'alpha');
 $search_task_ref = GETPOST('search_task_ref', 'alpha');
 $search_task_label = GETPOST('search_task_label', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
@@ -112,7 +113,7 @@ if (!$sortorder) {
 
 $childids = $user->getAllChildIds(1);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 //$object = new TaskTime($db);
 $hookmanager->initHooks(array('projecttasktime', 'globalcard'));
 
@@ -140,7 +141,7 @@ if (!$user->hasRight('projet', 'lire')) {
 if ($object->fk_project > 0) {
 	restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 } else {
-	restrictedArea($user, 'projet', null, 'projet&project');
+	restrictedArea($user, 'projet', 0, 'projet&project');
 	// We check user has permission to see all tasks of all users
 	if (empty($projectid) && !$user->hasRight('projet', 'all', 'lire')) {
 		$search_user = $user->id;
@@ -232,7 +233,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 		if (!$error) {
 			$object->fetch_projet();
 
-			if (empty($object->project->statut)) {
+			if (empty($object->project->status)) {
 				setEventMessages($langs->trans("ProjectMustBeValidatedFirst"), null, 'errors');
 				$action = 'createtime';
 				$error++;
@@ -419,7 +420,8 @@ if ($action == 'confirm_generateinvoice') {
 		$tmptimespent = new Task($db);
 		$tmpproduct = new Product($db);
 		$fuser = new User($db);
-
+		$remiseproject = price2num(GETPOST('remiseprojet', 'alphanohtml'));
+		$condidproject = GETPOSTINT('condidproject');
 		$db->begin();
 		$idprod = GETPOSTINT('productid');
 		$generateinvoicemode = GETPOST('generateinvoicemode', 'alphanohtml');
@@ -459,7 +461,7 @@ if ($action == 'confirm_generateinvoice') {
 		$tmpinvoice->socid = $projectstatic->thirdparty->id;
 		$tmpinvoice->date = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		$tmpinvoice->fk_project = $projectstatic->id;
-		$tmpinvoice->cond_reglement_id = $projectstatic->thirdparty->cond_reglement_id;
+		$tmpinvoice->cond_reglement_id = $condidproject;
 		$tmpinvoice->mode_reglement_id = $projectstatic->thirdparty->mode_reglement_id;
 		$tmpinvoice->fk_account = $projectstatic->thirdparty->fk_account;
 
@@ -496,8 +498,9 @@ if ($action == 'confirm_generateinvoice') {
 						if (getDolGlobalInt('PROJECT_USE_REAL_COST_FOR_TIME_INVOICING')) {
 							// We set unit price to 0 to force the use of the rate saved during recording
 							$pu_ht = 0;
-						} else {
+						} elseif ($idprod <= 0) {
 							// We want to sell all the time spent with the last hourly rate of user
+							// -> but what about choice user selected ? add idprod test
 							$pu_ht = $fuser->thm;
 						}
 
@@ -517,7 +520,7 @@ if ($action == 'confirm_generateinvoice') {
 						$localtax2line = $localtax2;
 
 						// If a particular product/service was defined for the task
-						if (!empty($fk_product) && $fk_product !== $idprod) {
+						if (!empty($fk_product) && ($fk_product > 0) && ($fk_product !== $idprod)) {
 							if (!array_key_exists($fk_product, $product_data_cache)) {
 								$result = $tmpproduct->fetch($fk_product);
 								if ($result < 0) {
@@ -550,7 +553,7 @@ if ($action == 'confirm_generateinvoice') {
 						}
 
 						// Add lines
-						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0));
+						$lineid = $tmpinvoice->addline($langs->trans("TimeSpentForInvoice", $username) . ' : ' . $qtyhourtext, $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -649,7 +652,7 @@ if ($action == 'confirm_generateinvoice') {
 						}
 						$idprodline = $value['fk_product'];
 					}
-					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0));
+					$lineid = $tmpinvoice->addline($value['note'], $pu_htline, round($qtyhour / $prodDurationHours, 2), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject);
 					if ($lineid < 0) {
 						$error++;
 						setEventMessages(null, $tmpinvoice->errors, 'errors');
@@ -747,7 +750,7 @@ if ($action == 'confirm_generateinvoice') {
 						$date_start = '';
 						$date_end = '';
 						$lineName = $ftask->ref . ' - ' . $ftask->label;
-						$lineid = $tmpinvoice->addline($lineName, $pu_ht_for_task, price2num($qtyhour / $prodDurationHours, 'MS'), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), 0, $date_start, $date_end, 0, 0, '', 'HT', 0, 1, -1, 0, '', 0, 0, null, $pa_ht);
+						$lineid = $tmpinvoice->addline($lineName, $pu_ht_for_task, price2num($qtyhour / $prodDurationHours, 'MS'), $txtvaline, $localtax1line, $localtax2line, ($idprodline > 0 ? $idprodline : 0), $remiseproject, $date_start, $date_end, 0, 0, '', 'HT', 0, 1, -1, 0, '', 0, 0, null, $pa_ht);
 						if ($lineid < 0) {
 							$error++;
 							setEventMessages($tmpinvoice->error, $tmpinvoice->errors, 'errors');
@@ -882,7 +885,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_time');
 
 if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser > 0) {
 	/*
@@ -1240,7 +1243,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 
 	if ($projectstatic->id > 0 || $allprojectforuser > 0) {
-		// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+		// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 		$hookmanager->initHooks(array('tasktimelist'));
 
 		$formconfirm = '';
@@ -1378,8 +1381,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$param .= '&withproject=' . urlencode((string) ($withproject));
 		}
 		// Add $param from hooks
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$parameters = array('param' => &$param);
+		$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$param .= $hookmanager->resPrint;
 
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -1466,13 +1469,28 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '</td>';
 					print '</tr>';
 				}
-
 				print '<tr>';
 				print '<td class="titlefield">';
 				print $langs->trans('InvoiceToUse');
 				print '</td>';
 				print '<td>';
 				print $form->selectInvoice($projectstatic->thirdparty->id, '', 'invoiceid', 24, 0, $langs->trans('NewInvoice'), 1, 0, 0, 'maxwidth500', '', 'all');
+				print '</td>';
+				print '</tr>';
+				print '<tr>';
+				print '<td class="titlefield">';
+				print $langs->trans("CustomerRelativeDiscount");
+				print '</td>';
+				print '<td>';
+				print '<input type="text" size="5" name="remiseproject" value="'.$projectstatic->thirdparty->remise_percent.'">%';
+				print '</td>';
+				print '</tr>';
+				print '<tr class="newinvoicedetail">';
+				print '<td class="titlefield">';
+				print $langs->trans("PaymentConditions");
+				print '</td>';
+				print '<td>';
+				print $form->getSelectConditionsPaiements($projectstatic->thirdparty->cond_reglement_id, 'condidproject');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1554,13 +1572,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$sql = "SELECT t.rowid, t.fk_element, t.element_date, t.element_datehour, t.element_date_withhour, t.element_duration, t.fk_user, t.note, t.thm,";
 		$sql .= " t.fk_product,";
 		$sql .= " pt.ref, pt.label, pt.fk_projet,";
-		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.statut as user_status,";
+		$sql .= " u.lastname, u.firstname, u.login, u.photo, u.gender, u.statut as user_status,";
 		$sql .= " il.fk_facture as invoice_id, inv.fk_statut,";
 		$sql .= " p.fk_soc,s.name_alias,";
-		$sql .= " t.invoice_line_id";
+		$sql .= " t.invoice_line_id,";
+		$sql .= " pt.billable";
 		// Add fields from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql = preg_replace('/,\s*$/', '', $sql);
 
@@ -1577,10 +1596,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Add table from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		$sql .= " WHERE elementtype = 'task'";
 		$sql .= " AND p.entity IN (".getEntity('project').")";
+		if (!$user->hasRight('projet', 'all', 'lire')) {
+			// Get list of project id allowed to user (in a string list separated by comma)
+			// TODO This may generate performance trouble when list of project is very large. Solution can be to complete $filterproj with filters on project.
+			$filterproj = '';
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $user->socid > 0 ? $user->socid : 0, $filterproj);
+			$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
+		}
 		if (empty($projectidforalltimes) && empty($allprojectforuser)) {
 			// Limit on one task
 			$sql .= " AND t.fk_element =".((int) $object->id);
@@ -1660,7 +1686,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		// Add where from hooks
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
 		// Count total nb of records
@@ -1757,7 +1783,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 			// Hook fields
 			$parameters = array('mode' => 'create');
-			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print '<td></td>';
 			print "</tr>\n";
@@ -1840,7 +1866,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Fields from hook
 			$parameters = array('mode' => 'create');
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			print '<td class="center">';
@@ -1858,7 +1884,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$moreforfilter = '';
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$moreforfilter .= $hookmanager->resPrint;
 		} else {
@@ -1928,11 +1954,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		// Author
 		if (!empty($arrayfields['author']['checked'])) {
-			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
+			print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth125').'</td>';
 		}
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) {
-			print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
+			print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_note" value="' . dol_escape_htmltag($search_note) . '"></td>';
 		}
 		// Duration
 		if (!empty($arrayfields['t.element_duration']['checked'])) {
@@ -1951,7 +1977,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if ($search_timespent_endhour || $search_timespent_endmin) {
 				$durationtouse_end = ($search_timespent_endhour * 3600 + $search_timespent_endmin * 60);
 			}
-			print '<div class="nowraponall">' . $langs->trans('at') . ' ';
+			print '<div class="nowraponall">' . $langs->trans('to') . ' ';
 			print $form->select_duration('search_timespent_duration_end', $durationtouse_end, 0, 'text', 0, 1);
 			print '</div>';
 
@@ -1976,7 +2002,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields);
-		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1986,6 +2012,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print '</td>';
 		}
 		print '</tr>' . "\n";
+
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
@@ -2060,7 +2087,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		 */
 		// Hook fields
 		$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'width="80"', $sortfield, $sortorder, 'center maxwidthsearch ');
@@ -2071,9 +2098,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		$tasktmp = new Task($db);
 		$tmpinvoice = new Facture($db);
 
+		if ($page) {
+			$param .= '&page='.((int) $page);
+		}
+		$param .= '&sortfield='.urlencode($sortfield).'&sortorder='.urlencode($sortorder);
+
 		$i = 0;
-		$total = 0;
-		$totalvalue = 0;
 
 		$savnbfield = $totalarray['nbfield'];
 		$totalarray = array();
@@ -2089,7 +2119,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Show here line of result
 			$j = 0;
-			print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+			print '<tr data-rowid="'.$task_time->rowid.'" class="oddeven">';
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2101,16 +2131,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
-						if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
-							print '&nbsp;';
-							print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
-							print img_split('', 'class="pictofixedwidth"');
-							print '</a>';
-						}
-
 						print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_edit('default', 0, 'class="pictofixedwidth paddingleft"');
 						print '</a>';
+
+						if (getDolGlobalString('PROJECT_ALLOW_SPLIT_TIMESPENT')) {
+							print '<a class="reposition editfielda paddingleft" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
+							print img_split('', 'class="pictofixedwidth paddingleft"');
+							print '</a>';
+						}
 
 						print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_delete('default', 'class="pictodelete paddingleft"');
@@ -2131,14 +2160,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$totalarray['nbfield']++;
 				}
 			}
+
 			// Date
 			if (!empty($arrayfields['t.element_date']['checked'])) {
 				print '<td class="nowrap">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					if (empty($task_time->element_date_withhour)) {
-						print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 3, 3, 2, "timespent_date", 1, 0);
+						print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 4, 3, 2, "timespent_date", 1, 0);
 					} else {
-						print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 1, 1, 2, "timespent_date", 1, 0);
+						print $form->selectDate(($date2 ? $date2 : $date1), 'timeline', 2, 1, 2, "timespent_date", 1, 0);
 					}
 				} else {
 					print dol_print_date(($date2 ? $date2 : $date1), ($task_time->element_date_withhour ? 'dayhour' : 'day'));
@@ -2227,7 +2257,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {   // Not a dedicated task
 					print '<td class="nowrap">';
 					if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
-						$formproject->selectTasks(-1, GETPOSTINT('taskid') ? GETPOSTINT('taskid') : $task_time->fk_element, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+						$formproject->selectTasks(-1, GETPOSTINT('taskid') ? GETPOSTINT('taskid') : $task_time->fk_element, 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth250', $projectstatic->id, '');
 					} else {
 						$tasktmp->id = $task_time->fk_element;
 						$tasktmp->ref = $task_time->ref;
@@ -2246,7 +2276,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Task label
 			if (!empty($arrayfields['t.element_label']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-					print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($task_time->label).'">';
+					print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($task_time->label).'">';
 					print dol_escape_htmltag($task_time->label);
 					print '</td>';
 					if (!$i) {
@@ -2257,18 +2287,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// By User
 			if (!empty($arrayfields['author']['checked'])) {
-				print '<td class="tdoverflowmax100">';
+				print '<td class="minwidth100 tdoverflowmax125">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
+					// Here $object is task. TODO Add a cache
 					if (empty($object->id)) {
-						$object->fetch($id);
+						$object->fetch($task_time->fk_element);
 					}
 					$contactsoftask = $object->getListContactId('internal');
 					if (!in_array($task_time->fk_user, $contactsoftask)) {
 						$contactsoftask[] = $task_time->fk_user;
 					}
 					if (count($contactsoftask) > 0) {
-						print img_object('', 'user', 'class="hideonsmartphone"');
-						print $form->select_dolusers($task_time->fk_user, 'userid_line', 0, '', 0, '', $contactsoftask, '0', 0, 0, '', 0, '', 'maxwidth200');
+						print img_object('', 'user', 'class="pictofixedwidth hideonsmartphone"');
+						print $form->select_dolusers($task_time->fk_user, 'userid_line', 0, null, 0, '', $contactsoftask, '0', 0, 0, '', 0, '', 'minwidth100 maxwidth100');	// maxwidth must be lowed than minwidth of the td
 					} else {
 						print img_error($langs->trans('FirstAddRessourceToAllocateTime')) . $langs->trans('FirstAddRessourceToAllocateTime');
 					}
@@ -2277,7 +2308,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					$userstatic->lastname = $task_time->lastname;
 					$userstatic->firstname = $task_time->firstname;
 					$userstatic->photo = $task_time->photo;
+					$userstatic->gender = $task_time->gender;
 					$userstatic->status = $task_time->user_status;
+
 					print $userstatic->getNomUrl(-1);
 				}
 				print '</td>';
@@ -2338,7 +2371,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Product
 			if (!empty($arrayfields['t.fk_product']['checked'])) {
 				print '<td class="nowraponall">';
-				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
+				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
 					print $form->select_produits($task_time->fk_product, 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', 0, '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
@@ -2388,6 +2421,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			}
 
 			// Invoiced
+			$invoiced = false;
 			if (!empty($arrayfields['valuebilled']['checked'])) {
 				print '<td class="center">'; // invoice_id and invoice_line_id
 				if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_BILL_TIME_SPENT')) {
@@ -2395,7 +2429,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 						if ($task_time->invoice_id) {
 							$result = $tmpinvoice->fetch($task_time->invoice_id);
 							if ($result > 0) {
-								if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid) {
+								if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 									print $formproject->selectInvoiceAndLine($task_time->invoice_id, $task_time->invoice_line_id, 'invoiceid', 'invoicelineid', 'maxwidth500', array('p.rowid' => $projectstatic->id));
 								} else {
 									print $tmpinvoice->getNomUrl(1);
@@ -2409,8 +2443,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 									}
 								}
 							}
+							$invoiced = true;
 						} else {
-							print $langs->trans("No");
+							if ( intval($task_time->billable) == 1) {
+								print $langs->trans("No");
+							} else {
+								print $langs->trans("Disabled");
+							}
 						}
 					} else {
 						print '<span class="opacitymedium">' . $langs->trans("NA") . '</span>';
@@ -2429,7 +2468,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			// Action column
@@ -2437,21 +2476,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="center nowraponall">';
 				if (($action == 'editline' || $action == 'splitline') && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<input type="hidden" name="lineid" value="'.GETPOSTINT('lineid').'">';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-save small" name="save" value="'.$langs->trans("Save").'">';
+					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-save" name="save" value="'.$langs->trans("Save").'">';
 					print '<br>';
-					print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button buttongen smallpaddingimp margintoponlyshort marginbottomonlyshort button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 				} elseif ($user->hasRight('projet', 'time') || $user->hasRight('projet', 'all', 'creer')) {	 // Read project and enter time consumed on assigned tasks
 					if (in_array($task_time->fk_user, $childids) || $user->hasRight('projet', 'all', 'creer')) {
-						if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 2) {
-							print '&nbsp;';
-							print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
-							print img_split('', 'class="pictofixedwidth"');
-							print '</a>';
-						}
-
 						print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=editline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_edit('default', 0, 'class="pictofixedwidth paddingleft"');
 						print '</a>';
+
+						if (getDolGlobalString('PROJECT_ALLOW_SPLIT_TIMESPENT')) {
+							print '<a class="reposition editfielda paddingleft" href="' . $_SERVER["PHP_SELF"] . '?action=splitline&token=' . newToken() . '&lineid=' . $task_time->rowid . $param . ((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '') . '">';
+							print img_split('', 'class="pictofixedwidth paddingleft"');
+							print '</a>';
+						}
 
 						print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?'.($withproject ? 'id='.$task_time->fk_element : '').'&action=deleteline&token='.newToken().'&lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_delete('default', 'class="pictodelete paddingleft"');
@@ -2463,7 +2501,17 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 								$selected = 1;
 							}
 							print '&nbsp;';
-							print '<input id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+							// Disable select if task not billable or already invoiced
+							$disabled = (intval($task_time->billable) !=1 || $invoiced);
+							$ctrl = '<input '.($disabled?'disabled':'').' id="cb' . $task_time->rowid . '" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="' . $task_time->rowid . '"' . ($selected ? ' checked="checked"' : '') . '>';
+							if ($disabled) {
+								// If disabled, a dbl-click very close outside the control
+								// will re-enable it, so that user is not blocked if needed.
+								print '<span id="cbsp'. $task_time->rowid . '">'.$ctrl.'</span>';
+								print '<script>$("#cbsp' . $task_time->rowid . '").dblclick(()=>{ $("#cb' . $task_time->rowid . '").removeAttr("disabled") })</script>';
+							} else {
+								print $ctrl;
+							}
 						}
 					}
 				}
@@ -2476,11 +2524,16 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			print "</tr>\n";
 
 
-			// Add line to split
+			// Add the lines for the split feature
 
 			if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 				print '<!-- first line -->';
 				print '<tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td></td>';
+				}
 
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2624,12 +2677,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split1');
-				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
 				// Action column
-				print '<td class="center nowraponall">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					print '</td>';
+				}
 
 				print "</tr>\n";
 
@@ -2637,6 +2692,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Line for second dispatching
 
 				print '<!-- second line --><tr class="oddeven">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					print '</td>';
+				}
 
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
@@ -2696,7 +2757,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// User
 				if (!empty($arrayfields['author']['checked'])) {
-					print '<td class="nowraponall">';
+					print '<td class="nowraponall tdoverflowmax100">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
 							$object->fetch($id);
@@ -2782,12 +2843,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Fields from hook
 				$parameters = array('arrayfields' => $arrayfields, 'obj' => $task_time, 'mode' => 'split2');
-				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+				$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				print $hookmanager->resPrint;
 
 				// Action column
-				print '<td class="center nowraponall">';
-				print '</td>';
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print '<td class="center nowraponall">';
+					print '</td>';
+				}
 
 				print "</tr>\n";
 			}
@@ -2833,7 +2896,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 
 		$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
 		print "</table>";

@@ -100,6 +100,7 @@ if ($action == 'set') {
 		require_once $file;
 
 		$module = new $classname($db, $commande);
+		'@phan-var-force pdf_standard_actions $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
@@ -145,7 +146,7 @@ if ($action == 'set') {
 
 $formactions = new FormActions($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-agenda_reminder');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');

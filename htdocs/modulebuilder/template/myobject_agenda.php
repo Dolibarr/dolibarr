@@ -83,7 +83,7 @@ dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 $langs->loadLangs(array("mymodule@mymodule", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
@@ -118,7 +118,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
@@ -127,7 +127,7 @@ $hookmanager->initHooks(array($object->element.'agenda', 'globalcard')); // Note
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->mymodule->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }

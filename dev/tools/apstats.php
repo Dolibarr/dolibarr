@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2023 	   	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024 	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /**
  * \file    dev/tools/apstats.php
- * \brief   Script to report Advanced Statistics on a coding PHP project
+ * \brief   Script to report Advanced Statistics and Status on a PHP project
  */
 
 
@@ -40,8 +40,6 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "apstats");
 define('VERSION', "1.0");
 
-$phpstanlevel = 3;
-
 // Include Dolibarr environment
 if (!is_readable("{$path}../../htdocs/config/config.php")) {
 	define("DOL_DOCUMENT_ROOT", __DIR__."/../../htdocs");
@@ -56,13 +54,14 @@ print '***** '.constant('PRODUCT').' - '.constant('VERSION').' *****'."\n";
 if (empty($argv[1])) {
 	print 'You must run this tool at the root of the project.'."\n";
 	print 'Usage:   '.constant('PRODUCT').'.php  pathto/outputfile.html  [--dir-scc=pathtoscc|disabled] [--dir-phpstan=pathtophpstan|disabled] [--dir-phan=path/to/phan|disabled]'."\n";
-	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin --dir-phan=~/vendor/bin/phan';
+	print 'Example: '.constant('PRODUCT').'.php  documents/apstats/index.html --dir-scc=/snap/bin --dir-phpstan=~/git/phpstan/htdocs/includes/bin --dir-phan=~/vendor/bin/phan --url-site=https://www.dolibarr.org';
 	exit(0);
 }
 
 $outputpath = $argv[1];
 $outputdir = dirname($outputpath);
 $outputfile = basename($outputpath);
+$outputfilerss = preg_replace('/\.\w+$/i', '', $outputfile).'-security.rss';
 
 if (!is_dir($outputdir)) {
 	print 'Error: dir '.$outputdir.' does not exists or is not writable'."\n";
@@ -73,6 +72,10 @@ $dirscc = '';
 $dirphpstan = '';
 $dir_phan = '';
 $datatable_script = '';
+$url_root = '';
+$url_site = '';
+$url_flux = '';
+$project = '';
 
 $i = 0;
 while ($i < $argc) {
@@ -83,11 +86,27 @@ while ($i < $argc) {
 		$dirphpstan = $reg[1];
 	} elseif (preg_match('/^--dir-phan=(.*)$/', $argv[$i], $reg)) {
 		$dir_phan = $reg[1];
+	} elseif (preg_match('/^--url-root=(.*)$/', $argv[$i], $reg)) {
+		$url_root = $reg[1];
+	} elseif (preg_match('/^--url-site=(.*)$/', $argv[$i], $reg)) {
+		$url_site = $reg[1];
+	} elseif (preg_match('/^--project-name=(.*)$/', $argv[$i], $reg)) {
+		$project = $reg[1];
 	}
+
 	$i++;
 }
 
-if (!is_readable("{$path}phan/config.php")) {
+// PHPSTAN setup
+$PHPSTANLEVEL = 4;
+
+// PHAN setup. Configuration is required, otherwise phan is disabled.
+$PHAN_CONFIG = "{$path}phan/config_extended.php";
+$PHAN_BASELINE = "{$path}phan/baseline_extended.txt";		// BASELINE is ignored if it does not exist
+$PHAN_MIN_PHP = "7.0";
+$PHAN_MEMORY_OPT = "--memory-limit 5G";
+
+if (!is_readable($PHAN_CONFIG)) {
 	print "Skipping phan - configuration not found\n";
 	// Disable phan while not integrated yet
 	$dir_phan = 'disabled';
@@ -118,27 +137,37 @@ if ($dirscc != 'disabled') {
 	exec($commandcheck, $output_arrdep, $resexecdep);
 }
 
-// Get technical debt
+// Get technical debt with PHPStan
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$phpstanlevel.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 5G --error-format=github';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --version';
+	print 'Execute PHPStan to get the version: '.$commandcheck."\n";
+	$resexectd = 0;
+	exec($commandcheck, $output_arrtd, $resexectd);
+}
+$phpstanversion = $output_arrtd[0];
+
+$output_arrtd = array();
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
 }
 
+// Get technical debt with Phan
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
+	if (is_readable($PHAN_BASELINE)) {
+		$PHAN_BASELINE_OPT = "-B '${PHAN_BASELINE}'";
+	} else {
+		$PHAN_BASELINE_OPT = '';
+	}
 	// Get technical debt (phan)
-	$PHAN_CONFIG = "dev/tools/phan/config_extended.php";
-	$PHAN_BASELINE = "dev/tools/phan/baseline.txt";
-	$PHAN_MIN_PHP = "7.0";
-	$PHAN_MEMORY_OPT = "--memory-limit 5G";
-
 	$commandcheck
 		= ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '')
-		  ."phan --output-mode json $PHAN_MEMORY_OPT -k $PHAN_CONFIG -B $PHAN_BASELINE --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
+		  ."phan --output-mode json $PHAN_MEMORY_OPT -k '$PHAN_CONFIG' $PHAN_BASELINE_OPT --analyze-twice --minimum-target-php-version $PHAN_MIN_PHP";
 	print 'Execute Phan to get the technical debt: '.$commandcheck."\n";
 	exec($commandcheck, $output_phan_json, $res_exec_phan);
 }
@@ -220,26 +249,28 @@ $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 
 // Get stats on nb of commits
-$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
+$commandcheck = "git log --all --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
 print 'Execute git log to get list of commits: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 //exec($commandcheck, $output_arrglpu, $resexecglpu);
 
 
-// Retrieve the git information for security alerts
-$nbofmonth = 2;
+// Get git information for security alerts
+$nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -E ".escapeshellarg("(yogosha|CVE|Sec:)");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 exec($commandcheck, $output_arrglpu, $resexecglpu);
 foreach ($output_arrglpu as $val) {
+	// Parse the line to split interesting data
 	$tmpval = cleanVal2($val);
-	if (preg_match('/(yogosha|CVE|Sec:)/i', $tmpval['title'])) {
+
+	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
 		foreach ($arrayofalerts as $val) {
@@ -258,14 +289,56 @@ foreach ($output_arrglpu as $val) {
 				$alreadyfoundcommitid = $val['commitid'];
 				break;
 			}
+			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
+				$alreadyfound = 'title';
+				$alreadyfoundcommitid = $val['commitid'];
+				break;
+			}
 		}
 		//$alreadyfound=0;
 		if (!$alreadyfound) {
+			// Get branch names
+			$commandgetbranch = "git branch -r --contains '".$tmpval['commitid']."'";
+			print 'Execute git branch to get the name of branches for the commit: '.$commandgetbranch."\n";
+			$output_arrgetbranch = array();
+			$resexecgetbranch = 0;
+			exec($commandgetbranch, $output_arrgetbranch, $resexecgetbranch);
+
+			foreach ($output_arrgetbranch as $valbranch) {
+				if (empty($tmpval['branch'])) {
+					$tmpval['branch'] = array();
+				}
+				if (preg_match('/^\s*origin\/(develop|\d)/', $valbranch)) {
+					$tmpval['branch'][] = preg_replace('/^\s*origin\//', '', $valbranch);
+				}
+			}
+
 			$arrayofalerts[$tmpval['commitid']] = $tmpval;
 		} else {
 			if (empty($arrayofalerts[$alreadyfoundcommitid]['commitidbis'])) {
 				$arrayofalerts[$alreadyfoundcommitid]['commitidbis'] = array();
 			}
+
+			// Get branch names
+			$commandgetbranch = "git branch -r --contains '".$tmpval['commitid']."'";
+			print 'Execute git branch to get the name of branches for the commit: '.$commandgetbranch."\n";
+			$output_arrgetbranch = array();
+			$resexecgetbranch = 0;
+			exec($commandgetbranch, $output_arrgetbranch, $resexecgetbranch);
+
+			foreach ($output_arrgetbranch as $valbranch) {
+				if (empty($tmpval['branch'])) {
+					$tmpval['branch'] = array();
+				}
+				if (preg_match('/^\s*origin\/(develop|\d)/', $valbranch)) {
+					$tmpval['branch'][] = preg_replace('/^\s*origin\//', '', $valbranch);
+				}
+			}
+			/*var_dump($tmpval['commitid'].' '.$alreadyfoundcommitid);
+			var_dump($arrayofalerts[$alreadyfoundcommitid]['branch']);
+			var_dump($tmpval);*/
+			$arrayofalerts[$alreadyfoundcommitid]['branch'] = array_merge($arrayofalerts[$alreadyfoundcommitid]['branch'], $tmpval['branch']);
+
 			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];
 		}
 	}
@@ -499,8 +572,10 @@ div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive
 		margin-left: 5px;
 		margin-right: 5px;
 	}
+	.boxallwidth picture img {
+	    width: 100%;
+	}
 }
-
 
 </style>'."\n";
 
@@ -510,9 +585,9 @@ $html .= '<body>'."\n";
 // Header
 
 $html .= '<header>'."\n";
-$html .= '<h1>Advanced Project Statistics</h1>'."\n";
+$html .= '<h1>Advanced Project Status</h1>'."\n";
 $currentDate = date("Y-m-d H:i:s"); // Format: Year-Month-Day Hour:Minute:Second
-$html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds</span>'."\n";
+$html .= '<span class="opacitymedium">Generated on '.$currentDate.' in '.($timeend - $timestart).' seconds by <a target="_blank" href="https://github.com/Dolibarr/dolibarr/blob/develop/dev/tools/apstats.php">apstats</a></span>'."\n";
 $html .= '</header>'."\n";
 
 
@@ -590,10 +665,29 @@ $html .= '<td class="right nowrap">'.formatNumber($arrayofmetrics['proj']['Code'
 //$html .= '<td></td>';
 $html .= '</tr>';
 $html .= '</table>';
+
 $html .= '</div>';
 $html .= '</div>';
 
+// OSSINSIGHT graph
+/*
+$html .= <<<END
+<br>
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-loc-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-loc-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+<img alt="Lines of Code Changes of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-loc-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+END;
+*/
+
 $html .= '</section>'."\n";
+
 
 
 // Contributions
@@ -603,7 +697,32 @@ $html .= '<h2><span class="fas fa-tasks pictofixedwidth"></span>Contributions</h
 
 $html .= '<div class="boxallwidth">'."\n";
 
-$html .= 'TODO...';
+$html .= <<<END
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+<img alt="Pushes and Commits of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pushes-and-commits-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+
+
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month?repo_id=1957456" target="_blank" style="display: block" align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+    <img alt="Pull Request Size of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-pull-requests-size-per-month/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+  </picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+
+END;
+
 
 $html .= '<!-- ';
 foreach ($output_arrglpu as $line) {
@@ -616,14 +735,49 @@ $html .= '</div>';
 $html .= '</section>'."\n";
 
 
-// Contributors
+// Community - Contributors
 
 $html .= '<section class="chapter" id="projectvalue">'."\n";
 $html .= '<h2><span class="fas fa-user pictofixedwidth"></span>Contributors</h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 
-$html .= 'TODO...';
+$html .= <<<END
+<center><br>Thumbs of most active contributors<br>
+<br>
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://camo.githubusercontent.com/a641a400eef38e00a93b572dcfc30d13ceaaeefbca951d09ed9189142d20cf62/68747470733a2f2f6f70656e636f6c6c6563746976652e636f6d2f646f6c69626172722f636f6e7472696275746f72732e7376673f77696474683d38393026627574746f6e3d66616c7365" alt="Dolibarr" data-canonical-src="https://opencollective.com/dolibarr/contributors.svg?width=890&amp;button=false" style="max-width: 100%;"></a>
+</center>
+<br>
+END;
+
+/*
+$html .= <<<END
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/compose-contributors?repo_id=1957456&limit=200" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/compose-contributors/thumbnail.png?repo_id=1957456&limit=200&image_size=auto&color_scheme=dark" width="655" height="auto">
+<img alt="Contributors of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/compose-contributors/thumbnail.png?repo_id=1957456&limit=200&image_size=auto&color_scheme=light" width="655" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+END;
+*/
+
+$html .= <<<END
+<br>
+<!-- Copy-paste in your Readme.md file -->
+
+<a href="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history?repo_id=1957456" target="_blank" style="display: block" align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=dark" width="721" height="auto">
+<img alt="Star History of Dolibarr/dolibarr" src="https://next.ossinsight.io/widgets/official/analyze-repo-stars-history/thumbnail.png?repo_id=1957456&image_size=auto&color_scheme=light" width="721" height="auto">
+</picture>
+</a>
+
+<!-- Made with [OSS Insight](https://ossinsight.io/) -->
+END;
 
 $html .= '</div>';
 
@@ -720,58 +874,171 @@ if (count($output_phan_json) != 0) {
 
 
 // Last security errors
+$title_security_short = "Last security issues";
+$title_security = ($project ? "[".$project."] " : "").$title_security_short;
 
 $html .= '<section class="chapter" id="linesofcode">'."\n";
-$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>Last security issues <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
+$html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
 $html .= '<div class="div-table-responsive">'."\n";
 $html .= '<table class="list_technical_debt centpercent">'."\n";
-$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td></tr>'."\n";
-foreach ($arrayofalerts as $alert) {
+$html .= '<tr class="trgroup"><td>Commit ID</td><td>Date</td><td style="white-space: nowrap">Reported on<br>Yogosha</td><td style="white-space: nowrap">Reported on<br>GIT</td><td style="white-space: nowrap">Reported on<br>CVE</td><td>Title</td><td>Branch of fix</td></tr>'."\n";
+foreach ($arrayofalerts as $key => $alert) {
+	$cve = '';
+	$yogosha = empty($alert['issueidyogosha']) ? '' : $alert['issueidyogosha'];
+	$arrayofalerts[$key]['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+	if (!empty($alert['issueid'])) {
+		$arrayofalerts[$key]['url_issue'] = 'https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'];
+	}
+	if (!empty($alert['issueidcve'])) {
+		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
+		$arrayofalerts[$key]['url_cve'] = 'https://nvd.nist.gov/vuln/detail/CVE-'.$cve;
+	}
+	$arrayofalerts[$key]['title'] = ($project ? "[".$project."] " : "").'Security alert - '.($yogosha ? ' Yogosha #'.$yogosha.' - ' : '').($cve ? 'CVE-'.$cve.' - ' : '');
+	$arrayofalerts[$key]['title'] .= 'Fix committed as: '.dol_trunc($alert['commitid'], 8);
+
+	$arrayofalerts[$key]['description'] = '<![CDATA[Security alert<br>';
+
 	$html .= '<tr style="vertical-align: top;">';
+
+	// Commits ID - Add link to Github
 	$html .= '<td class="nowrap">';
-	$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+	$arrayofalerts[$key]['description'] .= "\n<br>".'Commit ID: <a href="'.$arrayofalerts[$key]['url_commit'].'">'.dol_trunc($alert['commitid'], 8).'</a>';
+
 	if (!empty($alert['commitidbis'])) {
 		$html .= ' <div class="more inline"><span class="seeothercommit badge">+</span><div class="morediv hidden">';
 		foreach ($alert['commitidbis'] as $tmpcommitidbis) {
 			$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a><br>';
+			$arrayofalerts[$key]['description'] .= "\n<br>".'Commit ID: <a href="https://github.com/Dolibarr/dolibarr/commit/'.$tmpcommitidbis.'">'.dol_trunc($tmpcommitidbis, 8).'</a>';
 		}
 		$html .= '</div></div>';
 	}
 	$html .= '</td>';
+
+	// Date creation
 	$html .= '<td style="white-space: nowrap">';
 	$html .= preg_replace('/T.*$/', '', $alert['created_at']);
 	$html .= '</td>';
+
+	// Yogosha ID
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidyogosha'])) {
 		//$html .= '<a target="_blank" href="https://yogosha.com?'.$alert['issueidyogosha'].'">';
 		$html .= '#yogosha'.$alert['issueidyogosha'];
+		$arrayofalerts[$key]['description'] .= "\n<br>".'Yogosha ID #'.$alert['issueidyogosha'];
 		//$html .= '</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">public issue</span>';
 	}
 	$html .= '</td>';
+
+	// GIT Issue/PR ID
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueid'])) {
-		$html .= '<a target="_blank" href="https://github.com/Dolibarr/dolibarr/issues/'.$alert['issueid'].'">#'.$alert['issueid'].'</a>';
+		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_issue'].'">#'.$alert['issueid'].'</a>';
+		$arrayofalerts[$key]['description'] .= "\n<br>".'GitHub ID <a href="'.$arrayofalerts[$key]['url_issue'].'" target="_blank">#'.$alert['issueid'].'</a>';
 	} else {
 		//$html .= '<span class="opacitymedium">private</span>';
 	}
 	$html .= '</td>';
+
+	// CVE ID
 	$html .= '<td style="white-space: nowrap">';
 	if (!empty($alert['issueidcve'])) {
 		$cve = preg_replace('/\s+/', '-', trim($alert['issueidcve']));
-		$html .= '<a target="_blank" href="https://nvd.nist.gov/vuln/detail/CVE-'.$cve.'">CVE-'.$cve.'</a>';
+		$html .= '<a target="_blank" href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
+		$arrayofalerts[$key]['description'] .= "\n<br>".'CVE: <a href="'.$arrayofalerts[$key]['url_cve'].'">CVE-'.$cve.'</a>';
 	}
 	$html .= '</td>';
+
+	// Description
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
+
+	// Branches
+	$html .= '<td style="white-space: nowrap">';
+	if (!empty($alert['branch'])) {
+		$listofbranchnames = implode(', ', array_unique($alert['branch']));
+		$html .= $listofbranchnames;
+		$arrayofalerts[$key]['description'] .= "\n<br><br>".'Branches of fix: '.$listofbranchnames;
+	}
+	$html .= '</td>';
+
+	$arrayofalerts[$key]['description'] .= ']]>';
+
 	$html .= '</tr>';
 }
 $html .= '</table>';
 $html .= '</div>';
 $html .= '</div>';
+
+$html .= '<br>';
+$html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
+
 $html .= '</section>';
+
+
+// Generate the RSS file
+$fh = fopen($outputdir.'/'.$outputfilerss, 'w');
+if ($fh) {
+	if ($url_root && empty($url_site)) {
+		$url_site = $url_root;
+	}
+	if ($url_root && empty($url_flux)) {
+		$url_flux = $url_root.'/'.$outputfilerss;
+	}
+
+	// Generation of the feed
+	fwrite($fh, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
+	fwrite($fh, '<rss version="2.0">'."\n");
+	fwrite($fh, '<channel>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
+	fwrite($fh, '<description>' . htmlspecialchars("Feed of the latest security reports on the project") . '</description>'."\n");
+	//fwrite($fh, '<atom:link href="https://cti.dolibarr.org/index-security.rss" rel="self" type="application/rss+xml" />'."\n");
+	fwrite($fh, '<language>en-US</language>'."\n");
+	fwrite($fh, '<lastBuildDate>'.date('r').'</lastBuildDate>'."\n");
+	/*
+	<lastBuildDate>Mon, 29 Apr 2024 11:33:54 +0000</lastBuildDate>
+	<atom:link href="https://cti.dolibarr.org/security-index.rss" rel="self" type="application/rss+xml" />
+	*/
+	if ($url_site) {
+		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
+	}
+	// Image
+	fwrite($fh, '<image>'."\n");
+	fwrite($fh, '<url>https://www.dolibarr.org/medias/image/www.dolibarr.org/badge-openssf.png</url>'."\n");
+	fwrite($fh, '<title>' . htmlspecialchars($title_security) . '</title>'."\n");
+	if ($url_site) {
+		fwrite($fh, '<link>' . htmlspecialchars($url_site) . '</link>'."\n");
+	}
+	fwrite($fh, '</image>'."\n");
+
+	foreach ($arrayofalerts as $alert) {
+		$alert['url_commit'] = 'https://github.com/Dolibarr/dolibarr/commit/'.$alert['commitid'];
+
+		fwrite($fh, '<item>'."\n");
+		fwrite($fh, '<title>' . htmlspecialchars($alert['title']) . '</title>'."\n");
+		// Description of alert, list of links to sources and branches of fixes
+		fwrite($fh, '<description>' . $alert['description'] . '</description>'."\n");	// no htmlspeciachars here
+		fwrite($fh, '<link>' . htmlspecialchars($alert['url_commit']) . '</link>'."\n");
+		$tmpdate = strtotime($alert['created_at']);
+		fwrite($fh, '<pubDate>' . htmlspecialchars(date('r', $tmpdate)) . '</pubDate>'."\n");
+		fwrite($fh, '<guid isPermaLink="false"><![CDATA['.htmlspecialchars($alert['commitid']).']]></guid>'."\n");	// A hidden unique ID
+
+		fwrite($fh, '</item>'."\n");
+	}
+
+	fwrite($fh, '</channel>'."\n");
+	fwrite($fh, '</rss>'."\n");
+
+	fclose($fh);
+
+	print 'Generation of RSS output file '.$outputdir.'/'.$outputfilerss.' done.'."\n";
+} else {
+	print 'Failed to generate the RSS file '.$outputdir.'/'.$outputfilerss."\n";
+}
+
 
 
 // Technical debt PHPstan
@@ -786,7 +1053,7 @@ if ($dirphpstan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebt">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHPStan level '.$phpstanlevel.' -> '.$nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpstanversion.' - level '.$PHPSTANLEVEL.' -> '.$nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
@@ -857,10 +1124,11 @@ if ($fh) {
 	fwrite($fh, $html);
 	fclose($fh);
 
-	print 'Generation of output file '.$outputfile.' done.'."\n";
+	print 'Generation of output file '.$outputpath.' done.'."\n";
 } else {
-	print 'Failed to open '.$outputfile.' for output.'."\n";
+	print 'Failed to open '.$outputpath.' for output.'."\n";
 }
+
 
 
 /**

@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013 	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('receptionnote'));
 
 // Security check
@@ -105,7 +106,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -113,7 +114,7 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans('Reception'));
+llxHeader('', $langs->trans('Reception'), '', '', 0, 0, $morejs, '', '', 'mod-reception page-card_notes');
 
 $form = new Form($db);
 

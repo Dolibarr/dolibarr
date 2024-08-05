@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ if (! defined("NOLOGIN")) {
 }
 
 if (empty($user->id)) {
-	print "Load permissions for admin user nb 1\n";
+	print "Load permissions for admin user nb 1".PHP_EOL;
 	$user->fetch(1);
 	$user->getrights();
 }
@@ -81,11 +82,35 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 class LangTest extends CommonClassTest
 {
 	/**
-	 * testLang
+	 * Data provider for testLang
 	 *
-	 * @return string
+	 * @return array<string,array{0:string}>
 	 */
-	public function testLang()
+	public function langDataProvider(): array
+	{
+		$langCodes = [];
+		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
+		foreach ($filesarray as $key => $code) {
+			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) {
+				continue;
+			}
+			if (in_array($code, array('mk_MK'))) {	// We exclude some language not yet ready
+				continue;
+			}
+			$langCodes[$code] = [$code];
+		}
+		return $langCodes;
+	}
+
+
+	/**
+	 * testLang
+	 * @dataProvider langDataProvider
+	 *
+	 * @param 	string	$code 	Language code for which to verify translations
+	 * @return 	void
+	 */
+	public function testLang($code): void
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -95,96 +120,122 @@ class LangTest extends CommonClassTest
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
-		foreach ($filesarray as $key => $code) {
-			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) {
+
+		$prefix = __METHOD__."($code) ";
+		$tmplangs = new Translate('', $conf);
+		$langcode = $code;
+		$tmplangs->setDefaultLang($langcode);
+		$tmplangs->load("main");
+
+		print PHP_EOL.$prefix."Check language file".PHP_EOL;
+		$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
+		print $prefix."FONTFORPDF=".$result.PHP_EOL;
+		$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+
+		$result = $tmplangs->transnoentitiesnoconv("DIRECTION");
+		print $prefix."DIRECTION=".$result.PHP_EOL;
+		$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
+
+		$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
+		print $prefix."SeparatorDecimal=".$result.PHP_EOL;
+		$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+
+		$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
+		print $prefix."SeparatorThousand=".$result.PHP_EOL;
+		$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+
+		// Test java string contains only d,M,y,/,-,. and not m,...
+		$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
+		print $prefix."FormatDateShortJava=".$result.PHP_EOL;
+		$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+		$this->assertEquals(1, $tmpvar, 'FormatDateShortJava KO for lang code '.$code.'. Does not match /[dMy\/\-\.]+/');
+
+		$result = $tmplangs->trans("FormatDateShortJavaInput");
+		print $prefix."FormatDateShortJavaInput=".$result.PHP_EOL;
+		$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
+		$this->assertEquals(1, $tmpvar, 'FormatDateShortJavaInput KO for lang code '.$code.'. Does not match /^[dMy\/\-\.]+$/');
+
+		unset($tmplangs);
+
+		print $prefix."Check some syntax rules in the language file".PHP_EOL;
+		$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
+		foreach ($filesarray2 as $key => $file) {
+			if (! preg_match('/\.lang$/', $file)) {
 				continue;
 			}
 
-			print 'Check language file for lang code='.$code."\n";
-			$tmplangs = new Translate('', $conf);
-			$langcode = $code;
-			$tmplangs->setDefaultLang($langcode);
-			$tmplangs->load("main");
+			//print 'Check lang file '.$file.PHP_EOL;
+			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
-			$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
-			print __METHOD__." FONTFORPDF=".$result."\n";
-			$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
+			$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
+			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+			$this->assertTrue($result == 0, 'Found a translation KEY=-- in file '.$code.'/'.$file.'. We probably want Key=- instead.');
 
-			$result = $tmplangs->transnoentitiesnoconv("DIRECTION");
-			print __METHOD__." DIRECTION=".$result."\n";
-			$this->assertTrue(in_array($result, array('rtl', 'ltr')), 'Error bad value for DIRECTION in main.lang file '.$code);
+			$result = strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
+			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+			$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % in file '.$code.'/'.$file);
 
-			$result = $tmplangs->transnoentitiesnoconv("SeparatorDecimal");
-			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertTrue(in_array($result, array('.',',','/','。',' ','','None')), 'Error on decimal separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
+			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+			$this->assertTrue($result == 0, 'Found a sequence %n in the translation file '.$code.'/'.$file.'. We probably want %s');
 
-			$result = $tmplangs->transnoentitiesnoconv("SeparatorThousand");
-			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertTrue(in_array($result, array('.',',','/',' ','','\'','None','Space')), 'Error on thousand separator for lang code '.$code);	// Note that ، that is coma for RTL languages is not supported
+			$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
+			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+			$this->assertTrue($result == 0, 'Found a sequence <<<<< in the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
 
-			// Test java string contains only d,M,y,/,-,. and not m,...
-			$result = $tmplangs->transnoentitiesnoconv("FormatDateShortJava");
-			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
-			$this->assertEquals(1, $tmpvar, 'FormatDateShortJava KO for lang code '.$code.'. Does not match /[dMy\/\-\.]+/');
+			$reg = array();
+			$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
+			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+			$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' in the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
 
-			$result = $tmplangs->trans("FormatDateShortJavaInput");
-			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$tmpvar = preg_match('/^[dMy\/\-\.]+$/', $result);
-			$this->assertEquals(1, $tmpvar, 'FormatDateShortJavaInput KO for lang code '.$code.'. Does not match /^[dMy\/\-\.]+$/');
-
-			unset($tmplangs);
-
-			print "Check also some syntax rules into the language file\n";
-			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
-			foreach ($filesarray2 as $key => $file) {
-				if (! preg_match('/\.lang$/', $file)) {
-					continue;
-				}
-
-				//print 'Check lang file '.$file."\n";
-				$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
-
-				$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
-				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result == 0, 'Found a translation KEY=-- into file '.$code.'/'.$file.'. We probably want Key=- instead.');
-
-				$result = strpos($filecontent, '％');	// A special % char we don't want. We want the common one.
-				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % into file '.$code.'/'.$file);
-
-				$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
-				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result == 0, 'Found a sequence %n into the translation file '.$code.'/'.$file.'. We probably want %s');
-
-				$result = preg_match('/<<<<</m', $filecontent);	// A sequence of char we don't want
-				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result == 0, 'Found a sequence <<<<< into the translation file '.$code.'/'.$file.'. Probably a bad merge of code were done.');
-
+			if (!in_array($code, array('ar_SA'))) {
 				$reg = array();
-				$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
-				//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-				$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
-
-				if (!in_array($code, array('ar_SA'))) {
-					$reg = array();
-					$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
-					//print __METHOD__." Result for checking we don't have bad percent char = ".$result."\n";
-					$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '': $reg[2]).' into the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
-				}
+				$result = preg_match('/(.*)<([^a-z\/\s,=\(]1)/im', $filecontent, $reg);	// A sequence of char we don't want
+				//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+				$this->assertTrue($result == 0, 'Found a sequence tag <'.(empty($reg[2]) ? '' : $reg[2]).' in the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
 			}
 		}
-
-		return;
 	}
+
+
+	/**
+	 * Data provider for testTrans
+	 *
+	 * @return array<string,string[]>
+	 */
+	public function transDataProvider(): array
+	{
+		return [
+			'en_US-1' => [
+				'Result of lang->trans must have original translation string with its original HTML tag, but inserted values must be fully encoded.', // Description
+				"en_US",  // Langcode
+				"main",   // Dict
+				"Search criteria '<b>&lt;input autofocus onfocus='alert(1337)' &lt;--!</b>' into fields ",  // Expected
+				"FilterOnInto", "<input autofocus onfocus='alert(1337)' <--!"],
+			'fr-FR-1' => [
+				'Result of lang->trans must have original translation string with its original HTML tag, but inserted values must be fully encoded.', // Description
+				"fr_FR",  // Langcode
+				"main",   // Dict
+				"Rechercher le crit&egrave;re '<b>&lt;input autofocus onfocus='alert(1337)' &lt;--!</b>' dans les champs ",  // Expected
+				"FilterOnInto", "<input autofocus onfocus='alert(1337)' <--!"],
+		];
+	}
+
 
 	/**
 	 * testTrans
+	 * @dataProvider transDataProvider
 	 *
+	 * @param string  $description Test description
+	 * @param string  $langcode    Language code for translation
+	 * @param string  $dict        Dictionary file for translation
+	 * @param string  $expected    Expected translation result
+	 * @param string  $key         Key for translation
+	 * @param ?string $param1      Parameter 1 for translation
+	 * @param ?string $param2      Parameter 2 for translation
 	 * @return string
 	 */
-	public function testTrans()
+	public function testTrans($description, $langcode, $dict, $expected, $key, $param1 = null, $param2 = null)
 	{
 		global $conf,$user,$langs,$db;
 		$conf = $this->savconf;
@@ -193,12 +244,12 @@ class LangTest extends CommonClassTest
 		$db = $this->savdb;
 
 		$tmplangs = new Translate('', $conf);
-		$langcode = 'en_US';
 		$tmplangs->setDefaultLang($langcode);
-		$tmplangs->load("main");
+		$tmplangs->load($dict);
 
-		$result = $tmplangs->trans("FilterOnInto", "<input autofocus onfocus='alert(1337)' <--!");
-		print __METHOD__." result trans FilterOnInto = ".$result."\n";
-		$this->assertEquals($result, "Search criteria '<b>&lt;input autofocus onfocus='alert(1337)' &lt;--!</b>' into fields ", 'Result of lang->trans must have original translation string with its original HTML tag, but inserted values must be fully encoded.');
+		$result = $tmplangs->trans($key, $param1, $param2);
+		$prefix = __METHOD__."({$this->dataName()}) ";
+		print $prefix."result trans $key = ".$result.PHP_EOL;
+		$this->assertEquals($expected, $result, $description);
 	}
 }

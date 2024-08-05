@@ -151,9 +151,9 @@ class pdf_vinci extends ModelePDFMo
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != $conf->global->PDF_USE_ALSO_LANGUAGE_CODE) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
-			$outputlangsbis->setDefaultLang($conf->global->PDF_USE_ALSO_LANGUAGE_CODE);
+			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "orders", "companies", "bills", "dict", "products"));
 		}
 
@@ -167,9 +167,6 @@ class pdf_vinci extends ModelePDFMo
 		if (getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE')) {
 			$hidetop = getDolGlobalString('MAIN_PDF_DISABLE_COL_HEAD_TITLE');
 		}
-
-		// Loop on each lines to detect if there is at least one image to show
-		$realpatharray = array();
 
 		if ($conf->mrp->dir_output) {
 			$object->fetch_thirdparty();
@@ -213,7 +210,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$heightforinfotot = 50; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
@@ -340,7 +337,6 @@ class pdf_vinci extends ModelePDFMo
 						while ($i < $pageposafternote) {
 							$pdf->setPage($i);
 
-
 							$pdf->SetDrawColor(128, 128, 128);
 							// Draw note frame
 							if ($i > $pageposbeforenote) {
@@ -421,12 +417,6 @@ class pdf_vinci extends ModelePDFMo
 					$prod = new Product($this->db);
 					$prod->fetch($bom->lines[$i]->fk_product);
 
-					// Define size of image if we need it
-					$imglinesize = array();
-					if (!empty($realpatharray[$i])) {
-						$imglinesize = pdf_getSizeForImage($realpatharray[$i]);
-					}
-
 					$pdf->setTopMargin($tab_top_newpage);
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
@@ -435,33 +425,6 @@ class pdf_vinci extends ModelePDFMo
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					// We start with Photo of product line
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// If photo too high, we moved completely on new page
-						$pdf->AddPage('', '', true);
-						if (!empty($tplidx)) {
-							$pdf->useTemplate($tplidx);
-						}
-						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
-							$this->_pagehead($pdf, $object, 0, $outputlangs);
-						}
-						$pdf->setPage($pageposbefore + 1);
-
-						$curY = $tab_top_newpage;
-
-						// Allows data in the first page if description is long enough to break in multiples pages
-						if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
-							$showpricebeforepagebreak = 1;
-						} else {
-							$showpricebeforepagebreak = 0;
-						}
-					}
-
-					if (!empty($imglinesize['width']) && !empty($imglinesize['height'])) {
-						$curX = $this->posxpicture - 1;
-						$pdf->Image($realpatharray[$i], $curX + (($this->posxtva - $this->posxpicture - $imglinesize['width']) / 2), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300); // Use 300 dpi
-						// $pdf->Image does not increase value return by getY, so we save it manually
-						$posYAfterImage = $curY + $imglinesize['height'];
-					}
 					// Description of product line
 					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
@@ -593,8 +556,6 @@ class pdf_vinci extends ModelePDFMo
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 				}
-
-
 
 
 				// Show square
@@ -999,7 +960,7 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 			}
 
-			if (empty($hidetop)) {
+			if (empty($hidetop) && array_key_exists('title', $colDef) && array_key_exists('width', $colDef)) {
 				$pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0]);
 
 				$textWidth = $colDef['width'] - $colDef['title']['padding'][3] - $colDef['title']['padding'][1];
@@ -1396,25 +1357,6 @@ class pdf_vinci extends ModelePDFMo
 				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 		);
-
-		$rank = $rank + 10;
-		$this->cols['photo'] = array(
-			'rank' => $rank,
-			'width' => (!getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH') ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
-			'status' => false,
-			'title' => array(
-				'textkey' => 'Photo',
-				'label' => ' '
-			),
-			'content' => array(
-				'padding' => array(0, 0, 0, 0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-			),
-			'border-left' => false, // remove left line separator
-		);
-
-		if (getDolGlobalString('MAIN_GENERATE_ORDERS_WITH_PICTURE')) {
-			$this->cols['photo']['status'] = true;
-		}
 
 		$rank = $rank + 10;
 		$this->cols['dim'] = array(

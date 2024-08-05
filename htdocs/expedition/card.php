@@ -11,10 +11,10 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,9 +105,9 @@ $extrafields->fetch_name_optionals_label($object->table_element_line);
 $extrafields->fetch_name_optionals_label($objectorder->table_element_line);
 
 // Load object. Make an object->fetch
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
 
 $date_delivery = dol_mktime(GETPOSTINT('date_deliveryhour'), GETPOSTINT('date_deliverymin'), 0, GETPOSTINT('date_deliverymonth'), GETPOSTINT('date_deliveryday'), GETPOSTINT('date_deliveryyear'));
@@ -152,7 +152,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Actions to build doc
 	$upload_dir = $conf->expedition->dir_output.'/sending';
@@ -198,16 +198,17 @@ if (empty($reshook)) {
 
 	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -444,7 +445,7 @@ if (empty($reshook)) {
 			exit;
 		} else {
 			$db->rollback();
-			$_GET["commande_id"] = GETPOSTINT('commande_id');
+			//$_GET["commande_id"] = GETPOSTINT('commande_id');
 			$action = 'create';
 		}
 	} elseif ($action == 'create_delivery' && getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer')) {
@@ -455,7 +456,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			$db->commit();
 
-			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&id='.$result);
+			header("Location: ".DOL_URL_ROOT.'/delivery/card.php?action=create_delivery&token='.newToken().'&id='.$result);
 			exit;
 		} else {
 			$db->rollback();
@@ -892,7 +893,7 @@ if ($action == 'create2') {
 }
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card');
 
 if (empty($action)) {
 	$action = 'view';
@@ -1413,9 +1414,41 @@ if ($action == 'create') {
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty; // To get a numeric
 									$deliverableQty = min($quantityToBeDelivered, $batchStock);
+
+									// Now we will check if we have to reduce the deliverableQty by taking into account the qty already suggested in previous line
+									if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										$deliverableQty = min($quantityToBeDelivered, $batchStock - $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)]);
+									} else {
+										if (!isset($alreadyQtyBatchSetted[$line->fk_product])) {
+											$alreadyQtyBatchSetted[$line->fk_product] = array();
+										}
+
+										if (!isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch])) {
+											$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch] = array();
+										}
+
+										$deliverableQty = min($quantityToBeDelivered, $batchStock);
+									}
+
+									if ($deliverableQty < 0) $deliverableQty = 0;
+
+									$inputName = 'qtyl'.$indiceAsked.'_'.$subj;
+									if (GETPOSTISSET($inputName)) {
+										$deliverableQty = GETPOST($inputName, 'int');
+									}
+
+									$tooltipClass = $tooltipTitle = '';
+									if (!empty($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
+										$tooltipClass = ' classfortooltip';
+										$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+									} else {
+										$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = 0 ;
+									}
+									$alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)] = $deliverableQty + $alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)];
+
 									print '<!-- subj='.$subj.'/'.$nbofsuggested.' --><tr '.((($subj + 1) == $nbofsuggested) ? 'oddeven' : '').'>';
 									print '<td colspan="3" ></td><td class="center">';
-									print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
+									print '<input class="qtyl '.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
 
 									print '<!-- Show details of lot -->';
@@ -1514,9 +1547,10 @@ if ($action == 'create') {
 											$deliverableQty = 0;
 										}
 
-										$tooltip = '';
+										$tooltipClass = $tooltipTitle = '';
 										if (!empty($alreadyQtySetted[$line->fk_product][intval($warehouse_id)])) {
-											$tooltip = ' class="classfortooltip" title="'.$langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)].'" ';
+											$tooltipClass = ' classfortooltip';
+											$tooltipTitle = $langs->trans('StockQuantitiesAlreadyAllocatedOnPreviousLines').' : '.$alreadyQtySetted[$line->fk_product][intval($warehouse_id)];
 										} else {
 											$alreadyQtySetted[$line->fk_product][intval($warehouse_id)] = 0;
 										}
@@ -1528,7 +1562,7 @@ if ($action == 'create') {
 											$deliverableQty = GETPOSTINT($inputName);
 										}
 
-										print '<input '.$tooltip.' class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
+										print '<input class="qtyl'.$tooltipClass.' right" title="'.$tooltipTitle.'" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 										print '<input name="ent1'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$warehouse_id.'">';
 									} else {
 										if (getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) {
@@ -2048,7 +2082,7 @@ if ($action == 'create') {
 		if ($volumeUnit < 50) {
 			print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
 		} else {
-			print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
+			print $calculatedVolume.' '.measuringUnitString(0, "volume", (string) $volumeUnit);
 		}
 	}
 	if ($totalVolume > 0) {
@@ -2241,7 +2275,7 @@ if ($action == 'create') {
 	$alreadysent = array();
 	if ($origin && $origin_id > 0) {
 		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end";
-		$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot";
+		$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 		$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
 		$sql .= ', p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tosell as product_tosell, p.tobuy as product_tobuy, p.tobatch as product_tobatch';
@@ -2253,7 +2287,7 @@ if ($action == 'create') {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
 		$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 		$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
-		$sql .= " AND obj.rowid = ed.fk_origin_line";
+		$sql .= " AND obj.rowid = ed.fk_elementdet";
 		$sql .= " AND ed.fk_expedition = e.rowid";
 		//if ($filter) $sql.= $filter;
 		$sql .= " ORDER BY obj.fk_product";
@@ -2374,7 +2408,7 @@ if ($action == 'create') {
 				$htmltooltip = '';
 				$qtyalreadysent = 0;
 				foreach ($alreadysent as $key => $val) {
-					if ($lines[$i]->fk_origin_line == $key) {
+					if ($lines[$i]->fk_elementdet == $key) {
 						$j = 0;
 						foreach ($val as $shipmentline_id => $shipmentline_var) {
 							if ($shipmentline_var['shipment_id'] == $lines[$i]->fk_expedition) {
@@ -2743,6 +2777,14 @@ if ($action == 'create') {
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('shipping'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+		// Show online signature link
+		$useonlinesignature = getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN');
+
+		if ($object->statut != Expedition::STATUS_DRAFT && $useonlinesignature) {
+			print '<br><!-- Link to sign -->';
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+			print showOnlineSignatureUrl('expedition', $object->ref, $object).'<br>';
+		}
 
 		print '</div><div class="fichehalfright">';
 

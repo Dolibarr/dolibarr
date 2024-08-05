@@ -47,15 +47,7 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 
-	/**
-	 * @var int  	Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 1;
-
-
 	protected $childtablesoncascade = array();
-
 
 	/**
 	 * @var string String with name of icon for website. Must be the part after the 'object_' into object_myobject.png
@@ -93,16 +85,6 @@ class Website extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer	date_modification
-	 */
-	public $date_modification;
-
-	/**
 	 * @var integer Default home page
 	 */
 	public $fk_default_home;
@@ -133,11 +115,6 @@ class Website extends CommonObject
 	public $position;
 
 	/**
-	 * @var array List of containers
-	 */
-	public $lines;
-
-	/**
 	 * @var string name of template
 	 */
 	public $name_template;
@@ -154,6 +131,8 @@ class Website extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -368,11 +347,6 @@ class Website extends CommonObject
 			$this->db->free($resql);
 
 			if ($numrows > 0) {
-				// Lines
-				$this->fetchLines();
-			}
-
-			if ($numrows > 0) {
 				return 1;
 			} else {
 				return 0;
@@ -383,20 +357,6 @@ class Website extends CommonObject
 
 			return -1;
 		}
-	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		// Load lines with object MyObjectLine
-
-		return count($this->lines) ? 1 : 0;
 	}
 
 
@@ -629,6 +589,18 @@ class Website extends CommonObject
 		$this->db->begin();
 
 		if (!$error) {
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'categorie_website_page';
+			$sql .= ' WHERE fk_website_page IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.((int) $this->id).')';
+
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			}
+		}
+
+		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'website_page';
 			$sql .= ' WHERE fk_website = '.((int) $this->id);
 
@@ -847,13 +819,9 @@ class Website extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
-		global $langs, $conf, $db;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
-
+		global $langs;
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("WebSite").'</u>';
 		$label .= '<br>';
@@ -1008,7 +976,7 @@ class Website extends CommonObject
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
 		dol_syslog("Copy pages from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'));
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2, array('old', 'back'), 1);
 
 		// Copy file README.md and LICENSE from directory containers into directory root
 		if (dol_is_file($conf->website->dir_temp.'/'.$website->ref.'/containers/README.md')) {
@@ -1266,16 +1234,26 @@ class Website extends CommonObject
 			$error++;
 		}
 
-		$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);
-		if ($result < 0) {
-			$this->errors[] = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
-			return -5;
+		// Copy dir medias/image/websitekey
+		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey')) {
+			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);
+			if ($result < 0) {
+				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref.'.';
+				dol_syslog($this->error, LOG_WARNING);
+				$this->errors[] = $this->error;
+				return -5;
+			}
 		}
 
-		$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);
-		if ($result < 0) {
-			$this->errors[] = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
-			return -5;
+		// Copy dir medias/js/websitekey
+		if (dol_is_dir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey')) {
+			$result = dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);
+			if ($result < 0) {
+				$this->error = 'Failed to copy files into '.$conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref.'.';
+				dol_syslog($this->error, LOG_WARNING);
+				$this->errors[] = $this->error;
+				return -6;
+			}
 		}
 
 		$sqlfile = $conf->website->dir_temp."/".$object->ref.'/website_pages.sql';
@@ -1673,9 +1651,10 @@ class Website extends CommonObject
 	 * Overite template by copying all files
 	 *
 	 * @param	string	$pathtotmpzip		Path to the tmp zip file
+	 * @param   string  $exportPath         Relative path of directory to export files into (specified by the user)
 	 * @return 	int							Return integer <0 if KO, >0 if OK
 	 */
-	public function overwriteTemplate(string $pathtotmpzip)
+	public function overwriteTemplate(string $pathtotmpzip, $exportPath = '')
 	{
 		global $conf;
 
@@ -1686,8 +1665,8 @@ class Website extends CommonObject
 			setEventMessages("Website id or ref is not defined", null, 'errors');
 			return -1;
 		}
-		if (empty($website->name_template)) {
-			setEventMessages("To export the website template into the GIT sources directory, the name of the directory/template must be know. For this website, the variable 'name_template' is unknown, so export in GIT sources is not possible.", null, 'errors');
+		if (empty($website->name_template) && empty($exportPath)) {
+			setEventMessages("To export the website template into a directory of the server, the name of the directory/template must be provided.", null, 'errors');
 			return -1;
 		}
 		if (!is_writable($conf->website->dir_temp)) {
@@ -1696,29 +1675,71 @@ class Website extends CommonObject
 		}
 
 		// Replace modified files into the doctemplates directory.
-		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE') == '1') {
-			$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
-			$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
-		} else {
-			$destdirrel = basename(dirname(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'))).'/'.basename(getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE'));
-			$destdir = getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE');
+		if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
+			// If the user has not specified a path
+			if (empty($exportPath)) {
+				$destdirrel = 'install/doctemplates/websites/'.$website->name_template;
+				$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+			} else {
+				$exportPath = rtrim($exportPath, '/');
+				if (strpos($exportPath, '..') !== false) {
+					setEventMessages("Invalid path.", null, 'errors');
+					return -1;
+				}
+				// if path start with / (absolute path)
+				if (strpos($exportPath, '/') === 0 || preg_match('/^[a-zA-Z]:/', $exportPath)) {
+					if (!is_dir($exportPath)) {
+						setEventMessages("The specified absolute path does not exist.", null, 'errors');
+						return -1;
+					}
+
+					if (!is_writable($exportPath)) {
+						setEventMessages("The specified absolute path is not writable.", null, 'errors');
+						return -1;
+					}
+					$destdirrel = $exportPath;
+					$destdir = $exportPath;
+				} else {
+					// relatif path
+					$destdirrel = 'install/doctemplates/websites/'.$exportPath;
+					$destdir = DOL_DOCUMENT_ROOT.'/'.$destdirrel;
+				}
+			}
 		}
 
 		dol_mkdir($destdir);
 
+		if (!is_writable($destdir)) {
+			setEventMessages("The specified path ".$destdir." is not writable.", null, 'errors');
+			return -1;
+		}
+
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
-		// Remove the file README and LICENSE from the $destdir (already into the containers directory)
-		dol_delete_file($destdir.'/README.md');
-		dol_delete_file($destdir.'/LICENSE');
+		// Remove the file README and LICENSE from the $destdir/containers
+		if (dol_is_file($destdir.'/containers/README.md')) {
+			dol_move($destdir.'/containers/README.md', $destdir.'/README.md', '0', 1, 0, 0);
+		}
+		if (dol_is_file($destdir.'/containers/LICENSE')) {
+			dol_move($destdir.'/containers/LICENSE', $destdir.'/LICENSE', '0', 1, 0, 0);
+		}
+		/*
+		if (empty($exportPath)) {
+			dol_delete_file($destdir.'/containers/README.md');
+			dol_delete_file($destdir.'/containers/LICENSE');
+		}
+		*/
 
 		// Remove non required files (will be re-generated during the import)
 		dol_delete_file($destdir.'/containers/index.php');
 		dol_delete_file($destdir.'/containers/master.inc.php');
 
+		// Now we remove the flag o+x on files
+		// TODO
+
 		if (!empty($resultarray)) {
-			setEventMessages("Error, failed to unzip the export into target dir", null, 'errors');
+			setEventMessages("Error, failed to unzip the export into target dir ".$destdir.": ".implode(',', $resultarray), null, 'errors');
 		} else {
 			setEventMessages("Website content written into ".$destdirrel, null, 'mesgs');
 		}

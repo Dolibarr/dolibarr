@@ -39,12 +39,18 @@ create table llx_fichinter
   datee				date,						-- date de fin d'intervention
   datet				date,						-- date de terminaison de l'intervention
   duree				real,                       -- duree totale de l'intervention
-  signed_status     smallint DEFAULT NULL,      -- signed status
   description		text,
+
+  signed_status     smallint DEFAULT NULL,      -- signed status NULL, 0 or 1
+  online_sign_ip	varchar(48),
+  online_sign_name	varchar(64),
+
   note_private		text,
   note_public		text,
+
   model_pdf			varchar(255),
   last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
+
   import_key        varchar(14),
   extraparams		varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

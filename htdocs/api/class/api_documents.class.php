@@ -33,13 +33,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 class Documents extends DolibarrApi
 {
 	/**
-	 * @var array   $DOCUMENT_FIELDS     Mandatory fields, checked when create and update object
-	 */
-	public static $DOCUMENT_FIELDS = array(
-		'modulepart'
-	);
-
-	/**
 	 * Constructor
 	 */
 	public function __construct()
@@ -260,6 +253,22 @@ class Documents extends DolibarrApi
 
 			if (!$result) {
 				throw new RestException(404, 'Shipment not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
+			}
+		} elseif ($modulepart == 'mrp') {
+			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+
+			$tmpobject = new Mo($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'MO not found');
 			}
 
 			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
@@ -574,6 +583,17 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->projet->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
+		} elseif ($modulepart == 'mrp') {
+			$modulepart = 'mrp';
+			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+
+			$object = new Mo($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'MO not found');
+			}
+
+			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
@@ -596,8 +616,10 @@ class Documents extends DolibarrApi
 				} elseif (is_array($ecmfile->lines) && count($ecmfile->lines) > 0) {
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
-						if ($filearray[$i]['name'] == $ecmfile->lines[$i]->filename) {
-							$filearray[$i] = array_merge($filearray[$i], (array) $ecmfile->lines[0]);
+						foreach ($ecmfile->lines as $line) {
+							if ($filearray[$i]['name'] == $line->filename) {
+								$filearray[$i] = array_merge($filearray[$i], (array) $line);
+							}
 						}
 					}
 				}
@@ -712,7 +734,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$object = new Task($this->db);
 
-				$task_result = $object->fetch('', $ref);
+				$task_result = $object->fetch(0, $ref);
 
 				// Fetching the tasks project is required because its out_dir might be a sub-directory of the project
 				if ($task_result > 0) {
@@ -754,6 +776,10 @@ class Documents extends DolibarrApi
 				$modulepart = 'contrat';
 				require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 				$object = new Contrat($this->db);
+			} elseif ($modulepart == 'mrp') {
+				$modulepart = 'mrp';
+				require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+				$object = new Mo($this->db);
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -764,7 +790,7 @@ class Documents extends DolibarrApi
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
-					$result = $object->fetch('', $ref);
+					$result = $object->fetch(0, $ref);
 				}
 
 				if ($result == 0) {
@@ -992,26 +1018,5 @@ class Documents extends DolibarrApi
 		}
 
 		throw new RestException(403);
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName
-	/**
-	 * Validate fields before create or update object
-	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
-	 * @throws  RestException
-	 */
-	private function _validate_file($data)
-	{
-		// phpcs:enable
-		$result = array();
-		foreach (Documents::$DOCUMENT_FIELDS as $field) {
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$result[$field] = $data[$field];
-		}
-		return $result;
 	}
 }

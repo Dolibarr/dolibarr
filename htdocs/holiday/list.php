@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2013-2020 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016 Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2018      Charlene Benke	<charlie@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France		<frederic.france@free.fr>
+/* Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
+ * Copyright (C) 2013-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +55,6 @@ $cancel     = GETPOST('cancel', 'alpha'); // We click on a Cancel button
 $toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'holidaylist'; // To manage different context of search
 $mode        = GETPOST('mode', 'alpha'); // for switch mode view result
-
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
@@ -83,7 +84,7 @@ if (!$sortfield) {
 	$sortfield = "cp.ref";
 }
 
-$sall                = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all          = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
@@ -94,12 +95,12 @@ $search_year_start   = GETPOST('search_year_start', 'int');
 $search_day_end      = GETPOST('search_day_end', 'int');
 $search_month_end    = GETPOST('search_month_end', 'int');
 $search_year_end     = GETPOST('search_year_end', 'int');
-$search_employee     = GETPOSTINT('search_employee');
-$search_valideur     = GETPOSTINT('search_valideur');
+$search_employee     = GETPOST('search_employee', 'intcomma');
+$search_valideur     = GETPOST('search_valideur', 'intcomma');
 $search_status       = GETPOST('search_status', 'intcomma');
-$search_type         = GETPOSTINT('search_type');
+$search_type         = GETPOST('search_type', 'intcomma');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Holiday($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('holidaylist')); // Note that conf->hooks_modules contains array
@@ -183,7 +184,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('socid' => $socid, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -239,9 +240,9 @@ $holidaystatic = new Holiday($db);
 $result = $object->updateBalance();
 
 $title = $langs->trans('CPTitreMenu');
-$help_url = '';
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-holiday page-list');
 
 $max_year = 5;
 $min_year = 10;
@@ -252,7 +253,7 @@ $user_id = $user->id;
 if ($id > 0) {
 	// Charge utilisateur edite
 	$fuser->fetch($id, '', '', 1);
-	$fuser->getrights();
+	$fuser->loadRights();
 	$user_id = $fuser->id;
 
 	$search_employee = $user_id;
@@ -322,8 +323,8 @@ $sql .= ", ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
 $sql .= " WHERE cp.entity IN (".getEntity('holiday').")";
 $sql .= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 // Search all
-if (!empty($sall)) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
+if (!empty($search_all)) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 // Ref
 if (!empty($search_ref)) {
@@ -552,14 +553,14 @@ $objecttmp = new Holiday($db);
 $trackid = 'leav'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
-if ($sall) {
+if ($search_all) {
 	$setupstring = '';
 	foreach ($fieldstosearchall as $key => $val) {
 		$fieldstosearchall[$key] = $langs->trans($val);
 		$setupstring .= $key."=".$val.";";
 	}
 	print '<!-- Search done like if HOLIDAY_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).implode(', ', $fieldstosearchall).'</div>';
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';
@@ -582,7 +583,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 $include = '';

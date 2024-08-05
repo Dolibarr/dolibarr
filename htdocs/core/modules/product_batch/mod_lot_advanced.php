@@ -82,6 +82,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -114,7 +115,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$old_code_type = $mysoc->typent_code;
@@ -133,13 +134,13 @@ class mod_lot_advanced extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc	    Object thirdparty
-	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	Societe			$objsoc	    Object thirdparty
+	 *  @param  Productlot		$object		Object we need next value for
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -151,7 +152,7 @@ class mod_lot_advanced extends ModeleNumRefBatch
 			$res = $product->fetch($object->fk_product);
 			if ($res > 0 && !empty($product->batch_mask)) {
 				$mask = $product->batch_mask;
-				$filter = '';  // @phan-suppress-current-line PhanPluginRedundantAssignment
+				$filter = '';
 			}
 		}
 

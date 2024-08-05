@@ -41,7 +41,8 @@ class modMyModule extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
+
 		$this->db = $db;
 
 		// Id for module (must be unique).
@@ -63,6 +64,7 @@ class modMyModule extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleMyModuleName' not found (MyModule is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 
+		// DESCRIPTION_FLAG
 		// Module description, used if translation string 'ModuleMyModuleDesc' not found (MyModule is name of module).
 		$this->description = "MyModuleDescription";
 		// Used only if file README.md and README-LL.md not found.
@@ -70,7 +72,8 @@ class modMyModule extends DolibarrModules
 
 		// Author
 		$this->editor_name = 'Editor name';
-		$this->editor_url = 'https://www.example.com';
+		$this->editor_url = 'https://www.example.com';		// Must be an external online web site
+		$this->editor_squarred_logo = '';					// Must be image filename into the module/img directory followed with @modulename. Example: 'myimage.png@mymodule'
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated', 'experimental_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
@@ -115,6 +118,7 @@ class modMyModule extends DolibarrModules
 				//   '/mymodule/js/mymodule.js.php',
 			),
 			// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
+			/* BEGIN MODULEBUILDER HOOKSCONTEXTS */
 			'hooks' => array(
 				//   'data' => array(
 				//       'hookcontext1',
@@ -122,6 +126,7 @@ class modMyModule extends DolibarrModules
 				//   ),
 				//   'entity' => '0',
 			),
+			/* END MODULEBUILDER HOOKSCONTEXTS */
 			// Set this to 1 if features of module are opened to external users
 			'moduleforexternal' => 0,
 			// Set this to 1 if the module provides a website template into doctemplates/websites/website_template-mytemplate
@@ -178,7 +183,9 @@ class modMyModule extends DolibarrModules
 		}
 
 		// Array to add new pages in new tabs
+		/* BEGIN MODULEBUILDER TABS */
 		$this->tabs = array();
+		/* END MODULEBUILDER TABS */
 		// Example:
 		// To add a new tab identified by code tabname1
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@mymodule:$user->hasRight('mymodule', 'read'):/mymodule/mynewtab1.php?id=__ID__');
@@ -207,6 +214,7 @@ class modMyModule extends DolibarrModules
 		// 'stock'            to add a tab in stock view
 		// 'thirdparty'       to add a tab in third party view
 		// 'user'             to add a tab in user view
+
 
 		// Dictionaries
 		/* Example:
@@ -301,13 +309,12 @@ class modMyModule extends DolibarrModules
 		*/
 		/* END MODULEBUILDER PERMISSIONS */
 
+
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
-
 		// Add here entries to declare new menus
-
-		/* BEGIN MODULEBUILDER TOPMENU MYOBJECT */
+		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
@@ -323,7 +330,7 @@ class modMyModule extends DolibarrModules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
-		/* END MODULEBUILDER TOPMENU MYOBJECT */
+		/* END MODULEBUILDER TOPMENU */
 
 		/* BEGIN MODULEBUILDER LEFTMENU MYOBJECT */
 		/*
@@ -341,6 +348,7 @@ class modMyModule extends DolibarrModules
 			'perms'=>'$user->hasRight("mymodule", "myobject", "read")',
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+			'object'=>'MyObject'
 		);
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -355,6 +363,7 @@ class modMyModule extends DolibarrModules
 			'perms'=>'$user->hasRight("mymodule", "myobject", "write")'
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+			'object'=>'MyObject'
 		);
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=mymodule,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -369,6 +378,7 @@ class modMyModule extends DolibarrModules
 			'perms'=>'$user->hasRight("mymodule", "myobject", "read")'
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+			'object'=>'MyObject'
 		);
 		*/
 		/* END MODULEBUILDER LEFTMENU MYOBJECT */
@@ -399,7 +409,7 @@ class modMyModule extends DolibarrModules
 		//$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'mymodule_myobject as t';
-		//$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'mymodule_myobject_line as tl ON tl.fk_myobject = t.rowid';
+		//$this->export_sql_end[$r]  .=' LEFT JOIN '.MAIN_DB_PREFIX.'mymodule_myobject_line as tl ON tl.fk_myobject = t.rowid';
 		$this->export_sql_end[$r] .=' WHERE 1 = 1';
 		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
 		$r++; */
@@ -429,7 +439,7 @@ class modMyModule extends DolibarrModules
 			't.ref' => array(
 				'rule'=>'getrefifauto',
 				'class'=>(!getDolGlobalString('MYMODULE_MYOBJECT_ADDON') ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')),
-				'path'=>"/core/modules/commande/".(!getDolGlobalString('MYMODULE_MYOBJECT_ADDON') ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')).'.php'
+				'path'=>"/core/modules/mymodule/".(!getDolGlobalString('MYMODULE_MYOBJECT_ADDON') ? 'mod_myobject_standard' : getDolGlobalString('MYMODULE_MYOBJECT_ADDON')).'.php',
 				'classobject'=>'MyObject',
 				'pathobject'=>'/mymodule/class/myobject.class.php',
 			),
@@ -454,6 +464,7 @@ class modMyModule extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		// Create tables of module at module activation
 		//$result = $this->_load_tables('/install/mysql/', 'mymodule');
 		$result = $this->_load_tables('/mymodule/sql/');
 		if ($result < 0) {
@@ -481,9 +492,6 @@ class modMyModule extends DolibarrModules
 		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_myobjects.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

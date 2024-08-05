@@ -893,7 +893,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string		$table			Table containing field with counter
  * @param   string		$field			Field containing already used values of counter
  * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
- * @param   Societe|string $objsoc		The company that own the object we need a counter for
+ * @param   Societe|''  $objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
@@ -1777,7 +1777,14 @@ function dol_set_user_param($db, $conf, &$user, $tab)
 
 	foreach ($tab as $key => $value) {
 		// Set new parameters
-		if ($value) {
+		$forcevalue = 0;
+		if (is_array($value)) {
+			if ($value["forcevalue"] == 1) {
+				$forcevalue = 1;
+			}
+			$value = $value["value"];
+		}
+		if ($forcevalue == 1 || $value) {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
 			$sql .= " VALUES (".((int) $user->id).",".((int) $conf->entity).",";
 			$sql .= " '".$db->escape($key)."','".$db->escape($value)."')";
@@ -2239,7 +2246,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 
 /**
- * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
+ * Clean corrupted database tree (orphelins linked to a not existing parent), record linked to themself, and also child-parent loop
  *
  * @param	DoliDB	$db					Database handler
  * @param	string	$tabletocleantree	Table to clean
@@ -2302,6 +2309,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 					$listofidtoclean[$cursor] = $id;
 					break;
 				}
+				// @phpstan-ignore-next-line PHPStan thinks this line is never reached
 				$cursor = $listofparentid[$cursor];
 			}
 
@@ -2310,8 +2318,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
 		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -2327,9 +2335,9 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		//else dol_print_error($db);
 
 		// Check and clean orphelins
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
+		$sql .= " WHERE ".$db->sanitize($fieldfkparent)." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);
@@ -2694,6 +2702,8 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'fichinter';
 	} elseif ($moduleobject == 'mos') {
 		$moduledirforclass = 'mrp';
+	} elseif ($moduleobject == 'workstations') {
+		$moduledirforclass = 'workstation';
 	} elseif ($moduleobject == 'accounting') {
 		$moduledirforclass = 'accountancy';
 	} elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms', 'receptions', 'partnerships', 'recruitments'))) {
@@ -2981,4 +2991,64 @@ function removeGlobalParenthesis($string)
 	}
 
 	return $string;
+}
+
+
+/**
+ * Return array of Emojis for miscellaneous use.
+ *
+ * @return 	array<string,array<string>>			Array of Emojis in hexadecimal
+ * @see getArrayOfEmoji()
+ */
+function getArrayOfEmojiBis()
+{
+	$arrayofcommonemoji = array(
+		'misc' => array('2600', '26FF'),		// Miscellaneous Symbols
+		'ding' => array('2700', '27BF'),		// Dingbats
+		'????' => array('9989', '9989'),		// Variation Selectors
+		'vars' => array('FE00', 'FE0F'),		// Variation Selectors
+		'pict' => array('1F300', '1F5FF'),		// Miscellaneous Symbols and Pictographs
+		'emot' => array('1F600', '1F64F'),		// Emoticons
+		'tran' => array('1F680', '1F6FF'),		// Transport and Map Symbols
+		'flag' => array('1F1E0', '1F1FF'),		// Flags (note: may be 1F1E6 instead of 1F1E0)
+		'supp' => array('1F900', '1F9FF'),		// Supplemental Symbols and Pictographs
+	);
+
+	return $arrayofcommonemoji;
+}
+
+/**
+ * Remove EMoji from email content
+ *
+ * @param 	string	$text			String to sanitize
+ * @param	int		$allowedemoji	Mode to allow emoji
+ * @return 	string					Sanitized string
+ */
+function removeEmoji($text, $allowedemoji = 1)
+{
+	// $allowedemoji can be
+	// 0=no emoji, 1=exclude the main known emojis (default), 2=keep only the main known (not implemented), 3=accept all
+	// Note that to accept emoji in database, you must use utf8mb4, utf8mb3 is not enough.
+
+	if ($allowedemoji == 0) {
+		// For a large removal:
+		$text = preg_replace('/[\x{2600}-\x{FFFF}]/u', '', $text);
+		$text = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '', $text);
+	}
+
+	// Delete emoji chars with a regex
+	// See https://www.unicode.org/emoji/charts/full-emoji-list.html
+	if ($allowedemoji == 1) {
+		$arrayofcommonemoji = getArrayOfEmojiBis();
+
+		foreach ($arrayofcommonemoji as $key => $valarray) {
+			$text = preg_replace('/[\x{'.$valarray[0].'}-\x{'.$valarray[1].'}]/u', '', $text);
+		}
+	}
+
+	if ($allowedemoji == 2) {
+		// TODO Not yet implemented
+	}
+
+	return $text;
 }

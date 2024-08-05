@@ -1,3 +1,4 @@
+<!-- file login.tpl.php -->
 <?php
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -21,10 +22,10 @@ if (empty($context) || !is_object($context)) {
 				</div>
 				<div class="login__field">
 					<i class="login__icon fas fa-lock"></i>
-					<input type="password" class="login__input" name="password" placeholder="<?php print dol_escape_htmltag($langs->trans('loginWebportalPassword')) ?>">
+					<input type="password" class="login__input" name="password" placeholder="<?php print dol_escape_htmltag($langs->trans('Password')) ?>">
 				</div>
 				<button class="button login__submit">
-					<span class="button__text"><?php print dol_escape_htmltag($langs->trans('LoginNow')) ?></span>
+					<span class="button__text"><?php print dol_escape_htmltag($langs->trans('Connection')) ?></span>
 					<i class="button__icon fas fa-chevron-right"></i>
 				</button>
 			</form>

@@ -683,7 +683,7 @@ class Menubase
 				}
 
 				// Define $title
-				if ($enabled) {
+				if ($enabled && isset($menu)) {
 					$title = $langs->trans($menu['titre']); // If $menu['titre'] start with $, a dol_eval is done.
 					//var_dump($title.'-'.$menu['titre']);
 					if ($title == $menu['titre']) {   // Translation not found
@@ -708,8 +708,6 @@ class Menubase
 							$title = $langs->trans($menu['titre']);
 						}
 					}
-					//$tmp4=microtime(true);
-					//print '>>> 3 '.($tmp4 - $tmp3).'<br>';
 
 					// We complete tabMenu
 					$tabMenu[$b]['rowid']       = $menu['rowid'];

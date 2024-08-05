@@ -106,7 +106,7 @@ class DolibarrApiAccess implements iAuthenticate
 
 		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
 		$api_key = '';
-		if (isset($_GET['api_key'])) {	// For backward compatibility
+		if (isset($_GET['api_key'])) {	// For backward compatibility. Keep $_GET here.
 			// TODO Add option to disable use of api key on url. Return errors if used.
 			$api_key = $_GET['api_key'];
 		}
@@ -168,7 +168,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			$fuser = new User($this->db);
-			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
+			$result = $fuser->fetch(0, $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': Failed to fetch on entity", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
@@ -200,7 +200,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			// User seems valid
-			$fuser->getrights();
+			$fuser->loadRights();
 
 			// Set the property $user to the $user of API
 			static::$user = $fuser;

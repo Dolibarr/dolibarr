@@ -151,39 +151,30 @@ if ($action == 'delete') {
 	exit();
 }
 
-if (!GETPOST('code')) {
-	dol_syslog("Page is called without code parameter defined");
 
-	// If we enter this page without 'code' parameter, it means we click on the link from login page and we want to get the redirect
+if (!GETPOST('code')) {
+	dol_syslog("Page is called without the 'code' parameter defined");
+
+	// If we enter this page without 'code' parameter, it means we click on the link from login page ($forlogin is set) or from setup page and we want to get the redirect
 	// to the OAuth provider login page.
 	$_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 	$_SESSION["oauthkeyforproviderbeforeoauthjump"] = $keyforprovider;
 	$_SESSION['oauthstateanticsrf'] = $state;
 
 	// Save more data into session
-	// Not required. All data are saved into $_SESSION['datafromloginform'] when form is posted with a click on Login with
-	// Google with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
-	/*
-	if (!empty($_POST["tz"])) {
-		$_SESSION["tz"] = $_POST["tz"];
-	}
-	if (!empty($_POST["tz_string"])) {
-		$_SESSION["tz_string"] = $_POST["tz_string"];
-	}
-	if (!empty($_POST["dst_first"])) {
-		$_SESSION["dst_first"] = $_POST["dst_first"];
-	}
-	if (!empty($_POST["dst_second"])) {
-		$_SESSION["dst_second"] = $_POST["dst_second"];
-	}
-	*/
+	// No need to save more data in sessions. We have several info into $_SESSION['datafromloginform'], saved when form is posted with a click
+	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
 
+	// Set approval_prompt. Note: A refresh token will be provided only if prompt is done.
 	if ($forlogin) {
+		$approval_prompt = getDolGlobalString('OAUTH_GOOGLE_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
+		$apiService->setApprouvalPrompt($approval_prompt);
+	} else {
 		$apiService->setApprouvalPrompt('force');
 	}
 
 	// This may create record into oauth_state before the header redirect.
-	// Creation of record with state in this tables depend on the Provider used (see its constructor).
+	// Creation of record with state, create record or just update column state of table llx_oauth_token (and create/update entry in llx_oauth_state) depending on the Provider used (see its constructor).
 	if ($state) {
 		$url = $apiService->getAuthorizationUri(array('state' => $state));
 	} else {
@@ -221,7 +212,9 @@ if (!GETPOST('code')) {
 		}
 	}
 
-	// we go on oauth provider authorization page
+	//var_dump($url);exit;
+
+	// we go on oauth provider authorization page, we will then go back on this page but into the other branch of the if (!GETPOST('code'))
 	header('Location: '.$url);
 	exit();
 } else {
@@ -245,8 +238,12 @@ if (!GETPOST('code')) {
 			$db->begin();
 
 			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
-			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php, so into table llx_oauth_token
+			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+
+			// The refresh token is inside the object token if the prompt was forced only.
+			//$refreshtoken = $token->getRefreshToken();
+			//var_dump($refreshtoken);
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
 			$extraparams = $token->getExtraParams();
@@ -317,8 +314,8 @@ if (!GETPOST('code')) {
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
 					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
 
-					// Delete the token
-					$storage->clearToken('Google');
+					// Delete the old token
+					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)
 
 					$tmpuser = new User($db);
 					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);	// Load user. Can load with email_oauth2.
@@ -363,7 +360,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

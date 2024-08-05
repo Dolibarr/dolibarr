@@ -9,6 +9,7 @@
  * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +77,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartybancard', 'globalcard'));
 
 // Permissions
@@ -137,11 +138,11 @@ if (empty($reshook)) {
 
 	if ($action == 'update') {
 		// Update the bank account
-		if (!GETPOST('label', 'alpha') || !GETPOST('bank', 'alpha')) {
+		if (!GETPOST('label', 'alpha') || !(GETPOST('bank', 'alpha') || (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')!=0))) {
 			if (!GETPOST('label', 'alpha')) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
 			}
-			if (!GETPOST('bank', 'alpha')) {
+			if (!GETPOST('bank', 'alpha') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
 			}
 			$action = 'edit';
@@ -154,7 +155,7 @@ if (empty($reshook)) {
 				$action = 'edit';
 				$error++;
 			}
-			if (!GETPOST('bic')) {
+			if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 				$action = 'edit';
 				$error++;
@@ -162,14 +163,14 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companybankaccount->socid           = $object->id;
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOSTINT('courant');
-			$companybankaccount->clos            = GETPOSTINT('clos');
+			$companybankaccount->status          = GETPOSTINT('clos');
+			$companybankaccount->clos            = $companybankaccount->status;
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -177,10 +178,11 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
-			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
+			$companybankaccount->domiciliation   = $companybankaccount->address;
 
-			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
+			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio         = $companybankaccount->owner_name;
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
@@ -239,7 +241,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$companybankaccount->oldcopy = dol_clone($companybankaccount);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -301,8 +303,6 @@ if (empty($reshook)) {
 
 			$companybankaccount->bank            = GETPOST('bank', 'alpha');
 			$companybankaccount->label           = GETPOST('label', 'alpha');
-			$companybankaccount->courant         = GETPOSTINT('courant');
-			$companybankaccount->clos            = GETPOSTINT('clos');
 			$companybankaccount->code_banque     = GETPOST('code_banque', 'alpha');
 			$companybankaccount->code_guichet    = GETPOST('code_guichet', 'alpha');
 			$companybankaccount->number          = GETPOST('number', 'alpha');
@@ -319,7 +319,9 @@ if (empty($reshook)) {
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOSTINT('date_rummonth'), GETPOSTINT('date_rumday'), GETPOSTINT('date_rumyear'));
 			$companybankaccount->datec           = dol_now();
-			$companybankaccount->status          = 1;
+
+			//$companybankaccount->clos          = GETPOSTINT('clos');
+			$companybankaccount->status          = GETPOSTINT('clos');
 
 			$companybankaccount->bank = trim($companybankaccount->bank);
 			if (empty($companybankaccount->bank) && !empty($companybankaccount->thirdparty)) {
@@ -336,7 +338,7 @@ if (empty($reshook)) {
 					$action = 'create';
 					$error++;
 				}
-				if (!GETPOST('bic')) {
+				if (!GETPOST('bic') && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
 					$action = 'create';
 					$error++;
@@ -522,8 +524,8 @@ if (empty($reshook)) {
 			'use_companybankid' => GETPOST('companybankid'),
 			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
 		);
-		$_POST['lang_id'] = GETPOSTINT('lang_idrib'.GETPOSTINT('companybankid'));
-		$_POST['model'] = GETPOSTINT('modelrib'.GETPOSTINT('companybankid'));
+		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOSTINT('companybankid'), 'alphanohtml');	// This is required by core/action_builddoc.inc.php
+		$_POST['model'] = GETPOST('modelrib'.GETPOSTINT('companybankid'), 'alphanohtml'); 		// This is required by core/action_builddoc.inc.php
 	}
 
 	$id = $socid;
@@ -894,7 +896,7 @@ if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('fo
 // Load Bank account
 if (!$id) {
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	$companybankaccount->fetch(0, $object->id);
+	$companybankaccount->fetch(0, '', $object->id);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
 } else {
@@ -1306,7 +1308,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print $s;
 							print '</td>';
 							print '<td>';
-							print dol_print_date($companypaymentmodetemp->tms, 'dayhour');
+							print dol_print_date($companypaymentmodetemp->date_modification, 'dayhour', 'tzuserrel');
 							print '</td>';
 							// Fields from hook
 							$parameters = array('arrayfields' => array(), 'obj' => $obj, 'linetype' => 'stripecard');
@@ -1729,11 +1731,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
 				// Show online signature link
-				print '<td class="right nowraponall">';
+				print '<td class="width200">';
 				$useonlinesignature = 1;
 				if ($useonlinesignature) {
 					require_once DOL_DOCUMENT_ROOT . '/core/lib/signature.lib.php';
-					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib);
+					print showOnlineSignatureUrl($companybankaccount->element, $rib->id, $rib, 'short');
 				}
 				print '</td>';
 			}
@@ -1970,7 +1972,8 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Label").'</td>';
 	print '<td><input class="minwidth300" type="text" name="label" value="'.$companybankaccount->label.'"></td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
+	$required = (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) ? "fieldrequired" : "";
+	print '<tr><td class="'.$required.'">'.$langs->trans("BankName").'</td>';
 	print '<td><input class="minwidth200" type="text" name="bank" value="'.$companybankaccount->bank.'"></td></tr>';
 
 	// Show fields of bank account
@@ -2007,7 +2010,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $bankaccount->bic;
-			if ($bankaccount->needIBAN()) {
+			if ($bankaccount->needIBAN() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
@@ -2031,7 +2034,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 	print "</textarea></td></tr>";
 
 	print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->proprio.'"></td></tr>';
+	print '<td><input class="minwidth300" type="text" name="proprio" value="'.$companybankaccount->owner_name.'"></td></tr>';
 	print "</td></tr>\n";
 
 	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
@@ -2179,7 +2182,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 			$name = 'bic';
 			$size = 12;
 			$content = $companybankaccount->bic;
-			if ($companybankaccount->needIBAN()) {
+			if ($companybankaccount->needIBAN() && (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0)) {
 				$require = true;
 			}
 			$tooltip = $langs->trans("Example").': LIABLT2XXXX';

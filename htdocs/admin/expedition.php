@@ -8,6 +8,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,6 +117,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		'@phan-var-force ModelePdfExpedition $module';
 
 		if ($module->write_file($exp, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=expedition&file=SPECIMEN.pdf");
@@ -164,7 +166,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $form = new Form($db);
 
-llxHeader("", $langs->trans("SendingsSetup"));
+llxHeader("", $langs->trans("SendingsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expedition');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
@@ -294,7 +296,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -475,6 +479,13 @@ print '<tr><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input class="flat minwidth200" type="text" name="SHIPPING_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('SHIPPING_DRAFT_WATERMARK')).'">';
 print "</td></tr>\n";
+
+// Allow OnLine Sign
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
+print '<td class="center">';
+print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
 
 print '</table>';
 

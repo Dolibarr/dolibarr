@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
- * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
+ * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ if ($action == 'setfixednotif' && $user->admin) {
 $form = new Form($db);
 $notify = new Notify($db);
 
-llxHeader('', $langs->trans("NotificationSetup"));
+llxHeader('', $langs->trans("NotificationSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-notification');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"), $linkback, 'title_setup');
@@ -189,35 +189,25 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-print '<div class="div-table-responsive">';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
+
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationEMailFrom").'</td>';
 print '<td>';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input class="width150 quatrevingtpercentminusx" type="email" name="email_from" value="'.getDolGlobalString('NOTIFICATION_EMAIL_FROM').'">';
-if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail($conf->global->NOTIFICATION_EMAIL_FROM)) {
+if (getDolGlobalString('NOTIFICATION_EMAIL_FROM') && !isValidEmail(getDolGlobalString('NOTIFICATION_EMAIL_FROM'))) {
 	print ' '.img_warning($langs->trans("ErrorBadEMail"));
 }
 print '</td>';
 print '</tr>';
 
-print '<tr class="oddeven"><td>';
-print $langs->trans("NotificationDisableConfirmMessageContact").'</td>';
-print '<td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT", $arrval, getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT'));
-}
-print '</td>';
-print '</tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationDisableConfirmMessageUser").'</td>';
@@ -231,6 +221,20 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '</tr>';
 
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("NotificationDisableConfirmMessageContact").'</td>';
+print '<td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT", $arrval, getDolGlobalString('NOTIFICATION_EMAIL_DISABLE_CONFIRM_MESSAGE_CONTACT'));
+}
+print '</td>';
+print '</tr>';
+
+
 print '<tr class="oddeven"><td>';
 print $langs->trans("NotificationDisableConfirmMessageFix").'</td>';
 print '<td>';
@@ -242,6 +246,8 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td>';
 print '</tr>';
+
+
 print '</table>';
 print '</div>';
 

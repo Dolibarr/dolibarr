@@ -266,7 +266,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							$error_msg = $langs->trans('Error'). ': ';
 							$error_msg .= $langs->transnoentities('TicketWrongContact');
 							setEventMessages($error_msg, [], 'errors');
-							$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+							$ok = 0;
 							break;
 						}
 					}

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur      <eldy@users.sourceforge.net>
+/* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW                      <mdeweerd@users.noreply.github.com>
  * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,17 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class MyObject extends CommonObject
 {
 	/**
-	 * @var string ID of module.
+	 * @var string 	ID of module.
 	 */
 	public $module = 'mymodule';
 
 	/**
-	 * @var string ID to identify managed object.
+	 * @var string 	ID to identify managed object.
 	 */
 	public $element = 'myobject';
 
 	/**
-	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
 	 */
 	public $table_element = 'mymodule_myobject';
 
@@ -55,18 +55,7 @@ class MyObject extends CommonObject
 	//public $element_for_permission = 'mymodule';
 
 	/**
-	 * @var int  	Does this object support multicompany module ?
-	 * 				0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
-	 * @var string String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
+	 * @var string 	String with name of icon for myobject. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'myobject@mymodule' if picto is file 'img/object_myobject.png'.
 	 */
 	public $picto = 'fa-file';
 
@@ -78,7 +67,7 @@ class MyObject extends CommonObject
 	/**
 	 *  'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
-	 *  	'select' (list of values are in 'options'),
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
 	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
 	 *  	'chkbxlst:...',
 	 *  	'varchar(x)',
@@ -88,7 +77,9 @@ class MyObject extends CommonObject
 	 *  	'boolean', 'checkbox', 'radio', 'array',
 	 *  	'mail', 'phone', 'url', 'password', 'ip'
 	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
+	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
 	 *  'position' is the sort order of field.
@@ -116,7 +107,7 @@ class MyObject extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,length?:int|string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
@@ -177,11 +168,6 @@ class MyObject extends CommonObject
 	 * @var int Status
 	 */
 	public $status;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var int ID
@@ -251,6 +237,8 @@ class MyObject extends CommonObject
 		global $langs;
 
 		$this->db = $db;
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1129,10 +1117,10 @@ class MyObject extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/mymodule/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = $mybool || @include_once $dir.$file;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -1259,9 +1247,16 @@ class MyObjectLine extends CommonObjectLine
 	// We should have a field rowid, fk_myobject and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * To overload
+	 * @see CommonObjectLine
 	 */
-	public $isextrafieldmanaged = 0;
+	public $parent_element = '';		// Example: '' or 'myobject'
+
+	/**
+	 * To overload
+	 * @see CommonObjectLine
+	 */
+	public $fk_parent_attribute = '';	// Example: '' or 'fk_myobject'
 
 	/**
 	 * Constructor
@@ -1271,5 +1266,7 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

@@ -45,6 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -78,7 +79,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 
 $backtopage = '';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewticketcard', 'globalcard'));
 
 $object = new Ticket($db);
@@ -148,7 +149,7 @@ if (empty($reshook)) {
 
 	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {
 		$error = 0;
-		$origin_email = GETPOST('email', 'alpha');
+		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Email")));
@@ -209,7 +210,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!GETPOST("subject", "restricthtml")) {
+		if (!GETPOST("subject", "alphanohtml")) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 			$action = '';
@@ -271,9 +272,10 @@ if (empty($reshook)) {
 
 			$object->db->begin();
 
-			$object->subject = GETPOST("subject", "restricthtml");
+			$object->subject = GETPOST("subject", "alphanohtml");
 			$object->message = GETPOST("message", "restricthtml");
 			$object->origin_email = $origin_email;
+			$object->email_from = $origin_email;
 
 			$object->type_code = GETPOST("type_code", 'aZ09');
 			$object->category_code = GETPOST("category_code", 'aZ09');
@@ -509,7 +511,7 @@ if (!getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 
 $arrayofjs = array();
 
-$arrayofcss = array('/opensurvey/css/style.css', getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -532,7 +534,7 @@ if ($action != "infos_success") {
 
 	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
 
-	if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')=='') {
+	if (!getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')) {
 		$langs->load("errors");
 		print '<div class="error">';
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
@@ -540,11 +542,13 @@ if ($action != "infos_success") {
 		print '</div>';
 	} else {
 		//print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
-		$formticket->showForm(0, 'edit', 1, $with_contact);
+		$formticket->showForm(0, ($action ? $action : 'create'), 1, $with_contact, '', $object);
 	}
 }
 
 print '</div>';
+
+print '<br>';
 
 if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
 	// End of page

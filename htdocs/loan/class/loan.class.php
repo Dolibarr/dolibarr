@@ -70,21 +70,6 @@ class Loan extends CommonObject
 	public $accountancy_account_insurance;
 	public $accountancy_account_interest;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
 	public $insurance_amount;
 
 	/**
@@ -741,7 +726,7 @@ class Loan extends CommonObject
 		}
 
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

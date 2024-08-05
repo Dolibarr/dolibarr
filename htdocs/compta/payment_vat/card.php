@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/compta/payment_vat/card.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Onglet payment of a social contribution
  *		\remarks	Fichier presque identique a fournisseur/paiement/card.php
  */
@@ -150,17 +150,6 @@ if ($action == 'delete') {
 	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete', '', 0, 2);
 }
 
-/*
- * Validation confirmation of payment
- */
-/*
-if ($action == 'valide')
-{
-	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-
-}
-*/
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/payments.php">'.$langs->trans("BackToList").'</a>';
@@ -282,18 +271,6 @@ if ($resql) {
  * Boutons Actions
  */
 print '<div class="tabsAction">';
-
-/*
-if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
-	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
-	{
-		if ($user->hasRight('facture', 'paiement')) {
-			print '<a class="butAction" href="card.php?id='.GETPOST('id', 'int').'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-		}
-	}
-}
-*/
 
 if ($action == '') {
 	if ($user->hasRight('tax', 'charges', 'supprimer')) {

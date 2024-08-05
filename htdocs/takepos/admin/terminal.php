@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $terminal = GETPOSTINT('terminal');
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id'])) {
+if (GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha')) {
 	$_GET['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal] = GETPOST('CASHDESK_ID_THIRDPARTY'.$terminal.'_id', 'alpha');
@@ -167,7 +167,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, '', '', '', 'mod-takepos page-admin_terminal');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -192,28 +192,19 @@ print '<td>';
 print '<input type="text" name="terminalname'.$terminal.'" value="'.getDolGlobalString("TAKEPOS_TERMINAL_NAME_".$terminal, $langs->trans("TerminalName", $terminal)).'" >';
 print '</td></tr>';
 
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-	$formproject = new FormProjets($db);
-	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDefaultProject").'</td><td>';
-	print img_picto('', 'project', 'class="pictofixedwidth"');
-	// select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
-	$projectid = getDolGlobalInt('CASHDESK_ID_PROJECT'.$terminaltouse);
-	print $formproject->select_projects(-1, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
-	print '</td></tr>';
-}
-
-print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
-print '<td>';
-print img_picto('', 'company', 'class="pictofixedwidth"');
-$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
-print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0, 'maxwidth500 widthcentpercentminusx');
-print '</td></tr>';
-
 print '<tr class="oddeven"><td>'.$langs->trans("ForbidSalesToTheDefaultCustomer").'</td>';
 print '<td>';
 print ajax_constantonoff("TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
+
+if (!getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
+	print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("CashDeskThirdPartyForSell").'</td>';
+	print '<td>';
+	print img_picto('', 'company', 'class="pictofixedwidth"');
+	$filter = '((s.client:IN:1,2,3) AND (s.status:=:1))';
+	print $form->select_company(getDolGlobalInt('CASHDESK_ID_THIRDPARTY'.$terminaltouse), 'socid', $filter, 1, 0, 0, array(), 0, 'maxwidth500 widthcentpercentminusx');
+	print '</td></tr>';
+}
 
 $atleastonefound = 0;
 if (isModEnabled("bank")) {
@@ -317,8 +308,10 @@ if (isModEnabled('stock')) {
 	print $form->textwithpicto($langs->trans("CashDeskDoNotDecreaseStock"), $langs->trans("CashDeskDoNotDecreaseStockHelp"));
 	print '</td>'; // Force warehouse (this is not a default value)
 	print '<td>';
-	print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
+	//print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal), 1);
+	print ajax_constantonoff('CASHDESK_NO_DECREASE_STOCK'.$terminal, array(), $conf->entity, 0, 0, 1, 0);
 	print '</td></tr>';
+
 
 	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
@@ -345,12 +338,24 @@ if (isModEnabled('stock')) {
 	}
 	print '</td></tr>';
 
+	// Deprecated: CASHDESK_FORCE_DECREASE_STOCK is now always false. No more required/used.
 	if (isModEnabled('productbatch') && getDolGlobalString('CASHDESK_FORCE_DECREASE_STOCK') && !getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal)) {
 		print '<tr class="oddeven"><td>'.$langs->trans('CashDeskForceDecreaseStockLabel').'</td>';
 		print '<td>';
 		print '<span class="opacitymedium">'.$langs->trans('CashDeskForceDecreaseStockDesc').'</span>';
 		print '</td></tr>';
 	}
+}
+
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	$formproject = new FormProjets($db);
+	print '<tr class="oddeven"><td>'.$langs->trans("CashDeskDefaultProject").'</td><td>';
+	print img_picto('', 'project', 'class="pictofixedwidth"');
+	// select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
+	$projectid = getDolGlobalInt('CASHDESK_ID_PROJECT'.$terminaltouse);
+	print $formproject->select_projects(-1, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
+	print '</td></tr>';
 }
 
 if (isModEnabled('receiptprinter')) {

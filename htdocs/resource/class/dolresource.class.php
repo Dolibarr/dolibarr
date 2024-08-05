@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2015		Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,7 +129,7 @@ class Dolresource extends CommonObject
 	public $cache_code_type_resource;
 
 	/**
-	 * @var Dolresource Clone of object before changing it
+	 * @var static Clone of object before changing it
 	 */
 	public $oldcopy;
 
@@ -138,7 +139,7 @@ class Dolresource extends CommonObject
 	 *
 	 *  @param	DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDb $db)
+	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
 		$this->status = 0;
@@ -385,8 +386,8 @@ class Dolresource extends CommonObject
 		}
 
 		// $this->oldcopy should have been set by the caller of update (here properties were already modified)
-		if (empty($this->oldcopy)) {
-			$this->oldcopy = dol_clone($this);
+		if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
+			$this->oldcopy = dol_clone($this, 2);
 		}
 
 		// Update request

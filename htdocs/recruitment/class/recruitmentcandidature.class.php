@@ -49,17 +49,6 @@ class RecruitmentCandidature extends CommonObject
 	public $table_element = 'recruitment_recruitmentcandidature';
 
 	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for recruitmentcandidature. Must be the part after the 'object_' into object_recruitmentcandidature.png
 	 */
 	public $picto = 'recruitmentcandidature';
@@ -141,9 +130,6 @@ class RecruitmentCandidature extends CommonObject
 	public $ref;
 	public $fk_recruitmentjobposition;
 	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $fk_user;
@@ -173,6 +159,9 @@ class RecruitmentCandidature extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1058,7 +1047,7 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
-		global $langs;
+		global $mysoc;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
@@ -1076,21 +1065,21 @@ class RecruitmentCandidature extends CommonObject
 			$return .= '<br>';
 			//$return .= '<span class="opacitymedium">';
 			//$return .= $langs->trans('Job').'</span> : ';
-			$return .= '<span class="info-box-label">';
+			$return .= '<div class="info-box-label tdoverflowmax150">';
 			$tmpjob = new RecruitmentJobPosition($this->db);
 			$tmpjob->fetch($this->fk_recruitmentjobposition);
 			//$return .= $this->fk_recruitmentjobposition;
-			$return .= $tmpjob->label;
-			$return .= '</span>';
+			$return .= dolPrintHTML($tmpjob->label);
+			$return .= '</div>';
 		}
 		if (property_exists($this, 'phone') && $this->phone) {
-			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'phone').' '.$this->phone.'</span>';
+			$return .= '<div class="info-box-label small">'.dol_print_phone($this->phone, $mysoc->country_code, 0, 0, 'AC_TEL', '&nbsp;', 'phone').'</div>';
 		}
 		if (property_exists($this, 'email') && $this->email) {
-			$return .= '<br><span class="info-box-label opacitymedium small">'.img_picto('', 'email').' '.$this->email.'</span>';
+			$return .= '<div class="info-box-label small">'.dol_print_email($this->email, 0, 0, 1, 64, 1, 1).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

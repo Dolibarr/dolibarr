@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Regis Houssin	<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Charlie Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,9 +70,10 @@ print '</td>';
 print '<td class="right">'.$this->tpl['qty'].(($this->tpl['efficiency'] > 0 && $this->tpl['efficiency'] < 1) ? ' / '.$form->textwithpicto($this->tpl['efficiency'], $langs->trans("ValueOfMeansLoss")).' = '.$qtytoconsumeforline : '').'</td>';
 // Unit
 print '<td class="right">'.measuringUnitString($this->tpl['fk_unit'], '', '', 1).'</td>';
+// Stock
 print '<td class="center">';
 if ($tmpproduct->isStockManaged()) {
-	print (empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
+	print(empty($this->tpl['stock']) ? 0 : price2num($this->tpl['stock'], 'MS'));
 	if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['stock'] < $this->tpl['seuil_stock_alerte'])) {
 		print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
 	}
@@ -79,7 +81,7 @@ if ($tmpproduct->isStockManaged()) {
 print '</td>';
 print '<td class="center">';
 if ($tmpproduct->isStockManaged()) {
-	print ((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
+	print((empty($this->tpl['virtual_stock']) ? 0 : price2num($this->tpl['virtual_stock'], 'MS')));
 	if ($this->tpl['seuil_stock_alerte'] != '' && ($this->tpl['virtual_stock'] < $this->tpl['seuil_stock_alerte'])) {
 		print ' '.img_warning($langs->trans("StockLowerThanLimit", $this->tpl['seuil_stock_alerte']));
 	}
@@ -110,7 +112,7 @@ print '</tr>'."\n";
 
 // Select of all the sub-BOM lines
 $sql = 'SELECT rowid, fk_bom_child, fk_product, qty FROM '.MAIN_DB_PREFIX.'bom_bomline AS bl';
-$sql.= ' WHERE fk_bom ='. (int) $tmpbom->id;
+$sql .= ' WHERE fk_bom ='. (int) $tmpbom->id;
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -148,7 +150,7 @@ if ($resql) {
 		if ($sub_bom_line->qty_frozen > 0) {
 			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty, 0, '', 0, 0).'</td>';
 		} else {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * $line->qty, 0, '', 0, 0).'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price($sub_bom_line->qty * (float) $line->qty, 0, '', 0, 0).'</td>';
 		}
 
 		// Unit

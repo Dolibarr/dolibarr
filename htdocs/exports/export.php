@@ -37,9 +37,9 @@ $langs->loadlangs(array('admin', 'exports', 'other', 'users', 'companies', 'proj
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
-//  accessforbidden();
+	//  accessforbidden();
 
-// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
+	// Map icons, array duplicated in import.php, was not synchronized, TODO put it somewhere only once
 $entitytoicon = array(
 	'invoice'      => 'bill',
 	'invoice_line' => 'bill',
@@ -66,6 +66,7 @@ $entitytoicon = array(
 	'batch'        => 'stock',
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
+	'securityevent' => 'generic',
 	'shipment'     => 'sending',
 	'shipment_line' => 'sending',
 	'reception' => 'sending',
@@ -113,10 +114,12 @@ $entitytolang = array(
 	'category'     => 'Category',
 	'other'        => 'Other',
 	'trip'         => 'TripsAndExpenses',
+	'securityevent' => 'SecurityEvent',
 	'shipment'     => 'Shipments',
 	'shipment_line' => 'ShipmentLine',
 	'project'      => 'Projects',
 	'projecttask'  => 'Tasks',
+	'resource'     => 'Resource',
 	'task_time'    => 'TaskTimeSpent',
 	'action'       => 'Event',
 	'expensereport' => 'ExpenseReport',
@@ -127,7 +130,8 @@ $entitytolang = array(
 	'translation'  => 'Translation',
 	'bom'          => 'BOM',
 	'bomline'      => 'BOMLine',
-	'conferenceorboothattendee' => 'Attendee'
+	'conferenceorboothattendee' => 'Attendee',
+	'inventory'   => 'Inventory'
 );
 
 $array_selected = isset($_SESSION["export_selected_fields"]) ? $_SESSION["export_selected_fields"] : array();
@@ -183,8 +187,8 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 		$array_selected[$field] = count($array_selected) + 1; // We tag the key $field as "selected"
 		// We check if there is a dependency to activate
 		/*var_dump($field);
-		var_dump($fieldsentitiesarray[$field]);
-		var_dump($fieldsdependenciesarray);*/
+		 var_dump($fieldsentitiesarray[$field]);
+		 var_dump($fieldsdependenciesarray);*/
 		$listofdependencies = array();
 		if (!empty($fieldsentitiesarray[$field]) && !empty($fieldsdependenciesarray[$fieldsentitiesarray[$field]])) {
 			// We found a dependency on the type of field
@@ -219,11 +223,11 @@ if ($action == 'selectfield') {     // Selection of field at step 2
 	}
 }
 if ($action == 'unselectfield') {
-	if ($_GET["field"] == 'all') {
+	if (GETPOST("field") == 'all') {
 		$array_selected = array();
 		$_SESSION["export_selected_fields"] = $array_selected;
 	} else {
-		unset($array_selected[$_GET["field"]]);
+		unset($array_selected[GETPOST("field")]);
 		// Renumber fields of array_selected (from 1 to nb_elements)
 		asort($array_selected);
 		$i = 0;
@@ -238,7 +242,7 @@ if ($action == 'unselectfield') {
 }
 
 if ($action == 'downfield' || $action == 'upfield') {
-	$pos = $array_selected[$_GET["field"]];
+	$pos = $array_selected[GETPOST("field")];
 	if ($action == 'downfield') {
 		$newpos = $pos + 1;
 	}
@@ -253,9 +257,9 @@ if ($action == 'downfield' || $action == 'upfield') {
 			break;
 		}
 	}
-	//print("Switch pos=$pos (code=".$_GET["field"].") and newpos=$newpos (code=$newcode)");
+	//print("Switch pos=$pos (code=".GETPOST("field").") and newpos=$newpos (code=$newcode)");
 	if ($newcode) {   // Si newcode trouve (protection contre resoumission de page)
-		$array_selected[$_GET["field"]] = $newpos;
+		$array_selected[GETPOST("field")] = $newpos;
 		$array_selected[$newcode] = $pos;
 		$_SESSION["export_selected_fields"] = $array_selected;
 	}
@@ -269,6 +273,11 @@ if ($step == 1 || $action == 'cleanselect') {
 }
 
 if ($action == 'builddoc') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	$separator = GETPOST('delimiter', 'alpha');
 	$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
 	$max_time = @ini_get("max_execution_time");
@@ -290,7 +299,12 @@ if ($action == 'builddoc') {
 
 // Delete file
 if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
-	$file = $upload_dir."/".GETPOST('file'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
+	$file = $upload_dir."/".GETPOST('file');
 
 	$ret = dol_delete_file($file);
 	if ($ret) {
@@ -303,6 +317,11 @@ if ($step == 5 && $action == 'confirm_deletefile' && $confirm == 'yes') {
 }
 
 if ($action == 'deleteprof') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	if (GETPOSTINT("id")) {
 		$objexport->fetch(GETPOSTINT('id'));
 		$result = $objexport->delete($user);
@@ -311,6 +330,11 @@ if ($action == 'deleteprof') {
 
 // TODO The export for filter is not yet implemented (old code created conflicts with step 2). We must use same way of working and same combo list of predefined export than step 2.
 if ($action == 'add_export_model') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	if ($export_name) {
 		asort($array_selected);
 
@@ -386,6 +410,11 @@ if ($step == 2 && $action == 'select_model') {
 
 // Get form with filters
 if ($step == 4 && $action == 'submitFormField') {
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	// on boucle sur les champs selectionne pour recuperer la valeur
 	if (is_array($objexport->array_export_TypeFields[0])) {
 		$_SESSION["export_filtered_fields"] = array();
@@ -400,7 +429,6 @@ if ($step == 4 && $action == 'submitFormField') {
 				$filterqualified = 0;
 			}
 			if ($filterqualified) {
-				//print 'Filter on '.$newcode.' type='.$type.' value='.$_POST[$newcode]."\n";
 				$objexport->array_export_FilterValue[0][$code] = GETPOST($newcode, $check);
 			}
 		}
@@ -415,7 +443,7 @@ if ($step == 4 && $action == 'submitFormField') {
  */
 
 if ($step == 1 || !$datatoexport) {
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step1');
 
 	$h = 0;
 
@@ -470,7 +498,12 @@ if ($step == 1 || !$datatoexport) {
 }
 
 if ($step == 2 && $datatoexport) {
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step2');
 
 	$h = 0;
 
@@ -647,7 +680,12 @@ if ($step == 3 && $datatoexport) {
 		exit;
 	}
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step3');
 
 	$h = 0;
 
@@ -811,9 +849,14 @@ if ($step == 4 && $datatoexport) {
 		exit;
 	}
 
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	asort($array_selected);
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step4');
 
 	$stepoffset = 0;
 	$h = 0;
@@ -1080,9 +1123,14 @@ if ($step == 5 && $datatoexport) {
 		exit;
 	}
 
+	// Check permission
+	if (empty($objexport->array_export_perms[0])) {
+		accessforbidden();
+	}
+
 	asort($array_selected);
 
-	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+	llxHeader('', $langs->trans("NewExport"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones', '', 0, 0, '', '', '', 'mod-exports page-export action-step5');
 
 	$h = 0;
 	$stepoffset = 0;

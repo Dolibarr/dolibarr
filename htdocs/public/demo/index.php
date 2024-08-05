@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@ if (empty($dolibarr_main_demo)) {
 	httponly_accessforbidden('Parameter dolibarr_main_demo must be defined in conf file with value "default login,default pass" to enable the demo entry page');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $res = $hookmanager->initHooks(array('demo'));
 
 $demoprofiles = array();
@@ -76,41 +77,51 @@ $reshook = $hookmanager->executeHooks('addDemoProfile', $parameters, $object, $t
 $error = $hookmanager->error; $errors = $hookmanager->errors;
 if (empty($reshook)) {
 	$demoprofiles = array(
-		array('default'=>'1', 'key'=>'profdemoservonly', 'label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
-		'url'=>$url
+		array(
+			'default'=>'1', 'key'=>'profdemoservonly', 'label'=>'DemoCompanyServiceOnly',
+			'disablemodules'=>'adherent,barcode,bom,cashdesk,don,expedition,externalsite,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,stock,takepos',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-service.jpg',
+			'url'=>$url,
+			'lang' => '',
 		),
-		array('default'=>'0', 'key'=>'profmanufacture', 'label'=>'DemoCompanyManufacturing',
+		array(
+			'default'=>'0', 'key'=>'profmanufacture', 'label'=>'DemoCompanyManufacturing',
 			'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,ftp,mailmanspip,prelevement,service',
 			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-manufacturing.jpg',
-			'url'=>$url
+			'url'=>$url,
+			'lang' => '',
 		),
-		array('default'=>'0', 'key'=>'profdemoprodstock', 'label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
-		'url'=>$url
+		array(
+			'default'=>'0', 'key'=>'profdemoprodstock', 'label'=>'DemoCompanyProductAndStocks',
+			'disablemodules'=>'adherent,bom,contrat,don,externalsite,ficheinter,ftp,mailmanspip,mrp,prelevement,service',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-product.jpg',
+			'url'=>$url,
+			'lang' => '',
 		),
-		array('default'=>'0', 'key'=>'profdemofun2', 'label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
-		'url'=>$url
+		array(
+			'default'=>'0', 'key'=>'profdemofun2', 'label'=>'DemoFundation2',
+			'disablemodules'=>'barcode,cashdesk,bom,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,ftp,incoterm,mailmanspip,margin,mrp,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax,takepos',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png',
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-foundation.jpg',
+			'url'=>$url,
+			'lang' => '',
 		),
 		// All demo profile
-		array('default'=>'0', 'key'=>'profdemoall', 'label'=>'ChooseYourDemoProfilMore',
-		'disablemodules'=>'adherent,cashdesk,don,externalsite,mailmanspip',
-		//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
-		'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg'
+		array(
+			'default'=>'0', 'key'=>'profdemoall', 'label'=>'ChooseYourDemoProfilMore',
+			'disablemodules'=>'adherent,cashdesk,don,externalsite,mailmanspip',
+			//'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'
+			'icon'=>DOL_URL_ROOT.'/public/demo/demo-profile-all.jpg',
+			'lang' => '',
 		)
 	);
 
 
 	// Visible
 	$alwayscheckedmodules = array('barcode', 'bookmark', 'categorie', 'externalrss', 'fckeditor', 'geoipmaxmind', 'gravatar', 'memcached', 'syslog', 'user', 'webservices'); // Technical module we always want
-	$alwaysuncheckedmodules = array('dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'socialnetworks', 'website'); // Module we don't want by default
+	$alwaysuncheckedmodules = array('ai', 'dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'socialnetworks', 'webhook', 'webportal', 'website', 'zapier'); // Module we don't want by default
 	// Not visible
 	$alwayshiddencheckedmodules = array('accounting', 'api', 'barcode', 'blockedlog', 'bookmark', 'clicktodial', 'comptabilite', 'cron', 'document', 'domain', 'externalrss', 'externalsite', 'fckeditor', 'geoipmaxmind', 'gravatar', 'label', 'ldap',
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
@@ -186,7 +197,6 @@ foreach ($modulesdir as $dir) {
 }
 
 asort($orders);
-//var_dump($orders);
 
 
 /*
@@ -222,7 +232,7 @@ if (GETPOST('action', 'aZ09') == 'gotodemo') {     // Action run when we click o
 			$url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'urlfrom='.urlencode(GETPOST('urlfrom', 'alpha'));
 		}
 		$url .= (preg_match('/\?/', $url) ? '&amp;' : '?').'disablemodules='.$disablestring;
-		//var_dump($url);exit;
+
 		header("Location: ".$url);
 		exit;
 	}
@@ -328,7 +338,7 @@ foreach ($demoprofiles as $profilearray) {
 		print '<div id="div'.$profilearray['key'].'" summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" class="center inline-block CTable CTableRow'.($i % 2 == 0 ? '1' : '0').'">'."\n";
 
 
-		print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url']) ? 'modulelineshow cursorpointer' : 'nomodulelines').'">';
+		print '<div id="a1'.$profilearray['key'].'" class="demobox '.(empty($profilearray['url']) ? 'modulelineshow cursorpointer maxwidth1000' : 'nomodulelines').'">';
 
 		print '<a href="'.$urlwithmod.'" class="'.(empty($profilearray['url']) ? 'modulelineshow' : 'nomodulelines').'">';
 		print '<div style="padding: 10px;">';
@@ -347,9 +357,9 @@ foreach ($demoprofiles as $profilearray) {
 
 		// Modules (a profile you must choose modules)
 		if (empty($profilearray['url'])) {
-			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; line-height: 130%; padding-bottom: 8px">';
+			print '<div id="tr1'.$profilearray['key'].'" class="moduleline hidden" style="margin-left: 8px; margin-right: 8px; text-align: justify; font-size:0.75em; padding-bottom: 8px">';
 
-			print '<span class="opacitymedium">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
+			print '<span class="opacitymedium small">'.$langs->trans("ThisIsListOfModules").'</span><br><br>';
 
 			print '<div class="csscolumns">';
 

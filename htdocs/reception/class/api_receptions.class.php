@@ -16,9 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 
 /**
  * API class for receptions
@@ -73,7 +74,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$this->reception->fetchObjectLinked();
@@ -93,12 +94,13 @@ class Receptions extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 			throw new RestException(403);
@@ -139,6 +141,9 @@ class Receptions extends DolibarrApi
 			}
 		}
 
+		//this query will return total receptions with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -168,6 +173,23 @@ class Receptions extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -175,12 +197,12 @@ class Receptions extends DolibarrApi
 	 * Create reception object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of reception
+	 * @return  int     				ID of reception created
 	 */
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
-			throw new RestException(401, "Insuffisant rights");
+			throw new RestException(403, "Insuffisant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -188,16 +210,34 @@ class Receptions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->reception->context['caller'] = $request_data['caller'];
+				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->reception->$field = $value;
+			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
 		if (isset($request_data["lines"])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$receptionline = new ReceptionLineBatch($this->db);
+
+				$receptionline->fk_product = $line['fk_product'];
+				$receptionline->fk_entrepot = $line['fk_entrepot'];
+				$receptionline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: purchase order id.  this->origin is 'supplier_order'
+				$receptionline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order id
+				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order line id
+				$receptionline->origin_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
+				$receptionline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
+				$receptionline->qty = $line['qty'];
+				//$receptionline->rang = $line['rang'];
+				$receptionline->array_options = $line['array_options'];
+				$receptionline->batch = $line['batch'];
+				$receptionline->eatby = $line['eatby'];
+				$receptionline->sellby = $line['sellby'];
+				$receptionline->cost_price = $line['cost_price'];
+				$receptionline->status = $line['status'];
+
+				$lines[] = $receptionline;
 			}
 			$this->reception->lines = $lines;
 		}
@@ -231,7 +271,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->reception->getLinesArray();
 		$result = array();
@@ -265,7 +305,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -333,7 +373,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception',$this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -398,7 +438,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// TODO Check the lineid $lineid is a line of object
@@ -435,7 +475,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -443,11 +483,11 @@ class Receptions extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->reception->context['caller'] = $request_data['caller'];
+				$this->reception->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->reception->$field = $value;
+			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
 
 		if ($this->reception->update(DolibarrApiAccess::$user) > 0) {
@@ -474,7 +514,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->reception->delete(DolibarrApiAccess::$user)) {
@@ -519,7 +559,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->reception->valid(DolibarrApiAccess::$user, $notrigger);
@@ -642,7 +682,7 @@ class Receptions extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('reception', $this->reception->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->reception->setClosed();
@@ -684,6 +724,8 @@ class Receptions extends DolibarrApi
 
 		if (!empty($object->lines) && is_array($object->lines)) {
 			foreach ($object->lines as $line) {
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);

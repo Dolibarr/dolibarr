@@ -9,7 +9,8 @@
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2016       Meziane Sof             <virtualsof@yahoo.fr>
  * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Nick Fragoulis
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 
 /**
  *    \file       htdocs/fourn/facture/card-rec.php
- *    \ingroup    facture fournisseurs
+ *    \ingroup    invoice fournisseurs
  *    \brief      Page to show predefined invoice
  */
 
@@ -101,7 +102,7 @@ if (($id > 0 || $title) && $action != 'create' && $action != 'add') {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierinvoicereccard', 'globalcard'));
 $extrafields = new ExtraFields($db);
 
@@ -159,11 +160,11 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_changeselectedfields.inc.php';
 
 	// Set note
-	include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT . '/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT . '/core/actions_lineupdown.inc.php'; // Must be 'include', not 'include_once'
 
 	// Create predefined invoice
 	if ($action == 'add') {
@@ -191,38 +192,38 @@ if (empty($reshook)) {
 		}
 
 		if (! $error) {
-			$object->titre = GETPOST('title', 'alphanohtml'); // deprecated
-			$object->title = GETPOST('title', 'alphanohtml');
-			$object->libelle = GETPOST('libelle', 'alpha');	// deprecated
-			$object->label = GETPOST('libelle', 'alpha');
-			$object->fk_project = GETPOSTINT('projectid');
-			$object->ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
+			$object->subtype               = GETPOSTINT('subtype');
+			$object->title                 = GETPOST('title', 'alphanohtml');
+			$object->libelle               = GETPOST('libelle', 'alpha');	// deprecated
+			$object->label                 = GETPOST('libelle', 'alpha');
+			$object->fk_project            = GETPOSTINT('projectid');
+			$object->ref_supplier          = GETPOST('ref_supplier', 'alphanohtml');
 
-			$object->note_private = GETPOST('note_private', 'restricthtml');
-			$object->note_public = GETPOST('note_public', 'restricthtml');
-			$object->model_pdf = GETPOST('modelpdf', 'alpha');
-			$object->usenewprice = GETPOST('usenewprice', 'alpha');
+			$object->note_private          = GETPOST('note_private', 'restricthtml');
+			$object->note_public           = GETPOST('note_public', 'restricthtml');
+			$object->model_pdf             = GETPOST('modelpdf', 'alpha');
+			$object->usenewprice           = GETPOST('usenewprice', 'alpha');
 
-			$object->frequency = $frequency;
-			$object->unit_frequency = GETPOST('unit_frequency', 'alpha');
-			$object->nb_gen_max = $nb_gen_max;
-			$object->auto_validate = GETPOSTINT('auto_validate');
-			$object->generate_pdf = GETPOSTINT('generate_pdf');
+			$object->frequency             = $frequency;
+			$object->unit_frequency        = GETPOST('unit_frequency', 'alpha');
+			$object->nb_gen_max            = $nb_gen_max;
+			$object->auto_validate         = GETPOSTINT('auto_validate');
+			$object->generate_pdf          = GETPOSTINT('generate_pdf');
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
+
+			$ret = $extrafields->setOptionalsFromPost(null, $object);
+			if ($ret < 0) {
+				$error++;
+			}
+
 
 			$db->begin();
 
 			$oldinvoice = new FactureFournisseur($db);
 			$oldinvoice->fetch(GETPOSTINT('facid'));
 
-			$object->cond_reglement_id = $oldinvoice->cond_reglement_id;
-			$object->cond_reglement_code = $oldinvoice->cond_reglement_code;
-			$object->cond_reglement_label = $oldinvoice->cond_reglement_label;
-			$object->cond_reglement_doc = $oldinvoice->cond_reglement_doc;
-			$object->mode_reglement_id = $oldinvoice->mode_reglement_id;
-			$object->mode_reglement_code = $oldinvoice->mode_reglement_code;
 
 			$result = $object->create($user, $oldinvoice->id);
 
@@ -306,7 +307,7 @@ if (empty($reshook)) {
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 	} elseif ($action == 'setfrequency' && $usercancreate) {
 		// Set frequency and unit frequency
-		$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOSTINT('unit_frequency'));
+		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
 	} elseif ($action == 'setdate_when' && $usercancreate) {
 		// Set next date of execution
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
@@ -527,7 +528,7 @@ if (empty($reshook)) {
 
 			// Define special_code for special lines
 			$special_code = 0;
-			// if (empty($_POST['qty'])) $special_code=3; // Options should not exists on invoices
+			// if (!GETPOST('qty')) $special_code=3; // Options should not exists on invoices
 
 			// Ecrase $pu par celui du produit
 			// Ecrase $desc par celui du produit
@@ -875,7 +876,7 @@ if (empty($reshook)) {
  */
 
 $help_url = '';
-llxHeader('', $langs->trans("RepeatableSupplierInvoice"), $help_url);
+llxHeader('', $langs->trans("RepeatableSupplierInvoice"), $help_url, '', 0, 0, '', '', '', 'mod-fourn-facture page-card-rec');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -933,6 +934,13 @@ if ($action == 'create') {
 		print '<tr><td class="titlefieldcreate">' . $langs->trans("Customer") . '</td><td>' . $object->thirdparty->getNomUrl(1, 'customer') . '</td>';
 		print '</tr>';
 
+		// Invoice subtype
+		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
+			print $form->getSelectInvoiceSubtype(GETPOSTISSET('subtype') ? GETPOST('subtype') : $object->subtype, 'subtype', 0, 0, '');
+			print "</td></tr>";
+		}
+
 		$note_public = GETPOSTISSET('note_public') ? GETPOST('note_public', 'restricthtml') : $object->note_public;
 		$note_private = GETPOSTISSET('note_private') ? GETPOST('note_private', 'restricthtml') : $object->note_private;
 
@@ -965,6 +973,56 @@ if ($action == 'create') {
 		print '<input class="flat quatrevingtpercent" type="text" name="libelle" value="' . $object->label . '">';
 		print '</td></tr>';
 
+		// Author
+		print "<tr><td>" . $langs->trans("Author") . "</td><td>" . $user->getFullName($langs) . "</td></tr>";
+
+		// Payment term
+		print "<tr><td>" . $langs->trans("PaymentConditions") . "</td><td>";
+		print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $object->cond_reglement_id, 'cond_reglement_id', -1, 0, 0, '');
+		print "</td></tr>";
+
+		// Payment mode
+		print "<tr><td>" . $langs->trans("PaymentMode") . "</td><td>";
+		print img_picto('', 'payment', 'class="pictofixedwidth"');
+		print $form->select_types_paiements(GETPOSTISSET('mode_reglement_id') ? GETPOST('mode_reglement_id', 'int') : $object->mode_reglement_id, 'mode_reglement_id', '', 0, 1, 0, 0, 1, '', 1);
+		print "</td></tr>";
+
+		// Project
+		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
+			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
+			$langs->load('projects');
+			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
+			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
+			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $object->thirdparty->id . (!empty($id) ? '&id=' . $id : '')) . '">' . $langs->trans("AddProject") . '</a>';
+			print '</td></tr>';
+		}
+
+		// Bank account
+		if ($object->fk_account > 0) {
+			print "<tr><td>" . $langs->trans('BankAccount') . "</td><td>";
+			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_account, 'none');
+			print "</td></tr>";
+		}
+
+		//extrafields
+		$draft = new FactureFournisseur($db);
+		$draft->fetch(GETPOST('facid', 'int'));
+
+		$extralabels = new ExtraFields($db);
+		$extralabels = $extrafields->fetch_name_optionals_label($draft->table_element);
+		if ($draft->fetch_optionals() > 0) {
+			$object->array_options = array_merge($object->array_options, $draft->array_options);
+		}
+
+		print $object->showOptionals($extrafields, 'create', $parameters);
+
+		// Model pdf
+		print "<tr><td>" . $langs->trans('Model') . "</td><td>";
+		include_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_invoice/modules_facturefournisseur.php';
+		$list = ModelePDFSuppliersInvoices::liste_modeles($db);
+		print $form->selectarray('modelpdf', $list, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
+		print "</td></tr>";
+
 		// Public note
 		print '<tr>';
 		print '<td class="tdtop">';
@@ -985,43 +1043,6 @@ if ($action == 'create') {
 			print $doleditor->Create(1);
 			print '</td></tr>';
 		}
-
-		// Author
-		print "<tr><td>" . $langs->trans("Author") . "</td><td>" . $user->getFullName($langs) . "</td></tr>";
-
-		// Payment term
-		print "<tr><td>" . $langs->trans("PaymentConditions") . "</td><td>";
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'none');
-		print "</td></tr>";
-
-		// Payment mode
-		print "<tr><td>" . $langs->trans("PaymentMode") . "</td><td>";
-		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none', '', 1);
-		print "</td></tr>";
-
-		// Project
-		if (isModEnabled('project') && is_object($object->thirdparty) && $object->thirdparty->id > 0) {
-			$projectid = GETPOST('projectid') ? GETPOST('projectid') : $object->fk_project;
-			$langs->load('projects');
-			print '<tr><td>' . $langs->trans('Project') . '</td><td>';
-			$numprojet = $formproject->select_projects($object->thirdparty->id, $projectid, 'projectid', 0, 0, 1, 0, 0, 0, 0, '', 0, 0, '');
-			print ' &nbsp; <a href="' . DOL_URL_ROOT . '/projet/card.php?socid=' . $object->thirdparty->id . '&action=create&status=1&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?action=create&socid=' . $object->thirdparty->id . (!empty($id) ? '&id=' . $id : '')) . '">' . $langs->trans("AddProject") . '</a>';
-			print '</td></tr>';
-		}
-
-		// Bank account
-		if ($object->fk_account > 0) {
-			print "<tr><td>" . $langs->trans('BankAccount') . "</td><td>";
-			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_account, 'none');
-			print "</td></tr>";
-		}
-
-		// Model pdf
-		print "<tr><td>" . $langs->trans('Model') . "</td><td>";
-		include_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_invoice/modules_facturefournisseur.php';
-		$list = ModelePDFSuppliersInvoices::liste_modeles($db);
-		print $form->selectarray('modelpdf', $list, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
-		print "</td></tr>";
 
 		print "</table>";
 
@@ -1195,6 +1216,13 @@ if ($action == 'create') {
 
 		print '<table class="border centpercent tableforfield">';
 
+		// Invoice subtype
+		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
+			print "<tr><td>".$langs->trans("InvoiceSubtype")."</td><td>";
+			print $object->getSubtypeLabel('facture_fourn_rec');
+			print "</td></tr>";
+		}
+
 		print '<tr><td class="titlefield">' . $langs->trans('Author') . '</td><td>';
 		print $author->getNomUrl(-1);
 		print "</td></tr>";
@@ -1335,22 +1363,6 @@ if ($action == 'create') {
 		}
 		$htmltext .= '</i>';
 
-		// Note public
-		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $usercancreate);
-		print '</td><td class="wordbreak">';
-		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $usercancreate, 'textarea:' . ROWS_4 . ':90%', '', null, null, '', 1);
-		print '</td>';
-		print '</tr>';
-
-		// Note private
-		print '<tr><td>';
-		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $usercancreate);
-		print '</td><td class="wordbreak">';
-		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $usercancreate, 'textarea:' . ROWS_4 . ':90%', '', null, null, '', 1);
-		print '</td>';
-		print '</tr>';
-
 		// Bank Account
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -1367,6 +1379,25 @@ if ($action == 'create') {
 			$form->formSelectAccount($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_account, 'none');
 		}
 		print "</td>";
+		print '</tr>';
+
+		// Extrafields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+		// Note public
+		print '<tr><td>';
+		print $form->editfieldkey($form->textwithpicto($langs->trans('NotePublic'), $htmltext, 1, 'help', '', 0, 2, 'notepublic'), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'));
+		print '</td><td class="wordbreak">';
+		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
+		print '</td>';
+		print '</tr>';
+
+		// Note private
+		print '<tr><td>';
+		print $form->editfieldkey($form->textwithpicto($langs->trans("NotePrivate"), $htmltext, 1, 'help', '', 0, 2, 'noteprivate'), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'));
+		print '</td><td class="wordbreak">';
+		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->hasRight('facture', 'creer'), 'textarea:'.ROWS_4.':90%', '', null, null, '', 1);
+		print '</td>';
 		print '</tr>';
 
 		// Model pdf
@@ -1397,7 +1428,6 @@ if ($action == 'create') {
 
 		// Other attributes
 		$cols = 2;
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 

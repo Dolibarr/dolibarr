@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,9 +70,9 @@ $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_country_id = GETPOSTINT('search_country_id');
+$search_country_id = GETPOST('search_country_id', 'int');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -303,12 +304,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			setEventMessages($db->error(), null, 'errors');
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
-
-// if (GETPOST('actioncancel', 'alpha')) {
-// 	$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-// }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 	$rowidcol = "rowid";
@@ -621,7 +617,7 @@ if ($resql) {
 	// There is several pages
 	if ($num > $listlimit) {
 		print '<tr class="none"><td class="right" colspan="'.(2 + count($fieldlist)).'">';
-		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+		print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 		print '</td></tr>';
 	}
 
@@ -950,10 +946,10 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- * 	@param		array	$fieldlist		Array of fields
- * 	@param		Object	$obj			If we show a particular record, obj is filled with record fields
- *  @param		string	$tabname		Name of SQL table
- *  @param		string	$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
+ * 	@param		string[]	$fieldlist		Array of fields
+ * 	@param		stdClass	$obj			If we show a particular record, obj is filled with record fields
+ *  @param		string		$tabname		Name of SQL table
+ *  @param		string		$context		'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *	@return		void
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')

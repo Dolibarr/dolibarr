@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=User cannot be deleted. Maybe it is associated to Dolibarr entities.
 ErrorFieldsRequired=Some required fields have been left blank.
 ErrorSubjectIsRequired=The email subject is required
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Failed to create a directory. Check that Web server user has permissions to write into Dolibarr documents directory. If parameter <b>safe_mode</b> is enabled on this PHP, check that Dolibarr php files owns to web server user (or group).
 ErrorNoMailDefinedForThisUser=No mail defined for this user
 ErrorSetupOfEmailsNotComplete=Setup of emails is not complete
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Third party or Member of partnership is man
 ErrorFailedToWriteInTempDirectory=Failed to write in temp directory
 ErrorQuantityIsLimitedTo=Quantity is limited to %s
 ErrorFailedToLoadThirdParty=Failed to find/load third party from id=%s, email=%s, name=%s
-ErrorThisPaymentModeIsNotSepa=This payment mode is not a bank account
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this third party (or set to a value deleted on Stripe side). Create (or re-attach) it first.
 ErrorCharPlusNotSupportedByImapForSearch=IMAP search is not able to search into sender or recipient for a string containing the character +
 ErrorTableNotFound=Table <b>%s</b> not found
@@ -322,18 +325,21 @@ ErrorFixThisHere=<a href="%s">Fix this here</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Error: The URL of you current instance (%s) does not match the URL defined into your OAuth2 login setup (%s). Doing OAuth2 login in such a configuration is not allowed.
 ErrorMenuExistValue=A Menu already exist with this Title or URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG files are not allowed as external links without the option %s
-ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handle yet
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Check the command used for the export into the Advanced options of the export
-
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
@@ -378,14 +384,16 @@ WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s 
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
 WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Stock movement already reversed
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Creditor address is invalid (are ZIP and city set? (%s)
 SwissQrCreditorInformationInvalid = Creditor information is invalid for IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN not implemented yet
 SwissQrPaymentInformationInvalid = Payment information was invalid for total %s : %s
 SwissQrDebitorAddressInvalid = Debitor information was invalid (%s)
-
 # Validate
 RequireValidValue = Value not valid
 RequireAtLeastXString = Requires at least %s character(s)
@@ -407,11 +415,10 @@ BadSetupOfFieldClassNotFoundForValidation = Error bad setup of field : Class not
 BadSetupOfFieldFileNotFound = Error bad setup of field : File not found for inclusion
 BadSetupOfFieldFetchNotCallable = Error bad setup of field : Fetch not callable on class
 ErrorTooManyAttempts= Too many attempts, please try again later
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
-EmptyMessageNotAllowedError=Empty Message Not Allowed Error
+EmptyMessageNotAllowedError=Empty message is not allowed

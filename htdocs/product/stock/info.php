@@ -43,7 +43,7 @@ $usercancreate = $user->hasRight('stock', 'creer');
  */
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("Stocks"), $help_url);
+llxHeader("", $langs->trans("Stocks"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_info');
 
 $object = new Entrepot($db);
 $object->fetch($id, $ref);

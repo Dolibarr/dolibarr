@@ -59,7 +59,7 @@ $pagenext = $page + 1;
 //if (! $sortfield) $sortfield="p.date_fin";
 //if (! $sortorder) $sortorder="DESC";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new CashControl($db);
 $extrafields = new ExtraFields($db);
 //$diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
@@ -110,7 +110,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -371,7 +371,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 

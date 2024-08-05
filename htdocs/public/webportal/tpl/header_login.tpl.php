@@ -1,3 +1,4 @@
+<!-- file header_login.tpl.php -->
 <?php
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -22,11 +23,11 @@ global $langs;
 		}
 		?>
 	</title>
-	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/global.css'; ?>">
+	<link rel="stylesheet" href="<?php print $context->rootUrl.'css/global.css.php'; ?>">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
 	<?php
 	//$jNotifyCSSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.css';
-	$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.css', 2);
+	$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
 	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">';
 
 	// JQuery
@@ -36,7 +37,7 @@ global $langs;
 
 	// JNotify
 	//$jNotifyJSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.js';
-	$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.js', 2);
+	$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
 	print '<script src="'.$jNotifyJSUrl.'"></script>';
 	?>
 </head>

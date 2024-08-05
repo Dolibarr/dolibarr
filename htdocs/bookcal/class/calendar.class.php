@@ -19,7 +19,7 @@
  */
 
 /**
- * \file        class/calendar.class.php
+ * \file        htdocs/bookcal/class/calendar.class.php
  * \ingroup     bookcal
  * \brief       This file is a CRUD class file for Calendar (Create/Read/Update/Delete)
  */
@@ -48,17 +48,6 @@ class Calendar extends CommonObject
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'bookcal_calendar';
-
-	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 0;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var string String with name of icon for calendar. Must be a 'fa-xxx' fontawesome code (or 'fa-xxx_fa_color_size') or 'calendar@bookcal' if picto is file 'img/object_calendar.png'.
@@ -116,6 +105,7 @@ class Calendar extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'right', 'comment' => "Id"),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "Reference of object", 'css' => 'width100'),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'help' => "Help text", 'showoncombobox' => 2, 'validate' => 1,),
 		'visibility' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Owner', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'visible' => 1, 'picto' => 'user', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
@@ -133,6 +123,7 @@ class Calendar extends CommonObject
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'default' => '0', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Closed'), 'validate' => 1,),
 	);
 	public $rowid;
+	public $entity;
 	public $ref;
 	public $label;
 	public $type;
@@ -142,7 +133,6 @@ class Calendar extends CommonObject
 	public $description;
 	public $note_public;
 	public $note_private;
-	public $date_creation;
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
@@ -160,6 +150,9 @@ class Calendar extends CommonObject
 		global $langs, $user;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -1074,10 +1067,6 @@ class CalendarLine extends CommonObjectLine
 	// To complete with content of an object CalendarLine
 	// We should have a field rowid, fk_calendar and position
 
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * Constructor
@@ -1087,5 +1076,7 @@ class CalendarLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

@@ -61,7 +61,7 @@ restrictedArea($user, 'expedition');
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-stats_index');
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 
@@ -210,7 +210,7 @@ $type = 'shipment_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';

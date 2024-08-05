@@ -7,6 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,14 +45,14 @@ if (isModEnabled('accounting')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
 $year = GETPOSTINT("year");
-$search_sc_type = GETPOSTINT('search_sc_type');
+$search_sc_type = GETPOST('search_sc_type', 'intcomma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -307,7 +308,7 @@ while ($i < min($num, $limit)) {
 		$userstatic->admin = $obj->admin;
 		$userstatic->login = $obj->login;
 		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->status = $obj->statut;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 	}

@@ -1349,7 +1349,7 @@ class ProductFournisseur extends Product
 			$label .= $this->displayPriceProductFournisseurLog($logPrices);
 		}
 
-		$url = DOL_URL_ROOT.'/product/fournisseurs.php?id='.((int) $this->id).'&action=create_price&token='.newToken().'&socid='.((int) $this->fourn_id).'&rowid='.((int) $this->product_fourn_price_id);
+		$url = DOL_URL_ROOT.'/product/price_suppliers.php?id='.((int) $this->id).'&action=create_price&token='.newToken().'&socid='.((int) $this->fourn_id).'&rowid='.((int) $this->product_fourn_price_id);
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not

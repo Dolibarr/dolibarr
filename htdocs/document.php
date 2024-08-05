@@ -6,6 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,7 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
 	}
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
+// Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
@@ -76,10 +78,24 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 /**
  * Header empty
  *
- * @ignore
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	array|string  	$arrayofjs			Array of complementary js files
+ * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
 }
 /**
@@ -98,11 +114,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
+$original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTINT('entity') ?GETPOSTINT('entity') : $conf->entity;
+$entity = GETPOSTINT('entity', $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {

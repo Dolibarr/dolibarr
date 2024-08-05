@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2002-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2019	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2007	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2015		Abbes Bahfir			<bafbes@gmail.com>
- * Copyright (C) 2015-2016	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2017		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2018-2022	Charlene Benke			<charlene@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2019-2023	Alexandre Spangaro		<aspangaro@easya.solutions>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2019	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2007	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Abbes Bahfir				<bafbes@gmail.com>
+ * Copyright (C) 2015-2016	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2017		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2018-2022	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2023		Joachim Kueter		    <git-jk@bloxera.com>
+ * Copyright (C) 2023		Joachim Kueter				<git-jk@bloxera.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,8 +68,8 @@ $search_amount_no_tax = GETPOST("search_amount_no_tax", "alpha");
 $search_amount_all_tax = GETPOST("search_amount_all_tax", "alpha");
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_refsupplier = GETPOST('search_refsupplier', 'alpha');
-$search_type = GETPOSTINT('search_type');
-$search_subtype = GETPOSTINT('search_subtype');
+$search_type = GETPOST('search_type', 'intcomma');
+$search_subtype = GETPOST('search_subtype', 'intcomma');
 $search_project = GETPOST('search_project', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_company_alias = GETPOST('search_company_alias', 'alpha');
@@ -85,13 +85,13 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');	// Can be '' or a numeric
-$search_paymentmode = GETPOSTINT('search_paymentmode');
-$search_paymentcond = GETPOSTINT('search_paymentcond');
+$search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
+$search_paymentcond = GETPOST('search_paymentcond', 'intcomma');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_state = GETPOST("search_state");
-$search_country = GETPOST("search_country", 'alpha');
-$search_type_thirdparty = GETPOSTINT("search_type_thirdparty");
+$search_country = GETPOST("search_country", 'aZ09');
+$search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_user = GETPOST('search_user', 'intcomma');
 $search_sale = GETPOST('search_sale', 'intcomma');
 $search_date_start = GETPOSTDATE('search_date_start', '', 'tzserver');
@@ -104,8 +104,8 @@ $search_datelimit_endmonth = GETPOSTINT('search_datelimit_endmonth');
 $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
-$search_categ_sup = GETPOSTINT("search_categ_sup");
-$search_product_category = GETPOSTINT('search_product_category');
+$search_categ_sup = GETPOST("search_categ_sup", 'intcomma');
+$search_product_category = GETPOST('search_product_category', 'intcomma');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -137,7 +137,6 @@ $socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
-	$_GET["action"] = '';
 	$socid = $user->socid;
 }
 
@@ -145,7 +144,7 @@ $diroutputmassaction = $conf->fournisseur->facture->dir_output.'/temp/massgenera
 
 $now = dol_now();
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new FactureFournisseur($db);
 $hookmanager->initHooks(array('supplierinvoicelist'));
 $extrafields = new ExtraFields($db);
@@ -170,18 +169,18 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'f.ref' => array('label' => "Ref", 'checked' => 1),
-	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => 1),
-	'f.type' => array('label' => "Type", 'checked' => 0),
-	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0,),
-	'f.label' => array('label' => "Label", 'checked' => 0),
-	'f.datef' => array('label' => "DateInvoice", 'checked' => 1),
-	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => 0),
+	'f.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5),
+	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => 1, 'position' => 7),
+	'f.type' => array('label' => "Type", 'checked' => 0, 'position' => 15),
+	'f.subtype' => array('label' => "InvoiceSubtype", 'checked' => 0, 'position' => 17),
+	'f.label' => array('label' => "Label", 'checked' => 0, 'position' => 20),
+	'f.datef' => array('label' => "DateInvoice", 'checked' => 1, 'position' => 25),
+	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1, 'position' => 27),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => 0, 'position' => 30),
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'position' => 42),
 	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 43),
-	's.zip' => array('label' => "Zip", 'checked' => 1, 'position' => 44),
+	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 44),
 	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 45),
 	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 46),
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 49),
@@ -191,7 +190,7 @@ $arrayfields = array(
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 110),
 	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => $mysoc->localtax1_assuj == "1", 'position' => 95),
 	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => $mysoc->localtax2_assuj == "1", 'position' => 100),
-	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 115),
+	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => 1, 'position' => 115),
 	'dynamount_payed' => array('label' => "Paid", 'checked' => 0, 'position' => 116),
 	'rtp' => array('label' => "Rest", 'checked' => 0, 'position' => 117),
 	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'position' => 205, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
@@ -201,14 +200,19 @@ $arrayfields = array(
 	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'position' => 209, 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
 	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'position' => 210, 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
 	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => 0, 'position' => 211, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
-	'u.login' => array('label' => "Author", 'checked' => 1, 'position' => 500),
+	'u.login' => array('label' => "Author", 'checked' => -1, 'position' => 500),
 	'f.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 501),
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 502),
+	'f.nb_docs' => array('label' => "Documents", 'checked' => -1, 'position' => 510),
 	'f.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
-	'f.nb_docs' => array('label' => "Documents", 'checked' => 1, 'position' => 510),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+$subtypearray = $object->getArrayOfInvoiceSubtypes(0);
+if (empty($subtypearray)) {
+	unset($arrayfields['f.subtype']);
+}
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -346,10 +350,10 @@ if (empty($reshook)) {
 						setEventMessages($objecttmp->ref.' '.$langs->trans("ProcessingError"), $hookmanager->errors, 'errors');
 					}
 
-					if ($objecttmp->statut == FactureFournisseur::STATUS_DRAFT) {
+					if ($objecttmp->status == FactureFournisseur::STATUS_DRAFT) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("Draft"), $objecttmp->errors, 'errors');
-					} elseif ($objecttmp->paye || $objecttmp->resteapayer == 0) {
+					} elseif ($objecttmp->paid || $objecttmp->resteapayer == 0) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
 					} elseif ($objecttmp->resteapayer < 0) {
@@ -377,8 +381,9 @@ if (empty($reshook)) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
+						$langs->load("errors");
 						$error++;
-						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+						setEventMessages($objecttmp->ref.' '.$langs->trans("ErrorThisPaymentModeIsNotCreditTransfer"), $objecttmp->errors, 'errors');
 					} else {
 						$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 					}
@@ -451,11 +456,6 @@ $sql .= " state.code_departement as state_code, state.nom as state_name,";
 $sql .= " country.code as country_code,";
 $sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
-// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
-if (!$search_all) {
-	$sql .= ', SUM(pf.amount) as dynamount_payed';
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -467,6 +467,12 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
+
+// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
+// TODO Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
+if (!$search_all) {
+	$sql .= ', SUM(pf.amount) as dynamount_payed';
+}
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -683,17 +689,17 @@ if (!empty($searchCategoryProductList)) {
 	$listofcategoryid = '';
 	foreach ($searchCategoryProductList as $searchCategoryProduct) {
 		if (intval($searchCategoryProduct) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid AND p.rowid = ck.fk_product)";
+			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid AND fd.fk_product = ck.fk_product)";
 		} elseif (intval($searchCategoryProduct) > 0) {
 			if ($searchCategoryProductOperator == 0) {
-				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid AND p.rowid = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
+				$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid AND fd.fk_product = ck.fk_product AND ck.fk_categorie = ".((int) $searchCategoryProduct).")";
 			} else {
 				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryProduct);
 			}
 		}
 	}
 	if ($listofcategoryid) {
-		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid AND p.rowid = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+		$searchCategoryProductSqlList[] = " EXISTS (SELECT ck.fk_product FROM ".MAIN_DB_PREFIX."categorie_product as ck, ".MAIN_DB_PREFIX."facture_fourn_det as fd WHERE fd.fk_facture_fourn = f.rowid AND fd.fk_product = ck.fk_product AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
 	}
 	if ($searchCategoryProductOperator == 1) {
 		if (!empty($searchCategoryProductSqlList)) {
@@ -764,6 +770,8 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+	$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid/', '', $sqlforcount);
+
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -805,7 +813,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-fourn-facture page-list');
 
 if ($socid) {
 	$soc = new Societe($db);
@@ -943,7 +951,7 @@ if ($search_type_thirdparty != '' && $search_type_thirdparty > 0) {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -1064,7 +1072,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
@@ -1095,20 +1104,13 @@ if (!empty($arrayfields['f.ref_supplier']['checked'])) {
 // Type
 if (!empty($arrayfields['f.type']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone">';
-	$listtype = array(
+	$typearray = array(
 		FactureFournisseur::TYPE_STANDARD => $langs->trans("InvoiceStandard"),
 		FactureFournisseur::TYPE_REPLACEMENT => $langs->trans("InvoiceReplacement"),
 		FactureFournisseur::TYPE_CREDIT_NOTE => $langs->trans("InvoiceAvoir"),
 		FactureFournisseur::TYPE_DEPOSIT => $langs->trans("InvoiceDeposit"),
 	);
-	/*
-	 if (!empty($conf->global->INVOICE_USE_SITUATION))
-	 {
-	 $listtype[Facture::TYPE_SITUATION] = $langs->trans("InvoiceSituation");
-	 }
-	 */
-	//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
-	print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
+	print $form->selectarray('search_type', $typearray, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
 	print '</td>';
 }
 // Invoice Subtype
@@ -1377,7 +1379,7 @@ if (!empty($arrayfields['s.town']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['s.zip']['label'], $_SERVER["PHP_SELF"], 's.zip', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['state.nom']['checked'])) {
@@ -1511,6 +1513,9 @@ $totalarray['val']['f.total_vat'] = 0;
 $totalarray['val']['f.total_localtax1'] = 0;
 $totalarray['val']['f.total_localtax1'] = 0;
 $totalarray['val']['f.total_ttc'] = 0;
+$totalarray['val']['totalam']=0;
+$totalarray['val']['rtp']=0;
+
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
@@ -1597,6 +1602,7 @@ while ($i < $imaxinloop) {
 	$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
 
 	$facturestatic->paye = $obj->paye;
+	$facturestatic->paid = $obj->paye;
 
 	$facturestatic->date = $db->jdate($obj->datef);
 
@@ -1631,7 +1637,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->fk_statut > 1) ? 'opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1704,7 +1710,7 @@ while ($i < $imaxinloop) {
 
 		// Label
 		if (!empty($arrayfields['f.label']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="nowrap tdoverflowmax125" title="'.dol_escape_htmltag($obj->label).'">';
 			print dol_escape_htmltag($obj->label);
 			print '</td>';
 			if (!$i) {
@@ -1751,7 +1757,7 @@ while ($i < $imaxinloop) {
 
 		// Third party
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax150">';
+			print '<td class="tdoverflowmax125">';
 			print $thirdparty->getNomUrl(1, 'supplier', 0, 0, -1, empty($arrayfields['s.name_alias']['checked']) ? 0 : 1);
 			print '</td>';
 			if (!$i) {
@@ -1884,7 +1890,7 @@ while ($i < $imaxinloop) {
 			$totalarray['val']['f.total_ttc'] += $obj->total_ttc;
 		}
 
-		// Number of attached documents
+		// Number of attached documents (may slow your application on large lists)
 		if (!empty($arrayfields['f.nb_docs']['checked'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -1900,7 +1906,7 @@ while ($i < $imaxinloop) {
 
 		// Author
 		if (!empty($arrayfields['u.login']['checked'])) {
-			print '<td class="tdoverflowmax125">';
+			print '<td class="tdoverflowmax100">';
 			if ($userstatic->id) {
 				print $userstatic->getNomUrl(-1);
 			} else {
@@ -1912,15 +1918,20 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Dynamic amount paid
 		if (!empty($arrayfields['dynamount_payed']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.(!empty($totalpay) ? price($totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalam';
 			}
+			if (empty($totalarray['val']['totalam'])) {
+				$totalarray['val']['totalam'] = 0;		// avoid PHP Warning:  Undefined array key "totalam" on line 1891
+			}
 			$totalarray['val']['totalam'] += $totalpay;
 		}
 
+		// Remain to pay
 		if (!empty($arrayfields['rtp']['checked'])) {
 			print '<td class="right nowrap">'.(!empty($remaintopay) ? price($remaintopay, 0, $langs) : '&nbsp;').'</td>'; // TODO Use a denormalized field
 			if (!$i) {
@@ -1968,6 +1979,7 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Dynamic amount paid
 		if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
 			print '<td class="right nowrap"><span class="amount">'.(!empty($multicurrency_totalpay) ? price($multicurrency_totalpay, 0, $langs) : '').'</span></td>'; // TODO Use a denormalized field
 			if (!$i) {
@@ -1995,7 +2007,7 @@ while ($i < $imaxinloop) {
 
 		// Date creation
 		if (!empty($arrayfields['f.datec']['checked'])) {
-			print '<td class="center nowraponll">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {

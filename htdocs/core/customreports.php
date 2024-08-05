@@ -80,7 +80,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
 
 	if (empty($user) || empty($user->id)) {
-		print 'Page is called as an include but $user and its permission loaded with getrights() are not defined. We stop here.';
+		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
 		exit(-1);
 	}
 	if (empty($object)) {
@@ -606,7 +606,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 
 	// Filter (you can use param &show_search_component_params_hidden=1 for debug)
 	if (!empty($object)) {
-		print '<div class="divadvancedsearchfield quatrevingtpercent">';
+		print '<div class="divadvancedsearchfield">';
 		print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden);
 		print '</div>';
 	}

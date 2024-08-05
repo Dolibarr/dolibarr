@@ -78,7 +78,8 @@ class Salary extends CommonObject
 	 */
 	public $fk_project;
 
-	public $type_payment;
+	public $type_payment;	// TODO Rename into type_payment_id
+	public $type_payment_code;
 
 	/**
 	 * @var string salary payments label
@@ -129,6 +130,7 @@ class Salary extends CommonObject
 	const STATUS_PAID = 1;
 
 	public $resteapayer;
+
 
 	/**
 	 *	Constructor
@@ -239,17 +241,21 @@ class Salary extends CommonObject
 		$sql .= " s.label,";
 		$sql .= " s.datesp,";
 		$sql .= " s.dateep,";
-		$sql .= " s.note,";
+		$sql .= " s.note as note_private,";
+		$sql .= " s.note_public,";
 		$sql .= " s.paye,";
 		$sql .= " s.fk_bank,";
 		$sql .= " s.fk_user_author,";
 		$sql .= " s.fk_user_modif,";
-		$sql .= " s.fk_account";
+		$sql .= " s.fk_account,";
+		$sql .= " cp.code as type_payment_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."salary as s";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON s.fk_typepayment = cp.id";
 		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -264,10 +270,13 @@ class Salary extends CommonObject
 				$this->amount           = $obj->amount;
 				$this->fk_project       = $obj->fk_project;
 				$this->type_payment     = $obj->fk_typepayment;
+				$this->type_payment_code = $obj->type_payment_code;
 				$this->label			= $obj->label;
 				$this->datesp			= $this->db->jdate($obj->datesp);
 				$this->dateep			= $this->db->jdate($obj->dateep);
-				$this->note				= $obj->note;
+				$this->note				= $obj->note_private;
+				$this->note_private		= $obj->note_private;
+				$this->note_public		= $obj->note_public;
 				$this->paye 			= $obj->paye;
 				$this->status 			= $obj->paye;
 				$this->fk_bank          = $obj->fk_bank;
@@ -601,7 +610,7 @@ class Salary extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$table;
 		$sql .= " WHERE ".$field." = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
+		dol_syslog(get_class($this)."::getSommePaiement for salary id=".((int) $this->id), LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
 
@@ -826,7 +835,7 @@ class Salary extends CommonObject
 			}
 		}
 		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status margintoponly">'.$this->getLibStatut(3, $this->alreadypaid).'</div>';
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
@@ -858,7 +867,7 @@ class Salary extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$bac->fetch(0, $mysoc->id);
+			$bac->fetch(0, '', $mysoc->id);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";

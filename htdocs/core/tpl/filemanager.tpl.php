@@ -62,7 +62,7 @@ if (!isset($section)) {
 // Confirm remove file (for non javascript users)
 if (($action == 'delete' || $action == 'file_manager_delete') && empty($conf->use_javascript_ajax)) {
 	// TODO Add website, pageid, filemanager if defined
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 1);
 }
 
 // Start container of all panels
@@ -150,7 +150,7 @@ $nameforformuserfile = 'formuserfileecm';
 
 print '<div class="inline-block valignmiddle floatright">';
 
-// For to attach a new file
+// Zone to attach a new file
 if ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) || !empty($section)) {
 	if ((empty($section) || $section == -1) && ($module != 'medias')) {
 		?>
@@ -291,7 +291,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 		// Show the link to "Root"
 		if ($showroot) {
-			print '<tr class="nooddeven"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode((string) $pageid).'">';
+			print '<tr class="oddeven nohover"><td><div style="padding-left: 5px; padding-right: 5px;"><a href="'.$_SERVER["PHP_SELF"].'?file_manager=1'.(!empty($websitekey) ? '&website='.urlencode($websitekey) : '').'&pageid='.urlencode((string) $pageid).'">';
 			if ($module == 'medias') {
 				print $langs->trans("RootOfMedias");
 			} else {
@@ -300,7 +300,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 			print '</a></div></td></tr>';
 		}
 
-		print '<tr class="nooddeven"><td>';
+		print '<tr class="oddeven nohover"><td>';
 
 		// Show filemanager tree (will be filled by a call of ajax /ecm/tpl/enablefiletreeajax.tpl.php, later, that executes ajaxdirtree.php)
 		print '<div id="filetree" class="ecmfiletree"></div>';
@@ -316,7 +316,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 		$_POST['modulepart'] = $module;
 		$_POST['openeddir'] = GETPOST('openeddir');
-		$_POST['dir'] = empty($_POST['dir']) ? '/' : $_POST['dir'];
+		$_POST['dir'] = empty($_POST['dir']) ? '/' : GETPOST('dir');
 
 		// Show filemanager tree (will be filled by direct include of ajaxdirtree.php in mode noajax, this will return all dir - all levels - to show)
 		print '<div id="filetree" class="ecmfiletree">';

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro		<aspangaro@easya.solutions>
- * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
- * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2016	  	Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ if (!$sortorder) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancyexpensereportlist'));
 
 $formaccounting = new FormAccounting($db);
@@ -109,7 +110,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -224,7 +225,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url);
+llxHeader('', $langs->trans("ExpenseReportsVentilation"), $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-accountancy accountancy-expensereport page-list');
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -367,7 +368,10 @@ if ($result) {
 	$arrayofmassactions = array(
 		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
 	);
-	$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	$massactionbutton = '';
+	if ($massaction !== 'set_default_account') {
+		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
+	}
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -459,7 +463,7 @@ if ($result) {
 
 		$userstatic->id = $objp->userid;
 		$userstatic->login = $objp->login;
-		$userstatic->statut = $objp->statut;
+		$userstatic->status = $objp->statut;
 		$userstatic->email = $objp->email;
 		$userstatic->gender = $objp->gender;
 		$userstatic->firstname = $objp->firstname;
@@ -478,7 +482,7 @@ if ($result) {
 		print '</td>';
 
 		// Ref Expense report
-		print '<td>'.$expensereport_static->getNomUrl(1).'</td>';
+		print '<td class="tdoverflowmax150">'.$expensereport_static->getNomUrl(1).'</td>';
 
 		// Date validation
 		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {

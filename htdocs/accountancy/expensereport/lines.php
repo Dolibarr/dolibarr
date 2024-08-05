@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2013-2016	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024	Alexandre Spangaro	<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2013-2016	Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -169,7 +170,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"), $help_url);
+llxHeader('', $langs->trans("ExpenseReportsVentilation").' - '.$langs->trans("Dispatched"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-expensereport page-lines');
 
 print '<script type="text/javascript">
 			$(function () {
@@ -218,7 +219,7 @@ if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.label", $search_label);
 }
 if (strlen(trim($search_desc))) {
-	$sql .= natural_search("er.comments", $search_desc);
+	$sql .= natural_search("erd.comments", $search_desc);
 }
 if (strlen(trim($search_amount))) {
 	$sql .= natural_search("erd.total_ht", $search_amount, 1);
@@ -383,7 +384,7 @@ if ($result) {
 		$userstatic->id = $objp->userid;
 		$userstatic->ref = $objp->label;
 		$userstatic->login = $objp->login;
-		$userstatic->statut = $objp->statut;
+		$userstatic->status = $objp->statut;
 		$userstatic->email = $objp->email;
 		$userstatic->gender = $objp->gender;
 		$userstatic->firstname = $objp->firstname;
@@ -433,11 +434,13 @@ if ($result) {
 		print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
 
 		// Accounting account affected
-		print '<td>';
-		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
-		print ' <a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
+		print '<a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
-		print '</a></td>';
+		print '</a> ';
+		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+		print '</td>';
+
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
 
 		print "</tr>";

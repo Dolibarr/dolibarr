@@ -151,6 +151,11 @@ function getAllOauth2Array()
 		'OAUTH_MICROSOFT_SECRET',
 	),
 	array(
+		'OAUTH_MICROSOFT2_NAME',
+		'OAUTH_MICROSOFT2_ID',
+		'OAUTH_MICROSOFT2_SECRET',
+	),
+	array(
 		'OAUTH_NEST_NAME',
 		'OAUTH_NEST_ID',
 		'OAUTH_NEST_SECRET',
@@ -276,7 +281,7 @@ function getSupportedOauth2Array()
 	// Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 	$supportedoauth2array = array(
 		'OAUTH_GOOGLE_NAME' => array(
-			'callbackfile' => 'google',
+			'callbackfile' => 'google',		// used to generate the filename: google_oauthcallback.php
 			'picto' => 'google',
 			'urlforapp' => 'OAUTH_GOOGLE_DESC',
 			'name' => 'Google',
@@ -319,10 +324,20 @@ function getSupportedOauth2Array()
 		'callbackfile' => 'microsoft',
 		'picto' => 'microsoft',
 		'urlforapp' => 'OAUTH_MICROSOFT_DESC',
-		'name' => 'Microsoft',
+		'name' => 'Microsoft [outlook.office365]',
 		'urlforcredentials' => 'https://portal.azure.com/',
 		// User.Read is a microsoftgraph scope, if it's not working, do not select it
 		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office365.com/IMAP.AccessAsUser.All,https://outlook.office365.com/SMTP.Send',
+		'returnurl' => '/core/modules/oauth/microsoft_oauthcallback.php'
+	);
+	$supportedoauth2array['OAUTH_MICROSOFT2_NAME'] = array(
+		'callbackfile' => 'microsoft2',
+		'picto' => 'microsoft',
+		'urlforapp' => 'OAUTH_MICROSOFT2_DESC',
+		'name' => 'Microsoft [outlook.office]',
+		'urlforcredentials' => 'https://portal.azure.com/',
+		// User.Read is a microsoftgraph scope, if it's not working, do not select it
+		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office.com/.default',
 		'returnurl' => '/core/modules/oauth/microsoft_oauthcallback.php'
 	);
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {

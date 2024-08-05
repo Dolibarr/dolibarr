@@ -3,6 +3,7 @@
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ $elementtype = 'commandedet';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_line_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_line_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -241,7 +242,7 @@ $elementtype = 'commande';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -406,7 +407,7 @@ function getOrder($authentication, $id = 0, $ref = '', $ref_ext = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);
@@ -830,7 +831,7 @@ function validOrder($authentication, $id = 0, $id_warehouse = 0)
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('commande', 'lire')) {
 			$order = new Commande($db);

@@ -119,7 +119,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 
 // Delete file/link
 if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissiontoadd)) {
-	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$urlfile = GETPOST('urlfile', 'alpha', 0, null, null, 1);
 	if (GETPOST('section', 'alpha')) {
 		// For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
 		$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
@@ -253,6 +253,13 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			if ($filenamefrom && $filenameto) {
 				$srcpath = $upload_dir.'/'.$filenamefrom;
 				$destpath = $upload_dir.'/'.$filenameto;
+				if ($modulepart == "ticket" && !dol_is_file($srcpath)) {
+					$srcbis = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenamefrom;
+					if (dol_is_file($srcbis)) {
+						$srcpath = $srcbis;
+						$destpath = $conf->agenda->dir_output.'/'.GETPOST('section_dir').$filenameto;
+					}
+				}
 
 				$reshook = $hookmanager->initHooks(array('actionlinkedfiles'));
 				$parameters = array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);

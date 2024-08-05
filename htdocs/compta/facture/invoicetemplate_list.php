@@ -27,7 +27,7 @@
 
 /**
  *	\file       htdocs/compta/facture/invoicetemplate_list.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page to show list of template/recurring invoices
  */
 
@@ -110,7 +110,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
 
@@ -121,7 +121,7 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicereclist'));
 
 // Fetch optionals attributes and labels
@@ -520,7 +520,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
-$parameters = array();
+$parameters = array('param' => &$param);
 $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
@@ -535,7 +535,8 @@ $arrayofmassactions = array(
 $massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend' => $langs->trans("SendByMail"), 'builddoc' => $langs->trans("PDFMerge")));
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) : ''); // This also change content of $arrayfields
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 //$selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -606,19 +607,19 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 if (!empty($arrayfields['f.total_ht']['checked'])) {
 	// Amount net
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
+	print '<input class="flat width50" type="text"" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_tva']['checked'])) {
 	// Amount Vat
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
+	print '<input class="flat width50" type="text" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.total_ttc']['checked'])) {
 	// Amount
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
+	print '<input class="flat width50" type="text" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
@@ -859,7 +860,8 @@ while ($i < $imaxinloop) {
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				print $langs->trans("CreateBill").'</a>';
+				//print $langs->trans("CreateBill");
+				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 			}
@@ -1058,7 +1060,8 @@ while ($i < $imaxinloop) {
 			} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today) {
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 				print img_picto($langs->trans("CreateBill"), 'add', 'class="paddingrightonly"');
-				print $langs->trans("CreateBill").'</a>';
+				//print $langs->trans("CreateBill");
+				print '</a>';
 			} else {
 				print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 			}

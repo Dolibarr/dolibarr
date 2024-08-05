@@ -129,23 +129,23 @@ class Utils
 			}
 
 			if ($choice == 'allfiles') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "all", 0, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'allfilesold') {
-				// Delete all files (except install.lock, do not follow symbolic links)
+				// Delete all files (except .lock and .unlock files, do not follow symbolic links)
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 1, '', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1, $nbsecondsold);	// No need to use recursive, we will delete directory
 				}
 			}
 
 			if ($choice == 'logfile' || $choice == 'logfiles') {
 				// Define files log
 				if ($dolibarr_main_data_root) {
-					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
+					$filesarray = dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', '(\.lock|\.unlock)$', 'name', SORT_ASC, 0, 0, '', 1);
 				}
 
 				if (isModEnabled('syslog')) {
@@ -466,7 +466,7 @@ class Utils
 						$langs->load("errors");
 						dol_syslog("Datadump retval after exec=".$retval, LOG_ERR);
 						$errormsg = 'Error '.$retval;
-						$ok = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+						$ok = 0;
 					} else {
 						$i = 0;
 						if (!empty($output_arr)) {
@@ -560,13 +560,13 @@ class Utils
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
-				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg)) {	// No error
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*!999999/', $errormsg)) {	// Start of file is ok, NOT an error
 					$errormsg = '';
 				} else {
-					// Renommer fichier sortie en fichier erreur
+					// Rename file out into a file error
 					//print "$outputfile -> $outputerror";
 					@dol_delete_file($outputerror, 1, 0, 0, null, false, 0);
-					@rename($outputfile, $outputerror);
+					@dol_move($outputfile, $outputerror, '0', 1, 0, 0);
 					// Si safe_mode on et command hors du parameter exec, on a un fichier out vide donc errormsg vide
 					if (!$errormsg) {
 						$langs->load("errors");
@@ -816,12 +816,12 @@ class Utils
 				$moduleobj = new $class($this->db);
 			} catch (Exception $e) {
 				$error++;
-				dol_print_error($e->getMessage());
+				dol_print_error(null, $e->getMessage());
 			}
 		} else {
 			$error++;
 			$langs->load("errors");
-			dol_print_error($langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
+			dol_print_error(null, $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module));
 			exit;
 		}
 

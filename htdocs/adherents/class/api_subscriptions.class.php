@@ -161,11 +161,11 @@ class Subscriptions extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$subscription->context['caller'] = $request_data['caller'];
+				$subscription->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$subscription->$field = $value;
+			$subscription->$field = $this->_checkValForAPI($field, $value, $subscription);
 		}
 		if ($subscription->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error when creating subscription', array_merge(array($subscription->error), $subscription->errors));
@@ -202,11 +202,11 @@ class Subscriptions extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$subscription->context['caller'] = $request_data['caller'];
+				$subscription->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$subscription->$field = $value;
+			$subscription->$field = $this->_checkValForAPI($field, $value, $subscription);
 		}
 
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {

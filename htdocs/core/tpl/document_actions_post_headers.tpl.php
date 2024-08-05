@@ -93,6 +93,7 @@ if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PR
 			'facture',
 			'commande',
 			'propal',
+			'payment',
 			'supplier_proposal',
 			'ficheinter',
 			'contract',
@@ -133,6 +134,8 @@ $formfile->form_attach_new_file(
 	1,
 	$savingdocmask
 );
+
+//var_dump($modulepart);var_dump($upload_dir);
 
 // List of document
 $formfile->list_of_documents(

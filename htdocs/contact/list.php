@@ -1,18 +1,19 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2013       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2019       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Eric Seigne					<erics@rycks.com>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2018		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2019		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,14 +58,14 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'co
 $mode = GETPOST('mode', 'alpha');
 
 if ($contextpage == 'poslist') {
-	$_GET['optioncss'] = 'print';
+	$optioncss = 'print';
 }
 
 // Security check
 $id = GETPOSTINT('id');
 $contactid = GETPOSTINT('id');
 $ref = ''; // There is no ref for contacts
-if ($user->socid) {
+if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'contact', $contactid, '');
@@ -73,7 +74,7 @@ $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('searc
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
-$search_id = GETPOSTINT("search_id");
+$search_id = GETPOST("search_id", "intcomma");
 $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
@@ -101,20 +102,20 @@ if (isModEnabled('socialnetworks')) {
 	}
 }
 $search_priv = GETPOST("search_priv", 'alpha');
-$search_sale = GETPOSTINT('search_sale');
-$search_categ = GETPOSTINT("search_categ");
-$search_categ_thirdparty = GETPOSTINT("search_categ_thirdparty");
-$search_categ_supplier = GETPOSTINT("search_categ_supplier");
+$search_sale = GETPOST('search_sale', 'intcomma');
+$search_categ = GETPOST("search_categ", 'intcomma');
+$search_categ_thirdparty = GETPOST("search_categ_thirdparty", 'intcomma');
+$search_categ_supplier = GETPOST("search_categ_supplier", 'intcomma');
 $search_status = GETPOST("search_status", "intcomma");
 $search_type = GETPOST('search_type', 'alpha');
 $search_address = GETPOST('search_address', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_import_key = GETPOST("search_import_key", 'alpha');
-$search_country = GETPOST("search_country", 'intcomma');
+$search_country = GETPOST("search_country", 'aZ09');
 $search_roles = GETPOST("search_roles", 'array');
 $search_level = GETPOST("search_level", 'array');
-$search_stcomm = GETPOSTINT('search_stcomm');
+$search_stcomm = GETPOST('search_stcomm', 'intcomma');
 $search_birthday_start = dol_mktime(0, 0, 0, GETPOSTINT('search_birthday_startmonth'), GETPOSTINT('search_birthday_startday'), GETPOSTINT('search_birthday_startyear'));
 $search_birthday_end = dol_mktime(23, 59, 59, GETPOSTINT('search_birthday_endmonth'), GETPOSTINT('search_birthday_endday'), GETPOSTINT('search_birthday_endyear'));
 
@@ -183,7 +184,7 @@ if ($type == "c") {
 	$urlfiche = "";
 }
 
-// Initialize technical object
+// Initialize a technical object
 $object = new Contact($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array($contextpage));
@@ -231,7 +232,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -257,7 +258,7 @@ if (isModEnabled('socialnetworks')) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
 				'checked' => 0,
-				'position' => 300
+				'position' => 299
 			);
 		}
 	}
@@ -279,9 +280,9 @@ if (($id > 0 || !empty($ref)) && $action != 'add') {
 	}
 }
 
-$permissiontoread = $user->hasRight('societe', 'lire');
-$permissiontodelete = $user->hasRight('societe', 'supprimer');
-$permissiontoadd = $user->hasRight('societe', 'creer');
+$permissiontoread = $user->hasRight('societe', 'contact', 'lire');
+$permissiontodelete = $user->hasRight('societe', 'contact', 'supprimer');
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
 
 if (!$permissiontoread) {
 	accessforbidden();
@@ -347,7 +348,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -423,9 +424,10 @@ if (empty($reshook)) {
 if ($search_priv < 0) {
 	$search_priv = '';
 }
-// the user has not right to see other third-party than their own
+
+// The user has no rights to see other third-party than their own
 if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
+	$socid = $user->socid;
 }
 
 
@@ -533,7 +535,6 @@ if ($search_priv != '0' && $search_priv != '1') {
 		$sql .= " AND (p.priv='1' AND p.fk_user_creat=".((int) $user->id).")";
 	}
 }
-
 // Search on sale representative
 if (!empty($search_sale) && $search_sale != '-1') {
 	if ($search_sale == -2) {
@@ -765,6 +766,7 @@ $sql .= $hookmanager->resPrint;
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
+//print $sql;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -817,7 +819,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && ($
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-societe page-contact-list bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -943,6 +945,8 @@ if (isModEnabled('category') && $user->hasRight('societe', 'creer')) {
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
+
+$massactionbutton = '';
 if ($contextpage != 'poslist') {
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 }
@@ -1627,7 +1631,7 @@ while ($i < $imaxinloop) {
 
 		// Company / Third Party
 		if (!empty($arrayfields['p.fk_soc']['checked']) || !empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax150">';
 			if ($obj->socid) {
 				$objsoc = new Societe($db);
 				$objsoc->fetch($obj->socid);

@@ -43,9 +43,9 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	}
 
 	/**
-	 *	Return collected data
+	 * Return collected data
 	 *
-	 * @return array       Array
+	 * @return array       Array of collected data
 	 */
 	public function collect()
 	{
@@ -125,7 +125,7 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	/**
 	 *	Return widget settings
 	 *
-	 * @return array       Array
+	 * 	@return array       Array
 	 */
 	public function getWidgets()
 	{
@@ -172,7 +172,8 @@ class DolibarrCollector extends DataCollector implements Renderable, AssetProvid
 	{
 		return array(
 			'base_url' => dol_buildpath('/debugbar', 1),
-			'js' => 'js/widgets.js'
+			'js' => 'js/widgets.js',
+			'css' => 'css/widgets.css'
 		);
 	}
 }

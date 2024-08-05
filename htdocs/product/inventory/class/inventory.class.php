@@ -49,16 +49,6 @@ class Inventory extends CommonObject
 	public $table_element = 'inventory';
 
 	/**
-	 * @var int  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for inventory
 	 */
 	public $picto = 'inventory';
@@ -155,16 +145,6 @@ class Inventory extends CommonObject
 	public $status;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_user_creat;
@@ -230,6 +210,9 @@ class Inventory extends CommonObject
 		global $conf;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 0;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 			$this->fields['rowid']['visible'] = 0;
@@ -808,14 +791,14 @@ class InventoryLine extends CommonObjectLine
 	public $table_element = 'inventorydet';
 
 	/**
-	 * @var int  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @see CommonObjectLine
 	 */
-	public $ismultientitymanaged = 0;
+	public $parent_element = 'inventory';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 * @see CommonObjectLine
 	 */
-	public $isextrafieldmanaged = 0;
+	public $fk_parent_attribute = 'fk_inventory';
 
 	/**
 	 * @var string String with name of icon for inventory
@@ -868,13 +851,37 @@ class InventoryLine extends CommonObjectLine
 	public $fk_product;
 	public $batch;
 	public $datec;
+
+	/**
+	 * @var float Quantity stock
+	 */
 	public $qty_stock;
+
+	/**
+	 * @var float|null Quantity viewed
+	 */
 	public $qty_view;
+
+	/**
+	 * @var float Quantity regulated
+	 */
 	public $qty_regulated;
+
 	public $pmp_real;
 	public $pmp_expected;
 
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDB $db Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+		$this->ismultientitymanaged = 0;
 
+		$this->isextrafieldmanaged = 0;
+	}
 	/**
 	 * Create object in database
 	 *

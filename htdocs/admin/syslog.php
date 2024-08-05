@@ -4,6 +4,7 @@
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,7 @@ foreach ($dirsyslogs as $reldir) {
 					require_once $newdir.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force LogHandler $module';
 
 					// Show modules according to features level
 					if ($module->getVersion() == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -96,6 +98,7 @@ if ($action == 'set') {
 	foreach ($syslogModules as $syslogHandler) {
 		if (in_array($syslogHandler, $syslogModules)) {
 			$module = new $syslogHandler();
+			'@phan-var-force LogHandler $module';
 
 			if (in_array($syslogHandler, $selectedModules)) {
 				$newActiveModules[] = $syslogHandler;
@@ -118,6 +121,7 @@ if ($action == 'set') {
 	// Check configuration
 	foreach ($activeModules as $modulename) {
 		$module = new $modulename();
+		'@phan-var-force LogHandler $module';
 		$res = $module->checkConfiguration();
 		if (!$res) {
 			$error++;
@@ -167,7 +171,7 @@ if ($action == 'setlevel') {
  * View
  */
 
-llxHeader('', $langs->trans("SyslogSetup"));
+llxHeader('', $langs->trans("SyslogSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-syslog');
 
 $form = new Form($db);
 
@@ -210,6 +214,7 @@ print "</tr>\n";
 
 foreach ($syslogModules as $moduleName) {
 	$module = new $moduleName();
+	'@phan-var-force LogHandler $module';
 
 	$moduleactive = (int) $module->isActive();
 	//print $moduleName." = ".$moduleactive." - ".$module->getName()." ".($moduleactive == -1)."<br>\n";

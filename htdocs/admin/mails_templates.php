@@ -9,9 +9,9 @@
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
  * Copyright (C) 2011-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +37,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
 // Load translation files required by the page
 $langsArray = array("errors", "admin", "mails", "languages");
@@ -62,8 +62,7 @@ $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $mode = GETPOST('mode', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$id = GETPOSTINT('id');
-$rowid = GETPOST('rowid', 'alpha');
+$id = $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
 $search_label = GETPOST('search_label', 'alphanohtml'); // Must allow value like 'Abc Def' or '(MyTemplateName)'
 $search_type_template = GETPOST('search_type_template', 'alpha');
 $search_lang = GETPOST('search_lang', 'alpha');
@@ -99,7 +98,7 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('emailtemplates'));
 
 
@@ -192,6 +191,9 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 if (isModEnabled("societe") && $user->hasRight('societe', 'lire')) {
 	$elementList['thirdparty'] = img_picto('', 'company', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToThirdparty'));
 }
+if (isModEnabled("societe") && $user->hasRight('societe', 'contact', 'lire')) {
+	$elementList['contact'] = img_picto('', 'contact', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToContact'));
+}
 if (isModEnabled('project')) {
 	$elementList['project'] = img_picto('', 'project', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToProject'));
 }
@@ -249,7 +251,7 @@ if ($reshook == 0) {
 	}
 }
 
-$id = 25;
+$error = 0;
 
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
 
@@ -259,8 +261,16 @@ if (!empty($user->socid)) {
 }
 
 $permissiontoadd = 1;
-$permissiontodelete = 1;
-
+$permissiontoedit = ($user->admin ? 1 : 0);
+$permissiontodelete = ($user->admin ? 1 : 0);
+if ($rowid > 0) {
+	$tmpmailtemplate = new ModelMail($db);
+	$tmpmailtemplate->fetch($rowid);
+	if ($tmpmailtemplate->fk_user == $user->id) {
+		$permissiontoedit = 1;
+		$permissiontodelete = 1;
+	}
+}
 
 
 /*
@@ -299,11 +309,11 @@ if (empty($reshook)) {
 	}
 
 	// Actions add or modify an email template
-	if ((GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) && $permissiontoadd) {
-		$listfield = explode(',', str_replace(' ', '', $tabfield[$id]));
-		$listfieldinsert = explode(',', $tabfieldinsert[$id]);
-		$listfieldmodify = explode(',', $tabfieldinsert[$id]);
-		$listfieldvalue = explode(',', $tabfieldvalue[$id]);
+	if ((GETPOST('actionadd', 'alpha') && $permissiontoadd) || (GETPOST('actionmodify', 'alpha') && $permissiontoedit)) {
+		$listfield = explode(',', str_replace(' ', '', $tabfield[25]));
+		$listfieldinsert = explode(',', $tabfieldinsert[25]);
+		$listfieldmodify = explode(',', $tabfieldinsert[25]);
+		$listfieldvalue = explode(',', $tabfieldvalue[25]);
 
 		// Check that all fields are filled
 		$ok = 1;
@@ -355,9 +365,9 @@ if (empty($reshook)) {
 		// If previous test is ok action is add, we add the line
 		if ($ok && GETPOST('actionadd')) {
 			// Add new entry
-			$sql = "INSERT INTO ".$tabname[$id]." (";
+			$sql = "INSERT INTO ".$tabname[25]." (";
 			// List of fields
-			$sql .= $tabfieldinsert[$id];
+			$sql .= $tabfieldinsert[25];
 			$sql .= ", active, enabled)";
 			$sql .= " VALUES(";
 
@@ -418,7 +428,7 @@ if (empty($reshook)) {
 			$result = $db->query($sql);
 			if ($result) {	// Add is ok
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-				$_POST = array('id' => $id); // Clean $_POST array, we keep only id
+				$_POST = array('id' => 25); // Clean $_POST array, we keep only id
 			} else {
 				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -433,81 +443,93 @@ if (empty($reshook)) {
 		if ($ok && GETPOST('actionmodify')) {
 			$rowidcol = "rowid";
 
-			// Modify entry
-			$sql = "UPDATE ".$tabname[$id]." SET ";
-			// Modify value of fields
-			$i = 0;
-			foreach ($listfieldmodify as $field) {
-				if ($field == 'entity') {
-					// entity not present on listfieldmodify array
-					$keycode = $field;
-					$_POST[$keycode] = $conf->entity;
-				} else {
-					$keycode = $listfieldvalue[$i];
-				}
-
-				if ($field == 'lang') {
-					$keycode = 'langcode';
-				}
-				if (empty($keycode)) {
-					$keycode = $field;
-				}
-
-				// Rename some POST variables into a generic name
-				if ($field == 'fk_user' && !(GETPOSTINT('fk_user') > 0)) {
-					$_POST['fk_user'] = '';
-				}
-				if ($field == 'topic') {
-					$_POST['topic'] = GETPOST('topic-'.$rowid);
-				}
-				if ($field == 'joinfiles') {
-					$_POST['joinfiles'] = GETPOST('joinfiles-'.$rowid);
-				}
-				if ($field == 'content') {
-					$_POST['content'] = GETPOST('content-'.$rowid, 'restricthtml');
-				}
-				if ($field == 'content_lines') {
-					$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
-				}
-
-				if ($i) {
-					$sql .= ", ";
-				}
-				$sql .= $field."=";
-
-				if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
-					$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
-				} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
-					$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
-				} elseif ($keycode == 'fk_user') {
-					if (!$user->admin) {	// A non admin user can only edit its own template
-						$sql .= " ".((int) $user->id);
-					} else {
-						$sql .= " ".(GETPOSTINT($keycode));
-					}
-				} elseif ($keycode == 'content') {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
-				} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position'))) {
-					$sql .= GETPOSTINT($keycode);
-				} else {
-					$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
-				}
-				$i++;
-			}
-
-			$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
-			if (!$user->admin) {	// A non admin user can only edit its own template
-				$sql .= " AND fk_user  = ".((int) $user->id);
-			}
-			//print $sql;exit;
-			dol_syslog("actionmodify", LOG_DEBUG);
-			//print $sql;
-			$resql = $db->query($sql);
-			if ($resql) {
-				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
-			} else {
-				setEventMessages($db->error(), null, 'errors');
+			if (GETPOSTINT('fk_user') <= 0 && GETPOST('private')) {
+				setEventMessages($langs->trans("AnOwnerMustBeSetIfEmailTemplateIsPrivate"), null, 'errors');
+				$error++;
 				$action = 'edit';
+			}
+
+			if (!$error) {
+				// Modify entry
+				$sql = "UPDATE ".$tabname[25]." SET ";
+				// Modify value of fields
+				$i = 0;
+				foreach ($listfieldmodify as $field) {
+					if ($field == 'entity') {
+						// entity not present on listfieldmodify array
+						$keycode = $field;
+						$_POST[$keycode] = $conf->entity;
+					} else {
+						$keycode = $listfieldvalue[$i];
+					}
+
+					if ($field == 'lang') {
+						$keycode = 'langcode';
+					}
+					if (empty($keycode)) {
+						$keycode = $field;
+					}
+
+					// Rename some POST variables into a generic name
+					if ($field == 'fk_user' && !(GETPOSTINT('fk_user') > 0)) {
+						$_POST['fk_user'] = '';
+					}
+					if ($field == 'topic') {
+						$_POST['topic'] = GETPOST('topic-'.$rowid);
+					}
+					if ($field == 'joinfiles') {
+						$_POST['joinfiles'] = GETPOST('joinfiles-'.$rowid);
+					}
+					if ($field == 'content') {
+						$_POST['content'] = GETPOST('content-'.$rowid, 'restricthtml');
+					}
+					if ($field == 'content_lines') {
+						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
+					}
+
+					if ($i) {
+						$sql .= ", ";
+					}
+					$sql .= $field."=";
+
+					if (GETPOST($keycode) == '' || (!in_array($keycode, array('langcode', 'position', 'private', 'defaultfortype')) && !GETPOST($keycode))) {
+						$sql .= "null"; // langcode,... must be '' if not defined so the unique key that include lang will work
+					} elseif (GETPOST($keycode) == '0' && $keycode == 'langcode') {
+						$sql .= "''"; // langcode must be '' if not defined so the unique key that include lang will work
+					} elseif ($keycode == 'fk_user') {
+						if (!$user->admin) {	// A non admin user can only edit its own template
+							$sql .= " ".((int) $user->id);
+						} else {
+							$sql .= " ".(GETPOSTINT($keycode));
+						}
+					} elseif ($keycode == 'content') {
+						$sql .= "'".$db->escape(GETPOST($keycode, 'restricthtml'))."'";
+					} elseif (in_array($keycode, array('joinfiles', 'defaultfortype', 'private', 'position'))) {
+						$sql .= GETPOSTINT($keycode);
+					} else {
+						$sql .= "'".$db->escape(GETPOST($keycode, 'alphanohtml'))."'";
+					}
+					$i++;
+				}
+
+				$sql .= " WHERE ".$db->escape($rowidcol)." = ".((int) $rowid);
+				if (!$user->admin) {	// A non admin user can only edit its own template
+					$sql .= " AND fk_user  = ".((int) $user->id);
+				}
+				//print $sql;exit;
+				dol_syslog("actionmodify", LOG_DEBUG);
+
+				//print $sql;
+				$resql = $db->query($sql);
+				if (!$resql) {
+					$error++;
+					setEventMessages($db->error(), null, 'errors');
+					$action = 'edit';
+				}
+			}
+
+			if (!$error) {
+				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 			}
 		}
 	}
@@ -515,7 +537,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {       // delete
 		$rowidcol = "rowid";
 
-		$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql = "DELETE from ".$tabname[25]." WHERE ".$rowidcol." = ".((int) $rowid);
 		if (!$user->admin) {	// A non admin user can only edit its own template
 			$sql .= " AND fk_user = ".((int) $user->id);
 		}
@@ -531,10 +553,10 @@ if (empty($reshook)) {
 	}
 
 	// activate
-	if ($action == $acts[0] && $permissiontoadd) {
+	if ($action == $acts[0] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$tabname[25]." SET active = 1 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -543,10 +565,10 @@ if (empty($reshook)) {
 	}
 
 	// disable
-	if ($action == $acts[1] && $permissiontoadd) {
+	if ($action == $acts[1] && $permissiontoedit) {
 		$rowidcol = "rowid";
 
-		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE rowid = ".((int) $rowid);
+		$sql = "UPDATE ".$tabname[25]." SET active = 0 WHERE rowid = ".((int) $rowid);
 
 		$result = $db->query($sql);
 		if (!$result) {
@@ -561,10 +583,9 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formadmin = new FormAdmin($db);
 
 $now = dol_now();
-
-$formadmin = new FormAdmin($db);
 
 //$help_url = "EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';
@@ -615,7 +636,7 @@ $sql .= $db->plimit($listlimit + 1, $offset);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', '');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-admin page-mails_templates');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -681,11 +702,11 @@ if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu
 
 // Confirm deletion of record
 if ($action == 'delete') {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid).'&id='.((int) $id), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.((int) $rowid), $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete', '', 0, 1);
 }
 
 
-$fieldlist = explode(',', $tabfield[$id]);
+$fieldlist = explode(',', $tabfield[25]);
 
 if ($action == 'create') {
 	// If data was already input, we define them in obj to populate input fields.
@@ -702,7 +723,7 @@ if ($action == 'create') {
 	$obj->content = GETPOST('content', 'restricthtml');
 
 	// Form to add a new line
-	print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
@@ -761,13 +782,13 @@ if ($action == 'create') {
 		}
 		if ($valuetoshow != '') {
 			print '<th class="'.$css.'">';
-			if (!empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i', $tabhelp[$id][$value])) {
-				print '<a href="'.$tabhelp[$id][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
-			} elseif (!empty($tabhelp[$id][$value])) {
+			if (!empty($tabhelp[25][$value]) && preg_match('/^http(s*):/i', $tabhelp[25][$value])) {
+				print '<a href="'.$tabhelp[25][$value].'" target="_blank" rel="noopener noreferrer">'.$valuetoshow.' '.img_help(1, $valuetoshow).'</a>';
+			} elseif (!empty($tabhelp[25][$value])) {
 				if (in_array($value, array('topic'))) {
-					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, $value); // Tooltip on click
+					print $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, $value); // Tooltip on click
 				} else {
-					print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2); // Tooltip on hover
+					print $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2); // Tooltip on hover
 				}
 			} else {
 				print $valuetoshow;
@@ -776,14 +797,13 @@ if ($action == 'create') {
 		}
 	}
 	print '<th>';
-	print '<input type="hidden" name="id" value="'.$id.'">';
 	print '</th>';
 	print '</tr>';
 
 	$tmpaction = 'create';
 	$parameters = array(
 		'fieldlist' => $fieldlist,
-		'tabname' => $tabname[$id]
+		'tabname' => $tabname[25]
 	);
 	$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 	$error = $hookmanager->error;
@@ -795,9 +815,9 @@ if ($action == 'create') {
 
 	if (empty($reshook)) {
 		if ($action == 'edit') {
-			fieldList($fieldlist, $obj, $tabname[$id], 'hide');
+			fieldList($fieldlist, $obj, $tabname[25], 'hide');
 		} else {
-			fieldList($fieldlist, $obj, $tabname[$id], 'add');
+			fieldList($fieldlist, $obj, $tabname[25], 'add');
 		}
 	}
 	// Action column
@@ -805,7 +825,7 @@ if ($action == 'create') {
 	print '</td>';
 	print "</tr>";
 
-	print '<tr class="impair nodrag nodrop nohover"><td colspan="9" class="nobottom">';
+	print '<tr class="oddeven nodrag nodrop nohover"><td colspan="9">';
 
 	// Show fields for topic, join files and body
 	$fieldsforcontent = array('topic', 'email_from', 'joinfiles', 'content');
@@ -815,19 +835,19 @@ if ($action == 'create') {
 	foreach ($fieldsforcontent as $tmpfieldlist) {
 		// Topic of email
 		if ($tmpfieldlist == 'topic') {
-			print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
+			print '<strong>'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 		}
 		if ($tmpfieldlist == 'email_from') {
-			print $form->textwithpicto($langs->trans("MailFrom"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist);
+			print $form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist);
 		}
 		if ($tmpfieldlist == 'joinfiles') {
-			print '<strong>'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
+			print '<strong>'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</strong> ';
 		}
 		if ($tmpfieldlist == 'content') {
-			print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+			print $form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 		}
 		if ($tmpfieldlist == 'content_lines') {
-			print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+			print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 		}
 
 		// Input field
@@ -861,7 +881,8 @@ if ($action == 'create') {
 
 	print '</div>';
 	print '</form>';
-	print '<br><br>';
+
+	print '<br><br><br>';
 }
 
 // List of available record in database
@@ -874,7 +895,7 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
+print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
 
@@ -883,11 +904,11 @@ print '<table class="noborder centpercent">';
 
 $i = 0;
 
-$param = '&id='.((int) $id);
+$param = '';
 if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
-if ($search_lang > 0) {
+if (!empty($search_lang) && $search_lang != '-1') {
 	$param .= '&search_lang='.urlencode($search_lang);
 }
 if ($search_type_template != '-1') {
@@ -917,7 +938,7 @@ if (GETPOST('from', 'alpha')) {
 // There is several pages
 if ($num > $listlimit) {
 	print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+	print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 	print '</td></tr>';
 }
 
@@ -1032,16 +1053,16 @@ foreach ($fieldlist as $field => $value) {
 
 	// Show fields
 	if ($showfield) {
-		if (!empty($tabhelp[$id][$value])) {
+		if (!empty($tabhelp[25][$value])) {
 			if (in_array($value, array('topic'))) {
-				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltip'.$value, $forcenowrap); // Tooltip on click
+				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, 'tooltip'.$value, $forcenowrap); // Tooltip on click
 			} else {
-				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, '', $forcenowrap); // Tooltip on hover
+				$valuetoshow = $form->textwithpicto($valuetoshow, $tabhelp[25][$value], 1, 'help', '', 0, 2, '', $forcenowrap); // Tooltip on hover
 			}
 		}
 		$sortfieldtouse = ($sortable ? $fieldlist[$field] : '');
 		if ($sortfieldtouse == 'type_template') {
-			$sortfieldtouse .= 'type_template,lang,position,label';
+			$sortfieldtouse .= ',lang,position,label';
 		}
 		print getTitleFieldOfList($valuetoshow, 0, $_SERVER["PHP_SELF"], $sortfieldtouse, ($page ? 'page='.$page.'&' : ''), $param, '', $sortfield, $sortorder, $css.' ');
 	}
@@ -1066,7 +1087,7 @@ if ($num) {
 				print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
 				$tmpaction = 'edit';
-				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
+				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 				$reshook = $hookmanager->executeHooks('editEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 				$error = $hookmanager->error;
 				$errors = $hookmanager->errors;
@@ -1085,7 +1106,7 @@ if ($num) {
 				}
 				// Show main fields
 				if (empty($reshook)) {
-					fieldList($fieldlist, $obj, $tabname[$id], $action);
+					fieldList($fieldlist, $obj, $tabname[25], $action);
 				}
 				// Action column
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1118,23 +1139,23 @@ if ($num) {
 					if ($showfield) {
 						// Show line for topic, joinfiles and content
 						if ($tmpfieldlist == 'topic') {
-							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("Topic"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').'>';
 							print '<br>'."\n";
 						}
 						if ($tmpfieldlist == 'email_from') {
-							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("MailFrom"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
 							print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'-'.$rowid.'" value="'.(!empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '').'"'.($action != 'edit' ? ' disabled' : '').'>';
 							print '<br>'."\n";
 						}
 						if ($tmpfieldlist == 'joinfiles') {
-							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
+							print '<div class="minwidth150 inline-block bold">'.$form->textwithpicto($langs->trans("FilesAttachedToEmail"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'</div> ';
 							print $form->selectyesno($tmpfieldlist.'-'.$rowid, (isset($obj->$tmpfieldlist) ? $obj->$tmpfieldlist : '0'), 1, ($action != 'edit'), 0, 1);
 							print '<br>'."\n";
 						}
 
 						if ($tmpfieldlist == 'content') {
-							print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							print $form->textwithpicto($langs->trans("Content"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 							$okforextended = true;
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
@@ -1144,7 +1165,7 @@ if ($num) {
 						}
 						if ($tmpfieldlist == 'content_lines') {
 							print '<br>'."\n";
-							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
+							print $form->textwithpicto($langs->trans("ContentForLines"), $tabhelp[25][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist).'<br>';
 							$okforextended = true;
 							if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 								$okforextended = false;
@@ -1194,7 +1215,7 @@ if ($num) {
 					$canbemodified = 0;
 				}
 
-				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
+				$url = $_SERVER["PHP_SELF"].'?'.($page ? 'page='.$page.'&' : '').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).(!empty($obj->code) ? '&code='.urlencode($obj->code) : '');
 				if ($param) {
 					$url .= '&'.$param;
 				}
@@ -1217,7 +1238,7 @@ if ($num) {
 				}
 
 				$tmpaction = 'view';
-				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[$id]);
+				$parameters = array('fieldlist' => $fieldlist, 'tabname' => $tabname[25]);
 				$reshook = $hookmanager->executeHooks('viewEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				$error = $hookmanager->error;
@@ -1258,7 +1279,7 @@ if ($num) {
 							if ($valuetoshow > 0) {
 								$fuser = new User($db);
 								$fuser->fetch($valuetoshow);
-								$valuetoshow = $fuser->getNomUrl(1);
+								$valuetoshow = $fuser->getNomUrl(-1);
 								$class .= ' tdoverflowmax100';
 							}
 						}
@@ -1376,16 +1397,16 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin && $context != 'preview') {
-				print $form->select_dolusers(empty($obj->$value) ? '' : $obj->$value, 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
+				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), null, 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
-					print $user->getNomUrl(1); // Me
+					print $user->getNomUrl(-1); // Me
 					$forcedvalue = $user->id;
 				} else {
 					if ($obj && !empty($obj->$value) && $obj->$value > 0) {
 						$fuser = new User($db);
 						$fuser->fetch($obj->$value);
-						print $fuser->getNomUrl(1);
+						print $fuser->getNomUrl(-1);
 						$forcedvalue = $fuser->id;
 					} else {
 						$forcedvalue = $obj->$value;
@@ -1463,10 +1484,10 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			if ($value == 'private' && $context != 'preview') {
 				if (empty($user->admin)) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					print $form->selectyesno($value, '1', 1);
+					print $form->selectyesno($value, GETPOSTISSET($value) ? GETPOSTINT($value) : (($context != 'add' && isset($obj->$value)) ? $obj->$value : '1'), 1, false, 0, 1);
 				} else {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					print $form->selectyesno($value, (isset($obj->$value) ? $obj->$value : ''), 1);
+					print $form->selectyesno($value, (isset($obj->$value) ? $obj->$value : ''), 1, false, 0, 1);
 				}
 			} else {
 				print '<input type="text" '.$size.'class="flat'.($class ? ' '.$class : '').'" value="'.(isset($obj->$value) ? $obj->$value : '').'" name="'. $value .'"'.($context == 'preview' ? ' disabled' : '').'>';

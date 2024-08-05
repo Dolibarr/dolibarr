@@ -1,20 +1,20 @@
 <?php
-/* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
- * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2009-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2014-2018	Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2015-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2019	Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2019		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2020		Josep Lluís Amador 		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2021		Philippe Grand          <philippe.grand@atoo-net.com>
+/* Copyright (C) 2002-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014-2018	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2018-2019	Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2019		Nicolas ZABOURI 			<info@inovea-conseil.com>
+ * Copyright (C) 2020		Josep Lluís Amador 			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman            	<info@almoman.com>
+ * Copyright (C) 2021		Philippe Grand          	<philippe.grand@atoo-net.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,17 +58,6 @@ class Adherent extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'adherent';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var string picto
@@ -394,6 +383,8 @@ class Adherent extends CommonObject
 		$this->status = self::STATUS_DRAFT;
 		// l'adherent n'est pas public par default
 		$this->public = 0;
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 		// les champs optionnels sont vides
 		$this->array_options = array();
 	}
@@ -674,6 +665,7 @@ class Adherent extends CommonObject
 						require_once $modfile;
 						$modname = getDolGlobalString('MEMBER_CODEMEMBER_ADDON');
 						$modCodeMember = new $modname();
+						'@phan-var-force ModeleNumRefMembers $modCodeMember';
 						$this->ref = $modCodeMember->getNextValue($mysoc, $this);
 					} catch (Exception $e) {
 						dol_syslog($e->getMessage(), LOG_ERR);
@@ -856,7 +848,7 @@ class Adherent extends CommonObject
 			if (!$error && $this->pass) {
 				dol_syslog(get_class($this)."::update update password");
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted) {
-					$isencrypted = !getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 0 : 1;
+					$isencrypted = getDolGlobalString('DATABASE_PWD_ENCRYPTED') ? 1 : 0;
 
 					// If password to set differs from the one found into database
 					$result = $this->setPassword($user, $this->pass, $isencrypted, $notrigger, $nosyncuserpass);
@@ -1836,8 +1828,8 @@ class Adherent extends CommonObject
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
-				if (!empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects'])) {
-					$invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$invoice->linked_objects = array_merge($invoice->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				$result = $invoice->create($user);
@@ -2301,7 +2293,7 @@ class Adherent extends CommonObject
 	/**
 	 *  Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
+	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=???)
 	 *	@param	int		$maxlen						length max label
 	 *	@param	string	$option						Page for link ('card', 'category', 'subscription', ...)
 	 *	@param  string  $mode           			''=Show firstname+lastname as label (using default order), 'firstname'=Show only firstname, 'lastname'=Show only lastname, 'login'=Show login, 'ref'=Show ref
@@ -2370,9 +2362,7 @@ class Adherent extends CommonObject
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpictoimg) {
-			$result .= '<div class="inline-block nopadding valignmiddle">';
-		}
+
 		if ($withpictoimg) {
 			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
@@ -2405,9 +2395,7 @@ class Adherent extends CommonObject
 				$result .= '</span>';
 			}
 		}
-		if ($withpictoimg) {
-			$result .= '</div>';
-		}
+
 		$result .= $linkend;
 
 		if ($addlinktonotes) {
@@ -2470,19 +2458,19 @@ class Adherent extends CommonObject
 		} elseif ($status >= self::STATUS_VALIDATED) {
 			if ($need_subscription === 0) {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusNoSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusNoSubscription");
 				$labelStatusShort = $langs->trans("MemberStatusNoSubscriptionShort");
 			} elseif (!$date_end_subscription) {
 				$statusType = 'status1';
-				$labelStatus = $langs->trans("WaitingSubscription");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("WaitingSubscription");
 				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
 				$statusType = 'status8';
-				$labelStatus = $langs->trans("MemberStatusActiveLate");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {
 				$statusType = 'status4';
-				$labelStatus = $langs->trans("MemberStatusPaid");
+				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusPaid");
 				$labelStatusShort = $langs->trans("MemberStatusPaidShort");
 			}
 		} elseif ($status == self::STATUS_RESILIATED) {
@@ -3138,7 +3126,7 @@ class Adherent extends CommonObject
 								$extraparams = '';
 
 								$actionmsg = '';
-								$actionmsg2 = $langs->transnoentities('MailSentBy').' '.CMailFile::getValidAddress($from, 4, 0, 1).' '.$langs->transnoentities('To').' '.CMailFile::getValidAddress($sendto, 4, 0, 1);
+								$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
 								if ($message) {
 									$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
@@ -3294,7 +3282,9 @@ class Adherent extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$this->getmorphylib('', 2).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<br><div class="info-box-status paddingtop">';
+			$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
+			$return .= '</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';

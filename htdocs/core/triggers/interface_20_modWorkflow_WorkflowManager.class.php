@@ -115,6 +115,13 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$ret = $newobject->createFromOrder($object, $user);
 				if ($ret < 0) {
 					$this->setErrorsFromObject($newobject);
+				} else {
+					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
+						$res = $newobject->setBankAccount($object->thirdparty->fk_account, true, $user);
+						if ($ret < 0) {
+							$this->setErrorsFromObject($newobject);
+						}
+					}
 				}
 
 				$object->clearObjectLinkedCache();
@@ -231,6 +238,36 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				}
 			}
 
+			// First classify billed the order to allow the proposal classify process
+			if (isModEnabled('order') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER')) {
+				$object->fetchObjectLinked('', 'commande', $object->id, $object->element);
+				if (!empty($object->linkedObjects['commande']) && count($object->linkedObjects['commande']) == 1) {	// If the invoice has only 1 source order
+					$orderLinked = reset($object->linkedObjects['commande']);
+					$orderLinked->fetchObjectLinked($orderLinked->id, '', $orderLinked->element);
+					if (count($orderLinked->linkedObjects['facture']) >= 1) {
+						$totalHTInvoices = 0;
+						$areAllInvoicesValidated = true;
+						foreach ($orderLinked->linkedObjects['facture'] as $key => $invoice) {
+							if ($invoice->statut == Facture::STATUS_VALIDATED || $object->id == $invoice->id) {
+								$totalHTInvoices += (float) $invoice->total_ht;
+							} else {
+								$areAllInvoicesValidated = false;
+								break;
+							}
+						}
+						if ($areAllInvoicesValidated) {
+							$isSameTotal = (price2num($totalHTInvoices, 'MT') == price2num($orderLinked->total_ht, 'MT'));
+							dol_syslog("Amount of linked invoices = ".$totalHTInvoices.", of order = ".$orderLinked->total_ht.", isSameTotal = ".(string) $isSameTotal, LOG_DEBUG);
+							if ($isSameTotal) {
+								$ret = $orderLinked->classifyBilled($user);
+								if ($ret < 0) {
+									return $ret;
+								}
+							}
+						}
+					}
+				}
+			}
 			return $ret;
 		}
 
@@ -515,8 +552,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
 		if ($action == 'TICKET_CREATE') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-			// Auto link contract
-			if (!empty($conf->contract->enabled) && isModEnabled('ticket') && isModEnabled('intervention') && !empty($conf->workflow->enabled) && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
+			// Auto link ticket to contract
+			if (isModEnabled('contract') && isModEnabled('ticket') && isModEnabled('workflow') && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT') && getDolGlobalString('TICKET_PRODUCT_CATEGORY') && !empty($object->fk_soc)) {
 				$societe = new Societe($this->db);
 				$company_ids = (!getDolGlobalString('WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS')) ? [$object->fk_soc] : $societe->getParentsForCompany($object->fk_soc, [$object->fk_soc]);
 
@@ -524,7 +561,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$number_contracts_found = 0;
 				foreach ($company_ids as $company_id) {
 					$contrat->socid = $company_id;
-					$list = $contrat->getListOfContracts($option = 'all', $status = [Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED], $product_categories = [$conf->global->TICKET_PRODUCT_CATEGORY], $line_status = [ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN]);
+					$list = $contrat->getListOfContracts('all', array(Contrat::STATUS_DRAFT, Contrat::STATUS_VALIDATED), array(getDolGlobalString('TICKET_PRODUCT_CATEGORY')), array(ContratLigne::STATUS_INITIAL, ContratLigne::STATUS_OPEN));
 					if (!is_array($list) || empty($list)) {
 						continue;
 					}
@@ -539,14 +576,12 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					}
 
 					if ($number_contracts_found > 1 && !defined('NOLOGIN')) {
-						setEventMessage($langs->trans('TicketManyContractsLinked'), 'warnings');
+						setEventMessages($langs->trans('TicketManyContractsLinked'), null, 'warnings');
 					}
 					break;
 				}
-				if ($number_contracts_found == 0) {
-					if (empty(NOLOGIN)) {
-						setEventMessage($langs->trans('TicketNoContractFoundToLink'), 'mesgs');
-					}
+				if ($number_contracts_found == 0 && !defined('NOLOGIN')) {
+					setEventMessages($langs->trans('TicketNoContractFoundToLink'), null, 'mesgs');
 				}
 			}
 			// Automatically create intervention
@@ -576,7 +611,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 	}
 
 	/**
-	 * @param Object $conf                  Dolibarr settings object
+	 * @param Conf  $conf                   Dolibarr settings object
 	 * @param float $totalonlinkedelements  Sum of total amounts (excl VAT) of
 	 *                                      invoices linked to $object
 	 * @param float $object_total_ht        The total amount (excl VAT) of the object

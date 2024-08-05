@@ -5,7 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +114,7 @@ class DoliDBMysqli extends DoliDB
 				$this->ok = true;
 
 				// If client is old latin, we force utf8
-				$clientmustbe = empty($conf->db->character_set) ? 'utf8' : $conf->db->character_set;
+				$clientmustbe = empty($conf->db->character_set) ? 'utf8' : (string) $conf->db->character_set;
 				if (preg_match('/latin1/', $clientmustbe)) {
 					$clientmustbe = 'utf8';
 				}
@@ -160,7 +161,7 @@ class DoliDBMysqli extends DoliDB
 
 			if ($this->connected) {
 				// If client is old latin, we force utf8
-				$clientmustbe = empty($conf->db->character_set) ? 'utf8' : $conf->db->character_set;
+				$clientmustbe = empty($conf->db->character_set) ? 'utf8' : (string) $conf->db->character_set;
 				if (preg_match('/latin1/', $clientmustbe)) {
 					$clientmustbe = 'utf8';
 				}
@@ -316,11 +317,11 @@ class DoliDBMysqli extends DoliDB
 	 * 									Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
 	 *  @param  string	$type           Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * 	@param	int		$result_mode	Result mode (Using 1=MYSQLI_USE_RESULT instead of 0=MYSQLI_STORE_RESULT will not buffer the result and save memory)
-	 *	@return	bool|mysqli_result		Resultset of answer
+	 *	@return	false|mysqli_result		Resultset of answer
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0)
 	{
-		global $conf, $dolibarr_main_db_readonly;
+		global $dolibarr_main_db_readonly;
 
 		$query = trim($query);
 
@@ -518,6 +519,7 @@ class DoliDBMysqli extends DoliDB
 	 */
 	public function escapeforlike($stringtoencode)
 	{
+		// We must first replace the \ char into \\, then we can replace _ and % into \_ and \%
 		return str_replace(array('\\', '_', '%'), array('\\\\', '\_', '\%'), (string) $stringtoencode);
 	}
 
@@ -691,7 +693,7 @@ class DoliDBMysqli extends DoliDB
 	 * 	@param	string	$charset		Charset used to store data
 	 * 	@param	string	$collation		Charset used to sort data
 	 * 	@param	string	$owner			Username of database owner
-	 * 	@return	bool|mysqli_result		resource defined if OK, null if KO
+	 * 	@return	null|mysqli_result		Resource defined if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '')
 	{
@@ -715,6 +717,7 @@ class DoliDBMysqli extends DoliDB
 			dol_syslog($sql, LOG_DEBUG);
 			$ret = $this->query($sql);
 		}
+
 		return $ret;
 	}
 
@@ -851,7 +854,7 @@ class DoliDBMysqli extends DoliDB
 				$sqlfields[$i] .= "(".$this->sanitize($field_desc['value']).")";
 			}
 			if (isset($field_desc['attribute']) && $field_desc['attribute'] !== '') {
-				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute']);
+				$sqlfields[$i] .= " ".$this->sanitize($field_desc['attribute'], 0, 0, 1);	// Allow space to accept attributes like "ON UPDATE CURRENT_TIMESTAMP"
 			}
 			if (isset($field_desc['default']) && $field_desc['default'] !== '') {
 				if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {

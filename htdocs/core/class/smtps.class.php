@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +88,16 @@ class SMTPs
 	 * This can be defined via a INI file or via a setter method
 	 */
 	private $_msgReplyTo = null;
+
+	/**
+	 * List of In-Reply-To
+	 */
+	private $_msgInReplyTo = null;
+
+	/**
+	 * List of Msg-Id
+	 */
+	private $_msgReferences = null;
 
 	/**
 	 * Who will the Message be sent to; TO, CC, BCC
@@ -199,7 +210,7 @@ class SMTPs
 	 * If '$_transportType' is set to '1', then this variable is used
 	 * to define the UNIX file system path to the sendmail executable
 	 */
-	private $_mailPath = '/usr/lib/sendmail';
+	private $_mailPath = '/usr/lib/sendmail'; // @phpstan-ignore-line
 
 	/**
 	 * Sets the SMTP server timeout in seconds.
@@ -223,7 +234,7 @@ class SMTPs
 	 *  2 - message generation logging
 	 *  3 - detail logging
 	 */
-	private $_log_level = 0;
+	private $_log_level = 0; // @phpstan-ignore-line
 
 	/**
 	 * Place Class in" debug" mode
@@ -1140,6 +1151,56 @@ class SMTPs
 	}
 
 	/**
+	 * Set References in the list of Msg-Id
+	 *
+	 * @param 	string 	$_strInReplyTo 	List of Msg-Id
+	 * @return 	void
+	 */
+	public function setInReplyTo($_strInReplyTo)
+	{
+		if ($_strInReplyTo) {
+			$this->_msgInReplyTo = $_strInReplyTo;
+		}
+	}
+
+	/**
+	 * Retrieves the InReplyTo from which mail we reply to
+	 *
+	 * @return 	string 				Msg-Id of email we reply to
+	 */
+	public function getInReplyTo()
+	{
+		$_retValue = $this->_msgInReplyTo;
+
+		return $_retValue;
+	}
+
+	/**
+	 * Set References in the list of Msg-Id
+	 *
+	 * @param 	string 	$_strReferences 	List of Msg-Id
+	 * @return 	void
+	 */
+	public function setReferences($_strReferences)
+	{
+		if ($_strReferences) {
+			$this->_msgReferences = $_strReferences;
+		}
+	}
+
+	/**
+	 * Retrieves the References from which mail will be the reply-to
+	 *
+	 * @return 	string 				List of Msg-Id
+	 */
+	public function getReferences()
+	{
+		$_retValue = $this->_msgReferences;
+
+		return $_retValue;
+	}
+
+	/**
 	 * Inserts given addresses into structured format.
 	 * This method takes a list of given addresses, via an array or a COMMA delimited string, and inserts them into a highly
 	 * structured array. This array is designed to remove duplicate addresses and to sort them by Domain.
@@ -1453,8 +1514,6 @@ class SMTPs
 		if ($trackid) {
 			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
-			// References and In-Reply-To: will be set by caller
-			//$_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
 		} else {
 			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
 		}
@@ -1489,7 +1548,13 @@ class SMTPs
 		$_header .= 'X-Dolibarr-Option: '.($conf->global->MAIN_MAIL_USE_MULTI_PART ? 'MAIN_MAIL_USE_MULTI_PART' : 'No MAIN_MAIL_USE_MULTI_PART')."\r\n";
 		$_header .= 'Mime-Version: 1.0'."\r\n";
 
-		// TODO Add also $this->references and In-Reply-To
+		// Add also $this->references and In-Reply-To
+		if ($this->getInReplyTo()) {
+			$_header .= "In-Reply-To: ".$this->getInReplyTo()."\r\n";
+		}
+		if ($this->getReferences()) {
+			$_header .= "References: ".$this->getReferences()."\r\n";
+		}
 
 		return $_header;
 	}

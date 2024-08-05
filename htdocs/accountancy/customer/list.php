@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro	<aspangaro@easya.solutions>
- * Copyright (C) 2014-2015	Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2013-2021	Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014	  	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2016	  	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2013-2021	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_country = GETPOST('search_country', 'alpha');
+$search_country = GETPOST('search_country', 'aZ09');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Define begin binding date
@@ -101,7 +101,7 @@ if (!$sortorder) {
 	}
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancycustomerlist'));
 
 $formaccounting = new FormAccounting($db);
@@ -116,7 +116,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -232,7 +232,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("CustomersVentilation"), $help_url);
+llxHeader('', $langs->trans("CustomersVentilation"), $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-accountancy accountancy-customer page-list');
 
 if (empty($chartaccountcode)) {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
@@ -445,13 +445,14 @@ if ($result) {
 	}
 
 	$arrayofmassactions = array(
+		'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount"),
 		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
-		,'set_default_account' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ConfirmPreselectAccount")
 		//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 		//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	);
 	//if ($user->hasRight('mymodule', 'supprimer')) $arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 	//if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+	$massactionbutton = '';
 	if ($massaction !== 'set_default_account') {
 		$massactionbutton = $form->selectMassAction('ventil', $arrayofmassactions, 1);
 	}
@@ -662,10 +663,10 @@ if ($result) {
 		print '</td>';
 
 		// Description of line
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($facture_static_det->desc, 1));
-		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $facture_static_det->desc);
+		print '<td class="tdoverflowmax150 small classfortooltip" title="'.dol_escape_htmltag($text).'">';
+		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION');
+		print dol_trunc($text, $trunclength);
 		print '</td>';
 
 		// Amount

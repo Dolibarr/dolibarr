@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,12 +143,12 @@ $thirdparty_fields = array(
 
 $elementtype = 'societe';
 
-// Retrieve all extrafields for thirdsparty
+// Retrieve all extrafields for thirdparties
 // fetch optionals attributes and labels
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -338,7 +339,7 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '', $bar
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('societe', 'lire')) {
 			$thirdparty = new Societe($db);
@@ -844,7 +845,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 	dol_syslog("Function: deleteThirdParty 1");
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('societe', 'lire') && $fuser->hasRight('societe', 'supprimer')) {
 			$thirdparty = new Societe($db);

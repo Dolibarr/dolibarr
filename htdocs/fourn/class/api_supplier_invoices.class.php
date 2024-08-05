@@ -98,11 +98,12 @@ class SupplierInvoices extends DolibarrApi
 	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array                      Array of invoice objects
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "lire")) {
 			throw new RestException(403);
@@ -156,6 +157,9 @@ class SupplierInvoices extends DolibarrApi
 			}
 		}
 
+		//this query will return total supplier invoices with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -181,6 +185,23 @@ class SupplierInvoices extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve supplier invoice list : ' . $this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -211,7 +232,7 @@ class SupplierInvoices extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->invoice->context['caller'] = $request_data['caller'];
+				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -258,10 +279,15 @@ class SupplierInvoices extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->invoice->context['caller'] = $request_data['caller'];
+				$this->invoice->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 

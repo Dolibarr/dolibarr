@@ -24,8 +24,8 @@
  * \ingroup 	Accountancy (Double entries)
  * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -61,7 +61,7 @@ $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_country = GETPOST('search_country', 'alpha');
+$search_country = GETPOST('search_country', 'aZ09');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
 // Load variable for pagination
@@ -93,7 +93,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
@@ -177,7 +177,7 @@ $formother = new FormOther($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Liaisons_comptables';
 
-llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"), $help_url);
+llxHeader('', $langs->trans("CustomersVentilation").' - '.$langs->trans("Dispatched"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-customer page-lines');
 
 print '<script type="text/javascript">
 			$(function () {
@@ -489,7 +489,7 @@ if ($result) {
 		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facturestatic->getNomUrl(1).'</td>';
+		print '<td class="nowraponall tdoverflowmax125">'.$facturestatic->getNomUrl(1).'</td>';
 
 		// Date invoice
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
@@ -507,8 +507,8 @@ if ($result) {
 		}
 		print '</td>';
 
-		print '<td class="tdoverflowonsmartphone small">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
+		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
 		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 		print '</td>';
@@ -554,11 +554,12 @@ if ($result) {
 
 		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
 
-		print '<td>';
-		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
-		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
+		print '<a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
-		print '</a></td>';
+		print '</a> ';
+		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+		print '</td>';
 
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
 

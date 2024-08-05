@@ -223,7 +223,6 @@ Currency=Moneda
 Undo=Deshacer
 UndoExpandAll=Deshacer ampliar
 FeatureNotYetSupported=Característica aún no soportada
-MailSentBy=Correo electrónico enviado por
 TextUsedInTheMessageBody=Cuerpo del correo electronico
 NoEMail=Sin correo electrónico
 FollowingConstantsWillBeSubstituted=Las siguientes constantes serán reemplazadas con el valor correspondiente.

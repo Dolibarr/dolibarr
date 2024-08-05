@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
  * \brief       This file is a controller for partnership card
  */
 
-dol_include_once('/webportal/class/html.formcardwebportal.class.php');
+require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formcardwebportal.class.php';
 
 /**
  * Class for PartnershipCardController

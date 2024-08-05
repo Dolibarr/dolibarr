@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,124 +89,109 @@ class modUser extends DolibarrModules
 		$r = 0;
 
 		$r++;
-		$this->rights[$r][0] = 251;
-		$this->rights[$r][1] = 'Read information of other users, groups and permissions';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'lire';
+		$this->rights[$r][self::KEY_ID] = 251;
+		$this->rights[$r][self::KEY_LABEL] = 'Read information of other users, groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 252;
-		$this->rights[$r][1] = 'Read permissions of other users';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 252;
+		$this->rights[$r][self::KEY_LABEL] = 'Read permissions of other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][0] = 253;
-		$this->rights[$r][1] = 'Create/modify internal and external users, groups and permissions';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'creer';
+		$this->rights[$r][self::KEY_ID] = 253;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify internal and external users, groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 254;
-		$this->rights[$r][1] = 'Create/modify external users only';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][self::KEY_ID] = 254;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify external users only';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'write';
 
 		$r++;
-		$this->rights[$r][0] = 255;
-		$this->rights[$r][1] = 'Modify the password of other users';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'password';
+		$this->rights[$r][self::KEY_ID] = 255;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify the password of other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
 
 		$r++;
-		$this->rights[$r][0] = 256;
-		$this->rights[$r][1] = 'Delete or disable other users';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'supprimer';
+		$this->rights[$r][self::KEY_ID] = 256;
+		$this->rights[$r][self::KEY_LABEL] = 'Delete or disable other users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'supprimer';
 
 		$r++;
-		$this->rights[$r][0] = 341;
-		$this->rights[$r][1] = 'Read its own permissions';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 341;
+		$this->rights[$r][self::KEY_LABEL] = 'Read its own permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][0] = 342;
-		$this->rights[$r][1] = 'Create/modify of its own user';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self';
-		$this->rights[$r][5] = 'creer';
+		$this->rights[$r][self::KEY_ID] = 342;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify of its own user';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'creer';
 
 		$r++;
-		$this->rights[$r][0] = 343;
-		$this->rights[$r][1] = 'Modify its own password';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self';
-		$this->rights[$r][5] = 'password';
+		$this->rights[$r][self::KEY_ID] = 343;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own password';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'password';
 
 		$r++;
-		$this->rights[$r][0] = 344;
-		$this->rights[$r][1] = 'Modify its own permissions';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'writeperms';
+		$this->rights[$r][self::KEY_ID] = 344;
+		$this->rights[$r][self::KEY_LABEL] = 'Modify its own permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'self_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'writeperms';
 
 		$r++;
-		$this->rights[$r][0] = 351;
-		$this->rights[$r][1] = 'Read groups';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'read';
+		$this->rights[$r][self::KEY_ID] = 351;
+		$this->rights[$r][self::KEY_LABEL] = 'Read groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'read';
 
 		$r++;
-		$this->rights[$r][0] = 352;
-		$this->rights[$r][1] = 'Read permissions of groups';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'readperms';
+		$this->rights[$r][self::KEY_ID] = 352;
+		$this->rights[$r][self::KEY_LABEL] = 'Read permissions of groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'readperms';
 
 		$r++;
-		$this->rights[$r][0] = 353;
-		$this->rights[$r][1] = 'Create/modify groups and permissions';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'write';
+		$this->rights[$r][self::KEY_ID] = 353;
+		$this->rights[$r][self::KEY_LABEL] = 'Create/modify groups and permissions';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'write';
 
 		$r++;
-		$this->rights[$r][0] = 354;
-		$this->rights[$r][1] = 'Delete groups';
-		$this->rights[$r][2] = 'd';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
-		$this->rights[$r][5] = 'delete';
+		$this->rights[$r][self::KEY_ID] = 354;
+		$this->rights[$r][self::KEY_LABEL] = 'Delete groups';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'group_advance'; // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'delete';
 
 		$r++;
-		$this->rights[$r][0] = 358;
-		$this->rights[$r][1] = 'Export all users';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'user';
-		$this->rights[$r][5] = 'export';
+		$this->rights[$r][self::KEY_ID] = 358;
+		$this->rights[$r][self::KEY_LABEL] = 'Export all users';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'export';
 
 
 		// Menus
@@ -286,6 +271,41 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent as a ON u.fk_member = a.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
+
+
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'List of security events';
+		$this->export_permission[$r] = array(array("user"));	// Only admin
+		$this->export_fields_array[$r] = array(
+			'e.rowid'=>"Id", 'e.type'=>"Type",
+			'e.dateevent'=>"Date",
+			'e.description'=>'Description',
+			'e.ip'=>'IPAddress', 'e.user_agent'=>'UserAgent',
+			'e.authentication_method' => 'AuthenticationMode',
+			'e.fk_user'=>"UserID", 'u.login'=>"Login",
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'e.rowid'=>'Numeric', 'e.type'=>"Text",
+			'e.dateevent'=>"Date",
+			'e.description'=>'Text',
+			'e.ip'=>'Text', 'e.user_agent'=>'Text',
+			'e.authentication_method' => 'Text',
+			'e.fk_user'=>"Numeric", 'u.login'=>"Text",
+		);
+		$this->export_entities_array[$r] = array(
+			'e.rowid'=>'securityevent', 'e.type'=>"securityevent",
+			'e.dateevent'=>"securityevent",
+			'e.description'=>'securityevent',
+			'e.ip'=>'securityevent', 'e.user_agent'=>'securityevent',
+			'e.authentication_method' => 'securityevent',
+			'e.fk_user'=>"user", 'u.login'=>"user",
+		);
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'events as e';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' WHERE e.entity IN ('.getEntity('event').')';
+
 
 		// Imports
 		$r = 0;

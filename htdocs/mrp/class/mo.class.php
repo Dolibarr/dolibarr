@@ -45,16 +45,6 @@ class Mo extends CommonObject
 	public $table_element = 'mrp_mo';
 
 	/**
-	 * @var int  Does mo support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does mo support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for mo. Must be the part after the 'object_' into object_mo.png
 	 */
 	public $picto = 'mrp';
@@ -131,6 +121,10 @@ class Mo extends CommonObject
 	 */
 	public $mrptype;
 	public $label;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
 	public $fk_warehouse;
 	public $fk_soc;
@@ -145,11 +139,6 @@ class Mo extends CommonObject
 	 * @var string private note
 	 */
 	public $note_private;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
 
 	/**
 	 * @var integer|string date_validation
@@ -246,7 +235,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 * @var array tpl
+	 * @var array<string,int|string> tpl
 	 */
 	public $tpl = array();
 
@@ -261,6 +250,9 @@ class Mo extends CommonObject
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -337,11 +329,11 @@ class Mo extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+			return $idcreated;
 		} else {
 			$this->db->rollback();
+			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
@@ -377,12 +369,19 @@ class Mo extends CommonObject
 		unset($object->fk_user_creat);
 		unset($object->import_key);
 
+		// We make $object->lines empty to sort it without produced and consumed lines
+		$TLines = $object->lines;
+		$object->lines = array();
+
 		// Remove produced and consumed lines
-		foreach ($object->lines as $key => $line) {
+		foreach ($TLines as $key => $line) {
 			if (in_array($line->role, array('consumed', 'produced'))) {
 				unset($object->lines[$key]);
+			} else {
+				$object->lines[] = $line;
 			}
 		}
+
 
 		// Clear fields
 		$object->ref = empty($this->fields['ref']['default']) ? "copy_of_".$object->ref : $this->fields['ref']['default'];
@@ -740,7 +739,6 @@ class Mo extends CommonObject
 				$error++;
 				$this->error = $moline->error;
 				$this->errors = $moline->errors;
-				dol_print_error($this->db, $moline->error, $moline->errors);
 			}
 
 			if ($this->fk_bom > 0) {	// If a BOM is defined, we know what to consume.
@@ -759,7 +757,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
+								$moline->qty = (float) price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -832,7 +830,7 @@ class Mo extends CommonObject
 					if ($moLine->role == 'toconsume' || $moLine->role == 'toproduce') {
 						if (empty($moLine->qty_frozen)) {
 							$qty = $newQty * $moLine->qty / $oldQty;
-							$moLine->qty = price2num($qty, 'MS');
+							$moLine->qty = (float) price2num($qty, 'MS');
 							$res = $moLine->update($user);
 							if (!$res) {
 								$error++;
@@ -1967,9 +1965,13 @@ class Mo extends CommonObject
 		}
 		if (!empty($arraydata['product'])) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['product']->getNomUrl(1).'</span>';
-		}
-		if (property_exists($this, 'qty')) {
-			$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			if (property_exists($this, 'qty')) {
+				$return .= ' <span class="info-box-label">('.$langs->trans("Qty").' '.$this->qty.')</span>';
+			}
+		} else {
+			if (property_exists($this, 'qty')) {
+				$return .= '<br><span class="info-box-label">'.$langs->trans('Quantity').' : '.$this->qty.'</span>';
+			}
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
@@ -1998,14 +2000,54 @@ class MoLine extends CommonObjectLine
 	public $table_element = 'mrp_production';
 
 	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @see CommonObjectLine
 	 */
-	public $ismultientitymanaged = 0;
+	public $parent_element = 'mo';
 
 	/**
-	 * @var int  Does moline support extrafields ? 0=No, 1=Yes
+	 * @see CommonObjectLine
 	 */
-	public $isextrafieldmanaged = 1;
+	public $fk_parent_attribute = 'fk_mo';
+
+	/**
+	 *  'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'alias' the alias used into some old hard coded SQL requests
+	 *  'picto' is code of a picto to show before value in forms
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *	'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -2016,8 +2058,8 @@ class MoLine extends CommonObjectLine
 		'fk_product' => array('type' => 'integer', 'label' => 'Product', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'fk_warehouse' => array('type' => 'integer', 'label' => 'Warehouse', 'enabled' => 1, 'visible' => -1, 'position' => 30),
 		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 35),
-		'qty_frozen' => array('type' => 'smallint', 'label' => 'QuantityFrozen', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 105, 'css' => 'maxwidth50imp', 'help' => 'QuantityConsumedInvariable'),
-		'disable_stock_change' => array('type' => 'smallint', 'label' => 'DisableStockChange', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'position' => 108, 'css' => 'maxwidth50imp', 'help' => 'DisableStockChangeHelp'),
+		'qty_frozen' => array('type' => 'smallint', 'label' => 'QuantityFrozen', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'notnull' => 1, 'position' => 105, 'css' => 'maxwidth50imp', 'help' => 'QuantityConsumedInvariable'),
+		'disable_stock_change' => array('type' => 'smallint', 'label' => 'DisableStockChange', 'enabled' => 1, 'visible' => 1, 'default' => '0', 'notnull' => 1, 'position' => 108, 'css' => 'maxwidth50imp', 'help' => 'DisableStockChangeHelp'),
 		'batch' => array('type' => 'varchar(30)', 'label' => 'Batch', 'enabled' => 1, 'visible' => -1, 'position' => 140),
 		'role' => array('type' => 'varchar(10)', 'label' => 'Role', 'enabled' => 1, 'visible' => -1, 'position' => 145),
 		'fk_mrp_production' => array('type' => 'integer', 'label' => 'Fk mrp production', 'enabled' => 1, 'visible' => -1, 'position' => 150),
@@ -2038,17 +2080,26 @@ class MoLine extends CommonObjectLine
 	public $position;
 	public $fk_product;
 	public $fk_warehouse;
+
+	/**
+	 * @var float Quantity
+	 */
 	public $qty;
+
+	/**
+	 * @var float Quantity frozen
+	 */
 	public $qty_frozen;
 	public $disable_stock_change;
 	public $efficiency;
+
+	/**
+	 * @var string batch reference
+	 */
 	public $batch;
 	public $role;
 	public $fk_mrp_production;
 	public $fk_stock_movement;
-	public $date_creation;
-	public $fk_user_creat;
-	public $fk_user_modif;
 	public $import_key;
 	public $fk_parent_line;
 	public $fk_unit;
@@ -2068,6 +2119,9 @@ class MoLine extends CommonObjectLine
 		global $langs;
 
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -2105,7 +2159,7 @@ class MoLine extends CommonObjectLine
 	public function create(User $user, $notrigger = 0)
 	{
 		if (empty($this->qty)) {
-			$this->error = 'BadValueForQty';
+			$this->error = 'ErrorEmptyValueForQty';
 			return -1;
 		}
 

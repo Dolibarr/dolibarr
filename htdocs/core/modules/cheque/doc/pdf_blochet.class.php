@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,7 +165,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		// Create PDF instance
 		$pdf = pdf_getInstance($this->format);
 		$heightforinfotot = 50; // Height reserved to output the info and total part
-		$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+		$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 		$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 		if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 			$heightforfooter += 6;
@@ -287,7 +288,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pdf->MultiCell(22, 2, $outputlangs->transnoentities("Owner"), 0, 'L');
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(32, 26);
-		$pdf->MultiCell(80, 2, $outputlangs->convToOutputCharset($this->account->proprio), 0, 'L');
+		$pdf->MultiCell(80, 2, $outputlangs->convToOutputCharset($this->account->owner_name), 0, 'L');
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(10, 32);
@@ -444,7 +445,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
-		if (!empty($conf->global->$paramfreetext)) {
+		if (getDolGlobalString($paramfreetext)) {
 			$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 		}
 

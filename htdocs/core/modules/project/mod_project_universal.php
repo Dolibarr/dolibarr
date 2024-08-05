@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Project"), $langs->transnoentities("Project"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Prefix settings
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -109,29 +110,35 @@ class mod_project_universal extends ModeleNumRefProjects
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $project);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe		$objsoc		Object third party
-	 *  @param   Project		$project	Object project
-	 *  @return  string|0					Value if OK, 0 if KO
+	 *  @param   Societe			$objsoc		Object third party
+	 *  @param   Project			$project	Object project
+	 *  @return  string|int					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -139,7 +146,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$mask = getDolGlobalString('PROJECT_UNIVERSAL_MASK');
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 

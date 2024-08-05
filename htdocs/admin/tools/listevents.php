@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012  Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$search_rowid = GETPOSTINT("search_rowid");
+$search_rowid = GETPOST("search_rowid", "intcomma");
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
 $search_user = GETPOST("search_user", "alpha");
@@ -198,7 +199,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin) {
  */
 
 $title = $langs->trans("Audit");
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-tools_listevents');
 
 $form = new Form($db);
 
@@ -299,22 +300,22 @@ if ($result) {
 		$param .= '&search_prefix_session='.urlencode($search_prefix_session);
 	}
 	if ($date_startmonth) {
-		$param .= "&date_startmonth=".urlencode($date_startmonth);
+		$param .= "&date_startmonth=".((int) $date_startmonth);
 	}
 	if ($date_startday) {
-		$param .= "&date_startday=".urlencode($date_startday);
+		$param .= "&date_startday=".((int) $date_startday);
 	}
 	if ($date_startyear) {
-		$param .= "&date_startyear=".urlencode($date_startyear);
+		$param .= "&date_startyear=".((int) $date_startyear);
 	}
 	if ($date_endmonth) {
-		$param .= "&date_endmonth=".urlencode($date_endmonth);
+		$param .= "&date_endmonth=".((int) $date_endmonth);
 	}
 	if ($date_endday) {
-		$param .= "&date_endday=".urlencode($date_endday);
+		$param .= "&date_endday=".((int) $date_endday);
 	}
 	if ($date_endyear) {
-		$param .= "&date_endyear=".urlencode($date_endyear);
+		$param .= "&date_endyear=".((int) $date_endyear);
 	}
 
 	$center = '';

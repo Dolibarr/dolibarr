@@ -90,7 +90,7 @@ class printing_printgcp extends PrintingDriver
 	const PRINTERS_SEARCH_URL = 'https://www.google.com/cloudprint/search';
 	const PRINTERS_GET_JOBS = 'https://www.google.com/cloudprint/jobs';
 	const PRINT_URL = 'https://www.google.com/cloudprint/submit';
-	const LANGFILE = 'printgcp';
+
 
 	/**
 	 *  Constructor

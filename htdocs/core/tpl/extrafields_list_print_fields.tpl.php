@@ -19,6 +19,10 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 		foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
 			if (!empty($arrayfields[$extrafieldsobjectprefix.$key]['checked'])) {
+				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
+					continue;
+				}
+
 				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
 
 				$tmpkey = 'options_'.$key;
@@ -29,8 +33,12 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
+				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
+					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0'  ? $obj->$tmpkey : '');
 				} else {
-					$value = (!empty($obj->$tmpkey) ? $obj->$tmpkey : '');
+					// The key may be in $obj->array_options if not in $obj
+					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
+						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : '') );
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
@@ -39,7 +47,6 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
-					//var_dump($value);
 				}
 
 				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
@@ -59,7 +66,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					$totalarray['nbfield']++;
 				}
 
-				if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key])) {
 					if (!$i) {
 						// we keep position for the first line
 						$totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
@@ -71,7 +78,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 						$totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
 					}
 				}
-				// key 'totalizable' if in extrafields same as 'isameasure' into ->$fields
+				// The key 'totalizable' on extrafields, is the same as 'isameasure' into ->fields
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key] == 1) {
 					if (!$i) {
 						$totalarray['pos'][$totalarray['nbfield']] = $extrafieldsobjectprefix.$tmpkey;
@@ -82,7 +89,12 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					if (!isset($totalarray['val'][$extrafieldsobjectprefix.$tmpkey])) {
 						$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] = 0;
 					}
-					$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
+					if (isset($obj->$tmpkey) && is_numeric($obj->$tmpkey)) {
+						if (!isset($totalarray['val'][$extrafieldsobjectprefix.$tmpkey])) {
+							$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] = 0;
+						}
+						$totalarray['val'][$extrafieldsobjectprefix.$tmpkey] += $obj->$tmpkey;
+					}
 				}
 			}
 		}

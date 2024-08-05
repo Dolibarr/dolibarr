@@ -110,6 +110,10 @@ class FichinterRec extends Fichinter
 	 * int rank
 	 */
 	public $rang;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	public $usenewprice = 0;
@@ -286,11 +290,12 @@ class FichinterRec extends Fichinter
 	 */
 	public function fetch($rowid = 0, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.title as title, f.fk_soc';
+		$sql = 'SELECT f.title, f.fk_soc';
 		$sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
+		$sql .= ', f.status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
 		if ($rowid > 0) {
 			$sql .= " WHERE f.rowid = ".((int) $rowid);
@@ -307,28 +312,28 @@ class FichinterRec extends Fichinter
 
 				$this->id = $rowid;
 				$this->title = $obj->title;
-				$this->ref                  = $obj->title;
+				$this->ref = $obj->title;
 				$this->description = $obj->description;
-				$this->datec				= $obj->datec;
+				$this->datec = $obj->datec;
 				$this->duration = $obj->duree;
-				$this->socid				= $obj->fk_soc;
-				$this->status = 0;
-				$this->statut = 0;	// deprecated
-				$this->fk_project			= $obj->fk_projet;
-				$this->fk_contrat			= $obj->fk_contrat;
+				$this->socid = $obj->fk_soc;
+				$this->status = $obj->status;
+				$this->statut = $obj->status;	// deprecated
+				$this->fk_project = $obj->fk_projet;
+				$this->fk_contrat = $obj->fk_contrat;
 				$this->note_private = $obj->note_private;
-				$this->note_public			= $obj->note_public;
-				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= empty($obj->model_pdf) ? "" : $obj->model_pdf;
+				$this->note_public = $obj->note_public;
+				$this->user_author = $obj->fk_user_author;
+				$this->model_pdf = empty($obj->model_pdf) ? "" : $obj->model_pdf;
 				$this->rang = !empty($obj->rang) ? $obj->rang : "";
 				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
-				$this->frequency			= $obj->frequency;
+				$this->frequency = $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
-				$this->date_when			= $this->db->jdate($obj->date_when);
-				$this->date_last_gen		= $this->db->jdate($obj->date_last_gen);
+				$this->date_when = $this->db->jdate($obj->date_when);
+				$this->date_last_gen = $this->db->jdate($obj->date_last_gen);
 				$this->nb_gen_done = $obj->nb_gen_done;
 				$this->nb_gen_max = $obj->nb_gen_max;
-				$this->auto_validate		= $obj->auto_validate;
+				$this->auto_validate = $obj->auto_validate;
 
 				// Lines
 				$result = $this->fetch_lines();
@@ -870,7 +875,7 @@ class FichinterRec extends Fichinter
 		$sql .= ' , date_last_gen = now()';
 		// si on et arrivé à la fin des génération
 		if ($this->nb_gen_max <= $this->nb_gen_done + 1) {
-			$sql .= ' , statut = 1';
+			$sql .= ' , status = 1';
 		}
 
 		$sql .= " WHERE rowid = ".((int) $this->id);

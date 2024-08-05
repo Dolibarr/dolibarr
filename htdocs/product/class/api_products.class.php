@@ -315,14 +315,36 @@ class Products extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->product->context['caller'] = $request_data['caller'];
+				$this->product->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->product->$field = $value;
+			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
+		}
+
+		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$key_max = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			for ($key = 1; $key <= $key_max ; $key++) {
+				$newvat = $this->product->multiprices_tva_tx[$key];
+				$newnpr = 0;
+				$newvatsrccode = $this->product->default_vat_code;
+				$newprice = $this->product->multiprices[$key];
+				$newpricemin = $this->product->multiprices_min[$key];
+				$newbasetype = $this->product->multiprices_base_type[$key];
+				if (empty($newbasetype) || $newbasetype == '') {
+					$newbasetype = $this->product->price_base_type;
+				}
+				if ($newbasetype == 'TTC') {
+					$newprice = $this->product->multiprices_ttc[$key];
+					$newpricemin = $this->product->multiprices_min_ttc[$key];
+				}
+				if ($newprice > 0) {
+					$result = $this->product->updatePrice($newprice, $newbasetype, DolibarrApiAccess::$user, $newvat, $newpricemin, $key, $newnpr, 0, 0, array(), $newvatsrccode);
+				}
+			}
 		}
 
 		return $this->product->id;
@@ -330,7 +352,9 @@ class Products extends DolibarrApi
 
 	/**
 	 * Update product.
-	 * Price will be updated by this API only if option is set on "One price per product". See other APIs for other price modes.
+	 * Price will be updated by this API only if option is set on "One price per product" or
+	 * if PRODUIT_MULTIPRICES is set (1 price per segment)
+	 * See other APIs for other price modes.
 	 *
 	 * @param  	int   	$id           		Id of product to update
 	 * @param  	array 	$request_data 		Datas
@@ -351,10 +375,10 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$oldproduct = dol_clone($this->product);
+		$oldproduct = dol_clone($this->product, 2);
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
@@ -365,11 +389,16 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->product->context['caller'] = $request_data['caller'];
+				$this->product->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
-
-			$this->product->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->product->array_options[$index] = $this->_checkValForAPI($field, $val, $this->product);
+				}
+				continue;
+			}
+			$this->product->$field = $this->_checkValForAPI($field, $value, $this->product);
 		}
 
 		$updatetype = false;
@@ -429,6 +458,42 @@ class Products extends DolibarrApi
 			}
 		}
 
+		if ($result > 0 && getDolGlobalString('PRODUIT_MULTIPRICES')) {
+			$key_max = getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT');
+			for ($key = 1; $key <= $key_max ; $key++) {
+				$pricemodified = false;
+				if ($this->product->multiprices_base_type[$key] != $oldproduct->multiprices_base_type[$key]) {
+					$pricemodified = true;
+				} else {
+					if ($this->product->multiprices_tva_tx[$key] != $oldproduct->multiprices_tva_tx[$key]) $pricemodified = true;
+					if ($this->product->multiprices_base_type[$key] == 'TTC') {
+						if ($this->product->multiprices_ttc[$key] != $oldproduct->multiprices_ttc[$key]) $pricemodified = true;
+						if ($this->product->multiprices_min_ttc[$key] != $oldproduct->multiprices_min_ttc[$key]) $pricemodified = true;
+					} else {
+						if ($this->product->multiprices[$key] != $oldproduct->multiprices[$key]) $pricemodified = true;
+						if ($this->product->multiprices_min[$key] != $oldproduct->multiprices[$key]) $pricemodified = true;
+					}
+				}
+				if ($pricemodified && $result > 0) {
+					$newvat = $this->product->multiprices_tva_tx[$key];
+					$newnpr = 0;
+					$newvatsrccode = $this->product->default_vat_code;
+					$newprice = $this->product->multiprices[$key];
+					$newpricemin = $this->product->multiprices_min[$key];
+					$newbasetype = $this->product->multiprices_base_type[$key];
+					if (empty($newbasetype) || $newbasetype == '') {
+						$newbasetype = $this->product->price_base_type;
+					}
+					if ($newbasetype == 'TTC') {
+						$newprice = $this->product->multiprices_ttc[$key];
+						$newpricemin = $this->product->multiprices_min_ttc[$key];
+					}
+
+					$result = $this->product->updatePrice($newprice, $newbasetype, DolibarrApiAccess::$user, $newvat, $newpricemin, $key, $newnpr, 0, 0, array(), $newvatsrccode);
+				}
+			}
+		}
+
 		if ($result <= 0) {
 			throw new RestException(500, "Error updating product", array_merge(array($this->product->error), $this->product->errors));
 		}
@@ -453,7 +518,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		// The Product::delete() method uses the global variable $user.
@@ -494,7 +559,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$childrenArbo = $this->product->getChildsArbo($id, 1);
@@ -532,7 +597,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->add_sousproduit($id, $subproduct_id, $qty, $incdec);
@@ -562,7 +627,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->del_sousproduit($id, $subproduct_id);
@@ -668,7 +733,7 @@ class Products extends DolibarrApi
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 		if ($socid > 0 && $socid != $thirdparty_id) {
-			throw new RestException(401, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->product->fetch($id);
@@ -775,12 +840,12 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 		if ($socid > 0 && $socid != $fourn_id) {
-			throw new RestException(401, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->productsupplier->add_fournisseur(DolibarrApiAccess::$user, $fourn_id, $ref_fourn, $qty);
@@ -832,7 +897,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$resultsupplier = 0;
@@ -872,7 +937,7 @@ class Products extends DolibarrApi
 		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 		if ($socid > 0) {
 			if ($supplier != $socid || empty($supplier)) {
-				throw new RestException(401, 'As an external user, you can request only for your supplier id = '.$socid);
+				throw new RestException(403, 'As an external user, you can request only for your supplier id = '.$socid);
 			}
 		}
 
@@ -987,7 +1052,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$product_fourn_list = array();
@@ -1281,11 +1346,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$prodattr->context['caller'] = $request_data['caller'];
+				$prodattr->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$prodattr->$field = $value;
+			$prodattr->$field = $this->_checkValForAPI($field, $value, $prodattr);
 		}
 
 		if ($prodattr->update(DolibarrApiAccess::$user) > 0) {
@@ -1594,11 +1659,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$objectval->context['caller'] = $request_data['caller'];
+				$objectval->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$objectval->$field = $value;
+			$objectval->$field = $this->_checkValForAPI($field, $value, $objectval);
 		}
 
 		if ($objectval->update(DolibarrApiAccess::$user) > 0) {
@@ -1694,7 +1759,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$result = $this->product->fetch('', $ref);
+		$result = $this->product->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}
@@ -1816,7 +1881,7 @@ class Products extends DolibarrApi
 			}
 		}
 
-		$result = $this->product->fetch('', trim($ref));
+		$result = $this->product->fetch(0, trim($ref));
 		if (!$result) {
 			throw new RestException(404, 'Product not found');
 		}
@@ -1861,11 +1926,11 @@ class Products extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$prodcomb->context['caller'] = $request_data['caller'];
+				$prodcomb->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$prodcomb->$field = $value;
+			$prodcomb->$field = $this->_checkValForAPI($field, $value, $prodcomb);
 		}
 
 		$result = $prodcomb->update(DolibarrApiAccess::$user);
@@ -2064,7 +2129,7 @@ class Products extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!empty($includestockdata) && DolibarrApiAccess::$user->hasRight('stock', 'lire')) {

@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,14 +38,9 @@ class WebPortalInvoice extends Facture
 	public $module = 'webportal';
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Status list (short label)
 	 */
-	const STATUS_SHORT_LIST = array(
+	const ARRAY_STATUS_LABEL = array(
 		Facture::STATUS_DRAFT => 'BillShortStatusDraft',
 		Facture::STATUS_VALIDATED => 'BillShortStatusNotPaid',
 		Facture::STATUS_CLOSED => 'BillShortStatusPaid',
@@ -113,7 +109,7 @@ class WebPortalInvoice extends Facture
 		'multicurrency_total_ht' => array('type' => 'price', 'label' => 'MulticurrencyAmountHT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 290, 'isameasure' => 1,),
 		'multicurrency_total_tva' => array('type' => 'price', 'label' => 'MulticurrencyAmountVAT', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 291, 'isameasure' => 1,),
 		'multicurrency_total_ttc' => array('type' => 'price', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -2, 'position' => 292, 'isameasure' => 1,),
-		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'position' => 1000, 'arrayofkeyval' => self::STATUS_SHORT_LIST,),
+		'fk_statut' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'notnull' => 1, 'position' => 1000, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL,),
 	);
 	//public $rowid;
 	//public $ref;
@@ -151,6 +147,8 @@ class WebPortalInvoice extends Facture
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 
 		$this->getInvoiceStatic();
 	}

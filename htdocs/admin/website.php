@@ -67,7 +67,7 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('website'));
 
 // Name of SQL tables of dictionaries
@@ -257,7 +257,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 				$sql .= ",";
 			}
 			$sql .= $field."=";
-			if ($_POST[$listfieldvalue[$i]] == '') {
+			if (GETPOST($listfieldvalue[$i]) == '') {
 				$sql .= "null";
 			} else {
 				$sql .= "'".$db->escape(GETPOST($listfieldvalue[$i]))."'";
@@ -300,11 +300,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			$db->rollback();
 		}
 	}
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
-}
-
-if (GETPOST('actioncancel', 'alpha')) {
-	//$_GET["id"]=GETPOST('id', 'int');       // Force affichage dictionnaire en cours d'edition
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
@@ -390,7 +385,7 @@ if ($action == $acts[1]) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader('', $langs->trans("WebsiteSetup"));
+llxHeader('', $langs->trans("WebsiteSetup"),  '', '', 0, 0, '', '', '', 'mod-admin page-website');
 
 $titre = $langs->trans("WebsiteSetup");
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';

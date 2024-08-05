@@ -76,7 +76,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 
 		$ret = '';

@@ -14,7 +14,6 @@ AmountToWithdraw=Monto para extraer
 ResponsibleUser=Usuario responsable
 WithdrawalsSetup=Configuración de pago por débito automático
 WithdrawStatistics=Estadísticas de pago por débito automático
-Rejects=Rechazos
 LastWithdrawalReceipt=Ultimos %s comprobantes de débito automático
 MakeWithdrawRequest=Crear una solicitud de pago por débito automático
 WithdrawRequestsDone=%s solicitudes registradas de pago por débito automático

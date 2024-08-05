@@ -1,16 +1,18 @@
 <?php
-/* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2020  Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2014-2022  Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2015-2016  Abbes Bahfir            <bafbes@gmail.com>
- * Copyright (C) 2018-2022 	Philippe Grand       	<philippe.grand@atoo-net.com>
- * Copyright (C) 2020-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023       Benjamin Grembi         <benjamin@oarces.fr>
- * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+/* Copyright (C) 2002-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2018	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2020	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2018	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
+ * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2020-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
+ * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +82,7 @@ $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolG
 $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('interventioncard', 'globalcard'));
 
 $object = new Fichinter($db);
@@ -108,7 +110,7 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $permissionnote = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->rights->ficheinter->supprimer);
+$permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->hasRight('ficheinter', 'supprimer'));
 
 $usercancreate = $user->hasRight('ficheinter', 'creer');
 
@@ -117,7 +119,7 @@ $usercancreate = $user->hasRight('ficheinter', 'creer');
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -147,9 +149,9 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 
-	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php'; // Must be 'include', not 'include_once'
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
@@ -292,8 +294,8 @@ if (empty($reshook)) {
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects[$object->origin] = $object->origin_id;
-				if (is_array($_POST['other_linked_objects']) && !empty($_POST['other_linked_objects'])) {
-					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+				if (GETPOSTISARRAY('other_linked_objects')) {
+					$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 				}
 
 				// Extrafields
@@ -749,16 +751,17 @@ if (empty($reshook)) {
 
 	if ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->insertExtraFields('INTERVENTION_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'INTERVENTION_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -823,7 +826,7 @@ if (isModEnabled('project')) {
 
 $help_url = 'EN:Module_Interventions';
 
-llxHeader('', $langs->trans("Intervention"), $help_url);
+llxHeader('', $langs->trans("Intervention"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-card');
 
 if ($action == 'create') {
 	// Create new intervention
@@ -1185,7 +1188,7 @@ if ($action == 'create') {
 	}
 
 	if (!$formconfirm) {
-		$parameters = array('formConfirm' => $formconfirm, 'lineid'=>$lineid);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1204,8 +1207,8 @@ if ($action == 'create') {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->hasRight('ficheinter', 'creer'), 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
@@ -1644,7 +1647,7 @@ if ($action == 'create') {
 				// Validate
 				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS'))) {
 					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
 					} else {
 						print '<div class="inline-block divButActionRefused"><span class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</span></div>';
 					}
@@ -1652,7 +1655,7 @@ if ($action == 'create') {
 
 				// Modify
 				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
+					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
 					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS')) {
 						print $langs->trans("Modify");
 					} else {

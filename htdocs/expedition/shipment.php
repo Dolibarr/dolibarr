@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
 // Security check
 if ($user->socid) {
@@ -234,7 +234,7 @@ if (isModEnabled('project')) {
 
 $title = $object->ref." - ".$langs->trans('Shipments');
 $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:Modul_Kundenaufträge';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-shipment');
 
 
 if ($id > 0 || !empty($ref)) {
@@ -794,7 +794,7 @@ if ($id > 0 || !empty($ref)) {
 							print ' '.img_warning($langs->trans("StockTooLow"));
 							if (getDolGlobalString('STOCK_CORRECT_STOCK_IN_SHIPMENT')) {
 								$nbPiece = $toBeShipped[$objp->fk_product] - $product->stock_reel;
-								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&nbpiece='.urlencode((string) ($nbPiece)).'&backtopage='.urlencode((string) ($_SERVER["PHP_SELF"].'?id='.((int) $object->id))).'">'.$langs->trans("CorrectStock").'</a>';
+								print ' &nbsp; '.$langs->trans("GoTo").' <a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.((int) $product->id).'&action=correction&token='.newToken().'&nbpiece='.urlencode((string) ($nbPiece)).'&backtopage='.urlencode((string) ($_SERVER["PHP_SELF"].'?id='.((int) $object->id))).'">'.$langs->trans("CorrectStock").'</a>';
 							}
 						}
 						print '</td>';

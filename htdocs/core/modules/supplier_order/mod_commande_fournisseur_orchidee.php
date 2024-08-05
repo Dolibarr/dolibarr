@@ -22,7 +22,7 @@
 
 /**
  *	\file       htdocs/core/modules/supplier_order/mod_commande_fournisseur_orchidee.php
- *	\ingroup    commande
+ *	\ingroup    order
  *	\brief      File for class for 'orchidee' type numbering the supplier orders
  */
 
@@ -82,13 +82,16 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Order"), $langs->transnoentities("Order"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskorder" value="'.getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltiporchidee').'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -107,12 +110,17 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$supplierorder = new CommandeFournisseur($db);
+		$supplierorder->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $supplierorder);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
@@ -125,11 +133,11 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	 *
 	 *  @param	Societe|string		$objsoc     Object third party
 	 *  @param  CommandeFournisseur	$object		Object
-	 *  @return string|0      					Value if OK, 0 if KO
+	 *  @return string|int  					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -137,7 +145,7 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 		$mask = getDolGlobalString("COMMANDE_FOURNISSEUR_ORCHIDEE_MASK");
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 

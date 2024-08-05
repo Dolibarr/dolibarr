@@ -89,7 +89,8 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$tooltip .= '04{0000000000}? (for internal use)<br>';
 		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
 		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
-		//$tooltip.=$langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
@@ -175,9 +176,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
+		// Get barcode type configuration for products if $type not set
 		if (empty($type)) {
 			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
-		} //get barcode type configuration for products if $type not set
+		}
 
 		// Get Mask value
 		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
@@ -243,7 +245,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK'))) {
 			$result = -2;
 		} else {
@@ -252,7 +254,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = 0;
 				}
 			} else {
 				if (dol_strlen($code) == 0) {

@@ -67,7 +67,7 @@ if (empty($user->admin)) {
 $form = new Form($db);
 
 $help_url = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $help_url);
+llxHeader('', $langs->trans("Setup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-modulehelp');
 
 print '<!-- Force style container -->'."\n".'<style>
 .id-container {
@@ -155,7 +155,7 @@ foreach ($modulesdir as $dir) {
 									ksort($arrayofnatures);
 								}
 
-								// Define array $categ with categ with at least one qualified module
+								// Define an array $categ with categ with at least one qualified module
 								if ($modulequalified > 0) {
 									$modules[$i] = $objMod;
 									$filename[$i] = $modName;
@@ -366,10 +366,16 @@ if ($mode == 'desc') {
 			$textexternal .= ($objMod->editor_name != 'dolibarr' ? ' - ' : '').img_picto('', 'globe').' <a href="'.$editor_url.'" target="_blank" rel="noopener noreferrer external">'.$objMod->editor_url.'</a>';
 		}
 		$text .= $textexternal;
-		$text .= '<br>';
 	} else {
-		$text .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core").'<br>';
+		$text .= '<br><span class="opacitymedium">'.$langs->trans("Origin").':</span> '.$langs->trans("Core");
+		if (empty($objMod->numero)) {
+			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("AlwaysEnabled").')</span>';
+		} elseif (!empty($objMod->enabled_bydefault)) {
+			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("EnabledByDefaultAtInstall").')</span>';
+		}
+		$text .= '<br>';
 	}
+	$text .= '<br>';
 
 	$moduledesclong = $objMod->getDescLong();
 	if ($moduledesclong) {
@@ -609,6 +615,15 @@ if ($mode == 'feature') {
 			$text .= ($i ? ', ' : '').($val);
 			$i++;
 		}
+	} else {
+		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
+	}
+
+	$text .= '<br>';
+
+	$text .= '<br><strong>'.$langs->trans("AddWebsiteTemplates").':</strong> ';
+	if (isset($objMod->module_parts) && isset($objMod->module_parts['websitetemplates']) && $objMod->module_parts['websitetemplates']) {
+		$text .= $langs->trans("Yes");
 	} else {
 		$text .= '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}

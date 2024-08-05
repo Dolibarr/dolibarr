@@ -74,8 +74,6 @@ if (!empty($conf->$module->dir_temp)) {
 
 top_httphead();
 
-dol_syslog(implode(',', $_GET));
-
 $result = false;
 
 if (!empty($upload_dir)) {

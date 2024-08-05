@@ -43,7 +43,7 @@ $form = new Form($db);
 
 $help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones|DE:Modul_DatenExporte';
 
-llxHeader('', $langs->trans("ExportsArea"), $help_url);
+llxHeader('', $langs->trans("ExportsArea"), $help_url, '', 0, 0, '', '', '', 'mod-exports page-index');
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 

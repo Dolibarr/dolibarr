@@ -119,6 +119,14 @@ $workflowcodes = array(
 		'warning' => ''
 	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
 
+	'WORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER' => array(
+		'family' => 'classify_order',
+		'position' => 43,
+		'enabled' => (isModEnabled('invoice') && isModEnabled('order')),
+		'picto' => 'order',
+		'warning' => ''
+	), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
+
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL' => array(
 		'family' => 'classify_supplier_proposal',
@@ -196,12 +204,14 @@ $workflowcodes = array(
 		'family' => 'link_ticket',
 		'position' => 500,
 		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
-		'picto' => 'ticket'
+		'picto' => 'ticket',
+		'reloadpage' => 1		// So next option can be shown
 	),
+	// This one depends on previous one WORKFLOW_TICKET_LINK_CONTRACT
 	'WORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS' => array(
 		'family' => 'link_ticket',
 		'position' => 501,
-		'enabled' => (isModEnabled('ticket') && isModEnabled('contract')),
+		'enabled' => (isModEnabled('ticket') && isModEnabled('contract') && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT')),
 		'picto' => 'ticket'
 	),
 );
@@ -230,7 +240,7 @@ $workflowcodes = array_filter(
  * View
  */
 
-llxHeader('', $langs->trans("WorkflowSetup"), "EN:Module_Workflow_En|FR:Module_Workflow|ES:Módulo_Workflow");
+llxHeader('', $langs->trans("WorkflowSetup"), "EN:Module_Workflow_En|FR:Module_Workflow|ES:Módulo_Workflow", '', 0, 0, '', '', '', 'mod-admin page-workflow');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("WorkflowSetup"), $linkback, 'title_setup');
@@ -323,7 +333,11 @@ foreach ($workflowcodes as $key => $params) {
 	print '<td class="right">';
 
 	if (!empty($conf->use_javascript_ajax)) {
-		print ajax_constantonoff($key);
+		if (!empty($params['reloadpage'])) {
+			print ajax_constantonoff($key, array(), null, 0, 0, 1);
+		} else {
+			print ajax_constantonoff($key);
+		}
 	} else {
 		if (getDolGlobalString($key)) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'&token='.newToken().'">';
