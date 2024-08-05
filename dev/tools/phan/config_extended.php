@@ -66,6 +66,7 @@ $config['suppress_issue_types'] = [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
 		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
 		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
 		'PhanTypeObjectUnsetDeclaredProperty',
@@ -93,6 +94,9 @@ $config['suppress_issue_types'] = [
 		'PhanPluginRedundantAssignmentInGlobalScope',	// Not essential, a lot of false warning
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
+
+		'PhanPluginUnknownArrayMethodParamType',	// this option costs more time to be supported than it solves time
+		'PhanPluginUnknownArrayMethodReturnType',	// this option costs more time to be supported than it solves time
 ];
 
 return $config;

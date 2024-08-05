@@ -58,7 +58,7 @@ if ($socid > 0) {
 	$object->fetch($socid);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartymargins', 'globalcard'));
 
 $result = restrictedArea($user, 'societe', $object->id, '');
@@ -145,6 +145,10 @@ if ($search_invoice_date_start) {
 if ($search_invoice_date_end) {
 	$param .= '&search_invoice_date_end_day='.dol_print_date($search_invoice_date_end, '%d').'&search_invoice_date_end_month='.dol_print_date($search_invoice_date_end, '%m').'&search_invoice_date_end_year='.dol_print_date($search_invoice_date_end, '%Y');
 }
+
+$totalMargin = 0;
+$marginRate = '';
+$markRate = '';
 
 if ($socid > 0) {
 	$object = new Societe($db);

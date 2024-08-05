@@ -121,8 +121,8 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 $totalMargin = 0;
-$marginRate = 0;
-$markRate = 0;
+$marginRate = '';
+$markRate = '';
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 

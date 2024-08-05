@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = سياسة خصوصية البيانات
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = نموذج لإدارة خصوصية البيانات (التوافق مع اللائحة العامة لحماية البيانات)
-
-#
 # Administration page
-#
 datapolicySetup = نموذج إعداد سياسة خصوصية البيانات
 Deletion = حذف البيانات
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+datapolicySetupPage = وفقًا لقوانين بلدانك (مثال <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">المادة 5</a> من اللائحة العامة لحماية البيانات)، يجب الاحتفاظ بالبيانات الشخصية لفترة من الوقت. بما لا يتجاوز المدة المطلوبة للبيانات للغرض الذي تم جمعها من أجله، باستثناء الأغراض الأرشفية.<br>سيتم الحذف تلقائيًا بعد مدة معينة دون أحداث (المدة والتي ستشير إليها أدناه).
 NB_MONTHS = %s شهر
 ONE_YEAR = 1 سنة
 NB_YEARS = %s سنة
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ولا احتمال/ ولا العمي�
 DATAPOLICY_CONTACT_FOURNISSEUR = المورد
 DATAPOLICY_ADHERENT = عضو
 DATAPOLICY_Tooltip_SETUP = نوع جهة الاتصال - حدد اختياراتك لكل نوع.
-DATAPOLICYMail = إعداد رسائل البريد الإلكتروني
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = محتوى البريد الإلكتروني
-DATAPOLICYSUBSITUTION = يمكنك استخدام المتغيرات التالية في بريدك الإلكتروني (يسمح LINKACCEPT بإنشاء رابط يسجل موافقة الشخص، ويتيح LINKREFUSED تسجيل رفض الشخص):
-DATAPOLICYACCEPT = رسالة بعد الاتفاق
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = يمكنك إرسال بريد إلكتروني بالقانون العام لحماية البيانات (GDPR) إلى جميع جهات الاتصال ذات الصلة (الذين لم يتلقوا بعد رسالة بريد إلكتروني و والتي لم تسجل أي شيء بشأن اتفاقية القانون العام لحماية البيانات الخاصة بهم). للقيام بذلك، استخدم الزر التالي.
 SendAgreement = إرسال رسائل البريد الإلكتروني
 AllAgreementSend = تم إرسال كافة رسائل البريد الإلكتروني
 TXTLINKDATAPOLICYACCEPT = نص الرابط "الاتفاقية"
-TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
+TXTLINKDATAPOLICYREFUSE = نص الرابط "الخلاف"
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = اللائحة العامة لحماية البيانات: معالجة البيانات الشخصية
 DATAPOLICY_consentement = تم الحصول على الموافقة لمعالجة البيانات الشخصية
-DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = إخفاء هوية طرف ثالث
-DATAPOLICY_POPUP_ANONYME_TEXTE = لا يمكنك حذف جهة الاتصال هذه من Dolibarr نظرًا لوجود عناصر ذات صلة. وفقًا للائحة العامة لحماية البيانات، ستجعل جميع هذه البيانات مجهولة المصدر لاحترام التزاماتك. هل ترغب في الاستمرار ؟
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = قابلية النقل الناتج المحلي الإجمالي
-DATAPOLICY_PORTABILITE_TITLE = تصدير البيانات الشخصية
-DATAPOLICY_PORTABILITE_CONFIRMATION = تريد تصدير البيانات الشخصية لجهة الاتصال هذه. هل أنت متأكد ؟
-
-#
+DATAPOLICY_opposition_traitement = يعارض معالجة بياناته الشخصية
+DATAPOLICY_opposition_prospection = يعارض معالجة بياناته الشخصية لأغراض التنقيب
 # Notes added during an anonymization
-#
-ANONYMISER_AT = تم إخفاء هوية %s
-
-DATAPOLICY_date = Date of agreement/disagreement GDPR
-DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = إرسال البريد الإلكتروني اللائحة العامة لحماية البيانات
+DATAPOLICY_date = تاريخ الاتفاق/الخلاف الناتج المحلي الإجمالي
+DATAPOLICY_send = تاريخ إرسال البريد الإلكتروني للاتفاقية
 MailSent = تم ارسال البريد الالكتروني
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion
+NUMBER_MONTH_BEFORE_DELETION = عدد الأشهر قبل الحذف

@@ -172,7 +172,7 @@ class FormActions
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -184,10 +184,6 @@ class FormActions
 		if (!is_array($listofactions)) {
 			dol_print_error($this->db, 'FailedToGetActions');
 		}
-
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-		$caction = new CActionComm($this->db);
-		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
@@ -275,10 +271,10 @@ class FormActions
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
+					print '<td class="nowraponall nopaddingrightimp">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhourreduceformat', 'tzuserrel');
 					if ($actioncomm->datef) {
 						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);
@@ -287,13 +283,13 @@ class FormActions
 								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
 							}
 						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+							print '-'.dol_print_date($actioncomm->datef, 'dayhourreduceformat', 'tzuserrel');
 						}
 					}
 					print '</td>';
 
 					// Owner
-					print '<td class="nowraponall tdoverflowmax125">';
+					print '<td class="nowraponall tdoverflowmax100">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {
 							$tmpuser = $cacheusers[$actioncomm->userownerid];
@@ -308,34 +304,19 @@ class FormActions
 					}
 					print '</td>';
 
-					$actionstatic = $actioncomm;
-
 					// Example: Email sent from invoice card
 					//$actionstatic->code = 'AC_BILL_SENTBYMAIL
 					//$actionstatic->type_code = 'AC_OTHER_AUTO'
 
 					// Type
-					$labeltype = $actionstatic->type_code;
-					if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
-						$labeltype = 'AC_OTH';
-					}
-					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-						$labeltype = $langs->trans("Message");
-					} else {
-						if (!empty($arraylist[$labeltype])) {
-							$labeltype = $arraylist[$labeltype];
-						}
-						if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) {
-							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
-						}
-					}
+					$labeltype = $actioncomm->getTypeLabel(0);
 					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
 					print $actioncomm->getTypePicto();
 					print $labeltype;
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200">';
+					print '<td class="tdoverflowmax250">';
 					print $actioncomm->getNomUrl(0);
 					print '</td>';
 

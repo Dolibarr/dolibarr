@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=Adresă email HRM serviciu externalizat
 Establishments=Sedii
@@ -24,7 +23,7 @@ SkillsManagement=Management abilităţi
 HRM_MAXRANK=Numărul maxim de niveluri pentru a clasifica o abilitate
 HRM_DEFAULT_SKILL_DESCRIPTION=Descriere implicită a rangurilor la crearea de abilități
 deplacement=Schimb
-DateEval=Dată evaluare
+DateEval=Dată evaluare competență
 JobCard=Fişă job
 NewJobProfile=Profil job nou
 JobProfile=Profil job
@@ -41,12 +40,12 @@ Skill=Aptitudine
 Skills=Aptitudini
 SkillCard=Fişă aptitudini
 EmployeeSkillsUpdated=Competențele angajaților au fost actualizate (vezi fila "Abilități" din fişa de angajat)
-Eval=Evaluare
-Evals=Evaluări
-NewEval=Evaluare nouă
-ValidateEvaluation=Validare evaluare
-ConfirmValidateEvaluation=Ești sigur că vrei să validezi această evaluare cu referința <b>%s</b>?
-EvaluationCard=Fişă evaluare
+Eval=Evaluare competență
+Evals=Evaluări competență
+NewEval=Evaluare competență nouă
+ValidateEvaluation=Validare evaluare competență
+ConfirmValidateEvaluation=Sigur vrei să validezi evaluarea competențelor cu referința <b>%s</b>?
+EvaluationCard=Evaluare competență
 RequiredRank=Clasament necesar pentru profil job
 RequiredRankShort=Rang necesar
 PositionsWithThisProfile=Posturi pentru aceste profile de job
@@ -90,8 +89,9 @@ SaveAddSkill = Aptitudine(i) adăugat
 SaveLevelSkill = Nivel aptitudine(i) salvat
 DeleteSkill = Aptitudine ştearsă
 SkillsExtraFields=Atribute complementare (Aptitudini - skill-uri)
-JobsExtraFields=Atribute complementare (Probil job)
-EvaluationsExtraFields=Atribute complementare (Evaluări)
+JobsExtraFields=Atribute suplimentare (Profiluri joburi)
+EvaluationsExtraFields=Atribute suplimentare (Evaluări competențe)
 NeedBusinessTravels=Necesar călătorii de afaceri
 NoDescription=Nicio descriere
 TheJobProfileHasNoSkillsDefinedFixBefore=Profilul de post evaluat al acestui angajat nu are nicio aptitudine definită pe el. Adaugă aptitudin(i), apoi șterge și repornește evaluarea.
+PDFStandardHrmEvaluation=Șablon standard generare document PDF pentru evaluarea competențelor 

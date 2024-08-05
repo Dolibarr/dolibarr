@@ -32,6 +32,16 @@
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
 
+-- Previous version instruction forgotten
+
+-- missing entity field
+ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
+ALTER TABLE llx_c_holiday_types ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+
+-- V21 migration
+
 DROP TABLE llx_contratdet_log;
 
 
@@ -40,6 +50,19 @@ ALTER TABLE llx_projet_task ADD COLUMN billable smallint DEFAULT 1;
 
 ALTER TABLE llx_inventory DROP COLUMN datec;
 
+UPDATE llx_document_model SET nom='standard_expensereport' WHERE nom='standard' AND type='expensereport';
+UPDATE llx_document_model SET nom='standard_stock' WHERE nom='standard' AND type='stock';
+UPDATE llx_document_model SET name='standard_movementstock' WHERE nom='standard' AND type='mouvement';
+UPDATE llx_document_model SET nom='standard_evaluation' WHERE nom='standard' AND type='evaluation';
+UPDATE llx_document_model SET nom='standard_supplierpayment' WHERE nom='standard' AND type='supplier_payment';
+UPDATE llx_document_model SET nom='standard_member' WHERE nom='standard' AND type='member';
+-- if rename failed delete old models
+DELETE FROM llx_document_model WHERE nom='standard' AND type='expensereport';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='stock';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='mouvement';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='evaluation';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='supplier_payment';
+DELETE FROM llx_document_model WHERE nom='standard' AND type='member';
 
 ALTER TABLE llx_contrat ADD COLUMN total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN localtax1 double(24,8) DEFAULT 0;
@@ -47,3 +70,24 @@ ALTER TABLE llx_contrat ADD COLUMN localtax2 double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN revenuestamp double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ht double(24,8) DEFAULT 0;
 ALTER TABLE llx_contrat ADD COLUMN total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_expedition_package MODIFY COLUMN dangerous_goods varchar(60) DEFAULT '0';
+
+ALTER TABLE llx_propal ADD COLUMN model_pdf_pos_sign VARCHAR(32) DEFAULT NULL AFTER model_pdf;
+
+ALTER TABLE llx_commande ADD COLUMN signed_status smallint DEFAULT NULL AFTER total_ttc;
+
+
+-- a dictionary can not have entity = 0
+ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday;
+ALTER TABLE llx_c_hrm_public_holiday DROP INDEX uk_c_hrm_public_holiday2;
+ALTER TABLE llx_c_hrm_public_holiday MODIFY COLUMN entity integer DEFAULT 1 NOT NULL;
+UPDATE llx_c_hrm_public_holiday SET entity = 1 WHERE entity = 0;
+ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday(entity, code);
+ALTER TABLE llx_c_hrm_public_holiday ADD UNIQUE INDEX uk_c_hrm_public_holiday2(entity, fk_country, dayrule, day, month, year);
+
+ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime after date_previous_login;
+
+-- Rename of bank table
+ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
+ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;

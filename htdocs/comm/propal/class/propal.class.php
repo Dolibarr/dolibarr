@@ -150,11 +150,6 @@ class Propal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var integer|'' $date_creation;
-	 */
-	public $date_creation;
-
-	/**
 	 * @deprecated
 	 * @see $date_validation
 	 */
@@ -187,7 +182,7 @@ class Propal extends CommonObject
 	public $datep;
 
 	/**
-	 * @var integer|'' 	$delivery_date;
+	 * @var null|int|'' 	$delivery_date;
 	 */
 	public $delivery_date; // Date expected of shipment (date starting shipment, not the reception that occurs some days after)
 
@@ -488,9 +483,9 @@ class Propal extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Adding line of fixed discount in the proposal in DB
+	 *	Add a discount line into an proposal (as a proposal line) using an existing absolute discount (Consume the discount)
 	 *
-	 *	@param     int		$idremise			Id of fixed discount
+	 *	@param     int		$idremise			Id of fixed discount from table llx_societe_remise_except
 	 *  @return    int          				>0 if OK, <0 if KO
 	 */
 	public function insert_discount($idremise)
@@ -1427,8 +1422,10 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			$object->ref_client = '';
-			$object->ref_customer = '';
+			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+				$object->ref_client = '';
+				$object->ref_customer = '';
+			}
 
 			// TODO Change product price if multi-prices
 		} else {
@@ -2252,7 +2249,7 @@ class Propal extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."propal ";
-			$sql .= " SET date_livraison = ".($delivery_date != '' ? "'".$this->db->idate($delivery_date)."'" : 'null');
+			$sql .= " SET date_livraison = ".(isDolTms($delivery_date) ? "'".$this->db->idate($delivery_date)."'" : 'null');
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
@@ -2572,7 +2569,10 @@ class Propal extends CommonObject
 		}
 
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', date_signature='".$this->db->idate($date_signature)."', fk_user_signature=".$fk_user_signature;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
+		if ($status == self::STATUS_SIGNED) {
+			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".($fk_user_signature);
+		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);

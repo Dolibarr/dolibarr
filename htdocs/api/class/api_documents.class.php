@@ -261,6 +261,22 @@ class Documents extends DolibarrApi
 			if ($result <= 0) {
 				throw new RestException(500, 'Error generating document missing doctemplate parameter');
 			}
+		} elseif ($modulepart == 'mrp') {
+			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+
+			$tmpobject = new Mo($this->db);
+			$result = $tmpobject->fetch(0, preg_replace('/\.[^\.]+$/', '', basename($original_file)));
+
+			if (!$result) {
+				throw new RestException(404, 'MO not found');
+			}
+
+			$templateused = $doctemplate ? $doctemplate : $tmpobject->model_pdf;
+			$result = $tmpobject->generateDocument($templateused, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+			if ($result <= 0) {
+				throw new RestException(500, 'Error generating document missing doctemplate parameter');
+			}
 		} else {
 			throw new RestException(403, 'Generation not available for this modulepart');
 		}
@@ -567,6 +583,17 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->projet->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
+		} elseif ($modulepart == 'mrp') {
+			$modulepart = 'mrp';
+			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+
+			$object = new Mo($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'MO not found');
+			}
+
+			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
@@ -707,7 +734,7 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$object = new Task($this->db);
 
-				$task_result = $object->fetch('', $ref);
+				$task_result = $object->fetch(0, $ref);
 
 				// Fetching the tasks project is required because its out_dir might be a sub-directory of the project
 				if ($task_result > 0) {
@@ -749,6 +776,10 @@ class Documents extends DolibarrApi
 				$modulepart = 'contrat';
 				require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 				$object = new Contrat($this->db);
+			} elseif ($modulepart == 'mrp') {
+				$modulepart = 'mrp';
+				require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
+				$object = new Mo($this->db);
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -759,7 +790,7 @@ class Documents extends DolibarrApi
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$result = $object->fetch($ref);
 				} else {
-					$result = $object->fetch('', $ref);
+					$result = $object->fetch(0, $ref);
 				}
 
 				if ($result == 0) {

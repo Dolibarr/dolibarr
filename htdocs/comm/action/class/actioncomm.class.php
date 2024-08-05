@@ -1321,7 +1321,7 @@ class ActionComm extends CommonObject
 
 		dol_syslog(get_class()."::getActions", LOG_DEBUG);
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
@@ -1586,7 +1586,8 @@ class ActionComm extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $user;
+		global $langs, $form;
+
 		$langs->load('agenda');
 
 		$datas = array();
@@ -1635,7 +1636,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$datas['description'] = '<br><b>'.$langs->trans('Description').':</b><br>';
+			$datas['description'] = '<br><hr>';
 			// Try to limit length of content
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 10);
 			// Restrict height of content into the tooltip
@@ -1646,8 +1647,14 @@ class ActionComm extends CommonObject
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			$form = new Form($this->db);
-			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if (empty($form)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+			}
+			$tmpcategstring = $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if ($tmpcategstring) {
+				$datas['categories'] = '<br>'.$tmpcategstring;
+			}
 		}
 
 		return $datas;
@@ -1693,31 +1700,35 @@ class ActionComm extends CommonObject
 		$result = '';
 
 		// Set label of type
-		$labeltype = '';
-		if ($this->type_code) {
-			$langs->load("commercial");
-			$labeltype = ($langs->transnoentities("Action".$this->type_code) != "Action".$this->type_code) ? $langs->transnoentities("Action".$this->type_code) : $this->type_label;
-		}
-		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-			if ($this->type_code != 'AC_OTH_AUTO') {
-				$labeltype = $langs->trans('ActionAC_MANUAL');
-			}
-		}
+		$labeltype = $this->getTypeLabel(1);
 
 		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
+
+		$tooltip .= ' &nbsp; - &nbsp; '.$this->getTypePicto('pictofixedwidth paddingright valignmiddle').$labeltype;
 		if (!empty($this->ref)) {
 			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
 		}
 		if (!empty($label)) {
 			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
 		}
-		if (!empty($labeltype)) {
-			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.dol_escape_htmltag($labeltype);
-		}
 		if (!empty($this->location)) {
 			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
-		if (isset($this->transparency)) {
+
+		$tooltip .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
+		if ($this->datef) {
+			$tmpa = dol_getdate($this->datep);
+			$tmpb = dol_getdate($this->datef);
+			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+					$tooltip .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
+				}
+			} else {
+				$tooltip .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
+			}
+		}
+
+		if ($this->datef && $this->datep != $this->datef && isset($this->transparency)) {
 			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
 		if (!empty($this->email_msgid)) {
@@ -1736,7 +1747,7 @@ class ActionComm extends CommonObject
 			} */
 		}
 		if (!empty($this->note_private)) {
-			$tooltip .= '<br><br><b>'.$langs->trans('Description').':</b><br>';
+			$tooltip .= '<br><hr>';
 			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
 			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
 			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
@@ -1849,8 +1860,6 @@ class ActionComm extends CommonObject
 	 */
 	public function getTypePicto($morecss = 'pictofixedwidth paddingright valignmiddle', $titlealt = '')
 	{
-		global $conf;
-
 		$imgpicto = '';
 		if (getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 			$color = '';
@@ -1890,6 +1899,49 @@ class ActionComm extends CommonObject
 		return $imgpicto;
 	}
 
+
+	/**
+	 *  Return label of type of event
+	 *
+	 *  @param	int		$mode			0=Mode short, 1=Mode long
+	 *  @return	string					HTML String
+	 */
+	public function getTypeLabel($mode = 0)
+	{
+		global $conf, $langs;
+
+		// If cache for array of types unknown, we load it
+		if (!empty($conf->cache['actioncommgetypelabel'])) {
+			$arraylist = $conf->cache['actioncommgetypelabel'];
+		} else {
+			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+			$caction = new CActionComm($this->db);
+			$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
+			$conf->cache['actioncommgetypelabel'] = $arraylist;
+		}
+
+		$labeltype = $this->type_code;
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
+			$labeltype = 'AC_OTH';
+		}
+		if (preg_match('/^TICKET_MSG/', $this->code)) {
+			$labeltype = $langs->trans("Message");
+		} else {
+			if (!empty($arraylist[$labeltype])) {
+				$labeltype = $arraylist[$labeltype];
+			}
+			if ($this->type_code == 'AC_OTH_AUTO' && ($this->type_code != $this->code) && $labeltype && !empty($arraylist[$this->code])) {
+				$labeltype .= ' - '.$arraylist[$this->code]; // Use code in priority over type_code
+			}
+		}
+
+		if ($this->type == 'systemauto' && $mode == 1) {
+			$labeltype .= ' ('.$langs->trans("auto").')';
+		}
+
+
+		return $labeltype;
+	}
 
 	/**
 	 * Sets object to supplied categories.

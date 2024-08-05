@@ -136,7 +136,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 		if ($action == 'login') {
 			$login = GETPOST('login', 'alphanohtml');
-			$password = GETPOST('password', 'none');
+			$password = GETPOST('password', 'password');
 			// $security_code = GETPOST('security_code', 'alphanohtml');
 
 			if (empty($login)) {

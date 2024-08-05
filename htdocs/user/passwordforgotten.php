@@ -107,7 +107,7 @@ if (empty($reshook)) {
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 
-				header("Location: ".DOL_URL_ROOT.'/');
+				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
 				exit;
 			} else {
 				$langs->load("errors");
@@ -157,7 +157,7 @@ if (empty($reshook)) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
-						// Success
+						// Success to set temporary password, send email
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
 							$message .= $messagewarning;
 							$username = '';

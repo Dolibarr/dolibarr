@@ -755,7 +755,7 @@ class Holiday extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$error = 0;
 
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -878,7 +878,7 @@ class Holiday extends CommonObject
 	{
 		$error = 0;
 
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -1006,7 +1006,7 @@ class Holiday extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type);
+		$checkBalance = getDictionaryValue('c_holiday_types', 'block_if_negative', $this->fk_type, true);
 
 		if ($checkBalance > 0 && $this->status != self::STATUS_DRAFT) {
 			$balance = $this->getCPforUser($this->fk_user, $this->fk_type);
@@ -2277,6 +2277,7 @@ class Holiday extends CommonObject
 		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
+		$sql .= " AND entity IN (".getEntity('c_holiday_types').")";
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}

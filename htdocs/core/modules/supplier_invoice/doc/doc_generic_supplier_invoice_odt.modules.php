@@ -329,7 +329,7 @@ class doc_generic_supplier_invoice_odt extends ModelePDFSuppliersInvoices
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'INVOICE_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 

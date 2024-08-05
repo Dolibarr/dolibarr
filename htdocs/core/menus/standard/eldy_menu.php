@@ -137,7 +137,7 @@ class MenuManager
 	 *  Show menu.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
-	 *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
+	 *	@param	string	$mode			'top', 'topnb', 'left', 'leftdropdown', 'jmobile' (used to get full xml ul/li menu)
 	 *  @param	array	$moredata		An array with more data to output
 	 *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
@@ -161,6 +161,10 @@ class MenuManager
 			}
 			if ($mode == 'left') {
 				print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata, $this->type_user);
+			}
+			if ($mode == 'leftdropdown') {
+				//$leftmenudropdown = print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata, $this->type_user);
+				$leftmenudropdown = print_left_eldy_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 1, '', '', $moredata, $this->type_user);
 			}
 		} else {
 			$conf->global->MAIN_SHOW_LOGO = 0;
@@ -270,7 +274,7 @@ class MenuManager
 					*/
 
 					$lastlevel2 = array();
-					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
+					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu','prefix']
 						$showmenu = true;
 						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {
 							$showmenu = false;

@@ -631,7 +631,10 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+	// We don't print info messages for pages of type library or service
+	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
+	}
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res) {
@@ -930,11 +933,12 @@ function getSocialNetworkHeaderCards($params = null)
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
  *
+ * @param	string	$socialnetworks			'' or list of social networks
  * @return  string							HTML content
  */
-function getSocialNetworkSharingLinks()
+function getSocialNetworkSharingLinks($socialnetworks = '')
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	global $website, $websitepage; // Very important. Required to have var available when running included containers.
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -945,37 +949,30 @@ function getSocialNetworkSharingLinks()
 		$out .= '<div class="dol-social-share">'."\n";
 
 		// Twitter
-		$out .= '<div class="dol-social-share-tw">'."\n";
-		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-		$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/twitter/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-tw">'."\n";
+			$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+			$out .= '<script nonce="'.getNonce().'">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+			$out .= '</div>'."\n";
+		}
 
 		// Reddit
-		$out .= '<div class="dol-social-share-reddit">'."\n";
-		$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-		$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
-		$out .= '</a>';
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/reddit/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-reddit">'."\n";
+			$out .= '<a href="https://www.reddit.com/submit" target="_blank" rel="noopener noreferrer external" onclick="window.location = \'https://www.reddit.com/submit?url='.urlencode($fullurl).'\'; return false">';
+			$out .= '<span class="dol-social-share-reddit-span">Reddit</span>';
+			$out .= '</a>';
+			$out .= '</div>'."\n";
+		}
 
 		// Facebook
-		$out .= '<div class="dol-social-share-fbl">'."\n";
-		$out .= '<div id="fb-root"></div>'."\n";
-		$out .= '<script nonce="'.getNonce().'">(function(d, s, id) {
-				  var js, fjs = d.getElementsByTagName(s)[0];
-				  if (d.getElementById(id)) return;
-				  js = d.createElement(s); js.id = id;
-				  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
-				  fjs.parentNode.insertBefore(js, fjs);
-				}(document, \'script\', \'facebook-jssdk\'));</script>
-				        <fb:like
-				        href="'.$fullurl.'"
-				        layout="button_count"
-				        show_faces="false"
-				        width="90"
-				        colorscheme="light"
-				        share="1"
-				        action="like" ></fb:like>'."\n";
-		$out .= '</div>'."\n";
+		if (empty($socialnetworks) || preg_match('/facebook/', $socialnetworks)) {
+			$out .= '<div class="dol-social-share-fbl">'."\n";
+			$out .= '<a href="https://www.facebook.com/sharer/sharer.php?u='.urlencode($fullurl).'">';
+			$out .= '<span class="dol-social-share-fbl-span">Facebook</span>';
+			$out .= '</a>';
+			$out .= '</div>';
+		}
 
 		$out .= "\n</div>\n";
 	} else {
@@ -1096,6 +1093,56 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	}
 
 	return $image_path;
+}
+
+/**
+ * Return list of public files of a given object.
+ *
+ * @param	Object	$object			Object
+ * @return  array					List of public files of object
+ */
+function getPublicFilesOfObject($object)
+{
+	global $db;
+
+	$files = array();
+
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
+	$regexforimg = getListOfPossibleImageExt(0);
+	$regexforimg = '/('.$regexforimg.')$/i';
+
+	$sql = "SELECT rowid, ref, share, filename, cover, position";
+	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity IN (".getEntity($object->element).")";
+	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);
+	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				if (!empty($obj->share)) {
+					$files[$obj->rowid]['filename'] = $obj->filename;
+					$files[$obj->rowid]['position'] = $obj->position;
+					if (defined('USEDOLIBARRSERVER') || defined('USEDOLIBARREDITOR')) {
+						if (preg_match($regexforimg, $obj->filename)) {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($obj->share);
+						} else {
+							$files[$obj->rowid]['url'] = DOL_URL_ROOT.'/document.php?hashp='.urlencode($obj->share);
+						}
+					} else {
+						$files[$obj->rowid]['url'] = '/wrapper.php?hashp='.urlencode($obj->share);
+					}
+				}
+			}
+			$i++;
+		}
+	}
+
+	return $files;
 }
 
 

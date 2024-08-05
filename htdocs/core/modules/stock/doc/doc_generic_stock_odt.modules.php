@@ -327,7 +327,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				// Line of free text
 				$newfreetext = '';
 				$paramfreetext = 'stock_FREE_TEXT';
-				if (!empty($conf->global->$paramfreetext)) {
+				if (getDolGlobalString($paramfreetext)) {
 					$newfreetext = make_substitutions(getDolGlobalString($paramfreetext), $substitutionarray);
 				}
 

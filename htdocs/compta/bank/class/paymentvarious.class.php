@@ -875,7 +875,7 @@ class PaymentVarious extends CommonObject
 		/*
 		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $valuetoshow, 1);
+			$accountingaccount->fetch(0, $valuetoshow, 1);
 		}*/
 
 		return length_accountg($account);
