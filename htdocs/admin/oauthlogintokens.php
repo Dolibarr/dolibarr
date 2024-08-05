@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 use OAuth\Common\Storage\DoliStorage;
+use OAuth\Common\Consumer\Credentials;
 
 $supportedoauth2array = getSupportedOauth2Array();
 
@@ -114,6 +115,66 @@ if ($action == 'setvalue' && $user->admin) {
 	$action = '';
 }
 
+// Test a refresh of a token using the refresh token
+if ($action == 'refreshtoken' && $user->admin) {
+	$keyforprovider = GETPOST('keyforprovider');
+	$OAUTH_SERVICENAME = GETPOST('service');
+
+	// Show value of token
+	$tokenobj = null;
+	// Load OAUth libraries
+	require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+	// Dolibarr storage
+	$storage = new DoliStorage($db, $conf, $keyforprovider);
+	try {
+		// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
+		print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
+		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+		$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
+		// We have to save the refresh token because Google give it only once
+		$refreshtoken = $tokenobj->getRefreshToken();
+		print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
+
+		//print $tokenobj->getExtraParams()['id_token'].'<br>';
+		//print $tokenobj->getAccessToken().'<br>';
+		//print $tokenobj->getRefreshToken().'<br>';
+
+
+		//var_dump($expire);
+
+		// We do the refresh even if not expired, this is the goal of action.
+		$credentials = new Credentials(
+			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_ID'),
+			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_SECRET'),
+			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_URLAUTHORIZE')
+			);
+		$serviceFactory = new \OAuth\ServiceFactory();
+		$oauthname = explode('-', $OAUTH_SERVICENAME);
+		// ex service is Google-Emails we need only the first part Google
+		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+
+		if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
+			// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+			$tokenobj = $apiService->refreshAccessToken($tokenobj);
+			$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
+			$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+			if ($expire) {
+				setEventMessages($langs->trans("OldTokenWasExpiredItHasBeenRefresh"), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans("OldTokenWasNotExpiredButItHasBeenRefresh"), null, 'mesgs');
+			}
+		} else {
+			dol_print_error($db, 'apiService is not a correct OAUTH2 Abstract service');
+		}
+
+		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+	} catch (Exception $e) {
+		// Return an error if token not found
+		print $e->getMessage();
+	}
+}
+
 
 /*
  * View
@@ -188,6 +249,8 @@ if ($mode == 'setup' && $user->admin) {
 			}
 			$state = $shortscope;	// TODO USe a better state
 
+			$urltorefresh = $_SERVER["PHP_SELF"].'?action=refreshtoken&token='.newToken();
+
 			// Define $urltorenew, $urltodelete, $urltocheckperms
 			if ($keyforsupportedoauth2array == 'OAUTH_GITHUB_NAME') {
 				// List of keys that will be converted into scopes (from constants 'SCOPE_state_in_uppercase' in file of service).
@@ -216,6 +279,9 @@ if ($mode == 'setup' && $user->admin) {
 
 			if ($urltorenew) {
 				$urltorenew .= '&keyforprovider='.urlencode($keyforprovider);
+			}
+			if ($urltorefresh) {
+				$urltorefresh .= '&keyforprovider='.urlencode($keyforprovider).'&service='.urlencode($OAUTH_SERVICENAME);
 			}
 			if ($urltodelete) {
 				$urltodelete .= '&keyforprovider='.urlencode($keyforprovider);
@@ -334,17 +400,20 @@ if ($mode == 'setup' && $user->admin) {
 				if (is_object($tokenobj)) {
 					//test on $storage->hasAccessToken($OAUTH_SERVICENAME) ?
 					if ($urltodelete) {
-						print '<a class="button smallpaddingimp reposition" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a><br>';
+						print '<a class="button button-delete smallpaddingimp reposition marginright" href="'.$urltodelete.'">'.$langs->trans('DeleteAccess').'</a>';
 					} else {
-						print '<span class="opacitymedium">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span><br>';
+						print '<span class="opacitymedium marginright">'.$langs->trans('GoOnTokenProviderToDeleteToken').'</span>';
 					}
 				}
 				// Request remote token
 				if ($urltorenew) {
-					print '<a class="button smallpaddingimp reposition" href="'.$urltorenew.'">'.$langs->trans('GetAccess').'</a>';
-					print $form->textwithpicto('', $langs->trans('RequestAccess'));
-					print '<br>';
+					print '<a class="button smallpaddingimp reposition classfortooltip marginright" href="'.$urltorenew.'" title="'.dolPrintHTMLForAttribute($langs->trans('RequestAccess')).'">'.$langs->trans('GetAccess').'</a>';
 				}
+				// Request remote token
+				if ($urltorefresh && $refreshtoken) {
+					print '<a class="button smallpaddingimp reposition classfortooltip marginright" href="'.$urltorefresh.'" title="'.dolPrintHTMLForAttribute($langs->trans('RefreshTokenHelp')).'">'.$langs->trans('RefreshToken').'</a>';
+				}
+
 				// Check remote access
 				if ($urltocheckperms) {
 					print '<br>'.$langs->trans("ToCheckDeleteTokenOnProvider", $OAUTH_SERVICENAME).': <a href="'.$urltocheckperms.'" target="_'.strtolower($OAUTH_SERVICENAME).'">'.$urltocheckperms.'</a>';
@@ -353,26 +422,42 @@ if ($mode == 'setup' && $user->admin) {
 			print '</td>';
 			print '</tr>';
 
-			print '<tr class="oddeven">';
-			print '<td>';
-			//var_dump($key);
-			print $langs->trans("Token").'</td>';
-			print '<td colspan="2">';
-
 			if (is_object($tokenobj)) {
+				print '<tr class="oddeven">';
+				print '<td>';
+				//var_dump($key);
+				print $langs->trans("TokenRawValue").'</td>';
+				print '<td colspan="2">';
+				if (is_object($tokenobj)) {
+					print '<textarea class="quatrevingtpercent small" rows="'.ROWS_4.'">'.var_export($tokenobj, true).'</textarea><br>'."\n";
+				}
+				print '</td>';
+				print '</tr>'."\n";
+
+				print '<tr class="oddeven">';
+				print '<td>';
+				//var_dump($key);
+				print $langs->trans("AccessToken").'</td>';
+				print '<td colspan="2">';
 				$tokentoshow = $tokenobj->getAccessToken();
-				print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span><br>';
+				print '<span class="" title="'.dol_escape_htmltag($tokentoshow).'">'.showValueWithClipboardCPButton($tokentoshow, 1, dol_trunc($tokentoshow, 32)).'</span>';
 				//print 'Refresh: '.$tokenobj->getRefreshToken().'<br>';
 				//print 'EndOfLife: '.$tokenobj->getEndOfLife().'<br>';
 				//var_dump($tokenobj->getExtraParams());
 				/*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
 				 print ''.join(',',$tokenobj->getExtraParams());
 				 print '</textarea>';*/
-			}
-			print '</td>';
-			print '</tr>'."\n";
 
-			if (is_object($tokenobj)) {
+				print '<span class="opacitymedium"> &nbsp; - &nbsp; ';
+				print $langs->trans("ExpirationDate").': ';
+				print '</span>';
+				print $expiredat;
+
+				print $expire ? ' ('.$langs->trans("TokenExpired").')' : ' ('.$langs->trans("TokenNotExpired").')';
+
+				print '</td>';
+				print '</tr>'."\n";
+
 				// Token refresh
 				print '<tr class="oddeven">';
 				print '<td>';
@@ -381,28 +466,6 @@ if ($mode == 'setup' && $user->admin) {
 				print '</td>';
 				print '<td colspan="2">';
 				print '<span class="" title="'.dol_escape_htmltag($refreshtoken).'">'.showValueWithClipboardCPButton($refreshtoken, 1, dol_trunc($refreshtoken, 32)).'</span>';
-				print '</td>';
-				print '</tr>';
-
-				// Token expired
-				print '<tr class="oddeven">';
-				print '<td>';
-				//var_dump($key);
-				print $langs->trans("TOKEN_EXPIRED");
-				print '</td>';
-				print '<td colspan="2">';
-				print yn($expire);
-				print '</td>';
-				print '</tr>';
-
-				// Token expired at
-				print '<tr class="oddeven">';
-				print '<td>';
-				//var_dump($key);
-				print $langs->trans("TOKEN_EXPIRE_AT");
-				print '</td>';
-				print '<td colspan="2">';
-				print $expiredat;
 				print '</td>';
 				print '</tr>';
 			}

@@ -701,7 +701,7 @@ while ($i < $imaxinloop) {
 	$variousstatic->fk_bank = $bankline->getNomUrl(1);
 	$variousstatic->amount = $obj->amount;
 
-	$accountingaccount->fetch('', $obj->accountancy_code, 1);
+	$accountingaccount->fetch(0, $obj->accountancy_code, 1);
 	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
 
 	if ($mode == 'kanban') {
@@ -829,7 +829,7 @@ while ($i < $imaxinloop) {
 		// Accounting account
 		if (!empty($arrayfields['account']['checked'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-			$result = $accountingaccount->fetch('', $obj->accountancy_code, 1);
+			$result = $accountingaccount->fetch(0, $obj->accountancy_code, 1);
 			if ($result > 0) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->accountancy_code.' '.$accountingaccount->label).'">'.$accountingaccount->getNomUrl(0, 1, 1, '', 1).'</td>';
 			} else {

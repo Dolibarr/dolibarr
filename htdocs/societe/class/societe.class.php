@@ -184,7 +184,7 @@ class Societe extends CommonObject
 		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'nom' => array('type' => 'varchar(128)', 'length'=>128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
+		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
@@ -1117,6 +1117,7 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
+		$contact->roles				= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
 
 		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
@@ -2855,7 +2856,7 @@ class Societe extends CommonObject
 	 *    	Return a link on thirdparty (with picto)
 	 *
 	 *		@param	int		$withpicto		          	Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-	 *		@param	string	$option			          	Target of link ('', 'customer', 'prospect', 'supplier', 'project')
+	 *		@param	string	$option			          	Target of link (''=auto, 'nolink'=no link, 'customer', 'prospect', 'supplier', 'project', 'agenda', ...)
 	 *		@param	int		$maxlen			          	Max length of name
 	 *      @param	int  	$notooltip		          	1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -5473,12 +5474,14 @@ class Societe extends CommonObject
 
 				//First, all core objects must update their tables
 				foreach ($objects as $object_name => $object_file) {
+					/* $object_file is never an array -> code commented
 					if (is_array($object_file)) {
 						if (empty($object_file['enabled'])) {
 							continue;
 						}
 						$object_file = $object_file['file'];
 					}
+					*/
 
 					require_once DOL_DOCUMENT_ROOT.$object_file;
 

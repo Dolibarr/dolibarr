@@ -220,7 +220,7 @@ body {
 	<?php
 	//print getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? (getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER') > 100 ? 'zoom: '.getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER').'%;' : 'zoom: 150%;') : '';
 	?>
-	zoom: 105%;	/* not supported by al browsers */
+	/* zoom: 105%; */	/* not supported by all browsers. pb for popup position with select2. */
 }
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
@@ -407,7 +407,7 @@ div#cke_dp_desc {
 	margin-top: 5px;
 }
 textarea {
-	border-radius: 0;
+	border-radius: 3px;
 	border-top: solid 1px var(--inputbordercolor);
 	border-left: solid 1px var(--inputbordercolor);
 	border-right: solid 1px var(--inputbordercolor);
@@ -1031,11 +1031,17 @@ td.wordbreak img, td.wordbreakimp img {
 .paddingtop {
 	padding-top: 4px;
 }
+.paddingtopimp {
+	padding-top: 4px !important;
+}
 .paddingtop2 {
 	padding-top: 2px;
 }
 .paddingbottom {
 	padding-bottom: 4px;
+}
+.paddingbottomimp {
+	padding-bottom: 4px !important;
 }
 .paddingbottom2 {
 	padding-bottom: 2px;
@@ -1241,7 +1247,7 @@ span.fa.fa-plus-circle.paddingleft {
 	font-size: 1em;
 }
 .listofinvoicetype {
-	height: 28px;
+	height: 2.2em;
 	vertical-align: middle;
 }
 .divsocialnetwork:not(:last-child) {
@@ -1705,7 +1711,11 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	overflow-y: hidden;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+
 /* Style used for most tables */
+div.fiche>div.tabBar>form>div.div-table-responsive {
+	min-height: 392px;
+}
 .div-table-responsive, .div-table-responsive-no-min {
 	overflow-x: auto;
 	min-height: 0.01%;
@@ -1713,19 +1723,20 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .div-table-responsive {
 	line-height: var(--heightrow);
 }
+
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
-div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-	overflow-x: auto;
-}
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
-div.fiche>div.tabBar>form>div.div-table-responsive {
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+	overflow-x: auto;
+}
+
+/* Style used for table in public ticket */
+div.ticketpublicarealist>form>div.div-table-responsive {
 	min-height: 392px;
 }
-div.fiche {
-	/* text-align: justify; */
-}
+
 
 .display-flex {
 	display: flex;
@@ -2041,7 +2052,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		height: 40px !important;
 	}
 	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
-		height: 28px !important;
+		height: 2.2em !important;
 	}
 
 
@@ -2186,8 +2197,12 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
-	table-layout: fixed;
+	width: 100%;
+	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
+		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+	<?php } ?>
+	/* table-layout: fixed; */
+
 }
 #id-right, #id-left {
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
@@ -2375,6 +2390,8 @@ div.vmenu, td.vmenu {
 	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
+		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		table-layout: fixed;
 		width: 100%;
 	}
 	.side-nav {
@@ -3448,7 +3465,6 @@ div.vmenu, td.vmenu {
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 1px;
-	width: <?php echo $leftmenuwidth; ?>px;
 }
 
 .vmenu {
@@ -4013,7 +4029,7 @@ table.borderplus {
 .border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 28px;
+	height: 2.2em;
 }
 
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
@@ -4606,7 +4622,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 28px;
+	height: 2.2em;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -5696,7 +5712,7 @@ span[phptag] {
 	/* display: inline-block; */
 	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
-	line-height: 28px;
+	line-height: 2.2em;
 }
 .websiteselectionsection {
 	font-size: 0.85em;
@@ -6198,7 +6214,7 @@ div.cke_notifications_area .cke_notification_warning {
 		right: 0;
 		bottom: 0;
 		background-color: #ebebeb;
-		height: 28px;
+		height: 2.2em;
 		line-height: 2.2em;
 }
 .ace_status-indicator {
@@ -6530,12 +6546,40 @@ div#ecm-layout-center {
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
 }
+.jnotify-container .jnotify-close {
+	top: 4px !important;
+	font-size: 1.6em !important;
+}
 
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
 	-webkit-box-shadow: 2px 2px 4px #8888 !important;
 	box-shadow: 2px 2px 4px #8888 !important;
+}
+
+/* jnotify for the login page */
+.bodylogin .jnotify-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100000;
+	max-width: unset;
+	padding-left: unset !important;
+	padding-right: unset !important;
+	padding-top: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification {
+	margin: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-background {
+	border-radius: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-message {
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
 }
 
 
@@ -6687,7 +6731,7 @@ input.select2-input {
 	color: #FFF !important;
 }
 .select2-container .select2-selection--multiple {
-	min-height: 28px !important;
+	min-height: 2.2em !important;
 }
 .tableforfield .select2-container .select2-selection--single {
 	height: 25px;
@@ -7002,7 +7046,7 @@ select.multiselectononeline {
 	padding: 0;
 	vertical-align: middle;
 	min-height: unset;
-	height: 28px !important;
+	height: 2.2em !important;
 	opacity: 0;
 	/* width: 1px !important; */
 }
@@ -7010,15 +7054,15 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 230px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 230px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
-	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above{
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
 		min-width: 140px !important;
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
@@ -7588,7 +7632,7 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 
 .ticketpublictable td {
-	height: 28px;
+	height: 2.2em;
 }
 
 .ticketpublicarea {
@@ -8432,11 +8476,6 @@ table.jPicker {
 
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
-	}
-
-
-	div.fichehalfright {
-		margin-top: 30px;
 	}
 
 

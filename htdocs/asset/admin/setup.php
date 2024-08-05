@@ -640,7 +640,7 @@ if ($action == 'edit') {
 					if (isModEnabled('accounting')) {
 						require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 						$accountingaccount = new AccountingAccount($db);
-						$accountingaccount->fetch('', getDolGlobalString($constname), 1);
+						$accountingaccount->fetch(0, getDolGlobalString($constname), 1);
 
 						print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 					} else {

@@ -1586,7 +1586,8 @@ class ActionComm extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $langs;
+		global $langs, $form;
+
 		$langs->load('agenda');
 
 		$datas = array();
@@ -1646,8 +1647,14 @@ class ActionComm extends CommonObject
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			$form = new Form($this->db);
-			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if (empty($form)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+				$form = new Form($this->db);
+			}
+			$tmpcategstring = $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
+			if ($tmpcategstring) {
+				$datas['categories'] = '<br>'.$tmpcategstring;
+			}
 		}
 
 		return $datas;

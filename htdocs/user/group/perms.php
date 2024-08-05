@@ -74,7 +74,7 @@ if (!$canreadperms) {
 
 $object = new UserGroup($db);
 $object->fetch($id);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
@@ -106,7 +106,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 }
 

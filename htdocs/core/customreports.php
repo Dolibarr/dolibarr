@@ -80,7 +80,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	// $search_measures, $search_xaxis or $search_yaxis may have been defined by the parent.
 
 	if (empty($user) || empty($user->id)) {
-		print 'Page is called as an include but $user and its permission loaded with getrights() are not defined. We stop here.';
+		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
 		exit(-1);
 	}
 	if (empty($object)) {

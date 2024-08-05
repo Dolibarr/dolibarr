@@ -78,6 +78,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Mo"), $langs->transnoentities("Mo"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -96,7 +97,7 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 *  Return an example of numbering
 	 *
-	 *  @return     string      Example
+	 *  @return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{
@@ -123,9 +124,9 @@ class mod_mo_advanced extends ModeleNumRefMos
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Product		$objprod    Object product
-	 *  @param  Mo			$object		Object we need next value for
-	 *  @return string|0      			Value if OK, 0 if KO
+	 *  @param	Product			$objprod    Object product
+	 *  @param  Mo				$object		Object we need next value for
+	 *  @return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

@@ -2009,9 +2009,7 @@ if ($action == 'create') {
 					$totalpaid += $objp->amount;
 					$i++;
 				}
-				if (!is_null($totalpaid)) {
-					$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
-				}
+				$totalpaid = price2num($totalpaid); // Round $totalpaid to fix floating problem after addition into loop
 
 				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;

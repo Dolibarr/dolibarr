@@ -1437,7 +1437,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		// Check if user has rights
 		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$object->getrights();
+			$object->loadRights();
 			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) {
 				setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 			}

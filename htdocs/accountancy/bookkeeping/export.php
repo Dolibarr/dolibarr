@@ -1243,7 +1243,7 @@ while ($i < min($num, $limit)) {
 	// Journal code
 	if (!empty($arrayfields['t.code_journal']['checked'])) {
 		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
+		$result = $accountingjournal->fetch(0, $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {

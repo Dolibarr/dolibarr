@@ -1574,7 +1574,7 @@ function dol_size($size, $type = '')
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with.
  *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
- *	@return string          		String cleaned (a-zA-Z_)
+ *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
@@ -1601,7 +1601,7 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
  *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
- *	@return string          		String cleaned (a-zA-Z_)
+ *	@return string          		String cleaned
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizeFileName()
  */
@@ -1673,6 +1673,20 @@ function dol_sanitizeEmail($stringtoclean)
 }
 
 /**
+ *	Clean a string to use it as a key or code. So only char a-Z, A-Z, _ and 0-9 is kept.
+ *
+ *	@param	string	$str            String to clean
+ *	@return string          		String cleaned (a-zA-Z_)
+ *
+ * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitize...()
+ */
+function dol_sanitizeKeyCode($str)
+{
+	return preg_replace('/[^\w]+/', '', $str);
+}
+
+
+/**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
  *	@param	string	$str			String to clean
@@ -1682,8 +1696,6 @@ function dol_sanitizeEmail($stringtoclean)
  */
 function dol_string_unaccent($str)
 {
-	global $conf;
-
 	if (is_null($str)) {
 		return '';
 	}
@@ -2603,7 +2615,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				}
 
 				if ($displaytab == 0) {
-					$out .= img_picto($title, $picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle paddingright').' ';
+					$out .= img_picto($title, $picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle paddingright marginrightonlyshort');
 				}
 
 				$out .= $links[$i][1];
@@ -3086,7 +3098,6 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	} elseif ($reshook > 0) {
 		$morehtmlref = $hookmanager->resPrint;
 	}
-
 
 	print '<div class="'.($onlybanner ? 'arearefnobottom ' : 'arearef ').'heightref valignmiddle centpercent">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
@@ -4524,7 +4535,7 @@ function dol_user_country()
  *  @param  int		$id         Id of object
  *  @param	int		$noprint	No output. Result is the function return
  *  @param  string  $charfornl  Char to use instead of nl2br. '' means we use a standad nl2br.
- *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
+ *  @return ?string				Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address()
  */
 function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $charfornl = '')
@@ -4586,6 +4597,7 @@ function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $char
 		return $out;
 	} else {
 		print $out;
+		return null;
 	}
 }
 
@@ -4900,7 +4912,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 			$moreatt = str_replace('class="'.$reg[1].'"', '', $moreatt);
 		}
 	} else {
-		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
+		// $picto can not be null since replaced with 'generic' in that case
+		//$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', (is_null($picto) ? '' : $picto));
+		$pictowithouttext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 		$pictowithouttext = str_replace('object_', '', $pictowithouttext);
 		$pictowithouttext = str_replace('_nocolor', '', $pictowithouttext);
 
@@ -6926,7 +6940,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round 
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party ($mysoc if not defined)
  *  @param	int			$vatnpr					If vat rate is NPR or not
- * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found
+ * 	@return	int<0,0>|string	   					0 if not found, localtax rate if found (Can be '20', '-19:-15:-9')
  *  @see get_default_tva()
  */
 function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_seller = null, $vatnpr = 0)
@@ -7006,7 +7020,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 				}
 			} else { // i am the seller
 				if (!isOnlyOneLocalTax($local)) { // TODO If seller is me, why not always returning this, even if there is only one locatax vat.
-					return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
+					return getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX1');
 				}
 			}
 		}
@@ -7020,7 +7034,7 @@ function get_localtax($vatrate, $local, $thirdparty_buyer = null, $thirdparty_se
 				if (in_array($mysoc->country_code, array('ES'))) {
 					return $thirdparty_buyer->localtax2_value;
 				} else {
-					return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
+					return getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2');
 				}
 			}
 		}
@@ -7186,11 +7200,11 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
  *  provide the selected value to the function calcul_price_total.
  *
  *  @param	int|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
- *  @param	int		    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
+ *  @param	int<0,2>    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	    $buyer         		Company object
  *  @param	Societe	    $seller        		Company object
- *  @param  int         $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
- *  @return	array{}|array{0:string,1:float,2:string,3:string}|array{0:string,1:float,2:string,3:float,4:string,5:string}	array(localtax_type1(1-6 or 0 if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
+ *  @param  int<0,1>    $firstparamisid     1 if first param is ID into table instead of Rate+code (use this if you can)
+ *  @return	array{}|array{0:string,1:int|string,2:string,3:string}|array{0:string,1:int|string,2:string,3:int|string,4:string,5:string}		array(localtax_type1('1-6' or '0' if not found), rate localtax1, localtax_type2, rate localtax2, accountancycodecust, accountancycodesupp)
  *  @see getTaxesFromId()
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid = 0)
@@ -7932,14 +7946,14 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *	Clean a string to keep only desirable HTML tags.
  *  WARNING: This also clean HTML comments (because they can be used to obfuscate tag name).
  *
- *	@param	string	$stringtoclean			String to clean
- *  @param	int		$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
- *  @param	int		$removeclassattribute	1=Remove the class attribute from tags
- *  @param	int		$cleanalsojavascript	Remove also occurrence of 'javascript:'.
- *  @param	int		$allowiframe			Allow iframe tags.
- *  @param	string[]	$allowed_tags		List of allowed tags to replace the default list
- *  @param	int		$allowlink				Allow "link" tags.
- *	@return string	    					String cleaned
+ *	@param	string		$stringtoclean			String to clean
+ *  @param	int			$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
+ *  @param	int			$removeclassattribute	1=Remove the class attribute from tags
+ *  @param	int			$cleanalsojavascript	Remove also occurrence of 'javascript:'.
+ *  @param	int			$allowiframe			Allow iframe tags.
+ *  @param	string[]	$allowed_tags			List of allowed tags to replace the default list
+ *  @param	int			$allowlink				Allow "link" tags.
+ *	@return string	    						String cleaned
  *
  * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
@@ -7977,9 +7991,10 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	$stringtoclean = preg_replace('/&colon;/i', ':', $stringtoclean);
 	$stringtoclean = preg_replace('/&#58;|&#0+58|&#x3A/i', '', $stringtoclean); // refused string ':' encoded (no reason to have a : encoded like this) to disable 'javascript:...'
 
+	// Remove all HTML tags
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);	// Warning: This remove also undesired </>, so may changes string obfuscated with </> that pass the injection detection into a harmfull string
 
-	if ($cleanalsosomestyles) {	// Clean for remaining html tags
+	if ($cleanalsosomestyles) {		// Clean for remaining html tags
 		$temp = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $temp); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
 	}
 	if ($removeclassattribute) {	// Clean for remaining html tags
@@ -8232,6 +8247,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 	} else {
 		$out = $stringtoencode;
 
+		// First clean HTML content
 		do {
 			$oldstringtoclean = $out;
 
@@ -8343,6 +8359,17 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
 			$out = preg_replace('/&apos;/i', "&#39;", $out);
+
+			// Now remove js
+			// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
+			$out = preg_replace('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', '', $out); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+			$out = preg_replace('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', '', $out);
+			// More not into the previous list
+			$out = preg_replace('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', '', $out);
 		} while ($oldstringtoclean != $out);
 
 		// Check the limit of external links that are automatically executed in a Rich text content. We count:
@@ -12526,7 +12553,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 	if (!empty($helpText)) {
 		$attr['title'] = dol_escape_htmltag($helpText);
-	} elseif (empty($attr['title']) && $label) {
+	} elseif ($label) { // empty($attr['title']) &&
 		$attr['title'] = $label;
 		$useclassfortooltip = 0;
 	}
@@ -13192,9 +13219,12 @@ function addSummaryTableLine($tableColumnCount, $num, $nbofloop = 0, $total = 0,
 		return;
 	}
 
+	/* Case already handled above, commented to satisfy phpstan.
 	if ($num === 0) {
 		$colspan = $tableColumnCount;
-	} elseif ($num > $nbofloop) {
+	} else
+	*/
+	if ($num > $nbofloop) {
 		$colspan = $tableColumnCount;
 	} else {
 		$colspan = $tableColumnCount - 1;
@@ -13353,7 +13383,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 
 	// Test the filter syntax
 	$t = preg_replace_callback('/'.$regexstring.'/i', 'dolForgeDummyCriteriaCallback', $filter);
-	$t = str_replace(array('and','or','AND','OR',' '), '', $t);		// Remove the only strings allowed between each () criteria
+	$t = str_ireplace(array('and', 'or', ' '), '', $t);		// Remove the only strings allowed between each () criteria
 	// If the string result contains something else than '()', the syntax was wrong
 
 	if (preg_match('/[^\(\)]/', $t)) {
@@ -13598,7 +13628,7 @@ function dolForgeCriteriaCallback($matches)
 	} else {
 		if (strtoupper($tmpescaped) == 'NULL') {
 			$tmpescaped = 'NULL';
-		} elseif (is_int($tmpescaped)) {
+		} elseif (ctype_digit((string) $tmpescaped)) {	// if only 0-9 chars, no .
 			$tmpescaped = (int) $tmpescaped;
 		} else {
 			$tmpescaped = (float) $tmpescaped;
@@ -13722,7 +13752,7 @@ function getActionCommEcmList($object)
  *	@param  array<string,string>	$filters	Filter on other fields
  *	@param  string				$sortfield	Sort field
  *	@param  string				$sortorder	Sort order
- *	@return	string|void						Return html part or void if noprint is 1
+ *	@return	?string							Return html part or void if noprint is 1
  */
 function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC')
 {
@@ -14455,6 +14485,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		return $out;
 	} else {
 		print $out;
+		return null;
 	}
 }
 

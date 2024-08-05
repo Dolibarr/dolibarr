@@ -658,7 +658,7 @@ if ($id) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
 		} else {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $object->accountancy_code, 1);
+			$accountingaccount->fetch(0, $object->accountancy_code, 1);
 
 			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 		}

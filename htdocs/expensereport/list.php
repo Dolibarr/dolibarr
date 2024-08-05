@@ -167,7 +167,7 @@ $arrayfields = array(
 	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
 	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => 1),
 	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
-	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => 1),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => -1),
 	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 1),
 	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
@@ -271,7 +271,7 @@ $user_id = $user->id;
 if ($id > 0) {
 	// Charge utilisateur edite
 	$fuser->fetch($id, '', '', 1);
-	$fuser->getrights();
+	$fuser->loadRights();
 	$user_id = $fuser->id;
 
 	$search_user = $user_id;
@@ -744,7 +744,7 @@ if (!empty($arrayfields['d.total_ttc']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['d.date_create']['checked'])) {
 	print_liste_field_titre($arrayfields['d.date_create']['label'], $_SERVER["PHP_SELF"], "d.date_create", "", $param, '', $sortfield, $sortorder, 'nowraponall center');
@@ -961,7 +961,7 @@ if ($num > 0) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
 			$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
-			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
 			// Date creation

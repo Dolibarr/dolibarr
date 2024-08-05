@@ -211,6 +211,7 @@ function testSqlAndScriptInject($val, $type)
 	}
 	$inj += preg_match('/base\s+href/si', $val);
 	$inj += preg_match('/=data:/si', $val);
+
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
@@ -219,11 +220,12 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
 	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
-
 	$inj += preg_match('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', $val);
 
-	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML. Example: <img on<a>error=alert(1) to bypass test on onerror
-	$tmpval = preg_replace('/<[^<]+>/', '', $val);
+	// We refuse html into html because some hacks try to obfuscate evil strings by inserting HTML into HTML.
+	// Example: <img on<a>error=alert(1) or <img onerror<>=alert(1) to bypass test on onerror=
+	$tmpval = preg_replace('/<[^<]*>/', '', $val);
+
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $tmpval); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $tmpval);
@@ -1355,6 +1357,10 @@ if (!defined('NOLOGIN')) {
 			$conf->liste_limit = 20;
 		}
 	}
+	// Set main_checkbox_left_column from user setup
+	if (isset($user->conf->MAIN_CHECKBOX_LEFT_COLUMN)) {	// If a user setup exists
+		$conf->main_checkbox_left_column = getDolUserInt('MAIN_CHECKBOX_LEFT_COLUMN'); // Can be 0
+	}
 
 	// Replace conf->css by personalized value if theme not forced
 	if (!getDolGlobalString('MAIN_FORCETHEME') && getDolUserString('MAIN_THEME')) {
@@ -1465,7 +1471,7 @@ if (!defined('NOLOGIN')) {
 	}
 
 	// Load permissions
-	$user->getrights();
+	$user->loadRights();
 }
 
 dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' - action='.GETPOST('action', 'aZ09').', massaction='.GETPOST('massaction', 'aZ09').(defined('NOTOKENRENEWAL') ? ' NOTOKENRENEWAL='.constant('NOTOKENRENEWAL') : ''), LOG_NOTICE);

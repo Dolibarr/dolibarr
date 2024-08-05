@@ -564,8 +564,9 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+					$langs->load("errors");
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+					setEventMessages($objecttmp->ref.' '.$langs->trans("ErrorThisPaymentModeIsNotDirectDebit"), $objecttmp->errors, 'errors');
 				} else {
 					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 				}

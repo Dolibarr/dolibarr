@@ -467,7 +467,7 @@ class Paiement extends CommonObject
 
 									// Insert one discount by VAT rate category
 									$discount = new DiscountAbsolute($this->db);
-									$discount->fetch('', $invoice->id);
+									$discount->fetch(0, $invoice->id);
 									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 										$discount->description = '(DEPOSIT)';
 										$discount->fk_soc = $invoice->socid;
@@ -514,6 +514,8 @@ class Paiement extends CommonObject
 
 								// Set invoice to paid
 								if (!$error) {
+									$invoice->context['actionmsgmore'] = 'Invoice set to paid by the payment->create() of payment '.$this->ref.' because the remain to pay is 0';
+
 									$result = $invoice->setPaid($user, '', '');
 									if ($result < 0) {
 										$this->error = $invoice->error;

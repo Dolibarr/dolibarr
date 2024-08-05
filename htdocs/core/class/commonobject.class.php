@@ -145,7 +145,8 @@ abstract class CommonObject
 
 	/**
 	 * @var array<string,array<string,string>>	Array to store alternative languages values of object
-	 * 											Note: call fetchValuesForExtraLanguages() before using this
+	 *
+	 * Note: call fetchValuesForExtraLanguages() before using this
 	 */
 	public $array_languages = null; // Value is array() when load already tried
 
@@ -3356,9 +3357,9 @@ abstract class CommonObject
 	/**
 	 * 	Get children of line
 	 *
-	 * 	@param	int			$id					Id of parent line
-	 * 	@param	int			$includealltree		0 = 1st level child, >0 = All level child
-	 * 	@return	int[]			            	Array with list of children lines id
+	 * 	@param	int			$id				Id of parent line
+	 * 	@param	int<0,1>	$includealltree	0 = 1st level child, 1 = All level child
+	 * 	@return	int[]						Array with list of children lines id
 	 */
 	public function getChildrenOfLine($id, $includealltree = 0)
 	{
@@ -6688,7 +6689,7 @@ abstract class CommonObject
 								if (is_numeric($value)) {
 									$res = $object->fetch($value); // Common case
 								} else {
-									$res = $object->fetch('', $value); // For compatibility
+									$res = $object->fetch(0, $value); // For compatibility
 								}
 
 								if ($res > 0) {
@@ -7154,7 +7155,7 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								if (is_numeric($value)) $res = $object->fetch($value);	// Common case
-								else $res = $object->fetch('', $value);					// For compatibility
+								else $res = $object->fetch(0, $value);					// For compatibility
 
 								if ($res > 0) $new_array_options[$key] = $object->id;
 								else {
@@ -8263,7 +8264,7 @@ abstract class CommonObject
 
 			$sql = "SELECT ".$keyList;
 			$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-			if (strpos($InfoFieldList[4], 'extra') !== false) {
+			if (isset($InfoFieldList[4]) && strpos($InfoFieldList[4], 'extra') !== false) {
 				$sql .= ' as main';
 			}
 			if ($selectkey == 'rowid' && empty($value)) {
@@ -8280,7 +8281,7 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$filter_categorie) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -8578,10 +8579,10 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
-	 * @param  string  $fieldKey            Key of attribute
-	 * @param  string  $fieldValue          value of attribute
-	 * @return bool return false if fail true on success, see $this->error for error message
+	 * @param 	array<string,?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
+	 * @param  	string  $fieldKey           Key of attribute
+	 * @param	string  $fieldValue         Value of attribute
+	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
 	 */
 	public function validateField($fields, $fieldKey, $fieldValue)
 	{
@@ -8593,7 +8594,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey])) {
+		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
@@ -8915,7 +8916,7 @@ abstract class CommonObject
 									$value = $getposttemp;
 								}
 							} elseif (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('int'))) {
-								$value =( !empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0' ) ? $this->array_options["options_".$key] : '';
+								$value = (!empty($this->array_options["options_".$key]) || $this->array_options["options_".$key] === '0') ? $this->array_options["options_".$key] : '';
 							} else {
 								$value = (!empty($this->array_options["options_".$key]) ? $this->array_options["options_".$key] : ''); // No GET, no POST, no default value, so we take value of object.
 							}
