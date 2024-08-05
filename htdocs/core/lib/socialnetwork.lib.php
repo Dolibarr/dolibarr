@@ -32,7 +32,7 @@ function socialnetwork_prepare_head()
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/fediverse.php';
-	$head[$h][1] = $langs->trans("Fedivers");
+	$head[$h][1] = $langs->trans("Fediverse");
 	$head[$h][2] = 'divers';
 	$h++;
 
