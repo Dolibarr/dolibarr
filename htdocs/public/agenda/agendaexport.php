@@ -162,7 +162,7 @@ if (!isModEnabled('agenda')) {
 
 // Check config
 if (!getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
-	$user->getrights();
+	$user->loadRights();
 
 	top_httphead();
 
@@ -189,7 +189,7 @@ if ($reshook < 0) {
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
-		$user->getrights();
+		$user->loadRights();
 
 		top_httphead();
 

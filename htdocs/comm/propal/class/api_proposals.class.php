@@ -600,16 +600,17 @@ class Proposals extends DolibarrApi
 	 * Add a contact type of given commercial proposal
 	 *
 	 * @param int    $id             Id of commercial proposal to update
-	 * @param int    $contactid      Id of contact to add
-	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
+	 * @param int    $contactid      Id of external or internal contact to add
+	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
+	 * @param string $source         Source of the contact (internal, external)
 	 * @return array
 	 *
-	 * @url	POST {id}/contact/{contactid}/{type}
+	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 */
-	public function postContact($id, $contactid, $type)
+	public function postContact($id, $contactid, $type, $source = 'external')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
@@ -621,15 +622,23 @@ class Proposals extends DolibarrApi
 			throw new RestException(404, 'Proposal not found');
 		}
 
-		if (!in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
-			throw new RestException(500, 'Availables types: BILLING, SHIPPING OR CUSTOMER');
+		if (!in_array($source, array('internal', 'external'), true)) {
+			throw new RestException(500, 'Availables sources: internal OR external');
+		}
+
+		if ($source == 'external' && !in_array($type, array('BILLING', 'SHIPPING', 'CUSTOMER'), true)) {
+			throw new RestException(500, 'Availables external types: BILLING, SHIPPING OR CUSTOMER');
+		}
+
+		if ($source == 'internal' && !in_array($type, array('SALESREPFOLL'), true)) {
+			throw new RestException(500, 'Availables internal types: SALESREPFOLL');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->add_contact($contactid, $type, 'external');
+		$result = $this->propal->add_contact($contactid, $type, $source);
 
 		if (!$result) {
 			throw new RestException(500, 'Error when added the contact');

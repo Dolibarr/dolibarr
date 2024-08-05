@@ -733,7 +733,7 @@ if ($action == 'create') {
 		print '<td>';
 		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $object->account_number, 1);
+			$accountingaccount->fetch(0, $object->account_number, 1);
 
 			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 		} else {

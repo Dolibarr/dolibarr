@@ -379,9 +379,6 @@ class modAi extends DolibarrModules
 		$myTmpObjects['Availabilities'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		// foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-		// 	if ($myTmpObjectKey == 'Availabilities') {
-		// 		continue;
-		// 	}
 		// 	if ($myTmpObjectArray['includerefgeneration']) {
 		// 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_availabilitiess.odt';
 		// 		$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

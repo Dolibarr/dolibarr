@@ -1542,24 +1542,43 @@ class FormMail extends Form
 		$out .= '</div>';
 
 		$out .= '<script type="text/javascript">
-				$(document).ready(function() {
-					$(".template-option").click(function() {
-						var template = $(this).data("template");
+			$(document).ready(function() {
+				$(".template-option").click(function() {
+					var template = $(this).data("template");
 
-						console.log("We choose a layout for email template "+template);
+					console.log("We choose a layout for email template " + template);
 
-						$(".template-option").removeClass("selected");
-						$(this).addClass("selected");
+					$(".template-option").removeClass("selected");
+					$(this).addClass("selected");
 
-						var contentHtml = $(this).data("content");
+					var contentHtml = $(this).data("content");
+					var csrfToken = "'.newToken().'";
 
-						jQuery("#'.$htmlContent.'").val(contentHtml);
-						var editorInstance = CKEDITOR.instances.'.$htmlContent.';
-						if (editorInstance) {
-							editorInstance.setData(contentHtml);
+					// get value of sujet input
+					var subject = $("#sujet").val();
+
+					// Remplacer la variable de substitution dans le contenu HTML
+					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+
+
+					// Envoyer le contenu HTML à process_template.php pour traitement PHP
+					$.ajax({
+						type: "POST",
+						url: "/core/ajax/mailtemplate.php",
+						data: { content: contentHtml, token: csrfToken },
+						success: function(response) {
+							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
+							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
+							if (editorInstance) {
+								editorInstance.setData(response);
+							}
+						},
+						error: function(xhr, status, error) {
+							console.error("An error occurred: " + xhr.responseText);
 						}
 					});
 				});
+			});
 		</script>';
 
 		return $out;

@@ -804,6 +804,7 @@ if ($step == 4 && $datatoimport) {
 
 	// Load the source fields from input file into variable $arrayrecord
 	$fieldssource = array();
+	/** @var array<string,string> $fieldssource */
 	$result = $obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport, $langs);
 	if ($result >= 0) {
 		// Read first line

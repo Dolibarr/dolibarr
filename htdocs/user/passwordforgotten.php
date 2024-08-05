@@ -157,7 +157,7 @@ if (empty($reshook)) {
 						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
-						// Success
+						// Success to set temporary password, send email
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
 							$message .= $messagewarning;
 							$username = '';

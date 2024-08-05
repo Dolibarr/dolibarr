@@ -676,7 +676,7 @@ class Account extends CommonObject
 
 		if ($accline->insert() > 0) {
 			if ($categorie > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class(";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
 				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
@@ -2350,7 +2350,7 @@ class AccountLine extends CommonObjectLine
 			$nbko++;
 		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".(int) $this->rowid;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid=".(int) $this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -2509,7 +2509,7 @@ class AccountLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if (!empty($cat) && $cat > 0) {
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (";
 				$sql .= "lineid";
 				$sql .= ", fk_categ";
 				$sql .= ") VALUES (";
