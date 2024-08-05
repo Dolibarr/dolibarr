@@ -499,7 +499,7 @@ class FormMail extends Form
 
 			$modelmail_array = array();
 			if ($this->param['models'] != 'none') {
-				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);	// Fill $this->lines_model
+				$result = $this->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
 				if ($result < 0) {
 					setEventMessages($this->error, $this->errors, 'errors');
 				}
@@ -1566,33 +1566,38 @@ class FormMail extends Form
 		$out .= '</div>';
 
 		$out .= '<script type="text/javascript">
-			$(document).ready(function() {
-				$(".template-option").click(function() {
-					var template = $(this).data("template");
+		$(document).ready(function() {
+			$(".template-option").click(function() {
+				var template = $(this).data("template");
 
-					console.log("We choose a layout for email template " + template);
+				console.log("We choose a layout for email template " + template);
 
-					$(".template-option").removeClass("selected");
-					$(this).addClass("selected");
+				$(".template-option").removeClass("selected");
+				$(this).addClass("selected");
 
-					var contentHtml = $(this).data("content");
-					var csrfToken = "'.newToken().'";
+				var subject = $("#sujet").val();
 
-					// get value of sujet input
-					var subject = $("#sujet").val();
+				var contentHtml = $(this).data("content");
+				contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
 
-					// Remplacer la variable de substitution dans le contenu HTML
-					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
+				if (template === "news") {
+					$("#post-dropdown-container").show();
+					console.log("Displaying dropdown for news template");
+				} else {
+					$("#post-dropdown-container").hide();
 
-
-					// Envoyer le contenu HTML à process_template.php pour traitement PHP
+					var csrfToken = "' .newToken().'";
 					$.ajax({
 						type: "POST",
 						url: "/core/ajax/mailtemplate.php",
-						data: { content: contentHtml, token: csrfToken },
+						data: {
+							content: contentHtml,
+							selectedPosts: "[]",
+							token: csrfToken
+						},
 						success: function(response) {
-							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
-							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
+							jQuery("#'.$htmlContent.'").val(response);
+							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
 							if (editorInstance) {
 								editorInstance.setData(response);
 							}
@@ -1601,7 +1606,8 @@ class FormMail extends Form
 							console.error("An error occurred: " + xhr.responseText);
 						}
 					});
-				});
+				}
+			});
 
 			$("#blogpost-select").change(function() {
 				var selectedIds = $(this).val();
@@ -1630,7 +1636,7 @@ class FormMail extends Form
 							url: "/core/ajax/mailtemplate.php",
 							data: {
 								content: contentHtml,
-								selectedPosts: JSON.stringify(selectedPosts),
+								selectedPosts: selectedIds.join(","),
 								token: csrfToken
 							},
 							success: function(response) {
@@ -1651,7 +1657,8 @@ class FormMail extends Form
 				});
 			}
 		});
-		</script>';
+	</script>';
+
 		return $out;
 	}
 
@@ -1681,7 +1688,7 @@ class FormMail extends Form
 			return -1;
 		}
 
-		$ret = new ModelMail($dbs);
+		$ret = new ModelMail();
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1691,7 +1698,7 @@ class FormMail extends Form
 			$languagetosearchmain = '';
 		}
 
-		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
+		$sql = "SELECT rowid, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
 		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1714,7 +1721,6 @@ class FormMail extends Form
 		if ($id == -1) {
 			$sql .= " AND position = 0";
 		}
-		$sql .= " AND entity IN(".getEntity('c_email_templates', 1).")";
 		if ($languagetosearch) {
 			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		} else {
@@ -1841,7 +1847,7 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Find if template exists and are available for current user, then set them into $this->lines_model.
+	 *      Find if template exists and are available for current user, then set them into $this->lines_module.
 	 *      Search into table c_email_templates
 	 *
 	 * 		@param	string		$type_template		Get message for key module
@@ -1852,7 +1858,7 @@ class FormMail extends Form
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
-		global $db, $conf;
+		global $conf;
 
 		$sql = "SELECT rowid, module, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
@@ -1879,7 +1885,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail($db);
+				$line = new ModelMail();
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;
 				$line->lang = $obj->lang;
@@ -2077,61 +2083,13 @@ class FormMail extends Form
 }
 
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
 /**
- * Object of table llx_c_email_templates
+ * ModelMail
  *
- * TODO Move this class into a file cemailtemplate.class.php
+ * Object of table llx_c_email_templates
  */
-class ModelMail extends CommonObject
+class ModelMail
 {
-	/**
-	 * @var string ID to identify managed object.
-	 */
-	public $element = 'email_template';
-
-	/**
-	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
-	 */
-	public $table_element = 'c_email_templates';
-
-
-	// BEGIN MODULEBUILDER PROPERTIES
-	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 */
-	public $fields=array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"-1",),
-		"module" => array("type"=>"varchar(32)", "label"=>"Module", "enabled"=>"1", 'position'=>20, 'notnull'=>0, "visible"=>"-1",),
-		"type_template" => array("type"=>"varchar(32)", "label"=>"Typetemplate", "enabled"=>"1", 'position'=>25, 'notnull'=>0, "visible"=>"-1",),
-		"lang" => array("type"=>"varchar(6)", "label"=>"Lang", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"-1",),
-		"private" => array("type"=>"smallint(6)", "label"=>"Private", "enabled"=>"1", 'position'=>35, 'notnull'=>1, "visible"=>"-1",),
-		"fk_user" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"Fkuser", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
-		"datec" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1",),
-		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>50, 'notnull'=>1, "visible"=>"-1",),
-		"label" => array("type"=>"varchar(255)", "label"=>"Label", "enabled"=>"1", 'position'=>55, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "csslist"=>"tdoverflowmax150",),
-		"position" => array("type"=>"smallint(6)", "label"=>"Position", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"active" => array("type"=>"integer", "label"=>"Active", "enabled"=>"1", 'position'=>65, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
-		"topic" => array("type"=>"text", "label"=>"Topic", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"content" => array("type"=>"mediumtext", "label"=>"Content", "enabled"=>"1", 'position'=>75, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"content_lines" => array("type"=>"text", "label"=>"Contentlines", "enabled"=>"1", 'position'=>80, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"enabled" => array("type"=>"varchar(255)", "label"=>"Enabled", "enabled"=>"1", 'position'=>85, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"joinfiles" => array("type"=>"varchar(255)", "label"=>"Joinfiles", "enabled"=>"1", 'position'=>90, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_from" => array("type"=>"varchar(255)", "label"=>"Emailfrom", "enabled"=>"1", 'position'=>95, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_to" => array("type"=>"varchar(255)", "label"=>"Emailto", "enabled"=>"1", 'position'=>100, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_tocc" => array("type"=>"varchar(255)", "label"=>"Emailtocc", "enabled"=>"1", 'position'=>105, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_tobcc" => array("type"=>"varchar(255)", "label"=>"Emailtobcc", "enabled"=>"1", 'position'=>110, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"defaultfortype" => array("type"=>"smallint(6)", "label"=>"Defaultfortype", "enabled"=>"1", 'position'=>115, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-	);
-	public $rowid;
-	public $type_template;
-	public $datec;
-	public $tms;
-	public $active;
-	public $enabled;
-	public $defaultfortype;
-
 	/**
 	 * @var int ID
 	 */
@@ -2179,71 +2137,4 @@ class ModelMail extends CommonObject
 	 * @var int Position of template in a combo list
 	 */
 	public $position;
-	// END MODULEBUILDER PROPERTIES
-
-
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		global $langs;
-
-		$this->db = $db;
-		$this->ismultientitymanaged = 0;
-		$this->isextrafieldmanaged = 1;
-
-		if (!getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
-			$this->fields['rowid']['visible'] = 0;
-		}
-		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
-			$this->fields['entity']['enabled'] = 0;
-		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('test', 'mailtemplate', 'read')) {
-		 $this->fields['myfield']['visible'] = 1;
-		 $this->fields['myfield']['noteditable'] = 0;
-		 }*/
-
-		// Unset fields that are disabled
-		foreach ($this->fields as $key => $val) {
-			if (isset($val['enabled']) && empty($val['enabled'])) {
-				unset($this->fields[$key]);
-			}
-		}
-
-		// Translate some data of arrayofkeyval
-		if (is_object($langs)) {
-			foreach ($this->fields as $key => $val) {
-				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-					foreach ($val['arrayofkeyval'] as $key2 => $val2) {
-						$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
-					}
-				}
-			}
-		}
-	}
-
-
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param 	int    	$id   			Id object
-	 * @param 	string 	$ref  			Ref
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
-	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
-	{
-		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
-		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
-			$this->fetchLines($noextrafields);
-		}
-		return $result;
-	}
 }
