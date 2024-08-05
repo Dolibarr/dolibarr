@@ -57,7 +57,7 @@ $reg = array();
 // Initiate status list
 $statuslist = array(
 	Ticket::STATUS_IN_PROGRESS => $langs->trans("InProgress"),
-	Ticket::STATUS_NOT_READ => $langs->trans("NptRead"),
+	Ticket::STATUS_NOT_READ => $langs->trans("NotRead"),
 	Ticket::STATUS_READ => $langs->trans("Read"),
 	Ticket::STATUS_ASSIGNED => $langs->trans("Assigned"),
 	Ticket::STATUS_NEED_MORE_INFO => $langs->trans("NeedMoreInformationShort"),
