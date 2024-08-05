@@ -6774,7 +6774,7 @@ class Product extends CommonObject
 	 * Retrieve and display products.
 	 *
 	 * @param int $limit The maximum number of results to return.
-	 * @return Product[]|int  return array if OK, -1 if KO
+	 * @return array<int, array<string, mixed>>|int  return array if OK, -1 if KO
 	 */
 	public function getProductsToPreviewInEmail($limit)
 	{
