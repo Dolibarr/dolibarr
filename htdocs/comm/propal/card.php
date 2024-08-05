@@ -1237,9 +1237,9 @@ if (empty($reshook)) {
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					}
 				}
 
