@@ -1382,7 +1382,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  *	Show linked objects for PDF generation
  *
  *	@param	TCPDF		$pdf				Object PDF
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
  *	@param  int			$posy				Y
@@ -1404,7 +1404,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 
 			$posy += 3;
 			$pdf->SetXY($posx, $posy);
-			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetFont('', '', (float) $default_font_size - 2);
 			$pdf->MultiCell($w, $h, $reftoshow, '', $align);
 		}
 	}
@@ -1462,7 +1462,7 @@ function pdf_writelinedesc(&$pdf, $object, $i, $outputlangs, $w, $h, $posx, $pos
 
 		if (getDolGlobalString('MARGIN_TOP_ZERO_UL')) {
 			$pdf->setListIndentWidth(5);
-			$TMarginList = ['ul' => [['h'=>0.1, ],['h'=>0.1, ]], 'li' => [['h'=>0.1, ],],];
+			$TMarginList = ['ul' => [['h' => 0.1, ],['h' => 0.1, ]], 'li' => [['h' => 0.1, ],],];
 			$pdf->setHtmlVSpace($TMarginList);
 		}
 
