@@ -115,14 +115,14 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 			$levels--;
 			$hundreds = (int) ($num_levels[$i] / 100);
 			$hundreds = ($hundreds ? ' '.$list1[$hundreds].' '.$langs->transnoentities('hundred').($hundreds == 1 ? '' : 's').' ' : '');
-			$tens = (int) ($num_levels[$i] % 100);
+			$tens = (int) ((int) $num_levels[$i] % 100);
 			$singles = '';
 			if ($tens < 20) {
 				$tens = ($tens ? ' '.$list1[$tens].' ' : '');
 			} else {
 				$tens = (int) ($tens / 10);
 				$tens = ' '.$list2[$tens].' ';
-				$singles = (int) ($num_levels[$i] % 10);
+				$singles = (int) ((int) $num_levels[$i] % 10);
 				$singles = ' '.$list1[$singles].' ';
 			}
 			$words[] = $hundreds.$tens.$singles.(($levels && (int) ($num_levels[$i])) ? ' '.$list3[$levels].' ' : '');
