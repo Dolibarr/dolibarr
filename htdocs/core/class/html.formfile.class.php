@@ -1291,6 +1291,12 @@ class FormFile
 			$i = 0;
 			$nboflines = 0;
 			$lastrowid = 0;
+			$parametersByDefault = array(
+				'modulepart'=> $modulepart,
+				'relativepath'=> $relativepath,
+				'permtoedit' => $permtoeditline,
+				'permonobject' => $permonobject,
+			);
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
 				if ($file['name'] != '.'
 						&& $file['name'] != '..'
@@ -1299,8 +1305,13 @@ class FormFile
 						$lastrowid = $filearray[$key]['rowid'];
 					}
 
-					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+					// get specific parameters from file attributes if set or get default ones
+					$modulepart = ($file['modulepart'] ?? $parametersByDefault['modulepart']);
+					$relativepath = ($file['relativepath'] ?? $parametersByDefault['relativepath']);
+					$permtoeditline = ($file['permtoedit'] ?? $parametersByDefault['permtoedit']);
+					$permonobject = ($file['permonobject'] ?? $parametersByDefault['permonobject']);
 
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
 					if (empty($relativepath) || empty($modulepart)) {
 						$filepath = $file['level1name'].'/'.$file['name'];
 					} else {
