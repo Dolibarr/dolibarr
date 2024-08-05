@@ -572,14 +572,14 @@ if (empty($reshook)) {
 				// if price ht was forced (ie: from gui when calculated by margin rate and cost price). TODO Why this ?
 				if (!empty($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
 					// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
 
