@@ -113,7 +113,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		$nboflevels = count($num_levels);
 		for ($i = 0; $i < $nboflevels; $i++) {
 			$levels--;
-			$hundreds = (int) ($num_levels[$i] / 100);
+			$hundreds = (int) ((int) $num_levels[$i] / 100);
 			$hundreds = ($hundreds ? ' '.$list1[$hundreds].' '.$langs->transnoentities('hundred').($hundreds == 1 ? '' : 's').' ' : '');
 			$tens = (int) ((int) $num_levels[$i] % 100);
 			$singles = '';
