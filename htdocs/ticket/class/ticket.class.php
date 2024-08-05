@@ -2988,11 +2988,15 @@ class Ticket extends CommonObject
 				// Set status back to "In progress" if not set yet, but only if internal user and not a private message
 				// Or set status to "In progress" if the client has answered and if the ticket has started
 				// So we are sure to leave the STATUS_DRAFT, STATUS_NEED_INFO.
-				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
+				if ((empty(getDolGlobalInt('TICKET_SET_NEED_MORE_INFO_ON_SENDING_MESSAGE')) && $object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
 					($object->status > self::STATUS_IN_PROGRESS && $public_area)
 				) {
 					$object->setStatut($object::STATUS_IN_PROGRESS);
 				}
+				if ((!empty(getDolGlobalInt('TICKET_SET_NEED_MORE_INFO_ON_SENDING_MESSAGE')) && $object->status != self::STATUS_NEED_MORE_INFO && !$user->socid && !$private)) {
+					$object->setStatut($object::STATUS_NEED_MORE_INFO);
+				}
+
 				return 1;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
