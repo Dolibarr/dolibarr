@@ -553,7 +553,7 @@ function ClickProduct(position, qty = 1) {
 					} else if (data['paye'] == 0 && data['status'] == <?php echo Facture::STATUS_VALIDATED; ?>) {
 						console.log("Invoice not completely paid");
 						alert('Invoice not completely paid !');
-					} 
+					}
 				});
 			}
 	}
