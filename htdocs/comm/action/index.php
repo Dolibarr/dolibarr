@@ -278,6 +278,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		if (getDolGlobalString($source) && getDolGlobalString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
+				'type' => 'globalsetup',
 				'src' => getDolGlobalString($source),
 				'name' => dol_string_nohtmltag(getDolGlobalString($name)),
 				'offsettz' => (int) getDolGlobalInt($offsettz, 0),
@@ -288,6 +289,7 @@ if (empty($conf->global->AGENDA_DISABLE_EXT)) {
 		}
 	}
 }
+
 // Define list of external calendars (user setup)
 if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 	$i = 0;
@@ -304,6 +306,7 @@ if (empty($user->conf->AGENDA_DISABLE_EXT)) {
 		if (getDolUserString($source) && getDolUserString($name)) {
 			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
 			$listofextcals[] = array(
+				'type' => 'usersetup',
 				'src' => getDolUserString($source),
 				'name' => dol_string_nohtmltag(getDolUserString($name)),
 				'offsettz' => (int) (empty($user->conf->$offsettz) ? 0 : $user->conf->$offsettz),
@@ -555,6 +558,7 @@ if ($user->rights->agenda->myactions->create || $user->hasRight('agenda', 'allac
 
 // Define the legend/list of calendard to show
 $s = ''; $link = '';
+
 
 $showextcals = $listofextcals;
 
@@ -1094,7 +1098,7 @@ if ($user->hasRight("holiday", "read")) {
 // Complete $eventarray with external import Ical
 if (count($listofextcals)) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/ical.class.php';
-	foreach ($listofextcals as $extcal) {
+	foreach ($listofextcals as $key => $extcal) {
 		$url = $extcal['src']; // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
 		$namecal = $extcal['name'];
 		$offsettz = $extcal['offsettz'];
@@ -1106,6 +1110,11 @@ if (count($listofextcals)) {
 
 		$ical = new ICal();
 		$ical->parse($url, $pathforcachefile, $DELAYFORCACHE);
+		if ($ical->error) {
+			// Save error message for extcal
+			$listofextcals[$key]['error'] = $ical->error;
+			$s .= '<br><font class="warning">'.dol_escape_htmltag($listofextcals[$key]['name']).': '.$url.'<br>Error message: '.dol_escape_htmltag($ical->error).'</font>';
+		}
 
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;

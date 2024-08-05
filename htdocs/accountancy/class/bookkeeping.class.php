@@ -916,6 +916,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.date_creation,";
 			$sql .= " t.date_export,";
 			$sql .= " t.date_validated as date_validation,";
+			$sql .= " t.date_lim_reglement,";
 			$sql .= " t.import_key";
 		}
 		// Manage filter
@@ -938,6 +939,10 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.date_validated>=' || $key == 't.date_validated<=') {
 					$sqlwhere[] = $key.'\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_lim_reglement>=') {
+					$sqlwhere[] = 't.date_lim_reglement>=\''.$this->db->idate($value).'\'';
+				} elseif ($key == 't.date_lim_reglement<=') {
+					$sqlwhere[] = 't.date_lim_reglement<=\''.$this->db->idate($value).'\'';
 				} elseif ($key == 't.credit' || $key == 't.debit') {
 					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} elseif ($key == 't.reconciled_option') {
@@ -1022,6 +1027,8 @@ class BookKeeping extends CommonObject
 					$line->date_creation = $this->db->jdate($obj->date_creation);
 					$line->date_export = $this->db->jdate($obj->date_export);
 					$line->date_validation = $this->db->jdate($obj->date_validation);
+					// Due date
+					$line->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 					$line->import_key = $obj->import_key;
 
 					$this->lines[] = $line;
@@ -1376,7 +1383,7 @@ class BookKeeping extends CommonObject
 			$this->piece_num = trim($this->piece_num);
 		}
 
-		$result = $this->canModifyBookkeeping($this->id);
+		$result = $this->canModifyBookkeeping($this->id, $mode);
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -1789,7 +1796,7 @@ class BookKeeping extends CommonObject
 		global $conf;
 
 		$sql = "SELECT piece_num, doc_date,code_journal, journal_label, doc_ref, doc_type,";
-		$sql .= " date_creation, tms as date_modification, date_validated as date_validation";
+		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
 			$sql .= ", date_export";
@@ -1815,6 +1822,7 @@ class BookKeeping extends CommonObject
 				$this->date_export = $this->db->jdate($obj->date_export);
 			}
 			$this->date_validation = $this->db->jdate($obj->date_validation);
+			$this->date_lim_reglement = $this->db->jdate($obj->date_lim_reglement);
 		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(__METHOD__.$this->error, LOG_ERR);
@@ -2343,13 +2351,13 @@ class BookKeeping extends CommonObject
 
 			$bookkeeping = new BookKeeping($this->db);
 			$result = $bookkeeping->fetch($id);
+
 			if ($result <= 0) {
 				return $result;
 			}
-
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					if ($fiscal_period['date_start'] <= $bookkeeping->doc_date && $bookkeeping->doc_date <= $fiscal_period['date_end']) {
+					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $bookkeeping->doc_date && (empty($fiscal_period['date_end']) || $bookkeeping->doc_date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
 				}
@@ -2393,7 +2401,7 @@ class BookKeeping extends CommonObject
 
 			if (!empty($conf->cache['active_fiscal_period_cached']) && is_array($conf->cache['active_fiscal_period_cached'])) {
 				foreach ($conf->cache['active_fiscal_period_cached'] as $fiscal_period) {
-					if ($fiscal_period['date_start'] <= $date && $date <= $fiscal_period['date_end']) {
+					if (!empty($fiscal_period['date_start']) && $fiscal_period['date_start'] <= $date && (empty($fiscal_period['date_end']) || $date <= $fiscal_period['date_end'])) {
 						return 1;
 					}
 				}

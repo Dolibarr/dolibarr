@@ -275,6 +275,7 @@ if ($action == 'order' && GETPOST('valid')) {
 				} else {
 					$id = $result;
 				}
+				$i++;
 			} else {
 				$order->socid = $suppliersid[$i];
 				$order->fetch_thirdparty();
@@ -365,7 +366,7 @@ $sql .= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s ON p.rowid = s.fk_product';
 $sql .= ' AND s.fk_entrepot  IN (' . $db->sanitize($list_warehouse) . ')';
 
-$list_warehouse_selected = ($fk_entrepot < 0 || empty($fk_entrepot)) ? '0' : $fk_entrepot;
+$list_warehouse_selected = ($fk_entrepot < 0 || empty($fk_entrepot)) ? $list_warehouse : $fk_entrepot;
 $sql .= ' AND s.fk_entrepot  IN (' . $db->sanitize($list_warehouse_selected) . ')';
 
 

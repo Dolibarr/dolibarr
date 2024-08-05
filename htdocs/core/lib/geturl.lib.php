@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,17 +92,23 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	// Restrict use to some protocols only
 	$protocols = 0;
+	$redir_list = array();
 	if (is_array($allowedschemes)) {
 		foreach ($allowedschemes as $allowedscheme) {
 			if ($allowedscheme == 'http') {
 				$protocols |= CURLPROTO_HTTP;
-			}
-			if ($allowedscheme == 'https') {
+				$redir_list["HTTP"] = 1;
+			} elseif ($allowedscheme == 'https') {
 				$protocols |= CURLPROTO_HTTPS;
+				$redir_list["HTTPS"] = 1;
+			} elseif ($allowedscheme == 'ftp') {
+				$protocols |= CURLPROTO_FTP;
+				$redir_list["FTP"] = 1;
+			} elseif ($allowedscheme == 'ftps') {
+				$protocols |= CURLPROTO_FTPS;
+				$redir_list["FTPS"] = 1;
 			}
 		}
-		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
-		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
 	}
 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
@@ -217,6 +224,14 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 				//var_dump($connect_to);
 				curl_setopt($ch, CURLOPT_CONNECT_TO, $connect_to);
 			}
+		}
+
+		// Moving these just before the curl_exec option really limits
+		// on windows PHP 7.4.
+		curl_setopt($ch, CURLOPT_PROTOCOLS, $protocols);
+		curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $protocols);
+		if (version_compare(PHP_VERSION, '8.3.0', '>=') && version_compare(curl_version()['version'], '7.85.0', '>=')) {
+			curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS_STR, implode(",", array_keys($redir_list)));
 		}
 
 		// Getting response from server

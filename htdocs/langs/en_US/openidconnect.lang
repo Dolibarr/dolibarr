@@ -1,0 +1,22 @@
+# Dolibarr language file - en_US - openidconnect
+OpenIDconnectSetup=Configuration of the OpenID Connect module
+MainAuthenticationOidcClientIdName=Client ID
+MainAuthenticationOidcClientIdDesc=OpenID Connect Client ID
+MainAuthenticationOidcClientSecretName=Client secret
+MainAuthenticationOidcClientSecretDesc=OpenID Connect Client Secret
+MainAuthenticationOidcScopesName=Scopes
+MainAuthenticationOidcScopesDesc=OpenID scopes to allow access to user information
+MainAuthenticationOidcAuthorizeUrlName=Authorize URL
+MainAuthenticationOidcAuthorizeUrlDesc=(example: https://example.com/oauth2/authorize)
+MainAuthenticationOidcTokenUrlName=Token URL
+MainAuthenticationOidcTokenUrlDesc=(example: https://example.com/oauth2/token)
+MainAuthenticationOidcUserinfoUrlName=User info URL
+MainAuthenticationOidcUserinfoUrlDesc=(example: https://example.com/oauth2/userinfo)
+MainAuthenticationOidcLogoutUrlName=Logout URL
+MainAuthenticationOidcLogoutUrlDesc=(example: https://example.com/oauth2/logout)
+MainAuthenticationOidcRedirectUrlName=Redirect URL
+MainAuthenticationOidcRedirectUrlDesc=Redirect URL to authorize on the OpenID provider side
+MainAuthenticationOidcLogoutRedirectUrlName=Dolibarr logout URL
+MainAuthenticationOidcLogoutRedirectUrlDesc=Dolibarr logout URL to authorize on the OpenID provider side
+MainAuthenticationOidcLoginClaimName=Login claim
+MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr user login. If not set or empty, defaults to email

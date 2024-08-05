@@ -38,17 +38,6 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 $validatemonth = GETPOST('validatemonth', 'int');
 $validateyear = GETPOST('validateyear', 'int');
 
-// Security check
-if (!isModEnabled('accounting')) {
-	accessforbidden();
-}
-if ($user->socid > 0) {
-	accessforbidden();
-}
-if (!$user->hasRight('accounting', 'bind', 'write')) {
-	accessforbidden();
-}
-
 $accountingAccount = new AccountingAccount($db);
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
@@ -82,7 +71,7 @@ if (!isModEnabled('accounting')) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
+if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 

@@ -135,6 +135,13 @@ class FormMail extends Form
 	public $withtoccc;
 	public $withtopic;
 
+
+	/**
+	 * @var string|array 		email address (string) used as pre selected destination or list of desintation (array)
+	 * @see findToDefaultDestination()
+	 */
+	public $withtopreselected;
+
 	/**
 	 * @var int 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 */
@@ -1100,6 +1107,12 @@ class FormMail extends Form
 					if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action', 'aZ09') == 'presend') {
 						$withtoselected = array_keys($tmparray);
 					}
+
+					//if empty, search if one of them is default contact for that type of document ?
+					//first step: default role on object, then if empty switch back on default role on thirdpart
+					if (empty($withtoselected)) {
+						$withtoselected = $this->withtopreselected;
+					}
 				}
 
 				$out .= $form->multiselectarray("receiver", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
@@ -1707,6 +1720,39 @@ class FormMail extends Form
 		}
 
 		return $tmparray;
+	}
+
+
+	/**
+	 * Get list of substitution keys available for emails. This is used for tooltips help.
+	 * This include the complete_substitutions_array.
+	 *
+	 * @param	Object	$object	 Dolibarr Object
+	 *
+	 * @return	void
+	 */
+	public function findToDefaultDestination($object)
+	{
+		if (is_object($object)) {
+			$this->withtopreselected = $object->getIdContact('external', null);
+			if (empty($this->withtopreselected)) {
+				$element = $object->element;
+				if (empty($element)) {
+					$element = substr($this->param["models"], 0, strpos($this->param["models"], '_'));
+				}
+				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+				$contact = new Contact($this->db);
+				foreach ($this->withto as $key => $value) {
+					if ($contact->fetch($key, null, '', '', 1)) {
+						foreach ($contact->roles as $roleid => $role) {
+							if ($role['element'] == $element) {
+								$this->withtopreselected[] = $key;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

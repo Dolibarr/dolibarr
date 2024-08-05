@@ -371,6 +371,21 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 					}
 				}
 
+				// We also check content
+				$extractphp = dolKeepOnlyPhpCode($sql);
+				$extractphpold = '';
+
+				// Security analysis
+				$errorphpcheck = checkPHPCode($extractphpold, $extractphp);	// Contains the setEventMessages
+				if ($errorphpcheck) {
+					$error++;
+					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";
+					//print "newsqlclean = ".$newsqlclean."<br>\n";
+					dol_syslog('Admin.lib::run_sql Request '.($i + 1)." contains PHP code and checking this code returns errorphpcheck='.$errorphpcheck.'", LOG_WARNING);
+					dol_syslog('$sql='.$sql, LOG_DEBUG);
+					break;
+				}
+
 				if (!$qualified) {
 					$error++;
 					//print 'Request '.($i + 1)." contains non allowed instructions.<br>\n";

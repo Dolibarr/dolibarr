@@ -1648,6 +1648,8 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 {
 	if ($noescapetags == 'common') {
 		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody';
+		// Add also html5 tags
+		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
 	}
 	if ($cleanalsojavascript) {
 		$stringtoescape = dol_string_onlythesehtmltags($stringtoescape, 0, 0, $cleanalsojavascript, 0, array(), 0);
@@ -7174,7 +7176,8 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
 	if (empty($allowed_tags)) {
 		$allowed_tags = array(
 			"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li",
-			"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
+			"ol", "p", "q", "s", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6",
+			"header", "footer", "nav", "section", "menu", "menuitem"	// html5 tags
 		);
 	}
 	$allowed_tags[] = "comment";		// this tags is added to manage comment <!--...--> that are replaced into <comment>...</comment>
@@ -7443,6 +7446,42 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// Remove the trick added to solve pb with text without parent tag
 					$out = preg_replace('/^<div class="tricktoremove">/', '', $out);
 					$out = preg_replace('/<\/div>$/', '', $out);
+				} catch (Exception $e) {
+					// If error, invalid HTML string with no way to clean it
+					//print $e->getMessage();
+					$out = 'InvalidHTMLStringCantBeCleaned';
+				}
+			}
+
+			if (!empty($out) && getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') && $check != 'restricthtmlallowunvalid') {
+				try {
+					// Try cleaning using tidy
+					if (extension_loaded('tidy') && class_exists("tidy")) {
+						//print "aaa".$out."\n";
+
+						// See options at https://tidy.sourceforge.net/docs/quickref.html
+						$config = array(
+							'clean' => false,
+							'quote-marks' => false,		// do not replace " that are used for real text content (not a string symbol for html attribute) into &quot;
+							'doctype'     => 'strict',
+							'show-body-only' => true,
+							"indent-attributes" => false,
+							"vertical-space" => false,
+							'ident' => false,
+							"wrap" => 0
+							// HTML5 tags
+							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
+							//'new-blocklevel-tags' => 'footer header section menu menuitem'
+							//'new-empty-tags' => 'command embed keygen source track wbr',
+							//'new-inline-tags' => 'audio command datalist embed keygen mark menuitem meter output progress source time video wbr',
+						);
+
+						// Tidy
+						$tidy = new tidy();
+						$out = $tidy->repairString($out, $config, 'utf8');
+
+						//print "xxx".$out;exit;
+					}
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -8353,23 +8392,21 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		}
 
 		// Amount keys formated in a currency
-		if ($object->element =='facture') {
-			if (is_object($object)) {
-				$totalpaye			= $object->getSommePaiement();
-				$totalcreditnotes	= $object->getSumCreditNotesUsed();
-				$totaldeposits		= $object->getSumDepositsUsed();
-				$resteapayer		= price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-			}
-			$substitutionarray['__FACDATE__']			= is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '') : '';
-			$substitutionarray['__FACDATELIMREG__']		= is_object($object) ? (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '') : '';
-			$substitutionarray['__FACTOTALTTC_2D__']	= is_object($object) ? number_format($object->total_ttc, 2, ',', ' ') : '';
-			$substitutionarray['__FACTOTALHT_2D__']		= is_object($object) ? number_format($object->total_ht, 2, ',', ' ') : '';
-			$substitutionarray['__FACTOTALHT_2DC__']	= is_object($object) ? price($object->total_ht, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-			$substitutionarray['__FACTOTALTTC_2DC__']	= is_object($object) ? price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-			$substitutionarray['__FACREST_2D__']		= is_object($object) ? number_format($resteapayer, 2, ',', ' ') : '';
-			$substitutionarray['__FACREST_2DC__']		= is_object($object) ? price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto') : '';
-			$substitutionarray['__SIT_NUM__']			= is_object($object) ? (isset($object->situation_counter) ? $object->situation_counter : '') : '';
-        }
+		if (is_object($object) && $object->element == 'facture') {
+			$totalpaye = $object->getSommePaiement();
+			$totalcreditnotes = $object->getSumCreditNotesUsed();
+			$totaldeposits = $object->getSumDepositsUsed();
+			$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+			$substitutionarray['__FACDATE__'] = (isset($object->date) ? dol_print_date($object->date, 'daytext', 0, $outputlangs) : '');
+			$substitutionarray['__FACDATELIMREG__'] = (isset($object->date_lim_reglement) ? dol_print_date($object->date_lim_reglement, 'daytext', 0, $outputlangs) : '');
+			$substitutionarray['__FACTOTALTTC_2D__'] = number_format($object->total_ttc, 2, ',', ' ');
+			$substitutionarray['__FACTOTALHT_2D__'] = number_format($object->total_ht, 2, ',', ' ');
+			$substitutionarray['__FACTOTALHT_2DC__'] = price($object->total_ht, 0, $outputlangs, 1, 2, 2, 'auto');
+			$substitutionarray['__FACTOTALTTC_2DC__'] = price($object->total_ttc, 0, $outputlangs, 1, 2, 2, 'auto');
+			$substitutionarray['__FACREST_2D__'] = number_format($resteapayer, 2, ',', ' ');
+			$substitutionarray['__FACREST_2DC__'] = price($resteapayer, 0, $outputlangs, 1, 2, 2, 'auto');
+			$substitutionarray['__SIT_NUM__'] = ($object->situation_counter ?? '');
+		}
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object) ? ($object->total_ht ? price($object->total_ht, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object) ? ($object->total_ttc ? price($object->total_ttc, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';
 		$substitutionarray['__AMOUNT_REMAIN_FORMATED__'] = is_object($object) ? ($object->total_ttc ? price($object->total_ttc - $already_payed_all, 0, $outputlangs, 0, -1, -1, $conf->currency) : null) : '';

@@ -507,12 +507,12 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'settracking_number' || $action == 'settracking_url'
+	} elseif (($action == 'settracking_number' || $action == 'settracking_url'
 	|| $action == 'settrueWeight'
 	|| $action == 'settrueWidth'
 	|| $action == 'settrueHeight'
 	|| $action == 'settrueDepth'
-	|| $action == 'setshipping_method_id') {
+		|| $action == 'setshipping_method_id') && $permissiontoadd) {
 		// Action update
 		$error = 0;
 
@@ -587,7 +587,7 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 		}
-	} elseif ($action == 'classifybilled') {
+	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		$result = $object->setBilled();
 		if ($result >= 0) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -1506,7 +1506,7 @@ if ($action == 'create') {
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 
-		if ($action != 'editdate_livraison') {
+		if ($action != 'editdate_livraison' && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1638,7 +1638,7 @@ if ($action == 'create') {
 		print $langs->trans('ReceptionMethod');
 		print '</td>';
 
-		if ($action != 'editshipping_method_id') {
+		if ($action != 'editshipping_method_id' && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping_method_id&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetReceptionMethod'), 1).'</a></td>';
 		}
 		print '</tr></table>';

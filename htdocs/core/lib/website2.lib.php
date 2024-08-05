@@ -98,7 +98,7 @@ function dolSavePageAlias($filealias, $object, $objectpage)
 		dolChmod($filealiassub);
 	} elseif (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
 		// Save also alias into all language subdirectories if it is a main language
-		if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && !empty($object->otherlang)) {
+		if (empty(getDolGlobalInt('WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR')) && !empty($object->otherlang)) {
 			$dirname = dirname($filealias);
 			$filename = basename($filealias);
 			foreach (explode(',', $object->otherlang) as $sublang) {
@@ -176,7 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 	$tplcontent .= "require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
 	$tplcontent .= "ob_start();\n";
 	$tplcontent .= "// END PHP ?>\n";
-	if (!empty($conf->global->WEBSITE_FORCE_DOCTYPE_HTML5)) {
+	if (!empty(getDolGlobalInt('WEBSITE_FORCE_DOCTYPE_HTML5'))) {
 		$tplcontent .= "<!DOCTYPE html>\n";
 	}
 	$tplcontent .= '<html'.($shortlangcode ? ' lang="'.$shortlangcode.'"' : '').'>'."\n";
@@ -318,7 +318,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $o
 
 			// Create a version for sublanguages
 			if (empty($objectpage->lang) || !in_array($objectpage->lang, explode(',', $object->otherlang))) {
-				if (empty($conf->global->WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR) && is_object($object) && !empty($object->otherlang)) {
+				if (empty(getDolGlobalInt('WEBSITE_DISABLE_MAIN_LANGUAGE_INTO_LANGSUBDIR')) && is_object($object) && !empty($object->otherlang)) {
 					$dirname = dirname($fileindex);
 					foreach (explode(',', $object->otherlang) as $sublang) {
 						// Avoid to erase main alias file if $sublang is empty string
@@ -647,14 +647,14 @@ function showWebsiteTemplates(Website $website)
  * - Block if bad code in the new string.
  * - Block also if user has no permission to change PHP code.
  *
- * @param	string		$phpfullcodestringold		PHP old string. For exemple "<?php echo 'a' ?><php echo 'b' ?>"
- * @param	string		$phpfullcodestring			PHP new string. For exemple "<?php echo 'a' ?><php echo 'c' ?>"
+ * @param	string		$phpfullcodestringold		PHP old string (before the change). For example "<?php echo 'a' ?><php echo 'b' ?>"
+ * @param	string		$phpfullcodestring			PHP new string. For example "<?php echo 'a' ?><php echo 'c' ?>"
  * @return	int										Error or not
  * @see dolKeepOnlyPhpCode()
  */
-function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
+function checkPHPCode(&$phpfullcodestringold, &$phpfullcodestring)
 {
-	global $conf, $langs, $user;
+	global $langs, $user;
 
 	$error = 0;
 
@@ -663,11 +663,11 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 
 	// First check forbidden commands
-	$forbiddenphpcommands = array();
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_EXEC)) {    // If option is not on, we disallow functions to execute commands
-		$forbiddenphpcommands = array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI");
+	$forbiddenphpcommands = array("override_function", "session_id", "session_create_id", "session_regenerate_id");
+	if (!getDolGlobalString('WEBSITE_PHP_ALLOW_EXEC')) {    // If option is not on, we disallow functions to execute commands
+		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen", "eval", "dol_eval", "executeCLI"));
 	}
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_WRITE)) {    // If option is not on, we disallow functions to write files
+	if (empty(getDolGlobalInt('WEBSITE_PHP_ALLOW_WRITE'))) {    // If option is not on, we disallow functions to write files
 		$forbiddenphpcommands = array_merge($forbiddenphpcommands, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "unlink", "mkdir", "rmdir", "symlink", "touch", "umask"));
 	}
 	foreach ($forbiddenphpcommands as $forbiddenphpcommand) {
@@ -679,7 +679,7 @@ function checkPHPCode($phpfullcodestringold, $phpfullcodestring)
 	}
 	// This char can be used to execute RCE for example using with echo `ls`
 	$forbiddenphpchars = array();
-	if (empty($conf->global->WEBSITE_PHP_ALLOW_DANGEROUS_CHARS)) {    // If option is not on, we disallow functions to execute commands
+	if (empty(getDolGlobalInt('WEBSITE_PHP_ALLOW_DANGEROUS_CHARS'))) {    // If option is not on, we disallow functions to execute commands
 		$forbiddenphpchars = array("`");
 	}
 	foreach ($forbiddenphpchars as $forbiddenphpchar) {

@@ -5028,6 +5028,12 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 
 			//var_dump($filetpl);
 			$filephp = $filetpl;
+
+			// Get session info and obfuscate session cookie
+			$savsessionname = session_name();
+			$savsessionid = $_COOKIE[$savsessionname];
+			$_COOKIE[$savsessionname] = 'obfuscatedcookie';
+
 			ob_start();
 			try {
 				$res = include $filephp;
@@ -5039,6 +5045,9 @@ if ((empty($action) || $action == 'preview' || $action == 'createfromclone' || $
 			}
 			$newcontent = ob_get_contents();
 			ob_end_clean();
+
+			// Restore data
+			$_COOKIE[$savsessionname] = $savsessionid;
 		}
 
 		// Change the contenteditable to "true" or "false" when mode Edit Inline is on or off

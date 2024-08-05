@@ -61,6 +61,62 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) {
 	return;
 }
 
+/**
+ * Replace session_start()
+ *
+ * @return void
+ */
+function dol_session_start()
+{
+	session_start();
+}
+
+/**
+ * Replace session_regenerate_id()
+ *
+ * @return void
+ */
+function dol_session_regenerate_id()
+{
+	session_regenerate_id();
+}
+
+/**
+ * Destroy and recreate a new session without losing content.
+ * Not used yet.
+ *
+ * @param  $sessionname		string		Session name
+ * @return void
+ */
+function dol_session_rotate($sessionname = '')
+{
+	$oldsessionid = session_id();
+
+	// Backup the current session
+	$session_backup = $_SESSION;
+
+	// Set current session to expire in 1 minute
+	$_SESSION['OBSOLETE'] = true;
+	$_SESSION['EXPIRES'] = time() + 60;
+
+	// Close the current session
+	session_write_close();
+
+	// Set a new session id and start the session
+	session_name($sessionname);
+	dol_session_start();
+
+	// Restore the previous session backup
+	$_SESSION = $session_backup;
+
+	// Clean up
+	unset($session_backup);
+	unset($_SESSION['OBSOLETE']);
+	unset($_SESSION['EXPIRES']);
+
+	$newsessionid = session_id();
+	//var_dump("oldsessionid=".$oldsessionid." - newsessionid=".$newsessionid);
+}
 
 // Define vars
 $conffiletoshowshort = "conf.php";
@@ -78,7 +134,7 @@ $conffiletoshow = "htdocs/conf/conf.php";
 
 
 // Include configuration
-$result = @include_once $conffile; // Keep @ because with some error reporting this break the redirect done when file not found
+$result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
 
 if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not done and we are in a web session
 	if (!empty($_SERVER["CONTEXT_PREFIX"])) {    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
