@@ -2055,8 +2055,8 @@ class CommandeFournisseur extends CommonOrder
 						$qty = $prod->packaging;
 					} else {
 						if (!empty($prod->packaging) && ($qty % $prod->packaging) > 0) {
-							$coeff = intval($qty / $prod->packaging) + 1;
-							$qty = $prod->packaging * $coeff;
+							$coeff = intval((float) $qty / $prod->packaging) + 1;
+							$qty = (float) $prod->packaging * $coeff;
 							setEventMessages($langs->trans('QtyRecalculatedWithPackaging'), null, 'mesgs');
 						}
 					}
