@@ -307,7 +307,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
