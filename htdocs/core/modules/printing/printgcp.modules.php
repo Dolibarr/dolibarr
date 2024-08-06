@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2014-2019  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,9 +111,9 @@ class printing_printgcp extends PrintingDriver
 
 		if (!$conf->oauth->enabled) {
 			$this->conf[] = array(
-				'varname'=>'PRINTGCP_INFO',
-				'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
-				'type'=>'info',
+				'varname' => 'PRINTGCP_INFO',
+				'info' => $langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
+				'type' => 'info',
 			);
 		} else {
 			$keyforprovider = '';	// @FIXME
@@ -158,13 +159,13 @@ class printing_printgcp extends PrintingDriver
 				}
 			}
 			if ($this->google_id != '' && $this->google_secret != '') {
-				$this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
+				$this->conf[] = array('varname' => 'PRINTGCP_INFO', 'info' => 'GoogleAuthConfigured', 'type' => 'info');
 				$this->conf[] = array(
-					'varname'=>'PRINTGCP_TOKEN_ACCESS',
-					'info'=>$access,
-					'type'=>'info',
-					'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
-					'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
+					'varname' => 'PRINTGCP_TOKEN_ACCESS',
+					'info' => $access,
+					'type' => 'info',
+					'renew' => $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
+					'delete' => ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? $urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&token='.newToken().'&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp') : '')
 				);
 				if ($token_ok) {
 					$expiredat = '';
@@ -181,9 +182,9 @@ class printing_printgcp extends PrintingDriver
 						$expiredat = dol_print_date($endoflife, "dayhour");
 					}
 
-					$this->conf[] = array('varname'=>'TOKEN_REFRESH', 'info'=>((!empty($refreshtoken)) ? 'Yes' : 'No'), 'type'=>'info');
-					$this->conf[] = array('varname'=>'TOKEN_EXPIRED', 'info'=>($expire ? 'Yes' : 'No'), 'type'=>'info');
-					$this->conf[] = array('varname'=>'TOKEN_EXPIRE_AT', 'info'=>($expiredat), 'type'=>'info');
+					$this->conf[] = array('varname' => 'TOKEN_REFRESH', 'info' => ((!empty($refreshtoken)) ? 'Yes' : 'No'), 'type' => 'info');
+					$this->conf[] = array('varname' => 'TOKEN_EXPIRED', 'info' => ($expire ? 'Yes' : 'No'), 'type' => 'info');
+					$this->conf[] = array('varname' => 'TOKEN_EXPIRE_AT', 'info' => ($expiredat), 'type' => 'info');
 				}
 				/*
 				if ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)) {
@@ -193,11 +194,11 @@ class printing_printgcp extends PrintingDriver
 					$this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
 				}*/
 			} else {
-				$this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
+				$this->conf[] = array('varname' => 'PRINTGCP_INFO', 'info' => 'GoogleAuthNotConfigured', 'type' => 'info');
 			}
 		}
 		// do not display submit button
-		$this->conf[] = array('enabled'=>0, 'type'=>'submit');
+		$this->conf[] = array('enabled' => 0, 'type' => 'submit');
 	}
 
 	/**
@@ -250,7 +251,7 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array      list of printers
+	 *  @return array{ret:array}	list of printers
 	 */
 	public function getlistAvailablePrinters()
 	{
@@ -380,12 +381,12 @@ class printing_printgcp extends PrintingDriver
 		global $conf;
 		// Check if printer id
 		if (empty($printerid)) {
-			return array('status' =>0, 'errorcode' =>'', 'errormessage'=>'No provided printer ID');
+			return array('status' => 0, 'errorcode' => '', 'errormessage' => 'No provided printer ID');
 		}
 		// Open the file which needs to be print
 		$handle = fopen($filepath, "rb");
 		if (!$handle) {
-			return array('status' =>0, 'errorcode' =>'', 'errormessage'=>'Could not read the file.');
+			return array('status' => 0, 'errorcode' => '', 'errormessage' => 'Could not read the file.');
 		}
 		// Read file content
 		$contents = fread($handle, filesize($filepath));
