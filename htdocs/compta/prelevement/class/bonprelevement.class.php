@@ -2213,7 +2213,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '				</DrctDbtTx>' . $CrLf;
 			$XML_DEBITOR .= '				<DbtrAgt>' . $CrLf;
 			$XML_DEBITOR .= '					<FinInstnId>' . $CrLf;
-			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC')==0) {
+			if (getDolGlobalInt('WITHDRAWAL_WITHOUT_BIC') == 0) {
 				$XML_DEBITOR .= '						<BIC>' . $row_bic . '</BIC>' . $CrLf;
 			}
 			$XML_DEBITOR .= '					</FinInstnId>' . $CrLf;
@@ -2771,7 +2771,7 @@ class BonPrelevement extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
