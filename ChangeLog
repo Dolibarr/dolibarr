@@ -1643,7 +1643,7 @@ NEW: Add link to create an element from the category page
 NEW: add margin infos to takepos invoice lines
 NEW: Add max size send for "backup and link to mail" option
 NEW: Add method httponly_accessforbidden()
-NEW: Add more advices into the Setup security page
+NEW: Add more advice into the Setup security page
 NEW: Add new global variable for keeping the previous signature information on proposal (case of reopening a proposal)
 NEW: Add objectLink on shipment
 NEW: Add option --force on CLI cron_run_jobs.php
@@ -3061,8 +3061,8 @@ NEW: add option in Workflow module to set a shipment as closed
 
 
  for Admins
-NEW: Add a security center page with all information and advices related to the security of your instance
-NEW: Add a performance center page with all information and advices related to the performance of your instance
+NEW: Add a security center page with all information and advice related to the security of your instance
+NEW: Add a performance center page with all information and advice related to the performance of your instance
 
  Modules
 NEW: Module Recruitment is now stable
@@ -7080,7 +7080,7 @@ NEW: Add index and constraints keys on supplier proposal detail table
 NEW: Add phpunit to check the engine is defined into sql create files.
 NEW: Add project and Hook to Loan
 NEW: Add REST API to push a file.
-NEW: Allow extrafields list select to be dependands on other standard list and not only other extrafields list
+NEW: Allow extrafields list select to be dependent on other standard list and not only other extrafields list
 NEW: Architecture to manage search criteria persistence (using save_lastsearch_values=1 on exit links and restore_lastsearch_values=1 in entry links)
 NEW: data files are now also parsed by phpunit for sql syntax
 NEW: Hook to allow inserting custom product head #6001
@@ -8104,7 +8104,7 @@ NEW: The clicktodial module is now able to provide link "tel:" on phone numbers.
 NEW: The conditional IF into ODT templates works also on not defined var so we can show data only if defined. Close #3819
 NEW: The free text in PDF footers can now be a HTML content. So the WYSIWYG editor is on by default to edit it into module setup.
 NEW: The thirdparties tabs, the contacts tabs and the members tabs are now presented using a new "top banner", saving space and using a same way to show address, status and navigation arrows.
-NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
+NEW: Thumbs for statistics on main page are fully clickable (not only link inside the thumb)
 NEW: Translate extrafield's labels.
 NEW: Use new select2 component for juridical status, country and state selection.
 NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available.
@@ -8703,7 +8703,7 @@ NEW: [ task #851 ] Add a new field: Commercial name
 NEW: [ task #977 ] New option to manage product unit Migrated code from GPCSolutions/dolibarr:3.2-units branch and adapted for 3.8 with some improvements
 NEW: The line where mouse is over can be highlight with option THEME_ELDY_USE_HOVER (on by default)
 NEW: The notification module accept keyword __SUPERVISOR__ to send notification to supervisor of user.
-NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
+NEW: Thumbs for statistics on main page are fully clickable (not only link inside the thumb)
 NEW: Title of page project contains project ref and label
 NEW: update skeleton and class builder
 NEW: Use new select2 component for juridical status, country and state selection.
@@ -9854,7 +9854,7 @@ For users:
   prices, radio).
 - New: [ task #798 ] Add range limit date on product/services as it is done on order
   and invoice.
-- New: [ task #814 ] Add extrafield feature for projects ands tasks.
+- New: [ task #814 ] Add extrafield feature for projects and tasks.
 - New: [ task #770 ] Add ODT document generation for Projects module.
 - New: [ task #741 ] Add intervention box.
 - New: [ task #826 ] Optional increase stock when deleting an invoice already validated.

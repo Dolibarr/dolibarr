@@ -1032,7 +1032,7 @@ $sous_total_credit = 0;
 $totalarray['val'] = array();
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
-$totalarray['val']['totalbalance']=0;
+$totalarray['val']['totalbalance'] = 0;
 
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
@@ -1283,7 +1283,7 @@ while ($i < min($num, $limit)) {
 
 	// Label operation
 	if (!empty($arrayfields['t.label_operation']['checked'])) {
-		// Affiche un lien vers la facture client/fournisseur
+		// Show a link to the customer/supplier invoice
 		$doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
 		if (strlen(length_accounta($line->subledger_account)) == 0) {
 			print '<td class="small tdoverflowmax350 classfortooltip" title="'.dol_escape_htmltag($line->label_operation).'">'.dol_escape_htmltag($line->label_operation).'</td>';

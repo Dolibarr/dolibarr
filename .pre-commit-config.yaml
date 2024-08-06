@@ -3,7 +3,7 @@ exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       # This hook tests the name of the branch and return an error if the name is
       #  'develop' or an official version 'x.y'
@@ -177,7 +177,7 @@ repos:
 
   # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.33.0
+    rev: v1.35.1
     hooks:
       - id: yamllint
         args:
@@ -187,7 +187,7 @@ repos:
 
   # Execute codespell to fix typo errors (setup of codespell into dev/tools/codespell/)
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
       - id: codespell
         # Due to a current limitation of configuration files,
@@ -230,14 +230,14 @@ repos:
 
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
         args: [-W, "100"]
 
   # Check sql file syntax
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.0.4
+    rev: 3.1.0
     hooks:
       - id: sqlfluff-lint
         stages: [pre-commit, manual]  # manual needed for ci
