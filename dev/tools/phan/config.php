@@ -257,6 +257,7 @@ return [
 		'filtert' => 'int',
 		'forceall' => 'int<0,1>',
 		'form' => '\Form',
+		'formcompany' => '\FormCompany',
 		'hookmanager' => '\HookManager',
 		'inputalsopricewithtax' => 'int<0,1>',
 		'langs' => '\Translate',
@@ -268,6 +269,7 @@ return [
 		'obj' => '\CommonObject',     // Deprecated
 		'object_rights' => 'int|stdClass',
 		'objectoffield' => '\CommonObject',
+		'objsoc' => '\Societe',
 		'senderissupplier' => 'int<0,2>',
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
