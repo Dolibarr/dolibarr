@@ -244,6 +244,95 @@ class Contracts extends DolibarrApi
 	}
 
 	/**
+	 * Get all contracts that will expiring soon
+	 *
+	 * @url	GET /expired
+	 *
+	 * @return array
+	 */
+	public function getExpired()
+	{
+		global $conf;
+
+		if (!DolibarrApiAccess::$user->rights->contrat->lire) {
+			throw new RestException(401);
+		}
+
+		$obj_ret = array();
+
+		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+
+		// If the internal user must only see his customers, force searching by him
+		$search_sale = 0;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) {
+			$search_sale = DolibarrApiAccess::$user->id;
+		}
+
+		$sql = "SELECT c.rowid as contract_id, cd.rowid, cd.date_fin_validite as datefin";
+
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+		}
+		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
+
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		}
+
+		// Add contract detail table to access services informations
+		$sql .= ", ".MAIN_DB_PREFIX."contratdet as cd";
+
+		$sql .= ' WHERE c.entity IN ('.getEntity('contrat').')';
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
+			$sql .= " AND c.fk_soc = sc.fk_soc";
+		}
+		if ($socids) {
+			$sql .= " AND c.fk_soc IN (".$this->db->sanitize($socids).")";
+		}
+		if ($search_sale > 0) {
+			$sql .= " AND c.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
+		}
+		// Insert sale filter
+		if ($search_sale > 0) {
+			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		}
+
+		// Get only contracts that are validate and the services enabled and enabled expired
+		$sql .= " AND c.statut = 1";
+		$sql .= " AND c.rowid = cd.fk_contrat";
+		$sql .= " AND cd.statut = 4";
+
+                $result = $this->db->query($sql);
+		$now = dol_now();
+		$warning_delay = $conf->contrat->services->expires->warning_delay;
+
+                if ($result) {
+                        $num = $this->db->num_rows($result);
+                        $min = min($num, ($limit <= 0 ? $num : $limit));
+                        $i = 0;
+                        while ($i < $min) {
+                                $obj = $this->db->fetch_object($result);
+
+				if ($obj->datefin && $this->db->jdate($obj->datefin) < ($now - $warning_delay)) {
+	                                $contrat_static = new Contrat($this->db);
+        	                        if ($contrat_static->fetch($obj->contract_id)) {
+                	                        $obj_ret[] = $this->_cleanObjectDatas($contrat_static);
+                        	        }
+				}
+                                $i++;
+                        }
+                } else {
+                        throw new RestException(503, 'Error when retrieve contrat list : '.$this->db->lasterror());
+                }
+                if (!count($obj_ret)) {
+                        throw new RestException(404, 'No contract found');
+                }
+
+                return $obj_ret;
+        }
+
+	/**
 	 * Add a line to given contract
 	 *
 	 * @param int   $id             Id of contrat to update
