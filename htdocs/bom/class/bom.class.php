@@ -449,6 +449,8 @@ class BOM extends CommonObject
 
 		$objectline = new $objectlineclassname($this->db);
 
+		'@phan-var-force BOMLine $objectline';
+
 		$sql = "SELECT ".$objectline->getFieldList('l');
 		$sql .= " FROM ".$this->db->prefix().$objectline->table_element." as l";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."product as p ON p.rowid = l.fk_product";
@@ -883,6 +885,7 @@ class BOM extends CommonObject
 			}
 
 			$obj = new $classname();
+			'@phan-var-force ModeleNumRefBoms $obj';
 			$numref = $obj->getNextValue($prod, $this);
 
 			if ($numref != "") {
@@ -1635,9 +1638,9 @@ class BOM extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string		    $option			Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	array{prod:?Product,selected:int<-1,1>}	$arraydata	Array of data
+	 *  @return	string							HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
