@@ -205,6 +205,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file($db);
 
+					'@phan-var-force ModelNumRefHolidays $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -344,6 +346,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 								require_once $dir.'/'.$file;
 								$module = new $classname($db);
+
+
+								'@phan-var-force ModelePDFHoliday $module';
 
 								$modulequalified = 1;
 								if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
