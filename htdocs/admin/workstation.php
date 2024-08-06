@@ -300,6 +300,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								$nameofclass = ucfirst($myTmpObjectKey);
 								$mytmpinstance = new $nameofclass($db);
+								'@phan-var-force Workstation $mytmpinstance';
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
