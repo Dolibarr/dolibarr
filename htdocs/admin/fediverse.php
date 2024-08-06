@@ -36,7 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/socialnetwork.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/modSocialNetworks.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/rssparser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fediverseparser.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/boxes/box_fediverse.php';
 
 
 
@@ -74,7 +75,7 @@ if ($action == 'add') {
 		$boxlabel = '(SocialNetwoksInformations)';
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, note)";
-		$sql .= " VALUES ('box_socialnetworks.php', '".$db->escape($socialNetworkName)."')";
+		$sql .= " VALUES ('box_fediverse.php', '".$db->escape($socialNetworkName)."')";
 
 		if (!$db->query($sql)) {
 			dol_print_error($db);
@@ -198,7 +199,7 @@ if ($action == 'deletesocialnetwork') {
 	print $formconfirm;
 }
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
-$sql .= " WHERE file = 'box_socialnetworks.php'";
+$sql .= " WHERE file = 'box_fediverse.php'";
 $sql .= " ORDER BY note";
 
 dol_syslog("select socialnetworks boxes", LOG_DEBUG);
@@ -218,7 +219,10 @@ if ($resql) {
 		$socialNetworkUrl = $socialNetworkData['url'];
 		$key = $obj->rowid;
 
-		$rssparser = new RssParser($db);
+		$fediverseparser = new FediverseParser($db);
+		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
+
+		$result = $fediverseparser->parser($socialNetworkUrl, 5, 20, $path_fediverse, 'mastodon');
 
 		print "<br>";
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
@@ -252,13 +256,13 @@ if ($resql) {
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Status")."</td>";
 		print "<td>";
-		if ($jsonData > 0 && empty($rssparser->error)) {
+		if ($result > 0 && empty($fediverseparser->error)) {
 			print '<span class="ok">'.img_picto($langs->trans("Online"), 'tick', 'class="pictofixedwidth"').$langs->trans("Online").'</div>';
 		} else {
 			print '<span class="error">'.$langs->trans("Offline");
 			$langs->load("errors");
-			if ($rssparser->error) {
-				print ' - '.$langs->trans($rssparser->error);
+			if ($fediverseparser->error) {
+				print ' - '.$langs->trans($fediverseparser->error);
 			}
 			print '</div>';
 		}
@@ -266,6 +270,8 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Active
+		$active = _isInBoxListFaidiverse((int) $key, $boxlist) ? 'yes' : 'no';
+
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
 		print '<td>'.yn($active);
@@ -289,3 +295,20 @@ print dol_get_fiche_end();
 
 llxFooter();
 $db->close();
+
+/**
+ * Check if the given RSS feed if inside the list of boxes/widgets
+ *
+ * @param	int		$id		The id of the socialnetwork
+ * @param	array	$boxlist	A list with boxes/widgets
+ * @return	bool				true if the socialnetwork is inside the box/widget list, otherwise false
+ */
+function _isInBoxListFaidiverse($id, array $boxlist)
+{
+	foreach ($boxlist as $box) {
+		if ($box->boxcode === "lastfediverseinfos") {
+			return true;
+		}
+	}
+	return false;
+}
