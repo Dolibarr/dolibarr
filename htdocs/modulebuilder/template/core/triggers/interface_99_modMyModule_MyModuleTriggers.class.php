@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2013  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $error = '';
 
 	/**
-	 * @var int Maximum lines
+	 * @var int<0,max> Maximum lines
 	 */
 	public $max = 5;
 
@@ -156,9 +156,9 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 * Load a box line from its rowid
 	 *
-	 * @param   int $rowid  Row id to load
+	 * @param   int	$rowid	Row id to load
 	 *
-	 * @return  int         Return integer <0 if KO, >0 if OK
+	 * @return  int<-1,1>	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -196,7 +196,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *
 	 * @param   array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
 	 * @param   array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
-	 * @param	int		$nooutput	No print, only return string
+	 * @param	int<0,1>	$nooutput	No print, only return string
 	 * @return  string
 	 */
 	public function showBox($head, $contents, $nooutput = 0)
@@ -417,7 +417,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *  List is sorted by widget filename so by priority to run.
 	 *
 	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
-	 * 	@return	array						Array list of widget
+	*	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:int<0,1>,version:string,status:string,info:string}>	Array list of widgets
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
@@ -513,7 +513,6 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 				if (preg_match('/NORUN$/i', $files[$key])) {
 					$disabledbyname = 1;
 				}
-
 				// We set info of modules
 				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];

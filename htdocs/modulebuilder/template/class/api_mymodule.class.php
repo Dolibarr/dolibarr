@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,6 +66,8 @@ class MyModuleApi extends DolibarrApi
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
 	 *
+	 * @phan-return  MyObject
+	 *
 	 * @url	GET myobjects/{id}
 	 *
 	 * @throws RestException 403 Not allowed
@@ -99,7 +102,9 @@ class MyModuleApi extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of order objects
+	 * @return  array                               Array of ordered objects
+	 *
+	 * @phan-return  MyObject[]
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
@@ -223,7 +228,7 @@ class MyModuleApi extends DolibarrApi
 		// Clean data
 		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
 
-		if ($this->myobject->create(DolibarrApiAccess::$user)<0) {
+		if ($this->myobject->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating MyObject", array_merge(array($this->myobject->error), $this->myobject->errors));
 		}
 		return $this->myobject->id;
@@ -235,6 +240,8 @@ class MyModuleApi extends DolibarrApi
 	 * @param 	int   		$id             Id of myobject to update
 	 * @param 	array 		$request_data   Datas
 	 * @return 	Object						Object after update
+	 *
+	 * @phan-return  MyObject
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -291,6 +298,7 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param   int     $id   MyObject ID
 	 * @return  array
+	 * @phan-return  array<string,{code:int,message:string}>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -329,10 +337,12 @@ class MyModuleApi extends DolibarrApi
 
 
 	/**
-	 * Validate fields before create or update object
+	 * Validate fields before creating or updating object
 	 *
 	 * @param	array		$data   Array of data to validate
+	 * @phan-param MyObject[] $data
 	 * @return	array
+	 * @phan-return array<string,null|int|float|string> $data
 	 *
 	 * @throws	RestException
 	 */
