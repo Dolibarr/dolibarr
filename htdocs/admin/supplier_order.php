@@ -252,6 +252,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
+					'@phan-var-force ModeleNumRefSuppliersOrders $module';
+
 					if ($module->isEnabled()) {
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -378,6 +380,8 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.'/'.$file;
 					$module = new $classname($db, new CommandeFournisseur($db));
+
+					'@phan-var-force ModeleNumRefSuppliersOrders $module';
 
 
 					print "<tr class=\"oddeven\">\n";
