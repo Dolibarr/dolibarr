@@ -262,6 +262,7 @@ return [
 		'inputalsopricewithtax' => 'int<0,1>',
 		'langs' => '\Translate',
 		'leftmenu' => 'string',
+		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
