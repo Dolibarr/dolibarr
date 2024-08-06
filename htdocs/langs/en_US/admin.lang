@@ -2408,3 +2408,4 @@ AtBottomOfPage=At bottom of page
 FailedAuth=failed authentications
 MaxNumberOfFailedAuth=Max number of failed authentication in 24h to deny login.
 SpecialCharActivation=Enable the button to open a virtual keyboard to enter special characters
+ContactsDefaultRoles=For third parties of the "individual" type, a contact can be created simultaneously. Define here the roles that will be systematically assigned to this contact.
