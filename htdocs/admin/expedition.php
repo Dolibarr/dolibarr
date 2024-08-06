@@ -203,6 +203,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModelNumRefExpedition $module';
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
@@ -339,6 +340,8 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+
+							'@phan-var-force ModelePdfExpedition $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
