@@ -259,7 +259,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 
 						$module = new $file();
 
-						'@phan-var-force ModuleNumRefDeliveryOrder $module';
+						'@phan-var-force ModeleNumRefDeliveryOrder $module';
 
 						if ($module->isEnabled()) {
 							// Show modules according to features level
@@ -409,7 +409,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
