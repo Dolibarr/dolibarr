@@ -295,7 +295,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
 	print '<td width="140">'.$modCodeMember->name.'</td>'."\n";
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
-	print '<td class="nowrap">'.$modCodeMember->getExample($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
 	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
 		print '<td class="center">'."\n";
