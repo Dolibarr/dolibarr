@@ -166,12 +166,12 @@ abstract class CommonObject
 	public $linkedObjectsIds;
 
 	/**
-	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
+	 * @var array<string,CommonObject[]>	Array of linked objects. Loaded by ->fetchObjectLinked, key = object type
 	 */
 	public $linkedObjects;
 
 	/**
-	 * @var boolean[]	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
+	 * @var array<int,bool>	Array of boolean with object id as key and value as true if linkedObjects full loaded for object id. Loaded by ->fetchObjectLinked. Important for pdf generation time reduction.
 	 */
 	private $linkedObjectsFullLoaded = array();
 
