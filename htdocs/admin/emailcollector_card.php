@@ -457,6 +457,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							throw new Exception("Failed to refresh access token: ".$e->getMessage());
 						}
 
+						// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
