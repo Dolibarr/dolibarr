@@ -256,7 +256,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
 
-						'@phan-var-force pdf_standard_actions $module';
+						'@phan-var-force ModeleAction $module';
 
 						print '<tr class="oddeven">'."\n";
 						print "<td>";
