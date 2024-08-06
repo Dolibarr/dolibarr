@@ -210,7 +210,7 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
-					'@phan-var-force ModuleNumRefReception $module';
+					'@phan-var-force ModeleNumRefReception $module';
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
@@ -221,7 +221,7 @@ foreach ($dirmodels as $reldir) {
 							continue;
 						}
 
-						print '<tr><td>'.$module->nom."</td>\n";
+						print '<tr><td>'.$module->getName($langs)."</td>\n";
 						print '<td>';
 						print $module->info($langs);
 						print '</td>';
@@ -367,7 +367,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
