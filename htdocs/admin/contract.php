@@ -247,6 +247,8 @@ foreach ($dirmodels as $reldir) {
 					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
 
+					'@phan-var-force ModelNumRefContracts $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -382,6 +384,8 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							/** @var ModelePDFContract $module */
 							$module = new $classname($db);
+
+							'@phan-var-force ModelePDFContract $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
