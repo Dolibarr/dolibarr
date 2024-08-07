@@ -129,7 +129,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Delivery	$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @return string|int<0,-1>  		Value if OK, 0 or -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

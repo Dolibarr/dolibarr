@@ -47,7 +47,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 	/**
 	 * @var string Nom du modele
-	 * @deprecated
+	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */
 	public $nom = 'pacific';
@@ -124,7 +124,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe|string		$objsoc     Object thirdparty
 	 *  @param  Fichinter|string	$object		Object we need next value for
-	 *  @return string      					Value if KO, <0 if KO
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc = '', $object = '')
 	{

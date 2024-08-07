@@ -99,9 +99,9 @@ class mod_reception_beryl extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     Third party object
+	 *	@param	Societe		$objsoc		Third party object
 	 *	@param	Reception	$reception	Reception object
-	 *	@return string|-1      			Value if OK, -1 if KO
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{

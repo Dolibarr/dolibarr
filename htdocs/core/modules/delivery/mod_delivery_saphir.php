@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,11 +127,11 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 
 
 	/**
-	 *  Return next value
+	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     	Object third party
-	 *  @param  Delivery		$object			Object delivery
-	 *  @return string|int      				Value if OK, 0 if KO
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Delivery	$object		Object we need next value for
+	 *  @return string|int<0,-1>  		Value if OK, 0 or -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

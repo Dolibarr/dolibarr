@@ -210,7 +210,7 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file();
 
-					'@phan-var-force ModeleNumRefReception $module';
+					'@phan-var-force ModelNumRefReception $module';
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level

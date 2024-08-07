@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Maxime Kohlhaas <support@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +124,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 	 *  Return next free value
 	 *
 	 *  @param  ExpenseReport	$object     Object we need next value for
-	 *  @return string|int              	Next value if OK, 0 if KO
+	 *  @return string|int<-1,0>   			Next value if OK, -1 or 0 if KO
 	 */
 	public function getNextValue($object)
 	{

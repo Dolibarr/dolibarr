@@ -116,7 +116,7 @@ class mod_bom_standard extends ModeleNumRefBoms
 	 *
 	 *  @param	Product	$objprod    Object product
 	 *  @param  Bom		$object		Object we need next value for
-	 *  @return string|-1      		Next value if OK, -1 if KO
+	 *  @return string|int<-1,-1>	Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

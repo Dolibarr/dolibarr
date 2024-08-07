@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,5 +80,12 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
  */
 abstract class ModeleNumRefDeliveryOrder extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Delivery	$object		Object we need next value for
+	 *  @return string|int<0,-1>  		Value if OK, 0 or -1 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object);
 }

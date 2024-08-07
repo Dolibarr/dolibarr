@@ -132,9 +132,9 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	/**
 	 * 	Return next value
 	 *
-	 *  @param	Societe|string		$objsoc     Object third party
+	 *  @param	Societe|string		$objsoc		Object third party
 	 *  @param  CommandeFournisseur	$object		Object
-	 *  @return string      					Value if OK, 0 if KO
+	 *  @return string|int<-1,0>				Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

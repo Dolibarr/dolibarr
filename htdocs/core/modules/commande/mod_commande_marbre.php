@@ -128,7 +128,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Commande	$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +123,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	 *
 	 *	@param	Societe			$objsoc     Third party object
 	 *	@param	Expedition		$shipment	Shipment object
-	 *	@return string|int      			Value if OK, 0 if KO
+	 *	@return string|int<0,-1> 		Value if OK, 0 or -1 if KO
 	 */
 	public function getNextValue($objsoc, $shipment)
 	{

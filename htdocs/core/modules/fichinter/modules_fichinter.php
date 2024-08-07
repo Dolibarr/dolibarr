@@ -78,7 +78,14 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
  */
 abstract class ModeleNumRefFicheinter extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe|string		$objsoc     Object thirdparty
+	 *  @param  Fichinter|string	$object		Object we need next value for
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
+	 */
+	abstract public function getNextValue($objsoc = '', $object = '');
 }
 
 

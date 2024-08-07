@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +35,9 @@ class modPhpbarcode extends ModeleBarCode
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var 'development'|'experimental'|'dolibarr'
 	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr';
 
 	/**
 	 * @var string Error code (or message)

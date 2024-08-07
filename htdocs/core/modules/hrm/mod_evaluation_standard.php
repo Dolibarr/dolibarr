@@ -119,8 +119,8 @@ class mod_evaluation_standard extends ModeleNumRefEvaluation
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Evaluation	$object		Object we need next value for
-	 *  @return string|-1      			Value if OK, -1 if KO
+	 *  @param  Evaluation		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
 	{

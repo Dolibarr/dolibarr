@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 /**
  *      Parent class of emailing target selectors modules
  */
-class PrintingDriver
+abstract class PrintingDriver
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -115,4 +115,18 @@ class PrintingDriver
 			return $this->desc;
 		}
 	}
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return  int                     0 if OK, >0 if KO
+	 */
+	abstract public function listAvailablePrinters();
+
+	/**
+	 *  Return list of available printers
+	 *
+	 *  @return array	list of printers
+	 */
+	abstract public function getlistAvailablePrinters();
 }

@@ -126,7 +126,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	 *
 	 *  @param	Societe		$objsoc     Object third party
 	 * 	@param	Propal		$propal		Object commercial proposal
-	 *  @return string|-1      			Next value, -1 if KO
+	 *  @return string|int<-1,0>		Next value, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $propal)
 	{

@@ -262,7 +262,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 							$module = new $file($db);
 
-							'@phan-var-force CommonNumRefGenerator $module';
+							'@phan-var-force ModeleNumRefEvaluation $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -407,7 +407,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
 
-									'@phan-var-force CommonDocGenerator $module';
+									'@phan-var-force ModelePDFEvaluation $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -422,7 +422,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}

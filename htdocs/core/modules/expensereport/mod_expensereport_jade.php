@@ -118,10 +118,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 	}
 
 	/**
-	 * 	Return next free value
+	 *  Return next free value
 	 *
-	 *  @param  Object			$object		Object we need next value for
-	 *  @return string|int      			Next value if OK, 0 if KO
+	 *  @param  ExpenseReport	$object     Object we need next value for
+	 *  @return string|int<-1,0>   			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

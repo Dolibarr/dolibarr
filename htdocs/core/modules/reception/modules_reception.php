@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,5 +75,12 @@ abstract class ModelePdfReception extends CommonDocGenerator
  */
 abstract class ModelNumRefReception extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *	Return next value
+	 *
+	 *	@param	Societe		$objsoc		Third party object
+	 *	@param	Reception	$reception	Reception object
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
+	 */
+	abstract public function getNextValue($objsoc, $reception);
 }

@@ -251,7 +251,7 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array{ret:array}	list of printers
+	 *  @return array{available:array}	list of printers
 	 */
 	public function getlistAvailablePrinters()
 	{

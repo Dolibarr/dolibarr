@@ -121,7 +121,7 @@ class mod_stocktransfer_standard extends ModeleNumRefStockTransfer
 	 * 	Return next free value
 	 *
 	 *  @param  StockTransfer	$object		Object we need next value for
-	 *  @return string|-1     	 			Value if OK, -1 if KO
+	 *  @return string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

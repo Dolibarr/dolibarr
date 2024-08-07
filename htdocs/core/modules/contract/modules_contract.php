@@ -7,6 +7,7 @@
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,14 @@ abstract class ModelePDFContract extends CommonDocGenerator
 /**
  * Parent class for all contract numbering modules
  */
-class ModelNumRefContracts extends CommonNumRefGenerator
+abstract class ModelNumRefContracts extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *	Return next value
+	 *
+	 *	@param	Societe			$objsoc     third party object
+	 *	@param	Contrat			$contract	contract object
+	 *	@return string|int<0,-1>  			Next value if OK, -1 or 0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $contract);
 }
