@@ -649,7 +649,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listlinestaskres->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
+								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
