@@ -584,7 +584,7 @@ if (empty($reshook)) {
 				}
 				$tva_tx = str_replace('*', '', $tva_tx);
 				$desc = $product_desc;
-				$fk_unit = GETPOST('units', 'alpha');
+				$fk_unit = GETPOSTINT('units');
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');
 				$pu_ttc_devise = price2num($price_ttc_devise, 'MU');
 
@@ -762,7 +762,7 @@ if (empty($reshook)) {
 				$pa_ht = null;
 			}
 
-			$fk_unit = GETPOST('unit', 'alpha');
+			$fk_unit = GETPOSTINT('unit');
 
 			// update price_ht with discount
 			// TODO Use object->updateline instead objectline->update
@@ -793,7 +793,7 @@ if (empty($reshook)) {
 			// $objectline->rang = $objectline->rang;
 
 			if ($fk_unit > 0) {
-				$objectline->fk_unit = GETPOST('unit');
+				$objectline->fk_unit = GETPOSTINT('unit');
 			} else {
 				$objectline->fk_unit = null;
 			}
@@ -1740,7 +1740,7 @@ if ($action == 'create') {
 					// Ligne carac
 					print '<tr class="oddeven">';
 					print '<td>';
-					$currentLineProductId=GETPOSTISSET('idprod')?GETPOST('idprod'):(!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
+					$currentLineProductId = GETPOSTISSET('idprod') ? GETPOST('idprod') : (!empty($object->lines[$cursorline - 1]->fk_product) ? $object->lines[$cursorline - 1]->fk_product : 0);
 					if ($objp->fk_product > 0) {
 						$canchangeproduct = 1;
 
@@ -1773,7 +1773,7 @@ if ($action == 'create') {
 					if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 						$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
 					}
-					$doleditor = new DolEditor('product_desc', (GETPOSTISSET('product_desc')?GETPOST('product_desc'):$objp->description), '', 92, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '90%');
+					$doleditor = new DolEditor('product_desc', (GETPOSTISSET('product_desc') ? GETPOST('product_desc') : $objp->description), '', 92, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), $nbrows, '90%');
 					$doleditor->Create();
 
 					print '</td>';
@@ -1784,7 +1784,7 @@ if ($action == 'create') {
 					print '</td>';
 
 					// Price
-					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice')?GETPOST('elprice'):price($objp->subprice)).'"></td>';
+					print '<td class="right"><input class="width50" type="text" name="elprice" value="'.(GETPOSTISSET('elprice') ? GETPOST('elprice') : price($objp->subprice)).'"></td>';
 
 					// Price multicurrency
 					/*if (isModEnabled("multicurrency")) {
@@ -1792,24 +1792,24 @@ if ($action == 'create') {
 					 }*/
 
 					// Quantity
-					print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty')?GETPOST('elqty'):$objp->qty).'"></td>';
+					print '<td class="center"><input size="2" type="text" name="elqty" value="'.(GETPOSTISSET('elqty') ? GETPOST('elqty') : $objp->qty).'"></td>';
 
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 						print '<td class="left">';
-						print $form->selectUnits((GETPOSTISSET('unit')?GETPOST('unit'):$objp->fk_unit), "unit");
+						print $form->selectUnits((GETPOSTISSET('unit') ? GETPOSTINT('unit') : $objp->fk_unit), "unit");
 						print '</td>';
 					}
 
 					// Discount
-					print '<td class="nowraponall right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent).'">%</td>';
+					print '<td class="nowraponall right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent') ? GETPOST('elremise_percent') : $objp->remise_percent).'">%</td>';
 
 					if (!empty($usemargins)) {
 						print '<td class="right">';
 						if ($objp->fk_product) {
 							print '<select id="fournprice" name="fournprice"></select>';
 						}
-						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price((GETPOSTISSET('buying_price')?GETPOST('buying_price'):$objp->pa_ht), 0, '', 0).'"></td>';
+						print '<input id="buying_price" type="text" class="width50" name="buying_price" value="'.price((GETPOSTISSET('buying_price') ? GETPOST('buying_price') : $objp->pa_ht), 0, '', 0).'"></td>';
 					}
 					print '<td class="center">';
 					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
