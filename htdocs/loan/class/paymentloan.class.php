@@ -643,7 +643,7 @@ class PaymentLoan extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with eventually a picto)
+	 *  Return clickable name (with eventually a picto)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=No picto
 	 * 	@param	int		$maxlen						Max length label

@@ -1914,7 +1914,7 @@ class ExtraFields
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+					$value = ''; // value was used, so now we reset it to use it to build final output
 
 					$obj = $this->db->fetch_object($resql);
 
@@ -2024,7 +2024,7 @@ class ExtraFields
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|label:rowid)

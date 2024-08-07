@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ if ($action == 'getConnexionToken') {
 		// Force to use the correct API key
 		global $stripearrayofkeysbyenv;
 		\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
-		// The ConnectionToken's secret lets you connect to any Stripe Terminal reader
+		// The ConnectionToken's secret let's you connect to any Stripe Terminal reader
 		// and take payments with your Stripe account.
 		$array = array();
 		if (isset($location) && !empty($location)) {
@@ -102,9 +103,9 @@ if ($action == 'getConnexionToken') {
 		$object->fetch($json_obj->invoiceid);
 		$object->fetch_thirdparty();
 
-		$fulltag='INV='.$object->id.'.CUS='.$object->thirdparty->id;
-		$tag=null;
-		$fulltag=dol_string_unaccent($fulltag);
+		$fulltag = 'INV='.$object->id.'.CUS='.$object->thirdparty->id;
+		$tag = null;
+		$fulltag = dol_string_unaccent($fulltag);
 
 		$stripe = new Stripe($db);
 		$customer = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);

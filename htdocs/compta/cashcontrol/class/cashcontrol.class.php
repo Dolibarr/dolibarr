@@ -370,7 +370,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *  Return clicable link of object (with eventually picto)
+	 *  Return clickable link of object (with eventually picto)
 	 *
 	 *  @param  int     $withpicto                  Add picto into link
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -448,7 +448,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

@@ -390,17 +390,17 @@ class Commande extends CommonOrder
 	/*
 	 * Signed by sender
 	 */
-	CONST STATUS_SIGNED_SENDER   = 1;
+	const STATUS_SIGNED_SENDER   = 1;
 
 	/*
 	 * Signed by receiver
 	 */
-	CONST STATUS_SIGNED_RECEIVER = 2;
+	const STATUS_SIGNED_RECEIVER = 2;
 
 	/*
 	 * Signed by all
 	 */
-	CONST STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -3815,7 +3815,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -4397,6 +4397,8 @@ class OrderLine extends CommonOrderLine
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+
+			$this->fetch_optionals();
 
 			$this->db->free($result);
 
