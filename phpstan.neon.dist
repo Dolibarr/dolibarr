@@ -84,6 +84,7 @@ parameters:
 		- '#convert.* expects int, string#'
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
+		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'
