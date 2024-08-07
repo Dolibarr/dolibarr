@@ -113,7 +113,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * @param	?Product	$objproduct		Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs = 0, $objproduct = null)
+	public function getExample($langs = null, $objproduct = null)
 	{
 		if (!$langs instanceof Translate) {
 			$langs = $GLOBALS['langs'];
