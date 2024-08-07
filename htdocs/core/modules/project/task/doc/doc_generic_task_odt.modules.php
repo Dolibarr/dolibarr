@@ -619,9 +619,16 @@ class doc_generic_task_odt extends ModelePDFTask
 							$contact_arrray = array_merge($contact_arrray, $contact_temp);
 						}
 					}
-					if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
+					// Check for segment
+					$foundtagforlines = 1;
+					try {
 						$listlinestaskres = $odfHandler->setSegment('tasksressources');
-
+					} catch (OdfExceptionSegmentNotFound $e) {
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+					if ($foundtagforlines && (is_array($contact_arrray) && count($contact_arrray) > 0)) {
 						foreach ($contact_arrray as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
@@ -768,10 +775,17 @@ class doc_generic_task_odt extends ModelePDFTask
 						$contact_arrray = array_merge($contact_arrray, $contact_temp);
 					}
 				}
-				if ((is_array($contact_arrray) && count($contact_arrray) > 0)) {
+				// Check for segment
+				$foundtagforlines = 1;
+				try {
+					$listlines = $odfHandler->setSegment('projectcontacts');
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for lines not present into template
+					$foundtagforlines = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagforlines && (is_array($contact_arrray) && count($contact_arrray) > 0)) {
 					try {
-						$listlines = $odfHandler->setSegment('projectcontacts');
-
 						foreach ($contact_arrray as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
@@ -792,8 +806,6 @@ class doc_generic_task_odt extends ModelePDFTask
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
