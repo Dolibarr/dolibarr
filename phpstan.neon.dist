@@ -82,7 +82,6 @@ parameters:
 		- '#get.* expects int, string#'
 		- '#send.* expects int, string#'
 		- '#convert.* expects int, string#'
-		#- '#constructor expects int, string#'
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
 		- '#expects int, float#'
@@ -132,7 +131,7 @@ parameters:
 	cache:
 		nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
-	reportUnmatchedIgnoredErrors: false
+	reportUnmatchedIgnoredErrors: true
 	universalObjectCratesClasses:
 		- stdClass
 		- SimpleXMLElement
