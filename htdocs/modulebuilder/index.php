@@ -4155,7 +4155,7 @@ if ($module == 'initmodule') {
 						$pathtolib      = strtolower($module).'/lib/'.strtolower($module).'.lib.php';
 						$pathtoobjlib   = strtolower($module).'/lib/'.strtolower($module).'_'.strtolower($tabobj).'.lib.php';
 
-						$tmpobject = $tmpobject ?? null;
+						$tmpobject = $tmpobject ?? null;  // @phan-suppress-current-line PhanPluginDuplicateExpressionAssignmentOperation
 						if (is_object($tmpobject) && property_exists($tmpobject, 'picto')) {
 							$pathtopicto = $tmpobject->picto;
 							$realpathtopicto = '';
