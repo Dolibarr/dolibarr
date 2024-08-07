@@ -63,7 +63,7 @@ class SocialNetworkManager
 
 	/**
 	 * Initialize the social network needed
-	 * @return object|string   Object if OK, message error if KO
+	 * @return void   new instance if founded
 	 */
 	private function initializeHandler()
 	{
