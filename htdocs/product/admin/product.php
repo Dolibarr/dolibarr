@@ -325,6 +325,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				$modCodeProduct = new $file();
+				'@phan-var-force ModeleProductCode $modCodeProduct';
 
 				// Show modules according to features level
 				if ($modCodeProduct->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

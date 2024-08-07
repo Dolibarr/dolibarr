@@ -275,6 +275,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
+							'@phan-var-force ModeleNumRefRecruitmentJobPosition $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
