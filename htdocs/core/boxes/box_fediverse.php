@@ -56,23 +56,20 @@ class box_fediverse extends ModeleBoxes
 	 *
 	 *  @param	int		$max        	Maximum number of records to load
 	 *  @param	int		$cachedelay		Delay we accept for cache file
-	 *  @param string    $platform   social network (Mastodan, Twitter,...)
 	 *  @return	void
 	 */
-	public function loadBox($max = 5, $cachedelay = 3600, $platform = 'mastodon')
+	public function loadBox($max = 5, $cachedelay = 3600)
 	{
 		global $langs, $conf;
 		$langs->load("boxes");
 
 		$this->max = $max;
 
-
 		// Get Fediverse feed URL
-		$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const";
-		if (empty($platform)) {
-			$sql .= " WHERE name like '%SOCIAL_NETWORKS_DATA_%'";
-		} else {
-			$sql .= " WHERE name like '%SOCIAL_NETWORKS_DATA_".$this->db->escape($platform)."%'";
+		$sql = '';
+		if (!empty($this->paramdef)) {
+			$sql = "SELECT value FROM ".MAIN_DB_PREFIX."const";
+			$sql .= " WHERE name like '%SOCIAL_NETWORKS_DATA_".$this->db->escape($this->paramdef)."%'";
 		}
 		$resql = $this->db->query($sql);
 		$num = $this->db->num_rows($resql);
@@ -91,7 +88,7 @@ class box_fediverse extends ModeleBoxes
 
 		$result = $fediverseParser->parser($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse, 'mastodon');
 
-		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, getDolGlobalString($socialNetworkTitle));
+		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_SanitizeFileName($socialNetworkTitle));
 		if ($result < 0 || !empty($fediverseParser->error)) {
 			$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($fediverseParser->getLastFetchDate() ? dol_print_date($fediverseParser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
 			if ($fediverseParser->error) {
@@ -104,7 +101,7 @@ class box_fediverse extends ModeleBoxes
 				'text' => $title,
 				'sublink' => $socialNetworkUrl,
 				'subtext' => $langs->trans("LastRefreshDate").': '.($fediverseParser->getLastFetchDate() ? dol_print_date($fediverseParser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")),
-				'subpicto' => 'share-alt',
+				'subpicto' => 'globe',
 				'target' => '_blank',
 			);
 		}
@@ -121,7 +118,7 @@ class box_fediverse extends ModeleBoxes
 
 			$this->info_box_contents[$line][0] = array(
 				'td' => 'class="left" width="16"',
-				'text' => img_picto('', 'socialnetwork'),
+				'text' => img_picto('', 'share-alt'),
 				'url' => $href,
 				'tooltip' => $tooltip,
 				'target' => 'newfediverse',

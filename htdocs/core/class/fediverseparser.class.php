@@ -63,7 +63,7 @@ class FediverseParser
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
-	 * @param string    $platform   social network (Mastodan, Twitter,...)
+	 * @param string    $platform   social network (Mastodon, Twitter,...)
 	 * @return int      Status code: <0 if error, >0 if success.
 	 */
 	public function parser($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $platform = 'default')
@@ -132,7 +132,7 @@ class FediverseParser
 	 *
 	 * @param string $data JSON data.
 	 * @param int    $maxNb Maximum number of posts to process.
-	 * @param string    $platform   social network (Mastodan, Twitter,...)
+	 * @param string    $platform   social network (Mastodon, Twitter,...)
 	 * @return array Processed posts.
 	 */
 	private function processData($data, $maxNb, $platform)
@@ -160,7 +160,7 @@ class FediverseParser
 	 * Normalize data of retrieved posts
 	 *
 	 * @param  string   $postData   post retrieved
-	 * @param string    $platform   social network (Mastodan, Twitter,...)
+	 * @param string    $platform   social network (Mastodon, Twitter,...)
 	 * @return array    return array if OK , empty if KO
 	 */
 	private function normalizeData($postData, $platform = 'default')
