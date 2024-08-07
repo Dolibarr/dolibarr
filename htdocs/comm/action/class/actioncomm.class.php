@@ -2305,8 +2305,8 @@ class ActionComm extends CommonObject
 						$event['url'] = $link_subscription;
 					}
 
-					$event['created'] = $this->db->jdate($obj->datec) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
-					$event['modified'] = $this->db->jdate($obj->datem) - (!getDolGlobalString('AGENDA_EXPORT_FIX_TZ') ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
+					$event['created'] = (int) $this->db->jdate($obj->datec) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
+					$event['modified'] = (int) $this->db->jdate($obj->datem) - (getDolGlobalInt('AGENDA_EXPORT_FIX_TZ') * 3600);
 					$event['num_vote'] = $this->num_vote;
 					$event['event_paid'] = $this->event_paid;
 					$event['status'] = $this->status;
@@ -2324,7 +2324,9 @@ class ActionComm extends CommonObject
 						$assignedUserArray[$key] = $assignedUser;
 					}
 
-					$event['assignedUsers'] = $assignedUserArray;
+					if ($filters['module'] != 'project@eventorganization') {
+						$event['assignedUsers'] = $assignedUserArray;
+					}
 
 					if ($qualified && $datestart) {
 						$eventarray[] = $event;
