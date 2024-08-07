@@ -360,7 +360,7 @@ foreach ($dirproduct as $dirroot) {
 				}
 
 				print '<td class="center">';
-				$s = $modCodeProduct->getToolTip($langs, null, -1);
+				$s = $modCodeProduct->getToolTip($langs, '', -1);
 				print $form->textwithpicto('', $s, 1);
 				print '</td>';
 
