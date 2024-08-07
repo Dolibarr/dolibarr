@@ -170,7 +170,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	{
 		global $conf, $mysoc;
 		if (!$langs instanceof Translate) {
-			$langs = $_GLOBALS['langs'];
+			$langs = $GLOBALS['langs'];
 			'@phan-var-force Translate $langs';
 		}
 

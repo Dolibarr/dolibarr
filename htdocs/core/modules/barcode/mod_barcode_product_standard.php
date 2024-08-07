@@ -116,7 +116,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	public function getExample($langs = 0, $objproduct = null)
 	{
 		if (!$langs instanceof Translate) {
-			$langs = $_GLOBALS['langs'];
+			$langs = $GLOBALS['langs'];
 			'@phan-var-force Translate $langs';
 		}
 		$examplebarcode = $this->getNextValue($objproduct, '');

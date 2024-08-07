@@ -168,7 +168,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		if (!$langs instanceof Translate) {
-			$langs = $_GLOBALS['langs'];
+			$langs = $GLOBALS['langs'];
 			'@phan-var-force Translate $langs';
 		}
 		$examplecust = '';
