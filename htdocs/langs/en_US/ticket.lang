@@ -143,7 +143,6 @@ TicketAutoCheckNotifyThirdParty=Automatically check "Notify third-party" on tick
 TicketAutoCheckNotifyThirdPartyHelp=When creating a ticket, the option "Notify third-party" will be automatically checked.
 TicketAssignContactToMessage=Assign an external contact to a message
 TicketAssignContactToMessageHelp=When a known contact answer to a message, his name is displayed on the ticket messages list.
-
 # Index & list page
 TicketsIndex=Tickets area
 TicketList=List of tickets
