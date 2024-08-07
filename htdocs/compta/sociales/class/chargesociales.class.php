@@ -57,7 +57,7 @@ class ChargeSociales extends CommonObject
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var integer|string $date_ech
+	 * @var int|string $date_ech
 	 */
 	public $date_ech;
 

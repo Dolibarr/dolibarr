@@ -113,7 +113,7 @@ class Tva extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 

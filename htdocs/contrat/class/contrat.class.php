@@ -154,7 +154,7 @@ class Contrat extends CommonObject
 	public $user_cloture;
 
 	/**
-	 * @var integer|string		Date when contract was signed
+	 * @var int|string		Date when contract was signed
 	 */
 	public $date_contrat;
 

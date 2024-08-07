@@ -207,7 +207,7 @@ class EmailCollector extends CommonObject
 	public $maxemailpercollect;
 
 	/**
-	 * @var integer|string $datelastresult
+	 * @var int|string $datelastresult
 	 */
 	public $datelastresult;
 

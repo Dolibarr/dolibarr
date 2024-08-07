@@ -155,7 +155,7 @@ class BOM extends CommonObject
 	public $description;
 
 	/**
-	 * @var integer|string date_valid
+	 * @var int|string date_valid
 	 */
 	public $date_valid;
 

@@ -141,7 +141,7 @@ class Mo extends CommonObject
 	public $note_private;
 
 	/**
-	 * @var integer|string date_validation
+	 * @var int|string date_validation
 	 */
 	public $date_valid;
 
@@ -161,12 +161,12 @@ class Mo extends CommonObject
 	public $product;
 
 	/**
-	 * @var integer|string date_start_planned
+	 * @var int|string date_start_planned
 	 */
 	public $date_start_planned;
 
 	/**
-	 * @var integer|string date_end_planned
+	 * @var int|string date_end_planned
 	 */
 	public $date_end_planned;
 

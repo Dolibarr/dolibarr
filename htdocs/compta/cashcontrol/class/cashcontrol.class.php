@@ -113,7 +113,7 @@ class CashControl extends CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var integer|string $date_valid
+	 * @var int|string $date_valid
 	 */
 	public $date_valid;
 	public $fk_user_valid;
