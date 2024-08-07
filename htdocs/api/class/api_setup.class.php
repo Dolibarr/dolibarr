@@ -52,6 +52,72 @@ class Setup extends DolibarrApi
 	}
 
 	/**
+	 * Get the list of Action Triggers.
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int       $limit      Number of items per page
+	 * @param int       $page       Page number {@min 0}
+	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
+	 * @return array				List of extra fields
+	 *
+	 * @url     GET actiontriggers
+	 *
+	 * @throws	RestException	400		Bad value for sqlfilters
+	 * @throws	RestException	503		Error when retrieving list of action triggers
+	 */
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $sqlfilters = '')
+	{
+		$list = array();
+
+		if ($elementtype == 'thirdparty') {
+			$elementtype = 'societe';
+		}
+		if ($elementtype == 'contact') {
+			$elementtype = 'socpeople';
+		}
+
+		$sql = "SELECT t.rowid as id, t.elementtype, t.code, t.contexts, t.label, t.description, t.rang";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		if (!empty($elementtype)) {
+			$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+		}
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit, $offset);
+		}
+
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			for ($i = 0; $i < $min; $i++) {
+				$list[] = $this->db->fetch_object($result);
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of action triggers : '.$this->db->lasterror());
+		}
+
+		return $list;
+	}
+
+	/**
 	 * Get the list of ordering methods.
 	 *
 	 * @param string    $sortfield  Sort field
