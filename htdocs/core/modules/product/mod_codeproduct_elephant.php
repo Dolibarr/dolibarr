@@ -127,7 +127,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	public function getExample($langs = null, $objproduct = '', $type = -1)
 	{
 		if (!$langs instanceof Translate) {
-			$langs = $_GLOBAL['langs'];
+			$langs = $GLOBALS['langs'];
 			'@phan-var-force Translate $langs';
 		}
 		$exampleproduct = $exampleservice = '';
