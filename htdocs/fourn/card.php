@@ -8,6 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ if ($object->id > 0) {
  * Action
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -291,7 +292,7 @@ if ($object->id > 0) {
 	$vattoshow = ($object->tva_intra ? showValueWithClipboardCPButton(dol_escape_htmltag($object->tva_intra)) : '');
 	print $form->editfieldkey("VATIntra", 'tva_intra', $object->tva_intra, $object, $user->hasRight('societe', 'creer'));
 	print '</td><td>';
-	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 1, '', 'id', 'auto', array('valuealreadyhtmlescaped'=>1));
+	print $form->editfieldval("VATIntra", 'tva_intra', $vattoshow, $object, $user->hasRight('societe', 'creer'), 'string', $object->tva_intra, null, null, '', 1, '', 'id', 'auto', array('valuealreadyhtmlescaped' => 1));
 	print '</td></tr>';
 
 	// Default terms of the settlement
@@ -408,7 +409,7 @@ if ($object->id > 0) {
 	}
 
 	// Other attributes
-	$parameters = array('socid'=>$object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
+	$parameters = array('socid' => $object->id, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Module Adherent
@@ -442,7 +443,7 @@ if ($object->id > 0) {
 	print '<div class="underbanner underbanner-before-box clearboth"></div>';
 	print '<br>';
 
-	// Lien recap
+	// Summary link
 	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';

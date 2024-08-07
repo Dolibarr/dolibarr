@@ -389,7 +389,7 @@ class pdf_vinci extends ModelePDFMo
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -1358,7 +1358,7 @@ class pdf_vinci extends ModelePDFMo
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['dim'] = array(
 			'rank' => $rank,
 			'status' => true,
@@ -1369,7 +1369,7 @@ class pdf_vinci extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1380,7 +1380,7 @@ class pdf_vinci extends ModelePDFMo
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qtytot'] = array(
 			'rank' => $rank,
 			'width' => 25, // in mm

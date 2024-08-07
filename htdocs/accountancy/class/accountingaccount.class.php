@@ -466,7 +466,7 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param int $withlabel 0=No label, 1=Include label of account

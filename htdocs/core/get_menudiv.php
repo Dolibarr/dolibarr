@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -103,10 +104,10 @@ top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body class="getmenudiv">'."\n";
 
-// Javascript to make menu active like Jmobile did.
+// JavaScript to make menu active like Jmobile did.
 print '
 <style>
-    /*Lets hide the non active LIs by default*/
+    /* Hide the non active LIs by default*/
     body {
         font-size: 16px;
     }
@@ -155,7 +156,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print '
+print '
         background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
@@ -191,9 +192,9 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print 'background-position-y: 1px;';
-	print 'padding-left: 20px;';
-	print '
+print 'background-position-y: 1px;';
+print 'padding-left: 20px;';
+print '
 	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;

@@ -54,6 +54,17 @@ $type = 'ticket';
 $error = 0;
 $reg = array();
 
+// Initiate status list
+$statuslist = array(
+	Ticket::STATUS_IN_PROGRESS => $langs->trans("InProgress"),
+	Ticket::STATUS_NOT_READ => $langs->trans("NotRead"),
+	Ticket::STATUS_READ => $langs->trans("Read"),
+	Ticket::STATUS_ASSIGNED => $langs->trans("Assigned"),
+	Ticket::STATUS_NEED_MORE_INFO => $langs->trans("NeedMoreInformationShort"),
+	Ticket::STATUS_WAITING => $langs->trans("Waiting"),
+	Ticket::STATUS_CLOSED => $langs->trans("SolvedClosed")
+);
+
 /*
  * Actions
  */
@@ -161,6 +172,13 @@ if ($action == 'updateMask') {
 			$error++;
 		}
 	}
+
+	$param_status = GETPOST('TICKET_SET_STATUS_ON_ANSWER');
+	$res = dolibarr_set_const($db, 'TICKET_SET_STATUS_ON_ANSWER', $param_status, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
 
 	$param_delay_first_response = GETPOSTINT('delay_first_response');
 	$res = dolibarr_set_const($db, 'TICKET_DELAY_BEFORE_FIRST_RESPONSE', $param_delay_first_response, 'chaine', 0, '', $conf->entity);
@@ -577,6 +595,16 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Automatically define status on answering a ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoChangeStatusOnAnswer").'</td>';
+print '<td class="left">';
+print $formcategory->selectarray("TICKET_SET_STATUS_ON_ANSWER", $statuslist, getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER'));
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoChangeStatusOnAnswerHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

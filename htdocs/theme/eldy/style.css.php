@@ -288,18 +288,18 @@ $disableimages = 0;
 $maxwidthloginblock = 180;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disableimages = 1;
-	$maxwidthloginblock = $maxwidthloginblock + 50;
+	$maxwidthloginblock += 50;
 	$minwidthtmenu = 0;
 }
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 if (!empty($conf->bookmark->enabled)) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 
 

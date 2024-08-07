@@ -464,7 +464,7 @@ interface Database
 	/**
 	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
-	 * 19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 * 19700101020000 -> 7200 whatever is TZ if gmt=1
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ

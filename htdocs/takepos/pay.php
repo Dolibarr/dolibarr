@@ -2,6 +2,7 @@
 /* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,8 +222,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-	// Define list of possible payments
-	$arrayOfValidPaymentModes = array();
+		// Define list of possible payments
+		$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -588,16 +589,16 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 <?php
 $action_buttons = array(
 array(
-	"function" => "reset()",
-	"span" => "style='font-size: 150%;'",
-	"text" => "C",
-	"class" => "poscolorblue"
+"function" => "reset()",
+"span" => "style='font-size: 150%;'",
+"text" => "C",
+"class" => "poscolorblue"
 ),
 array(
-	"function" => "parent.$.colorbox.close();",
-	"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
-	"text" => "X",
-	"class" => "poscolordelete"
+"function" => "parent.$.colorbox.close();",
+"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
+"text" => "X",
+"class" => "poscolordelete"
 ),
 );
 $numpad = getDolGlobalString('TAKEPOS_NUMPAD');
@@ -709,7 +710,7 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
-	$i = $i + 1;
+	$i += 1;
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {

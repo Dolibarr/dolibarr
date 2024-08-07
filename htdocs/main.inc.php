@@ -378,14 +378,14 @@ if (GETPOST("DOL_AUTOSET_COOKIE")) {
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
 	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // keep cookie 1 year and add tag httponly
 	} else {
 		// Only available for php >= 7.3
 		$cookieparams = array(
 			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
 			'path' => '/',
 			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
 			'httponly' => true,
 			'samesite' => 'Lax'	// None || Lax  || Strict
 		);
@@ -416,14 +416,14 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
 	if (PHP_VERSION_ID < 70300) {
-		session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+		session_set_cookie_params(0, '/', null, !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	} else {
 		// Only available for php >= 7.3
 		$sessioncookieparams = array(
 			'lifetime' => 0,
 			'path' => '/',
 			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
 			'httponly' => true,
 			'samesite' => 'Lax'	// None || Lax  || Strict
 		);
@@ -835,7 +835,7 @@ if (!defined('NOLOGIN')) {
 		// Verification security graphic code
 		if ($test && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 
 			// Check code
 			if (!$ok) {
@@ -1023,7 +1023,7 @@ if (!defined('NOLOGIN')) {
 		if ($resultFetchUser <= 0 || $user->isNotIntoValidityDateRange()) {
 			dol_syslog('User not found or not valid, connection refused');
 			session_destroy();
-			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
 			dol_session_start();
 
@@ -1110,7 +1110,7 @@ if (!defined('NOLOGIN')) {
 				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
 			}
 			session_destroy();
-			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
 			dol_session_start();
 
@@ -2517,23 +2517,29 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<div id="topmenulogincompanyinfo" >';
 
 	$dropdownBody .= '<br><b>'.$langs->trans("Company").'</b>: <span>'.dol_escape_htmltag($mysoc->name).'</span>';
-	if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_SIREN"), 1).'</span>';
-	}
-	if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId2", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_SIRET"), 2).'</span>';
-	}
-	if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId3", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_APE"), 3).'</span>';
-	}
-	if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId4", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_RCS"), 4).'</span>';
-	}
-	if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId5", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID5"), 5).'</span>';
-	}
-	if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
-		$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId6", $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_PROFID6"), 6).'</span>';
+	$idprofcursor = 0;
+	while ($idprofcursor < 10) {
+		$idprofcursor++;
+		$constkeyforprofid = 'MAIN_INFO_PROFID'.$idprofcursor;
+		if ($idprofcursor == 1) {
+			$constkeyforprofid = 'MAIN_INFO_SIREN';
+		}
+		if ($idprofcursor == 2) {
+			$constkeyforprofid = 'MAIN_INFO_SIRET';
+		}
+		if ($idprofcursor == 3) {
+			$constkeyforprofid = 'MAIN_INFO_APE';
+		}
+		if ($idprofcursor == 4) {
+			$constkeyforprofid = 'MAIN_INFO_RCS';
+		}
+		$showprofid = (($idprofcursor <= 6) && $langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code) != '-');
+		if ($idprofcursor > 6 && getDolGlobalString($constkeyforprofid)) {
+			$showprofid = true;
+		}
+		if ($showprofid) {
+			$dropdownBody .= '<br><b>'.$langs->transcountry("ProfId".$idprofcursor, $mysoc->country_code).'</b>: <span>'.dol_print_profids(getDolGlobalString($constkeyforprofid), 1).'</span>';
+		}
 	}
 	$dropdownBody .= '<br><b>'.$langs->trans("VATIntraShort").'</b>: <span>'.dol_print_profids(getDolGlobalString("MAIN_INFO_TVAINTRA"), 'VAT').'</span>';
 	$dropdownBody .= '<br><b>'.$langs->trans("Country").'</b>: <span>'.($mysoc->country_code ? $langs->trans("Country".$mysoc->country_code) : '').'</span>';
