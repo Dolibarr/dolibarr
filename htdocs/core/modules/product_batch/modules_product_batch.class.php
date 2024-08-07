@@ -86,7 +86,7 @@ abstract class ModeleNumRefBatch extends CommonNumRefGenerator
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
 	 *  @param  Productlot	$object		Object we need next value for
-	 *  @return string|int      		String if OK, <0 if KO
+	 *  @return string|int<-1,0>		String if OK, <0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $object);
 }
