@@ -122,12 +122,16 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
+	 * @param	?Translate	$langs			Object langs
 	 * @param	?Societe	$objthirdparty	Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objthirdparty = null)
+	public function getExample($langs = 0, $objthirdparty = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $_GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objthirdparty, '');
 		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');

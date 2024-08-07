@@ -109,12 +109,16 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
-	 * @param	?Product	$objproduct		Object product
+	 * @param	?Translate	$langs			Object langs
+	 * @param	?Product	$objproduct		Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = null)
+	public function getExample($langs = 0, $objproduct = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $_GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');

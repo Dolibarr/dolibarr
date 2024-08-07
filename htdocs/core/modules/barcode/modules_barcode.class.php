@@ -105,18 +105,18 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param   Translate   $langs          Object langs
-	 * @param   ?Product    $objproduct     Object product
-	 * @return  string                      Return string example
+	 * @param   ?Translate		$langs			Object langs
+	 * @param   ?CommonObject	$object			Object product
+	 * @return  string							Return string example
 	 */
-	abstract public function getExample($langs, $objproduct = null);
+	abstract public function getExample($langs = null, $object = null);
 
 
 	/**
 	 *      Return description of module parameters
 	 *
 	 *      @param	Translate	$langs      Output language
-	 *		@param	?Societe		$soc		Third party object
+	 *		@param	?Societe	$soc		Third party object
 	 *		@param	int			$type		-1=Nothing, 0=Product, 1=Service
 	 *		@return	string					HTML translated description
 	 */
