@@ -219,10 +219,10 @@ if ($resql) {
 		$socialNetworkUrl = $socialNetworkData['url'];
 		$key = $obj->rowid;
 
-		$fediverseparser = new FediverseParser($db);
+		$fediverseparser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
-		$result = $fediverseparser->parser($socialNetworkUrl, 5, 20, $path_fediverse, 'mastodon');
+		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse);
 
 		print "<br>";
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";

@@ -83,10 +83,10 @@ class box_fediverse extends ModeleBoxes
 			$socialNetworkUrl = $socialNetworkData['url'];
 		}
 
-		$fediverseParser = new FediverseParser($this->db);
+		$fediverseParser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
-		$result = $fediverseParser->parser($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse, 'mastodon');
+		$result = $fediverseParser->fetchPosts($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse);
 
 		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_escape_htmltag($socialNetworkTitle));
 		if ($result < 0 || !empty($fediverseParser->error)) {
