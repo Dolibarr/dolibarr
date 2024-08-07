@@ -38,13 +38,25 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 {
 	public $name = 'Standard'; // Model Name
 
-	public $code_modifiable; // Editable code
+	/**
+	 * @var int Editable code
+	 */
+	public $code_modifiable;
 
-	public $code_modifiable_invalide; // Modified code if it is invalid
+	/**
+	 * @var int Modified code if it is invalid
+	 */
+	public $code_modifiable_invalide;
 
-	public $code_modifiable_null; // Modified code if it is null
+	/**
+	 * @var int Modified code if it is null
+	 */
+	public $code_modifiable_null;
 
-	public $code_null; // Optional code
+	/**
+	 * @var int Optional code
+	 */
+	public $code_null;
 
 	/**
 	 * Dolibarr version of the loaded document
@@ -52,11 +64,22 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $searchcode; // Search string
+	/**
+	 * @var string Search string
+	 */
+	public $searchcode;
 
-	public $numbitcounter; // Number of digits the counter
+	/**
+	 * Number of digits for the counter (not bits, but digits)
+	 *
+	 * @var int<0,max>
+	 */
+	public $numbitcounter;
 
-	public $prefixIsRequired; // The prefix field of third party must be filled when using {pre}
+	/**
+	 * @var int<0,1>	If the prefix field of third party must be filled when using {pre}
+	 */
+	public $prefixIsRequired;
 
 
 	/**
