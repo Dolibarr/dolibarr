@@ -1755,15 +1755,20 @@ class Mo extends CommonObject
 	 *  If lines are into a template, title must also be into a template
 	 *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
 	 *
-	 * 	@param	MoLine	$line				Line
-	 * 	@param	string				$var				Var
-	 *	@param	string				$restrictlist		''=All lines, 'services'=Restrict to services only (strike line if not)
-	 *  @param	string				$defaulttpldir		Directory where to find the template
-	 *  @param  array       		$selectedLines      Array of lines id for selected lines
+	 * 	@param	MoLine	$line			Line
+	 * 	@param	string	$var			Var
+	 *	@param	string	$restrictlist	''=All lines, 'services'=Restrict to services only (strike line if not)
+	 *  @param	string	$defaulttpldir	Directory where to find the template
+	 *  @param  int[]  	$selectedLines     Array of lines id for selected lines
 	 * 	@return	void
 	 */
 	public function printOriginLine($line, $var, $restrictlist = '', $defaulttpldir = '/core/tpl', $selectedLines = array())
 	{
+		if (!$line instanceof MoLine) {
+			dol_syslog(__METHOD__.'::pringOriginLine $line is '.get_class($line).'<>MoLine', LOG_WARNING);
+			parent::printOriginLine($line, $var, $restrictlist, $defaulttpldir, $selectedLines);
+			return;
+		}
 		$productstatic = new Product($this->db);
 
 		$this->tpl['id'] = $line->id;
