@@ -30,7 +30,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 class box_fediverse extends ModeleBoxes
 {
 	public $boxcode = "lastfediverseinfos";
-	public $boximg = "object_socialnetwork";
+	public $boximg = "object_share-alt";
 	public $boxlabel = "BoxLastFediverseInfos";
 	public $depends = array("socialnetworks");
 
@@ -88,7 +88,7 @@ class box_fediverse extends ModeleBoxes
 
 		$result = $fediverseParser->parser($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse, 'mastodon');
 
-		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_SanitizeFileName($socialNetworkTitle));
+		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_escape_htmltag($socialNetworkTitle));
 		if ($result < 0 || !empty($fediverseParser->error)) {
 			$errormessage = $langs->trans("FailedToRefreshDataInfoNotUpToDate", ($fediverseParser->getLastFetchDate() ? dol_print_date($fediverseParser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown")));
 			if ($fediverseParser->error) {
