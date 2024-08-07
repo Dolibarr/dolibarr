@@ -104,6 +104,8 @@ parameters:
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#expects array\|LDAP#'
 		- '#expects array<int#'
+		- '#expects array\|string#'
+		- '#expects array<string#'
 		- '#expects array, string given.#'
 		- '#expects array, null given.#'
 		- '#expects array<string>, null given.#'
