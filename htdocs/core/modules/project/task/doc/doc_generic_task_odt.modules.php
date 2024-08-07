@@ -607,8 +607,6 @@ class doc_generic_task_odt extends ModelePDFTask
 							$odfHandler->setVars($key, $val, true, 'UTF-8');
 						} catch (OdfException $e) {
 							dol_syslog($e->getMessage(), LOG_INFO);
-						} catch (SegmentException $e) {
-							dol_syslog($e->getMessage(), LOG_INFO);
 						}
 					}
 
@@ -645,8 +643,6 @@ class doc_generic_task_odt extends ModelePDFTask
 								try {
 									$listlinestaskres->setVars($key, $val, true, 'UTF-8');
 								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
-								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
