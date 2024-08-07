@@ -2273,7 +2273,7 @@ if ($action == 'create' && $usercancreate) {
 
 					if (array_key_exists('facture', $object->linkedObjects)) {
 						foreach ($object->linkedObjects['facture'] as $invoice) {
-							'@phan-var-type-force Facture $invoice';
+							'@phan-var-force Facture $invoice';
 							if ($invoice->type == Facture::TYPE_DEPOSIT) {
 								$eligibleForDepositGeneration = false;
 								break;
@@ -2287,7 +2287,7 @@ if ($action == 'create' && $usercancreate) {
 
 							if (array_key_exists('facture', $proposal->linkedObjects)) {
 								foreach ($proposal->linkedObjects['facture'] as $invoice) {
-									'@phan-var-type-force Facture $invoice';
+									'@phan-var-force Facture $invoice';
 									if ($invoice->type == Facture::TYPE_DEPOSIT) {
 										$eligibleForDepositGeneration = false;
 										break 2;
