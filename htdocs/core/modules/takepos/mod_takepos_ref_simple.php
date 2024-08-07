@@ -131,10 +131,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * ALTER TABLE llx_facture ADD COLUMN calculated_numrefonly INTEGER AS (CASE SUBSTRING(ref FROM 1 FOR 2) WHEN 'TC' THEN CAST(SUBSTRING(ref FROM 10) AS SIGNED) ELSE 0 END) PERSISTENT;
 	 * ALTER TABLE llx_facture ADD INDEX calculated_numrefonly_idx (calculated_numrefonly);
 	 *
-	 * @param   Societe     $objsoc     Object third party
-	 * @param   Facture		$invoice	Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string|int     			Next ref value or last ref if $mode is 'last'
+	 * @param	?Societe	$objsoc		Object third party
+	 * @param	?Facture	$invoice	Object invoice
+	 * @param	string		$mode		'next' for next value or 'last' for last value
+	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{

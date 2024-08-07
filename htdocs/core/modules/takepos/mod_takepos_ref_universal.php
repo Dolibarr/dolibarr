@@ -119,10 +119,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 * Return next free value
 	 *
-	 * @param   Societe     	$objsoc     Object thirdparty
-	 * @param   Facture			$invoice	Object invoice
-	 * @param   string			$mode       'next' for next value or 'last' for last value
-	 * @return  string|int                Next value if OK, 0 if KO
+	 * @param	?Societe	$objsoc		Object third party
+	 * @param	?Facture	$invoice	Object invoice
+	 * @param	string		$mode		'next' for next value or 'last' for last value
+	 * @return	string|int<-1,0>		Next ref value or last ref if $mode is 'last'
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{

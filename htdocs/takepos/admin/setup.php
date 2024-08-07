@@ -172,7 +172,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $file();
-					'@phan-var-force ModeleNumRefTakepos';
+					'@phan-var-force ModeleNumRefTakepos $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
