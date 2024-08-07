@@ -682,7 +682,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$tvatx= $line->tva_tx;
+			$tvatx = $line->tva_tx;
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
@@ -1913,7 +1913,7 @@ if ($action == 'create' && $usercancreate) {
 			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 			print img_picto('', 'contact', 'class="pictofixedwidth"');
 			//print $form->selectcontacts($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx');
-			print $form->select_contact($soc->id, $contactid, 'contactid', 1,  empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
+			print $form->select_contact($soc->id, $contactid, 'contactid', 1, empty($srccontactslist) ? "" : $srccontactslist, '', 1, 'maxwidth300 widthcentpercentminusx', true);
 			print '</td></tr>';
 
 			// Ligne info remises tiers
@@ -2273,6 +2273,7 @@ if ($action == 'create' && $usercancreate) {
 
 					if (array_key_exists('facture', $object->linkedObjects)) {
 						foreach ($object->linkedObjects['facture'] as $invoice) {
+							'@phan-var-type-force Facture $invoice';
 							if ($invoice->type == Facture::TYPE_DEPOSIT) {
 								$eligibleForDepositGeneration = false;
 								break;
@@ -2286,6 +2287,7 @@ if ($action == 'create' && $usercancreate) {
 
 							if (array_key_exists('facture', $proposal->linkedObjects)) {
 								foreach ($proposal->linkedObjects['facture'] as $invoice) {
+									'@phan-var-type-force Facture $invoice';
 									if ($invoice->type == Facture::TYPE_DEPOSIT) {
 										$eligibleForDepositGeneration = false;
 										break 2;
