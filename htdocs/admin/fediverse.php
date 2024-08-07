@@ -270,7 +270,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Active
-		$active = _isInBoxListFaidiverse((int) $key, $boxlist) ? 'yes' : 'no';
+		$active = _isInBoxListFediverse((int) $key, $boxlist) ? 'yes' : 'no';
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
@@ -297,13 +297,13 @@ llxFooter();
 $db->close();
 
 /**
- * Check if the given RSS feed if inside the list of boxes/widgets
+ * Check if the given fediverse feed if inside the list of boxes/widgets
  *
  * @param	int		$id		The id of the socialnetwork
  * @param	array	$boxlist	A list with boxes/widgets
- * @return	bool				true if the socialnetwork is inside the box/widget list, otherwise false
+ * @return	bool				True if the socialnetwork is inside the box/widget list, otherwise false
  */
-function _isInBoxListFaidiverse($id, array $boxlist)
+function _isInBoxListFediverse(int $id, array $boxlist)
 {
 	foreach ($boxlist as $box) {
 		if ($box->boxcode === "lastfediverseinfos") {

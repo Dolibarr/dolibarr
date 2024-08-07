@@ -29,9 +29,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  */
 class FediverseParser
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
 	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error = '';
+
 	private $posts = array();
+
+	/**
+	 * @var int
+	 */
 	private $lastFetchDate;
 
 	/**
@@ -51,7 +63,7 @@ class FediverseParser
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
-	 * @param string    $platform   social network (Mastodan, Twiter,...)
+	 * @param string    $platform   social network (Mastodan, Twitter,...)
 	 * @return int      Status code: <0 if error, >0 if success.
 	 */
 	public function parser($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $platform = 'default')
@@ -120,7 +132,7 @@ class FediverseParser
 	 *
 	 * @param string $data JSON data.
 	 * @param int    $maxNb Maximum number of posts to process.
-	 * @param string    $platform   social network (Mastodan, Twiter,...)
+	 * @param string    $platform   social network (Mastodan, Twitter,...)
 	 * @return array Processed posts.
 	 */
 	private function processData($data, $maxNb, $platform)
@@ -136,15 +148,6 @@ class FediverseParser
 			if ($count >= $maxNb) {
 				break;
 			}
-			if (!is_numeric($post['account']['created_at'])) {
-				$timestamp = strtotime($post['account']['created_at']);
-				if ($timestamp > 0) {
-					$date = $timestamp;
-				}
-			}
-			if (is_numeric($date)) {
-				$date = dol_print_date($date, "dayhour", 'tzuserrel');
-			}
 
 			$posts[] = $this->normalizeData($post, $platform);
 
@@ -157,25 +160,29 @@ class FediverseParser
 	 * Normalize data of retrieved posts
 	 *
 	 * @param  string   $postData   post retrieved
-	 * @param string    $platform   social network (Mastodan, Twiter,...)
+	 * @param string    $platform   social network (Mastodan, Twitter,...)
 	 * @return array    return array if OK , empty if KO
 	 */
 	private function normalizeData($postData, $platform = 'default')
 	{
 		$normalizedData = array();
 
-		$content = strip_tags($postData['content']);
-		if ($platform == 'mastodon') {
+		if (!is_array($postData)) {
+			$this->error = 'Invalid post data format';
+			return $normalizedData;
+		}
+
+		$content = isset($postData['content']) && is_string($postData['content']) ? strip_tags($postData['content']) : '';		if ($platform == 'mastodon') {
 			$normalizedData['id'] = $postData['id'] ?? '';
 			$normalizedData['content'] = $content ?? '';
-			$normalizedData['created_at'] = $this->formatDate($postData['account']['created_at']) ?? '';
+			$normalizedData['created_at'] = isset($postData['account']) && is_array($postData['account']) ? $this->formatDate($postData['account']['created_at'] ?? '') : '';
 			$normalizedData['url'] = $postData['url'] ?? '';
 			$normalizedData['media_url'] = $postData['media_attachments'][0]['url'] ?? '';
 		} elseif ($platform == 'twitter') {
 			$normalizedData['id'] = $postData['id_str'] ?? '';
 			$normalizedData['content'] = $content ?? '';
 			$normalizedData['created_at'] = $this->formatDate($postData['created_at']) ?? '';
-			$normalizedData['url'] = 'https://twitter.com/'.$postData['user']['screen_name'].'/status/'.$postData['id_str'];
+			$normalizedData['url'] = isset($postData['user']['screen_name']) && isset($postData['id_str']) ? 'https://twitter.com/'.$postData['user']['screen_name'].'/status/'.$postData['id_str'] : '';
 			$normalizedData['media_url'] = $postData['entities']['media'][0]['media_url_https'] ?? '';
 		} else {
 			// Default format
@@ -190,7 +197,7 @@ class FediverseParser
 	}
 
 	/**
-	 * Format date for normelize date fediverse
+	 * Format date for normalize date fediverse
 	 * @param   string    $dateString   date with string format
 	 * @return  string    return correct format
 	 */

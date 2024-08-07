@@ -34,6 +34,9 @@ class box_fediverse extends ModeleBoxes
 	public $boxlabel = "BoxLastFediverseInfos";
 	public $depends = array("socialnetworks");
 
+	/**
+	 * @var string
+	 */
 	public $paramdef;
 
 	/**
@@ -53,7 +56,7 @@ class box_fediverse extends ModeleBoxes
 	 *
 	 *  @param	int		$max        	Maximum number of records to load
 	 *  @param	int		$cachedelay		Delay we accept for cache file
-	 *  @param string    $platform   social network (Mastodan, Twiter,...)
+	 *  @param string    $platform   social network (Mastodan, Twitter,...)
 	 *  @return	void
 	 */
 	public function loadBox($max = 5, $cachedelay = 3600, $platform = 'mastodon')
