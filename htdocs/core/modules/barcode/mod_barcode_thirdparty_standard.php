@@ -149,7 +149,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 * @param	?Societe	$objthirdparty	Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs = 0, $objthirdparty = null)
+	public function getExample($langs = null, $objthirdparty = null)
 	{
 		if (!$langs instanceof Translate) {
 			$langs = $GLOBALS['langs'];
