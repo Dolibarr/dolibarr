@@ -937,7 +937,7 @@ if (empty($reshook)) {
 					//$vatratecode = $reg[2];
 				}
 
-				$pu_ht = price2num((float) $number / (1 + ((float) $vatratecleaned / 100)), 'MU');
+				$pu_ht = price2num((float) price2num($number, 'MU') / (1 + ((float) $vatratecleaned / 100)), 'MU');
 				// Check min price
 				if ($usercanproductignorepricemin && (!empty($price_min) && ((float) price2num($pu_ht) * (1 - (float) price2num($line->remise_percent) / 100) < price2num($price_min)))) {
 					$langs->load("products");
