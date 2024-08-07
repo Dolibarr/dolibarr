@@ -51,13 +51,13 @@ class mod_knowledgerecord_standard extends ModeleNumRefKnowledgeRecord
 
 
 	/**
-	 *  Return description of numbering module
+	 *	Returns the default description of the numbering template
 	 *
-	 *  @return     string      Text with description
+	 *  @param	Translate	$langs Object langs
+	 *	@return	string	Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $langs;
 		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
@@ -117,8 +117,8 @@ class mod_knowledgerecord_standard extends ModeleNumRefKnowledgeRecord
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1               Next value if OK, -1 if KO
+	 *  @param  KnowledgeRecord	$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
 	{
