@@ -2183,7 +2183,7 @@ class MoLine extends CommonObjectLine
 	 */
 	public $fk_parent_line;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_unit;
 
