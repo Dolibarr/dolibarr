@@ -221,7 +221,7 @@ if (empty($reshook)) {
 		$object = new Account($db);
 		$object->fetch(GETPOST("id", 'int'));
 
-		$object->oldref=$object->ref;
+		$object->oldref = $object->ref;
 		$object->ref = dol_string_nospecial(trim(GETPOST('ref', 'alpha')));
 		$object->label = trim(GETPOST("label", 'alphanohtml'));
 		$object->courant = GETPOST("type");
