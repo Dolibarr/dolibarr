@@ -531,8 +531,8 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Make substitution
 				$substitutionarray = array(
-				'__FROM_NAME__' => $this->emetteur->name,
-				'__FROM_EMAIL__' => $this->emetteur->email,
+					'__FROM_NAME__' => $this->emetteur->name,
+					'__FROM_EMAIL__' => $this->emetteur->email,
 				);
 				complete_substitutions_array($substitutionarray, $langs, $object);
 				// Call the ODTSubstitution hook
@@ -547,10 +547,10 @@ class doc_generic_task_odt extends ModelePDFTask
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->project->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->project->dir_temp,
+							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -731,7 +731,6 @@ class doc_generic_task_odt extends ModelePDFTask
 					dol_syslog($this->error, LOG_WARNING);
 					return -1;
 				}
-
 
 
 				// Replace tags of project files
