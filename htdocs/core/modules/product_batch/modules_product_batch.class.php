@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +22,14 @@
 
 
 /**
- *      \class      ModeleProductCode
+ *      \class      ModelePDFProductBatch
  *      \brief      Parent class for product code generators
  */
 
 /**
- *  \file       htdocs/core/modules/contract/modules_contract.php
- *  \ingroup    contract
- *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
+ *  \file       htdocs/core/modules/product_batch/modules_product_batch.class.php
+ *  \ingroup    product_batch
+ *  \brief      File with parent class for generating product batches to PDF and File of class to manage their numbering
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
