@@ -118,8 +118,8 @@ class mod_recruitmentjobposition_standard extends ModeleNumRefRecruitmentJobPosi
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  RecruitmentJobPosition	$object		Object we need next value for
-	 *  @return string|-1      			Next value if OK, -1 if KO
+	 *  @param	RecruitmentJobPosition	$object		Object we need next value for
+	 *  @return string|int<-1,0>					Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{
