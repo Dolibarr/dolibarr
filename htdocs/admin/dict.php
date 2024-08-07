@@ -2627,7 +2627,9 @@ if ($id > 0) {
 }
 
 print '<br>';
-print dol_get_fiche_end();
+if (GETPOST('id') && GETPOST('id') == DICT_SOCIALNETWORKS) {
+	print dol_get_fiche_end();
+}
 // End of page
 llxFooter();
 $db->close();
