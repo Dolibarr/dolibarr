@@ -1989,7 +1989,7 @@ class Products extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-
+		$obj_ret = array();
 		$product_model = new Product($this->db);
 		$product_model->fetch($id);
 		$product_model->load_stock();
