@@ -103,6 +103,7 @@ parameters:
 		- '#expects string, DateTime given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
 		- '#expects array\{#'
+		- '#expects array<array\{#'
 		- '#expects array\|LDAP#'
 		- '#expects array<int#'
 		- '#expects array\|string#'
