@@ -307,7 +307,7 @@ class pdf_beluga extends ModelePDFProjects
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top - 2, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 2);
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -658,8 +658,8 @@ class pdf_beluga extends ModelePDFProjects
 								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
 
 								if ($qualifiedfortotal) {
-									$total_ht = $total_ht + $element->total_ht;
-									$total_ttc = $total_ttc + $element->total_ttc;
+									$total_ht += $element->total_ht;
+									$total_ttc += $element->total_ttc;
 								}
 								$nexY = $pdf->GetY();
 								$curY = $nexY;

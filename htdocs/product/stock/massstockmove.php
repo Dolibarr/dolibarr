@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022 Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +151,7 @@ if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 		} else {
 			$id = 1;
 		}
-		$listofdata[$id] = array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
+		$listofdata[$id] = array('id' => $id, 'id_product' => $id_product, 'qty' => $qty, 'id_sw' => $id_sw, 'id_tw' => $id_tw, 'batch' => $batch);
 		$_SESSION['massstockmove'] = json_encode($listofdata);
 
 		//unset($id_sw);
@@ -338,14 +339,14 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 		$importcsv = new ImportCsv($db, 'massstocklist');
 		//print $importcsv->separator;
 
-		$nblinesrecord = $importcsv->import_get_nb_of_lines($fullpath)-1;
+		$nblinesrecord = $importcsv->import_get_nb_of_lines($fullpath) - 1;
 		$importcsv->import_open_file($fullpath);
 		$labelsrecord = $importcsv->import_read_record();
 
 		if ($nblinesrecord < 1) {
 			setEventMessages($langs->trans("BadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
 		} else {
-			$i=0;
+			$i = 0;
 			$data = array();
 			$productstatic = new Product($db);
 			$warehousestatics = new Entrepot($db);
@@ -496,7 +497,7 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 					$tmp_id_product = $data[$key][2]['val'];
 					$tmp_qty = $data[$key][3]['val'];
 					$tmp_batch = $data[$key][4]['val'];
-					$listofdata[$key] = array('id'=>$key, 'id_sw'=>$tmp_id_sw, 'id_tw'=>$tmp_id_tw, 'id_product'=>$tmp_id_product, 'qty'=>$tmp_qty, 'batch'=>$tmp_batch);
+					$listofdata[$key] = array('id' => $key, 'id_sw' => $tmp_id_sw, 'id_tw' => $tmp_id_tw, 'id_product' => $tmp_id_product, 'qty' => $tmp_qty, 'batch' => $tmp_batch);
 				}
 			}
 		}
@@ -589,36 +590,36 @@ if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp = $maxphp * 1;
+		$maxphp *= 1;
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024;
+		$maxphp *= 1024;
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024;
+		$maxphp *= 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024 * 1024;
+		$maxphp *= 1024 * 1024 * 1024;
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1;
+		$maxphp2 *= 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024;
+		$maxphp2 *= 1024;
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024;
+		$maxphp2 *= 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+		$maxphp2 *= 1024 * 1024 * 1024;
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;

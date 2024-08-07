@@ -5,6 +5,7 @@
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -388,7 +389,7 @@ class FormCompany extends Form
 	public function select_state_ajax($parent_field_id = 'country_id', $selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
 	{
 		$html = '<script>';
-		$html.='$("select[name=\"'.$parent_field_id.'\"]").change(function(){
+		$html .= '$("select[name=\"'.$parent_field_id.'\"]").change(function(){
 				$.ajax( "'.dol_buildpath('/core/ajax/ziptown.php', 2).'", { data:{ selected: $("select[name=\"'.$htmlname.'\"]").val(), country_codeid: $(this).val(), htmlname:"'.$htmlname.'", morecss:"'.$morecss.'" } } )
 				.done(function(msg) {
 					$("span#target_'.$htmlname.'").html(msg);
@@ -399,10 +400,11 @@ class FormCompany extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *   Retourne la liste deroulante des regions actives don't le pays est actif
-	 *   La cle de la liste est le code (il peut y avoir plusieurs entree pour
+	 *   Provides the dropdown of the active regions including the actif country.
+	 *   The key of the list is the code (there may be more than one entry for a
+	 *   code but in that case the fields country and language are different).
 	 *   un code donnee mais dans ce cas, le champ pays et lang differe).
-	 *   Ainsi les liens avec les regions se font sur une region independemment de son name.
+	 *   This way the links with the regions are made independent of its name.
 	 *
 	 *   @param		string		$selected		Preselected value
 	 *   @param		string		$htmlname		Name of HTML select field

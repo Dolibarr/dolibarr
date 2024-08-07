@@ -3778,22 +3778,22 @@ class Societe extends CommonObject
 
 		switch ($idprof) {
 			case 1:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF1_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF1_UNIQUE'));
 				break;
 			case 2:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF2_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF2_UNIQUE'));
 				break;
 			case 3:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF3_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF3_UNIQUE'));
 				break;
 			case 4:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF4_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF4_UNIQUE'));
 				break;
 			case 5:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF5_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF5_UNIQUE'));
 				break;
 			case 6:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF6_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF6_UNIQUE'));
 				break;
 			default:
 				$ret = false;
@@ -4591,7 +4591,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			return (($obj->nb > 0) ? true : false);
+			return ($obj->nb > 0);
 		} else {
 			$this->error = $this->db->lasterror();
 			return false;
@@ -5195,7 +5195,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

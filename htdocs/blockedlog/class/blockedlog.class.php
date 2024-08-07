@@ -98,12 +98,12 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var int|string date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string $date_modification;
+	 * @var int|string $date_modification;
 	 */
 	public $date_modification;
 

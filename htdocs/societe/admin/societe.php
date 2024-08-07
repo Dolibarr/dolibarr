@@ -438,7 +438,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = (isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] != $conf->entity)));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
@@ -717,9 +717,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = (empty($conf->global->$idprof_unique) ? false : true);
-		$mandatory = (empty($conf->global->$idprof_mandatory) ? false : true);
-		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ? false : true);
+		$verif = !empty($conf->global->$idprof_unique);
+		$mandatory = !empty($conf->global->$idprof_mandatory);
+		$invoice_mandatory = !empty($conf->global->$idprof_invoice_mandatory);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';

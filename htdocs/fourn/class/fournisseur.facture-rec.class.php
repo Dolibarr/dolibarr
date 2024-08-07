@@ -1436,7 +1436,7 @@ class FactureFournisseurRec extends CommonInvoice
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto       			Add picto into link
 	 * @param  string	$option          			Where point the link
