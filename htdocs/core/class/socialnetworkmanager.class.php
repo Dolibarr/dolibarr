@@ -38,6 +38,9 @@ class SocialNetworkManager
 	 */
 	private $platform;
 
+	/**
+	 * @var Object  Name of class handler
+	 */
 	private $handler;
 
 	/**
