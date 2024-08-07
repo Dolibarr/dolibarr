@@ -81,5 +81,12 @@ abstract class ModelePDFProductBatch extends CommonDocGenerator
  */
 abstract class ModeleNumRefBatch extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Productlot	$object		Object we need next value for
+	 *  @return string|int      		String if OK, <0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object);
 }
