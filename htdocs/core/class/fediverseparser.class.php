@@ -39,6 +39,9 @@ class FediverseParser
 	 */
 	public $error = '';
 
+	/**
+	 * @var Object  Name of object manager
+	 */
 	private $manager;
 
 	/**
