@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1008,9 +1009,9 @@ if ($num > 0) {
 			print '</tr>'."\n";
 		}
 
-		$total_total_ht = $total_total_ht + $obj->total_ht;
-		$total_total_tva = $total_total_tva + $obj->total_tva;
-		$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+		$total_total_ht += $obj->total_ht;
+		$total_total_tva += $obj->total_tva;
+		$total_total_ttc += $obj->total_ttc;
 
 		$i++;
 	}

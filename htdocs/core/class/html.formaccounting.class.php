@@ -383,7 +383,7 @@ class FormAccounting extends Form
 		}
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
-			$options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
+			$options += $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 			$selected = $selectid;
 		} else {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', 50);
@@ -483,7 +483,7 @@ class FormAccounting extends Form
 		$aux_account = array();
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
-			$aux_account = $aux_account + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
+			$aux_account += $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		} else {
 			dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 

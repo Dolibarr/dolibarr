@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ if (empty($reshook)) {
 	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 
 		// Verify code
 		if (!$ok) {

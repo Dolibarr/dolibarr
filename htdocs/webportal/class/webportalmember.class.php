@@ -236,7 +236,7 @@ class WebPortalMember extends Adherent
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpictoimg			0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 * @param	int		$maxlen					Length max label

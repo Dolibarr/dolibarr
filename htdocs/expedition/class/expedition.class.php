@@ -159,7 +159,7 @@ class Expedition extends CommonObject
 	public $weight;
 
 	/**
-	 * @var integer|string Date delivery planned
+	 * @var int|string Date delivery planned
 	 */
 	public $date_delivery;
 
@@ -177,12 +177,12 @@ class Expedition extends CommonObject
 
 	/**
 	 * Effective delivery date
-	 * @var integer|string
+	 * @var int|string
 	 */
 	public $date_shipping;
 
 	/**
-	 * @var integer|string date_valid
+	 * @var int|string date_valid
 	 */
 	public $date_valid;
 
@@ -1877,7 +1877,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto      			Add picto into link
 	 *	@param      string		$option         			Where the link point to
@@ -2001,7 +2001,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

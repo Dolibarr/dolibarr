@@ -5,6 +5,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,7 +213,7 @@ if (!empty($selected_type)) {
 if (!empty($typent_id)) {
 	$tableparams['typent_id'] = $typent_id;
 }
-$tableparams['subcat'] = ($subcat === true) ? 'yes' : '';
+$tableparams['subcat'] = $subcat ? 'yes' : '';
 
 // Adding common parameters
 $allparams = array_merge($commonparams, $headerparams, $tableparams);
@@ -306,7 +307,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= ",".MAIN_DB_PREFIX."facturedet as l";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-	if ($typent_id >0) {
+	if ($typent_id > 0) {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc ON (soc.rowid = f.fk_soc)";
 	}
 	$parameters = array();
@@ -401,7 +402,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.fk_soc = ".((int) $selected_soc);
 	}
 
-	if ($typent_id >0) {
+	if ($typent_id > 0) {
 		$sql .= " AND soc.fk_typent = ".((int) $typent_id);
 	}
 

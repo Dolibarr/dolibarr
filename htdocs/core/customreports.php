@@ -314,7 +314,7 @@ $features = $object->element;
 if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
 } else {
-	$features = $features.(empty($object->module) ? '' : '@'.$object->module);
+	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
 restrictedArea($user, $features, 0, '');

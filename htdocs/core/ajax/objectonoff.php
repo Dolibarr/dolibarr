@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ if (!empty($user->socid)) {
 
 // We check permission.
 // Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
-if (preg_match('/statu[st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
 	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
 	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');

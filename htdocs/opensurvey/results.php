@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +273,7 @@ if (GETPOSTISSET("ajoutercolonne") && $object->format == "D") {
 						$reponsesadd = str_split($obj->reponses);
 						$lengthresponses = count($reponsesadd);
 						for ($cpt = $lengthresponses; $cpt > $cleinsertion; $cpt--) {
-							$reponsesadd[$cpt] = $reponsesadd[$cpt-1];
+							$reponsesadd[$cpt] = $reponsesadd[$cpt - 1];
 						}
 						$reponsesadd[$cleinsertion] = '0';
 						$reponsesadd = implode($reponsesadd);
@@ -437,7 +438,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -590,7 +591,7 @@ if (GETPOST('ajoutsujet')) {
 	if ($object->format == "A") {
 		print $langs->trans("AddNewColumn").':<br><br>';
 		print $langs->trans("Title").' <input type="text" name="nouvellecolonne" size="40"><br>';
-		$tmparray = array('checkbox'=>$langs->trans("CheckBox"), 'yesno'=>$langs->trans("YesNoList"), 'foragainst'=>$langs->trans("PourContreList"));
+		$tmparray = array('checkbox' => $langs->trans("CheckBox"), 'yesno' => $langs->trans("YesNoList"), 'foragainst' => $langs->trans("PourContreList"));
 		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print '<input type="hidden" name="id_sondage" value="'.dol_escape_htmltag($object->id_sondage).'">';
@@ -728,7 +729,7 @@ if ($object->format == "D") {
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]); // intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
 
-		if (isset($toutsujet[$i + 1]) === false) {
+		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {
 			$next = intval($toutsujet[$i + 1]);
@@ -756,7 +757,7 @@ if ($object->format == "D") {
 	$colspan = 1;
 	for ($i = 0; $i < $nbofsujet; $i++) {
 		$cur = intval($toutsujet[$i]);
-		if (isset($toutsujet[$i + 1]) === false) {
+		if (!isset($toutsujet[$i + 1])) {
 			$next = false;
 		} else {
 			$next = intval($toutsujet[$i + 1]);
@@ -919,11 +920,11 @@ while ($compteur < $num) {
 					print '>';
 				}
 				if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') {
-					$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("No"), '1'=>$langs->trans("Yes"));
+					$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') {
-					$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("Against"), '1'=>$langs->trans("For"));
+					$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("Against"), '1' => $langs->trans("For"));
 					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				print '</td>'."\n";
@@ -1032,11 +1033,11 @@ if (empty($testligneamodifier)) {
 			print '>';
 		}
 		if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno') {
-			$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("No"), '1'=>$langs->trans("Yes"));
+			$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 			print $form->selectarray("choix".$i, $arraychoice);
 		}
 		if (!empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst') {
-			$arraychoice = array('2'=>'&nbsp;', '0'=>$langs->trans("Against"), '1'=>$langs->trans("For"));
+			$arraychoice = array('2' => '&nbsp;', '0' => $langs->trans("Against"), '1' => $langs->trans("For"));
 			print $form->selectarray("choix".$i, $arraychoice);
 		}
 		print '</td>'."\n";
@@ -1129,7 +1130,7 @@ $toutsujet = explode(",", $object->sujet); // With old versions, this field was 
 $compteursujet = 0;
 $meilleursujet = '';
 for ($i = 0; $i < $nbcolonnes; $i++) {
-	if (isset($sumfor[$i]) === true && isset($meilleurecolonne) === true && $sumfor[$i] == $meilleurecolonne) {
+	if (isset($sumfor[$i]) && isset($meilleurecolonne) && ($sumfor[$i] == $meilleurecolonne)) {
 		$meilleursujet .= ($meilleursujet ? ", " : "");
 
 		if ($object->format == "D") {

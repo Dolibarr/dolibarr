@@ -1898,7 +1898,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
-		if ($force_filter_contact === false) {
+		if (!$force_filter_contact) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
 				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {

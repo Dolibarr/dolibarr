@@ -490,7 +490,7 @@ class FormSetup
 			// calc new rank for each item to make place for new item
 			foreach ($this->items as $fItem) {
 				if ($item->rank <= $fItem->rank) {
-					$fItem->rank = $fItem->rank + 1;
+					$fItem->rank += 1;
 					$this->setItemMaxRank($fItem->rank); // set new max rank if needed
 				}
 			}

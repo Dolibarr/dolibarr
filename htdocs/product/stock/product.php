@@ -10,6 +10,7 @@
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1124,8 +1125,8 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 			if (price2num($object->pmp)) {
 				$totalwithpmp += $obj->reel;
 			}
-			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
-			$totalvaluesell = $totalvaluesell + ($object->price * $obj->reel);
+			$totalvalue += ($object->pmp * $obj->reel);
+			$totalvaluesell += ($object->price * $obj->reel);
 			// Batch Detail
 			if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 				$details = Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);

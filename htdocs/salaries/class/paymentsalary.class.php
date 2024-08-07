@@ -209,7 +209,7 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		//deprecatd
+		//deprecated
 		if (!empty($this->datepaye) && empty($this->datep)) {
 			dol_syslog(__METHOD__.": using datepaye is deprecated, please use datep instead", LOG_WARNING);
 			$this->datep = $this->datepaye;
@@ -711,7 +711,7 @@ class PaymentSalary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  salaire et la ligne dans llx_bank generee
+	 *  Update the relation between the salary paiment and the line generated in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -850,7 +850,7 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen						Longueur max libelle
@@ -987,7 +987,7 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

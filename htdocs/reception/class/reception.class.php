@@ -100,19 +100,19 @@ class Reception extends CommonObject
 	public $date_delivery; // Date delivery planned
 
 	/**
-	 * @var integer|string Effective delivery date
+	 * @var int|string Effective delivery date
 	 * @deprecated
 	 * @see $date_reception
 	 */
 	public $date;
 
 	/**
-	 * @var integer|string Effective delivery date
+	 * @var int|string Effective delivery date
 	 */
 	public $date_reception;
 
 	/**
-	 * @var integer|string date_validation
+	 * @var int|string date_validation
 	 */
 	public $date_valid;
 
@@ -1254,7 +1254,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto      Add picto into link
 	 *	@param      int			$option         Where point the link
@@ -1372,7 +1372,7 @@ class Reception extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

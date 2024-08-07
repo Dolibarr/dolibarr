@@ -1,10 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2013       Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2005       Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2024		    Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +205,7 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
 				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, (int) $duration_value);
