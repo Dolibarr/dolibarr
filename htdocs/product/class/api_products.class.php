@@ -1972,7 +1972,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Product
 	 * @param  int $selected_warehouse_id ID of warehouse
-	 * @return array
+	 * @return array|mixed                 Data without useless information
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 403
@@ -1989,7 +1989,7 @@ class Products extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('product', $id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$obj_ret = array();
+
 		$product_model = new Product($this->db);
 		$product_model->fetch($id);
 		$product_model->load_stock();
