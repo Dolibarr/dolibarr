@@ -398,7 +398,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled)) ? true : false;
+			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled));
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -1135,7 +1135,7 @@ class FormFile
 				// Download
 				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
 				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-						$tmpout .= 'target="_blank" ';
+					$tmpout .= 'target="_blank" ';
 				}
 				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);

@@ -129,7 +129,7 @@ print '<table>'."\n";
 //affichage des cases texte de formulaire
 for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	$j = $i + 1;
-	if (isset($_SESSION["choix$i"]) === false) {
+	if (!isset($_SESSION["choix$i"])) {
 		$_SESSION["choix$i"] = '';
 	}
 	print '<tr><td>'.$langs->trans("TitleChoice").' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';

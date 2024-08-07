@@ -880,7 +880,7 @@ class Workstation extends CommonObject
 				}
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}

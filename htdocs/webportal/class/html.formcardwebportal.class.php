@@ -617,7 +617,7 @@ class FormCardWebPortal
 					$cardRight = true;
 				}
 			}
-			if ($cardRight === true) {
+			if ($cardRight) {
 				$html .= '</div>';
 				$html .= '<div class="card-right">';
 			}

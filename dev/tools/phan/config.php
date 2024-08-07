@@ -386,7 +386,7 @@ return [
 		'UnknownElementTypePlugin',
 		'WhitespacePlugin',
 		//'RemoveDebugStatementPlugin', // Reports echo, print, ...
-		//'SimplifyExpressionPlugin',
+		'SimplifyExpressionPlugin',
 		//'StrictComparisonPlugin', // Expects ===
 		'SuspiciousParamOrderPlugin',
 		'UnsafeCodePlugin',

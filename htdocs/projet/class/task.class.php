@@ -1515,7 +1515,7 @@ class Task extends CommonObjectLine
 			}
 		}
 
-		if ($ret == true) {
+		if ($ret) {
 			$this->db->commit();
 		} else {
 			$this->db->rollback();

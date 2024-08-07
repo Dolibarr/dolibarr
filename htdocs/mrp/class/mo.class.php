@@ -1021,7 +1021,7 @@ class Mo extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -1386,7 +1386,7 @@ class Mo extends CommonObject
 		global $langs;
 
 		$langs->loadLangs(['mrp', 'products']);
-		$nofetch = isset($params['nofetch']) ? true : false;
+		$nofetch = isset($params['nofetch']);
 
 		$datas = [];
 

@@ -378,14 +378,14 @@ if (GETPOST("DOL_AUTOSET_COOKIE")) {
 	$cookievalue = json_encode($cookiearrayvalue);
 	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
 	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // keep cookie 1 year and add tag httponly
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // keep cookie 1 year and add tag httponly
 	} else {
 		// Only available for php >= 7.3
 		$cookieparams = array(
 			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
 			'path' => '/',
 			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
 			'httponly' => true,
 			'samesite' => 'Lax'	// None || Lax  || Strict
 		);
@@ -416,14 +416,14 @@ if (!empty($_COOKIE[$sessiontimeout])) {
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION')) {
 	if (PHP_VERSION_ID < 70300) {
-		session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+		session_set_cookie_params(0, '/', null, !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 	} else {
 		// Only available for php >= 7.3
 		$sessioncookieparams = array(
 			'lifetime' => 0,
 			'path' => '/',
 			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
 			'httponly' => true,
 			'samesite' => 'Lax'	// None || Lax  || Strict
 		);
@@ -835,7 +835,7 @@ if (!defined('NOLOGIN')) {
 		// Verification security graphic code
 		if ($test && GETPOST("username", "alpha", 2) && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') && !isset($_SESSION['dol_bypass_antispam'])) {
 			$sessionkey = 'dol_antispam_value';
-			$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
+			$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) === strtolower(GETPOST('code', 'restricthtml'))));
 
 			// Check code
 			if (!$ok) {
@@ -1023,7 +1023,7 @@ if (!defined('NOLOGIN')) {
 		if ($resultFetchUser <= 0 || $user->isNotIntoValidityDateRange()) {
 			dol_syslog('User not found or not valid, connection refused');
 			session_destroy();
-			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
 			dol_session_start();
 
@@ -1110,7 +1110,7 @@ if (!defined('NOLOGIN')) {
 				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
 			}
 			session_destroy();
-			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
+			session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
 			dol_session_start();
 

@@ -38,7 +38,7 @@
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && $var === false) || (is_array($var) && empty($var))) {
 		return true;
 	}
 	return false;
