@@ -160,13 +160,17 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate		$langs		Object langs
+	 * @param	?Translate		$langs		Object langs
 	 * @param	Societe|string	$objsoc		Object thirdparty
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = '', $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $_GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplecust = '';
 		$examplesup = '';
 		$errmsg = array(
