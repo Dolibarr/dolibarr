@@ -80,7 +80,7 @@ abstract class ModeleNumRefTask extends CommonNumRefGenerator
 	 *  Return next value
 	 *
 	 *  @param	Societe|string	$objsoc	Object third party
-	 *  @param	Task|string		$object	Object Task
+	 *  @param	Project|string	$object	Object Project
 	 *  @return	string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $object);
