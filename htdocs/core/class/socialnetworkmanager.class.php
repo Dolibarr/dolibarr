@@ -68,7 +68,6 @@ class SocialNetworkManager
 	private function initializeHandler()
 	{
 		$handlerClass = dol_ucfirst($this->platform).'Handler';
-		//var_dump($handlerClass);exit;
 		if (class_exists($handlerClass)) {
 			$this->handler = new $handlerClass();
 		} else {
@@ -83,7 +82,7 @@ class SocialNetworkManager
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
-	 * @return int      Status code: false if error,  array if success.
+	 * @return bool      Status code: false if error,  array if success.
 	 */
 	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '')
 	{
