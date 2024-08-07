@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 /**
  *      Parent class of emailing target selectors modules
  */
-abstract class PrintingDriver
+class PrintingDriver
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -41,6 +41,12 @@ abstract class PrintingDriver
 	 * @var string Error code (or message)
 	 */
 	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 
 	/**
 	 * @var string Name
@@ -121,12 +127,24 @@ abstract class PrintingDriver
 	 *
 	 *  @return  int                     0 if OK, >0 if KO
 	 */
-	abstract public function listAvailablePrinters();
+	public function listAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return 1;
+	}
 
 	/**
 	 *  Return list of available printers
 	 *
 	 *  @return array	list of printers
 	 */
-	abstract public function getlistAvailablePrinters();
+	public function getlistAvailablePrinters()
+	{
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		$this->errors[] = $msg;
+		return [];
+	}
 }

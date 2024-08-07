@@ -71,16 +71,6 @@ class printing_printgcp extends PrintingDriver
 	public $google_secret = '';
 
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	/**
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
