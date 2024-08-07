@@ -123,9 +123,9 @@ class mod_project_simple extends ModeleNumRefProjects
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe	$objsoc		Object third party
-	 *  @param   Project	$project	Object project
-	 *  @return	string|-1				Value if OK, -1 if KO
+	 *  @param   Societe		$objsoc		Object third party
+	 *  @param   Project		$project	Object project
+	 *  @return  string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{

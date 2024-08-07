@@ -425,7 +425,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file();
-						'@phan-var-force ModeleNumRefTasks $module';
+						'@phan-var-force ModeleNumRefTask $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
