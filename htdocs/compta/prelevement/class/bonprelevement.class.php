@@ -1786,7 +1786,7 @@ class BonPrelevement extends CommonObject
 
 						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->reffac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 
-						$this->total = $this->total + $obj->somme;
+						$this->total += $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
@@ -1927,7 +1927,7 @@ class BonPrelevement extends CommonObject
 
 						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $refobj, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type, $obj->fac_ref_supplier);
 
-						$this->total = $this->total + $obj->somme;
+						$this->total += $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
@@ -2004,7 +2004,7 @@ class BonPrelevement extends CommonObject
 
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$this->total = $this->total + $obj->amount;
+						$this->total += $obj->amount;
 
 						// TODO Write record into file
 						$i++;
@@ -2029,7 +2029,7 @@ class BonPrelevement extends CommonObject
 
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
-						$this->total = $this->total + $obj->amount;
+						$this->total += $obj->amount;
 
 						// TODO Write record into file
 						$i++;

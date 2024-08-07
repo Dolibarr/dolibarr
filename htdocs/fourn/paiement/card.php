@@ -334,7 +334,7 @@ if ($result > 0) {
 					$allow_delete = 0;
 					$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 				}
-				$total = $total + $objp->amount;
+				$total += $objp->amount;
 				$i++;
 			}
 		}

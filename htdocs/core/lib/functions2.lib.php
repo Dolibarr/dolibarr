@@ -1718,13 +1718,13 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	$weight = is_numeric($weight) ? $weight : 0;
 	while ($from_unit != $to_unit) {
 		if ($from_unit > $to_unit) {
-			$weight = $weight * 10;
-			$from_unit = $from_unit - 1;
+			$weight *= 10;
+			$from_unit -= 1;
 			$weight = weight_convert($weight, $from_unit, $to_unit);
 		}
 		if ($from_unit < $to_unit) {
-			$weight = $weight / 10;
-			$from_unit = $from_unit + 1;
+			$weight /= 10;
+			$from_unit += 1;
 			$weight = weight_convert($weight, $from_unit, $to_unit);
 		}
 	}

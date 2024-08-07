@@ -4073,7 +4073,7 @@ class Product extends CommonObject
 			}
 			if ($month == 0) {
 				$month = 12;
-				$year = $year - 1;
+				$year -= 1;
 			}
 		}
 

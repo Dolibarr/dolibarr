@@ -6799,7 +6799,7 @@ class FactureLigne extends CommonInvoiceLine
 					$res = $this->db->query($sql);
 					if ($res) {
 						while ($obj = $this->db->fetch_object($res)) {
-							$returnPercent = $returnPercent + (float) $obj->situation_percent;
+							$returnPercent += (float) $obj->situation_percent;
 						}
 					} else {
 						dol_print_error($this->db);
@@ -6865,7 +6865,7 @@ class FactureLigne extends CommonInvoiceLine
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {
 							while ($cn = $this->db->fetch_object($res_credit_note)) {
-								$cumulated_percent = $cumulated_percent + floatval($cn->situation_percent);
+								$cumulated_percent += floatval($cn->situation_percent);
 							}
 						} else {
 							dol_print_error($this->db);

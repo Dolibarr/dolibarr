@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -506,7 +507,7 @@ if (empty($numref)) {
 
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 
 			print '<tr class="oddeven">';
 
@@ -689,10 +690,10 @@ if (empty($numref)) {
 			print "</td>";
 
 			if ($objp->amount < 0) {
-				$totald = $totald + abs($objp->amount);
+				$totald += abs($objp->amount);
 				print '<td class="nowrap right">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 			} else {
-				$totalc = $totalc + abs($objp->amount);
+				$totalc += abs($objp->amount);
 				print '<td>&nbsp;</td><td class="nowrap right">'.price($objp->amount)."</td>\n";
 			}
 

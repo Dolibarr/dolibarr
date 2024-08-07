@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2021   Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2018-2022   Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024        Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1374,7 +1375,7 @@ class Setup extends DolibarrApi
 		$pos = $request_data['pos'];
 		$moreparams = array();
 
-		if ( 0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+		if (0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
 			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
@@ -1460,7 +1461,7 @@ class Setup extends DolibarrApi
 		$moreparams = array();
 
 		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
-		if ( 0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+		if (0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
 			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
@@ -2105,7 +2106,7 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$type =$this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
 				$this->translateLabel($type, $lang, 'TicketTypeShort', array('ticket'));
 				$list[] = $type;
 			}
@@ -2168,7 +2169,7 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$type =$this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
 				$list[] = $type;
 			}
 		} else {
@@ -2364,7 +2365,7 @@ class Setup extends DolibarrApi
 
 		$xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 		if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
-			$xmlfile = $xmlfile.'.zip';
+			$xmlfile .= '.zip';
 		}
 
 		// Remote file to compare to
@@ -2408,7 +2409,7 @@ class Setup extends DolibarrApi
 			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
-				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 			} else {
 				$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 				throw new RestException(500, $errormsg);
@@ -2481,7 +2482,7 @@ class Setup extends DolibarrApi
 					$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 					if (!in_array($tmprelativefilename, $file_list['insignature'])) {
 						$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-						$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+						$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
 					}
 				}
 
@@ -2644,7 +2645,7 @@ class Setup extends DolibarrApi
 			throw new RestException(404, 'No signature file known');
 		}
 
-		return array('resultcode'=>$resultcode, 'resultcomment'=>$resultcomment, 'expectedchecksum'=> $outexpectedchecksum, 'currentchecksum'=> $outcurrentchecksum, 'out'=>$out);
+		return array('resultcode' => $resultcode, 'resultcomment' => $resultcomment, 'expectedchecksum' => $outexpectedchecksum, 'currentchecksum' => $outcurrentchecksum, 'out' => $out);
 	}
 
 
