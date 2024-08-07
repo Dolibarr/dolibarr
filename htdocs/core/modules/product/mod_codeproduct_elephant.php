@@ -119,13 +119,17 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate		$langs		Object langs
+	 * @param	?Translate		$langs		Object langs
 	 * @param	Product|string	$objproduct	Object product
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objproduct = '', $type = -1)
+	public function getExample($langs = null, $objproduct = '', $type = -1)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $_GLOBAL['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$exampleproduct = $exampleservice = '';
 
 		if ($type == 0 || $type == -1) {
