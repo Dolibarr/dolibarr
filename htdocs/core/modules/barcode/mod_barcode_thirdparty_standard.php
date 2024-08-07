@@ -145,9 +145,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	?Translate	$langs			Object langs
-	 * @param	?Societe	$objthirdparty	Object third-party
-	 * @return	string						Return string example
+	 * @param	?Translate		$langs			Object langs
+	 * @param	?CommonObject	$objthirdparty	Object third-party / Societe
+	 * @return	string							Return string example
 	 */
 	public function getExample($langs = null, $objthirdparty = null)
 	{
