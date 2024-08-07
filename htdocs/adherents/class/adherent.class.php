@@ -795,7 +795,7 @@ class Adherent extends CommonObject
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
-		$sql .= ", public = '".$this->db->escape($this->public)."'";
+		$sql .= ", public = ".(int) $this->public;
 		$sql .= ", statut = ".(int) $this->statut;
 		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 		$sql .= ", fk_adherent_type = ".(int) $this->typeid;
@@ -2679,6 +2679,7 @@ class Adherent extends CommonObject
 		$this->photo = '';
 		$this->public = 1;
 		$this->statut = self::STATUS_DRAFT;
+		$this->status = self::STATUS_DRAFT;
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
