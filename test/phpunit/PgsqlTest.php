@@ -29,6 +29,8 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/db/pgsql.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
+
 $langs->load("dict");
 
 if (empty($user->id)) {
@@ -37,7 +39,7 @@ if (empty($user->id)) {
 	$user->getrights();
 }
 
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -47,88 +49,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PgsqlTest extends PHPUnit\Framework\TestCase
+class PgsqlTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return PgsqlTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testConvertSQLFromMysql
 	 *
@@ -137,63 +59,66 @@ class PgsqlTest extends PHPUnit\Framework\TestCase
 	public function testConvertSQLFromMysql()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		// Create a dummy db handler for pgsql
+		$tmpdb = new DoliDBPgsql('pqsql', 'host', 'user', 'pass');
 
 		/*
 		$sql = "CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$result=$tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "CREATE SEQUENCE __DATABASE__.llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;");
 		*/
 
 		$sql = "ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer;";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "-- ALTER TABLE llx_bank_account MODIFY COLUMN state_id integer USING state_id::integer; replaced by --\nALTER TABLE llx_bank_account ALTER COLUMN state_id TYPE integer USING state_id::integer;");
 
-		$sql="ALTER TABLE llx_table RENAME TO llx_table_new;";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table RENAME TO llx_table_new;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "ALTER TABLE llx_table RENAME TO llx_table_new;");
 
-		$sql="ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0';");
 
-		$sql="ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "-- ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60); replaced by --\nALTER TABLE llx_table RENAME COLUMN oldname TO newname");
 
-		$sql="ALTER TABLE llx_table DROP COLUMN oldname;";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table DROP COLUMN oldname;";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $sql);
 
-		$sql="ALTER TABLE llx_table MODIFY name varchar(60);";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "ALTER TABLE llx_table MODIFY name varchar(60);";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "-- ALTER TABLE llx_table MODIFY name varchar(60); replaced by --\nALTER TABLE llx_table ALTER COLUMN name TYPE varchar(60);");
 
 		// Create a constraint
-		$sql='ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)';
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = 'ALTER TABLE llx_tablechild ADD CONSTRAINT fk_tablechild_fk_fieldparent FOREIGN KEY (fk_fieldparent) REFERENCES llx_tableparent (rowid)';
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, $sql.' DEFERRABLE INITIALLY IMMEDIATE;');
 
 		// Test GROUP_CONCAT (without SEPARATOR)
-		$sql="SELECT a.b, GROUP_CONCAT(a.c) FROM table GROUP BY a.b";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "SELECT a.b, GROUP_CONCAT(a.c) FROM table GROUP BY a.b";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (without SEPARATOR)');
 
 		// Test GROUP_CONCAT (with SEPARATOR)
-		$sql="SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
-		$result=DoliDBPgsql::convertSQLFromMysql($sql);
+		$sql = "SELECT a.b, GROUP_CONCAT(a.c SEPARATOR ',') FROM table GROUP BY a.b";
+		$result = $tmpdb->convertSQLFromMysql($sql);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, "SELECT a.b, STRING_AGG(a.c, ',') FROM table GROUP BY a.b", 'Test GROUP_CONCAT (with SEPARATOR)');
 

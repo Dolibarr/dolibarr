@@ -27,7 +27,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 // DDOS protection
@@ -64,7 +64,9 @@ if (!empty($conf->dol_use_jmobile)) {
 }
 
 $php_self = empty($php_self) ? dol_escape_htmltag($_SERVER['PHP_SELF']) : $php_self;
-$php_self .= dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '';
+if (!empty($_SERVER["QUERY_STRING"]) && dol_escape_htmltag($_SERVER["QUERY_STRING"])) {
+	$php_self .= '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]);
+}
 if (!preg_match('/mainmenu=/', $php_self)) {
 	$php_self .= (preg_match('/\?/', $php_self) ? '&' : '?').'mainmenu=home';
 }
@@ -72,20 +74,22 @@ if (preg_match('/'.preg_quote('core/modules/oauth', '/').'/', $php_self)) {
 	$php_self = DOL_URL_ROOT.'/index.php?mainmenu=home';
 }
 $php_self = preg_replace('/(\?|&amp;|&)action=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)actionlogin=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(\?|&amp;|&)afteroauthloginreturn=[^&]+/', '\1', $php_self);
 $php_self = preg_replace('/(\?|&amp;|&)username=[^&]*/', '\1', $php_self);
 $php_self = preg_replace('/(\?|&amp;|&)entity=\d+/', '\1', $php_self);
 $php_self = preg_replace('/(\?|&amp;|&)massaction=[^&]+/', '\1', $php_self);
 $php_self = preg_replace('/(\?|&amp;|&)token=[^&]+/', '\1', $php_self);
+$php_self = preg_replace('/(&amp;)+/', '&amp;', $php_self);
 
 // Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $arrayofjs = array(
-	'/includes/jstz/jstz.min.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION)),
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
 // We display application title instead Login term
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$titleofloginpage = $conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$titleofloginpage = getDolGlobalString('MAIN_APPLICATION_TITLE');
 } else {
 	$titleofloginpage = $langs->trans('Login');
 }
@@ -95,8 +99,31 @@ $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) {
 	$disablenofollow = 0;
 }
-if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	$disablenofollow = 0;
+}
+
+// If OpenID Connect is set as an authentication
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid_connect/', $conf->file->main_authentication)) {
+	// Set a cookie to transfer rollback page information
+	$prefix = dol_getprefix('');
+	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
+		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+	}
+
+	// Auto redirect if OpenID Connect is the only authentication
+	if ($conf->file->main_authentication === 'openid_connect') {
+		// Avoid redirection hell
+		if (empty(GETPOST('openid_mode'))) {
+			dol_include_once('/core/lib/openid_connect.lib.php');
+			header("Location: " . openid_connect_get_url(), true, 302);
+		} elseif (!empty($_SESSION['dol_loginmesg'])) {
+			// Show login error without the login form
+			print '<div class="center login_main_message"><div class="error">' . dol_escape_htmltag($_SESSION['dol_loginmesg']) . '</div></div>';
+		}
+		// We shouldn't continue executing this page
+		exit();
+	}
 }
 
 top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 1, $disablenofollow);
@@ -106,19 +133,18 @@ $colorbackhmenu1 = '60,70,100'; // topmenu
 if (!isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) {
 	$conf->global->THEME_ELDY_TOPMENU_BACK1 = $colorbackhmenu1;
 }
-$colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $conf->global->THEME_ELDY_TOPMENU_BACK1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
+$colorbackhmenu1 = getDolUserString('THEME_ELDY_ENABLE_PERSONALIZED') ? getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
+$colorbackhmenu1 = implode(',', colorStringToArray($colorbackhmenu1)); // Normalize value to 'x,y,z'
 
 print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
-if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
-	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
-	?>
-	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
+if (getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
+	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'?>
+	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag(getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
 	<?php
 } else {
 	?>
-	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
+	<body class="body bodylogin"<?php print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode(getDolGlobalString('MAIN_LOGIN_BACKGROUND')).'\')"'; ?>>
 	<?php
 }
 ?>
@@ -135,11 +161,11 @@ $(document).ready(function () {
 <?php } ?>
 
 <div class="login_center center"<?php
-if (empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
-	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-	print empty($conf->global->MAIN_LOGIN_BACKGROUND) ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
+		$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">
@@ -199,7 +225,7 @@ if ($disablenofollow) {
 <!-- Login -->
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php
 } ?>
 <!-- <span class="span-icon-user">-->
@@ -212,27 +238,26 @@ if ($disablenofollow) {
 <?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-	<?php if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php
 	} ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key"></span>
-<input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo empty($conf->global->MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE) ? 'off' : 'on'; ?>" />
+<input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo !getDolGlobalString('MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE') ? 'off' : 'on'; ?>" />
 </div></div>
 <?php } ?>
 
 
 <?php
 if (!empty($captcha)) {
-	// Add a variable param to force not using cache (jmobile)
+		// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
 		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
 	} else {
 		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
 	}
-	// TODO: provide accessible captcha variants
-	?>
+		// TODO: provide accessible captcha variants?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd none valignmiddle tdinputlogin nowrap">
@@ -309,8 +334,8 @@ if ($forgetpasslink || $helpcenterlink) {
 	echo '<div class="center" style="margin-top: 5px;">';
 	if ($forgetpasslink) {
 		$url = DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
-		if (!empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) {
-			$url = $conf->global->MAIN_PASSWORD_FORGOTLINK;
+		if (getDolGlobalString('MAIN_PASSWORD_FORGOTLINK')) {
+			$url = getDolGlobalString('MAIN_PASSWORD_FORGOTLINK');
 		}
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'">';
 		echo $langs->trans('PasswordForgotten');
@@ -323,8 +348,8 @@ if ($forgetpasslink || $helpcenterlink) {
 
 	if ($helpcenterlink) {
 		$url = DOL_URL_ROOT.'/support/index.php'.$moreparam;
-		if (!empty($conf->global->MAIN_HELPCENTER_LINKTOUSE)) {
-			$url = $conf->global->MAIN_HELPCENTER_LINKTOUSE;
+		if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
+			$url = getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE');
 		}
 		echo '<a class="alogin" href="'.dol_escape_htmltag($url).'" target="_blank" rel="noopener noreferrer">';
 		echo $langs->trans('NeedHelpCenter');
@@ -333,14 +358,19 @@ if ($forgetpasslink || $helpcenterlink) {
 	echo '</div>';
 }
 
-if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
+	dol_include_once('/core/lib/openid_connect.lib.php');
 	$langs->load("users");
 
 	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 
-	$url = $conf->global->MAIN_AUTHENTICATION_OPENID_URL;
+	if (!getDolGlobalString("MAIN_AUTHENTICATION_OPENID_URL")) {
+		$url = openid_connect_get_url();
+	} else {
+		$url = getDolGlobalString('MAIN_AUTHENTICATION_OPENID_URL').'&state=' . openid_connect_get_state();
+	}
 	if (!empty($url)) {
 		print '<a class="alogin" href="'.$url.'">'.$langs->trans("LoginUsingOpenID").'</a>';
 	} else {
@@ -375,7 +405,7 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 	 */
 
 	print '<input type="hidden" name="beforeoauthloginredirect" id="beforeoauthloginredirect" value="">';
-	print '<a class="alogin" href="#" onclick="jQuery(\'#beforeoauthloginredirect\').val(1); $(this).closest(\'form\').submit();">';
+	print '<a class="alogin" href="#" onclick="console.log(\'Set beforeoauthloginredirect value\'); jQuery(\'#beforeoauthloginredirect\').val(\'google\'); $(this).closest(\'form\').submit(); return false;">';
 	print '<div class="loginbuttonexternal">';
 	print img_picto('', 'google', 'class="pictofixedwidth"');
 	print $langs->trans("LoginWith", "Google");
@@ -397,25 +427,38 @@ if (isset($conf->file->main_authentication) && preg_match('/google/', $conf->fil
 <?php
 // Show error message if defined
 if (!empty($_SESSION['dol_loginmesg'])) {
-	?>
-	<div class="center login_main_message">
-	<?php
 	$message = $_SESSION['dol_loginmesg'];	// By default this is an error message
-	if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
-		$message = str_replace('<!-- warning -->', '', $message);
-		print '<div class="warning">';
+	if (!empty($conf->use_javascript_ajax)) {
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			dol_htmloutput_mesg($message, array(), 'warning');
+		} else {
+			dol_htmloutput_mesg($message, array(), 'error');
+		}
+		print '<script>
+			$(document).ready(function() {
+				$(".jnotify-container").addClass("jnotify-container-login");
+			});
+		</script>';
 	} else {
-		print '<div class="error">';
+		?>
+		<div class="center login_main_message">
+		<?php
+		if (preg_match('/<!-- warning -->/', $message)) {	// if it contains this comment, this is a warning message
+			$message = str_replace('<!-- warning -->', '', $message);
+			print '<div class="warning" role="alert">';
+		} else {
+			print '<div class="error" role="alert">';
+		}
+		print dol_escape_htmltag($message);
+		print '</div>'; ?>
+		</div>
+		<?php
 	}
-	print dol_escape_htmltag($message);
-	print '</div>';
-	?>
-	</div>
-	<?php
 }
 
 // Add commit strip
-if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
+if (getDolGlobalString('MAIN_EASTER_EGG_COMMITSTRIP')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 	if (substr($langs->defaultlang, 0, 2) == 'fr') {
 		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/fr/feed/");
@@ -423,6 +466,13 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 		$resgetcommitstrip = getURLContent("https://www.commitstrip.com/en/feed/");
 	}
 	if ($resgetcommitstrip && $resgetcommitstrip['http_code'] == '200') {
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+			libxml_disable_entity_loader(true);
+		}
+
 		$xml = simplexml_load_string($resgetcommitstrip['content'], 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
 		$little = $xml->channel->item[0]->children('content', true);
 		print preg_replace('/width="650" height="658"/', '', $little->encoded);
@@ -433,7 +483,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 
 <?php if ($main_home) {
 	?>
-	<div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
+	<div class="center login_main_home paddingtopbottom <?php echo !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow'; ?>" style="max-width: 70%">
 	<?php echo $main_home; ?>
 	</div><br>
 	<?php
@@ -447,7 +497,7 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 <!-- Common footer is not used for login page, this is same than footer but inside login tpl -->
 
 <?php
-if (!empty($conf->global->MAIN_HTML_FOOTER)) {
+if (getDolGlobalString('MAIN_HTML_FOOTER')) {
 	print $conf->global->MAIN_HTML_FOOTER;
 }
 
@@ -465,8 +515,8 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 
 // Google Analytics
 // TODO Remove this, and add content into hook getLoginPageExtraOptions() instead
-if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
-	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AN_ID')) {
+	$tmptagarray = explode(',', getDolGlobalString('MAIN_GOOGLE_AN_ID'));
 	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
@@ -486,7 +536,7 @@ if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AN_ID)) {
 
 // TODO Replace this with a hook
 // Google Adsense (need Google module)
-if (isModEnabled('google') && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT)) {
+if (isModEnabled('google') && getDolGlobalString('MAIN_GOOGLE_AD_CLIENT') && getDolGlobalString('MAIN_GOOGLE_AD_SLOT')) {
 	if (empty($conf->dol_use_jmobile)) {
 		?>
 	<div class="center"><br>

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Frederic France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,33 +21,23 @@
 /**
  *	\file       htdocs/core/boxes/box_members_last_subscriptions.php
  *	\ingroup    adherent
- *	\brief      Module to show box of members
+ *	\brief      Module to show box of last members subscriptions
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last modofied members
+ * Class to manage the box to show last members subscriptions
  */
 class box_members_last_subscriptions extends ModeleBoxes
 {
-	public $boxcode = "box_members_last_subscriptions";
-	public $boximg = "object_user";
+	public $boxcode  = "box_members_last_subscriptions";
+	public $boximg   = "object_user";
 	public $boxlabel = "BoxLastMembersSubscriptions";
-	public $depends = array("adherent");
+	public $depends  = array("adherent");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -62,12 +52,12 @@ class box_members_last_subscriptions extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 		if (!in_array('adherent', $listofmodulesforexternal) && !empty($user->socid)) {
 			$this->enabled = 0; // disabled for external users
 		}
 
-		$this->hidden = !(isModEnabled('adherent') && $user->hasRight('adherent', 'lire'));
+		$this->hidden = !(isModEnabled('member') && $user->hasRight('adherent', 'lire'));
 	}
 
 	/**
@@ -120,7 +110,7 @@ class box_members_last_subscriptions extends ModeleBoxes
 					$staticmember->email = $obj->email;
 					$staticmember->photo = $obj->photo;
 					$staticmember->morphy = $obj->morphy;
-					$staticmember->statut = $obj->status;
+					$staticmember->status = $obj->status;
 					$staticmember->need_subscription = $obj->need_subscription;
 					$staticmember->datefin = $this->db->jdate($obj->date_end_subscription);
 					if (!empty($obj->fk_soc)) {
@@ -182,8 +172,8 @@ class box_members_last_subscriptions extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

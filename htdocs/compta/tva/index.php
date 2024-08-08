@@ -7,6 +7,7 @@
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +41,9 @@ $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "produ
 $now = dol_now();
 
 $refresh = GETPOSTISSET('submit') ? true : false;
-$year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : dol_print_date($now, '%Y', 'tzserver');
+$year_current = GETPOSTISSET('year') ? GETPOSTINT('year') : dol_print_date($now, '%Y', 'tzserver');
 $year_start = $year_current;
-$month_current = GETPOSTISSET('month') ? GETPOST('month', 'int') : dol_print_date($now, '%m', 'tzserver');
+$month_current = GETPOSTISSET('month') ? GETPOSTINT('month') : dol_print_date($now, '%m', 'tzserver');
 $month_start = $month_current;
 
 $refresh = true;
@@ -53,14 +54,14 @@ include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -118,11 +119,11 @@ function pt($db, $sql, $date)
 
 			if ($obj->mode == 'claimed') {
 				$amountclaimed = $obj->mm;
-				$totalclaimed = $totalclaimed + $amountclaimed;
+				$totalclaimed += $amountclaimed;
 			}
 			if ($obj->mode == 'paid') {
 				$amountpaid = $obj->mm;
-				$totalpaid = $totalpaid + $amountpaid;
+				$totalpaid += $amountpaid;
 			}
 
 			if ($obj->mode == 'paid') {
@@ -210,13 +211,13 @@ if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('accounting')) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
 
@@ -390,7 +391,7 @@ if ($refresh === true) {
 		$parameters["month"] = $m;
 		$parameters["type"] = 'vat';
 
-		// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+		// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -464,12 +465,12 @@ if ($refresh === true) {
 						//print $langs->trans("NA");
 					} else {
 						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
-							$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+							$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 						}
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_paye_total_ht += $temp_ht;
 				$subtot_paye_vat += $temp_vat;
@@ -478,11 +479,11 @@ if ($refresh === true) {
 		}
 		print '<td class="nowrap right"><span class="amount">' . price(price2num($x_paye_sum, 'MT')) . '</span></td>';
 
-		$subtotalcoll = $subtotalcoll + $x_coll_sum;
-		$subtotalpaid = $subtotalpaid + $x_paye_sum;
+		$subtotalcoll += $x_coll_sum;
+		$subtotalpaid += $x_paye_sum;
 
 		$diff = $x_coll_sum - $x_paye_sum;
-		$total = $total + $diff;
+		$total += $diff;
 		$subtotal = price2num($subtotal + $diff, 'MT');
 
 		print '<td class="nowrap right"><span class="amount">' . price(price2num($diff, 'MT')) . '</span></td>' . "\n";

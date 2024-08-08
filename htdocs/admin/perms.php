@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,11 @@ $langs->loadLangs(array('admin', 'users', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 
+$entity = $conf->entity;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$entity = $conf->entity;
 
 
 /*
@@ -47,14 +48,14 @@ $entity = $conf->entity;
 
 if ($action == 'add') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=1";
-	$sql .= " WHERE id = ".GETPOST("pid", 'int');
+	$sql .= " WHERE id = ".GETPOSTINT("pid");
 	$sql .= " AND entity = ".$conf->entity;
 	$db->query($sql);
 }
 
 if ($action == 'remove') {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."rights_def SET bydefault=0";
-	$sql .= " WHERE id = ".GETPOST('pid', 'int');
+	$sql .= " WHERE id = ".GETPOSTINT('pid');
 	$sql .= " AND entity = ".$conf->entity;
 	$db->query($sql);
 }
@@ -64,9 +65,11 @@ if ($action == 'remove') {
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 
-llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
+llxHeader('', $langs->trans("DefaultRights"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-perms');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -107,6 +110,7 @@ foreach ($modulesdir as $dir) {
 }
 
 $db->commit();
+'@phan-var-force DolibarrModules[] $modules';
 
 $head = security_prepare_head();
 
@@ -135,7 +139,7 @@ $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 $sql .= " AND r.entity = ".((int) $entity);
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 }
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
@@ -193,7 +197,7 @@ if ($result) {
 		}
 
 		// Break found, it's a new module to catch
-		if (isset($obj->module) && ($oldmod <> $obj->module)) {
+		if (isset($obj->module) && ($oldmod != $obj->module)) {
 			$oldmod = $obj->module;
 
 			// Break detected, we get objMod
@@ -202,7 +206,7 @@ if ($result) {
 
 			// Show break line
 			print '<tr class="oddeven trforbreak">';
-			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print '<td class="maxwidthonsmartphone tdoverflowmax200" title="'.dol_escape_htmltag($objMod->getName()).'">';
 			print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 			print '<a name="'.$objMod->getName().'"></a>';
 			print '</td>';
@@ -220,7 +224,7 @@ if ($result) {
 		print '<tr class="oddeven">';
 
 		// Picto and label of module
-		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+		print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
 		print '</td>';
 
@@ -248,10 +252,16 @@ if ($result) {
 		}
 
 		// Permission and tick
-		$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		print '<td>';
 		print $permlabel;
-		if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+		if ($langs->trans("Permission".$obj->id.'b') != "Permission".$obj->id.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'b').'</span>';
+		}
+		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+		}
+		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 			}
@@ -262,7 +272,7 @@ if ($result) {
 		if ($user->admin) {
 			print '<td class="right">';
 			$htmltext = $langs->trans("ID").': '.$obj->id;
-			$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+			$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.dol_escape_htmltag($obj->module).'\', \''.dol_escape_htmltag($obj->perms).'\''.($obj->subperms ? ', \''.dol_escape_htmltag($obj->subperms).'\'' : '').')';
 			print $form->textwithpicto('', $htmltext);
 			//print '<span class="opacitymedium">'.$obj->id.'</span>';
 			print '</td>';

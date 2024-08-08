@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 
 /**
  *      \file       compta/facture/class/paymentterm.class.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      This file is an example for a CRUD class file (Create/Read/Update/Delete)
  */
 
@@ -51,6 +52,12 @@ class PaymentTerm // extends CommonObject
 	 */
 	public $id;
 
+
+	/**
+	 * @var int Entity ID
+	 */
+	public $entity;
+
 	public $code;
 	public $sortorder;
 	public $active;
@@ -79,7 +86,7 @@ class PaymentTerm // extends CommonObject
 	 *
 	 *      @param      User	$user        	User that create
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *      @return     int       			  	<0 if KO, Id of created object if OK
+	 *      @return     int       			  	Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -129,7 +136,7 @@ class PaymentTerm // extends CommonObject
 		$sql .= "nbjour,";
 		$sql .= "decalage";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ?getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
+		$sql .= " ".(!isset($this->entity) ? getEntity('c_payment_term') : "'".$this->db->escape($this->entity)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->sortorder) ? 'NULL' : "'".$this->db->escape($this->sortorder)."'").",";
 		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
@@ -173,15 +180,13 @@ class PaymentTerm // extends CommonObject
 	 *
 	 *    @param      int		$id     Id object
 	 *    @param      string    $code   Code object
-	 *    @return     int         		<0 if KO, >0 if OK
+	 *    @return     int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '')
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
 		$sql .= " t.entity,";
-
 		$sql .= " t.code,";
 		$sql .= " t.sortorder,";
 		$sql .= " t.active,";
@@ -190,8 +195,6 @@ class PaymentTerm // extends CommonObject
 		$sql .= " t.type_cdr,";
 		$sql .= " t.nbjour,";
 		$sql .= " t.decalage";
-
-
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_payment_term as t";
 		if ($id) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
@@ -230,7 +233,7 @@ class PaymentTerm // extends CommonObject
 	/**
 	 *    Return id of default payment term
 	 *
-	 *    @return     int         <0 if KO, >0 if OK
+	 *    @return     int         Return integer <0 if KO, >0 if OK
 	 */
 	public function getDefaultId()
 	{
@@ -267,7 +270,7 @@ class PaymentTerm // extends CommonObject
 	 *
 	 *  @param      User	$user        	User that modify
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return     int       			  	<0 if KO, >0 if OK
+	 *  @return     int       			  	Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -348,7 +351,7 @@ class PaymentTerm // extends CommonObject
 	 *
 	 *	@param      User	$user  		User that delete
 	 *  @param      int		$notrigger	0=launch triggers after, 1=disable triggers
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -401,10 +404,6 @@ class PaymentTerm // extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
-		$object->statut = 0;
-
-		// Clear fields
-		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
@@ -434,7 +433,7 @@ class PaymentTerm // extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return	int
 	 */
 	public function initAsSpecimen()
 	{
@@ -448,5 +447,7 @@ class PaymentTerm // extends CommonObject
 		$this->type_cdr = '';
 		$this->nbjour = '';
 		$this->decalage = '';
+
+		return 1;
 	}
 }

@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2001-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2016       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+/* Copyright (C) 2001-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2016		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Pierre Ardoin				<mapiolca@me.com>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,36 +50,36 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sc
 $mode = GETPOST('mode', 'alpha');
 
 
-$search_ref = GETPOST('search_ref', 'int');
+$search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
 $search_typeid = GETPOST('search_typeid', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
-$search_status = GETPOST('search_status', 'int');
-$search_date_startday = GETPOST('search_date_startday', 'int');
-$search_date_startmonth = GETPOST('search_date_startmonth', 'int');
-$search_date_startyear = GETPOST('search_date_startyear', 'int');
-$search_date_endday = GETPOST('search_date_endday', 'int');
-$search_date_endmonth = GETPOST('search_date_endmonth', 'int');
-$search_date_endyear = GETPOST('search_date_endyear', 'int');
+$search_status = GETPOST('search_status', 'intcomma');
+$search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_startmonth = GETPOSTINT('search_date_startmonth');
+$search_date_startyear = GETPOSTINT('search_date_startyear');
+$search_date_endday = GETPOSTINT('search_date_endday');
+$search_date_endmonth = GETPOSTINT('search_date_endmonth');
+$search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);	// Use tzserver
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_date_limit_startday = GETPOST('search_date_limit_startday', 'int');
-$search_date_limit_startmonth = GETPOST('search_date_limit_startmonth', 'int');
-$search_date_limit_startyear = GETPOST('search_date_limit_startyear', 'int');
-$search_date_limit_endday = GETPOST('search_date_limit_endday', 'int');
-$search_date_limit_endmonth = GETPOST('search_date_limit_endmonth', 'int');
-$search_date_limit_endyear = GETPOST('search_date_limit_endyear', 'int');
+$search_date_limit_startday = GETPOSTINT('search_date_limit_startday');
+$search_date_limit_startmonth = GETPOSTINT('search_date_limit_startmonth');
+$search_date_limit_startyear = GETPOSTINT('search_date_limit_startyear');
+$search_date_limit_endday = GETPOSTINT('search_date_limit_endday');
+$search_date_limit_endmonth = GETPOSTINT('search_date_limit_endmonth');
+$search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_users = GETPOST('search_users');
-$search_type = GETPOST('search_type', 'int');
-$search_account = GETPOST('search_account', 'int');
+$search_users = GETPOST('search_users', 'intcomma');
+$search_type = GETPOST('search_type', 'alpha');
+$search_account = GETPOST('search_account', 'alpha');
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
 if (empty($page) || $page == -1) {
 	$page = 0; // If $page is not defined, or '' or -1
@@ -94,45 +95,48 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 
-$filtre = GETPOST("filtre", 'int');
+$filtre = GETPOSTINT("filtre");
 
 $arrayfields = array(
-	'cs.rowid'		=>array('label'=>"Ref", 'checked'=>1, 'position'=>10),
-	'cs.libelle'	=>array('label'=>"Label", 'checked'=>1, 'position'=>20),
-	'cs.fk_type'	=>array('label'=>"Type", 'checked'=>1, 'position'=>30),
-	'cs.date_ech'	=>array('label'=>"Date", 'checked'=>1, 'position'=>40),
-	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
-	'p.ref'			=>array('label'=>"ProjectRef", 'checked'=>1, 'position'=>60, 'enabled'=>(isModEnabled('project'))),
-	'cs.fk_user'	=>array('label'=>"Employee", 'checked'=>1, 'position'=>70),
-	'cs.fk_mode_reglement'	=>array('checked'=>-1, 'position'=>80, 'label'=>"DefaultPaymentMode"),
-	'cs.amount'		=>array('label'=>"Amount", 'checked'=>1, 'position'=>100),
-	'cs.paye'		=>array('label'=>"Status", 'checked'=>1, 'position'=>110),
+	'cs.rowid'		=> array('label' => "Ref", 'checked' => 1, 'position' => 10),
+	'cs.libelle'	=> array('label' => "Label", 'checked' => 1, 'position' => 20),
+	'cs.fk_type'	=> array('label' => "Type", 'checked' => 1, 'position' => 30),
+	'cs.date_ech'	=> array('label' => "Date", 'checked' => 1, 'position' => 40),
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
+	'p.ref'			=> array('label' => "ProjectRef", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled('project'))),
+	'cs.fk_user'	=> array('label' => "Employee", 'checked' => 1, 'position' => 70),
+	'cs.fk_mode_reglement'	=> array('checked' => -1, 'position' => 80, 'label' => "DefaultPaymentMode"),
+	'cs.amount'		=> array('label' => "Amount", 'checked' => 1, 'position' => 100),
+	'cs.paye'		=> array('label' => "Status", 'checked' => 1, 'position' => 110),
 );
 
-if (isModEnabled("banque")) {
-	$arrayfields['cs.fk_account'] = array('checked'=>-1, 'position'=>90, 'label'=>"DefaultBankAccount");
+if (isModEnabled("bank")) {
+	$arrayfields['cs.fk_account'] = array('checked' => -1, 'position' => 90, 'label' => "DefaultBankAccount");
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('sclist'));
 $object = new ChargeSociales($db);
 
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+$permissiontodelete = $user->hasRight('tax', 'charges', 'supprimer');
+
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'tax', '', 'chargesociales', 'charges');
-$permissiontodelete = $user->rights->tax->charges->supprimer;
 
 
 /*
  * Actions
  */
 
-$parameters = array('socid'=>$socid);
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -173,11 +177,11 @@ if (empty($reshook)) {
 		$toselect = array();
 	}
 
-		// Mass actions
-		$objectclass = 'ChargeSociales';
-		$objectlabel = 'ChargeSociales';
-		$uploaddir = $conf->tax->dir_output;
-		include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	// Mass actions
+	$objectclass = 'ChargeSociales';
+	$objectlabel = 'ChargeSociales';
+	$uploaddir = $conf->tax->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 /*
@@ -191,7 +195,9 @@ $formsocialcontrib = new FormSocialContrib($db);
 $chargesociale_static = new ChargeSociales($db);
 $projectstatic = new Project($db);
 
-llxHeader('', $langs->trans("SocialContributions"));
+$title = $langs->trans("SocialContributions");
+
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -326,7 +332,7 @@ if ($search_amount) {
 	$param .= '&search_amount='.urlencode($search_amount);
 }
 if ($search_typeid) {
-	$param .= '&search_typeid='.urlencode($search_typeid);
+	$param .= '&search_typeid='.urlencode((string) ($search_typeid));
 }
 if ($search_users) {
 	foreach ($search_users as $id_user) {
@@ -334,7 +340,7 @@ if ($search_users) {
 	}
 }
 if ($search_type) {
-	$param .= '&search_type='.urlencode($search_type);
+	$param .= '&search_type='.urlencode((string) ($search_type));
 }
 if ($search_account) {
 	$param .= '&search_account='.$search_account;
@@ -343,49 +349,49 @@ if ($search_status != '' && $search_status != '-1') {
 	$param .= '&search_status='.urlencode($search_status);
 }
 if ($search_date_startday) {
-	$param .= '&search_date_startday='.urlencode($search_date_startday);
+	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
 }
 if ($search_date_startmonth) {
-	$param .= '&search_date_startmonth='.urlencode($search_date_startmonth);
+	$param .= '&search_date_startmonth='.urlencode((string) ($search_date_startmonth));
 }
 if ($search_date_startyear) {
-	$param .= '&search_date_startyear='.urlencode($search_date_startyear);
+	$param .= '&search_date_startyear='.urlencode((string) ($search_date_startyear));
 }
 if ($search_date_endday) {
-	$param .= '&search_date_endday='.urlencode($search_date_endday);
+	$param .= '&search_date_endday='.urlencode((string) ($search_date_endday));
 }
 if ($search_date_endmonth) {
-	$param .= '&search_date_endmonth='.urlencode($search_date_endmonth);
+	$param .= '&search_date_endmonth='.urlencode((string) ($search_date_endmonth));
 }
 if ($search_date_endyear) {
-	$param .= '&search_date_endyear='.urlencode($search_date_endyear);
+	$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 }
 if ($search_date_limit_startday) {
-	$param .= '&search_date_limit_startday='.urlencode($search_date_limit_startday);
+	$param .= '&search_date_limit_startday='.urlencode((string) ($search_date_limit_startday));
 }
 if ($search_date_limit_startmonth) {
-	$param .= '&search_date_limit_startmonth='.urlencode($search_date_limit_startmonth);
+	$param .= '&search_date_limit_startmonth='.urlencode((string) ($search_date_limit_startmonth));
 }
 if ($search_date_limit_startyear) {
-	$param .= '&search_date_limit_startyear='.urlencode($search_date_limit_startyear);
+	$param .= '&search_date_limit_startyear='.urlencode((string) ($search_date_limit_startyear));
 }
 if ($search_date_limit_endday) {
-	$param .= '&search_date_limit_endday='.urlencode($search_date_limit_endday);
+	$param .= '&search_date_limit_endday='.urlencode((string) ($search_date_limit_endday));
 }
 if ($search_date_limit_endmonth) {
-	$param .= '&search_date_limit_endmonth='.urlencode($search_date_limit_endmonth);
+	$param .= '&search_date_limit_endmonth='.urlencode((string) ($search_date_limit_endmonth));
 }
 if ($search_date_limit_endyear) {
-	$param .= '&search_date_limit_endyear='.urlencode($search_date_limit_endyear);
+	$param .= '&search_date_limit_endyear='.urlencode((string) ($search_date_limit_endyear));
 }
+
+$url = DOL_URL_ROOT.'/compta/sociales/card.php?action=create';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss'=>'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss'=>'reposition'));
-if ($user->rights->tax->charges->creer) {
-	$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/sociales/card.php?action=create');
-}
-
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitleSeparator();
+$newcardbutton .= dolGetButtonTitle($langs->trans('MenuNewSocialContribution'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
 
 // List of mass actions available
 $arrayofmassactions = array();
@@ -409,6 +415,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
@@ -447,7 +454,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 
 // Filters: Line number (placeholder)
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
@@ -455,7 +462,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
 // Filter: Ref
 if (!empty($arrayfields['cs.rowid']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat maxwidth75" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth50" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 
@@ -476,10 +483,10 @@ if (!empty($arrayfields['cs.fk_type']['checked'])) {
 // Filter: Date (placeholder)
 if (!empty($arrayfields['cs.date_ech']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -488,10 +495,10 @@ if (!empty($arrayfields['cs.date_ech']['checked'])) {
 // Filter: Period end date
 if (!empty($arrayfields['cs.periode']['checked'])) {
 	print '<td class="liste_titre center">';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_limit_start ? $search_date_limit_start : -1, 'search_date_limit_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
-	print '<div class="nowrap">';
+	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_limit_end ? $search_date_limit_end : -1, 'search_date_limit_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 	print '</div>';
 	print '</td>';
@@ -535,13 +542,14 @@ if (!empty($arrayfields['cs.amount']['checked'])) {
 // Filter: Status
 if (!empty($arrayfields['cs.paye']['checked'])) {
 	print '<td class="liste_titre right parentonrightofpage">';
-	$liststatus = array('0'=>$langs->trans("Unpaid"), '1'=>$langs->trans("Paid"));
+	$liststatus = array('0' => $langs->trans("Unpaid"), '1' => $langs->trans("Paid"));
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 0, 0, 0, '', 'search_status width100 onrightofpage', 1);
 	print '</td>';
 }
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -566,7 +574,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	print_liste_field_titre('#', $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -616,7 +624,7 @@ if (!empty($arrayfields['cs.paye']['checked'])) {
 }
 
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder, 'totalarray'=>&$totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -632,8 +640,12 @@ $i = 0;
 $savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-$totalarray['val'] = array();
+$totalarray['val'] = array('totalttcfield' => 0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+if (!isset($TLoadedUsers) || !is_array($TLoadedUsers)) {
+	// Ensure array is initialised
+	$TLoadedUsers = array();
+}
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
@@ -657,7 +669,7 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $chargesociale_static->getKanbanView('', array('project'=> $projectstatic, 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
+		print $chargesociale_static->getKanbanView('', array('project' => $projectstatic, 'selected' => in_array($chargesociale_static->id, $arrayofselected)));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
@@ -683,7 +695,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Line number
-		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER_IN_LIST)) {
+		if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 			print '<td>'.(($offset * $limit) + $i).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -798,7 +810,9 @@ while ($i < $imaxinloop) {
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';
-			if (!$i) $totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 
 		// Amount
@@ -806,8 +820,6 @@ while ($i < $imaxinloop) {
 			print '<td class="nowraponall amount right">'.price($obj->amount).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
-			}
-			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'totalttcfield';
 			}
 			$totalarray['val']['totalttcfield'] += $obj->amount;
@@ -858,7 +870,7 @@ if ($num == 0) {
 
 $db->free($resql);
 
-$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 

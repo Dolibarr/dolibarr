@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -42,7 +43,7 @@ if (!defined('NOREQUIREMENU')) {
 require_once '../main.inc.php';
 
 $action = GETPOST('action', 'aZ');
-$entityid = GETPOST('entity', 'int');
+$entityid = GETPOSTINT('entity');
 $backtourl = GETPOST('backtourl');
 if (empty($backtourl)) {
 	$backtourl = DOL_URL_ROOT;
@@ -57,6 +58,9 @@ $langs->load("main");
 $right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
 $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
+if (!isModEnabled('multicompany')) {
+	httponly_accessforbidden('No multicompany module enabled');
+}
 
 
 /*
@@ -92,6 +96,7 @@ print '<div>';
 //print '<br>';
 
 
+$bookmarkList = '';
 if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
 	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
@@ -107,17 +112,19 @@ if (!isModEnabled('multicompany')) {
 
 	if (is_object($mc)) {
 		$listofentities = $mc->getEntitiesList($user->login, false, true);
+	} else {
+		$listofentities = array();
 	}
 
-	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
+	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none; padding: 0">';
 	foreach ($listofentities as $entityid => $entitycursor) {
 		$url = DOL_URL_ROOT.'/core/multicompany_page.php?action=switchentity&token='.newToken().'&entity='.((int) $entityid).($backtourl ? '&backtourl='.urlencode($backtourl) : '');
 		$multicompanyList .= '<li class="lilistonly" style="height: 2.5em; font-size: 1.15em;">';
-		$multicompanyList .= '<a class="dropdown-item multicompany-item" id="multicompany-item-'.$entityid.'" data-id="'.$entityid.'" href="'.dol_escape_htmltag($url).'">';
+		$multicompanyList .= '<a class="dropdown-item multicompany-item paddingtopimp paddingbottomimp" id="multicompany-item-'.$entityid.'" data-id="'.$entityid.'" href="'.dol_escape_htmltag($url).'">';
 		$multicompanyList .= img_picto('', 'entity', 'class="pictofixedwidth"');
 		$multicompanyList .= dol_escape_htmltag($entitycursor);
 		if ($conf->entity == $entityid) {
-			$multicompanyList .= ' <span class="opacitymedium">('.$langs->trans("Currently").')</span>';
+			$multicompanyList .= ' <span class="opacitymedium">'.img_picto($langs->trans("Currently"), 'tick').'</span>';
 		}
 		$multicompanyList .= '</a>';
 		$multicompanyList .= '</li>';
@@ -128,7 +135,7 @@ if (!isModEnabled('multicompany')) {
 
 
 	// Execute hook printBookmarks
-	$parameters = array('multicompany'=>$multicompanyList);
+	$parameters = array('multicompany' => $multicompanyList);
 	$reshook = $hookmanager->executeHooks('printMultiCompanyEntities', $parameters); // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook)) {
 		$multicompanyList .= $hookmanager->resPrint;

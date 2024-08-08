@@ -26,7 +26,6 @@ SupplierProposalStatusDraft=Borrador (necesita ser validado)
 SupplierProposalStatusValidated=Validado (la solicitud está abierta)
 CopyAskFrom=Crear una solicitud de precio copiando una solicitud existente
 CreateEmptyAsk=Crear solicitud en blanco
-ConfirmCloneAsk=¿Está seguro de que desea clonar la solicitud de precio <b> %s </b>?
 ConfirmReOpenAsk=¿Está seguro de que desea volver a abrir la solicitud de precio <b> %s </b>?
 SendAskByMail=Enviar solicitud de precio por correo
 SendAskRef=Enviando la solicitud de precio %s

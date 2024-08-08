@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,30 +18,21 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_invoices_peryear.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per year
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last invoices
+ * Class to manage the box to show invoices per year graph
  */
 class box_graph_invoices_peryear extends ModeleBoxes
 {
-	public $boxcode = "invoicesperyear";
-	public $boximg = "object_bill";
+	public $boxcode  = "invoicesperyear";
+	public $boximg   = "object_bill";
 	public $boxlabel = "BoxCustomersInvoicesPerYear";
-	public $depends = array("facture");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $depends  = array("facture");
 
 	/**
 	 *  Constructor
@@ -74,8 +66,10 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		//$facturestatic=new Facture($this->db);
 
-		$startmonth = $conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-		if (empty($conf->global->GRAPH_USE_FISCAL_YEAR)) $startmonth = 1;
+		$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		if (!getDolGlobalString('GRAPH_USE_FISCAL_YEAR')) {
+			$startmonth = 1;
+		}
 
 		$text = $langs->trans("Turnover", $max);
 		$this->info_box_head = array(
@@ -92,8 +86,12 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		$dir = ''; // We don't need a path because image file will not be saved into disk
 		$prefix = '';
 		$socid = 0;
-		if ($user->socid) $socid = $user->socid;
-		if (empty($user->rights->societe->client->voir) || $socid) $prefix .= 'private-'.$user->id.'-'; // If user has no permission to see all, output dir is specific to user
+		if ($user->socid) {
+			$socid = $user->socid;
+		}
+		if (!$user->hasRight('societe', 'client', 'voir')) {
+			$prefix .= 'private-'.$user->id.'-';
+		} // If user has no permission to see all, output dir is specific to user
 
 		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
@@ -105,17 +103,21 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-				$endyear = GETPOST($param_year, 'int');
+				$endyear = GETPOSTINT($param_year);
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
 				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
 				$endyear = $tmparray['year'];
 				$showtot = $tmparray['showtot'];
 			}
-			if (empty($showtot)) { $showtot = 1; }
+			if (empty($showtot)) {
+				$showtot = 1;
+			}
 			$nowarray = dol_getdate(dol_now(), true);
-			if (empty($endyear)) $endyear = $nowarray['year'];
-			$numberyears = (empty($conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH) ? 5 : $conf->global->MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH);
+			if (empty($endyear)) {
+				$endyear = $nowarray['year'];
+			}
+			$numberyears = getDolGlobalInt('MAIN_NB_OF_YEAR_IN_WIDGET_GRAPH', 5);
 			$startyear = $endyear - $numberyears;
 
 			$mode = 'customer';
@@ -123,6 +125,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			$HEIGHT = '192';
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
+			$stats->where = "f.fk_statut > 0";
 
 			// Build graphic amount of object. $data = array(array('Lib',val1,val2,val3),...)
 			$data2 = $stats->getAmountByYear($numberyears);

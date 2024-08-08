@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $langs->loadLangs(array("users", "companies", "admin", "website"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
@@ -44,7 +44,7 @@ if (empty($id) && empty($ref)) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 }
 
 // Security check
@@ -57,7 +57,7 @@ $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user')
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not the user that read and has no permission to read other users, we stop
-if (($object->id != $user->id) && empty($user->rights->user->user->lire)) {
+if (($object->id != $user->id) && !$user->hasRight('user', 'user', 'lire')) {
 	accessforbidden();
 }
 
@@ -73,9 +73,9 @@ if ($action == 'update') {
 	$tmparray['USER_PUBLIC_HIDE_OFFICE_PHONE'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_PHONE') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_OFFICE_FAX'] = (GETPOST('USER_PUBLIC_HIDE_OFFICE_FAX') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_USER_MOBILE'] = (GETPOST('USER_PUBLIC_HIDE_USER_MOBILE') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_BIRTH'] = (GETPOST('USER_PUBLIC_HIDE_BIRTH') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_SOCIALNETWORKS'] = (GETPOST('USER_PUBLIC_HIDE_SOCIALNETWORKS') ? 1 : 0);
-	$tmparray['USER_PUBLIC_HIDE_ADDRESS'] = (GETPOST('USER_PUBLIC_HIDE_ADDRESS') ? 1 : 0);
+	$tmparray['USER_PUBLIC_SHOW_BIRTH'] = (GETPOST('USER_PUBLIC_SHOW_BIRTH') ? 1 : 0);
+	$tmparray['USER_PUBLIC_SHOW_ADDRESS'] = (GETPOST('USER_PUBLIC_SHOW_ADDRESS') ? 1 : 0);
 	$tmparray['USER_PUBLIC_HIDE_COMPANY'] = (GETPOST('USER_PUBLIC_HIDE_COMPANY') ? 1 : 0);
 	$tmparray['USER_PUBLIC_MORE'] = (GETPOST('USER_PUBLIC_MORE') ? GETPOST('USER_PUBLIC_MORE') : '');
 
@@ -101,7 +101,7 @@ $form = new Form($db);
 $person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 $title = $person_name." - ".$langs->trans('Info');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-virtualcard');
 
 $head = user_prepare_head($object);
 
@@ -111,7 +111,7 @@ $title = $langs->trans("User");
 
 $linkback = '';
 
-if ($user->rights->user->user->lire || $user->admin) {
+if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
@@ -120,18 +120,12 @@ $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 
 $morehtmlref .= '</a>';
 
 $urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
-$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->trans("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
-
-//dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
 
 
 print '<div class="fichecenter">';
 
 print '<br>';
-
-if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
-	print '<span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
-}
 
 $param = '&id='.((int) $object->id);
 $param .= '&dol_openinpopup=1';
@@ -142,6 +136,8 @@ if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setUSER_ENABLE_PUBLIC&token='.newToken().'&value=1'.$param.'">';
 	$enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
 	$enabledisablehtml .= '</a>';
+
+	$enabledisablehtml .= '<br><br><span class="opacitymedium">'.$langs->trans("UserPublicPageDesc").'</span><br><br>';
 } else {
 	// Button on, click to disable
 	$enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setUSER_ENABLE_PUBLIC&token='.newToken().'&value=0'.$param.'">';
@@ -149,7 +145,7 @@ if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	$enabledisablehtml .= '</a>';
 }
 print $enabledisablehtml;
-print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" value="'.(empty($conf->global->USER_ENABLE_PUBLIC) ? 0 : 1).'">';
+print '<input type="hidden" id="USER_ENABLE_PUBLIC" name="USER_ENABLE_PUBLIC" value="'.(!getDolGlobalString('USER_ENABLE_PUBLIC') ? 0 : 1).'">';
 
 print '<br><br>';
 
@@ -159,10 +155,6 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-
-
-	print '<br>';
-
 
 	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('PublicVirtualCardUrl').'</span><br>';
@@ -259,13 +251,6 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print $form->selectyesno("USER_PUBLIC_HIDE_USER_MOBILE", (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
-	// User mobile
-	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
-	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_BIRTH", (getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_BIRTH', 0, $object) : 0), 1);
-	print "</td></tr>\n";
-
 	// Social networks
 	print '<tr class="oddeven" id="tredit"><td>';
 	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("SocialNetworksInformation"));
@@ -273,11 +258,18 @@ if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {
 	print $form->selectyesno("USER_PUBLIC_HIDE_SOCIALNETWORKS", (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
+	// Birth date
+	print '<tr class="oddeven" id="tredit"><td>';
+	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Birthdate"));
+	print '</td><td>';
+	print $form->selectyesno("USER_PUBLIC_SHOW_BIRTH", (getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) ? getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object) : 0), 1);
+	print "</td></tr>\n";
+
 	// Address
 	print '<tr class="oddeven" id="tredit"><td>';
-	print $langs->trans("HideOnVCard", $langs->transnoentitiesnoconv("Address"));
+	print $langs->trans("ShowOnVCard", $langs->transnoentitiesnoconv("Address"));
 	print '</td><td>';
-	print $form->selectyesno("USER_PUBLIC_HIDE_ADDRESS", (getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object) ? getDolUserInt('USER_PUBLIC_HIDE_ADDRESS', 0, $object) : 0), 1);
+	print $form->selectyesno("USER_PUBLIC_SHOW_ADDRESS", (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) ? getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) : 0), 1);
 	print "</td></tr>\n";
 
 	// Company name

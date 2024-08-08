@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2005-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,16 +45,29 @@ class ModeleImports
 	public $error = '';
 
 	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
+	/**
+	 * @var string[] warnings codes (or messages)
+	 */
+	public $warnings = array();
+
+	/**
 	 * @var string Code of driver
 	 */
 	public $id;
 
 	/**
-	 * @var string label
+	 * @var string label of driver
 	 */
 	public $label;
 
-	public $extension; // Extension of files imported by driver
+	/**
+	 * @var string Extension of files imported by driver
+	 */
+	public $extension;
 
 	/**
 	 * Dolibarr version of driver
@@ -60,9 +75,23 @@ class ModeleImports
 	 */
 	public $version = 'dolibarr';
 
-	public $label_lib; // Label of external lib used by driver
+	/**
+	 * PHP minimal version required by driver
+	 * @var array{0:int,1:int}
+	 */
+	public $phpmin = array(7, 0);
 
-	public $version_lib; // Version of external lib used by driver
+	/**
+	 * Label of external lib used by driver
+	 * @var string
+	 */
+	public $label_lib;
+
+	/**
+	 * Version of external lib used by driver
+	 * @var string
+	 */
+	public $version_lib;
 
 	// Array of all drivers
 	public $driverlabel = array();
@@ -71,41 +100,46 @@ class ModeleImports
 
 	public $driverversion = array();
 
+	public $drivererror = array();
+
 	public $liblabel = array();
 
 	public $libversion = array();
 
+	/**
+	 * @var string charset
+	 */
 	public $charset;
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
+
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var Societe thirdparty
+	 */
+	public $thirdpartyobject;
 
 	/**
 	 * @var	array	Element mapping from table name
 	 */
-	public static $mapTableToElement = array(
-		'actioncomm' => 'agenda',
-		'adherent' => 'member',
-		'adherent_type' => 'member_type',
-		//'bank_account' => 'bank_account',
-		'categorie' => 'category',
-		//'commande' => 'commande',
-		//'commande_fournisseur' => 'commande_fournisseur',
-		'contrat' => 'contract',
-		'entrepot' => 'stock',
-		//'expensereport' => 'expensereport',
-		'facture' => 'invoice',
-		//'facture_fourn' => 'facture_fourn',
-		'fichinter' => 'intervention',
-		//'holiday' => 'holiday',
-		//'product' => 'product',
-		'product_price' => 'productprice',
-		'product_fournisseur_price' => 'productsupplierprice',
-		'projet'  => 'project',
-		//'propal' => 'propal',
-		//'societe' => 'societe',
-		'socpeople' => 'contact',
-		//'supplier_proposal' => 'supplier_proposal',
-		//'ticket' => 'ticket',
-	);
+	public static $mapTableToElement = MODULE_MAPPING;
 
 	/**
 	 *  Constructor
@@ -129,7 +163,7 @@ class ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return int		Id
+	 * @return string		Code of driver
 	 */
 	public function getDriverId()
 	{
@@ -211,10 +245,10 @@ class ModeleImports
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/import/";
 		$handle = opendir($dir);
 
-		// Recherche des fichiers drivers imports disponibles
-		$i = 0;
+		// Search list ov drivers available and qualified
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
+				$reg = array();
 				if (preg_match("/^import_(.*)\.modules\.php/i", $file, $reg)) {
 					$moduleid = $reg[1];
 
@@ -231,11 +265,10 @@ class ModeleImports
 					$this->driverlabel[$module->id] = $module->getDriverLabel('');
 					$this->driverdesc[$module->id] = $module->getDriverDesc('');
 					$this->driverversion[$module->id] = $module->getDriverVersion('');
+					$this->drivererror[$module->id] = $module->error ? $module->error : '';
 					// If use an external lib
-					$this->liblabel[$module->id] = $module->getLibLabel('');
+					$this->liblabel[$module->id] = ($module->error ? '<span class="error">'.$module->error.'</span>' : $module->getLibLabel(''));
 					$this->libversion[$module->id] = $module->getLibVersion('');
-
-					$i++;
 				}
 			}
 		}

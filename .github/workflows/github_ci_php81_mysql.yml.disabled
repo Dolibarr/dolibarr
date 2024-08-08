@@ -190,7 +190,7 @@ jobs:
         sudo cat /etc/apache2/sites-enabled/000-default.conf
         sudo service apache2 restart
         curl -I localhost
-    - name: Chech Apache availability
+    - name: Check Apache availability
       run: |
         echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
         # Ensure we stop on error with set -e

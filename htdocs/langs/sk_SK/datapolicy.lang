@@ -4,89 +4,48 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = Zásady ochrany osobných údajov
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
-
-#
+Module4100Desc = Modul na správu ochrany osobných údajov (v súlade s GDPR)
 # Administration page
-#
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
+datapolicySetup = Nastavenie zásad ochrany osobných údajov modulu
+Deletion = Vymazanie údajov
+datapolicySetupPage = V závislosti od zákonov vašich krajín (príklad <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">článok 5</a> GDPR) musia byť osobné údaje uchovávané po dobu nepresahuje dobu, po ktorú sú údaje potrebné na účel, na ktorý boli zhromaždené, s výnimkou archívnych účelov.<br>Vymazanie sa vykoná automaticky po určitom čase bez udalostí (trvanie ktoré uvediete nižšie).
+NB_MONTHS = %s mesiacov
+ONE_YEAR = 1 rok
+NB_YEARS = %s rokov
 DATAPOLICY_TIERS_CLIENT = Zákazník
 DATAPOLICY_TIERS_PROSPECT = Vyhliadka
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Záujemca/zákazník
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ani potenciálny zákazník/ani zákazník
 DATAPOLICY_TIERS_FOURNISSEUR = Dodávateľ
 DATAPOLICY_CONTACT_CLIENT = Zákazník
 DATAPOLICY_CONTACT_PROSPECT = Vyhliadka
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Záujemca/zákazník
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani potenciálny zákazník/ani zákazník
 DATAPOLICY_CONTACT_FOURNISSEUR = Dodávateľ
 DATAPOLICY_ADHERENT = Člen
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
-
-
-#
+DATAPOLICY_Tooltip_SETUP = Typ kontaktu – uveďte svoje možnosti pre každý typ.
+SendAgreementText = Všetkým svojim relevantným kontaktom (ktorým ešte e-mail neprišiel a u ktorých ste nezaregistrovali nič o ich dohode s GDPR) môžete poslať GDPR email. Ak to chcete urobiť, použite nasledujúce tlačidlo.
+SendAgreement = Pošli e-maily
+AllAgreementSend = Všetky e-maily boli odoslané
+TXTLINKDATAPOLICYACCEPT = Text pre odkaz "dohoda"
+TXTLINKDATAPOLICYREFUSE = Text pre odkaz "nesúhlas"
 # Extrafields
-#
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
-
-#
+DATAPOLICY_BLOCKCHECKBOX = GDPR : Spracúvanie osobných údajov
+DATAPOLICY_consentement = Získaný súhlas so spracovaním osobných údajov
+DATAPOLICY_opposition_traitement = Namieta proti spracovaniu svojich osobných údajov
+DATAPOLICY_opposition_prospection = Namieta proti spracovaniu svojich osobných údajov na účely vyhľadávania
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymised the %s
-
-# V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
-
-# ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+DATAPOLICY_date = Dátum súhlasu/nesúhlasu GDPR
+DATAPOLICY_send = Dátum odoslania e-mailu so zmluvou
+MailSent = E-mail bol odoslaný
+NUMBER_MONTH_BEFORE_DELETION = Počet mesiacov pred odstránením

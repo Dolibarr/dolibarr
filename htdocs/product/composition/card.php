@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -53,7 +53,7 @@ if (!empty($user->socid)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productcompositioncard', 'globalcard'));
 
 $object = new Product($db);
@@ -76,9 +76,9 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
-$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->lire) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
-$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
-$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer));
+$usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
+$usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
 
 
 /*
@@ -89,58 +89,64 @@ if ($cancel) {
 	$action = '';
 }
 
-// Add subproduct to product
-if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-	$error = 0;
-	$maxprod = GETPOST("max_prod", 'int');
+$reshook = $hookmanager->executeHooks('doActions', [], $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	for ($i = 0; $i < $maxprod; $i++) {
-		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
-		if ($qty > 0) {
-			if ($object->add_sousproduit($id, GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int')) > 0) {
-				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
-				$action = 'edit';
-			} else {
-				$error++;
-				$action = 're-edit';
-				if ($object->error == "isFatherOfThis") {
-					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+if (empty($reshook)) {
+	// Add subproduct to product
+	if ($action == 'add_prod' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+		$error = 0;
+		$maxprod = GETPOSTINT("max_prod");
+
+		for ($i = 0; $i < $maxprod; $i++) {
+			$qty = price2num(GETPOST("prod_qty_" . $i, 'alpha'), 'MS');
+			if ($qty > 0) {
+				if ($object->add_sousproduit($id, GETPOSTINT("prod_id_" . $i), $qty, GETPOSTINT("prod_incdec_" . $i)) > 0) {
+					//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
+					$action = 'edit';
 				} else {
+					$error++;
+					$action = 're-edit';
+					if ($object->error == "isFatherOfThis") {
+						setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
+					} else {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
+			} else {
+				if ($object->del_sousproduit($id, GETPOSTINT("prod_id_" . $i)) > 0) {
+					$action = 'edit';
+				} else {
+					$error++;
+					$action = 're-edit';
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		} else {
-			if ($object->del_sousproduit($id, GETPOST("prod_id_".$i, 'int')) > 0) {
-				$action = 'edit';
-			} else {
-				$error++;
-				$action = 're-edit';
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
 		}
-	}
 
-	if (!$error) {
-		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+		if (!$error) {
+			header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		}
+	} elseif ($action === 'save_composed_product') {
+		$TProduct = GETPOST('TProduct', 'array');
+		if (!empty($TProduct)) {
+			foreach ($TProduct as $id_product => $row) {
+				if ($row['qty'] > 0) {
+					$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
+				} else {
+					$object->del_sousproduit($id, $id_product);
+				}
+			}
+			setEventMessages('RecordSaved', null);
+		}
+		$action = '';
+		header("Location: " . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 		exit;
 	}
-} elseif ($action === 'save_composed_product') {
-	$TProduct = GETPOST('TProduct', 'array');
-	if (!empty($TProduct)) {
-		foreach ($TProduct as $id_product => $row) {
-			if ($row['qty'] > 0) {
-				$object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0);
-			} else {
-				$object->del_sousproduit($id, $id_product);
-			}
-		}
-		setEventMessages('RecordSaved', null);
-	}
-	$action = '';
-	header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
-	exit;
 }
-
 
 /*
  * View
@@ -191,7 +197,7 @@ if ($action == 'search') {
 		}
 		$sql .= natural_search($params, $key);
 	}
-	if (isModEnabled('categorie') && !empty($parent) && $parent != -1) {
+	if (isModEnabled('category') && !empty($parent) && $parent != -1) {
 		$sql .= " AND cp.fk_categorie ='".$db->escape($parent)."'";
 	}
 	$sql .= " ORDER BY p.ref ASC";
@@ -211,7 +217,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Leistungen';
 }
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-composition_card');
 
 $head = product_prepare_head($object);
 
@@ -225,17 +231,17 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Product card
 	 */
-	if ($user->rights->produit->lire || $user->hasRight('service', 'lire')) {
+	if ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire')) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
 		dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '');
 
-		if ($object->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES) || empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if ($object->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || !getDolGlobalString('PRODUIT_MULTIPRICES')) {
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
@@ -246,7 +252,7 @@ if ($id > 0 || !empty($ref)) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="titlefield">';
-				print (empty($conf->global->PRODUCT_DENY_CHANGE_PRODUCT_TYPE)) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 				print '</td></tr>';
@@ -261,7 +267,7 @@ if ($id > 0 || !empty($ref)) {
 
 			// Nature
 			if ($object->type != Product::TYPE_SERVICE) {
-				if (empty($conf->global->PRODUCT_DISABLE_NATURE)) {
+				if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td>';
 					print $object->getLibFinished();
 					//print $formproduct->selectProductNature('finished', $object->finished);
@@ -269,7 +275,7 @@ if ($id > 0 || !empty($ref)) {
 				}
 			}
 
-			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
 				// Price
 				print '<tr><td class="titlefield">'.$langs->trans("SellingPrice").'</td><td>';
 				if ($object->price_base_type == 'TTC') {
@@ -315,7 +321,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
-		$nbofsubproducts = count($prodschild); // This include only first level of childs
+		$nbofsubproducts = count($prodschild); // This include only first level of children
 
 
 		print '<div class="fichecenter">';
@@ -383,6 +389,10 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('stock')) {
 			print '<td class="right">'.$langs->trans('Stock').'</td>';
 		}
+		// Hook fields
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Qty in kit
 		print '<td class="right">'.$langs->trans('Qty').'</td>';
 		// Stoc inc/dev
@@ -393,8 +403,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalsell = 0;
 		$total = 0;
-		if (count($prods_arbo))	{
-			foreach ($prods_arbo as $value)	{
+		if (count($prods_arbo)) {
+			foreach ($prods_arbo as $value) {
 				$productstatic->fetch($value['id']);
 
 				if ($value['level'] <= 1) {
@@ -419,7 +429,9 @@ if ($id > 0 || !empty($ref)) {
 						if ($product_fourn->product_fourn_price_id > 0) {
 							print $product_fourn->display_price_product_fournisseur(0, 0);
 						} else {
-							print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++;
+							print $langs->trans("NotDefined");
+							$notdefined++;
+							$atleastonenotdefined++;
 						}
 					}
 					print '</td>';
@@ -434,21 +446,21 @@ if ($id > 0 || !empty($ref)) {
 					$total +=  $totalline;
 
 					print '<td class="right nowraponall">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, '', '', 0, 0, -1, $conf->currency)).'</span>';
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : '').'<span class="amount">'.price($unitline, 0, '', 0, 0, -1, $conf->currency)).'</span>';
 					print '</td>';
 
 					// Best selling price
 					$pricesell = $productstatic->price;
-					if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+					if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 						$pricesell = 'Variable';
 					} else {
 						$totallinesell = price2num($value['nb'] * ($pricesell), 'MT');
 						$totalsell += $totallinesell;
 					}
 					print '<td class="right" colspan="2">';
-					print ($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
+					print($notdefined ? '' : ($value['nb'] > 1 ? $value['nb'].'x ' : ''));
 					if (is_numeric($pricesell)) {
-						print '<span class="amount">'.price($pricesell, '', '', 0, 0, -1, $conf->currency).'</span>';
+						print '<span class="amount">'.price($pricesell, 0, '', 0, 0, -1, $conf->currency).'</span>';
 					} else {
 						print '<span class="opacitymedium">'.$langs->trans($pricesell).'</span>';
 					}
@@ -458,6 +470,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td class="right">'.$value['stock'].'</td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty + IncDec
 					if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
@@ -474,7 +491,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</tr>'."\n";
 				} else {
 					$hide = '';
-					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) {
+					if (!getDolGlobalString('PRODUCT_SHOW_SUB_SUB_PRODUCTS')) {
 						$hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 					}
 
@@ -508,6 +525,11 @@ if ($id > 0 || !empty($ref)) {
 					if (isModEnabled('stock')) {
 						print '<td></td>'; // Real stock
 					}
+
+					// Hook fields
+					$parameters = array();
+					$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $productstatic); // Note that $action and $object may have been modified by hook
+					print $hookmanager->resPrint;
 
 					// Qty in kit
 					print '<td class="right">'.dol_escape_htmltag($value['nb']).'</td>';
@@ -545,7 +567,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($total, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($total, 0, '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Minimum selling price
@@ -557,7 +579,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($atleastonenotdefined) {
 				print $langs->trans("Unknown").' ('.$langs->trans("SomeSubProductHaveNoPrices").')';
 			}
-			print ($atleastonenotdefined ? '' : price($totalsell, '', '', 0, 0, -1, $conf->currency));
+			print($atleastonenotdefined ? '' : price($totalsell, 0, '', 0, 0, -1, $conf->currency));
 			print '</td>';
 
 			// Stock
@@ -603,7 +625,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<br>';
 
 			$rowspan = 1;
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				$rowspan++;
 			}
 
@@ -616,7 +638,7 @@ if ($id > 0 || !empty($ref)) {
 			print $langs->trans("KeywordFilter").': ';
 			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
 			print '</div>';
-			if (isModEnabled('categorie')) {
+			if (isModEnabled('category')) {
 				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
 				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
@@ -662,21 +684,23 @@ if ($id > 0 || !empty($ref)) {
 						$prod_arbo = new Product($db);
 						$prod_arbo->id = $objp->rowid;
 						// This type is not supported (not required to have virtual products working).
-						if ($prod_arbo->type == Product::TYPE_ASSEMBLYKIT || $prod_arbo->type == Product::TYPE_STOCKKIT) {
-							$is_pere = 0;
-							$prod_arbo->get_sousproduits_arbo();
-							// associations sousproduits
-							$prods_arbo = $prod_arbo->get_arbo_each_prod();
-							if (count($prods_arbo) > 0) {
-								foreach ($prods_arbo as $key => $value) {
-									if ($value[1] == $id) {
-										$is_pere = 1;
+						if (getDolGlobalString('PRODUCT_USE_DEPRECATED_ASSEMBLY_AND_STOCK_KIT_TYPE')) {
+							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
+								$is_pere = 0;
+								$prod_arbo->get_sousproduits_arbo();
+								// associations sousproduits
+								$prods_arbo = $prod_arbo->get_arbo_each_prod();
+								if (count($prods_arbo) > 0) {
+									foreach ($prods_arbo as $key => $value) {
+										if ($value[1] == $id) {
+											$is_pere = 1;
+										}
 									}
 								}
-							}
-							if ($is_pere == 1) {
-								$i++;
-								continue;
+								if ($is_pere == 1) {
+									$i++;
+									continue;
+								}
 							}
 						}
 

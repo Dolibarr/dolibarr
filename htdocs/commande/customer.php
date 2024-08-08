@@ -39,17 +39,17 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-if (!$user->rights->facture->creer) {
+if (!$user->hasRight('facture', 'creer')) {
 	accessforbidden();
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "orders"));
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -68,7 +68,7 @@ if (!$sortfield) {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-commande page-customer');
 
 $thirdpartystatic = new Societe($db);
 
@@ -77,19 +77,10 @@ $thirdpartystatic = new Societe($db);
  */
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
-$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", sc.fk_soc, sc.fk_user ";
-}
+$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
 $sql .= " AND s.entity IN (".getEntity('societe').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
 if (GETPOST("search_nom")) {
 	$sql .= natural_search("s.nom", GETPOST("search_nom"));
 }
@@ -102,8 +93,22 @@ if (GETPOST("search_code_client")) {
 if (dol_strlen($begin)) {
 	$sql .= " AND s.nom like '".$db->escape($begin)."'";
 }
-if ($socid > 0) {
-	$sql .= " AND s.rowid = ".((int) $socid);
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
+}
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search on socid
+if ($socid) {
+	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " AND c.fk_statut in (1, 2) AND c.facture = 0";
 $sql .= " GROUP BY s.nom";

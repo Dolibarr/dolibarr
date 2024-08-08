@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Bilgi Yönetim Sistemi
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Bir Bilgi Yönetimi (BY) veya Yardım-Masası tabanını yönetin
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Bilgi Yönetim Sistemi Kurulumu
-Settings = Ayarlar
 KnowledgeManagementSetupPage = Bilgi Yönetim Sistemi Kurulum Sayfası
-
-
-#
 # About page
-#
-About = Hakkında
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = Bilgi Yönetimi Hakkında
+KnowledgeManagementAboutPage = Bilgi Yönetimi hakkında sayfa
+KnowledgeManagementArea = Bilgi Yönetimi
+MenuKnowledgeRecord = Bilgi tabanı
+MenuKnowledgeRecordShort = Bilgi tabanı
+ListKnowledgeRecord = Makale listesi
+NewKnowledgeRecord = Yeni makale
+ValidateReply = Çözümü doğrula
+KnowledgeRecords = Nesne
 KnowledgeRecord = Mal
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeRecordExtraFields = Makale için Ekstra Alanlar
+GroupOfTicket=Grup bilet
+YouCanLinkArticleToATicketCategory=Makaleyi bir destek talebi grubuna bağlayabilirsiniz (böylece makale bu gruptaki tüm destek taleplerinde vurgulanacaktır)
+SuggestedForTicketsInGroup=Bilet oluşturmada önerildi
+SetObsolete=Eski olarak ayarla
+ConfirmCloseKM=Bu makalenin kapatılmasının geçersiz olduğunu onaylıyor musunuz?
+ConfirmReopenKM=Bu makaleyi "Doğrulandı" durumuna geri yüklemek istiyor musunuz?
+BoxLastKnowledgerecordDescription=Son %s makaleleri
+BoxLastKnowledgerecord=Son makaleler
+BoxLastKnowledgerecordContent=Son makaleler
+BoxLastKnowledgerecordModifiedContent=Son değiştirilen makaleler
+BoxLastModifiedKnowledgerecordDescription=En son %s değiştirilen makaleler
+BoxLastModifiedKnowledgerecord=Son değiştirilen makaleler

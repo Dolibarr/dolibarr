@@ -105,7 +105,7 @@ class FormWebsite
 	 *  @param  string  $moreattrib         More attributes on HTML select tag
 	 *  @param	int		$addjscombo			Add js combo
 	 *  @param	string	$morecss			More CSS
-	 * 	@return	void
+	 * 	@return	string						The HTML select component
 	 */
 	public function selectTypeOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
@@ -113,49 +113,78 @@ class FormWebsite
 
 		$langs->load("admin");
 
-		$sql = "SELECT rowid, code, label, entity";
+		$out = '';
+
+		$sql = "SELECT rowid, code, label, entity, position, typecontainer";
 		$sql .= " FROM ".$this->db->prefix().'c_type_container';
 		$sql .= " WHERE active = 1 AND entity IN (".getEntity('c_type_container').")";
-		$sql .= " ORDER BY label";
+		$sql .= " ORDER BY position ASC, typecontainer DESC, label ASC";
 
 		dol_syslog(get_class($this)."::selectTypeOfContainer", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$i = 0;
 			if ($num) {
-				print '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+				$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 				if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
-					print '<option value="-1">&nbsp;</option>';
+					$out .= '<option value="-1">&nbsp;</option>';
 				}
 
+				$lasttypecontainer = '';
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($result);
-					if ($selected == $obj->rowid || $selected == $obj->code) {
-						print '<option value="'.$obj->code.'" selected>';
-					} else {
-						print '<option value="'.$obj->code.'">';
+					/*if (in_array($obj->typecontainer, array('library', 'service'))) {
+						if (!getDolGlobalString('WEBSITE_ADD_PAGE_TYPE_PHPLIB')) {
+							$i++;
+							continue;
+						}
+					}*/
+					if ($obj->typecontainer != $lasttypecontainer) {
+						$out .= '<option value="0" disabled>--- ';
+						$transcodecontainer = ucfirst($obj->typecontainer);
+						if ($obj->typecontainer == 'page') {
+							$transcodecontainer = 'CompletePage';
+						} elseif ($obj->typecontainer == 'container') {
+							$transcodecontainer = 'PortionOfPage';
+						} elseif ($obj->typecontainer == 'service') {
+							$transcodecontainer = 'ServiceComponent';
+						}
+						$out .= $langs->trans($transcodecontainer);
+						$out .= ' ---</option>';
+						$lasttypecontainer = $obj->typecontainer;
 					}
-					print $langs->trans($obj->label);
-					print '</option>';
+
+					if ($selected == $obj->rowid || $selected == $obj->code) {
+						$out .= '<option value="'.$obj->code.'" selected>';
+					} else {
+						$out .= '<option value="'.$obj->code.'">';
+					}
+					$out .= $langs->trans($obj->label);
+					$out .= '</option>';
+
+					$conf->cache['type_of_container'][$obj->code] = $obj->label;
+
 					$i++;
 				}
-				print "</select>";
+				$out .= "</select>";
 				if ($user->admin) {
-					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+					$out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 
 				if ($addjscombo) {
-					print ajax_combobox('select'.$htmlname);
+					$out .= ajax_combobox('select'.$htmlname);
 				}
 			} else {
-				print $langs->trans("NoTypeOfPagePleaseEditDictionary");
+				$out .= $langs->trans("NoTypeOfPagePleaseEditDictionary");
 			}
 		} else {
-			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
 		}
-	}
 
+		return $out;
+	}
 
 	/**
 	 *  Return a HTML select list of samples of containers content
@@ -170,12 +199,11 @@ class FormWebsite
 	 */
 	public function selectSampleOfContainer($htmlname, $selected = '', $useempty = 0, $moreattrib = '', $addjscombo = 0, $morecss = 'minwidth200')
 	{
-		global $langs, $conf, $user;
+		global $langs, $user;
 
 		$langs->load("admin");
 
 		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
-
 		$arrayofsamples = array();
 		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
 		foreach ($listofsamples as $sample) {
@@ -191,7 +219,7 @@ class FormWebsite
 		}
 
 		$out = '';
-		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
+		$out .= '<select id="select'.$htmlname.'" class="selectSampleOfContainer'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'"'.($moreattrib ? ' '.$moreattrib : '').'>';
 
 		if ($useempty == 1 || $useempty == 2) {
 			$out .= '<option value="-1">&nbsp;</option>';
@@ -282,7 +310,7 @@ class FormWebsite
 				}
 				if ($website->fk_default_home && $key == $website->fk_default_home) {
 					//$valueforoption .= ' <span class="opacitymedium">('.$langs->trans("HomePage").')</span>';
-					$valueforoption .= ' <span class="opacitymedium fa fa-home"></span>';
+					$valueforoption .= ' <span class="opacitymedium fas fa-home"></span>';
 				}
 
 				$out .= '<option value="'.$key.'"';
@@ -305,6 +333,90 @@ class FormWebsite
 			$out .= '<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
 			$out .= ajax_combobox($htmlname);
 		}
+		return $out;
+	}
+
+
+	/**
+	 * Return HTML code for selection of page layout
+	 *
+	 * @param   string      $htmlContent    HTML name of WYSIWYG field
+	 * @return 	string      HTML for model page boxes
+	 */
+	public function getContentPageTemplate($htmlContent = 'message')
+	{
+		global $user, $langs;
+
+		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+
+		$listofsamples = dol_dir_list(DOL_DOCUMENT_ROOT.'/website/samples', 'files', 0, '^page-sample-.*\.html$');
+		$arrayofsamples = array();
+		$arrayofsamples['empty'] = 'EmptyPage'; // Always this one first
+		foreach ($listofsamples as $sample) {
+			$reg = array();
+			if (preg_match('/^page-sample-(.*)\.html$/', $sample['name'], $reg)) {
+				$key = $reg[1];
+				$labelkey = ucfirst($key);
+				if ($key == 'empty') {
+					$labelkey = 'EmptyPage';
+				}
+				$arrayofsamples[$key] = $labelkey;
+			}
+		}
+		$out = '<div id="template-selector" class="template-container hidden">';
+
+		// We disable some not ready templates
+		unset($arrayofsamples['dynamiccontent']);
+		//unset($arrayofsamples['news']);
+
+		$templates = $arrayofsamples;
+
+		foreach ($templates as $template => $templateFunction) {
+			$substitutionarray = array();
+			$substitutionarray['__WEBSITE_CREATED_BY__'] = $user->getFullName($langs);
+			$substitutionarray['__WEBSITE_CONTENT__'] = $langs->trans("WebpageContent");
+			$substitutionarray['__WEBSITE_TITLE1__'] = $langs->trans("Title1");
+			$substitutionarray['__WEBSITE_TITLE2__'] = $langs->trans("Title2");
+
+			$pathtoTemplateFile = DOL_DOCUMENT_ROOT.'/website/samples/page-sample-'.dol_sanitizeFileName($template).'.html';
+			$contentHtml = file_exists($pathtoTemplateFile) ? make_substitutions(@file_get_contents($pathtoTemplateFile), $substitutionarray) : '';
+
+			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
+			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
+			$out .= '<span class="template-option-text">'.($template != 'text'  ? ucfirst($template) : ucfirst($templateFunction)).'</span>';
+			$out .= '</div>';
+		}
+		$out .= '<input type="hidden" name="sample" value="" />';
+		$out .= '</div>';
+
+		$out .= '<script type="text/javascript">
+				$(document).ready(function() {
+					$(".template-option").click(function() {
+						console.log("We choose a layout for website, we fill the field \''.$htmlContent.'\'");
+
+						$(".template-option").removeClass("selected");
+						$(this).addClass("selected");
+
+						var template = $(this).data("template");
+						var contentHtml = $(this).data("content");
+
+						jQuery("#'.$htmlContent.'").val(contentHtml);
+						//jQuery("#'.$htmlContent.'preview").val(contentHtml);
+
+						var editorInstance = CKEDITOR.instances.'.$htmlContent.';
+						if (editorInstance) {
+							editorInstance.setData(contentHtml);
+						}
+						//var editorInstance = CKEDITOR.instances.'.$htmlContent.'preview;
+						//if (editorInstance) {
+						//	editorInstance.setData(contentHtml);
+						//}
+					});
+				});
+		</script>';
+
 		return $out;
 	}
 }

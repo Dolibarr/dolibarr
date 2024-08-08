@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,13 +15,10 @@
 Module4100Name = Datenschutzrichtlinien
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Modul zur Verwaltung der Datenschutzeinstellungen (DSGVO-Konform)
-
-#
 # Administration page
-#
 datapolicySetup = Modul Datenschutzrichtlinien einrichten
 Deletion = Löschung von Daten
-datapolicySetupPage = Abhängig von den Gesetzen Ihres Landes (Beispiel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> der DSGVO) müssen personenbezogene Daten für einen Zeitraum aufbewahrt werden, der den für die Zwecke, für die sie erhoben wurden, erforderlichen Zeitraum nicht überschreitet, mit Ausnahme von Archivierungszwecken. <br>Die Löschung erfolgt automatisch nach einer bestimmten Dauer ohne Ereignis (die Dauer, die Sie unten angegeben haben).
+datapolicySetupPage = Abhängig von den Gesetzen Ihres Landes (Beispiel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> der DSGVO) dürfen personenbezogene Daten nur für einen Zeitraum aufbewahrt werden, der den für die Zwecke erforderlichen Zeitraum, für die sie erhoben wurden, nicht überschreitet, mit Ausnahme von Archivierungszwecken.<br>Die Löschung erfolgt automatisch nach einer bestimmten Dauer ohne Ereignisse (die Dauer, die Sie unten angegeben haben).
 NB_MONTHS = %s Monate
 ONE_YEAR = 1 Jahr
 NB_YEARS = %s Jahre
@@ -39,54 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Weder Interessent noch Kunde
 DATAPOLICY_CONTACT_FOURNISSEUR = Lieferant
 DATAPOLICY_ADHERENT = Mitglied
 DATAPOLICY_Tooltip_SETUP = Art des Kontakts – Geben Sie Ihre Auswahl für jede Art an.
-DATAPOLICYMail = E-Mail-Einrichtung
-DATAPOLICYSUBJECTMAIL = Betreff der E-Mail
-DATAPOLICYCONTENTMAIL = Inhalt der E-Mail
-DATAPOLICYSUBSITUTION = Sie können die folgenden Variablen in Ihrer E-Mail verwenden (LINKACCEPT ermöglicht es, einen Link zu erstellen, der die Zustimmung der Person aufzeichnet, LINKREFUSED ermöglicht es, die Ablehnung der Person aufzuzeichnen):
-DATAPOLICYACCEPT = Nachricht nach einer Zustimmung
-DATAPOLICYREFUSE = Nachricht nach einer Ablehnung
 SendAgreementText = Sie können eine DSGVO-E-Mail an alle Ihre relevanten Kontakte senden (die noch keine E-Mail erhalten haben und für die Sie nichts über ihre DSGVO-Vereinbarung registriert haben). Verwenden Sie dazu die folgende Schaltfläche.
 SendAgreement = E-Mails senden
 AllAgreementSend = Alle E-Mails wurden versendet
 TXTLINKDATAPOLICYACCEPT = Text für den Link "Zustimmung"
 TXTLINKDATAPOLICYREFUSE = Text für den Link "Ablehnung"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = DSGVO: Verarbeitung personenbezogener Daten
 DATAPOLICY_consentement = Einwilligung zur Verarbeitung personenbezogener Daten eingeholt
 DATAPOLICY_opposition_traitement = Widerspricht der Verarbeitung seiner personenbezogenen Daten
-DATAPOLICY_opposition_prospection = widersetzt sich der Verarbeitung seiner personenbezogenen Daten zum Zwecke der Kundenakquise
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymisieren Sie einen Geschäftspartner
-DATAPOLICY_POPUP_ANONYME_TEXTE = Sie können diesen Kontakt nicht aus Dolibarr löschen, da es zugeordnete Objekte gibt. In Übereinstimmung mit der DSGVO werden alle diese Daten anonymisiert, um Ihren Verpflichtungen nachzukommen. Möchten Sie fortfahren ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Übertragbarkeit DSGVO
-DATAPOLICY_PORTABILITE_TITLE = Export personenbezogener Daten
-DATAPOLICY_PORTABILITE_CONFIRMATION = Sie möchten die personenbezogenen Daten dieses Kontakts exportieren. Sind Sie sicher ?
-
-#
+DATAPOLICY_opposition_prospection = Widersetzt sich der Verarbeitung seiner personenbezogenen Daten zum Zweck der Kundenakquise
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymisiert die %s
-
-# V2
-DATAPOLICYReturn = DSGVO-Validierung
 DATAPOLICY_date = Datum der Zustimmung/Ablehnung DSGVO
-DATAPOLICY_send = Datum, an dem die Vereinbarungs-E-Mail gesendet wird
-DATAPOLICYReturn = DSGVO-Validierung
-DATAPOLICY_SEND = DSGVO-E-Mail senden
+DATAPOLICY_send = Datum, an dem die Vereinbarungs-E-Mail gesendet wurde
 MailSent = Die Email wurde verschickt
-
-# ERROR
-ErrorSubjectIsRequired = Fehler: Der Betreff der E-Mail ist erforderlich. Geben Sie ihn im Modul-Setup an
-=Aufgrund eines technischen Problems konnten wir Ihre Auswahl nicht registrieren. Wir bitten dafür um Entschuldigung. Kontaktieren Sie uns, um uns Ihre Wahl zu senden.
 NUMBER_MONTH_BEFORE_DELETION = Anzahl der Monate bis zum Löschen

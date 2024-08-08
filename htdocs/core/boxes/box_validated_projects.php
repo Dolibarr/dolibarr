@@ -38,18 +38,7 @@ class box_validated_projects extends ModeleBoxes
 	public $boxlabel;
 	//var $depends = array("projet");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $enabled = 1;
-
 
 	/**
 	 *  Constructor
@@ -67,7 +56,7 @@ class box_validated_projects extends ModeleBoxes
 		$this->db = $db;
 		$this->boxlabel = "ProjectTasksWithoutTimeSpent";
 
-		$this->hidden = empty($user->rights->projet->lire);
+		$this->hidden = !$user->hasRight('projet', 'lire');
 
 		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 			$this->enabled = 0;
@@ -94,16 +83,16 @@ class box_validated_projects extends ModeleBoxes
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 

@@ -100,9 +100,9 @@ Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversi
 
 ; Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.4.51, php 7.3.33, mariadb10.6.5 (wampserver3.2.6_x64.exe)
+; Value OK: apache 2.4.51, php 7.4.26, mariadb10.6.5 (wampserver3.2.6_x64.exe)
 Source: "C:\wamp64\bin\apache\apache2.4.51\*.*"; DestDir: "{app}\bin\apache\apache2.4.51"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
-Source: "C:\wamp64\bin\php\php7.3.33\*.*"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
+Source: "C:\wamp64\bin\php\php7.4.26\*.*"; DestDir: "{app}\bin\php\php7.4.26"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
 Source: "C:\wamp64\bin\mariadb\mariadb10.6.5\*.*"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 
 ; Mysql data files (does not overwrite if exists)
@@ -121,7 +121,7 @@ Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flag
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.51\conf"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mariadb\mariadb10.6.5"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.3.33"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php7.4.26"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
@@ -228,7 +228,7 @@ begin
 
   //version des applis, a modifier pour chaque version de WampServer 2
   apacheVersion := '2.4.51';
-  phpVersion := '7.3.33' ;
+  phpVersion := '7.4.26' ;
   mysqlVersion := '10.6.5';
 
   smtpServer := 'localhost';

@@ -9,28 +9,31 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crează automat o factură client după
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=În mod automat se crează o factură client după ce se închide o comandă de vânzări (noua factură va avea aceeași valoare ca comanda)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=La crearea unui tichet, crează automat o intervenţie.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificați oferta comercială sursă asociată ca facturată atunci când comanda de vânzări este setată ca facturată (și dacă valoarea comenzii este aceeași cu valoarea totală a ofertei asociate semnate)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificați oferta comercială sursă asociată ca facturată atunci când factura clientului este validată (și dacă valoarea facturii este aceeași cu valoarea totală a ofertei asociate semnate)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificați comanda de vânzări sursă asociată ca facturată atunci când factura clientului este validată (și dacă valoarea facturii este aceeași cu valoarea totală a comenzii de vânzare asociate)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificați comanda de vânzări sursă asociată ca fiind facturată atunci când factura clientului este setată la plată (și dacă valoarea facturii este aceeași cu suma totală a comenzii asociate)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificați comanda de vânzări sursă asociată ca livrată atunci când o livrare este validată (și dacă cantitatea livrată de toate expedițiile este aceeași ca în ordinea de actualizare)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Clasificați comanda de vânzare sursă legată ca fiind expediată atunci când o expediere este închisă (și dacă cantitatea expediată din toate livrările este aceeași ca în comanda actualizată)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Când o comandă de vânzare este setată la facturată, clasifică ofertele sursă asociate ca facturate (și dacă valoarea comenzii este aceeași cu suma totală a ofertelor asociate semnate)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Când o factură client este validată, clasifică ofertele sursă asociate ca fiind facturate (și dacă suma facturii este aceeași cu suma totală a ofertelor asociate semnate)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Când o factură client este setată ca achitată, clasifică comenzile de vânzări sursă asociate ca facturate (și dacă suma facturii este aceeași cu suma totală a comenzilor de vânzări asociate). Dacă generezi 1 factură pentru n comenzi, aceasta poate seta și toate comenzile să fie setate ca facturate.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Când o factură client este validată, clasifică toate comenzile de vânzări sursă asociate ca fiind facturate (și dacă suma facturii este aceeași cu suma totală a comenzilor de vânzări sursă asociate). Dacă generezi 1 factură comună pentru n comenzi, aceasta poate seta toate comenzile sursă ca facturate.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Când o factură client este validată, clasifică comanda de vânzare asociată (dacă există doar una) ca facturată, dacă suma totală a comenzii de vânzare asociată este egală cu suma totală a tuturor facturilor emise de la aceasta. Dacă generezi n facturi pentru 1 comandă, aceasta îți permite să setezi comanda ca facturată imediat ce toate facturile sunt validate.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Când o livrare este validată, clasifică comenzile de vânzare sursă asociate ca fiind livrate (și dacă cantitatea expediată de pe toate expedierile este aceeași cu cea din comanda de actualizat)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Când o livrare este închisă, clasifică comanda de vânzări sursă asociată ca fiind livrată (și dacă cantitatea expediată de pe toate expedierile este aceeași cu cea din comanda de actualizat)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificați propunerea furnizorului sursă asociată ca fiind facturată atunci când factura furnizorului este validată (și dacă valoarea facturii este aceeași cu valoarea totală a propunerii asociate)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Când o factură furnizor este validată, clasifică oferta furnizor sursă asociată ca fiind facturată (și dacă suma facturii este aceeași cu suma totală a ofertelor asociate)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificați comanda de vânzări sursă asociată ca fiind facturată atunci când factura furnizorului este validată (și dacă valoarea facturii este aceeași cu valoarea totală a comenzii asociate)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Clasifică comanda de achiziție sursă asociată ca primită atunci când o recepție este validată (și dacă cantitatea primită de toate recepțiile este aceeași cu cea din comanda de achiziţie pentru actualizare)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Clasifică comanda de achiziție sursă asociată ca primită atunci când o recepție este închisă (și dacă cantitatea primită de toate recepțiile este aceeași cu cea din comanda de achiziţie pentru actualizare)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Clasifică recepțiile ca "facturate" atunci când o factură de achiziție asociată este validată (și dacă suma facturii este aceeași cu suma totală a recepțiilor asociate)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Când o factură furnizor este validată, clasifică comanda de achiziție sursă asociată ca facturată (și dacă suma facturii este aceeași cu suma totală a comenzilor asociate)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Când o recepție este validată, clasifică comanda de achiziție sursă asociată ca primită (și dacă cantitatea primită de pe toate recepțiile este aceeași cu cea din comanda de achiziție de actualizat)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Când o recepție este închisă, clasifică comenzile de achiziție sursă asociate ca fiind primite (și dacă cantitatea primită de pe toate recepțiile emise din comanda de achiziție este aceeași cu cea din comanda de achiziție de actualizat)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Când o factură client este validată, clasifică livrarea sursă asociată ca închisă (și dacă suma facturii este aceeași cu suma totală a livrărilor asociate)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Când o factură client este validată, clasifică livrarea sursă asociată ca fiind facturată (și dacă suma facturii este aceeași cu suma totală a livrărilor asociate)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Când o factură de achiziție este validată, clasifică recepțiile sursă asociate ca fiind închise (și dacă suma facturii este aceeași cu suma totală a recepțiilor asociate)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Când o factură de achiziție este validată, clasifică recepțiile sursă asociate ca fiind facturate (și dacă suma facturii este aceeași cu suma totală a recepțiilor asociate)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=La crearea unui tichet , asociază contractele disponibile ale terților care se potrivesc
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Când se asociază contracte, caută printre cele ale companiilor-mamă
+descWORKFLOW_TICKET_LINK_CONTRACT=Când este creat un tichet, asociază-l cu contractele disponibile, potrivind același terț cu cel din tichet
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Când conectezi automat un tichet cu contracte, caută contracte printre cele ale companiilor-mamă
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Închideți toate intervențiile legate de tichet  atunci când tichetul este închis
 AutomaticCreation=Creare automată
 AutomaticClassification=Clasificare automată
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Clasifică expedierea/livrarea sursă asociată ca fiind închisă atunci când factura clientului este validată (și dacă suma facturii este aceeași cu suma totală a livrărilor legate)
 AutomaticClosing=Închidere automată
 AutomaticLinking=Asociere automată

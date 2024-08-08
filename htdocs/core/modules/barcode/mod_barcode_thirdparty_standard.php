@@ -4,6 +4,8 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2022      Faustin Boitel <fboitel@enseirb-matmeca.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +52,6 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
 	public $searchcode; // Search string
 
 	public $numbitcounter; // Number of digits the counter
@@ -76,10 +73,11 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	}
 
 
-	/**		Return description of module
+	/**
+	 * Return description of module
 	 *
-	 * 		@param	Translate 		$langs		Object langs
-	 * 		@return string      			Description of module
+	 * @param	Translate 	$langs		Object langs
+	 * @return  string      			Description of module
 	 */
 	public function info($langs)
 	{
@@ -104,13 +102,14 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$tooltip .= '04{0000000000}? (for internal use)<br>';
 		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
 		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
-		//$tooltip.=$langs->trans("GenericMaskCodes5");
+		//$tooltip . =$langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(!empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK) ? $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition small" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK') ? $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -124,10 +123,10 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	Societe		$objthirdparty	Object third-party
+	 * @param	?Societe	$objthirdparty	Object third-party
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objthirdparty = 0)
+	public function getExample($langs, $objthirdparty = null)
 	{
 		$examplebarcode = $this->getNextValue($objthirdparty, '');
 		if (!$examplebarcode) {
@@ -143,18 +142,18 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *  Return literal barcode type code from numerical rowid type of barcode
 	 *
-	 *	@param	Database    $db         Database
+	 *	@param	DoliDB    	$db         Database
 	 *  @param  int  		$type       Type of barcode (EAN, ISBN, ...) as rowid
 	 *  @return string
 	 */
-	public function literalBarcodeType($db, $type = '')
+	public function literalBarcodeType($db, $type = 0)
 	{
 		global $conf;
 		$out = '';
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-		$sql .= " WHERE rowid = '".$db->escape($type)."'";
+		$sql .= " WHERE rowid = ". (int) $type;
 		$sql .= " AND entity = ".((int) $conf->entity);
 		$result = $db->query($sql);
 		if ($result) {
@@ -173,28 +172,24 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objthirdparty     Object third-party
-	 * @param	string		$type       	Type of barcode (EAN, ISBN, ...)
-	 * @return 	string      				Value if OK, '' if module not configured, <0 if KO
+	 * @param	?CommonObject	$objthirdparty  Object third-party
+	 * @param	string			$type       	Type of barcode (EAN, ISBN, ...)
+	 * @return 	string      					Value if OK, '' if module not configured, <0 if KO
 	 */
-	public function getNextValue($objthirdparty, $type = '')
+	public function getNextValue($objthirdparty = null, $type = '')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
+		// Get barcode type configuration for products if $type not set
 		if (empty($type)) {
-			$type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-		} //get barcode type configuration for companies if $type not set
-
-		// TODO
+			$type = getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY');
+		}
 
 		// Get Mask value
-		$mask = '';
-		if (!empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
-			$mask = $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
-		}
+		$mask = getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK');
 
 		if (empty($mask)) {
 			$this->error = 'NotConfigured';
@@ -208,24 +203,25 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 
 		$numFinal = get_next_value($db, $mask, 'societe', $field, $where, '', $now);
 		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
-		if ((substr($numFinal, -1)=='*') or (substr($numFinal, -1)=='?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
+		if ((substr($numFinal, -1) == '*') or (substr($numFinal, -1) == '?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 			$literaltype = '';
 			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
 			switch ($literaltype) {
 				case 'EAN13': //EAN13 rowid = 2
-					if (strlen($numFinal)==13) {// be sure that the mask length is correct for EAN13
+					if (strlen($numFinal) == 13) {// be sure that the mask length is correct for EAN13
 						$ean = substr($numFinal, 0, 12); //take first 12 digits
-							$eansum = barcode_gen_ean_sum($ean);
-							$ean .= $eansum; //substitute the las character by the key
-							$numFinal = $ean;
+						$eansum = barcode_gen_ean_sum($ean);
+						$ean .= $eansum; //substitute the las character by the key
+						$numFinal = $ean;
 					}
 					break;
-				// Other barcode cases with key could be written here
+					// Other barcode cases with key could be written here
 				default:
 					break;
 			}
 		}
 		//End barcode with key
+
 		return  $numFinal;
 	}
 
@@ -246,23 +242,19 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 */
 	public function verif($db, &$code, $thirdparty, $thirdparty_type, $type)
 	{
-		global $conf;
-
-		//var_dump($code.' '.$thirdparty->ref.' '.$thirdparty_type);exit;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK'))) {
 			$result = -2;
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
 				$is_dispo = $this->verif_dispo($db, $code, $thirdparty);
-				if ($is_dispo <> 0) {
+				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
 					$result = 0;
@@ -277,6 +269,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		}
 
 		dol_syslog(get_class($this)."::verif type=".$thirdparty_type." result=".$result);
+
 		return $result;
 	}
 
@@ -285,9 +278,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	/**
 	 *	Return if a code is used (by other element)
 	 *
-	 *	@param	DoliDB		$db			Handler acces base
+	 *	@param	DoliDB		$db			Handler access base
 	 *	@param	string		$code		Code to check
-	 *	@param	Societe		$thirdparty	Objet third-party
+	 *	@param	Societe		$thirdparty	Object third-party
 	 *	@return	int						0 if available, <0 if KO
 	 */
 	public function verif_dispo($db, $code, $thirdparty)
@@ -327,7 +320,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$result = 0;
 
 		// Get Mask value
-		$mask = empty($conf->global->BARCODE_STANDARD_THIRDPARTY_MASK) ? '' : $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
+		$mask = !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK') ? '' : $conf->global->BARCODE_STANDARD_THIRDPARTY_MASK;
 		if (!$mask) {
 			$this->error = 'NotConfigured';
 			return -1;

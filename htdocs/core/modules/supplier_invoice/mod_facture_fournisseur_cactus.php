@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,9 +68,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 *  Return description of numbering model
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		$langs->load("bills");
@@ -90,9 +93,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * 	Tests if the numbers already in the database do not cause conflicts that would prevent this numbering.
 	 *
-	 *  @return     boolean     false if conflict, true if ok
+	 *	@param	CommonObject	$object		Object we need next value for
+	 *  @return boolean     				false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -171,10 +175,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object		$object		Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, <=0 if KO
+	 * @param	Societe				$objsoc     Object third party
+	 * @param  	FactureFournisseur	$object		Object invoice
+	 * @param   string				$mode       'next' for next value or 'last' for last value
+	 * @return 	string|-1      					Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
@@ -211,7 +215,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max);
+				$num = sprintf("%04d", $max);
 			}
 
 			$ref = '';
@@ -234,18 +238,18 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 			return $ref;
 		} elseif ($mode == 'next') {
 			$date = $object->date; // This is invoice date (not creation date)
-			$yymm = strftime("%y%m", $date);
+			$yymm = dol_print_date($date, "%y%m");
 
 			if ($max >= (pow(10, 4) - 1)) {
 				$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 			} else {
-				$num = sprintf("%04s", $max + 1);
+				$num = sprintf("%04d", $max + 1);
 			}
 
 			dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 			return $prefix.$yymm."-".$num;
 		} else {
-			dol_print_error('', 'Bad parameter for getNextValue');
+			dol_print_error(null, 'Bad parameter for getNextValue');
 			return -1;
 		}
 	}
@@ -254,10 +258,11 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next free value
 	 *
-	 * @param	Societe		$objsoc     	Object third party
-	 * @param	string		$objforref		Object for number to search
-	 * @param   string		$mode       	'next' for next value or 'last' for last value
-	 * @return  string      				Next free value
+	 * @param	Societe				$objsoc     	Object third party
+	 * @param	FactureFournisseur	$objforref		Object for number to search
+	 * @param   string				$mode      		'next' for next value or 'last' for last value
+	 * @return  string      						Next free value
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

@@ -28,6 +28,7 @@ ModuleMyModuleDesc = MyModule description
 MyModuleSetup = MyModule setup
 Settings = Settings
 MyModuleSetupPage = MyModule setup page
+NewSection=New section
 MYMODULE_MYPARAM1 = My param 1
 MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
 MYMODULE_MYPARAM2=My param 2

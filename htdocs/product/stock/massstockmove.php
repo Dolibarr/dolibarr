@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022 Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014	   Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,29 +54,32 @@ $result = restrictedArea($user, 'produit|service');
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'aZ09');
-$id_product = GETPOST('productid', 'int');
-$id_sw = GETPOST('id_sw', 'int');
-$id_tw = GETPOST('id_tw', 'int');
+$id_product = GETPOSTINT('productid');
+$id_sw = GETPOSTINT('id_sw');
+$id_tw = GETPOSTINT('id_tw');
 $batch = GETPOST('batch');
 $qty = GETPOST('qty');
 $idline = GETPOST('idline');
 
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 if (!$sortfield) {
 	$sortfield = 'p.ref';
 }
-
 if (!$sortorder) {
 	$sortorder = 'ASC';
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$offset = $limit * $page;
 
 if (GETPOST('init')) {
 	unset($_SESSION['massstockmove']);
@@ -85,12 +89,14 @@ if (!empty($_SESSION['massstockmove'])) {
 	$listofdata = json_decode($_SESSION['massstockmove'], true);
 }
 
+$error = 0;
+
 
 /*
  * Actions
  */
 
-if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'addline' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	if (!($id_sw > 0)) {
 		//$error++;
 		//setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WarehouseSource")), null, 'errors');
@@ -145,7 +151,7 @@ if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 		} else {
 			$id = 1;
 		}
-		$listofdata[$id] = array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw, 'batch'=>$batch);
+		$listofdata[$id] = array('id' => $id, 'id_product' => $id_product, 'qty' => $qty, 'id_sw' => $id_sw, 'id_tw' => $id_tw, 'batch' => $batch);
 		$_SESSION['massstockmove'] = json_encode($listofdata);
 
 		//unset($id_sw);
@@ -156,7 +162,7 @@ if ($action == 'addline' && !empty($user->rights->stock->mouvement->creer)) {
 	}
 }
 
-if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'delline' && $idline != '' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	if (!empty($listofdata[$idline])) {
 		unset($listofdata[$idline]);
 	}
@@ -167,7 +173,7 @@ if ($action == 'delline' && $idline != '' && !empty($user->rights->stock->mouvem
 	}
 }
 
-if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$error = 0;
 
 	if (!GETPOST("label")) {
@@ -190,7 +196,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 			$dlc = -1; // They are loaded later from serial
 			$dluo = -1; // They are loaded later from serial
 
-			if (!$error && $id_sw <> $id_tw && is_numeric($qty) && $id_product) {
+			if (!$error && $id_sw != $id_tw && is_numeric($qty) && $id_product) {
 				$result = $product->fetch($id_product);
 
 				$product->load_stock('novirtual'); // Load array product->stock_warehouse
@@ -291,7 +297,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 					}
 				}
 			} else {
-				// dol_print_error('',"Bad value saved into sessions");
+				// dol_print_error(null,"Bad value saved into sessions");
 				$error++;
 			}
 		}
@@ -303,7 +309,7 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 
 		$db->commit();
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php'); // Redirect to avoid pb when using back
 		exit;
 	} else {
 		$db->rollback();
@@ -311,31 +317,36 @@ if ($action == 'createmovements' && !empty($user->rights->stock->mouvement->cree
 	}
 }
 
-if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
+if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	dol_mkdir($conf->stock->dir_temp);
 	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 	$fullpath = $conf->stock->dir_temp."/".$user->id.'-csvfiletotimport.csv';
-	if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
+	$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
+	if (is_numeric($resultupload) && $resultupload > 0) {
 		dol_syslog("File ".$fullpath." was added for import");
 	} else {
 		$error++;
 		$langs->load("errors");
-		setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		if ($resultupload === 'ErrorDirNotWritable') {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile").' - '.$langs->trans($resultupload, $fullpath), null, 'errors');
+		} else {
+			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+		}
 	}
 
 	if (!$error) {
 		$importcsv = new ImportCsv($db, 'massstocklist');
 		//print $importcsv->separator;
 
-		$nblinesrecord = $importcsv->import_get_nb_of_lines($fullpath)-1;
+		$nblinesrecord = $importcsv->import_get_nb_of_lines($fullpath) - 1;
 		$importcsv->import_open_file($fullpath);
 		$labelsrecord = $importcsv->import_read_record();
 
 		if ($nblinesrecord < 1) {
 			setEventMessages($langs->trans("BadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
 		} else {
-			$i=0;
+			$i = 0;
 			$data = array();
 			$productstatic = new Product($db);
 			$warehousestatics = new Entrepot($db);
@@ -486,7 +497,7 @@ if ($action == 'importCSV' && !empty($user->rights->stock->mouvement->creer)) {
 					$tmp_id_product = $data[$key][2]['val'];
 					$tmp_qty = $data[$key][3]['val'];
 					$tmp_batch = $data[$key][4]['val'];
-					$listofdata[$key] = array('id'=>$key, 'id_sw'=>$tmp_id_sw, 'id_tw'=>$tmp_id_tw, 'id_product'=>$tmp_id_product, 'qty'=>$tmp_qty, 'batch'=>$tmp_batch);
+					$listofdata[$key] = array('id' => $key, 'id_sw' => $tmp_id_sw, 'id_tw' => $tmp_id_tw, 'id_product' => $tmp_id_product, 'qty' => $tmp_qty, 'batch' => $tmp_batch);
 				}
 			}
 		}
@@ -509,14 +520,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 		$param .= '&endatlinenb='.urlencode($endatlinenb);
 	}
 
-	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	} else {
 		setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-	Header('Location: '.$_SERVER["PHP_SELF"]);
+	header('Location: '.$_SERVER["PHP_SELF"]);
 	exit;
 }
 
@@ -538,7 +549,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:Módulo_Stocks|DE:Modul_Best
 
 $title = $langs->trans('MassMovement');
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_massstomove');
 
 print load_fiche_titre($langs->trans("MassStockTransferShort"), '', 'stock');
 
@@ -571,44 +582,44 @@ if ($maxmin > 0) {
 	print '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
 }
 print '<input type="file" name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
-$out = (empty($conf->global->MAIN_UPLOAD_DOC) ? ' disabled' : '');
+$out = (!getDolGlobalString('MAIN_UPLOAD_DOC') ? ' disabled' : '');
 print '<input type="submit" class="button small smallpaddingimp" value="'.$langs->trans("ImportFromCSV").'"'.$out.' name="sendit">';
 $out = '';
-if (!empty($conf->global->MAIN_UPLOAD_DOC)) {
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
+if (getDolGlobalString('MAIN_UPLOAD_DOC')) {
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp = $maxphp * 1;
+		$maxphp *= 1;
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024;
+		$maxphp *= 1024;
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024;
+		$maxphp *= 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024 * 1024;
+		$maxphp *= 1024 * 1024 * 1024;
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1;
+		$maxphp2 *= 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024;
+		$maxphp2 *= 1024;
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024;
+		$maxphp2 *= 1024 * 1024;
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+		$maxphp2 *= 1024 * 1024 * 1024;
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;
@@ -672,13 +683,13 @@ print '</td>';
 // Product
 print '<td class="nowraponall">';
 $filtertype = 0;
-if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$filtertype = '';
 }
-if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
+if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
 	$limit = '';
 } else {
-	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+	$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
 }
 
 print img_picto($langs->trans("Product"), 'product', 'class="paddingright"');
@@ -812,7 +823,7 @@ function startsWith($haystack, $needle)
  *
  * @param Object $static_object static object to fetch
  * @param string $tmp_ref ref of the object to fetch
- * @return int <0 if Ko or Id of object
+ * @return int Return integer <0 if Ko or Id of object
  */
 function fetchref($static_object, $tmp_ref)
 {

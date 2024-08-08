@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2008-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2008-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,9 @@
  *	\brief		Main page for ECM section area
  */
 
-if (! defined('DISABLE_JS_GRAHP')) define('DISABLE_JS_GRAPH', 1);
+if (! defined('DISABLE_JS_GRAHP')) {
+	define('DISABLE_JS_GRAPH', 1);
+}
 
 // Load Dolibarr environment
 require '../main.inc.php';
@@ -35,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts", "categories"));
 
 // Get parameters
-$socid      = GETPOST('socid', 'int');
+$socid      = GETPOSTINT('socid');
 $action     = GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -43,7 +45,7 @@ $confirm    = GETPOST('confirm', 'alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
@@ -61,15 +63,14 @@ if (empty($urlsection)) {
 
 if ($module == 'ecm') {
 	$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
-} else // For example $module == 'medias'
-{
+} else { // For example $module == 'medias'
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -97,14 +98,14 @@ $permissiontoadd = 0;
 $permissiontodelete = 0;
 $permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permissiontoadd = $user->rights->ecm->setup;
-	$permissiontodelete = $user->rights->ecm->setup;
-	$permissiontoupload = $user->rights->ecm->upload;
+	$permissiontoadd = $user->hasRight('ecm', 'setup');
+	$permissiontodelete = $user->hasRight('ecm', 'setup');
+	$permissiontoupload = $user->hasRight('ecm', 'upload');
 }
 if ($module == 'medias') {
-	$permissiontoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permissiontodelete = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permissiontoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoadd = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+	$permissiontodelete = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
+	$permissiontoupload = ($user->hasRight('mailing', 'creer') || $user->hasRight('website', 'write'));
 }
 
 if (!$permissiontoadd) {
@@ -166,7 +167,7 @@ if ($action == 'add' && $permissiontoadd) {
 			}
 			if (empty($dirfornewdir)) {
 				$error++;
-				dol_print_error('', 'Bad value for module. Not supported.');
+				dol_print_error(null, 'Bad value for module. Not supported.');
 			}
 
 			if (!$error) {
@@ -289,7 +290,7 @@ if (empty($action) || $action == 'delete_section') {
 	print '<div class="tabsAction">';
 
 	// Delete
-	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->rights->ecm->setup);
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), '', $user->hasRight('ecm', 'setup'));
 
 	print '</div>';
 }

@@ -9,28 +9,31 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan 
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creëer automatisch een klantfactuur nadat een verkooporder is gesloten (de nieuwe factuur heeft hetzelfde bedrag als de bestelling)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Maak bij het aanmaken van tickets automatisch een interventie aan.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classificeer gekoppeld bronvoorstel als gefactureerd wanneer verkooporder is ingesteld op gefactureerd (en als het bedrag van de bestelling gelijk is aan het totale bedrag van het ondertekende gekoppelde voorstel)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classificeer het gekoppelde bronvoorstel als gefactureerd wanneer de klantfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van het ondertekende gekoppelde voorstel)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classificeer gekoppelde bronverkooporder als gefactureerd wanneer klantfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde bestelling)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classificeer gekoppelde bronverkooporder als gefactureerd wanneer klantfactuur is ingesteld op betaald (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde bestelling)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classificeer gekoppelde bronverkooporder als verzonden wanneer een zending is gevalideerd (en als de hoeveelheid die door alle zendingen is verzonden dezelfde is als in de te updaten bestelling)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classificeer gekoppelde bronverkooporder als verzonden wanneer een zending is gesloten (en als de hoeveelheid die door alle zendingen wordt verzonden hetzelfde is als in de order die moet worden bijgewerkt)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Wanneer een verkoop Bestelling is ingesteld op gefactureerd, classificeert u gekoppelde bronvoorstellen als gefactureerd (en als het bedrag van de Bestelling hetzelfde is als het totaalbedrag van de ondertekende gekoppelde voorstellen)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Wanneer een klant factuur wordt gevalideerd, classificeert u gekoppelde bronvoorstellen als gefactureerd (en als het bedrag van de Factuur hetzelfde is als het totaal bedrag van de ondertekende gekoppelde voorstellen)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Wanneer een klant factuur is ingesteld op betaald, classificeert u gekoppelde bronverkooporders als gefactureerd (en als het bedrag van de Factuur hetzelfde is als het totaalbedrag van de gekoppelde verkooporders). Als u 1 Factuur genereert voor n bestellingen, worden alle bestellingen mogelijk ook gefactureerd.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Wanneer een klant factuur is gevalideerd, classificeert u alle gekoppelde bronverkooporders als gefactureerd (en als het bedrag van de Factuur hetzelfde is als het totaalbedrag van de gekoppelde bronverkooporders). Als u 1 gemeenschappelijke Factuur genereert voor n bestellingen, worden alle bronbestellingen mogelijk op gefactureerd gezet.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Wanneer een klant factuur gevalideerd is, classificeert u de gekoppelde verkopen Bestelling (als er slechts één is) als gefactureerd, als het totale bedrag van de gekoppelde verkoop Bestelling is gelijk aan het totale bedrag van alle Facturen die daaruit zijn uitgegeven. Als u n Facturen genereert voor 1 Bestelling, kunt u de Bestelling instellen > wordt gefactureerd zodra alle Facturen zijn gevalideerd.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Wanneer een verzending is gevalideerd, classificeert u de gekoppelde bronverkooporders als verzonden (en of de hoeveelheid die door alle verzendingen wordt verzonden hetzelfde is als in de Bestelling om bij te werken)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Wanneer een zending is gesloten, classificeert u gekoppelde bronverkopen Bestelling als verzonden (en als de hoeveelheid die door alle zendingen wordt verzonden hetzelfde is als in de Bestelling om bij te werken)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classificeer het gekoppelde bronvoorstel als gefactureerd wanneer de leveranciersfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van het gekoppelde voorstel)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Wanneer een leverancier Factuur wordt gevalideerd, classificeert u het voorstel van de gekoppelde bronleverancier als gefactureerd (en als het bedrag van de Factuur hetzelfde is als het totaalbedrag van de gekoppelde voorstellen)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classificeer gekoppelde inkooporder als gefactureerd wanneer leveranciersfactuur is gevalideerd (en als het factuurbedrag gelijk is aan het totale bedrag van de gekoppelde order)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classificeer inkooporder met gekoppelde bron als ontvangen wanneer een ontvangst is gevalideerd (en als de hoeveelheid die door alle ontvangsten is ontvangen hetzelfde is als in de inkooporder die moet worden bijgewerkt)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classificeer inkooporder met gekoppelde bron als ontvangen wanneer een ontvangst wordt gesloten (en als de hoeveelheid die door alle ontvangsten wordt ontvangen hetzelfde is als in de inkooporder die moet worden bijgewerkt)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classificeer ontvangsten als "gefactureerd" wanneer een gekoppelde aankoopfactuur gevalideerd is (en als het bedrag van de factuur gelijk is aan het totaalbedrag van de gekoppelde ontvangsten)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Wanneer een leverancier Factuur wordt gevalideerd, classificeert u de gekoppelde bronaankoop Bestelling als gefactureerd (en als het bedrag van de Factuur is hetzelfde als het totaalbedrag van de gekoppelde bestellingen)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Wanneer een ontvangst gevalideerd is, classificeert u de gekoppelde bronaankoop Bestelling als ontvangen (en als de door alle ontvangsten ontvangen hoeveelheid hetzelfde is als bij de aankoop Bestelling  om bij te werken)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Wanneer een ontvangst gesloten is, classificeert u de gekoppelde broninkooporders als ontvangen (en als de hoeveelheid ontvangen door alle ontvangsten die voortvloeien uit de aankoop Bestelling hetzelfde is als bij de aankoop Bestelling om bij te werken)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Wanneer een klant factuur gevalideerd is, classificeert u de gekoppelde bronzending als gesloten (en als het bedrag van de Factuur hetzelfde is als de totaalbedrag van de gekoppelde zendingen)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Wanneer een klant factuur gevalideerd is, classificeert u de gekoppelde bronzending als gefactureerd (en als het bedrag van de Factuur hetzelfde is als de totaalbedrag van de gekoppelde zendingen)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Wanneer een aankoop Factuur wordt gevalideerd, classificeert u gekoppelde bronontvangsten als gesloten (en als het bedrag van de Factuur hetzelfde is als de totaalbedrag van de gekoppelde ontvangsten)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Wanneer een aankoop Factuur wordt gevalideerd, classificeert u gekoppelde bronontvangsten als gefactureerd (en als het bedrag van de Factuur hetzelfde is als de totaalbedrag van de gekoppelde ontvangsten)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=Koppel bij het aanmaken van een ticket beschikbare contracten van bijpassende derde partijen
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Zoek bij het koppelen van contracten onder die van moederbedrijven
+descWORKFLOW_TICKET_LINK_CONTRACT=Wanneer een ticket wordt aangemaakt, koppelt u dit aan beschikbare contracten, waarbij dezelfde derde partij als het ticket overeenkomt
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Bij het automatisch koppelen van een ticket aan contracten, zoek contracten onder die van de moederbedrijven
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Sluit alle interventies die aan het ticket zijn gekoppeld wanneer een ticket is gesloten
 AutomaticCreation=Automatisch aanmaken
 AutomaticClassification=Automatisch classificeren
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Gelinkte bronzending classificeren als gesloten wanneer klantfactuur is gevalideerd (en als het bedrag van de factuur gelijk is aan het totale bedrag van de gekoppelde zendingen)
 AutomaticClosing=Automatisch sluiten
 AutomaticLinking=Automatisch koppelen

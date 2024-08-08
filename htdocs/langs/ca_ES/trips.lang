@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Desat per
 AUTHORPAIEMENT=Pagat per
 AddTrip=Crear informe de despeses
@@ -13,6 +13,8 @@ byEX_EXP=per línia (limitació a %s)
 byEX_MON=per mes (limitació a %s)
 byEX_YEA=per any (limitació a %s)
 CANCEL_USER=Eliminat per
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=El compte dedicat definit a la fitxa d'usuari només s'utilitzarà per a la comptabilitat de Subllibre. Aquest s'utilitzarà per al Llibre Major, i també com a valor predeterminat de la comptabilitat del Subllibre si no es defineix cap compte comptable dedicat a l'usuari.
 CarCategory=Categoria de vehicles
 ClassifyRefunded=Marca «Reemborsat»
 CompanyVisited=Empresa/organització visitada
@@ -39,7 +41,7 @@ expenseReportCoef=Coeficient
 expenseReportCoefUndefined=(valor no definit)
 expenseReportOffset=Decàleg
 expenseReportPrintExample=offset + (d x coef) = %s
-expenseReportRangeDisabled=S'ha desactivat el rang: consulteu el diccionari c_exp_tax_range
+expenseReportRangeDisabled=Interval desactivat: consulteu el diccionari c_exp_tax_range
 expenseReportRangeFromTo=de %d a %d
 expenseReportRangeMoreThan=més de %d
 expenseReportTotalForFive=Exemple amb <u>d</u> = 5
@@ -77,7 +79,7 @@ ExpenseReportsToApprove=Informes de despeses per a aprovar
 ExpenseReportsToPay=Informes de despeses a pagar
 ExpensesArea=Àrea d'informes de despeses
 FeesKilometersOrAmout=Import o quilòmetres
-LastExpenseReports=Últims %s informes de despeses 
+LastExpenseReports=Últims %s informes de despeses
 ListOfFees=Llista de taxes
 ListOfTrips=Llistat de informes de despeses
 ListToApprove=Pendent d'aprovació
@@ -91,9 +93,9 @@ nolimitbyEX_EXP=per línia (sense límits)
 nolimitbyEX_MON=per mes (sense límits)
 nolimitbyEX_YEA=per any (sense límits)
 NoTripsToExportCSV=No hi ha cap informe de despeses per a exportar en aquest període.
-NOT_AUTHOR=No sou l’autor d’aquest informe de despeses. Operació cancel·lada.
+NOT_AUTHOR=No sou l'autor d'aquest informe de despeses. Operació cancel·lada.
 OnExpense=Línia de despesa
-PDFStandardExpenseReports=Plantilla estàndard per a generar un document PDF per a l'informe de despeses
+PDFStandardExpenseReports=Plantilla estàndard per generar un document PDF per a un informe de despeses
 PaidTrip=Pagar un informe de despeses
 REFUSEUR=Denegat per
 RangeIk=Rang de quilometratge
@@ -103,7 +105,7 @@ ShowExpenseReport=Mostra l'informe de despeses
 ShowTrip=Mostra l'informe de despeses
 TripCard=Informe de despesa de targeta
 TripId=Id d'informe de despeses
-TripNDF=Informacions de l'informe de despeses
+TripNDF=Informe de despeses d'informació
 TripSociete=Informació de l'empresa
 Trips=Informes de despeses
 TripsAndExpenses=Informes de despeses
@@ -115,6 +117,10 @@ VALIDOR=Aprovat per
 ValidateAndSubmit=Validar i sotmetre a aprovació
 ValidatedWaitingApproval=Validat (pendent d'aprovació)
 ValideTrip=Aprova l'informe de despeses
+ExpenseReportPayments=Pagaments de l'informe de despeses
+TaxUndefinedForThisCategory = L'impost no està definit per a aquesta categoria
+errorComputeTtcOnMileageExpense=Error en calcular la despesa del quilometratge
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Només els elements en estat d'esborrany es poden suprimir en accions massives
 
 ## Dictionary
 EX_BRE=Esmorzar
@@ -129,7 +135,7 @@ EX_FUE_VP=PV de benzina
 EX_GUM=Menjar de convidats
 EX_HOT=Hotel
 EX_IND=Indemnització de subscripció de transport
-EX_KME=Cost de quilometratge 
+EX_KME=Cost de quilometratge
 EX_OTR=Altres que reben
 EX_PAR=CV d'aparcament
 EX_PAR_VP=PV d'aparcament

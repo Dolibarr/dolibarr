@@ -18,14 +18,14 @@
 /**
  *       \file       /ticket/class/ticketstats.class.php
  *       \ingroup    ticket
- *       \brief      Fichier de la classe de gestion des stats des tickets
+ *       \brief      File for class to manage the ticket stats
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
 require_once 'ticket.class.php';
 
 
 /**
- * Classe permettant la gestion des stats des deplacements et notes de frais
+ * Class to manage the ticket stats
  */
 class TicketStats extends Stats
 {
@@ -67,7 +67,7 @@ class TicketStats extends Stats
 			$this->where .= " AND fk_soc = ".((int) $this->socid);
 		}
 		if (is_array($this->userid) && count($this->userid) > 0) {
-			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(join(',', $this->userid)).')';
+			$this->where .= ' AND fk_user_create IN ('.$this->db->sanitize(implode(',', $this->userid)).')';
 		} elseif ($this->userid > 0) {
 			$this->where .= " AND fk_user_create = ".((int) $this->userid);
 		}
@@ -91,7 +91,7 @@ class TicketStats extends Stats
 	/**
 	 *  Return the number of tickets per month for a given year
 	 *
-	 *  @param  string 	$year 		Year to scan
+	 *  @param  int 	$year 		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *  @return array            	Array of values
 	 */

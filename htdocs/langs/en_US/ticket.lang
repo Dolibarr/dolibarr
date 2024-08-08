@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tickets
 Module56000Desc=Ticket system for issue or request management
-
 Permission56001=See tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 Permission56006=Export tickets
-
 Tickets=Tickets
 TicketDictType=Ticket - Types
-TicketDictCategory=Ticket - Groupes
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Ticket - Severities
 TicketDictResolution=Ticket - Resolution
-
 TicketTypeShortCOM=Commercial question
-TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Project
 TicketTypeShortOTHER=Other
-
 TicketSeverityShortLOW=Low
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=High
 TicketSeverityShortBLOCKING=Critical, Blocking
-
 TicketCategoryShortOTHER=Other
-
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets
 MenuListNonClosed=Open tickets
-
 TypeContact_ticket_internal_CONTRIBUTOR=Contributor
 TypeContact_ticket_internal_SUPPORTTEC=Assigned user
 TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticket_external_CONTRIBUTOR=External contributor
-
 OriginEmail=Reporter Email
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Send ticket message by email
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=Read
 Assigned=Assigned
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
-Answered=Answered
 Waiting=Waiting
 SolvedClosed=Solved
 Deleted=Deleted
-
 # Dict
-Type=Type
 Severity=Severity
 TicketGroupIsPublic=Group is public
 TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
 # Email templates
 MailToSendTicketMessage=To send email from ticket message
-
-#
 # Admin page
-#
 TicketSetup=Ticket module setup
 TicketSettings=Settings
-TicketSetupPage=
 TicketPublicAccess=A public interface requiring no identification is available at the following url
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
 TicketEmailNotificationFrom=Sender e-mail for notification on answers
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the backoffice. For example noreply@example.com
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
 TicketEmailNotificationTo=Notify ticket creation to this e-mail address
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=In the public interface, the email address should alre
 TicketsShowProgression=Display the ticket progress in the public interface
 TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
 TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a thirdparty or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=Public interface
-TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
-TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Welcome text of the public interface
 TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
 TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
@@ -126,7 +103,9 @@ TicketParams=Params
 TicketsShowModuleLogo=Display the logo of the module in the public interface
 TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
 TicketsShowCompanyLogo=Display the logo of the company in the public interface
-TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyFooter=Display the footer of the company in the public interface
+TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
 TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
 TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
@@ -135,31 +114,32 @@ TicketsActivatePublicInterface=Activate public interface
 TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
+TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
+TicketAutoChangeStatusOnAnswerHelp=When user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=Tickets numbering module
-TicketsModelModule=Document templates for tickets 
+TicketsModelModule=Document templates for tickets
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
 TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
 TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
 TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
 TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
 TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
 TicketChooseProductCategory=Product category for ticket support
 TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
 TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
 TicketsIndex=Tickets area
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
@@ -174,10 +154,7 @@ ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=Ticket
 TicketCard=Ticket card
 CreateTicket=Create ticket
@@ -219,8 +196,8 @@ ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandon
 ConfirmDeleteTicket=Please confirm ticket deleting
 TicketDeletedSuccess=Ticket deleted with success
 TicketMarkedAsClosed=Ticket marked as closed
-TicketDurationAuto=Calculated duration
-TicketDurationAutoInfos=Duration calculated automatically from intervention related
+TicketDurationAuto=Duration of interventions
+TicketDurationAutoInfos=Duration calculated automatically from related interventions
 TicketUpdated=Ticket updated
 SendMessageByEmail=Send message by email
 TicketNewMessage=New message
@@ -277,20 +254,14 @@ TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on t
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Ticket %s read by %s
 NoLogForThisTicket=No log for this ticket yet
 TicketLogAssignedTo=Ticket %s assigned to %s
 TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
 TicketLogClosedBy=Ticket %s closed by %s
 TicketLogReopen=Ticket %s re-open
-
-#
 # Public pages
-#
 TicketSystem=Ticket system
 ShowListTicketWithTrackId=Display ticket list from track ID
 ShowTicketWithTrackId=Display ticket from track ID
@@ -305,13 +276,13 @@ TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket ha
 TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
 TicketNewEmailBodyInfosTrackId=Ticket tracking number: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=Please do not reply directly to this email! Use the link to reply into the interface.
 TicketPublicInfoCreateTicket=This form allows you to record a support ticket in our management system.
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your question. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=Please enter ticket tracking ID
-TicketTrackId=Public Tracking ID
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=One of your tracking ID
 ErrorTicketNotFound=Ticket with tracking ID %s not found!
 Subject=Subject
@@ -327,6 +298,8 @@ OldUser=Old user
 NewUser=New user
 NumberOfTicketsByMonth=Number of tickets per month
 NbOfTickets=Number of tickets
+ExternalContributors=External contributors
+AddContributor=Add external contributor
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -338,12 +311,8 @@ TicketNotificationRecipient=Notification recipient
 TicketNotificationLogMessage=Log message
 TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
 TicketNotificationNumberEmailSent=Notification email sent: %s
-
 ActionsOnTicket=Events on ticket
-
-#
 # Boxes
-#
 BoxLastTicket=Latest created tickets
 BoxLastTicketDescription=Latest %s created tickets
 BoxLastTicketContent=
@@ -363,3 +332,4 @@ BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
 TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
 KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+SetTitle=Set title

@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2022, CKSource Holding sp. z o.o. All rights reserved.
+ Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
  For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
 */
 CKEDITOR.plugins.setLang("specialchar","eo",{euro:"Eŭrosigno",lsquo:"Supra 6-citilo",rsquo:"Supra 9-citilo",ldquo:"Supra 66-citilo",rdquo:"Supra 99-citilo",ndash:"Streketo",mdash:"Substreko",iexcl:"Renversita krisigno",cent:"Cendosigno",pound:"Pundosigno",curren:"Monersigno",yen:"Enosigno",brvbar:"Rompita vertikala streko",sect:"Kurba paragrafo",uml:"Tremao",copy:"Kopirajtosigno",ordf:"Adjektiva numerfinaĵo",laquo:"Duobla malplio-citilo",not:"Negohoko",reg:"Registrita marko",macr:"Superstreko",deg:"Gradosigno",

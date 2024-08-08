@@ -5,6 +5,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	                    <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +55,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 *  return description of the numbering model
 	 *
-	 * @return     string      Descriptive text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $db, $langs;
 
@@ -76,13 +78,14 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$tooltip .= $langs->trans('GenericMaskCodes3');
 		$tooltip .= $langs->trans('GenericMaskCodes4a', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
 		$tooltip .= $langs->trans('GenericMaskCodes5');
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 		$tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
 
 		// Setting up the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -115,10 +118,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 * Return next free value
 	 *
-	 * @param   Societe     $objsoc     Object thirdparty
-	 * @param   Facture		$invoice	Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      Value if KO, <0 if KO
+	 * @param   Societe     	$objsoc     Object thirdparty
+	 * @param   Facture			$invoice	Object invoice
+	 * @param   string			$mode       'next' for next value or 'last' for last value
+	 * @return  string|int                Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
@@ -150,8 +153,9 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * Return next free value
 	 *
 	 * @param   Societe     $objsoc         Object third party
-	 * @param   Object      $objforref      Object for number to search
+	 * @param   Facture     $objforref      Object for number to search
 	 * @return  string      Next free value
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

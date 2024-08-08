@@ -1,5 +1,6 @@
 <?php
- /*  Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
+/* Copyright (C) 2021		Thibault FOUCART	<support@ptibogxiv.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 
 /**
  *	\file       htdocs/stripe/ajax/ajax.php
- *	\brief      Ajax action for Stipe ie: Terminal
+ *	\brief      Ajax action for Stipe ie: Terminal. Used when doing payment with Stripe Terminal in TakePOS.
  *
  *  Calling with
  *  action=getConnexionToken return a token of Stripe terminal
@@ -50,10 +51,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 $action = GETPOST('action', 'aZ09');
 $location = GETPOST('location', 'alphanohtml');
 $stripeacc = GETPOST('stripeacc', 'alphanohtml');
-$servicestatus = GETPOST('servicestatus', 'int');
-$amount = GETPOST('amount', 'int');
+$servicestatus = GETPOSTINT('servicestatus');
+$amount = GETPOSTINT('amount');
 
-if (empty($user->rights->takepos->run)) {
+if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden('Not allowed to use TakePOS');
 }
 
@@ -75,7 +76,7 @@ if ($action == 'getConnexionToken') {
 		// Force to use the correct API key
 		global $stripearrayofkeysbyenv;
 		\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
-		// The ConnectionToken's secret lets you connect to any Stripe Terminal reader
+		// The ConnectionToken's secret let's you connect to any Stripe Terminal reader
 		// and take payments with your Stripe account.
 		$array = array();
 		if (isset($location) && !empty($location)) {
@@ -102,14 +103,14 @@ if ($action == 'getConnexionToken') {
 		$object->fetch($json_obj->invoiceid);
 		$object->fetch_thirdparty();
 
-		$fulltag='INV='.$object->id.'.CUS='.$object->thirdparty->id;
-		$tag=null;
-		$fulltag=dol_string_unaccent($fulltag);
+		$fulltag = 'INV='.$object->id.'.CUS='.$object->thirdparty->id;
+		$tag = null;
+		$fulltag = dol_string_unaccent($fulltag);
 
 		$stripe = new Stripe($db);
 		$customer = $stripe->customerStripe($object->thirdparty, $stripeacc, $servicestatus, 1);
 
-		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object)?' ref='.$object->ref:''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
+		$intent = $stripe->getPaymentIntent($json_obj->amount, $object->multicurrency_code, null, 'Stripe payment: '.$fulltag.(is_object($object) ? ' ref='.$object->ref : ''), $object, $customer, $stripeacc, $servicestatus, 1, 'terminal', false, null, 0, 1);
 
 		echo json_encode(array('client_secret' => $intent->client_secret));
 	} catch (Error $e) {

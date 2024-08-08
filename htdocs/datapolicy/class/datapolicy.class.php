@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018 Nicolas ZABOURI <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
  */
 class DataPolicy
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $error;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -180,10 +189,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -199,14 +208,14 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
 			}
-				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
-				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
-				$actionmsg = dol_concatdesc($actionmsg, $message);
+			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
+			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
+			$actionmsg = dol_concatdesc($actionmsg, $message);
 		}
 
 
@@ -214,11 +223,13 @@ class DataPolicy
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
 
+		$resultmasssend = '';
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {
-			$result4 = $mailfile->sendfile();
-			if (!$error) {
+			$resultmail = $mailfile->sendfile();
+
+			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$contact->array_options['options_datapolicy_send'] = date('Y-m-d', time());
 				$contact->update($contact->id);
@@ -257,10 +268,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -273,10 +284,10 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
-				 $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
+				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
 			}
 			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 			$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
@@ -286,15 +297,17 @@ class DataPolicy
 		// Send mail
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
+
+		$resultmasssend = '';
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {
-			$result4 = $mailfile->sendfile();
+			$resultmail = $mailfile->sendfile();
 
-			if (!$error) {
+			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$societe->array_options['options_datapolicy_send'] = date('Y-m-d', time());
-				$societe->update($societe->id);
+				$societe->update($societe->id, $user);
 			} else {
 				dol_print_error($db);
 			}
@@ -330,10 +343,10 @@ class DataPolicy
 		$la = 'TXTLINKDATAPOLICYACCEPT_'.$l;
 		$lr = 'TXTLINKDATAPOLICYREFUSE_'.$l;
 
-		$subject = $conf->global->$s;
-		$message = $conf->global->$ma;
-		$linka = $conf->global->$la;
-		$linkr = $conf->global->$lr;
+		$subject = getDolGlobalString($s);
+		$message = getDolGlobalString($ma);
+		$linka = getDolGlobalString($la);
+		$linkr = getDolGlobalString($lr);
 		$sendtocc = $sendtobcc = '';
 		$filepath = $mimetype = $filename = array();
 		$deliveryreceipt = 0;
@@ -346,7 +359,7 @@ class DataPolicy
 		$message = make_substitutions($message, $substitutionarray);
 
 		$actiontypecode = 'AC_EMAIL';
-		$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
+		$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
 		if ($message) {
 			if ($sendtocc) {
 				$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -360,12 +373,14 @@ class DataPolicy
 		// Send mail
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1);
+
+		$resultmasssend = '';
 		if ($mailfile->error) {
 			$resultmasssend .= '<div class="error">'.$mailfile->error.'</div>';
 		} else {
-			$result4 = $mailfile->sendfile();
+			$resultmail = $mailfile->sendfile();
 
-			if (!$error) {
+			if ($resultmail) {
 				$resultmasssend .= $langs->trans("MailSent").': '.$sendto."<br>";
 				$adherent->array_options['options_datapolicy_send'] = date('Y-m-d', time());
 				$adherent->update($user);

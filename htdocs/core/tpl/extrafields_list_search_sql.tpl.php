@@ -3,14 +3,14 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
 }
 
-// Loop to complete the sql search criterias from extrafields
+// Loop to complete the sql search criteria from extrafields
 if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($search_array_options)) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 	if (empty($extrafieldsobjectprefix)) {
 		$extrafieldsobjectprefix = 'ef.';

@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL offrant une interface de paiement e
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL offrant une interface de paiement en ligne %s pour le paiement d'une cotisation d'adhérent
 ToOfferALinkForOnlinePaymentOnDonation=URL offrant une interface de paiement en ligne %s pour le paiement de dons
 YouCanAddTagOnUrl=Vous pouvez également ajouter le paramètre <b>&tag=<i>valeur</i></b> à n'importe laquelle de ces URL (obligatoire uniquement pour les paiements non liés à un objet) pour ajouter votre propre commentaire de paiement. <br>Pour l'URL des paiements sans objet existant, vous pouvez également ajouter le paramètre <strong>&noidempotency=1</strong> pour que le même lien avec le même tag puisse être utilisé plusieurs fois (certains modes de paiement peuvent limiter le paiement à 1 pour chaque lien différent sans ce paramètre)
+YouCanEmbedOnWebsite=Si vous souhaitez intégrer la page de paiement dans un site Dolibarr, vous pouvez inclure le paramètre : <b>&ws=website_ref</b>.<br>De plus, deux pages nommées <b>paymentok</b> et <b>paymentko</b> doivent être créés sur le site pour gérer la redirection après une réussite ou un échec du paiement en ligne.
 SetupStripeToHavePaymentCreatedAutomatically=Configurez votre URL Stripe à <b>%s</b> pour avoir le paiement créé automatiquement si validé.
 AccountParameter=Paramètres du compte
 UsageParameter=Paramètres d'utilisation
@@ -32,7 +33,7 @@ CSSUrlForPaymentForm=URL feuille style css pour le formulaire de paiement
 NewStripePaymentReceived=Nouveau paiement Stripe reçu
 NewStripePaymentFailed=Nouveau paiement Stripe tenté mais en échec
 FailedToChargeCard=Échec d'encaissement de la carte
-STRIPE_TEST_SECRET_KEY=Clé secrète de test 
+STRIPE_TEST_SECRET_KEY=Clé secrète de test
 STRIPE_TEST_PUBLISHABLE_KEY=Clé plublique de test
 STRIPE_TEST_WEBHOOK_KEY=Clé test des Webhooks
 STRIPE_LIVE_SECRET_KEY=Clé secrète live
@@ -71,9 +72,19 @@ ToOfferALinkForTestWebhook=Lien pour la configuration de Stripe WebHook pour app
 ToOfferALinkForLiveWebhook=Lien pour la configuration de Stripe WebHook pour appeler l'IPN (mode actif)
 PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la prochaine période.
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe : %s
 STRIPE_CARD_PRESENT=Carte présente pour les terminaux Stripe
 TERMINAL_LOCATION=Localisation (adresse) pour les terminaux Stripe
 RequestDirectDebitWithStripe=Demander un prélèvement automatique avec Stripe
+RequesCreditTransferWithStripe=Demander un virement avec Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Activer les paiements par débit direct avec Stripe
-
+STRIPE_KLARNA=Activer les paiements utilisant Klarna
+STRIPE_BANCONTACT=Activer les paiements utilisant BANCONTACT
+STRIPE_IDEAL=Activer les paiements utilisant IDEAL
+STRIPE_GIROPAY=Activer les paiements via GIROPAY
+STRIPE_SOFORT=Activer les paiements via SOFORT
+StripeConnect_Mode=Mode Stripe Connect
+ExampleOnlyForBECustomers=Uniquement pour les clients de Belgique
+ExampleOnlyForDECustomers=Uniquement pour les clients Allemands
+ExampleOnlyForNLCustomers=Uniquement pour les clients néerlandais
+ExampleOnlyForATBEDEITNLESCustomers=Uniquement pour clients d'Autriche, de Belgique, d'Allemagne, d'Italie, des Pays-Bas et d'Espagne.

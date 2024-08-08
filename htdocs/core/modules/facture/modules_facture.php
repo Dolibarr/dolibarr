@@ -22,12 +22,13 @@
 
 /**
  *	\file       htdocs/core/modules/facture/modules_facture.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File that contains parent class for invoices models
  *              and parent class for invoices numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required because used in classes that inherit
 
@@ -39,11 +40,6 @@ use Sprain\SwissQrBill;
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	public $posxpicture;
 	public $posxtva;
 	public $posxup;
@@ -60,6 +56,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 	public $atleastonediscount = 0;
 	public $atleastoneratenotnull = 0;
+
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -199,7 +196,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 * @param Translate $langs   	Translation object
 	 * @return int      			Height in mm of the bottom-page QR invoice. Can be zero if not on right page; not enabled
 	 */
-	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs) : int
+	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs)
 	{
 		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 			// Keep it, to reset it after QRinvoice getter
@@ -227,7 +224,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 * @param Translate $langs   	Translation object
 	 * @return bool 				True for for success
 	 */
-	public function addBottomQRInvoice(TCPDF $pdf, Facture $object, Translate $langs) : bool
+	public function addBottomQRInvoice(TCPDF $pdf, Facture $object, Translate $langs): bool
 	{
 		if (!($qrBill = $this->getSwissQrBill($object, $langs))) {
 			return false;
@@ -251,95 +248,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 /**
  *  Parent class of invoice reference numbering templates
  */
-abstract class ModeleNumRefFactures
+abstract class ModeleNumRefFactures extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	public $version;
-
-
-	/**
-	 * Return if a module can be used or not
-	 *
-	 * @return	boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns the default description of the numbering pattern
-	 *
-	 * @return    string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * Return an example of numbering
-	 *
-	 * @return	string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 * @return	boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 * @param	Societe		$objsoc		Objet societe
-	 * @param   Facture		$invoice	Objet facture
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Value
-	 */
-	public function getNextValue($objsoc, $invoice, $mode = 'next')
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 * Renvoi version du modele de numerotation
-	 *
-	 * @return    string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	// No overload code
 }

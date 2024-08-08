@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2021 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $hookmanager->initHooks(array('rowinterface'));
 
+$roworder = GETPOST('roworder', 'alpha', 3);
+$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
+$fk_element = GETPOST('fk_element', 'aZ09', 3);
+$element_id = GETPOSTINT('element_id', 3);
+$action = 'edit';
+
+
 // Security check
 // This is done later into view.
 
@@ -62,18 +70,13 @@ $hookmanager->initHooks(array('rowinterface'));
 
 top_httphead();
 
+dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
+
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
 if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
-	&& GETPOST('fk_element', 'aZ09', 3) && GETPOST('element_id', 'int', 3)) {
-	$roworder = GETPOST('roworder', 'alpha', 3);
-	$table_element_line = GETPOST('table_element_line', 'aZ09', 3);
-	$fk_element = GETPOST('fk_element', 'aZ09', 3);
-	$element_id = GETPOST('element_id', 'int', 3);
-
-	dol_syslog("AjaxRow roworder=".$roworder." table_element_line=".$table_element_line." fk_element=".$fk_element." element_id=".$element_id, LOG_DEBUG);
-
+	&& GETPOST('fk_element', 'aZ09', 3) && GETPOSTINT('element_id', 3)) {
 	// Make test on permission
 	$perm = 0;
 	if ($table_element_line == 'propaldet' && $user->hasRight('propal', 'creer')) {
@@ -86,46 +89,50 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 		$perm = 1;
 	} elseif ($table_element_line == 'emailcollector_emailcollectoraction' && $user->admin) {
 		$perm = 1;
-	} elseif ($table_element_line == 'bom_bomline' && $user->rights->bom->write) {
+	} elseif ($table_element_line == 'bom_bomline' && $user->hasRight('bom', 'write')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'mrp_production' && $user->rights->mrp->write) {
+	} elseif ($table_element_line == 'mrp_production' && $user->hasRight('mrp', 'write')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'supplier_proposaldet' && $user->rights->supplier_proposal->creer) {
+	} elseif ($table_element_line == 'supplier_proposaldet' && $user->hasRight('supplier_proposal', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->rights->fournisseur->commande->creer) {
+	} elseif ($table_element_line == 'commande_fournisseurdet' && $user->hasRight('fournisseur', 'commande', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facture_fourn_det' && $user->rights->fournisseur->facture->creer) {
+	} elseif ($table_element_line == 'facture_fourn_det' && $user->hasRight('fournisseur', 'facture', 'creer')) {
 		$perm = 1;
-	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->rights->fournisseur->facture->creer) {
+	} elseif ($table_element_line == 'facture_fourn_det_rec' && $user->hasRight('fournisseur', 'facture', 'creer')) {
 		$perm = 1;
 	} elseif ($table_element_line == 'product_attribute_value' && $fk_element == 'fk_product_attribute' && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$perm = 1;
 	} elseif ($table_element_line == 'ecm_files') {		// Used when of page "documents.php"
-		if (!empty($user->rights->ecm->creer)) {
+		if ($user->hasRight('ecm', 'creer')) {
 			$perm = 1;
-		} elseif ($fk_element == 'fk_product' && ($user->hasRight('produit', 'creer') || !empty($user->rights->service->creer))) {
+		} elseif ($fk_element == 'fk_product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 			$perm = 1;
-		} elseif ($fk_element == 'fk_ticket' && !empty($user->rights->ticket->write)) {
+		} elseif ($fk_element == 'fk_ticket' && $user->hasRight('ticket', 'write')) {
 			$perm = 1;
-		} elseif ($fk_element == 'fk_holiday' && !empty($user->rights->holiday->write)) {
+		} elseif ($fk_element == 'fk_holiday' && $user->hasRight('holiday', 'write')) {
 			$perm = 1;
-		} elseif ($fk_element == 'fk_soc' && !empty($user->rights->societe->creer)) {
+		} elseif ($fk_element == 'fk_soc' && $user->hasRight('societe', 'creer')) {
 			$perm = 1;
 		}
-	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && ($user->hasRight('produit', 'creer') || !empty($user->rights->service->creer))) {
+	} elseif ($table_element_line == 'product_association' && $fk_element == 'fk_product' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		$perm = 1;
-	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->rights->projet->creer) {
+	} elseif ($table_element_line == 'projet_task' && $fk_element == 'fk_projet' && $user->hasRight('projet', 'creer')) {
 		$perm = 1;
 	} elseif ($table_element_line == 'contratdet' && $fk_element == 'fk_contrat' && $user->hasRight('contrat', 'creer')) {
 		$perm = 1;
+	} elseif ($table_element_line == 'stocktransfer_stocktransferline' && $fk_element == 'fk_stocktransfer' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) {
+		$perm = 1;
 	} else {
 		$tmparray = explode('_', $table_element_line);
-		$tmpmodule = $tmparray[0]; $tmpobject = preg_replace('/line$/', '', $tmparray[1]);
-		if (!empty($tmpmodule) && !empty($tmpobject) && !empty($conf->$tmpmodule->enabled) && !empty($user->rights->$tmpobject->write)) {
+		$tmpmodule = $tmparray[0];
+		$tmpobject = preg_replace('/line$/', '', $tmparray[1]);
+		if (!empty($tmpmodule) && !empty($tmpobject) && !empty($conf->$tmpmodule->enabled) && $user->hasRight($tmpobject, 'write')) {
 			$perm = 1;
 		}
 	}
-	$parameters = array('roworder'=> &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
+	// Overwrite $perm by hook
+	$parameters = array('roworder' => &$roworder, 'table_element_line' => &$table_element_line, 'fk_element' => &$fk_element, 'element_id' => &$element_id, 'perm' => &$perm);
 	$row = new GenericObject($db);
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
@@ -134,12 +141,14 @@ if (GETPOST('roworder', 'alpha', 3) && GETPOST('table_element_line', 'aZ09', 3)
 	if ($reshook > 0) {
 		$perm = $hookmanager->resArray['perm'];
 	}
+
 	if (! $perm) {
 		// We should not be here. If we are not allowed to reorder rows, feature should not be visible on script.
 		// If we are here, it is a hack attempt, so we report a warning.
 		print 'Bad permission to modify position of lines for object in table '.$table_element_line;
 		dol_syslog('Bad permission to modify position of lines for object in table='.$table_element_line.', fk_element='.$fk_element, LOG_WARNING);
-		accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
+		//accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
+		httponly_accessforbidden('Bad permission to modify position of lines for object in table '.$table_element_line);
 	}
 
 	$rowordertab = explode(',', $roworder);

@@ -1,2 +1,0 @@
-<!-- Before this is the imported content -->
-<?php includeContainer('blogpost-footer'); ?>

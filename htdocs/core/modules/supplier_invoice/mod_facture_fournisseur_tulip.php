@@ -5,6 +5,7 @@
  * Copyright (C) 2013-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2016-2021  Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefo
 
 
 /**
-	\class      mod_facture_fournisseur_tulip
-	\brief      Tulip Class of numbering models of suppliers invoices references
+ * \class      mod_facture_fournisseur_tulip
+ * \brief      Tulip Class of numbering models of suppliers invoices references
 */
 class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 {
@@ -63,9 +64,10 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	/**
 	 *  Returns the description of the model numbering
 	 *
-	 * 	@return     string      Description Text
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs, $db;
 
@@ -86,34 +88,37 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").')';
 		$texte .= ':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("SUPPLIER_INVOICE_TULIP_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("SUPPLIER_INVOICE_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipstandardtulip').'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
 		// Prefix setting of credit note
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcredit" value="'.getDolGlobalString("SUPPLIER_CREDIT_TULIP_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcredit" value="'.getDolGlobalString("SUPPLIER_CREDIT_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipcredittuplie').'</td>';
 		$texte .= '</tr>';
 
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			// Parametrage du prefix des replacement
+		if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			// Prefix setting of replacement
 			$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
-			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("SUPPLIER_REPLACEMENT_TULIP_MASK").'">', $tooltip, 1, 1).'</td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("SUPPLIER_REPLACEMENT_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipreplacementtulip').'</td>';
 			$texte .= '</tr>';
 		}
 
 		// Prefix setting of deposit
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("SUPPLIER_DEPOSIT_TULIP_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("SUPPLIER_DEPOSIT_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipdownpaymenttulip').'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -129,7 +134,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -145,14 +150,14 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object	    $object		Object invoice
-	 * @param	string		$mode       'next' for next value or 'last' for last value
-	 * @return 	string      			Value if OK, 0 if KO
+	 * @param	Societe				$objsoc     Object third party
+	 * @param  	FactureFournisseur	$object		Object invoice
+	 * @param	string				$mode       'next' for next value or 'last' for last value
+	 * @return 	string|int  					Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -184,10 +189,11 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next free value
 	 *
-	 *  @param  Societe     $objsoc         Object third party
-	 *  @param  string      $objforref      Object for number to search
-	 *  @param  string      $mode           'next' for next value or 'last' for last value
-	 *  @return string                      Next free value
+	 *  @param  Societe     		$objsoc         Object third party
+	 *  @param  FactureFournisseur  $objforref      Object for number to search
+	 *  @param  string      		$mode           'next' for next value or 'last' for last value
+	 *  @return string                      		Next free value
+	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref, $mode = 'next')
 	{

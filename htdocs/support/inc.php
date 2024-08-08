@@ -75,16 +75,16 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$dolibarr_main_db_type = 'mysqli';
 		}
 
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
+		if (!isset($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
 			$dolibarr_main_db_port = '3306'; // For backward compatibility
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root        = isset($dolibarr_main_data_root) ?trim($dolibarr_main_data_root) : '';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ?trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ?trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ?trim($dolibarr_main_document_root) : '';
-		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ?trim($dolibarr_main_document_root_alt) : '';
+		$dolibarr_main_data_root        = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : '';
+		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
 		if (!empty($dolibarr_main_document_root) && !preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) {
@@ -130,7 +130,7 @@ if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
 }
 define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
 
-define('DOL_CLASS_PATH', 'class/'); // Filsystem path to class dir
+define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
 define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root) ? $dolibarr_main_data_root : ''));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root) ? $dolibarr_main_url_root : '')); // URL relative root
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
@@ -166,7 +166,7 @@ if (empty($conf->db->user)) {
 }
 
 
-// Defini objet langs
+// Defini object langs
 $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09'));
@@ -174,15 +174,12 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang('auto');
 }
 
-$bc[false] = ' class="bg1"';
-$bc[true] = ' class="bg2"';
-
 
 /**
  *	Load conf file (file must exists)
  *
  *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	@return	int											<0 if KO, >0 if OK
+ *	@return	int											Return integer <0 if KO, >0 if OK
  */
 function loadconf($dolibarr_main_document_root)
 {

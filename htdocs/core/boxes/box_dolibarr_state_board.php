@@ -2,7 +2,8 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2021 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024 Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +38,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 	public $boxlabel = "BoxDolibarrStateBoard";
 	public $depends = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -56,8 +48,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
-
 		$this->db = $db;
 	}
 
@@ -69,18 +59,18 @@ class box_dolibarr_state_board extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 		$langs->load("boxes");
 
 		$this->max = $max;
 		$this->info_box_head = array('text' => $langs->trans("DolibarrStateBoard"));
 
-		if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS)) {
+		if (empty($user->socid) && !getDolGlobalString('MAIN_DISABLE_GLOBAL_BOXSTATS')) {
 			$hookmanager = new HookManager($this->db);
 			$hookmanager->initHooks(array('index'));
 			$object = new stdClass();
 			$action = '';
-			$parameters =array();
+			$parameters = array();
 			$hookmanager->executeHooks('addStatisticLine', $parameters, $object, $action);
 			$boxstatItems = array();
 			$boxstatFromHook = '';
@@ -113,26 +103,27 @@ class box_dolibarr_state_board extends ModeleBoxes
 			);
 			$conditions = array(
 				'users' => $user->hasRight('user', 'user', 'lire'),
-				'members' => isModEnabled('adherent') && $user->hasRight('adherent', 'lire'),
-				'customers' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-				'prospects' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-				'suppliers' => ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) && $user->hasRight('fournisseur', 'lire'))
+				'members' => isModEnabled('member') && $user->hasRight('adherent', 'lire'),
+				'customers' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS'),
+				'prospects' => isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS'),
+				'suppliers' => (
+					(isModEnabled("fournisseur") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD') && $user->hasRight('fournisseur', 'lire'))
 								 || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire'))
 								 || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
-								 )
-								 && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
+				)
+								 && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS'),
 				'contacts' => isModEnabled('societe') && $user->hasRight('societe', 'contact', 'lire'),
 				'products' => isModEnabled('product') && $user->hasRight('product', 'read'),
 				'services' => isModEnabled('service') && $user->hasRight('service', 'read'),
 				'proposals' => isModEnabled('propal') && $user->hasRight('propal', 'read'),
-				'orders' => isModEnabled('commande') && $user->hasRight('commande', 'lire'),
-				'invoices' => isModEnabled('facture') && $user->hasRight('facture', 'lire'),
+				'orders' => isModEnabled('order') && $user->hasRight('commande', 'lire'),
+				'invoices' => isModEnabled('invoice') && $user->hasRight('facture', 'lire'),
 				'donations' => isModEnabled('don') && $user->hasRight('don', 'lire'),
-				'contracts' => isModEnabled('contrat') && $user->hasRight('contrat', 'lire'),
-				'interventions' => isModEnabled('ficheinter') && $user->hasRight('ficheinter', 'lire'),
-				'supplier_orders' => isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire') && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
-				'supplier_invoices' => isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire') && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
-				'supplier_proposals' => isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire') && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
+				'contracts' => isModEnabled('contract') && $user->hasRight('contrat', 'lire'),
+				'interventions' => isModEnabled('intervention') && $user->hasRight('ficheinter', 'lire'),
+				'supplier_orders' => isModEnabled('supplier_order') && $user->hasRight('fournisseur', 'commande', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS'),
+				'supplier_invoices' => isModEnabled('supplier_invoice') && $user->hasRight('fournisseur', 'facture', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS'),
+				'supplier_proposals' => isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS'),
 				'projects' => isModEnabled('project') && $user->hasRight('projet', 'lire'),
 				'expensereports' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
 				'holidays' => isModEnabled('holiday') && $user->hasRight('holiday', 'read'),
@@ -263,7 +254,14 @@ class box_dolibarr_state_board extends ModeleBoxes
 						include_once $includes[$val]; // Loading a class cost around 1Mb
 
 						$board = new $class($this->db);
-						$board->load_state_board();
+						if (method_exists($board, 'load_state_board')) {
+							// @phan-suppress-next-line PhanUndeclaredMethod  (Legacy, not present in core).
+							$board->load_state_board();
+						} elseif (method_exists($board, 'loadStateBoard')) {
+							$board->loadStateBoard();
+						} else {
+							$board = -1;
+						}
 						$boardloaded[$class] = $board;
 					} else {
 						$board = $boardloaded[$classkeyforcache];
@@ -301,7 +299,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 
 				$this->info_box_contents[0][0] = array(
 					'tr' => 'class="nohover"',
-					'td' => 'class="tdwidgetstate"',
+					'td' => 'class="tdwidgetstate center"',
 					'textnoformat' => $boxstat
 				);
 			}
