@@ -1109,7 +1109,11 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					$ecmfile->filename = $filename;
 					$ecmfile->label = md5_file(dol_osencode($destfile)); // $destfile is a full path to file
 					$ecmfile->fullpath_orig = basename($srcfile);
-					$ecmfile->gen_or_uploaded = 'uploaded';
+					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
+						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
+					} else {
+						$ecmfile->gen_or_uploaded = 'uploaded';
+					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
 					} else {
@@ -1132,10 +1136,18 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
 					}
+					if (!empty($moreinfo) && !empty($moreinfo['array_options']) && is_array($moreinfo['array_options'])) {
+						$ecmfile->array_options = $moreinfo['array_options'];
+					}
 
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+					} else {
+						$resultecm = $ecmfile->insertExtraFields();
+						if ($resultecm < 0) {
+							setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+						}
 					}
 				} elseif ($resultecm < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
