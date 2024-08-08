@@ -272,7 +272,6 @@ $exportholidays = GETPOSTINT('includeholidays');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {
-
 	$result = build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
 	if ($result >= 0) {
 		$attachment = true;
@@ -384,374 +383,374 @@ llxFooterVierge();
 
 
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Export events from database into a cal file.
-	 *
-	 * @param string    $format         			The format of the export 'vcal', 'ical/ics' or 'rss'
-	 * @param string    $type           			The type of the export 'event' or 'journal'
-	 * @param integer   $cachedelay     			Do not rebuild file if date older than cachedelay seconds
-	 * @param string    $filename       			The name for the exported file.
-	 * @param array<string,int|string>	$filters	Array of filters. 
-	 * @return int<-1,1>                			-1 = error on build export file, 0 = export okay
-	 */
-	function build_exportfile($format, $type, $cachedelay, $filename, $filters)
-	{
+// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+/**
+ * Export events from database into a cal file.
+ *
+ * @param string    $format         			The format of the export 'vcal', 'ical/ics' or 'rss'
+ * @param string    $type           			The type of the export 'event' or 'journal'
+ * @param integer   $cachedelay     			Do not rebuild file if date older than cachedelay seconds
+ * @param string    $filename       			The name for the exported file.
+ * @param array<string,int|string>	$filters	Array of filters.
+ * @return int<-1,1>                			-1 = error on build export file, 0 = export okay
+ */
+function build_exportfile($format, $type, $cachedelay, $filename, $filters)
+{
 
-		// quelques filtres possible au nivau du tableau $filters
-		// logina : login de l'utilisateur qui a créé l'événement (author)
-		// logini : login de l'utilisateur qui intervient
-		// loginr : login de l'utilisateur qui est responsable de l'intervention
+	// quelques filtres possible au nivau du tableau $filters
+	// logina : login de l'utilisateur qui a créé l'événement (author)
+	// logini : login de l'utilisateur qui intervient
+	// loginr : login de l'utilisateur qui est responsable de l'intervention
 
 
 
-		global $hookmanager;
-		global $db;
+	global $hookmanager;
+	global $db;
 
-		// phpcs:enable
-		global $conf, $langs, $dolibarr_main_url_root, $mysoc;
+	// phpcs:enable
+	global $conf, $langs, $dolibarr_main_url_root, $mysoc;
 
-		require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
-		require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
-		require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/xcal.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+	require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
-		dol_syslog(
-				"build_exportfile Build export file format=".$format.", 
-				type=".$type.", cachedelay=".$cachedelay.", 
-				filename=".$filename.", filters size=".count($filters), LOG_DEBUG
-			);
+	dol_syslog(
+			"build_exportfile Build export file format=".$format.", 
+			type=".$type.", cachedelay=".$cachedelay.", 
+			filename=".$filename.", filters size=".count($filters), LOG_DEBUG
+		);
 
-		// Check parameters
-		if (empty($format)) {
+	// Check parameters
+	if (empty($format)) {
+		return -1;
+	}
+
+	// Clean parameters
+	if (!$filename) {
+		$extension = 'vcs';
+		if ($format == 'ical') {
+			$extension = 'ics';
+		}
+		$filename = $format.'.'.$extension;
+	}
+
+	// Create dir and define output file (definitive and temporary)
+	$result = dol_mkdir($conf->agenda->dir_temp);
+	$outputfile = $conf->agenda->dir_temp.'/'.$filename;
+
+	$result = 0;
+
+	$buildfile = true;
+	$login = '';
+	$logina = '';
+	$logini = '';
+	$loginr = '';
+
+	$eventorganization = '';
+
+	$now = dol_now();
+
+	if ($cachedelay) {
+		$nowgmt = dol_now();
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay)) {
+			dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
+			$buildfile = false;
+		}
+	}
+
+	if ($buildfile) {
+		// Build event array
+		$eventarray = array();
+
+		$sql = "SELECT f.rowid,";
+		$sql .= " fd.date,"; // on récupère la date et la durée sur le détail d'inter pour avoir aussi l'heure
+		$sql .= " f.datee,"; // End ne sera pas utilisée
+		$sql .= " fd.duree,"; // durée de l'intervention
+		$sql .= " f.datec, f.tms as datem,";
+		$sql .= " f.ref, f.ref_client, fd.description, f.note_private, f.note_public,";
+		$sql .= " f.fk_soc,";
+		$sql .= " f.fk_user_author, f.fk_user_modif,";
+		$sql .= " f.fk_user_valid,";
+		$sql .= " u.firstname, u.lastname, u.email,";
+		$sql .= " p.ref as ref_project, c.ref as ref_contract,";
+		$sql .= " s.nom as socname, f.fk_statut";
+
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON f.rowid = fd.fk_fichinter";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = f.fk_user_author";
+
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = f.fk_soc";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p on p.rowid = f.fk_projet";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on c.rowid = f.fk_contrat";
+
+		$parameters = array('filters' => $filters);
+		// Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters);
+		$sql .= $hookmanager->resPrint;
+
+		$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
+
+		foreach ($filters as $key => $value) {
+			if ($key == 'notolderthan' && $value != '') {
+				$sql .= " AND fd.date >= '".$db->idate($now - ($value * 24 * 60 * 60))."'";
+			}
+			if ($key == 'year') {
+				$sql .= " AND fd.date BETWEEN '".$db->idate(dol_get_first_day($value, 1))."'";
+				$sql .= "     AND '".$db->idate(dol_get_last_day($value, 12))."'";
+			}
+			if ($key == 'id') {
+				$sql .= " AND f.rowid = ".(is_numeric($value) ? $value : 0);
+			}
+			if ($key == 'idfrom') {
+				$sql .= " AND f.rowid >= ".(is_numeric($value) ? $value : 0);
+			}
+			if ($key == 'idto') {
+				$sql .= " AND f.rowid <= ".(is_numeric($value) ? $value : 0);
+			}
+			if ($key == 'project') {
+				$sql .= " AND f.fk_project = ".(is_numeric($value) ? $value : 0);
+			}
+			if ($key == 'contract') {
+				$sql .= " AND f.fk_contract = ".(is_numeric($value) ? $value : 0);
+			}
+
+			if ($key == 'logina') {
+				$logina = $value;
+				$condition = '=';
+				if (preg_match('/^!/', $logina)) {
+					$logina = preg_replace('/^!/', '', $logina);
+					$condition = '<>';
+				}
+				$userforfilter = new User($db);
+				$result = $userforfilter->fetch(0, $logina);
+				if ($result > 0) {
+					$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
+				} elseif ($result < 0 || $condition == '=') {
+					$sql .= " AND a.fk_user_author = 0";
+				}
+			}
+			if ($key == 'logini') {
+				$logini = $value;
+				$condition = '=';
+				if (preg_match('/^!/', $logini)) {
+					$logini = preg_replace('/^!/', '', $logini);
+					$condition = '<>';
+				}
+				$userforfilter = new User($db);
+				$result = $userforfilter->fetch(0, $logini);
+				$sql .= " AND EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
+				$sql .= " WHERE ec.element_id = f.rowid";
+				$sql .= " AND ec.fk_c_type_contact = 26";
+				if ($result > 0) {
+					$sql .= " AND ec.fk_socpeople = ".((int) $userforfilter->id);
+				} elseif ($result < 0 || $condition == '=') {
+					$sql .= " AND ec.fk_socpeople = 0";
+				}
+				$sql .= ")";
+			}
+			if ($key == 'loginr') {
+				$loginr = $value;
+				$condition = '=';
+				if (preg_match('/^!/', $loginr)) {
+					$loginr = preg_replace('/^!/', '', $loginr);
+					$condition = '<>';
+				}
+				$userforfilter = new User($db);
+				$result = $userforfilter->fetch(0, $loginr);
+				$sql .= " AND EXISTS (SELECT ecr.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecr";
+				$sql .= " WHERE ecr.element_id = f.rowid";
+				$sql .= " WHERE AND ecr.fk_c_type_contact = 27";
+				if ($result > 0) {
+					$sql .= " AND ecr.fk_socpeople = ".((int) $userforfilter->id);
+				} elseif ($result < 0 || $condition == '=') {
+					$sql .= " AND ecr.fk_socpeople = 0";
+				}
+				$sql .= ")";
+			}
+
+			if ($key == 'status') {
+				$sql .= " AND f.fk_statut = ".((int) $value);
+			}
+		}
+
+		// To exclude corrupted events and avoid errors in lightning/sunbird import
+		$sql .= " AND f.dateo IS NOT NULL";
+
+		$parameters = array('filters' => $filters);
+		// Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
+		$sql .= $hookmanager->resPrint;
+
+		$sql .= " ORDER by fd.date";
+
+
+		if (!empty($filters['limit'])) {
+			$sql .= $db->plimit((int) $filters['limit']);
+		}
+
+		// print $sql;exit;
+
+		dol_syslog("build_exportfile select event(s)", LOG_DEBUG);
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$diff = 0;
+			while ($obj = $db->fetch_object($resql)) {
+				$qualified = true;
+
+				// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
+				$event = array();
+				$event['uid'] = 'dolibarragenda-'.$db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
+				$event['type'] = $type;
+
+				$datestart = $db->jdate($obj->date) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+
+				// fix for -> Warning: A non-numeric value encountered
+				// if (is_numeric($db->jdate($obj->datee))) {
+				// 	$dateend = $db->jdate($obj->datee) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+				// } else {
+				// 	// use start date as fall-back to avoid pb with empty end date on ICS readers
+				// 	$dateend = $datestart;
+				// }
+
+				$duration = $obj->duree;
+				$event['location'] = ($obj->socname ? $obj->socname : "");
+				$event['summary'] = $obj->ref." - ". $obj->description;
+				if ($obj->ref_client)
+				$event['summary'].= " (".$obj->ref_client.")";
+
+				$event['desc'] = $obj->description;
+
+				if ($obj->ref_project)
+					$event['desc'] .= " - ".$obj->ref_project;
+
+				if ($obj->ref_contract)
+					$event['desc'] .= " - ".$obj->ref_contract;
+
+				if ($obj->note_public)
+					$event['desc'].= " - ".$obj->note_public;
+
+				$event['startdate'] = $datestart;
+				$event['enddate'] = ''; // $dateend; // Not required with type 'journal'
+				$event['duration'] = $duration; // Not required with type 'journal'
+				$event['author'] = dolGetFirstLastname($obj->firstname, $obj->lastname);
+
+				// OPAQUE (busy) or TRANSPARENT (not busy)
+				//$event['transparency'] = (($obj->transparency > 0) ? 'OPAQUE' : 'TRANSPARENT');
+				//$event['category'] = $obj->type_label;
+				$event['email'] = $obj->email;
+
+				// Public URL of event
+				if ($eventorganization != '') {
+					$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $obj->id).'&type=global&noregistration=1';
+					$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $obj->id), 'md5');
+					$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
+
+					//$event['url'] = $link_subscription;
+				}
+
+				$event['created'] = $db->jdate($obj->datec) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0 ) * 3600);
+				$event['modified'] = $db->jdate($obj->datem) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+				// $event['num_vote'] = $this->num_vote;
+				// $event['event_paid'] = $this->event_paid;
+				$event['status'] = $obj->fk_statut;
+
+				// // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
+				// $this->id = $obj->rowid;
+				// $this->fetch_userassigned(false);
+
+				// $assignedUserArray = array();
+
+				// foreach ($this->userassigned as $key => $value) {
+				// 	$assignedUser = new User($db);
+				// 	$assignedUser->fetch($value['id']);
+
+				// 	$assignedUserArray[$key] = $assignedUser;
+				// }
+
+				// $event['assignedUsers'] = $assignedUserArray;
+
+				if ($qualified && $datestart) {
+					$eventarray[] = $event;
+				}
+				$diff++;
+			}
+
+			$parameters = array('filters' => $filters, 'eventarray' => &$eventarray);
+			// Note that $action and $object may have been modified by hook
+			$reshook = $hookmanager->executeHooks('addMoreEventsExport', $parameters);
+			if ($reshook > 0) {
+				$eventarray = $hookmanager->resArray;
+			}
+		} else {
+			print $db->lasterror();
 			return -1;
 		}
 
-		// Clean parameters
-		if (!$filename) {
-			$extension = 'vcs';
-			if ($format == 'ical') {
-				$extension = 'ics';
+		$langs->load("agenda");
+
+		// Define title and desc
+		$title = '';
+		$more = '';
+		if ($login) {
+			$more = $langs->transnoentities("User").' '.$login;
+		}
+		if ($logina) {
+			$more = $langs->transnoentities("ActionsAskedBy").' '.$logina;
+		}
+		if ($logint) {
+			$more = $langs->transnoentities("ActionsToDoBy").' '.$logint;
+		}
+		if ($eventorganization) {
+			$langs->load("eventorganization");
+			$title = $langs->transnoentities("OrganizedEvent").(empty($eventarray[0]['label']) ? '' : ' '.$eventarray[0]['label']);
+			$more = 'ICS file - '.$langs->transnoentities("OrganizedEvent").(empty($eventarray[0]['label']) ? '' : ' '.$eventarray[0]['label']);
+		}
+		if ($more) {
+			if (empty($title)) {
+				$title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
 			}
-			$filename = $format.'.'.$extension;
+			$desc = $more;
+			$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
+		} else {
+			if (empty($title)) {
+				$title = 'Dolibarr actions '.$mysoc->name;
+			}
+			$desc = $langs->transnoentities('ListOfActions');
+			$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
 		}
 
-		// Create dir and define output file (definitive and temporary)
-		$result = dol_mkdir($conf->agenda->dir_temp);
-		$outputfile = $conf->agenda->dir_temp.'/'.$filename;
+		// Create temp file
+		// Temporary file (allow call of function by different threads
+		$outputfiletmp = tempnam($conf->fichinter->dir_temp, 'tmp');
+		dolChmod($outputfiletmp);
 
-		$result = 0;
-
-		$buildfile = true;
-		$login = '';
-		$logina = '';
-		$logini = '';
-		$loginr = '';
-
-		$eventorganization = '';
-
-		$now = dol_now();
-
-		if ($cachedelay) {
-			$nowgmt = dol_now();
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay)) {
-				dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
-				$buildfile = false;
-			}
+		// Write file
+		if ($format == 'vcal') {
+			$result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+		} elseif ($format == 'ical') {
+			$result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
+		} elseif ($format == 'rss') {
+			$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
 		}
 
-		if ($buildfile) {
-			// Build event array
-			$eventarray = array();
-
-			$sql = "SELECT f.rowid,";
-			$sql .= " fd.date,"; // on récupère la date et la durée sur le détail d'inter pour avoir aussi l'heure
-			$sql .= " f.datee,"; // End ne sera pas utilisée
-			$sql .= " fd.duree,"; // durée de l'intervention
-			$sql .= " f.datec, f.tms as datem,";
-			$sql .= " f.ref, f.ref_client, fd.description, f.note_private, f.note_public,";
-			$sql .= " f.fk_soc,";
-			$sql .= " f.fk_user_author, f.fk_user_modif,";
-			$sql .= " f.fk_user_valid,";
-			$sql .= " u.firstname, u.lastname, u.email,";
-			$sql .= " p.ref as ref_project, c.ref as ref_contract,";
-			$sql .= " s.nom as socname, f.fk_statut";
-
-			$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON f.rowid = fd.fk_fichinter";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = f.fk_user_author";
-
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = f.fk_soc";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p on p.rowid = f.fk_projet";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contrat as c on c.rowid = f.fk_contrat";
-
-			$parameters = array('filters' => $filters);
-			// Note that $action and $object may have been modified by hook
-			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters);
-			$sql .= $hookmanager->resPrint;
-
-			$sql .= " WHERE f.entity IN (".getEntity('fichinter').")";
-
-			foreach ($filters as $key => $value) {
-				if ($key == 'notolderthan' && $value != '') {
-					$sql .= " AND fd.date >= '".$db->idate($now - ($value * 24 * 60 * 60))."'";
-				}
-				if ($key == 'year') {
-					$sql .= " AND fd.date BETWEEN '".$db->idate(dol_get_first_day($value, 1))."'";
-					$sql .= "     AND '".$db->idate(dol_get_last_day($value, 12))."'";
-				}
-				if ($key == 'id') {
-					$sql .= " AND f.rowid = ".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'idfrom') {
-					$sql .= " AND f.rowid >= ".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'idto') {
-					$sql .= " AND f.rowid <= ".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'project') {
-					$sql .= " AND f.fk_project = ".(is_numeric($value) ? $value : 0);
-				}
-				if ($key == 'contract') {
-					$sql .= " AND f.fk_contract = ".(is_numeric($value) ? $value : 0);
-				}
-
-				if ($key == 'logina') {
-					$logina = $value;
-					$condition = '=';
-					if (preg_match('/^!/', $logina)) {
-						$logina = preg_replace('/^!/', '', $logina);
-						$condition = '<>';
-					}
-					$userforfilter = new User($db);
-					$result = $userforfilter->fetch(0, $logina);
-					if ($result > 0) {
-						$sql .= " AND a.fk_user_author ".$condition." ".$userforfilter->id;
-					} elseif ($result < 0 || $condition == '=') {
-						$sql .= " AND a.fk_user_author = 0";
-					}
-				}
-				if ($key == 'logini') {
-					$logini = $value;
-					$condition = '=';
-					if (preg_match('/^!/', $logini)) {
-						$logini = preg_replace('/^!/', '', $logini);
-						$condition = '<>';
-					}
-					$userforfilter = new User($db);
-					$result = $userforfilter->fetch(0, $logini);
-					$sql .= " AND EXISTS (SELECT ec.rowid FROM ".MAIN_DB_PREFIX."element_contact as ec";
-					$sql .= " WHERE ec.element_id = f.rowid";
-					$sql .= " AND ec.fk_c_type_contact = 26";
-					if ($result > 0) {
-						$sql .= " AND ec.fk_socpeople = ".((int) $userforfilter->id);
-					} elseif ($result < 0 || $condition == '=') {
-						$sql .= " AND ec.fk_socpeople = 0";
-					}
-					$sql .= ")";
-				}
-				if ($key == 'loginr') {
-					$loginr = $value;
-					$condition = '=';
-					if (preg_match('/^!/', $loginr)) {
-						$loginr = preg_replace('/^!/', '', $loginr);
-						$condition = '<>';
-					}
-					$userforfilter = new User($db);
-					$result = $userforfilter->fetch(0, $loginr);
-					$sql .= " AND EXISTS (SELECT ecr.rowid FROM ".MAIN_DB_PREFIX."element_contact as ecr";
-					$sql .= " WHERE ecr.element_id = f.rowid";
-					$sql .= " WHERE AND ecr.fk_c_type_contact = 27";
-					if ($result > 0) {
-						$sql .= " AND ecr.fk_socpeople = ".((int) $userforfilter->id);
-					} elseif ($result < 0 || $condition == '=') {
-						$sql .= " AND ecr.fk_socpeople = 0";
-					}
-					$sql .= ")";
-				}
-
-				if ($key == 'status') {
-					$sql .= " AND f.fk_statut = ".((int) $value);
-				}
-			}
-
-			// To exclude corrupted events and avoid errors in lightning/sunbird import
-			$sql .= " AND f.dateo IS NOT NULL";
-
-			$parameters = array('filters' => $filters);
-			// Note that $action and $object may have been modified by hook
-			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters);
-			$sql .= $hookmanager->resPrint;
-
-			$sql .= " ORDER by fd.date";
-
-
-			if (!empty($filters['limit'])) {
-				$sql .= $db->plimit((int) $filters['limit']);
-			}
-
-			// print $sql;exit;
-
-			dol_syslog("build_exportfile select event(s)", LOG_DEBUG);
-
-			$resql = $db->query($sql);
-			if ($resql) {
-				$diff = 0;
-				while ($obj = $db->fetch_object($resql)) {
-					$qualified = true;
-
-					// 'eid','startdate','duration','enddate','title','summary','category','email','url','desc','author'
-					$event = array();
-					$event['uid'] = 'dolibarragenda-'.$db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
-					$event['type'] = $type;
-
-					$datestart = $db->jdate($obj->date) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
-
-					// fix for -> Warning: A non-numeric value encountered
-					// if (is_numeric($db->jdate($obj->datee))) {
-					// 	$dateend = $db->jdate($obj->datee) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
-					// } else {
-					// 	// use start date as fall-back to avoid pb with empty end date on ICS readers
-					// 	$dateend = $datestart;
-					// }
-
-					$duration = $obj->duree;
-					$event['location'] = ($obj->socname ? $obj->socname : "");
-					$event['summary'] = $obj->ref." - ". $obj->description;
-					if ($obj->ref_client)
-					$event['summary'].= " (".$obj->ref_client.")";
-
-					$event['desc'] = $obj->description;
-
-					if ($obj->ref_project)
-						$event['desc'] .= " - ".$obj->ref_project;
-
-					if ($obj->ref_contract)
-						$event['desc'] .= " - ".$obj->ref_contract;
-
-					if ($obj->note_public)
-						$event['desc'].= " - ".$obj->note_public;
-
-					$event['startdate'] = $datestart;
-					$event['enddate'] = ''; // $dateend; // Not required with type 'journal'
-					$event['duration'] = $duration; // Not required with type 'journal'
-					$event['author'] = dolGetFirstLastname($obj->firstname, $obj->lastname);
-
-					// OPAQUE (busy) or TRANSPARENT (not busy)
-					//$event['transparency'] = (($obj->transparency > 0) ? 'OPAQUE' : 'TRANSPARENT');
-					//$event['category'] = $obj->type_label;
-					$event['email'] = $obj->email;
-
-					// Public URL of event
-					if ($eventorganization != '') {
-						$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $obj->id).'&type=global&noregistration=1';
-						$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.((int) $obj->id), 'md5');
-						$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
-
-						//$event['url'] = $link_subscription;
-					}
-
-					$event['created'] = $db->jdate($obj->datec) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0 ) * 3600);
-					$event['modified'] = $db->jdate($obj->datem) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
-					// $event['num_vote'] = $this->num_vote;
-					// $event['event_paid'] = $this->event_paid;
-					$event['status'] = $obj->fk_statut;
-
-					// // TODO: find a way to call "$this->fetch_userassigned();" without override "$this" properties
-					// $this->id = $obj->rowid;
-					// $this->fetch_userassigned(false);
-
-					// $assignedUserArray = array();
-
-					// foreach ($this->userassigned as $key => $value) {
-					// 	$assignedUser = new User($db);
-					// 	$assignedUser->fetch($value['id']);
-
-					// 	$assignedUserArray[$key] = $assignedUser;
-					// }
-
-					// $event['assignedUsers'] = $assignedUserArray;
-
-					if ($qualified && $datestart) {
-						$eventarray[] = $event;
-					}
-					$diff++;
-				}
-
-				$parameters = array('filters' => $filters, 'eventarray' => &$eventarray);
-				// Note that $action and $object may have been modified by hook
-				$reshook = $hookmanager->executeHooks('addMoreEventsExport', $parameters);
-				if ($reshook > 0) {
-					$eventarray = $hookmanager->resArray;
-				}
+		if ($result >= 0) {
+			if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
+				$result = 1;
 			} else {
-				print $db->lasterror();
-				return -1;
-			}
-
-			$langs->load("agenda");
-
-			// Define title and desc
-			$title = '';
-			$more = '';
-			if ($login) {
-				$more = $langs->transnoentities("User").' '.$login;
-			}
-			if ($logina) {
-				$more = $langs->transnoentities("ActionsAskedBy").' '.$logina;
-			}
-			if ($logint) {
-				$more = $langs->transnoentities("ActionsToDoBy").' '.$logint;
-			}
-			if ($eventorganization) {
-				$langs->load("eventorganization");
-				$title = $langs->transnoentities("OrganizedEvent").(empty($eventarray[0]['label']) ? '' : ' '.$eventarray[0]['label']);
-				$more = 'ICS file - '.$langs->transnoentities("OrganizedEvent").(empty($eventarray[0]['label']) ? '' : ' '.$eventarray[0]['label']);
-			}
-			if ($more) {
-				if (empty($title)) {
-					$title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
-				}
-				$desc = $more;
-				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
-			} else {
-				if (empty($title)) {
-					$title = 'Dolibarr actions '.$mysoc->name;
-				}
-				$desc = $langs->transnoentities('ListOfActions');
-				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
-			}
-
-			// Create temp file
-			// Temporary file (allow call of function by different threads
-			$outputfiletmp = tempnam($conf->fichinter->dir_temp, 'tmp');
-			dolChmod($outputfiletmp);
-
-			// Write file
-			if ($format == 'vcal') {
-				$result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-			} elseif ($format == 'ical') {
-				$result = build_calfile($format, $title, $desc, $eventarray, $outputfiletmp);
-			} elseif ($format == 'rss') {
-				$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp);
-			}
-
-			if ($result >= 0) {
-				if (dol_move($outputfiletmp, $outputfile, 0, 1, 0, 0)) {
-					$result = 1;
-				} else {
-					$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
-					dol_syslog("build_exportfile ".$error, LOG_ERR);
-					dol_delete_file($outputfiletmp, 0, 1);
-					$result = -1;
-				}
-			} else {
-				dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
+				dol_syslog("build_exportfile ".$error, LOG_ERR);
 				dol_delete_file($outputfiletmp, 0, 1);
-				$langs->load("errors");
-				$error = $langs->trans("ErrorFailToCreateFile", $outputfile);
+				$result = -1;
 			}
+		} else {
+			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
+			dol_delete_file($outputfiletmp, 0, 1);
+			$langs->load("errors");
+			$error = $langs->trans("ErrorFailToCreateFile", $outputfile);
 		}
+	}
 
 		return $result;
 	}
