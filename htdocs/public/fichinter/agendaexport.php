@@ -677,8 +677,8 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 		if ($logina) {
 			$more = $langs->transnoentities("ActionsAskedBy").' '.$logina;
 		}
-		if ($logint) {
-			$more = $langs->transnoentities("ActionsToDoBy").' '.$logint;
+		if ($logini) {
+			$more = $langs->transnoentities("ActionsToDoBy").' '.$logini;
 		}
 		if ($eventorganization) {
 			$langs->load("eventorganization");
