@@ -650,7 +650,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 					//$event['url'] = $link_subscription;
 				}
 
-				$event['created'] = $db->jdate($obj->datec) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0 ) * 3600);
+				$event['created'] = $db->jdate($obj->datec) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
 				$event['modified'] = $db->jdate($obj->datem) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
 				// $event['num_vote'] = $this->num_vote;
 				// $event['event_paid'] = $this->event_paid;
@@ -751,6 +751,5 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 			$error = $langs->trans("ErrorFailToCreateFile", $outputfile);
 		}
 	}
-
-		return $result;
-	}
+	return $result;
+}
