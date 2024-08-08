@@ -175,10 +175,6 @@ function fichinter_admin_prepare_head()
 	$extrafields->fetch_name_optionals_label('fichinter');
 	$extrafields->fetch_name_optionals_label('fichinterdet');
 
-	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter_xcal.php";
-	$head[$h][1] = $langs->trans("ExportCal");
-	$head[$h][2] = 'xcal';
-	$h++;
 
 	$h = 0;
 	$head = array();
@@ -186,6 +182,11 @@ function fichinter_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
 	$head[$h][1] = $langs->trans("Interventions");
 	$head[$h][2] = 'ficheinter';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter_xcal.php";
+	$head[$h][1] = $langs->trans("ExportCal");
+	$head[$h][2] = 'xcal';
 	$h++;
 
 	// Show more tabs from modules
