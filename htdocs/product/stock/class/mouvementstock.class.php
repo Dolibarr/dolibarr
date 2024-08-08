@@ -1341,12 +1341,12 @@ class MouvementStock extends CommonObject
 	/**
 	 * Retrieve date of last stock movement for 
 	 * 
-	 * @param     int      $fk_entrepot
-	 * @param     int      $fk_product
-	 * @param     string   $batch
-	 * @return    string   date of last stock movement if found else empty string
+	 * @param int $fk_entrepot
+	 * @param int $fk_product
+	 * @param string $batch
+	 * @return string   date of last stock movement if found else empty string
 	 */
-	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch) 
+	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch)
 	{
 		$date = '';
 
