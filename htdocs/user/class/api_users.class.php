@@ -435,6 +435,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param   int     $id        User ID
 	 * @param	int		$send_password		Set this to 1 to have thenew password sent to the user
+	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
 	 * @return  int                1 if password changed, 2 if password changed and sent
 	 *
 	 * @throws RestException 403 Not allowed
