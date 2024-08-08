@@ -2941,7 +2941,7 @@ if ($action == 'create') {
 						// Iterate each line and get the reference that uses the supplier of that product/service
 						$i = 0;
 						foreach ($object->lines as $line) {
-							$i = $i + 1;
+							$i += 1;
 							$ref_supplier = $line->ref_supplier;
 							$line_id = $i."º) ".$line->product_ref.": ";
 							if (empty($ref_supplier)) {

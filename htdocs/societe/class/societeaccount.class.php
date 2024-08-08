@@ -146,7 +146,7 @@ class SocieteAccount extends CommonObject
 	public $site_account;
 
 	/**
-	 * @var integer|string date_last_login
+	 * @var int|string date_last_login
 	 */
 	public $date_last_login;
 

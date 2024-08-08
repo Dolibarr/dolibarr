@@ -1968,7 +1968,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *  Return clicable link of object (with eventually picto)
+	 *  Return clickable link of object (with eventually picto)
 	 *
 	 *  @param	int		$withpicto       			Add picto into link
 	 *  @param  string	$option          			Where point the link
@@ -2861,7 +2861,7 @@ class Facture extends CommonInvoice
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.((int) $rowid);
 
-			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact() >= 0 ) {
+			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact() >= 0) {
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.((int) $rowid);
 
 				$resql = $this->db->query($sql);
@@ -5985,7 +5985,7 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
@@ -6799,7 +6799,7 @@ class FactureLigne extends CommonInvoiceLine
 					$res = $this->db->query($sql);
 					if ($res) {
 						while ($obj = $this->db->fetch_object($res)) {
-							$returnPercent = $returnPercent + (float) $obj->situation_percent;
+							$returnPercent += (float) $obj->situation_percent;
 						}
 					} else {
 						dol_print_error($this->db);
@@ -6865,7 +6865,7 @@ class FactureLigne extends CommonInvoiceLine
 						$res_credit_note = $this->db->query($sql_credit_note);
 						if ($res_credit_note) {
 							while ($cn = $this->db->fetch_object($res_credit_note)) {
-								$cumulated_percent = $cumulated_percent + floatval($cn->situation_percent);
+								$cumulated_percent += floatval($cn->situation_percent);
 							}
 						} else {
 							dol_print_error($this->db);

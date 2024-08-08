@@ -196,21 +196,21 @@ if (!function_exists('dol_loginfunction')) {
 		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 			if (session_status() != PHP_SESSION_ACTIVE) {
 				if (PHP_VERSION_ID < 70300) {
-					session_set_cookie_params(0, '/', null, ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
+					session_set_cookie_params(0, '/', null, !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 				} else {
 					// Only available for php >= 7.3
 					$sessioncookieparams = array(
 						'lifetime' => 0,
 						'path' => '/',
 						//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-						'secure' => ((empty($dolibarr_main_force_https) && isHTTPS() === false) ? false : true),
+						'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
 						'httponly' => true,
 						'samesite' => 'Lax'	// None || Lax  || Strict
 					);
 					session_set_cookie_params($sessioncookieparams);
 				}
 
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', (empty($dolibarr_main_force_https) ? false : true), true);
+				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', !empty($dolibarr_main_force_https), true);
 			}
 		}
 

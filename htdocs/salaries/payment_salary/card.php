@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,7 +154,7 @@ print '</td></tr>';*/
 print '<tr><td>';
 print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink' => 1));
 print "</td>";
 print '</tr>';
 
@@ -246,7 +247,7 @@ if ($resql) {
 				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}

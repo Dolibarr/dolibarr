@@ -8364,7 +8364,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
 			$out = preg_replace('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', '', $out); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
 			$out = preg_replace('/on(abort|after|animation|auxclick|before|blur|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', '', $out);
-			$out = preg_replace('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', '', $out);
+			$out = preg_replace('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus(in|out)?|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', '', $out);
 			$out = preg_replace('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', '', $out);
 			$out = preg_replace('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', '', $out);
 			$out = preg_replace('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', '', $out);
@@ -8738,11 +8738,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 	$substitutionarray = array();
 
-	if ((empty($exclude) || !in_array('user', $exclude)) && (empty($include) || in_array('user', $include))) {
+	if ((empty($exclude) || !in_array('user', $exclude)) && (empty($include) || in_array('user', $include)) && $user instanceof User) {
 		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
 		// this will include signature content first and then replace var found into content of signature
 		//var_dump($onlykey);
-		$emailsendersignature = $user->signature; //  dy default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
+		$emailsendersignature = $user->signature; //  By default, we use the signature of current user. We must complete substitution with signature in c_email_senderprofile of array after calling getCommonSubstitutionArray()
 		$usersignature = $user->signature;
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__SENDEREMAIL_SIGNATURE__' => (string) ((!getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? ($onlykey == 2 ? dol_trunc('SignatureFromTheSelectedSenderProfile', 30) : $emailsendersignature) : ''),

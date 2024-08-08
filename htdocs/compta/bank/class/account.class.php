@@ -557,12 +557,12 @@ class Account extends CommonObject
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				// Anciens liens (pour compatibilite)
+				// Old links (for compatibility)
 				$lines[$i][0] = $obj->url;
 				$lines[$i][1] = $obj->url_id;
 				$lines[$i][2] = $obj->label;
 				$lines[$i][3] = $obj->type;
-				// Nouveaux liens
+				// New links
 				$lines[$i]['url'] = $obj->url;
 				$lines[$i]['url_id'] = $obj->url_id;
 				$lines[$i]['label'] = $obj->label;
@@ -1515,7 +1515,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					Include picto into link
 	 *  @param  string	$mode           			''=Link to card, 'transactions'=Link to transactions card
@@ -1950,7 +1950,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

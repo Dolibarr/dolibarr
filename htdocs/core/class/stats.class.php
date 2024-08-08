@@ -133,7 +133,7 @@ abstract class Stats
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) {
-				$year = $year - 1;
+				$year -= 1;
 			}
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -234,7 +234,7 @@ abstract class Stats
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) {
-				$year = $year - 1;
+				$year -= 1;
 			}
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getAmountByMonth($year, $format);

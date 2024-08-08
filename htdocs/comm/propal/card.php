@@ -216,10 +216,10 @@ if (empty($reshook)) {
 							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line) {
 								if (isset($line->date_start)) {
-									$line->date_start = $line->date_start + $difference;
+									$line->date_start +=  $difference;
 								}
 								if (isset($line->date_end)) {
-									$line->date_end = $line->date_end + $difference;
+									$line->date_end += $difference;
 								}
 							}
 						}
@@ -969,7 +969,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$tvatx= $line->tva_tx;
+			$tvatx = $line->tva_tx;
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}

@@ -1768,7 +1768,7 @@ class Project extends CommonObject
 		if ($move_date) {
 			$clone_project->date_start = $now;
 			if (!(empty($clone_project->date_end))) {
-				$clone_project->date_end = $clone_project->date_end + ($now - $orign_dt_start);
+				$clone_project->date_end += ($now - $orign_dt_start);
 			}
 		}
 
@@ -2491,7 +2491,7 @@ class Project extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
@@ -2674,7 +2674,7 @@ class Project extends CommonObject
 				$to = $obj->email;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
 				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
-					$numHolidays = $numHolidays - 2;
+					$numHolidays -= 2;
 					$weekendEnabled = 2;
 				}
 
