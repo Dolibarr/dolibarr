@@ -1136,17 +1136,17 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['src_object_id'])) {
 						$ecmfile->src_object_id = $moreinfo['src_object_id'];
 					}
-					if (!empty($moreinfo) && !empty($moreinfo['array_options']) && is_array($moreinfo['array_options'])) {
-						$ecmfile->array_options = $moreinfo['array_options'];
-					}
 
 					$resultecm = $ecmfile->create($user);
 					if ($resultecm < 0) {
 						setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 					} else {
-						$resultecm = $ecmfile->insertExtraFields();
-						if ($resultecm < 0) {
-							setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+						if (!empty($moreinfo) && !empty($moreinfo['array_options']) && is_array($moreinfo['array_options'])) {
+							$ecmfile->array_options = $moreinfo['array_options'];
+							$resultecm = $ecmfile->insertExtraFields();
+							if ($resultecm < 0) {
+								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+							}
 						}
 					}
 				} elseif ($resultecm < 0) {
