@@ -430,6 +430,65 @@ class Users extends DolibarrApi
 		}
 	}
 
+	/**
+	 * Update a users password
+	 *
+	 * @param   int     $id        User ID
+	 * @param	int		$send_password		Set this to 1 to have thenew password sent to the user
+	 * @return  int                1 if password changed, 2 if password changed and sent
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 User not found
+	 * @throws RestException 500 System error
+	 *
+	 * @url	GET {id}/setPassword
+	 */
+	public function setPassword($id, $send_password = 0, $entity = 1)
+	{
+		global $conf;
+
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "setPassword on user not allowed");
+		}
+
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found, no password changed');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
+			throw new RestException(403, 'User not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
+			$entity = (!empty($entity) ? $entity : $conf->entity);
+		} else {
+			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
+			// hack the security by giving himself permissions on another entity.
+			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+		}
+
+		// I do not like that the first parameter has to be an empty string :-()
+		// in user/card.php it is called like this setPassword($user, '')
+		// and my development server does not actually send email, so I can't really test this
+		$newpassword = $this->useraccount->setPassword('', '');	// This will generate a new password
+		if (is_int($newpassword) && $newpassword < 0) {
+			throw new RestException(520, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+		} else {
+			// Success
+			if ($send_password) {
+				// I do not like that the first parameter has to be an empty string :-(
+				// in user/card.php it is called like this send_password($user, $newpassword)
+				if ($this->useraccount->send_password('', $newpassword) > 0) {
+					return 2;
+				} else {
+					throw new RestException(530, 'ErrorFailedSendingNewPassword'.$this->useraccount->error);
+				}
+			} else {
+				return 1;
+			}
+		}
+	}
 
 	/**
 	 * List the groups of a user
