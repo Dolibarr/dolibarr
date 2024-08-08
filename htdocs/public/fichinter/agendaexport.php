@@ -53,27 +53,6 @@ if (!defined('NOIPCHECK')) {
 }
 
 
-// It's a wrapper, so empty header
-
-/**
- * Header function
- *
- * @return	void
- */
-function llxHeaderVierge()
-{
-	print '<html><title>Export fichinter cal</title><body>';
-}
-/**
- * Footer function
- *
- * @return	void
- */
-function llxFooterVierge()
-{
-	print '</body></html>';
-}
-
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref
@@ -159,9 +138,10 @@ if (!getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY')) {
 
 	top_httphead();
 
-	llxHeaderVierge();
+
+	print '<html><title>Export fichinter cal</title><body>';
 	print '<div class="error">Module Agenda was not configured properly.</div>';
-	llxFooterVierge();
+	print '</body></html>';
 	exit;
 }
 
@@ -173,13 +153,13 @@ $reshook = $hookmanager->executeHooks('doActions', $filters);
 if ($reshook < 0) {
 	top_httphead();
 
-	llxHeaderVierge();
+	print '<html><title>Export fichinter cal</title><body>';
 	if (!empty($hookmanager->errors) && is_array($hookmanager->errors)) {
 		print '<div class="error">'.implode('<br>', $hookmanager->errors).'</div>';
 	} else {
 		print '<div class="error">'.$hookmanager->error.'</div>';
 	}
-	llxFooterVierge();
+	print '</body></html>';
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
@@ -187,9 +167,9 @@ if ($reshook < 0) {
 
 		top_httphead();
 
-		llxHeaderVierge();
+		print '<html><title>Export fichinter cal</title><body>';
 		print '<div class="error">Bad value for key.</div>';
-		llxFooterVierge();
+		print '</body></html>';
 		exit;
 	}
 }
@@ -255,9 +235,9 @@ if ($shortfilename == 'dolibarrcalendar') {
 
 	top_httphead();
 
-	llxHeaderVierge();
+	print '<html><title>Export fichinter cal</title><body>';
 	print '<div class="error">'.$langs->trans("ErrorWrongValueForParameterX", 'format').'</div>';
-	llxFooterVierge();
+	print '</body></html>';
 	exit;
 }
 
@@ -377,9 +357,9 @@ if ($format == 'rss') {
 
 top_httphead();
 
-llxHeaderVierge();
+print '<html><title>Export fichinter cal</title><body>';
 print '<div class="error">'.$fichinterStatic->error.'</div>';
-llxFooterVierge();
+print '</body></html>';
 
 
 
