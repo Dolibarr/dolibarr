@@ -3,8 +3,8 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Gilles Poirier 		   <glgpoirier@gmail.com>
- * Copyright (C) 2018		charlene Benke 		   <charlie@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024	Charlene Benke 		   <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -174,6 +174,11 @@ function fichinter_admin_prepare_head()
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('fichinter');
 	$extrafields->fetch_name_optionals_label('fichinterdet');
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter_xcal.php";
+	$head[$h][1] = $langs->trans("ExportCal");
+	$head[$h][2] = 'xcal';
+	$h++;
 
 	$h = 0;
 	$head = array();
