@@ -582,11 +582,11 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 				$event['uid'] = 'dolibarragenda-'.$db->database_name.'-'.$obj->id."@".$_SERVER["SERVER_NAME"];
 				$event['type'] = $type;
 
-				$datestart = $db->jdate($obj->date) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+				$datestart = $db->jdate($obj->date) - ((int) getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
 
 				// fix for -> Warning: A non-numeric value encountered
 				// if (is_numeric($db->jdate($obj->datee))) {
-				// 	$dateend = $db->jdate($obj->datee) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+				// 	$dateend = $db->jdate($obj->datee) - ((int) getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
 				// } else {
 				// 	// use start date as fall-back to avoid pb with empty end date on ICS readers
 				// 	$dateend = $datestart;
@@ -628,8 +628,8 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 					//$event['url'] = $link_subscription;
 				}
 
-				$event['created'] = $db->jdate($obj->datec) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
-				$event['modified'] = $db->jdate($obj->datem) - (getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+				$event['created'] = $db->jdate($obj->datec) - ((int) getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
+				$event['modified'] = $db->jdate($obj->datem) - ((int) getDolGlobalString('MAIN_FICHINTER_EXPORT_FIX_TZ', 0) * 3600);
 				// $event['num_vote'] = $this->num_vote;
 				// $event['event_paid'] = $this->event_paid;
 				$event['status'] = $obj->fk_statut;
