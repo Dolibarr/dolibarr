@@ -155,7 +155,7 @@ if (!isModEnabled('intervention')) {
 
 // Check config
 if (!getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY')) {
-	$user->getrights();
+	$user->getRights();
 
 	top_httphead();
 
@@ -183,7 +183,7 @@ if ($reshook < 0) {
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
-		$user->getrights();
+		$user->getRights();
 
 		top_httphead();
 
