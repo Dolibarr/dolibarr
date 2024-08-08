@@ -235,7 +235,7 @@ if ($shortfilename == 'dolibarrcalendar') {
 	exit;
 }
 
-$fichinter = new fichinter($db);
+$fichinter = new Fichinter($db);
 
 $cachedelay = 0;
 if (getDolGlobalString('MAIN_FICHINTER_EXPORT_CACHE')) {
