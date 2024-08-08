@@ -386,11 +386,7 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 	require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 	require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
-	dol_syslog(
-			"build_exportfile Build export file format=".$format.", 
-			type=".$type.", cachedelay=".$cachedelay.", 
-			filename=".$filename.", filters size=".count($filters), LOG_DEBUG
-		);
+	dol_syslog("build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
 	// Check parameters
 	if (empty($format)) {
