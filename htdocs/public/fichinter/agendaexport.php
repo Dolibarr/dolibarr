@@ -252,7 +252,7 @@ $exportholidays = GETPOSTINT('includeholidays');
 
 // Build file
 if ($format == 'ical' || $format == 'vcal') {
-	$result = build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
+	$result = build_exportfile($format, $type, $cachedelay, $filename, $filters);
 	if ($result >= 0) {
 		$attachment = true;
 		if (GETPOSTISSET("attachment")) {
@@ -301,7 +301,7 @@ if ($format == 'ical' || $format == 'vcal') {
 }
 
 if ($format == 'rss') {
-	$result = build_exportfile($format, $type, $cachedelay, $filename, $filters, $exportholidays);
+	$result = build_exportfile($format, $type, $cachedelay, $filename, $filters);
 	if ($result >= 0) {
 		$attachment = false;
 		if (GETPOSTISSET("attachment")) {
