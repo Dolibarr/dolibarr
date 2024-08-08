@@ -679,7 +679,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							if (!empty($row['fk_user'])) {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($row['fk_user']);
-								// TODO Use a cache to aoid fetch for same user
+								// TODO Use a cache to avoid fetch for same user
 								$row['fullcivname'] = $objectdetail->getFullName($outputlangs, 1);
 							} else {
 								$row['fullcivname'] = '';
