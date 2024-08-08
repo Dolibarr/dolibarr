@@ -398,11 +398,9 @@ function build_exportfile($format, $type, $cachedelay, $filename, $filters)
 {
 
 	// quelques filtres possible au nivau du tableau $filters
-	// logina : login de l'utilisateur qui a créé l'événement (author)
-	// logini : login de l'utilisateur qui intervient
-	// loginr : login de l'utilisateur qui est responsable de l'intervention
-
-
+	// logina : user login who is create interventional (author)
+	// logini : user login who make the intenventional
+	// loginr : user login who is responsible of interventional
 
 	global $hookmanager;
 	global $db;
