@@ -134,10 +134,7 @@ if (!isModEnabled('intervention')) {
 
 // Check config
 if (!getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY')) {
-	$user->getRights();
-
 	top_httphead();
-
 
 	print '<html><title>Export fichinter cal</title><body>';
 	print '<div class="error">Module Agenda was not configured properly.</div>';
@@ -163,8 +160,6 @@ if ($reshook < 0) {
 } elseif (empty($reshook)) {
 	// Check exportkey
 	if (!GETPOST("exportkey") || getDolGlobalString('MAIN_FICHINTER_XCAL_EXPORTKEY') != GETPOST("exportkey")) {
-		$user->getRights();
-
 		top_httphead();
 
 		print '<html><title>Export fichinter cal</title><body>';
@@ -173,7 +168,6 @@ if ($reshook < 0) {
 		exit;
 	}
 }
-
 
 // Define filename with prefix on filters predica (each predica set must have on cache file)
 $shortfilename = 'dolibarrcalendar';
