@@ -165,21 +165,24 @@ class Asset extends CommonObject
 	 * @var int
 	 */
 	public $acquisition_type;
+	/**
+	 * @var int
+	 */
 	public $asset_type;
 	/**
 	 * @var int<0,1>
 	 */
 	public $not_depreciated;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $disposal_date;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $disposal_amount_ht;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_disposal_type;
 	/**
@@ -1324,8 +1327,8 @@ class Asset extends CommonObject
 		$this->disposal_date = null;
 		$this->disposal_amount_ht = null;
 		$this->fk_disposal_type = null;
-		$this->disposal_depreciated = null;
-		$this->disposal_subject_to_vat = null;
+		$this->disposal_depreciated = 0;
+		$this->disposal_subject_to_vat = 0;
 		$result = $this->update($user, 1);
 		if ($result > 0) {
 			$this->deleteObjectLinked(null, 'facture');

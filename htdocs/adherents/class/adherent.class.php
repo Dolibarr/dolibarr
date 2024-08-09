@@ -206,7 +206,7 @@ class Adherent extends CommonObject
 	public $datem;
 
 	/**
-	 * @var string
+	 * @var string|int
 	 */
 	public $datevalid;
 

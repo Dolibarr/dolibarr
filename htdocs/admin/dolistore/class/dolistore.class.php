@@ -41,20 +41,47 @@ class Dolistore
 	public $end;
 
 	/**
-	 * @var int
+	 * @var int Pagination: display per page
 	 */
-	public $per_page; // pagination: display per page
-	public $categorie; // the current categorie
+	public $per_page;
+	/**
+	 * @var int The current categorie
+	 */
+	public $categorie;
+	/**
+	 * @var ?SimpleXMLElement
+	 */
 	public $categories; // an array of categories
-	public $search; // the search keywords
+
+	/**
+	 * @var string The search keywords
+	 */
+	public $search;
 
 	// setups
+	/**
+	 * @var string
+	 */
 	public $url; // the url of this page
+	/**
+	 * @var string
+	 */
 	public $shop_url; // the url of the shop
+	/**
+	 * @var int
+	 */
 	public $lang; // the integer representing the lang in the store
+	/**
+	 * @var bool
+	 */
 	public $debug_api; // useful if no dialog
-
+	/**
+	 * PrestaShopWebservice
+	 */
 	public $api;
+	/**
+	 * @var ?SimpleXMLElement
+	 */
 	public $products;
 
 	/**

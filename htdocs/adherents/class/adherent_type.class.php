@@ -84,7 +84,7 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var string Subscription required (0 or 1)
+	 * @var int<0,1> Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -505,7 +505,7 @@ class AdherentType extends CommonObject
 				$this->morphy         = $obj->morphy;
 				$this->status         = $obj->status;
 				$this->duration       = $obj->duration;
-				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
+				$this->duration_value = (int) substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
 				$this->duration_unit  = substr($obj->duration, -1);
 				$this->subscription   = $obj->subscription;
 				$this->amount         = $obj->amount;
