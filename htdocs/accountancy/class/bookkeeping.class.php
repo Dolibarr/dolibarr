@@ -3096,8 +3096,18 @@ class BookKeepingLine extends CommonObjectLine
 	 */
 	public $id;
 
+	/**
+	 * @var ?int	Date of source document
+	 */
 	public $doc_date = null;
+	/**
+	 * @var string 	Doc type
+	 */
 	public $doc_type;
+
+	/**
+	 * @var string 	Doc ref
+	 */
 	public $doc_ref;
 
 	/**
@@ -3110,13 +3120,44 @@ class BookKeepingLine extends CommonObjectLine
 	 */
 	public $fk_docdet;
 
+	/**
+	 * @var string 	Thirdparty code
+	 */
 	public $thirdparty_code;
+
+	/**
+	 * @var string|null 	Subledger account
+	 */
 	public $subledger_account;
+
+	/**
+	 * @var string|null 	Subledger label
+	 */
 	public $subledger_label;
+
+	/**
+	 * @var string  doc_type
+	 */
 	public $numero_compte;
+
+	/**
+	 * @var string label compte
+	 */
 	public $label_compte;
+
+	/**
+	 * @var string label operation
+	 */
 	public $label_operation;
+
+	/**
+	 * @var float FEC:Debit
+	 */
 	public $debit;
+
+	/**
+	 * @var float FEC:Credit
+	 */
 	public $credit;
 
 	/**
@@ -3144,7 +3185,15 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var string Sens
 	 */
 	public $sens;
+
+	/**
+	 * @var ?string
+	 */
 	public $lettering_code;
+
+	/**
+	 * @var string
+	 */
 	public $date_lettering;
 
 	/**
@@ -3152,8 +3201,20 @@ class BookKeepingLine extends CommonObjectLine
 	 */
 	public $fk_user_author;
 
+
+	/**
+	 * @var string key for import
+	 */
 	public $import_key;
+
+	/**
+	 * @var string
+	 */
 	public $code_journal;
+
+	/**
+	 * @var string
+	 */
 	public $journal_label;
 	/**
 	 * @var int accounting transaction id

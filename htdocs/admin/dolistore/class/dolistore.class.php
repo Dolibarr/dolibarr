@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2017		 Oscss-Shop       <support@oscss-shop.fr>.
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -39,6 +40,9 @@ class Dolistore
 	 */
 	public $end;
 
+	/**
+	 * @var int
+	 */
 	public $per_page; // pagination: display per page
 	public $categorie; // the current categorie
 	public $categories; // an array of categories
@@ -118,7 +122,7 @@ class Dolistore
 	 * Load data from remote Dolistore market place.
 	 * This fills ->products
 	 *
-	 * @param 	array 	$options	Options. If 'categorie' is defined, we filter products on this category id
+	 * @param 	array{start:int,end:int,per_page:int,categorie:int,search:string}	$options	Options. If 'categorie' is defined, we filter products on this category id
 	 * @return	void
 	 */
 	public function getRemoteProducts($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0, 'search' => ''))

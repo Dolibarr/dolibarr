@@ -68,20 +68,23 @@ class AdherentType extends CommonObject
 	 */
 	public $morphy;
 
+	/**
+	 * @var string
+	 */
 	public $duration;
 
 	/**
-	 * type expiration
+	 * @var int type expiration
 	 */
 	public $duration_value;
 
 	/**
-	 * Expiration unit
+	 * @var string Expiration unit
 	 */
 	public $duration_unit;
 
 	/**
-	 * @var int Subscription required (0 or 1)
+	 * @var string Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -119,7 +122,7 @@ class AdherentType extends CommonObject
 	/** @var string Email sent after exclude */
 	public $mail_exclude = '';
 
-	/** @var array Array of members */
+	/** @var Adherent[] Array of members */
 	public $members = array();
 
 	/**
@@ -534,7 +537,7 @@ class AdherentType extends CommonObject
 	 *  Return list of members' type
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array					List of types of members
+	 *  @return array<int,string>		List of types of members
 	 */
 	public function liste_array($status = -1)
 	{
@@ -573,7 +576,7 @@ class AdherentType extends CommonObject
 	 *  Return the array of all amounts per membership type id
 	 *
 	 *  @param	int		$status			Filter on status of type
-	 *  @return array					Array of membership type
+	 *  @return array<int,string>		Array of membership type
 	 */
 	public function amountByType($status = null)
 	{
@@ -609,11 +612,11 @@ class AdherentType extends CommonObject
 	/**
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. This value must not come from a user input.
-	 *  @param	int		$mode				0=Return array of member instance
+	 * 	@param	string		$excludefilter	Filter to exclude. This value must not come from a user input.
+	 *  @param	int<0,2>	$mode			0=Return array of member instance
 	 *  									1=Return array of member instance without extra data
 	 *  									2=Return array of members id only
-	 * 	@return	mixed						Array of members or -1 on error
+	 * 	@return	Adherent[]|int<-1,-1>		Array of members or -1 on error
 	 */
 	public function listMembersForMemberType($excludefilter = '', $mode = 0)
 	{
@@ -713,12 +716,12 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return clickable name (with picto eventually)
 	 *
-	 *  @param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *  @param		int		$maxlen						length max label
-	 *  @param		int  	$notooltip					1=Disable tooltip
-	 *  @param  	string  $morecss                    Add more css on link
-	 *  @param  	int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return		string								String with URL
+	 *  @param	int<0,2>	$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+	 *  @param	int			$maxlen					length max label
+	 *  @param	int<0,1>	$notooltip				1=Disable tooltip
+	 *  @param 	string		$morecss				Add more css on link
+	 *  @param 	int<-1,1>	$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -773,8 +776,8 @@ class AdherentType extends CommonObject
 	/**
 	 *    Return label of status (activity, closed)
 	 *
-	 *    @param  	int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *    @return   string     	   		Label of status
+	 *    @param	int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *    @return	string     		   		Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -785,9 +788,9 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status         Status id
-	 *  @param	int		$mode           0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string          		Status label
+	 *  @param	int			$status		Status id
+	 *  @param	int<0,6>	$mode		0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string					Status label
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -815,11 +818,11 @@ class AdherentType extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		array	$info		Info array loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
-	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
-	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@param	array		$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>	$mode	0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *								1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+	 *								2=Return key only (uid=qqq)
+	 *	@return	string				DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{

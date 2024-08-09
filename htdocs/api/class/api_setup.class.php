@@ -40,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
  */
 class Setup extends DolibarrApi
 {
+	/**
+	 * @var ?Translate
+	 */
 	private $translations = null;
 
 	/**

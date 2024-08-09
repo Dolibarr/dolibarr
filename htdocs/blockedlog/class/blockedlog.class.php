@@ -65,6 +65,9 @@ class BlockedLog
 	 */
 	public $signature_line = '';
 
+	/**
+	 * @var ?float
+	 */
 	public $amounts = null;
 
 	/**
@@ -107,13 +110,29 @@ class BlockedLog
 	 */
 	public $date_modification;
 
+	/**
+	 * @var int
+	 */
 	public $date_object = 0;
 
+	/**
+	 * @var string
+	 */
 	public $ref_object = '';
 
+	/**
+	 * @var ?stdClass
+	 */
 	public $object_data = null;
+
+	/**
+	 * @var string
+	 */
 	public $object_version = '';
 
+	/**
+	 * @var string
+	 */
 	public $user_fullname = '';
 
 	/**

@@ -105,8 +105,17 @@ class AssetDepreciationOptions extends CommonObject
 			),
 		),
 	);
+	/**
+	 * @var int
+	 */
 	public $fk_asset;
+	/**
+	 * @var int
+	 */
 	public $fk_asset_model;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
 
 	/**
@@ -114,10 +123,25 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public $deprecation_options = array();
 
+	/**
+	 * @var int
+	 */
 	public $depreciation_type;
+	/**
+	 * @var float
+	 */
 	public $degressive_coefficient;
+	/**
+	 * @var int
+	 */
 	public $duration;
+	/**
+	 * @var int
+	 */
 	public $duration_type;
+	/**
+	 * @var int<0,1>
+	 */
 	public $accelerated_depreciation_option;
 
 	/**
@@ -383,7 +407,7 @@ class AssetDepreciationOptions extends CommonObject
 	 *  get general depreciation info for a mode (used in depreciation card)
 	 *
 	 * @param	string			$mode		Depreciation mode (economic, accelerated_depreciation, ...)
-	 * @return	array|int					Return integer <0 if KO otherwise array with general depreciation info
+	 * @return array{base_deperciation_ht,duration:string,duration_type:string,rate:string}|int<-1,-1>		Return integer <0 if KO otherwise array with general depreciation info
 	 */
 	public function getGeneralDepreciationInfoForMode($mode)
 	{

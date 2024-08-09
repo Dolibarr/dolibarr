@@ -106,6 +106,9 @@ class Adherent extends CommonObject
 	 */
 	public $civility_code;
 
+	/**
+	 * @var int
+	 */
 	public $civility;
 
 	/**
@@ -202,6 +205,9 @@ class Adherent extends CommonObject
 	 */
 	public $datem;
 
+	/**
+	 * @var string
+	 */
 	public $datevalid;
 
 	/**
@@ -239,6 +245,9 @@ class Adherent extends CommonObject
 	 */
 	public $user_login;
 
+	/**
+	 * @var string
+	 */
 	public $datefin;
 
 

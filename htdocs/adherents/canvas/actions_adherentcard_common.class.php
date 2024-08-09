@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,26 @@ abstract class ActionsAdherentCardCommon
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
-	public $card;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
-	//! Object container
+	/**
+	 * @var Object container
+	 */
 	public $object;
 
 	/**
@@ -57,7 +70,7 @@ abstract class ActionsAdherentCardCommon
 	 *  Get object
 	 *
 	 *  @param	int		$id		Object id
-	 *  @return	object			Object loaded
+	 *  @return	Adherent		Object loaded
 	 */
 	public function getObject($id)
 	{
