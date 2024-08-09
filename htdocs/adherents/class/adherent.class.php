@@ -246,7 +246,7 @@ class Adherent extends CommonObject
 	public $user_login;
 
 	/**
-	 * @var string
+	 * @var string|int
 	 */
 	public $datefin;
 

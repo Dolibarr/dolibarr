@@ -178,7 +178,7 @@ class Asset extends CommonObject
 	 */
 	public $disposal_date;
 	/**
-	 * @var ?string
+	 * @var null|string|int  Is string, but asset/Card.php assigns int.
 	 */
 	public $disposal_amount_ht;
 	/**
@@ -245,7 +245,7 @@ class Asset extends CommonObject
 	 */
 	public $asset_accountancy_codes;
 	/**
-	 * @var array<string,array>array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
+	 * @var array<string,array<array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
 	 */
 	public $depreciation_lines = array();
 
@@ -1040,7 +1040,7 @@ class Asset extends CommonObject
 					$fiscal_period_end = $init_fiscal_period_end;
 				}
 				$cumulative_depreciation_ht = $last_cumulative_depreciation_ht;
-				$depreciation_period_amount = $depreciation_amount - $this->reversal_amount_ht;
+				$depreciation_period_amount = $depreciation_amount - (float) $this->reversal_amount_ht;
 				$start_date = $depreciation_date_start;
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
@@ -1133,7 +1133,7 @@ class Asset extends CommonObject
 						}
 
 						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
-							$depreciation_ht = (float) price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
+							$depreciation_ht = (float) price2num($depreciation_amount - (float) $cumulative_depreciation_ht, 'MT');
 							$cumulative_depreciation_ht = $depreciation_amount;
 						} else {
 							$cumulative_depreciation_ht += $depreciation_ht;

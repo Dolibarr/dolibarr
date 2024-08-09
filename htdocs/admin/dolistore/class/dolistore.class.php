@@ -76,7 +76,7 @@ class Dolistore
 	 */
 	public $debug_api; // useful if no dialog
 	/**
-	 * PrestaShopWebservice
+	 * @var PrestaShopWebservice
 	 */
 	public $api;
 	/**
@@ -432,7 +432,7 @@ class Dolistore
 	{
 		// phpcs:enable
 		$param_array = array();
-		if (count($this->products) < $this->per_page) {
+		if ($this->products !== null && count($this->products) < $this->per_page) {
 			$add = 0;
 		} else {
 			$add = $this->per_page;
