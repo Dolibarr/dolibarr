@@ -475,16 +475,16 @@ class Users extends DolibarrApi
 		// and my development server does not actually send email, so I can't really test this
 		$newpassword = $this->useraccount->setPassword($user, '');	// This will generate a new password
 		if (is_int($newpassword) && $newpassword < 0) {
-			throw new RestException(520, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
 		} else {
 			// Success
 			if ($send_password) {
 				// I do not like that the first parameter has to be an empty string :-(
 				// in user/card.php it is called like this send_password($user, $newpassword)
-				if ($this->useraccount->send_password($user, $newpassword) > 0) {
+				if ($this->useraccount->send_password( $user, $newpassword) > 0) {
 					return 2;
 				} else {
-					throw new RestException(530, 'ErrorFailedSendingNewPassword'.$this->useraccount->error);
+					throw new RestException(500, 'ErrorFailedSendingNewPassword'.$this->useraccount->error);
 				}
 			} else {
 				return 1;
