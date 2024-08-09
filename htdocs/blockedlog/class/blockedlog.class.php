@@ -393,7 +393,7 @@ class BlockedLog
 	 *
 	 *	@param	CommonObject	$object		object to store
 	 *	@param	string			$action		action
-	 *	@param	string			$amounts	amounts
+	 *	@param	float|int		$amounts	amounts
 	 *	@param	?User			$fuser		User object (forced)
 	 *	@return	int							>0 if OK, <0 if KO
 	 */
@@ -825,9 +825,9 @@ class BlockedLog
 	/**
 	 * Encode data
 	 *
-	 * @param	string	$data	Data to serialize
-	 * @param	int		$mode	0=serialize, 1=json_encode
-	 * @return 	string			Value serialized, an object (stdClass)
+	 * @param	stdClass	$data	Data to serialize, an object (stdClass)
+	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
+	 * @return 	string		Value serialized
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
 	{
@@ -921,7 +921,7 @@ class BlockedLog
 
 		$this->date_creation = dol_now();
 
-		$this->object_version = ((float) DOL_VERSION);
+		$this->object_version = DOL_VERSION;
 
 
 		$this->db->begin();

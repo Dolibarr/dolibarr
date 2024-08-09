@@ -253,14 +253,14 @@ class Dolistore
 			if ($cat->is_root_category == 1 && $parent == 0) {
 				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.((int) $cat->id).'" ';
 				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a></h3>';
-				$html .= self::get_categories($cat->id);
+				$html .= self::get_categories((int) $cat->id);
 				$html .= "</li>\n";
 			} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
 				$select = ($cat->id == $this->categorie) ? ' selected' : '';
 				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.((int) $cat->id).'"';
 				$html .= ' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" ';
 				$html .= '>'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a>';
-				$html .= self::get_categories($cat->id);
+				$html .= self::get_categories((int) $cat->id);
 				$html .= "</li>\n";
 			}
 		}
