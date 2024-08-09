@@ -159,10 +159,6 @@ class Availabilities extends CommonObject
 	/**
 	 * @var string
 	 */
-	public $end;
-	/**
-	 * @var string
-	 */
 	public $import_key;
 	/**
 	 * @var string

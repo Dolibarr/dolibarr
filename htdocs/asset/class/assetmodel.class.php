@@ -154,7 +154,7 @@ class AssetModel extends CommonObject
 	 */
 	public $status;
 	/**
-	 * @var AssetDeprecationOptions
+	 * @var AssetDepreciationOptions
 	 */
 	public $asset_depreciation_options;
 	/**
