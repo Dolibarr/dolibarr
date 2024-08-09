@@ -45,7 +45,10 @@ abstract class ActionsAdherentCardCommon
 	 * @var string
 	 */
 	public $canvas;
-
+	/**
+	 * @var string
+	 */
+	public $card;
 	/**
 	 * @var array<string,mixed> Template container
 	 */
