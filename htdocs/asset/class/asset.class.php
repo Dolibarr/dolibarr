@@ -242,7 +242,7 @@ class Asset extends CommonObject
 	 */
 	public $asset_accountancy_codes;
 	/**
-	 * @var array<string,array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation:string,bookkeeping:Bookkeeping}>	List of depreciation lines for each mode (sort by depreciation date).
+	 * @var array<string,array>array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
 	 */
 	public $depreciation_lines = array();
 
