@@ -68,7 +68,7 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of action triggers
 	 */
-	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $lang='', $sqlfilters = '')
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
