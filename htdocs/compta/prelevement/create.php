@@ -110,7 +110,7 @@ $arrayfields = array(
 	'f.date_lim_reglement'=>array('label'=>"DateDue", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
 	'f.fk_account'=>array('label'=>"BankAccount", 'checked'=>1),
-	'pfd.fk_soc_rib'=>array('label'=>"RIB", 'checked'=>1),
+	'pfd.fk_soc_rib'=>array('label'=>"SupplierIBAN", 'checked'=>1),
 	'rum'=>array('label'=>"RUM", 'checked'=>1),
 	'pfd.amount'=>array('label'=>"AmountTTC", 'checked'=>1),
 	'pfd.date_demande'=>array('label'=>"DateRequest", 'checked'=>1)
@@ -213,7 +213,7 @@ if (empty($reshook)) {
 				$selected_invoices[] = (int) $select;
 			}
 			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, $selected_invoices, $id_bankaccount);
-			
+
 			if ($result < 0) {
 				setEventMessages($bprev->error, $bprev->errors, 'errors');
 			} elseif ($result == 0) {
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 
 $sql = "SELECT f.ref, f.rowid, f.date_lim_reglement as datelimite, f.total_ttc, f.fk_account,";
 $sql .= " s.nom as name, s.rowid as socid,";
-$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount"; //, pfd.fk_soc_rib";
+$sql .= " pfd.rowid as request_row_id, pfd.date_demande, pfd.amount, pfd.fk_soc_rib";
 if ($type == 'bank-transfer') {
 	$sql .= " , ref_supplier";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -693,7 +693,7 @@ if ($resql) {
 			if (!empty($arrayfields['f.fk_account']['checked'])) {
 				if (!empty($obj->fk_account)) {
 					$bankaccountstatic->fetch($obj->fk_account);
-					print '<td class="tdoverflowmax200">'.$bankaccountstatic->getNomUrl(1);
+					print '<td class="tdoverflowmax200">'.$bankaccountstatic->getNomUrl(1, '', 'reflabel');
 					print '<input type="hidden" name="account_searched" value="'.$obj->fk_account.'">';
 					print "</td>\n";
 				}
@@ -708,7 +708,7 @@ if ($resql) {
 				print '<td>';
 				if ($bac->id > 0) {
 					if (!empty($bac->iban) || !empty($bac->bic)) {
-						print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+						print (!empty($bac->label) ? $bac->label.' - ' : '').$bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 						if ($bac->verif() <= 0) {
 							print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error_message));
 						}
