@@ -418,7 +418,8 @@ if (empty($reshook) && $action == 'add') {
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) {
-		$error++; $donotclearsession = 1;
+		$error++;
+        $donotclearsession = 1;
 		$action = 'create';
 	}
 
