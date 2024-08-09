@@ -777,9 +777,10 @@ abstract class CommonInvoice extends CommonObject
 	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
 	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
 	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *  @param		int		$bacselected				IBAN selected
 	 *	@return     int         						<0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
+	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0, $bacselected = '')
 	{
 		// phpcs:enable
 		global $conf;
@@ -791,7 +792,11 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, $this->socid);
+			if (empty($bacselected)) {
+				$bac->fetch(0, $this->socid);
+			} else {
+				$bac->fetch($bacselected);
+			}
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
@@ -833,11 +838,12 @@ abstract class CommonInvoice extends CommonObject
 						} else {
 							$sql .= 'fk_facture, ';
 						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
+						$sql .= ' amount, date_demande, fk_user_demande, fk_soc_rib, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
 						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
 						$sql .= ", ".((int) $fuser->id);
+						$sql .= ",".(!empty($bac->id) ? $bac->id : 'NULL');
 						$sql .= ", '".$this->db->escape($bac->code_banque)."'";
 						$sql .= ", '".$this->db->escape($bac->code_guichet)."'";
 						$sql .= ", '".$this->db->escape($bac->number)."'";
