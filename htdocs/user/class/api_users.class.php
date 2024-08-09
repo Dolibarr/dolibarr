@@ -472,7 +472,7 @@ class Users extends DolibarrApi
 		// I do not like that the first parameter has to be an empty string :-()
 		// in user/card.php it is called like this setPassword($user, '')
 		// and my development server does not actually send email, so I can't really test this
-		$newpassword = $this->useraccount->setPassword($user, '');	// This will generate a new password
+		$newpassword = $this->useraccount->setPassword(global $user, '');	// This will generate a new password
 		if (is_int($newpassword) && $newpassword < 0) {
 			throw new RestException(520, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
 		} else {
@@ -480,7 +480,7 @@ class Users extends DolibarrApi
 			if ($send_password) {
 				// I do not like that the first parameter has to be an empty string :-(
 				// in user/card.php it is called like this send_password($user, $newpassword)
-				if ($this->useraccount->send_password($user, $newpassword) > 0) {
+				if ($this->useraccount->send_password(global $user, $newpassword) > 0) {
 					return 2;
 				} else {
 					throw new RestException(530, 'ErrorFailedSendingNewPassword'.$this->useraccount->error);
