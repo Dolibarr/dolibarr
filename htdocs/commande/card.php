@@ -2951,7 +2951,7 @@ if ($action == 'create' && $usercancreate) {
 				$arrayforbutaction = array();
 				// Create a purchase order
 				if (getDolGlobalInt('COMMANDE_DISABLE_ADD_PURCHASE_ORDER') == 0) {
-					$arrayforbutaction[] = array('lang'=>'orders', 'enabled'=>(isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbLinesProductOrServiceOnBuy(getDolGlobalInt('COMMANDE_ADD_PURCHASE_ORDER_IGNORE_FREE_PRODUCTS')) > 0), 'perm'=>$usercancreatepurchaseorder, 'label'=>'AddPurchaseOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
+					$arrayforbutaction[] = array('lang'=>'orders', 'enabled'=>(isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT ), 'perm'=>$usercancreatepurchaseorder, 'label'=>'AddPurchaseOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id);
 				}
 				/*if (isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0) {
 					if ($usercancreatepurchaseorder) { isModEnabled("supplier_order") && $object->statut > Commande::STATUS_DRAFT && $object->getNbOfServicesLines() > 0
