@@ -91,19 +91,20 @@ print '<body>'."\n";
 print '<div>';
 //print '<br>';
 
+// Define $multicompanyList
+$multicompanyList = '';
 
 if (!isModEnabled('multicompany')) {
 	$langs->load("admin");
-	$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
-	$bookmarkList .= '<br><br>';
+	$multicompanyList .= '<br><span class="opacitymedium">'.$langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("MultiCompany")).'</span>';
+	$multicompanyList .= '<br><br>';
+} elseif (!empty($user->entity) && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) { // Should not be accessible if the option to centralize users on the main entity is not activated
+	$langs->load("errors");
+	$multicompanyList .= '<br><span class="opacitymedium">'.$langs->trans("ErrorForbidden").'</span>';
+	$multicompanyList .= '<br><br>';
 } else {
 	// Instantiate hooks of thirdparty module
 	$hookmanager->initHooks(array('multicompany'));
-
-	// Define $bookmarks
-	$multicompanyList = '';
-	$searchForm = '';
-
 
 	if (is_object($mc)) {
 		$listofentities = $mc->getEntitiesList($user->login, false, true);
@@ -124,9 +125,6 @@ if (!isModEnabled('multicompany')) {
 	}
 	$multicompanyList .= '</ul>';
 
-	$searchForm .= '<input name="bookmark" id="top-multicompany-search-input" class="dropdown-search-input" placeholder="'.$langs->trans('Entity').'" autocomplete="off" >';
-
-
 	// Execute hook printBookmarks
 	$parameters = array('multicompany'=>$multicompanyList);
 	$reshook = $hookmanager->executeHooks('printMultiCompanyEntities', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -135,18 +133,17 @@ if (!isModEnabled('multicompany')) {
 	} else {
 		$multicompanyList = $hookmanager->resPrint;
 	}
-
-
-	print "\n";
-	print "<!-- Begin Multicompany list -->\n";
-	print '<div class="center"><div class="center" style="padding: 6px;">';
-	print '<style>.menu_titre { padding-top: 7px; }</style>';
-	print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
-	print $multicompanyList;
-	print '</div>'."\n";
-	print '</div></div>';
-	print "\n<!-- End SearchForm -->\n";
 }
+
+print "\n";
+print "<!-- Begin Multicompany list -->\n";
+print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<style>.menu_titre { padding-top: 7px; }</style>';
+print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
+print $multicompanyList;
+print '</div>'."\n";
+print '</div></div>';
+print "\n<!-- End Multicompany list -->\n";
 
 print '</div>';
 print '</body></html>'."\n";
