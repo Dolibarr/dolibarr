@@ -317,7 +317,7 @@ $num = $db->num_rows($resql);
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $helpurl, '');
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-intracommreport page-list');
 
 // Displays product removal confirmation
 if (GETPOST('delreport')) {

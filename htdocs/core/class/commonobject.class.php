@@ -8594,7 +8594,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
+		if (!array_key_exists($fieldKey, $fields) || !is_array($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}

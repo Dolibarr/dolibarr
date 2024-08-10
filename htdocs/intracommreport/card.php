@@ -171,7 +171,7 @@ if ($action == 'add' && $permissiontoadd) {
  */
 
 $title = $langs->trans("IntracommReportTitle");
-llxHeader("", $title);
+llxHeader("", $title, '', '', 0, 0, '', '', '', 'mod-intracommreport page-card');
 
 // Creation mode
 if ($action == 'create') {
