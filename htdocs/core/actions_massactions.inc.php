@@ -1182,6 +1182,8 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			} else {
 				$nbok++;
 			}
+
+            unset($objecttmp);
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;
