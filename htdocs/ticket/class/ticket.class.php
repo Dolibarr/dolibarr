@@ -1900,7 +1900,7 @@ class Ticket extends CommonObject
 					if (dol_mkdir($destdir) >= 0) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 						dol_move($filespath, $destfile);
-						if ($actioncomm->code == "TICKET_MSG") {
+						if (in_array($actioncomm->code,  array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
 							$ecmfile = new EcmFiles($this->db);
 							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
 							$destdir = preg_replace('/[\\/]$/', '', $destdir);
