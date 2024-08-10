@@ -107,11 +107,15 @@ if (!isModEnabled('multicompany')) {
 	$hookmanager->initHooks(array('multicompany'));
 
 	if (is_object($mc)) {
-		$listofentities = $mc->getEntitiesList($user->login, false, true);
+		$listofentities = $mc->getEntitiesList(true, false, true);
 	}
 
 	$multicompanyList .= '<ul class="ullistonly left" style="list-style: none;">';
 	foreach ($listofentities as $entityid => $entitycursor) {
+		// Check if the user has the right to access the entity
+		if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')	&& !empty($user->entity) && $mc->checkRight($user->id, $entityid) < 0) {
+			continue;
+		}
 		$url = DOL_URL_ROOT.'/core/multicompany_page.php?action=switchentity&token='.newToken().'&entity='.((int) $entityid).($backtourl ? '&backtourl='.urlencode($backtourl) : '');
 		$multicompanyList .= '<li class="lilistonly" style="height: 2.5em; font-size: 1.15em;">';
 		$multicompanyList .= '<a class="dropdown-item multicompany-item" id="multicompany-item-'.$entityid.'" data-id="'.$entityid.'" href="'.dol_escape_htmltag($url).'">';

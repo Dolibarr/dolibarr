@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Alexandre SPANGARO			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,9 +152,9 @@ print '</td></tr>';*/
 
 // Date
 print '<tr><td>';
-print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
+print $form->editfieldkey("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
+print $form->editfieldval("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
 print "</td>";
 print '</tr>';
 

@@ -1108,9 +1108,7 @@ if ($resql) {
 
 				//PMP Real
 				print '<td class="right">';
-
-
-				if (!empty($obj->pmp_real)) {
+				if (!empty($obj->pmp_real) || (string) $obj->pmp_real === '0') {
 					$pmp_real = $obj->pmp_real;
 				} else {
 					$pmp_real = $product_static->pmp;
@@ -1334,6 +1332,7 @@ function updateTotalValuation() {
 		maximumFractionDigits: currencyFractionDigits
 	}));
 }
+
 
 </script>
 	<?php
