@@ -84,7 +84,7 @@ if ($actionsave) {
  * View
  */
 
-if (!isset($conf->global->MAIN_FICHINTER_EXPORT_PAST_DELAY)) {
+if (!getDolGlobalString("MAIN_FICHINTER_EXPORT_PAST_DELAY")) {
 	$conf->global->MAIN_FICHINTER_EXPORT_PAST_DELAY = 100;
 }
 
