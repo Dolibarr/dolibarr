@@ -772,7 +772,7 @@ class ProductFournisseur extends Product
 	 *    @param	int			$limit		Limit
 	 *    @param	int			$offset		Offset
 	 *    @param	int			$socid		Filter on a third party id
-	 *    @return	array|int				Array of ProductFournisseur with new properties to define supplier price
+	 *    @return	ProductFournisseur[]|int<-1,-1>	Array of ProductFournisseur with new properties to define supplier price
 	 *    @see find_min_price_product_fournisseur()
 	 */
 	public function list_product_fournisseur_price($prodid, $sortfield = '', $sortorder = '', $limit = 0, $offset = 0, $socid = 0)
