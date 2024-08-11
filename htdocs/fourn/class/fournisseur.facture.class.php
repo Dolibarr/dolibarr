@@ -3885,7 +3885,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Percent of discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 

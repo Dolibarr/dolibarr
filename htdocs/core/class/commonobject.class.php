@@ -843,8 +843,8 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var float       Deposit percent for payment terms.
-	 *                  Populated by setPaymentTerms().
+	 * @var float|string Deposit percent for payment terms.
+	 *                   Populated by setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -2166,7 +2166,7 @@ abstract class CommonObject
 	 *	@param	?int			$id				To force other object id (should not be used)
 	 *	@param	string			$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
 	 *	@param	string			$id_field		To force rowid field name. 'rowid' is used if not defined
-	 *	@param	?User|?string	$fuser	Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
+	 *	@param	User|string|null	$fuser	Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
 	 *	@return	int<-2,1>					Return integer <0 if KO, >0 if OK

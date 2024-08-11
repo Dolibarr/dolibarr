@@ -61,6 +61,7 @@ class ProductFournisseur extends Product
 	public $id;
 
 	/**
+	 * @var string
 	 * @deprecated
 	 * @see $ref_supplier
 	 */
@@ -82,11 +83,12 @@ class ProductFournisseur extends Product
 	public $desc_supplier;
 
 	/**
-	 * @var float		The VAT rate by default for this {supplier, qty, product}. Can be set by get_buyprice().
+	 * @var string		The VAT rate by default for this {supplier, qty, product}. Can be set by get_buyprice().
 	 */
 	public $vatrate_supplier;
 
 	/**
+	 * @var int
 	 * @deprecated
 	 * @see $product_id
 	 */
