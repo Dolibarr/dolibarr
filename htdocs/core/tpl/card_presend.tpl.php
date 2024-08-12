@@ -88,9 +88,8 @@ if ($action == 'presend') {
 	if (empty($object->ref_client)) {
 		$topicmail = $outputlangs->trans($defaulttopic, '__REF__');
 	} elseif (!empty($object->ref_client)) {
-		$topicmail = $outputlangs->trans($defaulttopic, '__REF__ (__REF_CLIENT__)');
+		$topicmail = $outputlangs->trans($defaulttopic, '__REF__'. getDolGlobalString('MAIN_MAIL_NO_DISPLAY_OBJECT_REF_CLIENT', ' (__REF_CLIENT__)'));
 	}
-
 	// Build document if it not exists
 	$forcebuilddoc = true;
 	if (in_array($object->element, array('user', 'member'))) {
