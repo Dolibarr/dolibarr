@@ -249,8 +249,7 @@ if ($result) {
 					$line->fetch($obj->fdid);
 
 					// Situation invoices handling
-					$prev_progress = $line->get_prev_progress($obj->rowid);
-
+					$prev_progress = $line->getPrevProgressFromInvoiceCycleRefAndType($obj->situation_cycle_ref, $obj->type);
 					$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 				}
 			}

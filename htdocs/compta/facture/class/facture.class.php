@@ -6764,56 +6764,23 @@ class FactureLigne extends CommonInvoiceLine
 		// phpcs:enable
 		global $invoicecache;
 
-		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
-			return 0;
-		} else {
+		if ($invoiceid > 0) {
 			// If invoice is not a situation invoice, this->fk_prev_id is used for something else
 			if (!isset($invoicecache[$invoiceid])) {
 				$invoicecache[$invoiceid] = new Facture($this->db);
-				$invoicecache[$invoiceid]->fetch($invoiceid);
-			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) {
-				return 0;
-			}
-
-			$sql = "SELECT situation_percent FROM ".MAIN_DB_PREFIX."facturedet";
-			$sql .= " WHERE rowid = ".((int) $this->fk_prev_id);
-
-			$resql = $this->db->query($sql);
-
-			if ($resql && $this->db->num_rows($resql) > 0) {
-				$returnPercent = 0;
-
-				$obj = $this->db->fetch_object($resql);
-				if ($obj) {
-					$returnPercent = (float) $obj->situation_percent;
+				$result = $invoicecache[$invoiceid]->fetch($invoiceid);
+				if ($result <= 0) {
+					$this->error = $invoicecache[$invoiceid]->errorsToString();
+					$this->errors[] = $this->error;
+					dol_syslog(__METHOD__." Error : ".$this->error, LOG_ERR);
+					return -1;
 				}
-
-				if ($include_credit_note) {
-					$sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
-					$sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-					$sql .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
-					$sql .= " AND f.situation_cycle_ref = ".((int) $invoicecache[$invoiceid]->situation_cycle_ref); // Prevent cycle outed
-					$sql .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
-
-					$res = $this->db->query($sql);
-					if ($res) {
-						while ($obj = $this->db->fetch_object($res)) {
-							$returnPercent += (float) $obj->situation_percent;
-						}
-					} else {
-						dol_print_error($this->db);
-					}
-				}
-
-				return $returnPercent;
-			} else {
-				$this->error = $this->db->error();
-				dol_syslog(get_class($this)."::select Error ".$this->error, LOG_ERR);
-				$this->db->rollback();
-				return -1;
 			}
+
+			return $this->getPrevProgressFromInvoiceCycleRefAndType($invoicecache[$invoiceid]->situation_cycle_ref, $invoicecache[$invoiceid]->type, $include_credit_note);
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -6886,6 +6853,70 @@ class FactureLigne extends CommonInvoiceLine
 				}
 			}
 			return $cumulated_percent;
+		}
+	}
+
+	/**
+	 * Returns situation percent of the previous line.
+	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
+	 *
+	 * @param	int		$invoiceSituationCycleRef	Situation cycle reference of invoice
+	 * @param	int		$invoiceType				Type of invoice
+	 * @param	bool	$includeCreditNote			Include credit note or not
+	 * @return	float|int							Return previous situation percent or 0 if not situation invoice or -1 if error
+	 */
+	public function getPrevProgressFromInvoiceCycleRefAndType($invoiceSituationCycleRef, $invoiceType, $includeCreditNote = true)
+	{
+		if (empty($this->fk_prev_id) || $this->fk_prev_id == "") {
+			return 0;
+		} else {
+			if ($invoiceType != Facture::TYPE_SITUATION)	return 0;
+
+			$sql1 = "SELECT situation_percent FROM ".$this->db->prefix()."facturedet";
+			$sql1 .= " WHERE rowid=".$this->fk_prev_id;
+			$res1 = $this->db->query($sql1);
+			if ($res1) {
+				$error = 0;
+				$returnPercent = 0;
+
+				if ($obj1 = $this->db->fetch_object($res1)) {
+					$returnPercent = (float) $obj1->situation_percent;
+
+					if ($includeCreditNote) {
+						$sql2 = "SELECT fd.situation_percent FROM ".$this->db->prefix()."facturedet fd";
+						$sql2 .= " INNER JOIN ".MAIN_DB_PREFIX."facture f ON (f.rowid = fd.fk_facture) ";
+						$sql2 .= " WHERE fd.fk_prev_id = ".$this->fk_prev_id;
+						$sql2 .= " AND f.situation_cycle_ref = ".((int) $invoiceSituationCycleRef); // Prevent cycle outed
+						$sql2 .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
+
+						$res2 = $this->db->query($sql2);
+						if ($res2) {
+							while ($obj2 = $this->db->fetch_object($res2)) {
+								$returnPercent += (float) $obj2->situation_percent;
+							}
+
+							$this->db->free($res2);
+						} else {
+							$error++;
+							$this->error = $this->db->lasterror();
+							$this->errors[] = $this->error;
+						}
+					}
+				}
+				$this->db->free($res1);
+
+				if ($error) {
+					dol_syslog(__METHOD__." Error : ".$this->error, LOG_ERR);
+					return -1;
+				} else {
+					return $returnPercent;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(__METHOD__." Error : ".$this->error, LOG_ERR);
+				return -1;
+			}
 		}
 	}
 }
