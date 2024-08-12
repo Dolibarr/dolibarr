@@ -6873,7 +6873,7 @@ class FactureLigne extends CommonInvoiceLine
 			if ($invoiceType != Facture::TYPE_SITUATION)	return 0;
 
 			$sql1 = "SELECT situation_percent FROM ".$this->db->prefix()."facturedet";
-			$sql1 .= " WHERE rowid=".$this->fk_prev_id;
+			$sql1 .= " WHERE rowid = ".((int) $this->fk_prev_id);
 			$res1 = $this->db->query($sql1);
 			if ($res1) {
 				$error = 0;
@@ -6884,8 +6884,8 @@ class FactureLigne extends CommonInvoiceLine
 
 					if ($includeCreditNote) {
 						$sql2 = "SELECT fd.situation_percent FROM ".$this->db->prefix()."facturedet fd";
-						$sql2 .= " INNER JOIN ".MAIN_DB_PREFIX."facture f ON (f.rowid = fd.fk_facture) ";
-						$sql2 .= " WHERE fd.fk_prev_id = ".$this->fk_prev_id;
+						$sql2 .= " INNER JOIN ".$this->db->prefix()."facture f ON (f.rowid = fd.fk_facture) ";
+						$sql2 .= " WHERE fd.fk_prev_id = ".((int) $this->fk_prev_id);
 						$sql2 .= " AND f.situation_cycle_ref = ".((int) $invoiceSituationCycleRef); // Prevent cycle outed
 						$sql2 .= " AND f.type = ".Facture::TYPE_CREDIT_NOTE;
 
