@@ -683,6 +683,15 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	$reshook = $hookmanager->executeHooks('dolibarrSetConst', $parameters); // Note that $action and $object may have been modified by some hooks
 	if ($reshook != 0) {
 		return $reshook;
+
+	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
+
+	$db->begin();
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
+	$sql .= " WHERE name = ".$db->encrypt($name);
+	if ($entity >= 0) {
+		$sql .= " AND entity = ".((int) $entity);
 	}
 
 	dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
