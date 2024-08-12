@@ -656,7 +656,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	// Clean parameters
 	$name = trim($name);
@@ -666,15 +666,23 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters");
 		exit;
 	}
+	if (! is_object($hookmanager)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
 
-	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
+	$parameters = array(
+		'name' => $name,
+		'value' => $value,
+		'type' => $type,
+		'visible' => $visible,
+		'note' => $note,
+		'entity' => $entity,
+	);
 
-	$db->begin();
-
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE name = ".$db->encrypt($name);
-	if ($entity >= 0) {
-		$sql .= " AND entity = ".((int) $entity);
+	$reshook = $hookmanager->executeHooks('dolibarrSetConst', $parameters); // Note that $action and $object may have been modified by some hooks
+	if ($reshook != 0) {
+		return $reshook;
 	}
 
 	dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
