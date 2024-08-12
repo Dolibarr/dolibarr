@@ -47,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
 
@@ -457,6 +458,8 @@ if (empty($reshook)) {
 					for ($i = 0; $i < $num; $i++) {
 						$desc = ($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 						if ($lines[$i]->subprice < 0) {
+							require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
 							// Negative line, we create a discount line
 							$discount = new DiscountAbsolute($db);
 							$discount->fk_soc = $objecttmp->socid;

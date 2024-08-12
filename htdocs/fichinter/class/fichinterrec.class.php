@@ -882,8 +882,9 @@ class FichinterRec extends Fichinter
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->nb_gen_done = $this->nb_gen_done + 1;
-			$this->nb_gen_done = dol_now();
+			$this->nb_gen_done++;
+			$this->date_last_gen = dol_now();
+			//$this->date_when = ...
 			return 1;
 		} else {
 			dol_print_error($this->db);

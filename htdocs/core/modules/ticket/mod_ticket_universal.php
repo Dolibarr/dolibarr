@@ -79,6 +79,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Prefix settings
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -117,9 +118,9 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc     Object third party
-	 *  @param  Ticket  $ticket 	Object ticket
-	 *  @return string|0            Next value if OK, 0 if KO
+	 *  @param  Societe 		$objsoc     Object third party
+	 *  @param  Ticket  		$ticket 	Object ticket
+	 *  @return string|int   			Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{

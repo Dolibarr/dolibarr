@@ -1024,11 +1024,17 @@ td.wordbreak img, td.wordbreakimp img {
 .paddingtop {
 	padding-top: 4px;
 }
+.paddingtopimp {
+	padding-top: 4px !important;
+}
 .paddingtop2 {
 	padding-top: 2px;
 }
 .paddingbottom {
 	padding-bottom: 4px;
+}
+.paddingbottomimp {
+	padding-bottom: 4px !important;
 }
 .paddingbottom2 {
 	padding-bottom: 2px;
@@ -8414,11 +8420,6 @@ table.jPicker {
 
 	.a-mesure, .a-mesure-disabled {
 		text-align: center;
-	}
-
-
-	div.fichehalfright {
-		margin-top: 30px;
 	}
 
 

@@ -117,8 +117,8 @@ class ProductCombination2ValuePair
 	/**
 	 * Create a ProductCombination2ValuePair
 	 *
-	 * @param	User	$user		User that creates		//not used
-	 * @return 	-1|1				1 if OK, -1 if KO
+	 * @param	User		$user		User that creates		//not used
+	 * @return 	int						Return 1 if OK, -1 if KO
 	 */
 	public function create($user)
 	{
@@ -141,7 +141,7 @@ class ProductCombination2ValuePair
 	 * Retrieve all ProductCombination2ValuePair linked to a given ProductCombination ID.
 	 *
 	 * @param   int          $fk_combination           ID of the ProductCombination
-	 * @return  -1|ProductCombination2ValuePair[]      -1 if KO, array of ProductCombination2ValuePair if OK
+	 * @return  -1|ProductCombination2ValuePair[]      Return <0 if KO, array of ProductCombination2ValuePair if OK
 	 */
 	public function fetchByFkCombination($fk_combination)
 	{
@@ -179,8 +179,8 @@ class ProductCombination2ValuePair
 	/**
 	 * Delete all ProductCombination2ValuePair linked to a given ProductCombination ID.
 	 *
-	 * @param       int     $fk_combination         ID of the ProductCombination
-	 * @return      -1|1                            -1 if KO, 1 if OK
+	 * @param       int     	$fk_combination         ID of the ProductCombination
+	 * @return      int		                            Return <0 if KO, 1 if OK
 	 */
 	public function deleteByFkCombination($fk_combination)
 	{

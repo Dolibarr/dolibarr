@@ -82,6 +82,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Delivery"), $langs->transnoentities("Delivery"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
@@ -104,7 +105,7 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -121,13 +122,13 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     	Object third party
-	 *  @param  Delivery	$object			Object delivery
-	 *  @return string|0      				Value if OK, 0 if KO
+	 *  @param	Societe			$objsoc     	Object third party
+	 *  @param  Delivery		$object			Object delivery
+	 *  @return string|int      				Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -148,9 +149,9 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
-	 * 	@param	Delivery	$objforref	Object for number to search
-	 *  @return string|0      			Next free value, 0 if KO
+	 *  @param	Societe			$objsoc     Object third party
+	 * 	@param	Delivery		$objforref	Object for number to search
+	 *  @return string|int      			Next free value, 0 if KO
 	 *  @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
