@@ -46,7 +46,7 @@ create table llx_bank_account
   pti_in_ctti               smallint DEFAULT 0,
   state_id					integer        DEFAULT NULL,
   fk_pays					integer        NOT NULL,
-  proprio					varchar(60),
+  owner_name					varchar(60),
   owner_address				varchar(255),
   owner_zip					varchar(25),
   owner_town				varchar(50),

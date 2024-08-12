@@ -415,3 +415,5 @@ UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI
 ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity	integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+ALTER TABLE llx_bank_account CHANGE COLUMN proprio owner_name varchar(60);

@@ -147,7 +147,7 @@ if (empty($reshook)) {
 		$object->address = trim(GETPOST("account_address", "alphanohtml"));
 		$object->domiciliation = $object->address;	// deprecated
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
+		$object->owner_name = trim(GETPOST("owner_name", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
 		$object->owner_town = trim(GETPOST("owner_town", 'alphanohtml'));
@@ -261,7 +261,7 @@ if (empty($reshook)) {
 		$object->iban = trim(GETPOST("iban"));
 		$object->pti_in_ctti = empty(GETPOST("pti_in_ctti")) ? 0 : 1;
 
-		$object->proprio = trim(GETPOST("proprio", 'alphanohtml'));
+		$object->owner_name = trim(GETPOST("owner_name", 'alphanohtml'));
 		$object->owner_address = trim(GETPOST("owner_address", 'alphanohtml'));
 		$object->owner_zip = trim(GETPOST("owner_zip", 'alphanohtml'));
 		$object->owner_town = trim(GETPOST("owner_town", 'alphanohtml'));
@@ -602,7 +602,7 @@ if ($action == 'create') {
 
 		print '<table class="border centpercent">';
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankAccountOwner").'</td>';
-		print '<td><input type="text" class="flat minwidth300" name="proprio" value="'.(GETPOST('proprio') ? GETPOST('proprio', 'alpha') : $object->proprio).'">';
+		print '<td><input type="text" class="flat minwidth300" name="owner_name" value="'.(GETPOST('owner_name') ? GETPOST('owner_name', 'alpha') : $object->owner_name).'">';
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
@@ -1197,7 +1197,7 @@ if ($action == 'create') {
 			print '<table class="border centpercent">';
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-			print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="proprio" value="'.$object->proprio.'"></td>';
+			print '<td><input class="maxwidth200onsmartphone" type="text" class="flat" name="owner_name" value="'.$object->owner_name.'"></td>';
 			print '</tr>';
 
 			print '<tr><td class="titlefieldcreate tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
