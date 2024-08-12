@@ -45,6 +45,7 @@ function product_prepare_head($object)
 		$label = $langs->trans('Service');
 		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
 	}
+
 	$h = 0;
 	$head = array();
 
