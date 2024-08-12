@@ -39,9 +39,7 @@ function product_prepare_head($object)
 	$langs->load("products");
 
 	$label = $langs->trans('Product');
-	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ?
-		$user->hasRight('product', 'product_advance', 'read_prices') :
-		$user->hasRight('product', 'read');
+	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
 
 	if ($object->isService()) {
 		$label = $langs->trans('Service');
