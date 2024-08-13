@@ -582,7 +582,7 @@ class AccountingJournal extends CommonObject
 							}
 
 							$lines = array();
-							$lines[0][$accountancy_code_value_asset_sold] = -($element_static->acquisition_value_ht - $last_cumulative_amount_ht);
+							$lines[0][$accountancy_code_value_asset_sold] = -((float) $element_static->acquisition_value_ht - $last_cumulative_amount_ht);
 							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 

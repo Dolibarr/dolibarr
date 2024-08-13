@@ -289,7 +289,7 @@ if ($module == 'ecm' && $ecmdir->id > 0) {
 	$object->fetch($ecmdir->id);
 }
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-dir_card');
 
 // Built the file List
 $filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
