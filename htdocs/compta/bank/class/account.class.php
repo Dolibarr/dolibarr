@@ -884,7 +884,7 @@ class Account extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$error = 0;
 
