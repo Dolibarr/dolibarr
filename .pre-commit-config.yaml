@@ -1,5 +1,5 @@
 ---
-exclude: (?x)^( htdocs/includes/ckeditor/.* )
+exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -11,7 +11,12 @@ repos:
         args: [--unsafe]
       - id: check-json
       - id: mixed-line-ending
-        exclude: (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*)$
+        # alternative for dev/tools/fixdosfiles.sh
+        exclude: |
+          (?x)^(htdocs/includes/tecnickcom/tcpdf/fonts/.*
+               |.*/CRLF.*.php  # Files in swiftmailer
+               )$
+        args: [--fix=lf]
       - id: trailing-whitespace
         exclude_types: [markdown]
       - id: end-of-file-fixer
@@ -31,7 +36,8 @@ repos:
     rev: v6.2.1
     hooks:
       - id: beautysh
-        exclude: (?x)^(dev/setup/git/hooks/pre-commit)$
+        exclude:
+          (?x)^(dev/setup/git/hooks/pre-commit)$
         args: [--tab]
 
   # Run local script
@@ -66,6 +72,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
           ]
       - alias: php-cs-with-cache
         id: php-cs
@@ -76,6 +83,7 @@ repos:
             --standard=dev/setup/codesniffer/ruleset.xml,
             --report=emacs,
             --severity=5,
+            --no-colors,
             --cache=.cache/pre-commit/dolibarr-php-cs.cache,
             .,
           ]
@@ -162,7 +170,18 @@ repos:
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
-
+      - alias: codespell-ignores
+        #
+        # Update codespell ignore file.
+        #
+        # Execute with `pre-commit run codespell -a --hook-stage manual`
+        id: codespell
+        stages: [manual]
+        name: Update file with codespell exceptions
+        additional_dependencies: [tomli]
+        language: python
+        entry: bash -c '[ ! -x dev/tools/codespell/addCodespellIgnores.sh ] || dev/tools/codespell/addCodespellIgnores.sh'
+        pass_filenames: false
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.6
