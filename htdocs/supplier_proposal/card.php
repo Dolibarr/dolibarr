@@ -2077,14 +2077,14 @@ if ($action == 'create') {
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_proposal'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-
+		$MAXEVENT = 10;
 
 		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid, 1);
+		$somethingshown = $formactions->showactions($object, 'supplier_proposal', $socid, 1, '', $MAXEVENT);
 
 		print '</div></div>';
 	}

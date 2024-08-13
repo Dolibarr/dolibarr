@@ -1801,12 +1801,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
-		// Recherche histo sur actioncomm
-		if (is_object($objcon) && $objcon->id > 0) {
-			$sql = "SELECT DISTINCT a.id, a.label as label,";
-		} else {
-			$sql = "SELECT a.id, a.label as label,";
-		}
+		$sql = "SELECT a.id, a.label as label,";
 		$sql .= " a.datep as dp,";
 		$sql .= " a.datep2 as dp2,";
 		$sql .= " a.percent as percent, 'action' as type,";
@@ -1848,18 +1843,20 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		// Link to the owner of action
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
+		// Link to action types
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-		if (is_object($filterobj) && get_class($filterobj) !== 'User') {
-			$force_filter_contact = false;
-		} else {
+		// Set $force_filter_contact:
+		// - true for a filter on a user or a contact, so a link on table llx_actioncomm_resources or llx_actioncomm.fk_user_action
+		// - false for a link on table llx_element_resources
+		$force_filter_contact = false;
+		if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
 			$force_filter_contact = true;
 		}
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
 		// Fields from hook
@@ -1896,6 +1893,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
+
 		if ($force_filter_contact === false) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
 				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
@@ -1955,7 +1953,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				return 'Bad value for $filterobj';
 			}
 		} else {
-			$sql .= " AND u.rowid = ". ((int) $filterobj->id);
+			if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
+				$sql .= " AND (u.rowid = ". ((int) $filterobj->id).' OR ';
+				$sql .= " EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
+				$sql .= " AND r.element_type = '".$db->escape($filterobj->table_element)."' AND r.fk_element = ".((int) $filterobj->id).')';
+				$sql .= ")";
+			}
+			if (is_object($objcon) && $objcon->id > 0) {
+				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
+				$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id).')';
+			}
 		}
 
 		if (!empty($tms_start) && !empty($tms_end)) {
