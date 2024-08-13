@@ -189,7 +189,7 @@ if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -419,7 +419,11 @@ if ($action == "view_ticketlist") {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 
-				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
+				$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
+
+				$newcardbutton = '<a class="marginrightonly" href="'.$baseurl . 'create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'&token='.newToken().'" rel="nofollow noopener"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon" title="'.dol_escape_htmltag($langs->trans("CreateTicket")).'"></span></a>';
+
+				print_barre_liste($langs->trans('TicketList'), $page, 'list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket', 0, $newcardbutton);
 
 				// Search bar
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" id="searchFormList" >'."\n";
@@ -472,13 +476,13 @@ if ($action == "view_ticketlist") {
 
 				if (!empty($arrayfields['category.code']['checked'])) {
 					print '<td class="liste_titre">';
-					$formTicket->selectGroupTickets($search_category, 'search_category', 'public=1', 2, 1, 1);
+					$formTicket->selectGroupTickets($search_category, 'search_category', '(public:=:1)', 2, 1, 1, 0, 'maxwidth150');
 					print '</td>';
 				}
 
 				if (!empty($arrayfields['severity.code']['checked'])) {
 					print '<td class="liste_titre">';
-					$formTicket->selectSeveritiesTickets($search_severity, 'search_severity', '', 2, 1, 1);
+					$formTicket->selectSeveritiesTickets($search_severity, 'search_severity', '', 2, 1, 1, 0, 'maxwidth150');
 					print '</td>';
 				}
 
@@ -580,21 +584,21 @@ if ($action == "view_ticketlist") {
 					// Date ticket
 					if (!empty($arrayfields['t.datec']['checked'])) {
 						print '<td>';
-						print dol_print_date($db->jdate($obj->datec), 'dayhour');
+						print dol_print_date($db->jdate($obj->datec), 'dayhour', 'tzuserrel');
 						print '</td>';
 					}
 
 					// Date read
 					if (!empty($arrayfields['t.date_read']['checked'])) {
 						print '<td>';
-						print dol_print_date($db->jdate($obj->date_read), 'dayhour');
+						print dol_print_date($db->jdate($obj->date_read), 'dayhour', 'tzuserrel');
 						print '</td>';
 					}
 
 					// Date close
 					if (!empty($arrayfields['t.date_close']['checked'])) {
 						print '<td>';
-						print dol_print_date($db->jdate($obj->date_close), 'dayhour');
+						print dol_print_date($db->jdate($obj->date_close), 'dayhour', 'tzuserrel');
 						print '</td>';
 					}
 

@@ -103,7 +103,6 @@ TicketNewEmailSubject=Confirmação de criação de ticket - Ref %s (ID do ticke
 TicketNewEmailBody=Este é um e-mail automático para confirmar que você registrou um novo ticket.
 TicketNewEmailBodyCustomer=Este é um e-mail automático para confirmar que um novo ticket acaba de ser criado na sua conta.
 TicketNewEmailBodyInfosTrackId=Número de acompanhamento do tíquete : %s
-TicketTrackId=ID de acompanhamento público
 OneOfTicketTrackId=Um de seu ID de acompanhamento
 ErrorTicketNotFound=Tíquete com número %s não encontrado
 ViewTicket=Visualizar passagem

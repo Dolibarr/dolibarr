@@ -483,9 +483,9 @@ class Propal extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Adding line of fixed discount in the proposal in DB
+	 *	Add a discount line into an proposal (as a proposal line) using an existing absolute discount (Consume the discount)
 	 *
-	 *	@param     int		$idremise			Id of fixed discount
+	 *	@param     int		$idremise			Id of fixed discount from table llx_societe_remise_except
 	 *  @return    int          				>0 if OK, <0 if KO
 	 */
 	public function insert_discount($idremise)
@@ -1422,8 +1422,10 @@ class Propal extends CommonObject
 			}
 
 			// reset ref_client
-			$object->ref_client = '';
-			$object->ref_customer = '';
+			if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
+				$object->ref_client = '';
+				$object->ref_customer = '';
+			}
 
 			// TODO Change product price if multi-prices
 		} else {
@@ -3721,7 +3723,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int		$withpicto		          Add picto into link
 	 *	@param      string	$option			          Where point the link ('expedition', 'document', ...)
@@ -3936,7 +3938,7 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

@@ -65,6 +65,9 @@ class BlockedLog
 	 */
 	public $signature_line = '';
 
+	/**
+	 * @var ?float
+	 */
 	public $amounts = null;
 
 	/**
@@ -98,22 +101,38 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var int|string date_creation
 	 */
 	public $date_creation;
 
 	/**
-	 * @var integer|string $date_modification;
+	 * @var int|string $date_modification;
 	 */
 	public $date_modification;
 
+	/**
+	 * @var int
+	 */
 	public $date_object = 0;
 
+	/**
+	 * @var string
+	 */
 	public $ref_object = '';
 
+	/**
+	 * @var ?stdClass
+	 */
 	public $object_data = null;
+
+	/**
+	 * @var string
+	 */
 	public $object_version = '';
 
+	/**
+	 * @var string
+	 */
 	public $user_fullname = '';
 
 	/**
@@ -374,7 +393,7 @@ class BlockedLog
 	 *
 	 *	@param	CommonObject	$object		object to store
 	 *	@param	string			$action		action
-	 *	@param	string			$amounts	amounts
+	 *	@param	float|int		$amounts	amounts
 	 *	@param	?User			$fuser		User object (forced)
 	 *	@return	int							>0 if OK, <0 if KO
 	 */
@@ -806,9 +825,9 @@ class BlockedLog
 	/**
 	 * Encode data
 	 *
-	 * @param	string	$data	Data to serialize
-	 * @param	int		$mode	0=serialize, 1=json_encode
-	 * @return 	string			Value serialized, an object (stdClass)
+	 * @param	stdClass	$data	Data to serialize, an object (stdClass)
+	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
+	 * @return 	string		Value serialized
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
 	{
@@ -902,7 +921,7 @@ class BlockedLog
 
 		$this->date_creation = dol_now();
 
-		$this->object_version = ((float) DOL_VERSION);
+		$this->object_version = DOL_VERSION;
 
 
 		$this->db->begin();

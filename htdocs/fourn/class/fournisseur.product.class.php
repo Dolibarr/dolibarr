@@ -391,7 +391,7 @@ class ProductFournisseur extends Product
 		}
 		if ($price_base_type == 'TTC') {
 			$ttx = $tva_tx;
-			$buyprice = $buyprice / (1 + ($ttx / 100));
+			$buyprice /= (1 + ($ttx / 100));
 		}
 
 		// Multicurrency
@@ -406,7 +406,7 @@ class ProductFournisseur extends Product
 			}
 			if ($multicurrency_price_base_type == 'TTC') {
 				$ttx = $tva_tx;
-				$multicurrency_buyprice = $multicurrency_buyprice / (1 + ($ttx / 100));
+				$multicurrency_buyprice /= (1 + ($ttx / 100));
 			}
 			$multicurrency_buyprice = price2num($multicurrency_buyprice, 'MU');
 			$multicurrency_unitBuyPrice = price2num($multicurrency_buyprice / $qty, 'MU');

@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2024		Regis Houssin		<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,15 +17,17 @@
 --
 -- ===================================================================
 
-CREATE TABLE llx_c_holiday_types (
-  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  code varchar(16) NOT NULL,
-  label varchar(255) NOT NULL,
-  affect integer NOT NULL,						-- a request will change sold or not
-  delay integer NOT NULL,						-- Minimum delay to be allowed to make request
-  newbymonth double(8,5) DEFAULT 0 NOT NULL, -- Amount of new days for each user each month
-  fk_country integer DEFAULT NULL,			-- This type is dedicated to a country
-  block_if_negative integer NOT NULL DEFAULT 0,
-  sortorder smallint,
-  active integer DEFAULT 1
+CREATE TABLE llx_c_holiday_types 
+(
+  rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,
+  code				varchar(16) NOT NULL,
+  label				varchar(255) NOT NULL,
+  affect			integer NOT NULL,						-- a request will change sold or not
+  delay				integer NOT NULL,						-- Minimum delay to be allowed to make request
+  newbymonth		double(8,5) DEFAULT 0 NOT NULL, -- Amount of new days for each user each month
+  fk_country		integer DEFAULT NULL,			-- This type is dedicated to a country
+  block_if_negative	integer NOT NULL DEFAULT 0,
+  sortorder			smallint,
+  active			integer DEFAULT 1
 ) ENGINE=innodb;

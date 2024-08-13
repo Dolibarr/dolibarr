@@ -100,7 +100,7 @@ class MenuManager
 			$_SESSION["mainmenu"] = $mainmenu;
 			$_SESSION["leftmenuopened"] = "";
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$mainmenu = isset($_SESSION["mainmenu"]) ? $_SESSION["mainmenu"] : '';
 		}
 		if (!empty($forcemainmenu)) {
@@ -119,7 +119,7 @@ class MenuManager
 				$_SESSION["leftmenuopened"] = $leftmenu;
 			}
 		} else {
-			// On va le chercher en session si non defini par le lien
+			// Look for the menu in the session if not set by the link
 			$leftmenu = isset($_SESSION["leftmenu"]) ? $_SESSION["leftmenu"] : '';
 		}
 		if (!empty($forceleftmenu)) {

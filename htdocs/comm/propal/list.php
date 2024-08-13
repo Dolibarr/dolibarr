@@ -1,22 +1,22 @@
 <?php
-/* Copyright (C) 2001-2007 Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Marc Barilley / Ocebo	<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
- * Copyright (C) 2010-2011 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2022 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015      Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2016-2021 Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2017-2023 Charlene Benke			<charlene@patas-monkey.com>
- * Copyright (C) 2018	   Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2021 Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2022      Josep Lluís Amador		<joseplluis@lliuretic.cat>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2013	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2010-2011	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2010-2022	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012		Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2016-2021	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2017-2023	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
+ * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -272,7 +272,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['t.'.$key] = array(
 			'label'=>$val['label'],
 			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && (int) dol_eval($val['enabled'], 1)),
+			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position'],
 			'help'=> isset($val['help']) ? $val['help'] : ''
 		);
@@ -635,15 +635,28 @@ if ($search_project) {
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
+$societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	if ($societe_add_ref_in_list == 1) {
+		$sql .= natural_search(array("s.nom", "s.name_alias", "s.code_client"), $search_societe);
+	} else {
+		$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	}
 } else {
 	if ($search_societe) {
-		$sql .= natural_search('s.nom', $search_societe);
+		if ($societe_add_ref_in_list == 1) {
+			$sql .= natural_search(array('s.nom', 's.code_client'), $search_societe);
+		} else {
+			$sql .= natural_search('s.nom', $search_societe);
+		}
 	}
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
+}
+// Rechercher dans code_client si SOCIETE_ADD_REF_IN_LIST est égal à 1
+if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
+	$sql .= natural_search('s.code_client', $search_code_client);
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
@@ -876,7 +889,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 }
 
 $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 $param = '&search_status='.urlencode($search_status);
 if (!empty($mode)) {
@@ -1770,7 +1783,7 @@ while ($i < $imaxinloop) {
 	}
 
 	$marginInfo = array();
-	if ($with_margin_info === true) {
+	if ($with_margin_info) {
 		$objectstatic->fetch_lines();
 		$marginInfo = $formmargin->getMarginInfosArray($objectstatic);
 		$total_ht += $obj->total_ht;

@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -698,6 +699,9 @@ class dolReceiptPrinter extends Printer
 			return $reshook;
 		}
 
+		// escape special characters for xml_parse_into_struct
+		$this->template = htmlspecialchars($this->template, ENT_QUOTES | ENT_XML1);
+
 		// parse template
 		$this->template = str_replace("{", "<", $this->template);
 		$this->template = str_replace("}", ">", $this->template);
@@ -928,7 +932,7 @@ class dolReceiptPrinter extends Printer
 								$spaces = str_repeat(' ', $spacestoadd > 0 ? $spacestoadd : 0);
 								$amount_payment = (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
 								if ($row->code == "LIQ") {
-									$amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+									$amount_payment += $row->pos_change; // Show amount with excess received if is cash payment
 								}
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
 								if ($row->code == "LIQ" && $row->pos_change > 0) { // Print change only in cash payments

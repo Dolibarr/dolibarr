@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2018		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,22 +91,22 @@ $socid = GETPOSTINT('socid');
 $opouvertureprevuemonth = GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday = GETPOST('opouvertureprevueday');
 $opouvertureprevueyear = GETPOST('opouvertureprevueyear');
-$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue');
+$filter_opouvertureprevue = GETPOST('filter_opouvertureprevue', 'alphawithlgt');
 
 $op1month = GETPOSTINT('op1month');
 $op1day = GETPOSTINT('op1day');
 $op1year = GETPOSTINT('op1year');
-$filter_op1 = GETPOST('filter_op1', 'alpha');
+$filter_op1 = GETPOST('filter_op1', 'alphawithlgt');
 
 $op2month = GETPOSTINT('op2month');
 $op2day = GETPOSTINT('op2day');
 $op2year = GETPOSTINT('op2year');
-$filter_op2 = GETPOST('filter_op2', 'alpha');
+$filter_op2 = GETPOST('filter_op2', 'alphawithlgt');
 
 $opcloturemonth = GETPOSTINT('opcloturemonth');
 $opclotureday = GETPOSTINT('opclotureday');
 $opclotureyear = GETPOSTINT('opclotureyear');
-$filter_opcloture = GETPOST('filter_opcloture', 'alpha');
+$filter_opcloture = GETPOST('filter_opcloture', 'alphawithlgt');
 
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -237,7 +238,7 @@ if ($search_status == "4" && $filter == "expired") {
 if ($search_status == "5") {
 	$title = $langs->trans("ListOfClosedServices");
 }
-$help_url = '';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
 // Build and execute select
 // --------------------------------------------------------------------
@@ -432,7 +433,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-list_services bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 

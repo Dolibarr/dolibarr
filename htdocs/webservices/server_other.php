@@ -243,7 +243,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		// Suppression de la chaine de character ../ dans $original_file
 		$original_file = str_replace("../", "/", $original_file);

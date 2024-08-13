@@ -108,7 +108,7 @@ class Members extends DolibarrApi
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty);
+		$result = $member->fetch(0, '', $thirdparty);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
@@ -141,13 +141,13 @@ class Members extends DolibarrApi
 		}
 
 		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $email);
 		if (!$result) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
+		$result = $member->fetch(0, '', $thirdparty->id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}
@@ -180,13 +180,13 @@ class Members extends DolibarrApi
 		}
 
 		$thirdparty = new Societe($this->db);
-		$result = $thirdparty->fetch('', '', '', $barcode);
+		$result = $thirdparty->fetch(0, '', '', $barcode);
 		if (!$result) {
 			throw new RestException(404, 'thirdparty not found');
 		}
 
 		$member = new Adherent($this->db);
-		$result = $member->fetch('', '', $thirdparty->id);
+		$result = $member->fetch(0, '', $thirdparty->id);
 		if (!$result) {
 			throw new RestException(404, 'member not found');
 		}

@@ -4,12 +4,10 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
@@ -17,10 +15,7 @@
 Module4100Name = Məlumat Məxfilik Siyasəti
 # Module description 'ModuledatapolicyDesc'
 Module4100Desc = Məlumat Məxfiliyini idarə etmək üçün modul (GDPR ilə uyğunluq)
-
-#
 # Administration page
-#
 datapolicySetup = Modul Məlumatlarının Məxfilik Siyasətinin Quraşdırılması
 Deletion = Məlumatların silinməsi
 datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
@@ -39,50 +34,18 @@ DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nə perspektiv/Nə müştəri
 DATAPOLICY_CONTACT_FOURNISSEUR = Təchizatçı
 DATAPOLICY_ADHERENT = Üzv
 DATAPOLICY_Tooltip_SETUP = Əlaqə növü - Hər növ üçün seçimlərinizi göstərin.
-DATAPOLICYMail = E-poçtların qurulması
-DATAPOLICYSUBJECTMAIL = Subject of the email
-DATAPOLICYCONTENTMAIL = E-poçtun məzmunu
-DATAPOLICYSUBSITUTION = Siz e-poçtunuzda aşağıdakı dəyişənlərdən istifadə edə bilərsiniz (LINKACCEPT şəxsin razılığını qeyd edən link yaratmağa imkan verir, LINK REFUSED şəxsin imtinasını qeyd etməyə imkan verir):
-DATAPOLICYACCEPT = Razılaşmadan sonra mesaj
-DATAPOLICYREFUSE = Message after disagreement
 SendAgreementText = Siz bütün müvafiq kontaktlarınıza (hələ e-poçt almamış və GDPR müqaviləsi haqqında heç nə qeydiyyatdan keçirmədiyiniz) GDPR e-poçtu göndərə bilərsiniz. Bunu etmək üçün aşağıdakı düyməni istifadə edin.
 SendAgreement = E-poçt göndərin
 AllAgreementSend = Bütün e-poçtlar göndərildi
 TXTLINKDATAPOLICYACCEPT = "Razılaşma" linki üçün mətn
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
-
-
-#
 # Extrafields
-#
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Şəxsi məlumatların emalı
 DATAPOLICY_consentement = Şəxsi məlumatların emalı üçün alınan razılıq
 DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
 DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Üçüncü tərəfi anonimləşdirin
-DATAPOLICY_POPUP_ANONYME_TEXTE = Bu kontaktı Dolibarr-dan silə bilməzsiniz, çünki əlaqəli elementlər var. GDPR-ə uyğun olaraq, öhdəliklərinizə hörmət etmək üçün bütün bu məlumatları anonim edəcəksiniz. Davam etmək istərdinizmi?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Daşınma GDPR
-DATAPOLICY_PORTABILITE_TITLE = Şəxsi məlumatların ixracı
-DATAPOLICY_PORTABILITE_CONFIRMATION = Bu kontaktın şəxsi məlumatlarını ixrac etmək istəyirsiniz. Sən əminsən ?
-
-#
 # Notes added during an anonymization
-#
-ANONYMISER_AT = %s anonimləşdirildi
-
 DATAPOLICY_date = Date of agreement/disagreement GDPR
 DATAPOLICY_send = Date agreement email sent
-DATAPOLICY_SEND = GDPR e-poçtunu göndərin
 MailSent = E-poçt göndərildi
-
-# ERROR
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to notify us your choice.
 NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

@@ -35,7 +35,6 @@ SupplierProposalStatusSignedShort=ተቀባይነት አግኝቷል
 SupplierProposalStatusNotSignedShort=እምቢ አለ።
 CopyAskFrom=ያለውን ጥያቄ በመቅዳት የዋጋ ጥያቄ ይፍጠሩ
 CreateEmptyAsk=ባዶ ጥያቄ ፍጠር
-ConfirmCloneAsk=Are you sure you want to clone the price request <b>%s</b>?
 ConfirmReOpenAsk=Are you sure you want to open back the price request <b>%s</b>?
 SendAskByMail=የዋጋ ጥያቄን በፖስታ ይላኩ።
 SendAskRef=የዋጋ ጥያቄውን በመላክ ላይ %s

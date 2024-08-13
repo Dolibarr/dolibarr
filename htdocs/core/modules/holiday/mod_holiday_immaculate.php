@@ -31,7 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
  */
 class mod_holiday_immaculate extends ModelNumRefHolidays
 {
-
 	// variables inherited from ModelNumRefHolidays class
 	public $name = 'Immaculate';
 	public $version = 'dolibarr';
@@ -70,6 +69,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Holiday"), $langs->transnoentities("Holiday"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskholiday" value="'.getDolGlobalString('HOLIDAY_IMMACULATE_MASK').'">', $tooltip, 1, 1).'</td>';
@@ -84,7 +84,7 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return numbering example
 	 *
-	 *	@return     string      Example
+	 *	@return     string|int<0,0>      Example
 	 */
 	public function getExample()
 	{
@@ -102,19 +102,20 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Holiday		$holiday	holiday object
-	 *	@return string|0      			Value if OK, 0 if KO
+	 *	@param	Societe			$objsoc     third party object
+	 *	@param	Holiday			$holiday	holiday object
+	 *	@return string|int      			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $holiday)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
