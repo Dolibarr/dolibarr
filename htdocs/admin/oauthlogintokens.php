@@ -145,13 +145,15 @@ if ($action == 'refreshtoken' && $user->admin) {
 		//var_dump($expire);
 
 		// We do the refresh even if not expired, this is the goal of action.
-		$credentials = new Credentials(
-			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_ID'),
-			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_SECRET'),
-			getDolGlobalString('OAUTH_'.strtoupper($OAUTH_SERVICENAME).'_URLAUTHORIZE')
-			);
-		$serviceFactory = new \OAuth\ServiceFactory();
 		$oauthname = explode('-', $OAUTH_SERVICENAME);
+		$keyforoauthservice = strtoupper($oauthname[0]).(empty($oauthname[1]) ? '' : '-'.$oauthname[1]);
+		$credentials = new Credentials(
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_ID'),
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_SECRET'),
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_URLAUTHORIZE')
+			);
+
+		$serviceFactory = new \OAuth\ServiceFactory();
 		// ex service is Google-Emails we need only the first part Google
 		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
 
