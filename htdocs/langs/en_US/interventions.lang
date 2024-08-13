@@ -39,6 +39,7 @@ SendInterventionRef=Submission of intervention %s
 SendInterventionByMail=Send intervention by email
 InterventionCreatedInDolibarr=Intervention %s created
 InterventionValidatedInDolibarr=Intervention %s validated
+InterventionSignedInDolibarr=Intervention %s signed
 InterventionModifiedInDolibarr=Intervention %s modified
 InterventionClassifiedBilledInDolibarr=Intervention %s set as billed
 InterventionClassifiedUnbilledInDolibarr=Intervention %s set as unbilled

@@ -520,6 +520,24 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = 0;
 			$object->fk_element = 0;
 			$object->elementtype = '';
+		} elseif ($action == 'FICHINTER_SIGN') {
+			// Load translation files required by the page
+			$langs->loadLangs(array("agenda", "other", "interventions"));
+
+			if (empty($object->actionmsg2)) {
+				if (empty($object->context['actionmsg2'])) {
+					$object->actionmsg2 = $langs->transnoentities("InterventionSignedInDolibarr", ($object->newref ?: $object->ref));
+				} else {
+					$object->actionmsg2 = $object->context['actionmsg2'];
+				}
+			}
+			if (empty($object->actionmsg)) {
+				$object->actionmsg = $langs->transnoentities("InterventionSignedInDolibarr", ($object->newref ?: $object->ref));
+			}
+
+			$object->sendtoid = 0;
+			$object->fk_element = 0;
+			$object->elementtype = '';
 		} elseif ($action == 'FICHINTER_MODIFY') {
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "interventions"));
