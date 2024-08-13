@@ -61,7 +61,7 @@ class modSocialNetworks extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages
-		$this->config_page_url = array(DOL_URL_ROOT.'/admin/dict.php?id=38');
+		$this->config_page_url = array(DOL_URL_ROOT.'/admin/fediverse.php');
 
 		// Dependencies
 		$this->hidden = getDolGlobalInt('MODULE_SOCIALNETWORKS_DISABLED'); // A condition to hide module
