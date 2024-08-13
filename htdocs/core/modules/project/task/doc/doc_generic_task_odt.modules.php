@@ -658,6 +658,16 @@ class doc_generic_task_odt extends ModelePDFTask
 						$odfHandler->mergeSegment($listlinestaskres);
 					}
 
+					// Check for segment
+					$foundtagforlines = 1;
+					try {
+						$listlinestasktime = $odfHandler->setSegment('taskstimes');
+					} catch (OdfExceptionSegmentNotFound $e) {
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+
 					// Time resources
 					$sql = "SELECT t.rowid, t.element_date as task_date, t.element_duration as task_duration, t.fk_user, t.note";
 					$sql .= ", u.lastname, u.firstname";
@@ -669,11 +679,11 @@ class doc_generic_task_odt extends ModelePDFTask
 					$sql .= " ORDER BY t.element_date DESC";
 
 					$resql = $this->db->query($sql);
-					if ($resql) {
+					if ($foundtagforlines && $resql) {
 						$num = $this->db->num_rows($resql);
 						$i = 0;
 						$tasks = array();
-						$listlinestasktime = $odfHandler->setSegment('taskstimes');
+
 						while ($i < $num) {
 							$row = $this->db->fetch_array($resql);
 							if (!empty($row['fk_user'])) {
@@ -690,8 +700,6 @@ class doc_generic_task_odt extends ModelePDFTask
 							foreach ($tmparray as $key => $val) {
 								try {
 									$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-								} catch (OdfException $e) {
-									dol_syslog($e->getMessage(), LOG_INFO);
 								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -706,29 +714,35 @@ class doc_generic_task_odt extends ModelePDFTask
 
 
 					// Replace tags of project files
-					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
-
-					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
-					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
-
-
-					foreach ($filearray as $filedetail) {
-						$tmparray = $this->get_substitutionarray_task_file($filedetail, $outputlangs);
-						//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
-						foreach ($tmparray as $key => $val) {
-							try {
-								$listtasksfiles->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
-							} catch (SegmentException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
-							}
-						}
-						$listtasksfiles->merge();
+					// Check for segment
+					$foundtagforlines = 1;
+					try {
+						$listtasksfiles = $odfHandler->setSegment('tasksfiles');
+					} catch (OdfExceptionSegmentNotFound $e) {
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					//$listlines->merge();
+					if ($foundtagforlines) {
+						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
+						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
-					$odfHandler->mergeSegment($listtasksfiles);
+						foreach ($filearray as $filedetail) {
+							$tmparray = $this->get_substitutionarray_task_file($filedetail, $outputlangs);
+							//dol_syslog(get_class($this).'::main $tmparray'.var_export($tmparray,true));
+							foreach ($tmparray as $key => $val) {
+								try {
+									$listtasksfiles->setVars($key, $val, true, 'UTF-8');
+								} catch (SegmentException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
+							}
+							$listtasksfiles->merge();
+						}
+						//$listlines->merge();
+
+						$odfHandler->mergeSegment($listtasksfiles);
+					}
 				} catch (OdfException $e) {
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);

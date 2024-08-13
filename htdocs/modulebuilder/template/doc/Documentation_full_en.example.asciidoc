@@ -49,7 +49,7 @@ external documents stored in the *Appendices* directory accompanying this docume
 *Log of versions*
 
 [options="header",format="csv"]
-|=== 
+|===
 Author, Date, Version
 --- __USER_FULLNAME__  __USER_EMAIL__ ---, __YYYY-MM-DD__, Version 1.0
 |===
@@ -70,7 +70,7 @@ The following chart prensts list of actors or partners identified by the project
 |===
 Actor/profil/role, Description of role, Access to system or not, Example of actor
 Customer Service, Receive and create Sales orders (SO), Yes, Mr Smith
-Purchase, Make puchase order (PO), Yes, 5 people
+Purchase, Make purchase order (PO), Yes, 5 people
 Administrator - IT, Administration of users/groups and IT services, Yes, John Doe
 Automaton, Execute automatic data processing, Yes, NA
 |===
@@ -79,7 +79,7 @@ Automaton, Execute automatic data processing, Yes, NA
 === Definitions [[definitions]]
 
 To understand the descriptions of the target process, it was necessary to define or redefine some vocabulary concepts. We must see these definitions as defined in the
-new system. Indeed, some terms are already being used but have either not a definition in line with standards, or even differs between services. To bring everyone, 
+new system. Indeed, some terms are already being used but have either not a definition in line with standards, or even differs between services. To bring everyone,
 and to consolidate the process, these terms are redefined here, and with their definition in the target objective.
 
 *Definition ABC*
@@ -134,5 +134,3 @@ _Each process/use case is described into a separate chapter._
 
 * Business rule 1
 * Business rule 2
-
-
