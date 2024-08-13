@@ -139,7 +139,7 @@ if ($action == 'update') {
 					$error++;
 				}
 
-				// Update const where the token was used, might not be exhaustive
+				// Update other const that was using the renamed key as token (might not be exhaustive)
 				if (getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE') == $oldname) {
 					if (!dolibarr_set_const($db, 'MAIN_MAIL_SMTPS_OAUTH_SERVICE', strtoupper($oldprovider).'-'.$newlabel, 'chaine', 0, '', $conf->entity)) {
 						$error++;
