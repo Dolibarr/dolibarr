@@ -64,7 +64,7 @@ Author, Date, Version
 === List of actors [[actors]]
 
 Actors are physical people or moral entities working on at least one process.
-The following chart prensts list of actors or partners identified by the project for the defined scope of project. We will use then the name defined into first column to speak about roles in the rest of documents.
+The following chart presents a list of actors or partners identified by the project within it defined scope. We will use then the name defined into first column to speak about roles in the rest of documents.
 
 [options="header",format="csv"]
 |===
