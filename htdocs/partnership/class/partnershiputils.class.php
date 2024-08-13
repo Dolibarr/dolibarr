@@ -543,7 +543,7 @@ class PartnershipUtils
 				$href = $hrefs->item($i);
 				$url = $href->getAttribute('href');
 				$url = filter_var($url, FILTER_SANITIZE_URL);
-				if (filter_var($url, FILTER_VALIDATE_URL)) {
+				if (!(!filter_var($url, FILTER_VALIDATE_URL))) {
 					$webcontent .= $url;
 				}
 			}
