@@ -1142,7 +1142,7 @@ if ($step == 4 && $datatoimport) {
 
 		$selectforline = '';
 		$selectforline .= '<select id="selectorderimport_'.($i + 1).'" class="targetselectchange minwidth300" name="select_'.($i + 1).'">';
-		if (isset($line["imported"]) && !empty($line["imported"])) {
+		if (array_key_exists("imported", $line) && !empty($line["imported"])) {
 			$selectforline .= '<option value="-1">&nbsp;</option>';
 		} else {
 			$selectforline .= '<option selected="" value="-1">&nbsp;</option>';
