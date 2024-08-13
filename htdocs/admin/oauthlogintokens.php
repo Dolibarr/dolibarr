@@ -129,16 +129,18 @@ if ($action == 'refreshtoken' && $user->admin) {
 	try {
 		// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 		print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
+
+		dol_syslog("oauthlogintokens.php: Read token for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
+
 		$expire = ($tokenobj->getEndOfLife() !== -9002 && $tokenobj->getEndOfLife() !== -9001 && time() > ($tokenobj->getEndOfLife() - 30));
-		// We have to save the refresh token because Google give it only once
+		// We have to save the refresh token in a memory variable because Google give it only once
 		$refreshtoken = $tokenobj->getRefreshToken();
 		print '<!-- data stored into field token: '.$storage->token.' - expire '.((string) $expire).' -->';
 
 		//print $tokenobj->getExtraParams()['id_token'].'<br>';
 		//print $tokenobj->getAccessToken().'<br>';
 		//print $tokenobj->getRefreshToken().'<br>';
-
 
 		//var_dump($expire);
 
@@ -155,9 +157,14 @@ if ($action == 'refreshtoken' && $user->admin) {
 
 		if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 			// ServiceInterface does not provide refreshAccessToekn, AbstractService does
-			$tokenobj = $apiService->refreshAccessToken($tokenobj);
+			dol_syslog("oauthlogintokens.php: call refreshAccessToken to get the new access token");
+			$tokenobj = $apiService->refreshAccessToken($tokenobj);		// This call refresh and store the new token (but does not include the refresh token)
+
+			dol_syslog("oauthlogintokens.php: call setRefreshToken");
 			$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
-			$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
+
+			dol_syslog("oauthlogintokens.php: call storeAccessToken to save the new access token + the old refresh token");
+			$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);	// This save the new token including the refresh token
 
 			if ($expire) {
 				setEventMessages($langs->trans("OldTokenWasExpiredItHasBeenRefresh"), null, 'mesgs');
@@ -168,6 +175,7 @@ if ($action == 'refreshtoken' && $user->admin) {
 			dol_print_error($db, 'apiService is not a correct OAUTH2 Abstract service');
 		}
 
+		dol_syslog("oauthlogintokens.php: Read token again for service ".$OAUTH_SERVICENAME);
 		$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 	} catch (Exception $e) {
 		// Return an error if token not found

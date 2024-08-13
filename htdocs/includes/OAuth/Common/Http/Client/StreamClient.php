@@ -60,6 +60,13 @@ class StreamClient extends AbstractClient
         //var_dump($requestBody); var_dump($extraHeaders);var_dump($method);exit;
         $context = $this->generateStreamContext($requestBody, $extraHeaders, $method);
 
+        /*
+        var_dump($endpoint->getAbsoluteUri());
+        var_dump($requestBody);
+        var_dump($method);
+        var_dump($extraHeaders);
+		*/
+
         $level = error_reporting(0);
         $response = file_get_contents($endpoint->getAbsoluteUri(), false, $context);
         error_reporting($level);
