@@ -751,33 +751,39 @@ class doc_generic_task_odt extends ModelePDFTask
 
 
 				// Replace tags of project files
+				// Check for segment
+				$foundtagforlines = 1;
 				try {
 					$listlines = $odfHandler->setSegment('projectfiles');
+				} catch (OdfExceptionSegmentNotFound $e) {
+					// We may arrive here if tags for lines not present into template
+					$foundtagforlines = 0;
+					dol_syslog($e->getMessage(), LOG_INFO);
+				}
+				if ($foundtagforlines) {
+					try {
+						$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
+						$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
 
-					$upload_dir = $conf->project->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', 'name', SORT_ASC, 1);
+						foreach ($filearray as $filedetail) {
+							//dol_syslog(get_class($this).'::main $filedetail'.var_export($filedetail,true));
+							$tmparray = $this->get_substitutionarray_project_file($filedetail, $outputlangs);
 
-
-					foreach ($filearray as $filedetail) {
-						//dol_syslog(get_class($this).'::main $filedetail'.var_export($filedetail,true));
-						$tmparray = $this->get_substitutionarray_project_file($filedetail, $outputlangs);
-
-						foreach ($tmparray as $key => $val) {
-							try {
-								$listlines->setVars($key, $val, true, 'UTF-8');
-							} catch (OdfException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
-							} catch (SegmentException $e) {
-								dol_syslog($e->getMessage(), LOG_INFO);
+							foreach ($tmparray as $key => $val) {
+								try {
+									$listlines->setVars($key, $val, true, 'UTF-8');
+								} catch (SegmentException $e) {
+									dol_syslog($e->getMessage(), LOG_INFO);
+								}
 							}
+							$listlines->merge();
 						}
-						$listlines->merge();
+						$odfHandler->mergeSegment($listlines);
+					} catch (OdfException $e) {
+						$this->error = $e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
 					}
-					$odfHandler->mergeSegment($listlines);
-				} catch (OdfException $e) {
-					$this->error = $e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
 				}
 
 				// Replace tags of lines for contacts
