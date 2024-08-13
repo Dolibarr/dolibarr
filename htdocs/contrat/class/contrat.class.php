@@ -112,8 +112,10 @@ class Contrat extends CommonObject
 	 */
 	public $fk_soc;
 
-
-	public $societe; // Object societe
+	/**
+	 * @var Societe thirparty Object
+	 */
+	public $societe;
 
 	/**
 	 * Status of the contract
