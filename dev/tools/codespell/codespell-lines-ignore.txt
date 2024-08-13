@@ -7,6 +7,7 @@
 							$txt .= $outputlangs->transnoentities("DateStartPlannedShort")." : <strong>".$datei."</strong> - ".$outputlangs->transnoentities("DateEndPlanned")." : <strong>".$datee.'</strong>';
 							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
 						$object->date_ech = $object->periode;
 						$object->periode = $object->date_ech;
 						$reponsesadd = str_split($obj->reponses);
@@ -17,6 +18,7 @@
 						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
 						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
 						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
+						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
 					$date = $overview[0]->udate;
 					$dateb = $this->db->jdate($data[$j]->datea);
 					$link->datea = $this->db->jdate($obj->datea);
@@ -27,6 +29,7 @@
 					$tmp = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee);
 					$tmpprojtime = $element->getSumOfAmount($idofelementuser ? $elementuser : '', $dates, $datee); // $element is a task. $elementuser may be empty
 					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
+					// 	//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 					//var_dump("$key, $tablename, $datefieldname, $dates, $datee");
 					GETPOSTINT("mouvement"),
 					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
@@ -65,6 +68,7 @@
 				if (count($arrayfields) > 0 && !empty($arrayfields['t.datee']['checked'])) {
 				if (jQuery("#mouvement").val() == \'0\') jQuery("#unitprice").removeAttr("disabled");
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
 			$action = 'transfert';
 			$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
@@ -110,6 +114,7 @@
 			preg_match('/:([!<>=\s]+|in|notin|like|notlike):/', $tmpcrit, $reg);
 			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
 			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
@@ -164,6 +169,7 @@
 		'datee' =>array('type'=>'date', 'label'=>'DateEnd', 'enabled'=>1, 'visible'=>1, 'position'=>35),
 		'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
 		,'datee'=>array('type'=>'date')
+		// Reference de la remise creancier D1 sur 7 caracteres
 		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 		echo dol_print_date($rule->datee, 'day');
 		foreach ($TWeek as $weekNb) {
@@ -187,6 +193,7 @@
 		print_liste_field_titre($arrayfields['t.datee']['label'], $_SERVER["PHP_SELF"], "t.datee", '', $param, '', $sortfield, $sortorder, 'center ');
 	 *  @param		string		$datee		End date (ex 23:59:59)
 	 *  @param  float|string  $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
+	 * Methode qui permet de modifier la taille des caracteres
 	$TWeek = array();
 	$date = $obj->periode;
 	$datee = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
@@ -236,6 +243,7 @@
 	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
 	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>101),
 	't.datee'=>array('label'=>"Deadline", 'checked'=>1, 'position'=>5),
+	// Hauteur des caracteres
 	// Ligne de la periode d'analyse du rapport
 	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 	//$datee=$now
@@ -350,8 +358,3 @@ print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacityme
 print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
-						print '<td class="center"><a href="'.DOL_URL_ROOT.'/product/stock/product.php?dwid='.$object->id.'&id='.$objp->rowid.'&action=transfert&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$id).'">';
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
-							print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&id_entrepot='.$entrepotstatic->id.'&action=transfert&pdluoid='.$pdluo->id.'&token='.newToken().'">';
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
