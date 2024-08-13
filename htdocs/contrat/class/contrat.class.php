@@ -113,7 +113,7 @@ class Contrat extends CommonObject
 	public $fk_soc;
 
 	/**
-	 * @var Societe thirparty Object
+	 * @var Societe thirdparty Object
 	 */
 	public $societe;
 
@@ -172,6 +172,7 @@ class Contrat extends CommonObject
 	public $fk_commercial_suivi;
 
 	/**
+	 * @var int
 	 * @deprecated Use fk_project instead
 	 * @see $fk_project
 	 */
