@@ -46,15 +46,19 @@ $langs->loadLangs(array('admin', 'users', 'dict'));
 
 $action = GETPOST('action', 'aZ09');
 
-//Security check
+// Security check
 if (!$user->admin) {
 	accessforbidden();
+}
+if (!isModEnabled('socialnetworks')) {
+	accessforbidden('Module Social Networks is not enabled');
 }
 
 
 /*
  * Actions
  */
+
 if ($action == 'add') {
 	$error = 0;
 
@@ -134,6 +138,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 /*
  * View
  */
+
 $form = new Form($db);
 
 llxHeader('', $langs->trans("FediverseSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-dict');
@@ -160,15 +165,15 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td width="100">'.$langs->trans("Title").'</td>';
+print '<td>'.$langs->trans("Title").'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name"></td>';
-print '<td>'.$langs->trans('Example').'</td>';
+print '<td>Mastodon</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('SocialNetworkUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url"></td>';
-print '<td>https://twitter.social<br>http://www.dolibarr.org/</td>';
+print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
 print '</tr>';
 print '</table>';
 
@@ -226,32 +231,28 @@ if ($resql) {
 
 		print "<br>";
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<table class="noborder centpercent">'."\n";
-		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<tr class="liste_titre">';
 		print "<td>".$langs->trans("SocialNetworks")." ".($i+1)."</td>";
 		print '<td class="right">';
 		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($key).'">'.img_edit().'</a>';
 		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
-
 		print '<input type="hidden" name="id" value="'.$key.'">';
 		print '</td>';
 		print '</tr>'."\n";
 
-
 		print '<tr class="oddeven">';
-		print '<td class="titlefield">'.$langs->trans("Title")."</td>";
+		print '<td>'.$langs->trans("Title")."</td>";
 		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name" value="'.dol_escape_htmltag($socialNetworkTitle).'" '.($action != "editsocialnetwork" ? 'disabled' : '').'></td>';
 		print '</tr>'."\n";
-
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
 		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url" value="'.dol_escape_htmltag($socialNetworkUrl).'" '.($action != "editsocialnetwork" ? 'disabled' : '').'></td>';
 		print '</tr>'."\n";
-
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Status")."</td>";
