@@ -1,5 +1,7 @@
 <!-- file menu.tpl.php -->
 <?php
+/* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
@@ -140,7 +142,7 @@ if (empty($reshook)) {
 					// apply rank
 					if (!empty($navGroupMenu[$goupId]['rank']) && $navGroupMenu[$goupId]['rank'] > 0) {
 						// minimum rank of group determine rank of group
-						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank']));
+						$navGroupMenu[$goupId]['rank'] = min(abs($navGroupMenu[$goupId]['rank']), abs($menuItem['rank'])); // @phpstan-ignore-line
 					}
 				}
 			}

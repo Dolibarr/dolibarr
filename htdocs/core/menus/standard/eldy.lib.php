@@ -744,7 +744,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 	$mainmenu = ($forcemainmenu ? $forcemainmenu : $_SESSION["mainmenu"] ?? '');
 	$leftmenu = ($forceleftmenu ? '' : (empty($_SESSION["leftmenu"]) ? 'none' : $_SESSION["leftmenu"] ?? ''));
 
-	if (is_null($mainmenu)) {
+	if (empty($mainmenu)) {
 		$mainmenu = 'home';
 	}
 
