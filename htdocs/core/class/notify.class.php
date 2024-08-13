@@ -1114,7 +1114,7 @@ class Notify
 						break;
 					case 'FICHINTER_SIGN':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
-						$dir_output = $conf->facture->dir_output;
+						$dir_output = $conf->ficheinter->dir_output;
 						$object_type = 'ficheinter';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionSigned", $link);
 						break;
