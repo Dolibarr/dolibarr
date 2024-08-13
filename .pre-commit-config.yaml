@@ -19,6 +19,8 @@ repos:
         args: [--fix=lf]
       - id: trailing-whitespace
         exclude_types: [markdown]
+        exclude: |
+          (?x)^(dev/tools/codespell/codespell-lines-ignore.txt)$
       - id: end-of-file-fixer
       - id: check-merge-conflict
       - id: check-executables-have-shebangs
@@ -174,7 +176,7 @@ repos:
         #
         # Update codespell ignore file.
         #
-        # Execute with `pre-commit run codespell -a --hook-stage manual`
+        # Execute with `pre-commit run codespell-ignores -a --hook-stage manual`
         id: codespell
         stages: [manual]
         name: Update file with codespell exceptions

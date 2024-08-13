@@ -87,6 +87,8 @@
 						$cat['filles'][] = array(
 						$invoiceid = -1; // There is more than one invoice payed by this payment
 						$newarrayres[$key]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we considere it's null
+						$object->date_ech = $object->periode;
+						$object->periode = $object->date_ech;
 						$objectobj->thirdparty = $objectobj; // Hack so following code is comaptible when objectobj is a thirdparty
 						$outtva_tx_formated = price($objp->tva_tx);	// formated for langage user because is inserted into input field
 						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
@@ -100,10 +102,12 @@
 						$serie[$i] .= 'd' . $i . '.push({"label":"' . dol_escape_js($legends[$x]) . '", "data":' . $y . '});' . "\n";
 						$sql .= " SET reponses = '".$db->escape($reponsesadd)."'";
 						$sql .= " SET reponses = '0".$db->escape($obj->reponses)."'";
+						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
 						$translationKey = 'CompanyHasAbsoluteDiscount'; // If we want deposit to be substracted to payments only and not to total of final invoice
 						$translationKey = 'HasAbsoluteDiscountFromSupplier'; // If we want deposit to be substracted to payments only and not to total of final invoice
 						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 						/*case 'select':	// Not required, we chosed value='0' for undefined values
+						// $object->periode = dol_get_last_day(year of $object->date_ech - 1m, month or $object->date_ech -1m)
 						// Batch number managment
 						// Case we dont use the list of available qty for each warehouse/lot
 						// Change each progression persent on each lines
@@ -135,6 +139,8 @@
 						// if we have a CUSTOMER contact and we dont use it as thirdparty recipient we store the contact object for later use
 						// if we have a SHIPPING contact and we dont use it as thirdparty recipient we store the contact object for later use
 						// service and we setted mandatory_period to true
+						//$pice = '<i class="fas fa-briefcase inline-block"></i>';
+						//$typea = ($objp->typea == 'birth') ? $picb : $pice;
 						//Time ressources
 						//comparaison des heures de fin et de debut
 						console.log("objectline_create.tpl Load desciption into text area : "+proddesc);
@@ -159,12 +165,14 @@
 					$cluser = new User($this->db);
 					$cluser->fetch($obj->fk_user_closing);
 					$cluser->fetch($obj->fk_user_cloture);
+					$date = $overview[0]->udate;
 					$erorr++;
 					$heigth = $tmp[3];
 					$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 					$info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 					$info[getDolGlobalString('LDAP_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
 					$info[getDolGlobalString('LDAP_MEMBER_FIELD_PASSWORD')] = $this->pass_indatabase; // $this->pass_indatabase = mot de passe non crypte
+					$object->periode = $newdateperiod;
 					$objectoffield = $object; //For compatibily with the computed formula
 					$optstart .= ' data-tvatx-formated="' . dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)) . '"';
 					$optstart .= ' data-tvatx-formated="'.dol_escape_htmltag(price($objp->tva_tx, 0, $langs, 1, -1, 2)).'"';
@@ -172,6 +180,7 @@
 					$outprice_ttc = price($objp->price_ttc);	// formated for langage user because is inserted into input field
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
+					$pice = '<i class="fas fa-briefcase inline-block"></i>';
 					$postactionmessages[] = 'Payment donation can\'t be payed with diffent currency than '.$conf->currency;
 					$serie[$i] .= ($j > 0 ? ", " : "") . $y;
 					$serie[$i] .= ($j > 0 ? ", " : "") . 'null';
@@ -179,6 +188,7 @@
 					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandonned, we use now ->tva_array that is more complete
 					$this->user_closing = $cluser;
 					$this->user_cloture = $cluser;
+					$typea = ($data[$j]->typea == 'birth') ? $picb : $pice;
 					$usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
 					$valuetoshow = ucfirst($value); // Par defaut
 					$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
@@ -188,6 +198,7 @@
 					'transparency'=>$object->transparency, // Force transparency on onwer from preoperty of event
 					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
 					/*case 'select':	// Not required, we chosed value='0' for undefined values
+					// 	//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
 					// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
 					// Batch number managment
 					// Calculcate number of days consumed
@@ -213,6 +224,7 @@
 					// Selection of all product stock mouvements that contains batchs
 					// Si safe_mode on et command hors du parametre exec, on a un fichier out vide donc errormsg vide
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwig is off.
 					// Strip off the beggining '<'
 					// TODO If not defined, use $objectobj->model_pdf (or defaut invoice config) to know what is template to use to regenerate doc.
 					// TODO Replace this with a checkbox for each payment mode: "Send request to PaymentModeManager immediatly..."
@@ -246,6 +258,7 @@
 					console.log("Clik on topmenuloginmoreinfo-btn");
 					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
 					dol_syslog("Function: deleteThirdParty cant delete");
+					dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criterias)");
 					error="Database $dbname NOT successfully droped. You have to do it manually."
 					foreach ($cats as $fille) {
@@ -280,6 +293,7 @@
 				$bugbaseurl .= urlencode("## [Attached files](https://help.github.com/articles/issue-attachments) (Screenshots, screencasts, dolibarr.log, debugging informations…)\n");
 				$childs[] = array_combine($keys, $values);
 				$curent = getDolGlobalString($thisTypeConfName, getDolGlobalString('FACTURE_ADDON_PDF'));
+				$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
 				$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 				$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 				$info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
@@ -289,9 +303,13 @@
 				$initialY = $tab_top + 7;
 				$invoicestatic->statut = $obj->fk_statut;	// For backward comaptibility
 				$jsListType .= (!empty($jsListType) ? ',' : '').'"'.$type.'":"'.$curent.'"';
+				$newfiletmp = preg_replace('/\.od(s|t)/i', '', $newfile);
+				$newfiletmp = preg_replace('/\.od[ts]/i', '', $newfile);
 				$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 				$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 				$object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
+				$object->period = dol_time_plus_duree($object->periode, 1, 'm');
+				$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 				$paramfortooltipimg .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1)) . '"'; // Attribut to put on img tag to store tooltip
 				$paramfortooltipimg .= ' title="'.($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1)).'"'; // Attribut to put on img tag to store tooltip
 				$paramfortooltiptd .= ' title="' . ($noencodehtmltext ? $htmltext : dol_escape_htmltag($htmltext, 1)) . '"'; // Attribut to put on td tag to store tooltip
@@ -303,6 +321,7 @@
 				$this->civility_id = $obj->civility_code; // Bad. Kept for backard compatibility
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->liste_array = $repid;
+				$this->periode = $this->db->jdate($obj->period);
 				$this->statut = self::STATUS_DRAFT;	// dperecated
 				$this->stringtoshow .= $serie[$i] . "\n";
 				$this->stringtoshow .= $this->mirrorGraphValues ? '[' . -$serie[$i] . ',' . $serie[$i] . ']' : $serie[$i];
@@ -310,6 +329,7 @@
 				$this->stringtoshow .= '  data: [' . $serie[$i] . ']';
 				$this->stringtoshow .= '<!-- Serie ' . $i . ' -->' . "\n";
 				$tmp = array('id_users'=>$obj->id_users, 'nom'=>$obj->name, 'reponses'=>$obj->reponses);
+				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0, true); // Disable hook for the moment
 				$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
 				$ways = $c->print_all_ways(' &gt;&gt; ', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 				'align' => 'L', // text alignement :  R,C,L
@@ -449,6 +469,10 @@
 			$childs = array();
 			$childs[] = array_combine($keys, $values);
 			$curent = !empty($conf->global->{$thisTypeConfName}) ? $conf->global->{$thisTypeConfName}:$conf->global->FACTURE_ADDON_PDF;
+			$date_com = dol_mktime(GETPOST('rehour', 'int'), GETPOST('remin', 'int'), GETPOST('resec', 'int'), GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+			$date_next_execution = (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
+			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
+			$datesubscription = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 			$ensemblereponses = $obj->reponses;
 			$event->datep = dol_mktime(0, 0, 0, $datearray['mon'], $datearray['mday'], $year, true); // For full day events, date are also GMT but they wont but converted during output
 			$ext = 'version='.GETPOST('version', 'int'); // usefull to force no cache on css/js
@@ -463,6 +487,7 @@
 			$line->pa_ht = $line->pa_ht; // we choosed to have buy/cost price always positive, so no revert of sign here
 			$msgishtml = -1; // Unknow = autodetect by default
 			$msgishtml = -1; // Unknow by default
+			$object->periode = $dateperiod;
 			$paht_ret = $paht;
 			$paramfortooltipimg = ($extracss ? ' class="' . $extracss . '"' : '') . ($extrastyle ? ' style="' . $extrastyle . '"' : ''); // Attribut to put on td text tag
 			$paramfortooltipimg = ($extracss ? ' class="'.$extracss.'"' : '').($extrastyle ? ' style="'.$extrastyle.'"' : ''); // Attribut to put on td text tag
@@ -474,9 +499,11 @@
 			$result -= $amountToBreakdown; // And canceled substraction has been replaced by breakdown
 			$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
 			$result = $line->insert(0, 1); // When creating credit note with same lines than source, we must ignore error if discount alreayd linked
+			$scrit = explode(' ', $filterkey);
 			$serie[$i] = "";
 			$serie[$i] = "var d" . $i . " = [];\n";
 			$showfield = 1; // By defaut
+			$sql .= " '".$db->escape($conf->currency)."' as currency, 0 as fk_soc, t.date_ech as date, t.periode as date_due, 'SocialContributions' as item, '' as thirdparty_name, '' as thirdparty_code, '' as country_code, '' as vatnum, ".PAY_DEBIT." as sens";
 			$sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
 			$sql .= " AND f.fk_statut = 3"; // abandonned
 			$sql .= " WHERE c.entity IN (".getEntity('commande').")"; // Dont't use entity if you use rowid
@@ -604,6 +631,7 @@
 			// The entity on the table usergroup_user should be useless and should never be used because it is alreay into gr and r.
 			// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
 			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
+			// Thoose lines are for substitution
 			// Update hourly rate of this time spent entry, but only if it was not set initialy
 			// We choosed to have line->pa_ht always positive in database, so we guess the correct sign
 			// We dont have printers so return blank array
@@ -651,6 +679,8 @@
 			console.log("Load desciption into text area : "+description);
 			continue; // We discard parametes starting with ?
 			dol_print_error('', get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined");
+			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (invalid token), so we disable POST and some GET parameters - referer=".(empty($_SERVER['HTTP_REFERER'])?'':$_SERVER['HTTP_REFERER']).", action=".GETPOST('action', 'aZ09').", _GET|POST['token']=".GETPOST('token', 'alpha'), LOG_WARNING);
+			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referer).", LOG_WARNING);
 			dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
 			dol_syslog("Failed to read image using Imagick (Try to install package 'apt-get install php-imagick ghostscript' and check there is no policy to disable ".$ext." convertion in /etc/ImageMagick*/policy.xml): ".$e->getMessage(), LOG_WARNING);
 			dol_syslog("Fichier invalide",LOG_WARNING);
@@ -695,27 +725,35 @@
 			for ($i = 0; $i < $nbseries; $i++) {	// Loop on each serie
 			foreach ($criterias as $criteriafamilykey => $criteriafamilyval) {
 			foreach ($legends as $val) {	// Loop on each serie
+			foreach ($scrit as $crit) {
 			header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb whith back
 			idata++; //Next data everytime
 			if (!empty($_facrec->frequency)) {  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarly when there is no recurrence.
 			if ($attachs && strpos($action, 'SENTBYMAIL')) {
 			if ($user->hasRight('stock', 'mouvement', 'lire')) {
 			if ($value) {		// If we have -1 here, pb is into insert, not into ouptut (fix insert instead of changing code here to compensate)
+			if (count($scrit) > 1) {
 			if (empty($objimport->array_import_convertvalue[0][$tmpcode])) {	// If source file does not need convertion
+			if (empty($reyear) || empty($remonth) || empty($reday)) {
 			jQuery("#mouvement").change(function() {
 			let hours = hour.getHours().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
 			let mins = hour.getMinutes().toString().padStart(2, "0"); // Formater pour obtenir deux chiffres
 			preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
 			print " - Error cant find payment mode for ".$condpayment."\n";
+			print "Access refused by CSRF protection in main.inc.php. Referer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
 			print "Expedition inexistante ou acces refuse";
 			print "\n<!-- A script section to add menuhider handler on backoffice, manage focus and madatory fields, tuning info, ... -->\n";
+			print $form->selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 			print '<!-- Minimim amount for orders -->'."\n";
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("TransferStock").'</a>';
 			print '<a class="cursoradd" href="'.$urltocreate.'">'; // Explicit link, usefull for nojs interfaces
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 			print '<input id="assujtva_value" name="assujtva_value" type="checkbox" ' . (GETPOSTISSET('assujtva_value') ? 'checked="checked"' : 'checked="checked"') . ' value="1">'; // Assujeti par defaut en creation
+			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
 			print __METHOD__." module accouting must be enabled.\n";
 			print __METHOD__." module accouting must be enabled.\n"; exit(-1);
+			print dol_print_date($object->periode, "day");
 			return -1; // Alternate souce not found
 			return false; // Sould be 6
 			return false; // Sould be 6 but can be 123-456
@@ -741,8 +779,13 @@
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we muste keep this value
 		$canbedeleted = $object->can_be_deleted(); // Renvoi vrai si compte sans mouvements
 		$childs = array();
+		$cle_rib = strtolower(checkES($rib, $CCC));
 		$couleur = imagecolorallocate($image, $rouge, $vert, $bleu);
+		$date_com = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		$date_time = $enveloppe->addChild('DateTime');
+		$datefrom = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+		$datesubscription = dol_mktime(0, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
 		$declaration = $enveloppe->addChild('Declaration');
 		$ensemblereponses = $obj->reponses;
 		$enveloppe = $e->addChild('Envelope');
@@ -754,6 +797,8 @@
 		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		$genericcompanyname = $langs->trans('EventParticipant').' '.($emailcompany ? $emailcompany : $email);	// Keep this label simple so we can retreive same thirdparty for another event
+		$head[$h][1] = $langs->trans("Referers");
+		$head[$tab][1] = $langs->trans("Referers");
 		$keyval = substr($nvpstr, $intial, $keypos);
 		$ldap = new Ldap(); // Les parametres sont passes et recuperes via $conf
 		$localobject->date=dol_mktime(12, 0, 0, 1, 1, 1915);	// we use year 1915 to be sure to not have existing invoice for this year (usefull only if numbering is {0000@1}
@@ -765,11 +810,13 @@
 		$object->fields['label']=array(); // Usefull to get only agenda events linked to position (this object doesn't need label of ref field, but show_actions_done() needs it to work correctly)
 		$object->km = price2num(GETPOST('km', 'alpha'), 'MU'); // Not 'int', it may be a formated amount
 		$objet = $this->db->fetch_object($result);
+		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
 		$out .= '<!-- code to open popup and variables to retreive returned variables -->';
 		$out .= '<b>XDebug informations:</b>'."<br>\n";
 		$out = str_replace(array(':', ';', '@', "\t", ' '), '', $out);		// Can be before the loop because only 1 char is replaced. No risk to retreive it after other replacements.
 		$paht_ret = $paht;
 		$party = $enveloppe->addChild('Party');
+		$reday = GETPOST('reday', 'int');
 		$repid = array();
 		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
 		$result = dol_delete_file($pathtodelete, 1); // Delete uploded Files
@@ -784,15 +831,21 @@
 		$rouge = hexdec(substr($color, 0, 2)); //conversion du canal rouge
 		$serie = array();
 		$showfield = 1; // By defaut
+		$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referal link.
 		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de remplacement
 		$sql .= " AND ff.type IS NULL"; // Renvoi vrai si pas facture de remplacement
 		$sql .= " AND mc.statut NOT IN (-1,0)"; // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= " WHERE u.email != ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql .= " label = 'Annulation mouvement ID ".((int) $this->id)."',";
 		$sql .= " tms = tms"; // La date de derniere modif doit changer sauf pour la mise a jour de date de derniere connexion
 		$sql .= ", '".$this->db->escape($url)."'";		// dperecated
+		$sql .= ", '".$this->db->idate($this->periode)."'";
+		$sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode as period, cs.import_key";
+		$sql .= ", periode='".$this->db->idate($this->periode)."'";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, fk_projet, entity, fk_user_author, fk_user, date_creation)";
 		$sql = "SELECT id_users, nom as name, id_sondage, reponses";
 		$sql = "SELECT id_users, nom as name, reponses";
 		$test = '/javas:cript/google.com';
@@ -817,10 +870,16 @@
 		$this->assertTrue($result, 'move of directory with file whitout rename needed in directory');
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/stocks/mouvements";
 		$this->const[$r][3] = "Mot de passe Admin des liste mailman";
+		$this->const[0] = array("FCKEDITOR_ENABLE_SOCIETE", "yesno", "1", "WYSIWIG for the fields descriptions of elements (except products/services)");
+		$this->const[2] = array("FCKEDITOR_ENABLE_DETAILS", "yesno", "1", "WYSIWIG for products details lines for all entities");
+		$this->const[3] = array("FCKEDITOR_ENABLE_USERSIGN", "yesno", "1", "WYSIWIG for user signature");
+		$this->const[4] = array("FCKEDITOR_ENABLE_MAILING", "yesno", "1", "WYSIWIG for mass emailings");
+		$this->const[5] = array("FCKEDITOR_ENABLE_MAIL", "yesno", "1", "WYSIWIG for products details lines for all entities");
 		$this->description = "A tool for developper adding a debug bar in your browser.";
 		$this->description = "Ajout de files d'informations RSS dans les ecrans Dolibarr";
 		$this->description = "Gestion des projets";
 		$this->object->address = GETPOST("adresse");
+		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$this->posxdesc = $this->marge_gauche + 1; // For module retrocompatibility support durring PDF transition: TODO remove this at the end
 		$this->posxdesc = $this->marge_gauche + 1; // used for notes ans other stuff
 		$this->rights[$r][1] = 'Exporter les commande fournisseurs, attributs';
@@ -837,6 +896,9 @@
 		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really usefull
 		$this->tva_intra = empty($conf->global->MAIN_INFO_TVAINTRA) ? '' : $conf->global->MAIN_INFO_TVAINTRA; // VAT number, not necessarly INTRA.
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarly INTRA.
+		$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Referers');
+		$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Referers');
+		$title = $langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
 		$valuetoshow = ucfirst($fieldlist[$field]); // Par defaut
 		'filles' => array('name'=>'filles', 'type'=>'tns:FillesArray')
 		'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Status', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Paid', 3=>'Abandonned')),
@@ -942,6 +1004,7 @@
 		// Permettre l'inclusion de groupes
 		// Positionne parametres
 		// Positionning
+		// Reference de la remise creancier D1 sur 7 caracteres
 		// Refresh / Reload web site (for non javascript browers)
 		// Remove '<' into remainging, so remove non closing html tags like '<abc' or '<<abc'. Note: '<123abc' is not a html tag (can be kept), but '<abc123' is (must be removed).
 		// Remove fields not relevent to categories
@@ -991,7 +1054,9 @@
 		// add menu manualy
 		// additionnal list with adherents of company
 		// admin login no exectued.
+		// app is still working with 7.0 so no reason to abandon compatiblity with this target for the moment.
 		// attemp to create without mandatory fields :
+		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 		// delete menu manuelly
 		// for js desabled compatibility set $url as call to confirm action and $params['confirm']['url'] to confirmed action
 		// groupe
@@ -1033,6 +1098,7 @@
 		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
 		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour saisie
 		//var_dump($serie);
+		Special Thanks to developpers :
 		console.log("Cancel check_events() with dolnotif_nb_test_for_page="+dolnotif_nb_test_for_page+". Check is useless because javascript Notification.permission is "+Notification.permission+" (blocked manualy or web site is not https).");
 		console.log("Change montly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
 		dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], curren date is ".dol_now());
@@ -1046,20 +1112,24 @@
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id); // To avoid pb whith back
 		http_response_code(202);		// If we use 202, this is not really an error message, but this allow to ouput message on command line tools
 		if (!$login || (in_array('ldap', $authmode) && empty($passwordtotest))) {	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
+		if (!empty($arrayfields['cs.periode']['checked'])) {
 		if (!empty($this->phone)) {	// If a phone of thirdparty is defined, we add it ot mobile of contacts
 		if (!getDolGlobalString('PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN')) {    // Note that some countries still need bank number, BIC/IBAN not enougth for them
 		if (!is_array($this->userassigned) && !empty($this->userassigned)) {	// For backward compatibility when userassigned was an int instead fo array
 		if ($lines[$i]->fk_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
 		if ($lines[$i]->fk_task_parent == $parent || $level < 0) {       // if $level = -1, we dont' use sublevel recursion, we show all lines
+		if ($newamount == 0 || empty($this->date_ech) || (empty($this->period) && empty($this->periode))) {
 		if ($objectfield) {	// We must retreive the objectdesc from the field or extrafield
 		if ($this->label == 'Annulation mouvement ID'.$this->id) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
 		if (GETPOST('import_name')) {	// If we have submited a form, we take value used fot the update try
+		if (GETPOSTISSET("reday") && GETPOSTISSET("remonth") && GETPOSTISSET("reyear")) {
 		if (dol_strlen($phone) == 10) {// fixe 6 chiffres +352_AA_BB_CC
 		if (empty($conf->global->PDF_BANK_HIDE_NUMBER_SHOW_ONLY_BICIBAN)) {    // Note that some countries still need bank number, BIC/IBAN not enougth for them
 		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STDEST", "Contact destinataire transfert de stocks", 1, NULL, 0)');
 		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "external", "STFROM", "Contact expéditeur transfert de stocks", 1, NULL, 0)');
 		if (empty($res)) $this->db->query('INSERT INTO '.MAIN_DB_PREFIX.'c_type_contact(rowid, element, source, code, libelle, active, module, position) VALUES('.((int) $nextid).', "StockTransfer", "internal", "STRESP", "Responsable du transfert de stocks", 1, NULL, 0)');
+		if (empty($reyear) || empty($remonth) || empty($reday)) {
 		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we dont find 'company' link because it is an old 'withdraw' record
 		if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
@@ -1076,6 +1146,7 @@
 		print '<td classe="somme"><div class="center">'.$langs->trans("Time").' '.$j.'</div></td>'."\n";
 		print '<td classe="somme"><input type="image" name="ajoutcases" src="../img/add-16.png"></td>'."\n";
 		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
+		print __METHOD__." set a password with noo too much consecutive chars\n";
 		return $childs;
 		return $objet->compteur;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Lable")), null, 'errors');
@@ -1231,6 +1302,7 @@
 	 *      Build the conditionnal string from filter the query
 	 *      Charge indicateurs this->nb de tableau de bord
 	 *      Charge indicateurs this->nb pour le tableau de bord
+	 *      Function called when a Dolibarrr business event is done.
 	 *      Update informations into database
 	 *     @param  	string			$page        	   	Url of page to call if confirmation is OK. Can contains parameters (param 'action' and 'confirm' will be reformated)
 	 *    $this->code_client = -1 and $this->code_fournisseur = -1 means automatic assignement.
@@ -1311,6 +1383,8 @@
 	 *  @param 	User	$user       Objet du user qui cree
 	 *  @param 	User	$user       Objet user
 	 *  @param 	array 		$params    		array of additionals parameters
+	 *  @param 	string	$content		        		Content of WYSIWIG field
+	 *  @param 	string	$htmlname		        		HTML name of WYSIWIG field
 	 *  @param    	int				$info_bits        	Miscellaneous informations on line
 	 *  @param    	int		$socid			Id third pary
 	 *  @param      Translate   $outputlangs    objet lang a utiliser pour traduction
@@ -1350,6 +1424,7 @@
 	 *  Deplace fichier uploade sous le nom $file dans le repertoire sdir
 	 *  Fonction appelee lors d'une nouvelle connexion
 	 *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+	 *  Function called when a Dolibarrr business event is done.
 	 *  Function to build PDF on disk, then output on HTTP strem.
 	 *  Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
 	 *  Mise a jour de l'objet ligne de commande en base
@@ -1462,6 +1537,7 @@
 	 * @param bool 		$multiple 			add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 * @param bool 		$multiple 		add [] in the name of element and add 'multiple' attribut
 	 * @param bool $multiple add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 * @param float|string $selectedrate Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
 	 * @param int			$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
 	 * @param int 			$socid 				Id ot third party or 0 for all or -1 for empty list
 	 * @param int 		$socid 			Id ot third party or 0 for all
@@ -1469,6 +1545,7 @@
 	 * @param int       $month 				Specifig month - Can be empty
 	 * @param int       $year 				Specifig year - Can be empty
 	 * @param int $_type  Interger value representing Mail Transport Type
+	 * @param int $showempty Add a nempty line
 	 * @param string			$properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @param string		   $properties			Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
 	 * @param string	$str 		Original string to encode and optionaly truncate
@@ -1542,6 +1619,7 @@
 	 * Exemple of POST query :
 	 * Exemple: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
 	 * Flag to 1 if we must clean ambiguous charaters for the autogeneration of password (List of ambiguous char is in $this->Ambi)
+	 * Function called when a Dolibarrr business event is done.
 	 * Function to know all custom groupd from an accounting account
 	 * Function to shwo the combo select to chose a type of field (varchar, int, email, ...)
 	 * Function used to return childs of Mo
@@ -1552,6 +1630,7 @@
 	 * Method exists only for manage setup convertion
 	 * Method used to test  module builder convertion to this form usage
 	 * Method was used to test  module builder convertion to this form usage.
+	 * Methode qui permet de modifier la taille des caracteres
 	 * Mot de passe de l'administrateur
 	 * Multi-diminsional array containg addresses the message will
 	 * Note: To complete search with a particular filter on select, you can set $object->next_prev_filter set to define SQL criterias.
@@ -1636,9 +1715,17 @@
 	$amount = (is_numeric($amount) ? $amount : 0); // Check if amount is numeric, for example, an error occured when amount value = o (letter) instead 0 (number)
 	$controle = $tableau[$report][10];
 	$data = getDecodeValue($mege, $type);
+	$date = $obj->periode;
+	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
+	$datepaid = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", "int"), GETPOST("reday", "int"), GETPOST("reyear", "int"));
+	$datepaye = dol_mktime(12, 0, 0, GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'));
+	$datepaye = dol_mktime(GETPOST("rehour", 'int'), GETPOST("remin", 'int'), GETPOST("resec", 'int'), GETPOST("remonth", 'int'), GETPOST("reday", 'int'), GETPOST("reyear", 'int'), 'tzuserrel');
 	$daytoparse = dol_mktime(0, 0, 0, $month, $day, $year); // this are value submited after submit of action 'submitdateselect'
 	$ensemblereponses = $obj->reponses;
 	$fils = 0;
+	$head[$h][1] = $langs->trans('Referers');
 	$i1 = 0;	// count the nb of and criteria added (all fields / criterias)
 	$intial = 0;
 	$ldaprecords = $ldap->getRecords('*', $conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 'member'); // Fiter on 'member' filter param
@@ -1650,13 +1737,25 @@
 	$object->status = $object->fk_statut; // for backwad compatibility
 	$opensurveysondage->mail_admin = $_SESSION['adresse'];
 	$pdf->SetXY($savx, $savy);
+	$reday = GETPOST('reday');
 	$savy = $pdf->getY();
 	$showfield = 1; // By defaut
 	$somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
+	$sql .= "   (cs.periode IS NOT NULL AND cs.periode between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
+	$sql .= " AND cs.periode <= '".$db->idate($search_date_limit_end)."'";
+	$sql .= " AND cs.periode >= '".$db->idate($search_date_limit_start)."'";
+	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= " SET reponses = '".$db->escape($nouveauchoix)."'";
+	$sql .= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode as period, cs.date_ech, cs.amount as total,";
 	$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories set cachenbofdoc = -1 WHERE cachenbofdoc < 0"; // If pb into cahce counting, we set to value -1 = "unknown"
+	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+	$sql.= " AND nd.fk_action = ad.rowid";
+	$sql.= " WHERE u.rowid = nd.fk_user";
+	$sql.= " nd.rowid, ad.code, ad.label";
+	$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Referers');
 	$tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
 	$valuetoshow = ucfirst($fieldlist[$field]); // By defaut
+	'cs.periode'	=>array('label'=>"PeriodEndDate", 'checked'=>1, 'position'=>50),
 	/* intput, input[type=text], */
 	/* width: 168px; If I use with, there is trouble on size of flex boxes solved with min+max that is a little bit higer than min */
 	/**     Renvoi la description par defaut du modele de numerotation
@@ -1700,11 +1799,13 @@
 	// For example to avoid to have substition done when object is generic and not yet defined.
 	// Force parametres en chaine
 	// Get the main request informaiton.
+	// Hauteur des caracteres
 	// Hauteur par defaut d'une ligne
 	// If there is a translation, we can send immediatly the label
 	// If we are here, this means authentication was successfull.
 	// Initialisation objet cactioncomm
 	// Initialize array of search criterias
+	// Ligne de la periode d'analyse du rapport
 	// Link for delivery fields ref and date. Does not duplicate the line because we should always have ony 1 link or 0 per shipment
 	// List of fiels for action=list
 	// None. Beeing connected is enough.
@@ -1739,6 +1840,7 @@
 	// add properties and declare them in consturctor
 	// buil format asciidoc for urls in table
 	// but in some situations that is required (update legal informations for example)
+	// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
 	// for gravatar use get_avatar_from_service('gravatar', md5 hash email@adress, size-in-px )
 	// on transfert les données de l'un vers l'autre
 	// rewrite dictionnary if
@@ -1780,6 +1882,8 @@
 	if ($action == "transfert") {
 	if ($fils == 0) {
 	if ($fk_pa > 0 && empty($paht)) {
+	if (GETPOST("reyear", "int") && GETPOST("remonth", "int") && GETPOST("reday", "int")) {
+	if (GETPOST('reday')) {
 	if (empty($shmkeys[$memoryid])) {	// No room reserved for thid memoryid, no way to use cache
 	if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {    // For backward compatiblity, we scan also old dirs
 	min-height: 26px !important;	/* We cant use height because it's a div and it should be higher if content is more. but min-height doe not work either for div */
@@ -1791,13 +1895,25 @@
 	print '<div class="info">The recommanded value for MAIN_SECURITY_HASH_ALGO is now \'password_hash\' but setting it now will make ALL existing passwords of all users not valid, so update is not possible.<br>';
 	print '<option value="1"'.(GETPOST('mouvement') ? ' selected="selected"' : '').'>'.$langs->trans("Delete").'</option>';
 	print '<select name="mouvement" id="mouvement" class="minwidth100 valignmiddle">';
+	print '<td class="left" width="25%">'.$langs->trans("Referers").'</td>';
+	print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
 	print '<tr><td colspan="2"><br>*** Force modules not found physicaly to be disabled (only modules adding js, css or hooks can be detected as removed physicaly)</td></tr>';
+	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
 	print 'Failed to open '.$outputfile.' for ouput.'."\n";
 	print 'Missing paramater s, c or a';
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print ajax_combobox("mouvement");
 	print img_picto($langs->trans("Activited"), 'switch_on');
 	print price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
+	print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.lastname,cs.periode", "", $param, 'class="left"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.amount']['label'], $_SERVER["PHP_SELF"], "cs.amount,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.date_ech']['label'], $_SERVER["PHP_SELF"], "cs.date_ech,cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cs.fk_account']['label'], $_SERVER["PHP_SELF"], "cs.fk_account,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_mode_reglement']['label'], $_SERVER["PHP_SELF"], "cs.fk_mode_reglement,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.fk_type']['label'], $_SERVER["PHP_SELF"], "cs.fk_type,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.libelle']['label'], $_SERVER["PHP_SELF"], "cs.libelle,cs.periode", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.paye']['label'], $_SERVER["PHP_SELF"], "cs.paye,cs.periode", '', $param, 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cs.periode']['label'], $_SERVER["PHP_SELF"], "cs.periode", '', $param, '', $sortfield, $sortorder, 'center ');
 	private $cache_childids; // Cache array of already loaded childs
 	public $cacheconvert = array(); // Array to cache list of value found after a convertion
 	public $childs = array();
@@ -1811,6 +1927,7 @@
 	public $infofiles; // Used to return informations by function getDocumentsLink
 	public $lastsearch_values; // To store last saved search criterias for user
 	public $lastsearch_values_tmp; // To store current search criterias for user
+	public $periode;
 	public $recurid;		/* A string YYYYMMDDHHMMSS shared by allevent of same serie */
 	public $require_module = array("none"); // This module should not be displayed as Selector in mailling
 	public $societe; // Objet societe
@@ -1825,6 +1942,9 @@
                                 <input type="hidden" name="toekn" value="<?php echo newToken(); ?>">
                             <q>We were skeptical to work with a consultant to optimize our sales emails, but they were highly recommended by many other startups we knew. They helped us to reach our objective of 20% turnover increase, in 4 monthes.</q>
                             tempora nam reprehenderit quia itaque debitis,
+          - creat,unitl,alltime,datas,referers
+          - informations,medias,uptodate,reenable,crypted,developpers
+          - ned
         // prevent submiting form on press ENTER
         print "Package $target built succeessfully in $DESTI\n";
        SOCIETE_USEPREFIX can restore old feature.
@@ -1842,6 +1962,7 @@
   Replaced phplot and phplot5 librairies by artichow.
   for a personnal address book.
   fundation module.
+  path to thoose classes into the include function.
   where {TYPE} is contact type code (BILLING, SHIPPING, CUSTOMER, ... see contact type dictionnary).
  *									non defini=>renvoi un salt pour cryptage par defaut
  *					Initialy built by build_class_from_table on 2016-05-17 12:22
@@ -2138,6 +2259,7 @@
  * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
  * Correspondance des expeditions et des commandes clients dans la table llx_co_exp
  * Correspondance des livraisons et des commandes clients dans la table llx_co_liv
  * Creation objet $langs (must be before all other code)
@@ -2155,6 +2277,7 @@
  * Output a task line into a perday intput mode
  * Output a task line into a pertime intput mode
  * Parametre
+ * Referers types
  * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
  * Return array head with list of tabs to view object informations.
  * Return if we are using a HTTPS connexion
@@ -2188,6 +2311,7 @@
 # Examle of rule you can add to fail2ban to restrict bruteforce attacks.
 # If phpcs check fail and AUTOFIX is set to 1, then it run phpcbf to fix automaticaly the syntax, and git commit is canceled.
 # NOTE: Using this script is depcrecated, you can now convert generated ODT to PDF on the fly by setting the value MAIN_ODT_AS_PDF
+# OPTIMIZE: To use cache on static pages (A259200 = 1 month, A7200 = 2 hours, A691600 = 8 days = recommanded for static resources).
 # Script to extrac a database with demo values.
 # The output patch file can then be submited on Dolibarr dev mailing-list,
 # a logarithmic scale so increasing the size by one will rougly double the
@@ -2197,6 +2321,8 @@
 $FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more informations
 $array = array(1=>'Value 1', 2=>'Value 2', 3=>'Value 3 ith a very long text. aze eazeae e ae aeae a e a ea ea ea e a e aea e ae aeaeaeaze.');
 $conf = new stdClass(); // instantiate $conf explicitely
+$dolibarrroot = preg_replace('/([\\/]+)$/i', '', DOL_DOCUMENT_ROOT);
+$dolibarrroot = preg_replace('/([^\\/]+)$/i', '', $dolibarrroot);
 $html .= ' monthes people</b><br>';
 $permissiontoadd = $user->rights->stock->mouvement->creer;
 $permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
@@ -2204,9 +2330,14 @@ $permissiontodelete = $user->rights->stock->mouvement->creer; // There is no del
 $permissiontoread = $user->rights->stock->mouvement->lire;
 $seledted = !getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY') ? array() : explode(',', getDolGlobalString('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY'));
 $seledted = empty($conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY) ? array() : explode(',', $conf->global->BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY);
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";  // maybe better to use ad (adh) instead od d
+$sql .= " GROUP BY cs.rowid, cs.fk_type, cs.fk_user, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, cs.fk_account, c.libelle, c.accountancy_code, ba.label, ba.ref, ba.number, ba.account_number, ba.iban_prefix, ba.bic, ba.currency_code, ba.clos, pay.code";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
+$sql .= " cs.rowid, cs.libelle as label_sc, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total, cs.paye,";
 $sql = "SELECT id_users, nom as name, id_sondage, reponses";
 $sql = 'SELECT nom as name, reponses';
 $tag = GETPOST('tag');	// To retreive the emailing, and recipient
+$title = $langs->trans("Referers", $object->name);
 $tmpday = -date("w", dol_mktime(12, 0, 0, $month, 1, $year, 'gmt')) + 2; // date('w') is 0 fo sunday
 $usercancreate = $user->rights->stock->mouvement->creer;
 $usercancreate = (($user->rights->stock->mouvement->creer));
@@ -2224,7 +2355,6 @@ $usercanread = (($user->rights->stock->mouvement->lire));
 * Optionnaly, removed all fonts except
 * Removed the method 4 of GETPOST (to get $_COOKIE). It was not used and not recommanded to use in Dolibarr.
 * Sensitive datas like keys in setup pages, that need encyption (for example the API keys of users, the CRON security key, the keys into the Stripe module, or
-* Sensitive datas like keys in setup pages, that need encyption (for example the API keys of users, the CRON security key, the keys into the Stripe module, or 
 * The deprecated subsitution key __SIGNATURE__ has been removed. Replace it with __USER_SIGNATURE__ if you used the old syntax in your email templates.
 * The substition key __SIGNATURE__ was renamed into __USER_SIGNATURE__ to follow naming conventions.
 * You can test patching of serie with "quilt push" (autant de fois que de patch). Avec "quilt pop -a", on revient a l'état du upstream sans les patch.
@@ -2247,6 +2377,7 @@ $usercanread = (($user->rights->stock->mouvement->lire));
 - New: Add field oustanding limit into thirdparty properties.
 - New: Add management of triger FICHEINTER_VALIDATE
 - New: Add more "hooks" (like hooks to change way of showing/editing lines into dictionnaries).
+- New: Add proposals into referer page of thirdparty.
 - New: Default approver for holidays is set by default to hierchical parent.
 - New: Dictionary setup works with very large external dictionnaries (Add
 - New: Form to add a photo is immediatly available on photo page if
@@ -2317,6 +2448,7 @@ $usercanread = (($user->rights->stock->mouvement->lire));
 // Personalized search criterias. Example: $conf->global->PRODUCT_QUICKSEARCH_ON_FIELDS = 'p.ref=ProductRef;p.label=ProductLabel;p.description=Description;p.note=Note;'
 // Personalized search criterias. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
 // Place customer adress to the ISO location
+// Possible values: 0 or 1 (no strict CSRF test, only test on referer) or 2 (no CSRF test at all)
 // Repair llx_commande_fournisseur to eleminate duplicate reference
 // SQL Aliase adherent
 // SQL Aliase adherent_type
@@ -2538,6 +2670,7 @@ NEW: Product stock and subproduct stock are independant
 NEW: Products: Add SQL contraint on product_stock table to allow only existing product and warehouse #23543
 NEW: Remove tooltip tipTip library replaced with standatd jquery tooltip
 NEW: Start to introduce search filters on dictionnaries for vat list.
+NEW: Suport html content for combo list of email recipient
 NEW: Support of deployement of metapackages
 NEW: When a new field to show into lists is selected, the form is automatically submited and field added.
 NEW: When an user unset the batch management of products, transformation of each batch stock mouvement in global stock mouvement
@@ -2584,23 +2717,30 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 define('DOL_CLASS_PATH', 'class/'); // Filsystem path to class dir
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formating role of function price
 elseif ($year && $month && $day) $daytoparsegmt = dol_mktime(0, 0, 0, $month, $day, $year, 'gmt'); // this are value submited after submit of action 'submitdateselect'
+function checkES($IentOfi, $InumCta)
 function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localtax2_tx, $fk_pa, $paht)
 function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $action, $showextcals = array(), $actioncode = '', $usergroupid = '', $excludetype = '', $resourceid = 0)
 if (!$user->hasRight('stock', 'mouvement', 'lire')) {
+if (!empty($arrayfields['cs.periode']['checked'])) {
 if (!empty($conf->variants->eabled) && !getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT')) {	// Add test to exclude products that has variants
 if (!empty($conf->variants->eabled) && empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {	// Add test to exclude products that has variants
 if (!empty($contactname)) { // acces a partir du module de recherche
 if ($action == "transfert") {
 if (preg_match('/^dopayment/', $action)) {			// If we choosed/click on the payment mode
 if you restore or duplicate the data from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or
-if you restore or duplicate the data from another instance dump, you must also update this parameter in ther conf.php file to allow decryption in the new instance, or 
 print $form->multiselectarray('BLOCKEDLOG_DISABLE_NOT_ALLOWED_FOR_COUNTRY', $countryArray, $seledted);
+print $langs->trans("Developpers").':';
 print $langs->trans("Size").': '.ini_get('xcache.size').' &nbsp; &nbsp; &nbsp; '.$langs->trans("Recommanded").': 16*Split<br>'."\n";
 print $langs->trans("Split").': '.ini_get('xcache.count').' &nbsp; &nbsp; &nbsp; '.$langs->trans("Recommanded").': (cat /proc/cpuinfo | grep -c processor) + 1<br>'."\n";
 print $langs->trans("xcache.optimizer").': '.yn(ini_get('xcache.optimizer')).' (will be usefull only with xcache v2)<br>'."\n";
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
+print str_replace('{s}', $dolibarrroot, $langs->trans("UnpackPackageInDolibarrRoot", '{s}')).'<br>';
 print_barre_liste($langs->trans("Sessions"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, ($num ? $num : ''), 'setup'); // Do not show numer (0) if no session found (it means we can't know)
+print_liste_field_titre("PeriodEndDate", $_SERVER["PHP_SELF"], "cs.periode", "", $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre("Prority", $_SERVER["PHP_SELF"], "t.priority", "", $param, '', $sortfield, $sortorder);
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth
+select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
 session_start(); // To be able to keep info into session (used for not losing pass during navigation. pass must not transit through parmaeters)
 } // this are value submited after submit of action 'submitdateselect'
