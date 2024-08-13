@@ -709,7 +709,7 @@ class Fichinter extends CommonObject
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
