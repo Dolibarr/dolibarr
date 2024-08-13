@@ -7,8 +7,9 @@ build-backend = "setuptools.build_meta"
 # `codespell` can be run as a standalone program from the CLI
 # with the appropriate default options.
 
-skip = "*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*.svg,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css"
+skip = "*/.*/*,*/langs/*,*/build/exe/*,**.log,*.pdf,*dev/resources/*,*.phar,*.z,*.gz,*.sql,*.svg,*htdocs/includes/*,*/textiso.txt,*.js,*README-*,*build/rpm/*spec,*build/pad/*ml,*htdocs/includes/phpoffice/*,*htdocs/includes/tecnickcom/*,*dev/initdemo/removeconfdemo.sh,*dev/tools/codespell/*,*dev/trans*/ignore_translation_keys.lst,*pyproject.toml,*build/exe/*,*fontawe*,*htdocs/theme/*/flags-sprite.inc.php,*dev/setup/codetemplates/codetemplates.xml,*/php.ini,*/html_cerfafr.*,*/lessc.class.php,*.asciidoc,*.xml,*opensurvey/css/style.css,*dev/tools/phan/stubs/*,*/documents"
 
+check-hidden = true
 quiet-level=2
 ignore-regex = '\\[fnrstv]'
 builtin = "clear,rare,informal,usage,code,names"
@@ -48,3 +49,22 @@ line_length = 80
 # YAMLFIX_quote_keys_and_basic_values = false
 # uote_representation = false
 # preserve_quotes = false
+
+[tool.sqlfluff.core]
+# Documentation: https://docs.sqlfluff.com/en/stable/configuration.html#default-configuration
+# (Note: the examples given are for a .ini file and need slight adaptions for pyproject.toml
+
+ignore_comment_lines = true
+sql_file_exts = ".sql"
+encoding = "utf-8"
+processes = -1
+#verbose = 1
+#exclude_rules = "LT01,CP01,RF04"
+# RF04 | Keywords should not be used as identifiers. (rowid, login, position, ...)
+exclude_rules = "LT01,LT02,LT05,LT12,LT13,CP01,CP02,CP04,CP05,RF04"
+dialect = "mysql"
+# Default byte limit is 20000, must set limit - some files are too big.
+large_file_skip_byte_limit = 100000
+
+[tool.sqlfluff.indentation]
+indent_unit = "tab"

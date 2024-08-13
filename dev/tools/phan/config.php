@@ -344,7 +344,7 @@ return [
 		'/^GETPOST$/' => [1, $sanitizeRegex, 'GetPostUnknownSanitizeType'],
 		'/^isModEnabled$/' => [0, $moduleNameRegex, 'UnknownModuleName'],
 		// Note: trick to have different key for same regex:
-		'/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
+		// '/^isModEnable[d]$/' => [0, $deprecatedModuleNameRegex, "DeprecatedModuleName"],
 		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
 		'/^checkVal$/' => [1, $sanitizeRegex,"UnknownCheckValSanitizeType"],
 		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
