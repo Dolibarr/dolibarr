@@ -3,7 +3,6 @@ name: "CI"
 on: [push, pull_request]
 jobs:
   pre-commit:
-    if: false
     uses: ./.github/workflows/pre-commit.yml
     secrets: inherit
     with:

@@ -1,8 +1,21 @@
 ---
 name: pre-commit
 on:
-  pull_request:
-  push:
+  # pull_request:
+  # push:
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  workflow_dispatch:
+
+concurrency:
+  group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
@@ -15,11 +28,12 @@ jobs:
         if: false
 
       # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
       # This is faster for a big repo.
       - name: Get all changed php files (if PR)
         id: changed-php
-        uses: tj-actions/changed-files@v42
-        if: github.event_name == 'pull_request'
+        uses: tj-actions/changed-files@v44
+        if: env.gh_event == 'pull_request'
         with:
           files: |
             **.php
@@ -37,12 +51,14 @@ jobs:
           cache: pip
           python-version: "3.11"
       - run: python -m pip install pre-commit
+
       # Restore previous cache of precommit
       - uses: actions/cache/restore@v4
         with:
           path: ~/.cache/pre-commit/
           key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      # Run all the precommit tools (defined into pre-commit-config.yaml).
+
+      # Run all the precommit tools (defined in pre-commit-config.yaml).
       # We can force exclusion of some of them here.
       - name: Run pre-commit hooks
         env:
@@ -56,8 +72,8 @@ jobs:
       # The next uses git, which is slow for a bit repo.
       # - name: Get all changed php files (if PR)
       #   id: changed-php
-      #   uses: tj-actions/changed-files@v42
-      #   if: github.event_name == 'pull_request'
+      #   uses: tj-actions/changed-files@v44
+      #   if: env.gh_event == 'pull_request'
       #   with:
       #     files: |
       #        **.php
@@ -66,13 +82,16 @@ jobs:
         uses: shivammathur/setup-php@v2
         # Install when we're going to run phpcs
         if: |
-          steps.changed-php.outputs.any_changed == 'true'
-          ||
+          ! cancelled() &&
           (
-            github.event_name == 'push'
-            && (
-                 github.event.ref == 'refs/heads/develop'
-               || endsWith(github.event.ref, '.0')
+            steps.changed-php.outputs.any_changed == 'true'
+            ||
+            (
+              env.gh_event == 'push'
+              && (
+                   github.event.ref == 'refs/heads/develop'
+                 || endsWith(github.event.ref, '.0')
+              )
             )
           )
         with:
@@ -81,7 +100,7 @@ jobs:
           tools: phpcs
 
       - name: Run some pre-commit hooks on selected changed files only
-        if: steps.changed-php.outputs.any_changed == 'true'
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
         run: |
@@ -90,7 +109,7 @@ jobs:
 
       - name: Run some pre-commit hooks on all files on push to "main" branches
         if: |
-          github.event_name == 'push'
+          env.gh_event == 'push'
           && (
                github.event.ref == 'refs/heads/develop'
              || endsWith(github.event.ref, '.0')
@@ -99,10 +118,11 @@ jobs:
           set -o pipefail
           ln -sf ~/.cache .cache  # Absolute path in .pre-commit-config.yaml
           pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a ${RAW_LOG}
+          # pre-commit run --hook-stage manual -a sqlfluff-lint | tee -a ${RAW_LOG}
           ls -l ~/.cache/pre-commit/
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.2.9
+        uses: mdeweerd/logToCheckStyle@v2024.3.5
         if: ${{ failure() }}
         with:
           in: ${{ env.RAW_LOG }}
@@ -122,4 +142,4 @@ jobs:
           path: |
             ${{ env.RAW_LOG }}
             ${{ env.CS_XML }}
-          retention-days: 2
+            retention-days: 2
