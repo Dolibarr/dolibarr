@@ -1683,6 +1683,7 @@
 	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
 	 * Return list of categories having choosed type
 	 * Return list of product formated for output
+	 * Return multiselect list of entities for extrafeild type sellist
 	 * Return the addtional SQL JOIN query for filtering a list by a category
 	 * Return the addtional SQL SELECT query for filtering a list by a category
 	 * Return verion of data file
