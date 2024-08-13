@@ -860,10 +860,11 @@ class Fichinter extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
+		global $langs;
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			global $langs;
-			$langs->load("fichinter");
+			$langs->load("interventions");
+			$langs->load( "propal");
 
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
@@ -879,7 +880,12 @@ class Fichinter extends CommonObject
 		if ($status == self::STATUS_BILLED || $status == self::STATUS_CLOSED) {
 			$statuscode = 'status6';
 		}
-		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statuscode, $mode);
+
+		$signed_label = ' (' . $langs->transnoentitiesnoconv('Signed') . ')';
+		$status_label = $this->signed_status ? $this->labelStatus[$status] . $signed_label : $this->labelStatus[$status];
+		$status_label_short = $this->signed_status ? $this->labelStatusShort[$status] . $signed_label : $this->labelStatusShort[$status];
+
+		return dolGetStatus($status_label, $status_label_short, '', $statuscode, $mode);
 	}
 
 	/**
