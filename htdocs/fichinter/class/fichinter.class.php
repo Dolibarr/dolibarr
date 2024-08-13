@@ -342,6 +342,7 @@ class Fichinter extends CommonObject
 		$sql .= ", fk_projet";
 		$sql .= ", fk_contrat";
 		$sql .= ", fk_statut";
+		$sql .= ", signed_status";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
 		$sql .= ") ";
@@ -358,6 +359,7 @@ class Fichinter extends CommonObject
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : 0);
 		$sql .= ", ".($this->fk_contrat ? ((int) $this->fk_contrat) : 0);
 		$sql .= ", ".((int) $this->statut);
+		$sql .= ", ".($this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ")";
@@ -492,7 +494,7 @@ class Fichinter extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status,";
+		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
 		$sql .= " f.date_valid as datev,";
 		$sql .= " f.tms as datem,";
@@ -518,6 +520,7 @@ class Fichinter extends CommonObject
 				$this->socid        = $obj->fk_soc;
 				$this->status       = $obj->status;
 				$this->statut       = $obj->status;	// deprecated
+				$this->signed_status= $obj->signed_status;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
 				$this->dateo        = $this->db->jdate($obj->dateo);
