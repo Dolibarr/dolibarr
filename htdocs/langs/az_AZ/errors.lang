@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=İstifadəçi silinə bilməz. Ola bilsin ki, bu, Dolibarr qurumları ilə bağlıdır.
 ErrorFieldsRequired=Bəzi tələb olunan sahələr boş qalıb.
 ErrorSubjectIsRequired=E-poçt mövzusu tələb olunur
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Kataloq yaratmaq alınmadı. Veb server istifadəçisinin Dolibarr sənədlər qovluğuna yazmaq icazəsi olduğunu yoxlayın. Bu PHP-də <b>safe_mode</b> parametri aktivdirsə, Dolibarr php fayllarının veb server istifadəçisinə (və ya qrupa) məxsus olduğunu yoxlayın.
 ErrorNoMailDefinedForThisUser=Bu istifadəçi üçün heç bir poçt təyin olunmayıb
 ErrorSetupOfEmailsNotComplete=E-poçtların quraşdırılması tamamlanmayıb
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Xəta, dəyişdiriləcək sətir boşdur
 ErrorProductNeedBatchNumber=Xəta, '<b>%s</b>' çoxlu/seriyalı nömrə tələb edir
 ErrorProductDoesNotNeedBatchNumber=Xəta, '<b>%s</b>' çox şeyi qəbul etmir/ seriya nömrəsi
 ErrorFailedToReadObject=Xəta, <b>%s</b> tipli obyekti oxumaq alınmadı
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Xəta, bu giriş etibarlılıq tarix diapazonundan kənardadır
 ErrorValueLength=Length of field '<b>%s</b>' must be higher than '<b>%s</b>'
 ErrorReservedKeyword='<b>%s</b>' sözü qorunmuş açar sözdür
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Üçüncü tərəf və ya tərəfdaşlığ�
 ErrorFailedToWriteInTempDirectory=Müvəqqəti qovluğa yazmaq alınmadı
 ErrorQuantityIsLimitedTo=Kəmiyyət %s ilə məhdudlaşır
 ErrorFailedToLoadThirdParty=id=%s, email=%s, name= ünvanından üçüncü tərəfi tapmaq/yükləmək alınmadı %s
-ErrorThisPaymentModeIsNotSepa=Bu ödəniş rejimi bank hesabı deyil
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe müştərisi bu üçüncü tərəf üçün təyin edilməyib (yaxud Zolaq tərəfində silinmiş dəyərə ayarlanıb). Əvvəlcə onu yaradın (və ya yenidən əlavə edin).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP axtarışı + simvolu olan sətir üçün göndərən və ya alıcıda axtarış edə bilmir
 ErrorTableNotFound=Cədvəl <b>%s</b> tapılmadı
@@ -322,16 +325,21 @@ ErrorFixThisHere=<a href="%s">Bunu burada düzəldin</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Xəta: Cari nümunənizin URL-i (%s) OAuth2 giriş quraşdırmanızda müəyyən edilmiş URL ilə uyğun gəlmir (%s). Belə konfiqurasiyada OAuth2 girişinə icazə verilmir.
 ErrorMenuExistValue=Bu Başlıq və ya URL ilə artıq Menyu mövcuddur
 ErrorSVGFilesNotAllowedAsLinksWithout=%s seçimi olmadan SVG fayllarına xarici keçid kimi icazə verilmir
-ErrorTypeMenu=Navbarda eyni modul üçün başqa menyu əlavə etmək mümkün deyil, hələ idarə olunmur
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = <b>%s</b> tapılmadı, url ünvanınızı yoxlayın
 ErrorCountryCodeMustBe2Char=Ölkə kodu 2 simvoldan ibarət olmalıdır
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Cədvəl <b>%s</b> artıq mövcuddur
 ErrorDictionaryNotFound=Lüğət <b>%s</b> tapılmadı
 ErrorFailedToCreateSymLinkToMedias=%s-a işarə etmək üçün %s simvolik linki yaratmaq alınmadı.
 ErrorCheckTheCommandInsideTheAdvancedOptions=İxrac üçün istifadə olunan əmri İxracın Qabaqcıl seçimlərində yoxlayın
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP parametriniz upload_max_filesize (%s) PHP post_max_size parametrindən (%s) yüksəkdir. Bu ardıcıl quraşdırma deyil.
 WarningPasswordSetWithNoAccount=Bu üzv üçün parol təyin edildi. Bununla belə, heç bir istifadəçi hesabı yaradılmayıb. Beləliklə, bu parol saxlanılır, lakin Dolibarr-a daxil olmaq üçün istifadə edilə bilməz. O, xarici modul/interfeys tərəfindən istifadə oluna bilər, lakin əgər üzv üçün hər hansı bir giriş və ya parol təyin etməyə ehtiyac yoxdursa, siz Üzv modulunun quraşdırılmasından "Hər bir üzv üçün girişi idarə et" seçimini söndürə bilərsiniz. Əgər siz girişi idarə etməlisinizsə, lakin heç bir parola ehtiyacınız yoxdursa, bu xəbərdarlığın qarşısını almaq üçün bu sahəni boş saxlaya bilərsiniz. Qeyd: Üzv bir istifadəçi ilə bağlıdırsa, e-poçt da giriş kimi istifadə edilə bilər.
@@ -344,6 +352,7 @@ WarningConfFileMustBeReadOnly=Xəbərdarlıq, konfiqurasiya faylınız (<b>htdoc
 WarningsOnXLines=<b>%s</b> mənbə qeyd(lər)i ilə bağlı xəbərdarlıqlar
 WarningNoDocumentModelActivated=Sənəd yaratmaq üçün heç bir model aktivləşdirilməyib. Siz modul quraşdırmanızı yoxlayana qədər standart olaraq model seçiləcək.
 WarningLockFileDoesNotExists=Xəbərdarlıq, quraşdırma tamamlandıqdan sonra <b>install.lock</b> faylını qovluğa əlavə etməklə quraşdırma/miqrasiya alətlərini deaktiv etməlisiniz. <b>%s</b>. Bu faylın yaradılmasının buraxılması ciddi təhlükəsizlik riskidir.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=Bu təhlükəsizlik xəbərdarlığı zəiflik mövcud olduğu müddətdə aktiv qalacaq.
 WarningCloseAlways=Xəbərdarlıq, bağlama, hətta mənbə və hədəf elementlər arasında fərq olsa belə edilir. Bu funksiyanı ehtiyatla aktivləşdirin.
 WarningUsingThisBoxSlowDown=Xəbərdarlıq, bu qutudan istifadə edərək qutunu göstərən bütün səhifələri ciddi şəkildə yavaşlatır.
@@ -373,16 +382,18 @@ WarningModuleNeedRefresh = <b>%s</b> modulu deaktiv edilib. Aktivləşdirməyi u
 WarningPermissionAlreadyExist=Bu obyekt üçün mövcud icazələr
 WarningGoOnAccountancySetupToAddAccounts=Bu siyahı boşdursa, menyuya daxil olun %s - %s - %s hesab planınız üçün hesabları yükləmək və ya yaratmaq üçün.
 WarningCorrectedInvoiceNotFound=Düzəliş edilmiş faktura tapılmadı
-WarningCommentNotFound=Lütfən, <b>%s</b> bölməsində başlanğıc və son şərhlərin yerləşdirilməsini yoxlayın. Fəaliyyətinizi təqdim etməzdən əvvəl <b>%s</b> faylı
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Fond hərəkəti artıq tərsinə çevrilib
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR faktura yalnız kredit köçürmə ödənişləri ilə ödəniləcək hesab-fakturalara əlavə edilə bilər.
 SwissQrCreditorAddressInvalid = Kreditor ünvanı yanlışdır (Poçt və şəhər təyin olunub? (%s)
 SwissQrCreditorInformationInvalid = Kreditor məlumatı IBAN üçün etibarsızdır (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN hələ tətbiq olunmayıb
 SwissQrPaymentInformationInvalid = Ödəniş məlumatı cəmi %s üçün etibarsızdır: %s
 SwissQrDebitorAddressInvalid = Debitor məlumatı yanlış idi (%s)
-
 # Validate
 RequireValidValue = Dəyər etibarlı deyil
 RequireAtLeastXString = Ən azı %s simvol tələb edir
@@ -404,10 +415,10 @@ BadSetupOfFieldClassNotFoundForValidation = Sahənin səhv qurulması xətası: 
 BadSetupOfFieldFileNotFound = Sahənin səhv qurulması xətası: Fayl daxil edilmək üçün tapılmadı
 BadSetupOfFieldFetchNotCallable = Sahənin səhv qurulması xətası: Sinifdə çağırıla bilməz
 ErrorTooManyAttempts= Həddindən artıq cəhd, sonra yenidən cəhd edin
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed

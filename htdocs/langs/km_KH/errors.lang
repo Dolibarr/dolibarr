@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=ភាគីទីបី ឬសមាជិ
 ErrorFailedToWriteInTempDirectory=បរាជ័យក្នុងការសរសេរក្នុងថតឯកសារ
 ErrorQuantityIsLimitedTo=បរិមាណត្រូវបានកំណត់ត្រឹម %s
 ErrorFailedToLoadThirdParty=បរាជ័យក្នុងការស្វែងរក/ផ្ទុកភាគីទីបីពី id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=របៀបបង់ប្រាក់នេះមិនមែនជាគណនីធនាគារទេ។
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=អតិថិជន Stripe មិនត្រូវបានកំណត់សម្រាប់ភាគីទីបីនេះទេ (ឬកំណត់ទៅតម្លៃដែលបានលុបនៅផ្នែក Stripe)។ បង្កើត (ឬភ្ជាប់ឡើងវិញ) វាជាមុនសិន។
 ErrorCharPlusNotSupportedByImapForSearch=ការស្វែងរក IMAP មិនអាចស្វែងរកអ្នកផ្ញើ ឬអ្នកទទួលសម្រាប់ខ្សែអក្សរដែលមានតួអក្សរ +
 ErrorTableNotFound=តារាង <b>%s</b> រកមិនឃើញទេ
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=វចនានុក្រម <b>%s</b> រកមិន
 ErrorFailedToCreateSymLinkToMedias=បរាជ័យក្នុងការបង្កើតតំណនិមិត្តសញ្ញា %s ដើម្បីចង្អុលទៅ %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=ពិនិត្យពាក្យបញ្ជាដែលបានប្រើសម្រាប់ការនាំចេញទៅក្នុងជម្រើសកម្រិតខ្ពស់នៃការនាំចេញ
 ErrorEndTimeMustBeGreaterThanStartTime=ពេលវេលាបញ្ចប់ត្រូវតែធំជាងម៉ោងចាប់ផ្តើម
-ErrorIncoherentDates=កាលបរិច្ឆេទចាប់ផ្តើមត្រូវតែតិចជាងថ្ងៃបញ្ចប់
-ErrorEndHourIsNull=កាលបរិច្ឆេទបញ្ចប់មិនអាចជាសូន្យទេ។
-ErrorStartHourIsNull=កាលបរិច្ឆេទចាប់ផ្តើមមិនអាចជាសូន្យទេ។
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=បន្ទាត់ច្រើនពេកដើម្បីដំណើរការ។ សូមប្រើតម្រងជ្រើសរើសបន្ថែមទៀត។
 ErrorEmptyValueForQty=បរិមាណមិនអាចជាសូន្យទេ។
 # Warnings
