@@ -193,8 +193,17 @@ class BOM extends CommonObject
 	 * @var int product Id
 	 */
 	public $fk_product;
+	/**
+	 * @var float
+	 */
 	public $qty;
+	/**
+	 * @var string
+	 */
 	public $duration;
+	/**
+	 * @var float
+	 */
 	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 

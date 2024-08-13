@@ -224,7 +224,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Availabilities");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_availabilities');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">

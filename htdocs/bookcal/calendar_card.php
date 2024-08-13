@@ -184,7 +184,7 @@ $formproject = new FormProjets($db);
 
 $title = $langs->trans("Calendar");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar');
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
