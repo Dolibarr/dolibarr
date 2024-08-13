@@ -205,7 +205,7 @@ function getMultidirVersion($object, $module = '', $forobject = 0)
 
 
 /**
- * Return dolibarr global constant string value
+ * Return a Dolibarr global constant string value
  *
  * @param 	string 				$key 		Key to return value, return $default if not set
  * @param 	string|int|float 	$default 	Value to return if not defined
@@ -231,6 +231,19 @@ function getDolGlobalInt($key, $default = 0)
 {
 	global $conf;
 	return (int) (isset($conf->global->$key) ? $conf->global->$key : $default);
+}
+
+/**
+ * Return a Dolibarr global constant boolean value.
+ * The constants $conf->global->xxx are loaded by the script master.inc.php included at begin of any PHP page.
+ *
+ * @param string 	$key 		key to return value, return false if not set
+ * @param bool 		$default 	value to return
+ * @return bool
+ */
+function getDolGlobalBool($key, $default = false)
+{
+	return (bool) ($conf->global->$key ?? $default);
 }
 
 /**
