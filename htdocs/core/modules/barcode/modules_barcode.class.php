@@ -156,4 +156,22 @@ abstract class ModeleNumRefBarCode extends CommonNumRefGenerator
 
 		return $s;
 	}
+
+
+	/**
+	 * 	Check validity of code according to its rules
+	 *
+	 *	@param	DoliDB		$db					Database handler
+	 *	@param	string		$code				Code to check/correct
+	 *	@param	Product|Societe	$object		Object product or ThirdParty
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
+	 *  @return int<-7,0>						0 if OK
+	 * 											-1 ErrorBadCustomerCodeSyntax
+	 * 											-2 ErrorCustomerCodeRequired
+	 * 											-3 ErrorCustomerCodeAlreadyUsed
+	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
+	 */
+	abstract public function verif($db, &$code, $object, $thirdparty_type, $type);
 }

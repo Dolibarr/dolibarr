@@ -2158,7 +2158,7 @@ class Products extends DolibarrApi
 				$children[] = array_combine($keys, $values);
 			}
 
-			$this->product->sousprods = $children;
+			$this->product->sousprods = $children;  // @phpstan-ignore-line
 		}
 
 		if ($includeparentid) {
