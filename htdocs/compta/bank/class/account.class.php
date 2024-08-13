@@ -74,7 +74,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $type
 	 */
-	private $courant; // @phpstan-ignore-line
+	public $courant;
 
 	/**
 	 * Bank account type. Check TYPE_ constants. It's integer but Company bank account use string to identify type account
@@ -95,7 +95,7 @@ class Account extends CommonObject
 	 * @deprecated 	Duplicate field. We already have the field $this->status
 	 * @see $status
 	 */
-	private $clos = self::STATUS_OPEN;
+	public $clos = self::STATUS_OPEN;
 
 	/**
 	 * Does it need to be conciliated?
@@ -165,7 +165,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $owner_name
 	 */
-	private $proprio;
+	public $proprio;
 
 	/**
 	 * Name of account holder
@@ -199,7 +199,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $address
 	 */
-	private $domiciliation;
+	public $domiciliation;
 
 	/**
 	 * Address of the bank account
@@ -278,7 +278,7 @@ class Account extends CommonObject
 	 * @deprecated
 	 * @see $balance
 	 */
-	private $solde; // @phpstan-ignore-line
+	public $solde;
 
 	/**
 	 * Balance. Used in Account::create
@@ -393,22 +393,6 @@ class Account extends CommonObject
 	const STATUS_OPEN = 0;
 	const STATUS_CLOSED = 1;
 
-
-	/**
-	 * Provide list of deprecated properties and replacements
-	 *
-	 * @return array<string,string>  Old property to new property mapping
-	 */
-	protected function deprecatedProperties()
-	{
-		return array(
-			'proprio' => 'owner_name',
-			'domiciliation' => 'owner_address',
-			'courant' => 'type',
-			'clos' => 'status',
-			'solde' => 'balance',
-		) + parent::deprecatedProperties();
-	}
 
 	/**
 	 *  Constructor
@@ -815,7 +799,7 @@ class Account extends CommonObject
 		$sql .= ", '".$this->db->escape($this->iban)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
 		$sql .= ", ".((int) $this->pti_in_ctti);
-		$sql .= ", '".$this->db->escape($this->proprio)."'";
+		$sql .= ", '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
 		$sql .= ", '".$this->db->escape($this->owner_address)."'";
 		$sql .= ", '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ", '".$this->db->escape($this->owner_town)."'";
@@ -921,11 +905,9 @@ class Account extends CommonObject
 			$this->label = "???";
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
-
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET";
 		$sql .= " ref   = '".$this->db->escape($this->ref)."'";
 		$sql .= ",label = '".$this->db->escape($this->label)."'";
-
 		$sql .= ",courant = ".((int) $this->type);
 		$sql .= ",clos = ".((int) $this->status);
 		$sql .= ",rappro = ".((int) $this->rappro);
@@ -941,7 +923,7 @@ class Account extends CommonObject
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
 		$sql .= ",domiciliation='".$this->db->escape($this->address)."'";
 		$sql .= ",pti_in_ctti=".((int) $this->pti_in_ctti);
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1040,7 +1022,7 @@ class Account extends CommonObject
 			return -2;
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET";
 		$sql .= " bank  = '".$this->db->escape($this->bank)."'";
 		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
 		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
@@ -1048,8 +1030,8 @@ class Account extends CommonObject
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape($this->iban)."'";
-		$sql .= ",domiciliation='".$this->db->escape($this->domiciliation)."'";
-		$sql .= ",proprio = '".$this->db->escape($this->proprio)."'";
+		$sql .= ",domiciliation='".$this->db->escape($this->address ? $this->address : $this->domiciliation)."'";
+		$sql .= ",proprio = '".$this->db->escape($this->owner_name ? $this->owner_name : $this->proprio)."'";
 		$sql .= ",owner_address = '".$this->db->escape($this->owner_address)."'";
 		$sql .= ",owner_zip = '".$this->db->escape($this->owner_zip)."'";
 		$sql .= ",owner_town = '".$this->db->escape($this->owner_town)."'";
@@ -1134,8 +1116,8 @@ class Account extends CommonObject
 				$this->domiciliation = $obj->address;
 				$this->address       = $obj->address;
 				$this->pti_in_ctti   = $obj->pti_in_ctti;
-				$this->proprio = $obj->owner_name;
-				$this->owner_name = $obj->owner_name;
+				$this->proprio       = $obj->owner_name;
+				$this->owner_name    = $obj->owner_name;
 				$this->owner_address = $obj->owner_address;
 				$this->owner_zip     = $obj->owner_zip;
 				$this->owner_town    = $obj->owner_town;
@@ -1931,8 +1913,8 @@ class Account extends CommonObject
 		$this->label           = 'My Big Company Bank account';
 		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
-		$this->type = Account::TYPE_CURRENT;
-		$this->status = Account::STATUS_OPEN;
+		$this->type            = Account::TYPE_CURRENT;
+		$this->status          = Account::STATUS_OPEN;
 		$this->code_banque     = '30001';
 		$this->code_guichet    = '00794';
 		$this->number          = '12345678901';
@@ -1943,7 +1925,7 @@ class Account extends CommonObject
 		$this->bank            = 'MyBank';
 		$this->address         = 'Rue de Paris';
 		$this->proprio         = 'Owner';
-		$this->owner_name = 'Owner';
+		$this->owner_name      = 'Owner';
 		$this->owner_address   = 'Owner address';
 		$this->owner_zip       = 'Owner zip';
 		$this->owner_town      = 'Owner town';
