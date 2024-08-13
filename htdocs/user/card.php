@@ -2974,12 +2974,14 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			$MAXEVENT = 10;
+
 			print '</div><div class="fichehalfright">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', 0, '', '', $object->id);
+			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', $MAXEVENT, '', '', $object->id);
 
 			print '</div></div>';
 		}

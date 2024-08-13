@@ -1299,7 +1299,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Load all objects with filters.
-	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join.
+	 *  @TODO WARNING: This make a fetch on all records instead of making one request with a join, like done into show_actions_done.
 	 *
 	 *  @param		int		$socid			Filter by thirdparty
 	 *  @param		int		$fk_element		Id of element action is linked to
@@ -1341,9 +1341,14 @@ class ActionComm extends CommonObject
 			if ($elementtype == 'project') {
 				$sql .= ' AND a.fk_project = '.((int) $fk_element);
 			} elseif ($elementtype == 'contact') {
-				$sql .= ' AND a.id IN';
-				$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
-				$sql .= " element_type = 'socpeople' AND fk_element = ".((int) $fk_element).')';
+				$sql .= ' AND EXISTS';
+				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql .= " r.element_type = 'socpeople' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+			} elseif ($elementtype == 'user') {
+				$sql .= " AND (a.fk_user_action = ".((int) $fk_element)." OR EXISTS";
+				$sql .= " (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE";
+				$sql .= " r.element_type = 'user' AND r.fk_element = ".((int) $fk_element).' AND r.fk_actioncomm = a.id)';
+				$sql .= ")";
 			} else {
 				$sql .= " AND a.fk_element = ".((int) $fk_element)." AND a.elementtype = '".$this->db->escape($elementtype)."'";
 			}
