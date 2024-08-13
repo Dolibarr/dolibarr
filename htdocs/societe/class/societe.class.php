@@ -4381,10 +4381,11 @@ class Societe extends CommonObject
 		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
 		// We define state_id, state_code and state
 		$state_id = 0;
-		$state_code = $state_label = '';
+		$state_code = '';
+		$state_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
-			$state_id = $tmp[0];
+			$state_id = (int) $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];

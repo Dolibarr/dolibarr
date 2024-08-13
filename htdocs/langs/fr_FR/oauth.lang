@@ -23,15 +23,13 @@ TOKEN_REFRESH=Token Refresh présent
 TOKEN_EXPIRED=Token expiré
 TOKEN_EXPIRE_AT=Token expire le
 TOKEN_DELETE=Supprimer jeton enregistré
-OAUTH_GOOGLE_NAME=Service Oauth Google
 OAUTH_GOOGLE_ID=Oauth Google Id
 OAUTH_GOOGLE_SECRET=Oauth Google secret
-OAUTH_GITHUB_NAME=Service Oauth GitHub
 OAUTH_GITHUB_ID=Oauth GitHub Id
 OAUTH_GITHUB_SECRET=Secret Oauth GitHub
 OAUTH_URL_FOR_CREDENTIAL=Accédez à <a class="notasortlink" href="%s" target="_blank" rel="noopener noreferrer external"> cette page <span class="fas fa-external-link-alt paddingleft"> </span> </a> pour créer ou obtenir votre identifiant OAuth et votre secret
-OAUTH_STRIPE_TEST_NAME=OAuth Stripe Test
-OAUTH_STRIPE_LIVE_NAME=OAuth Stripe Live
+OAUTH_STRIPE_TEST_NAME=Stripe Test
+OAUTH_STRIPE_LIVE_NAME=Stripe Live
 OAUTH_ID=ID client OAuth
 OAUTH_SECRET=Code secret OAuth
 OAUTH_TENANT=Tenant OAuth
