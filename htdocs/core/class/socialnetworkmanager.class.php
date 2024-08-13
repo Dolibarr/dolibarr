@@ -21,6 +21,7 @@
  *      \brief      Class to manage each socialNetwork (Mastodon, etc.)
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/mastodonhandler.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/diasporahandler.class.php';
 
 
 /**
@@ -85,14 +86,15 @@ class SocialNetworkManager
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
+	 * @param array     $authParams (Optional) Parameters for authentication, if needed.
 	 * @return bool      Status code: false if error,  array if success.
 	 */
-	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '')
+	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
 		if (!$this->handler) {
 			return false;
 		}
-		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir);
+		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
 	}
 
 	/**

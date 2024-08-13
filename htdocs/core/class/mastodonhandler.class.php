@@ -57,6 +57,33 @@ class MastodonHandler
 			return false;
 		}
 
+		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, 3);
+		$foundInCache = false;
+
+		// Check cache
+		if ($cacheDelay > 0 && $cacheDir && dol_is_file($cacheFile)) {
+			$fileDate = dol_filemtime($cacheFile);
+			if ($fileDate >= (dol_now() - $cacheDelay)) {
+				$foundInCache = true;
+				$data = file_get_contents($cacheFile);
+			}
+		}
+
+		if (!$foundInCache) {
+			$result = getURLContent($urlAPI, 'GET', '', 1, array(), array('http', 'https'), 0);
+			if (empty($result['content'])) {
+				$this->error = 'Error retrieving URL ' . $urlAPI;
+				return false;
+			}
+			$data = $result['content'];
+
+			// Save to cache
+			if ($cacheDir) {
+				dol_mkdir($cacheDir);
+				file_put_contents($cacheFile, $data);
+			}
+		}
+
 		$data = json_decode($result['content'], true);
 		if (!is_array($data)) {
 			$this->error = 'Invalid JSON format';
