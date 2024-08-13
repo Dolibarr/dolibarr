@@ -864,7 +864,7 @@ class Fichinter extends CommonObject
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			$langs->load("interventions");
-			$langs->load( "propal");
+			$langs->load("propal");
 
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
