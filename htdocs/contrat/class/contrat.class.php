@@ -112,8 +112,10 @@ class Contrat extends CommonObject
 	 */
 	public $fk_soc;
 
-
-	public $societe; // Object societe
+	/**
+	 * @var Societe thirdparty Object
+	 */
+	public $societe;
 
 	/**
 	 * Status of the contract
@@ -154,7 +156,7 @@ class Contrat extends CommonObject
 	public $user_cloture;
 
 	/**
-	 * @var integer|string		Date when contract was signed
+	 * @var int|string		Date when contract was signed
 	 */
 	public $date_contrat;
 
@@ -170,6 +172,7 @@ class Contrat extends CommonObject
 	public $fk_commercial_suivi;
 
 	/**
+	 * @var int
 	 * @deprecated Use fk_project instead
 	 * @see $fk_project
 	 */
@@ -599,7 +602,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
@@ -1633,6 +1636,7 @@ class Contrat extends CommonObject
 
 				if (empty($error)) {
 					// Call trigger
+					$this->context['line_id'] = $contractlineid;
 					$result = $this->call_trigger('LINECONTRACT_INSERT', $user);
 					if ($result < 0) {
 						$error++;
@@ -1827,6 +1831,7 @@ class Contrat extends CommonObject
 
 			if (empty($error)) {
 				// Call trigger
+				$this->context['line_id'] = $rowid;
 				$result = $this->call_trigger('LINECONTRACT_MODIFY', $user);
 				if ($result < 0) {
 					$this->db->rollback();
@@ -1861,6 +1866,7 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0) {
 			// Call trigger
+			$this->context['line_id'] = $idline;
 			$result = $this->call_trigger('LINECONTRACT_DELETE', $user);
 			if ($result < 0) {
 				return -1;
@@ -2057,7 +2063,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	int		$maxlength					Max length of ref
@@ -2886,7 +2892,7 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
@@ -3230,7 +3236,7 @@ class ContratLigne extends CommonObjectLine
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually) for ContratLigne
+	 *	Return clickable name (with picto eventually) for ContratLigne
 	 *
 	 *  @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int		$maxlength		Max length

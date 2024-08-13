@@ -601,7 +601,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'unletteringmanual' && $confirm == "yes") {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->deleteLettering($toselect);
-			if ($result < 0) {
+			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
@@ -1212,8 +1212,10 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Document ref
-	$modulepart = '';
+	$modulepart = '';	// may be used by include*.tpl.php
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$objectstatic = null;
+
 		if ($line->doc_type === 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
 
@@ -1270,11 +1272,11 @@ while ($i < min($num, $limit)) {
 		$labeltoshow = '';
 		$labeltoshowalt = '';
 		$classforlabel = '';
-		if ($line->doc_type === 'customer_invoice' || $line->doc_type === 'supplier_invoice' || $line->doc_type === 'expense_report') {
+		if (($line->doc_type === 'customer_invoice' || $line->doc_type === 'supplier_invoice' || $line->doc_type === 'expense_report') && is_object($objectstatic)) {
 			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			$labeltoshow .= $documentlink;
 			$labeltoshowalt .= $objectstatic->ref;
-		} elseif ($line->doc_type === 'bank') {
+		} elseif ($line->doc_type === 'bank' && is_object($objectstatic)) {
 			$labeltoshow .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;
 			$bank_ref = strstr($line->doc_ref, '-');

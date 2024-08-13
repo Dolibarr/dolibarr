@@ -184,7 +184,7 @@ class Societe extends CommonObject
 		'parent' => array('type' => 'integer', 'label' => 'Parent', 'enabled' => 1, 'visible' => -1, 'position' => 20),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 25),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 30),
-		'nom' => array('type' => 'varchar(128)', 'length'=>128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
+		'nom' => array('type' => 'varchar(128)', 'length' => 128, 'label' => 'Nom', 'enabled' => 1, 'visible' => -1, 'position' => 35, 'showoncombobox' => 1, 'csslist' => 'tdoverflowmax150'),
 		'name_alias' => array('type' => 'varchar(128)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 36, 'showoncombobox' => 2),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 45),
@@ -1117,6 +1117,7 @@ class Societe extends CommonObject
 		$contact->town              = $this->town;
 		$this->setUpperOrLowerCase();
 		$contact->phone_pro         = $this->phone;
+		$contact->roles				= explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
 
 		$contactId = $contact->create($user, $notrigger);
 		if ($contactId < 0) {
@@ -2855,7 +2856,7 @@ class Societe extends CommonObject
 	 *    	Return a link on thirdparty (with picto)
 	 *
 	 *		@param	int		$withpicto		          	Add picto into link (0=No picto, 1=Include picto with link, 2=Picto only)
-	 *		@param	string	$option			          	Target of link ('', 'customer', 'prospect', 'supplier', 'project')
+	 *		@param	string	$option			          	Target of link (''=auto, 'nolink'=no link, 'customer', 'prospect', 'supplier', 'project', 'agenda', ...)
 	 *		@param	int		$maxlen			          	Max length of name
 	 *      @param	int  	$notooltip		          	1=Disable tooltip
 	 *      @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -3777,22 +3778,22 @@ class Societe extends CommonObject
 
 		switch ($idprof) {
 			case 1:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF1_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF1_UNIQUE'));
 				break;
 			case 2:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF2_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF2_UNIQUE'));
 				break;
 			case 3:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF3_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF3_UNIQUE'));
 				break;
 			case 4:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF4_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF4_UNIQUE'));
 				break;
 			case 5:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF5_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF5_UNIQUE'));
 				break;
 			case 6:
-				$ret = (!getDolGlobalString('SOCIETE_IDPROF6_UNIQUE') ? false : true);
+				$ret = !(!getDolGlobalString('SOCIETE_IDPROF6_UNIQUE'));
 				break;
 			default:
 				$ret = false;
@@ -4380,10 +4381,11 @@ class Societe extends CommonObject
 		//TODO This could be replicated for region but function `getRegion` didn't exist, so I didn't added it.
 		// We define state_id, state_code and state
 		$state_id = 0;
-		$state_code = $state_label = '';
+		$state_code = '';
+		$state_label = '';
 		if (getDolGlobalString('MAIN_INFO_SOCIETE_STATE')) {
 			$tmp = explode(':', getDolGlobalString('MAIN_INFO_SOCIETE_STATE'));
-			$state_id = $tmp[0];
+			$state_id = (int) $tmp[0];
 			if (!empty($tmp[1])) {   // If $conf->global->MAIN_INFO_SOCIETE_STATE is "id:code:label"
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
@@ -4590,7 +4592,7 @@ class Societe extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			return (($obj->nb > 0) ? true : false);
+			return ($obj->nb > 0);
 		} else {
 			$this->error = $this->db->lasterror();
 			return false;
@@ -5186,10 +5188,7 @@ class Societe extends CommonObject
 	 */
 	public function fetchPartnerships($mode)
 	{
-		global $langs;
-
 		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-
 
 		$this->partnerships[] = array();
 
@@ -5197,7 +5196,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
@@ -5213,7 +5212,19 @@ class Societe extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax125 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref);
+		$return .= '</div>';
+		if (!empty($this->phone)) {
+			$return .= '<div class="inline-block valignmiddle">';
+			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+			$return .= dol_print_phone($this->phone, $this->country_code, 0, $this->id, 'tel', 'hidenum', 'phone', $this->phone, 0, 'paddingleft paddingright');
+			$return .= '</div>';
+		}
+		if (!empty($this->email)) {
+			$return .= '<div class="inline-block valignmiddle">';
+			$return .= dol_print_email($this->email, 0, $this->id, 'thirdparty', -1, 1, 2, 'paddingleft paddingright');
+			$return .= '</div>';
+		}
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
@@ -5223,7 +5234,7 @@ class Societe extends CommonObject
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
-		$return .= '</div>';
+		$return .= '</div>';	// end info-box-content
 		$return .= '</div>';
 		$return .= '</div>';
 
@@ -5464,12 +5475,14 @@ class Societe extends CommonObject
 
 				//First, all core objects must update their tables
 				foreach ($objects as $object_name => $object_file) {
+					/* $object_file is never an array -> code commented
 					if (is_array($object_file)) {
 						if (empty($object_file['enabled'])) {
 							continue;
 						}
 						$object_file = $object_file['file'];
 					}
+					*/
 
 					require_once DOL_DOCUMENT_ROOT.$object_file;
 

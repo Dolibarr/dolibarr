@@ -106,7 +106,6 @@ abstract class Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
@@ -134,7 +133,7 @@ abstract class Stats
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) {
-				$year = $year - 1;
+				$year -= 1;
 			}
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -208,7 +207,6 @@ abstract class Stats
 		// Search into cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
@@ -236,7 +234,7 @@ abstract class Stats
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) {
-				$year = $year - 1;
+				$year -= 1;
 			}
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getAmountByMonth($year, $format);
@@ -333,7 +331,6 @@ abstract class Stats
 		// Search in cache
 		if (!empty($cachedelay)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 		}
 
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';

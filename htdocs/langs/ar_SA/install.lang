@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=لقد استخدمت معالج إعداد Dolibarr من �
 KeepDefaultValuesMamp=لقد استخدمت معالج إعداد Dolibarr من DoliMamp ، لذلك تم تحسين القيم المقترحة هنا بالفعل. قم بتغييرها فقط إذا كنت تعرف ما تفعله.
 KeepDefaultValuesProxmox=لقد استخدمت معالج إعداد Dolibarr من جهاز Proxmox الظاهري ، لذلك تم تحسين القيم المقترحة هنا بالفعل. قم بتغييرها فقط إذا كنت تعرف ما تفعله.
 UpgradeExternalModule=قم بتشغيل عملية ترقية مخصصة للوحدة الخارجية
-SetAtLeastOneOptionAsUrlParameter=عيِّن خيارًا واحدًا على الأقل كمعامل في URL. على سبيل المثال: "... repair.php؟ standard = Verified"
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=لا شيء للتنظيف / الحذف
 NothingToDo=لا شيء لأفعله
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=حاول التطبيق الترقية الذا�
 YouTryUpgradeDisabledByMissingFileUnLock=حاول التطبيق الترقية الذاتية، لكن عملية الترقية غير مسموح بها حاليًا.<br>
 ClickHereToGoToApp=انقر هنا للذهاب إلى التطبيق الخاص بك
 ClickOnLinkOrRemoveManualy=إذا كانت الترقية قيد التقدم ، يرجى الانتظار. إذا لم يكن كذلك ، انقر فوق الارتباط التالي. إذا كنت ترى نفس الصفحة دائمًا ، فيجب عليك إزالة / إعادة تسمية الملف install.lock في دليل المستندات.
-ClickOnLinkOrCreateUnlockFileManualy=إذا كانت الترقية قيد التقدم، فيرجى الانتظار... إذا لم يكن الأمر كذلك، فيجب عليك إزالة الملف install.lock أو إنشاء ملف Upgrade.unlock في دليل مستندات Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=محمل
 FunctionTest=اختبار الوظيفة
 NodoUpgradeAfterDB=لا يوجد إجراء مطلوب من قبل الوحدات الخارجية بعد ترقية قاعدة البيانات

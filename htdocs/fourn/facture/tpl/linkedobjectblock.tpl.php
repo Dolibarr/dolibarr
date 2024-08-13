@@ -3,6 +3,7 @@
  * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke <charlie@patas-monkey.com>
  * Copyright (C) 2016      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +59,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			}
 			if ($objectlink->statut != 3) {
 				// If not abandoned
-				$total = $total + $sign * $objectlink->total_ht;
+				$total += $sign * $objectlink->total_ht;
 				echo price($objectlink->total_ht);
 			} else {
 				echo '<strike>'.price($objectlink->total_ht).'</strike>';

@@ -44,7 +44,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 	}
 
 	if ($centimes && strlen((string) $num) == 1) {
-		$num = $num * 10;
+		$num *= 10;
 	}
 
 	if (isModEnabled('numberwords')) {
@@ -129,7 +129,7 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 		} //end for loop
 		$commas = count($words);
 		if ($commas > 1) {
-			$commas = $commas - 1;
+			$commas -= 1;
 		}
 		$concatWords = implode(' ', $words);
 		// Delete multi whitespaces
@@ -202,21 +202,21 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			$number = $numero;
 			if ($number >= 1000000000) {
 				$CdMMillon = (int) ($numero / 100000000000);
-				$numero = $numero - $CdMMillon * 100000000000;
+				$numero -= $CdMMillon * 100000000000;
 				$DdMMillon = (int) ($numero / 10000000000);
-				$numero = $numero - $DdMMillon * 10000000000;
+				$numero -= $DdMMillon * 10000000000;
 				$UdMMillon = (int) ($numero / 1000000000);
-				$numero = $numero - $UdMMillon * 1000000000;
+				$numero -= $UdMMillon * 1000000000;
 				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
 				$entexto .= " MIL ";
 			}
 			if ($number >= 1000000) {
 				$CdMILLON = (int) ($numero / 100000000);
-				$numero = $numero - $CdMILLON * 100000000;
+				$numero -= $CdMILLON * 100000000;
 				$DdMILLON = (int) ($numero / 10000000);
-				$numero = $numero - $DdMILLON * 10000000;
+				$numero -= $DdMILLON * 10000000;
 				$udMILLON = (int) ($numero / 1000000);
-				$numero = $numero - $udMILLON * 1000000;
+				$numero -= $udMILLON * 1000000;
 				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1) {
 					$entexto .= " MILL&OacuteN ";
@@ -226,18 +226,18 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			}
 			if ($number >= 1000) {
 				$cdm = (int) ($numero / 100000);
-				$numero = $numero - $cdm * 100000;
+				$numero -= $cdm * 100000;
 				$ddm = (int) ($numero / 10000);
-				$numero = $numero - $ddm * 10000;
+				$numero -= $ddm * 10000;
 				$udm = (int) ($numero / 1000);
-				$numero = $numero - $udm * 1000;
+				$numero -= $udm * 1000;
 				$entexto .= hundreds2text($cdm, $ddm, $udm);
 				if ($cdm || $ddm || $udm) {
 					$entexto .= " MIL ";
 				}
 			}
 			$c = (int) ($numero / 100);
-			$numero = $numero - $c * 100;
+			$numero -= $c * 100;
 			$d = (int) ($numero / 10);
 			$u = (int) $numero - $d * 10;
 			$entexto .= hundreds2text($c, $d, $u);

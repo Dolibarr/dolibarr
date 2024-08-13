@@ -1226,7 +1226,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => 1, 'position' => 40),
 		't.birthday' => array('label' => "Birthday", 'checked' => 0, 'position' => 45),
 		't.statut' => array('label' => "Status", 'checked' => 1, 'position' => 50, 'class' => 'center'),
-		'u.user'=>array('label'=>"DolibarrLogin", 'checked'=>1, 'position'=>50, 'class'=>'center'),
+		'u.user' => array('label' => "DolibarrLogin", 'checked' => 1, 'position' => 50, 'class' => 'center'),
 	);
 	// Extra fields
 	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
@@ -1717,7 +1717,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
  * 		@param	Contact				$objcon	        Object contact
  *      @param  int					$noprint	    Return string but does not output it
  *      @param  string|string[]		$actioncode 	Filter on actioncode
- *      @return	string|void					    	Return html part or void if noprint is 1
+ *      @return	?string							   	Return html part or null if noprint is 1
  */
 function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '')
 {
@@ -1729,6 +1729,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		return $out;
 	} else {
 		print $out;
+		return null;
 	}
 }
 
@@ -1748,7 +1749,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  *      @param  string             $sortfield      Sort field
  *      @param  string             $sortorder      Sort order
  *      @param	string			   $module		   You can add module name here if elementtype in table llx_actioncomm is objectkey@module
- *      @return	string|void				           Return html part or void if noprint is 1
+ *      @return	?string							   Return html part or void if noprint is 1
  */
 function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $noprint = 0, $actioncode = '', $donetodo = 'done', $filters = array(), $sortfield = 'a.datep,a.id', $sortorder = 'DESC', $module = '')
 {
@@ -1802,12 +1803,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('agendadao'));
 
-		// Recherche histo sur actioncomm
-		if (is_object($objcon) && $objcon->id > 0) {
-			$sql = "SELECT DISTINCT a.id, a.label as label,";
-		} else {
-			$sql = "SELECT a.id, a.label as label,";
-		}
+		$sql = "SELECT a.id, a.label as label,";
 		$sql .= " a.datep as dp,";
 		$sql .= " a.datep2 as dp2,";
 		$sql .= " a.percent as percent, 'action' as type,";
@@ -1849,18 +1845,20 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		// Link to the owner of action
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
+		// Link to action types
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
 
-		if (is_object($filterobj) && get_class($filterobj) !== 'User') {
-			$force_filter_contact = false;
-		} else {
+		// Set $force_filter_contact:
+		// - true for a filter on a user or a contact, so a link on table llx_actioncomm_resources or llx_actioncomm.fk_user_action
+		// - false for a link on table llx_element_resources
+		$force_filter_contact = false;
+		if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
 			$force_filter_contact = true;
 		}
 		if (is_object($objcon) && $objcon->id > 0) {
 			$force_filter_contact = true;
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as r ON a.id = r.fk_actioncomm";
-			$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id);
 		}
 
 		// Fields from hook
@@ -1897,7 +1895,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
-		if ($force_filter_contact === false) {
+		if (!$force_filter_contact) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
 				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
@@ -1956,7 +1954,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				return 'Bad value for $filterobj';
 			}
 		} else {
-			$sql .= " AND u.rowid = ". ((int) $filterobj->id);
+			if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
+				$sql .= " AND (u.rowid = ". ((int) $filterobj->id).' OR ';
+				$sql .= " EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
+				$sql .= " AND r.element_type = '".$db->escape($filterobj->table_element)."' AND r.fk_element = ".((int) $filterobj->id).')';
+				$sql .= ")";
+			}
+			if (is_object($objcon) && $objcon->id > 0) {
+				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
+				$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id).')';
+			}
 		}
 
 		if (!empty($tms_start) && !empty($tms_end)) {
@@ -2412,6 +2419,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		return $out;
 	} else {
 		print $out;
+		return  null;
 	}
 }
 

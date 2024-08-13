@@ -87,7 +87,7 @@ function dol_session_regenerate_id()
  * Destroy and recreate a new session without losing content.
  * Not used yet.
  *
- * @param  $sessionname		string		Session name
+ * @param  string	$sessionname	Session name
  * @return void
  */
 function dol_session_rotate($sessionname = '')
@@ -268,7 +268,7 @@ define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core ph
 if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
+	exit(1);
 }
 
 

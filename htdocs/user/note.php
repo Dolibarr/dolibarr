@@ -42,7 +42,7 @@ $langs->loadLangs(array('companies', 'members', 'bills', 'users'));
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 // If user is not user read and no permission to read other users, we stop
 if (($object->id != $user->id) && (!$user->hasRight("user", "user", "read"))) {

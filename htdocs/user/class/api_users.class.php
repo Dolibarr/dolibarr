@@ -168,7 +168,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -207,7 +207,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -246,7 +246,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -281,7 +281,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		$usergroup = new UserGroup($this->db);

@@ -11,6 +11,7 @@ $sanitizeRegex
 		array(
 			// Documented:
 			'none',
+			'password',
 			'array',
 			'int',
 			'intcomma',
@@ -22,24 +23,15 @@ $sanitizeRegex
 			'aZ09',
 			'aZ09arobase',
 			'aZ09comma',
+			'email',
 			'san_alpha',
 			'restricthtml',
 			'nohtml',
 			'custom',
 			// Not documented:
-			'email',
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
-			'restricthtmlnolink',
-			//'ascii',
-			//'categ_id',
-			//'chaine',
-
-			//'html',
-			//'boolean',
-			//'double',
-			//'float',
-			//'string',
+			'restricthtmlnolink'
 		)
 	).')*$/';
 
@@ -325,6 +317,8 @@ return [
 	//'exclude_file_regex' => '@^vendor/.*/(tests?|Tests?)/@',
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
+		// mymodule seen in cti, but not in git.
+		.'|htdocs/core/mymodule/.*'  // @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
@@ -354,9 +348,9 @@ return [
 		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
 		'/^checkVal$/' => [1, $sanitizeRegex,"UnknownCheckValSanitizeType"],
 		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
-		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],  // '', 0, 1 match bool and int values
+		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],
 		'/^dol_mktime$/' => [6, '{^(?:|0|1|auto|gmt|tz(?:server|ref|user(?:rel)?|,[+a-zA-Z-/]+))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
-		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],
+		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
 		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidGetPostFloatRounding"],
 		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidPrice2NumRounding"],
 	],
@@ -392,7 +386,7 @@ return [
 		'UnknownElementTypePlugin',
 		'WhitespacePlugin',
 		//'RemoveDebugStatementPlugin', // Reports echo, print, ...
-		//'SimplifyExpressionPlugin',
+		'SimplifyExpressionPlugin',
 		//'StrictComparisonPlugin', // Expects ===
 		'SuspiciousParamOrderPlugin',
 		'UnsafeCodePlugin',
@@ -421,6 +415,7 @@ return [
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is
+		'PhanPluginUnknownArrayPropertyType',	// this option costs more time to be supported than it solves time
 		'PhanTypeArraySuspiciousNullable',		// this option costs more time to be supported than it solves time
 		'PhanTypeInvalidDimOffset',				// this option costs more time to be supported than it solves time
 		'PhanTypeObjectUnsetDeclaredProperty',

@@ -130,10 +130,11 @@ class Thirdparties extends DolibarrApi
 	 *								Set to 4 to show only suppliers
 	 * @param	int		$category   Use this param to filter list by category
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param   string  $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool $pagination_data If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array               Array of thirdparty objects
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 
@@ -203,8 +204,10 @@ class Thirdparties extends DolibarrApi
 			}
 		}
 
-		$sql .= $this->db->order($sortfield, $sortorder);
+		//this query will return total thirdparties with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
+		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
 				$page = 0;
@@ -236,6 +239,24 @@ class Thirdparties extends DolibarrApi
 		if (!count($obj_ret)) {
 			throw new RestException(404, 'Thirdparties not found');
 		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -1110,7 +1131,7 @@ class Thirdparties extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 
-		$sql = "SELECT rowid as id, fk_action, fk_action as event, fk_soc, fk_soc as socid, fk_contact, fk_contact as target, type, datec, tms";
+		$sql = "SELECT rowid as id, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 		if ($id) {
 			$sql .= " WHERE fk_soc  = ".((int) $id);
@@ -1136,7 +1157,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(404, 'No notifications found');
 		}
 
-		$fields = array('id', 'socid', 'fk_soc', 'fk_action', 'event', 'fk_contact', 'target', 'datec', 'tms', 'type');
+		$fields = array('id', 'socid', 'event', 'contact_id', 'datec', 'tms', 'type');
 
 		$returnNotifications = array();
 
@@ -1178,8 +1199,92 @@ class Thirdparties extends DolibarrApi
 			$notification->$field = $value;
 		}
 
+		$event = $notification->event;
+		if (!$event) {
+			throw new RestException(500, 'Error creating Thirdparty Notification, request_data missing event');
+		}
+		$socid = $notification->socid;
+		$contact_id = $notification->contact_id;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape($event)."'";
+		$exists_sql .= " AND fk_soc = '".$this->db->escape($socid)."'";
+		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_sql) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
 		if ($notification->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating Thirdparty Notification');
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Create CompanyNotification object for thirdparty using action trigger code
+	 * @param int  $id ID of thirdparty
+	 * @param string  $code Action Trigger code
+	 * @param array $request_data Request data
+	 *
+	 * @return array|mixed  Notification of thirdparty
+	 *
+	 * @url POST {id}/notificationsbycode/{code}
+	 */
+	public function createCompanyNotificationByCode($id, $code, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
+			throw new RestException(403, "User has no right to update thirdparties");
+		}
+		if ($this->company->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Thirdparty Notification, Thirdparty doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+		$notification->socid = $id;
+
+		$sql = "SELECT t.rowid as id FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+
+		$result = $this->db->query($sql);
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Action Trigger code not found');
+		}
+
+		$notification->event = $this->db->fetch_row($result)[0];
+		foreach ($request_data as $field => $value) {
+			if ($field === 'event') {
+				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains event key');
+			}
+			if ($field === 'fk_action') {
+				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
+			}
+			$notification->$field = $value;
+		}
+
+		$event = $notification->event;
+		$socid = $notification->socid;
+		$contact_id = $notification->contact_id;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape($event)."'";
+		$exists_sql .= " AND fk_soc = '".$this->db->escape($socid)."'";
+		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_sql) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
+		if ($notification->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating Thirdparty Notification, are request_data well formed?');
 		}
 
 		if ($notification->update(DolibarrApiAccess::$user) < 0) {

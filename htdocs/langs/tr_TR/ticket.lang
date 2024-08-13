@@ -5,106 +5,86 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Destek Bildirimleri
 Module56000Desc=Sorun veya istek yönetimi için destek bildirim sistemi
-
 Permission56001=Destek bildirimlerini gör
 Permission56002=Destek bildirimini değiştir
 Permission56003=Destek bildirimlerini sil
 Permission56004=Destek bildirimlerini yönet
-Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
-Permission56006=Export tickets
-
+Permission56005=Tüm üçüncü tarafların biletlerini görün (harici kullanıcılar için geçerli değildir, her zaman bağımlı oldukları üçüncü tarafla sınırlıdır)
+Permission56006=Biletleri dışa aktar
 Tickets=Destek Bildirimleri
 TicketDictType=Destek Bildirimi - Türler
-TicketDictCategory=Ticket - Groups
+TicketDictCategory=Bilet - Gruplar
 TicketDictSeverity=Destek Bildirimi - Önemler
 TicketDictResolution=Destek Bildirimi - Çözüm
-
 TicketTypeShortCOM=Ticari soru
-TicketTypeShortHELP=Request for functional help
-TicketTypeShortISSUE=Issue or bug
-TicketTypeShortPROBLEM=Problem
-TicketTypeShortREQUEST=Change or enhancement request
+TicketTypeShortHELP=İşlevsel yardım talebi
+TicketTypeShortISSUE=Sorun veya hata
+TicketTypeShortPROBLEM=Sorun
+TicketTypeShortREQUEST=Değişiklik veya geliştirme talebi
 TicketTypeShortPROJET=Proje
 TicketTypeShortOTHER=Diğer
-
 TicketSeverityShortLOW=Düşük
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Yüksek
-TicketSeverityShortBLOCKING=Critical, Blocking
-
+TicketSeverityShortBLOCKING=Kritik, Engelleyici
 TicketCategoryShortOTHER=Diğer
-
 ErrorBadEmailAddress='%s' alanı hatalı
 MenuTicketMyAssign=Destek bildirimlerim
 MenuTicketMyAssignNonClosed=Açık destek bildirimlerim
 MenuListNonClosed=Açık destek bildirimleri
-
 TypeContact_ticket_internal_CONTRIBUTOR=Katılımcı
 TypeContact_ticket_internal_SUPPORTTEC=Atanan kullanıcı
-TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
+TypeContact_ticket_external_SUPPORTCLI=Müşteri iletişim/olay takibi
 TypeContact_ticket_external_CONTRIBUTOR=Dış iştirakçi
-
-OriginEmail=Reporter Email
+OriginEmail=Muhabir E-postası
+EmailReplyto=E-postayla yanıtla
+EmailReferences=E-postalardaki Referanslar
 Notify_TICKET_SENTBYMAIL=Destek bildirimini e-posta ile gönderil
-
 ExportDataset_ticket_1=Destek Bildirimleri
-
 # Status
 Read=Okundu
 Assigned=Atanan
-NeedMoreInformation=Waiting for reporter feedback
-NeedMoreInformationShort=Waiting for feedback
-TicketAnswered=Cevaplandı
+NeedMoreInformation=Muhabirlerin geri bildirimlerini bekliyorum
+NeedMoreInformationShort=Geribildirim için beklemek
 Waiting=Bekliyor
-SolvedClosed=Solved
+SolvedClosed=Çözüldü
 Deleted=Silindi
-
 # Dict
-Type=Türü
 Severity=Önem seviyesi
-TicketGroupIsPublic=Group is public
-TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
+TicketGroupIsPublic=Grup herkese açık
+TicketGroupIsPublicDesc=Bilet grubu herkese açıksa, genel arayüzden bilet oluştururken formda görünür olacaktır.
 # Email templates
 MailToSendTicketMessage=Destek bildirim mesajından e-posta göndermek için
-
-#
 # Admin page
-#
 TicketSetup=Destek bildirimi modülü kurulumu
 TicketSettings=Ayarlar
 TicketPublicAccess=Kimlik gerektirmeyen herkese açık bir arayüz şu url'de adresinde mevcuttur
 TicketSetupDictionaries=Destek bildirimi, önem ve analitik kodlarının türleri sözlüklerden yapılandırılabilir
 TicketParamModule=Modül değişken kurulumu
 TicketParamMail=E-posta kurulumu
-TicketEmailNotificationFrom=Sender e-mail for notification on answers
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
-TicketEmailNotificationTo=Notify ticket creation to this e-mail address
-TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketEmailNotificationFrom=Cevaplarla ilgili bildirim için gönderenin e-postası
+TicketEmailNotificationFromHelp=Arka ofiste bir yanıt verildiğinde bildirim e-postasını göndermek için kullanılacak gönderen e-postası. Örneğin noreply@example.com
+TicketEmailNotificationTo=Bilet oluşturulmasını bu e-posta adresine bildir
+TicketEmailNotificationToHelp=Varsa, bu e-posta adresine bir bilet oluşturulduğu bildirilecektir.
 TicketNewEmailBodyLabel=Bir destek bildirimi oluşturulduktan sonra metin mesajı gönderildi
 TicketNewEmailBodyHelp=Burada belirtilen metin, ortak arayüzden yeni bir destek bildiriminin oluşturulmasını onaylayan e-postaya eklenecektir. Destek bildiriminin danışmanlığına ilişkin bilgiler otomatik olarak eklenir.
 TicketParamPublicInterface=Genel arayüz kurulumu
 TicketsEmailMustExist=Destek bildirimi oluşturmak için geçerli bir e-posta adresi iste
-TicketsEmailMustExistHelp=In the public interface, the email address should already be filled in the database to create a new ticket.
-TicketsShowProgression=Display the ticket progress in the public interface
-TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
-TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
+TicketsEmailMustExistHelp=Genel arayüzde, yeni bir bilet oluşturmak için e-posta adresinin veritabanında önceden doldurulmuş olması gerekir.
+TicketsShowProgression=Bilet ilerleme durumunu genel arayüzde görüntüleyin
+TicketsShowProgressionHelp=Biletin genel arayüz sayfalarındaki ilerlemesini gizlemek için bu seçeneği etkinleştirin
+TicketCreateThirdPartyWithContactIfNotExist=Bilinmeyen e-postalar için adı ve şirket adını sorun.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Girilen e-posta için üçüncü bir tarafın veya kişinin mevcut olup olmadığını kontrol edin. Değilse, irtibat kurabileceğiniz üçüncü bir taraf oluşturmak için bir isim ve şirket adı isteyin.
 PublicInterface=Genel arayüz
 TicketPublicInterfaceTextHomeLabelAdmin=Genel arayüzün karşılama metni
 TicketPublicInterfaceTextHome=Bir destek bildirimi oluşturabilir veya daha önce oluşturulan bir destek bildirimini tanımlayıcı takip numarasından görüntüleyebilirsiniz.
@@ -114,7 +94,7 @@ TicketPublicInterfaceTopicHelp=Bu metin, ortak arayüzün başlığı olarak gö
 TicketPublicInterfaceTextHelpMessageLabelAdmin=Mesaj girişine yardım metni
 TicketPublicInterfaceTextHelpMessageHelpAdmin=Bu metin, kullanıcının mesaj giriş alanının üstünde görünecektir.
 ExtraFieldsTicket=Ekstra nitelikler
-TicketCkEditorEmailNotActivated=HTML editor is not activated. Please put FCKEDITOR_ENABLE_MAIL content to 1 to get it.
+TicketCkEditorEmailNotActivated=HTML düzenleyici etkinleştirilmedi. Bunu elde etmek için lütfen FCKEDITOR_ENABLE_MAIL içeriğini 1'e koyun.
 TicketsDisableEmail=Bilet oluşturma veya mesaj kaydı için e-posta gönderme
 TicketsDisableEmailHelp=Varsayılan olarak, yeni destek bildirimleri veya mesajlar oluşturulduğunda e-postalar gönderilir. *tüm* e-posta bildirimlerini devre dışı bırakmak için bu seçeneği etkinleştirin.
 TicketsLogEnableEmail=Günlüğü e-postayla etkinleştir
@@ -122,45 +102,42 @@ TicketsLogEnableEmailHelp=Her değişiklikte, destek bildirimi ile bağlantılı
 TicketParams=Parametreler
 TicketsShowModuleLogo=Genel arayüzde modülün logosunu görüntüle
 TicketsShowModuleLogoHelp=Genel arayüz sayfalarında logo modülünü gizlemek için bu seçeneği etkinleştirin
-TicketsShowCompanyLogo=Genel arayüzde firmanın logosunu göster 
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
-TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
-TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
-TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
-TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will be visible. Does not apply to a user with tickets management rights.
+TicketsShowCompanyLogo=Genel arayüzde firmanın logosunu göster
+TicketsShowCompanyLogoHelp=Genel arayüz sayfalarında ana şirketin logosunu göstermek için bu seçeneği etkinleştirin
+TicketsShowCompanyFooter=Şirketin altbilgisini genel arayüzde görüntüleyin
+TicketsShowCompanyFooterHelp=Genel arayüz sayfalarında ana şirketin altbilgisini göstermek için bu seçeneği etkinleştirin
+TicketsEmailAlsoSendToMainAddress=Ayrıca ana e-posta adresine bir bildirim gönderin
+TicketsEmailAlsoSendToMainAddressHelp="%s" kurulumunda tanımlanan adrese bir e-posta göndermek için de bu seçeneği etkinleştirin (bkz. "%s" sekmesi)
+TicketsLimitViewAssignedOnly=Gösterimi mevcut kullanıcıya atanan biletlerle sınırlandırın (harici kullanıcılar için etkili değildir, her zaman bağımlı oldukları üçüncü tarafla sınırlı olmalıdır)
+TicketsLimitViewAssignedOnlyHelp=Yalnızca mevcut kullanıcıya atanan biletler görünür olacaktır. Bilet yönetimi haklarına sahip bir kullanıcı için geçerli değildir.
 TicketsActivatePublicInterface=Genel arayüzü etkinleştir
 TicketsActivatePublicInterfaceHelp=Genel arayüz, ziyaretçilerin destek bildirimi oluşturmasına izin verir.
 TicketsAutoAssignTicket=Destek bildirimini oluşturan kullanıcıyı otomatik olarak atayın
 TicketsAutoAssignTicketHelp=Bir destek bildirimi oluştururken, kullanıcı otomatik olarak destek bildirimine atanabilir.
 TicketNumberingModules=Destek bildirimi numaralandırma modülü
-TicketsModelModule=Document templates for tickets
+TicketsModelModule=Biletler için belge şablonları
 TicketNotifyTiersAtCreation=Oluşturunca üçüncü tarafa bildir
 TicketsDisableCustomerEmail=Bir destek bildirimi ortak arayüzden oluşturulduğunda e-postaları her zaman devre dışı bırak
-TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is added to a ticket
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
-TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
-TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
-TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
-TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
-TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
-TicketChooseProductCategory=Product category for ticket support
-TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
-TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
-TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
-
-#
+TicketsPublicNotificationNewMessage=Bir bilete yeni bir mesaj/yorum eklendiğinde e-posta(lar) gönder
+TicketsPublicNotificationNewMessageHelp=Genel arayüzden (atanan kullanıcıya veya bildirim e-postasına (güncelleme) ve/veya bildirim e-postasına) yeni bir mesaj eklendiğinde e-posta(lar) gönder
+TicketPublicNotificationNewMessageDefaultEmail=Bildirim e-postası (güncelleme)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Bilete atanmış bir kullanıcı yoksa veya kullanıcının bilinen bir e-postası yoksa, her yeni mesaj bildirimi için bu adrese bir e-posta gönderin.
+TicketsAutoReadTicket=Bileti otomatik olarak okundu olarak işaretleyin (arka ofisten oluşturulduğunda)
+TicketsAutoReadTicketHelp=Bileti arka ofisten oluşturulduğunda otomatik olarak okundu olarak işaretleyin. Bilet genel arayüzden oluşturulduğunda bilet "Okunmadı" durumunda kalır.
+TicketsDelayBeforeFirstAnswer=Yeni bir destek talebinin ilk yanıtı şu tarihten (saat) önce alınmalıdır:
+TicketsDelayBeforeFirstAnswerHelp=Bu süre sonunda (saat cinsinden) yeni bir bilete yanıt alınamazsa, liste görünümünde önemli bir uyarı simgesi görüntülenecektir.
+TicketsDelayBetweenAnswers=Çözümlenmemiş bir bilet aşağıdaki süreler boyunca aktif olmamalıdır:
+TicketsDelayBetweenAnswersHelp=Halihazırda yanıt almış olan çözümlenmemiş bir bildirimin bu süre sonunda (saat cinsinden) başka bir etkileşimi olmadıysa, liste görünümünde bir uyarı simgesi görüntülenecektir.
+TicketsAutoNotifyClose=Bilet kapatıldığında üçüncü tarafa otomatik olarak bildirimde bulunun
+TicketsAutoNotifyCloseHelp=Bir bildirimi kapatırken üçüncü taraf kişilerden birine bir mesaj göndermeniz önerilecektir. Toplu kapanışta, bilete bağlı üçüncü tarafın irtibat kişilerinden birine mesaj gönderilecektir.
+TicketWrongContact=Sağlanan iletişim kişisi mevcut bilet iletişim bilgilerinin parçası değildir. E-posta gönderilmedi.
+TicketChooseProductCategory=Bilet desteği için ürün kategorisi
+TicketChooseProductCategoryHelp=Bilet desteği ürün kategorisini seçin. Bu, bir sözleşmeyi otomatik olarak bilete bağlamak için kullanılacaktır.
+TicketUseCaptchaCode=Bilet oluştururken grafik kodunu (CAPTCHA) kullanın
+TicketUseCaptchaCodeHelp=Yeni bir bilet oluştururken CAPTCHA doğrulaması ekler.
+TicketsAllowClassificationModificationIfClosed=Kapalı biletlerin sınıflandırmasını değiştirmeye izin ver
+TicketsAllowClassificationModificationIfClosedHelp=Biletler kapalı olsa bile sınıflandırmanın (tür, bilet grubu, önem derecesi) değiştirilmesine izin ver.
 # Index & list page
-#
 TicketsIndex=Destek bildirimleri alanı
 TicketList=Destek bildirimlerinin listesi
 TicketAssignedToMeInfos=Bu sayfa mevcut kullanıcı tarafından oluşturulan veya bu kullanıcıya atanmış destek bildirim listesini görüntüler
@@ -169,16 +146,13 @@ NoUnreadTicketsFound=Okunmamış destek bildirimi bulunamadı
 TicketViewAllTickets=Tüm destek bildirimlerini görüntüle
 TicketViewNonClosedOnly=Sadece açık destek bildirimlerini görüntüle
 TicketStatByStatus=Duruma göre destek bildirimleri
-OrderByDateAsc=Sort by ascending date
-OrderByDateDesc=Sort by descending date
-ShowAsConversation=Show as conversation list
-MessageListViewType=Show as table list
-ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
-ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
+OrderByDateAsc=Artan tarihe göre sırala
+OrderByDateDesc=Azalan tarihe göre sırala
+ShowAsConversation=Görüşme listesi olarak göster
+MessageListViewType=Tablo listesi olarak göster
+ConfirmMassTicketClosingSendEmail=Biletleri kapatırken otomatik olarak e-posta gönder
+ConfirmMassTicketClosingSendEmailQuestion=Bu bildirimleri kapatırken üçüncü şahıslara bilgi vermek ister misiniz?
 # Ticket card
-#
 Ticket=Destek Bildirimi
 TicketCard=Destek bildirim kartı
 CreateTicket=Destek bildirimi oluştur
@@ -188,7 +162,7 @@ CreatedBy=Oluşturan
 NewTicket=Yeni destek bildirimi
 SubjectAnswerToTicket=Destek bildirimi cevabı
 TicketTypeRequest=İstek türü
-TicketCategory=Ticket group
+TicketCategory=Bilet grubu
 SeeTicket=Destek bildirimini gör
 TicketMarkedAsRead=Destek bildirimi okundu olarak işaretlendi
 TicketReadOn=Okumaya devam et
@@ -200,8 +174,8 @@ TicketAssigned=Destek bildirimi şimdi atandı
 TicketChangeType=Türü değiştir
 TicketChangeCategory=Analitik kodu değiştir
 TicketChangeSeverity=Önem seviyesini değiştir
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Mesaj ekleyin veya gönderin
+TicketAddPrivateMessage=Özel mesaj ekle
 MessageSuccessfullyAdded=Destek bildirimi eklendi
 TicketMessageSuccessfullyAdded=Mesaj başarılı şekilde eklendi
 TicketMessagesList=Mesaj listesi
@@ -212,86 +186,80 @@ TicketSeverity=Önem seviyesi
 ShowTicket=Destek bildirimini gör
 RelatedTickets=İlgili destek bildirimleri
 TicketAddIntervention=Müdahale oluştur
-CloseTicket=Close|Solve
-AbandonTicket=Abandon
-CloseATicket=Close|Solve a ticket
+CloseTicket=Kapat|Çöz
+AbandonTicket=Terk etmek
+CloseATicket=Kapat|Bilet çöz
 ConfirmCloseAticket=Destek bildirimi kapatmayı onayla
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+ConfirmAbandonTicket=Biletin 'Terkedilmiş' durumuna kapatılmasını onaylıyor musunuz?
 ConfirmDeleteTicket=Lütfen destek bildirimi silmeyi onaylayın
 TicketDeletedSuccess=Destek bildirimi başarı ile silindi
 TicketMarkedAsClosed=Destek bildirimi kapalı olarak işaretlendi
 TicketDurationAuto=Hesaplanan süre
-TicketDurationAutoInfos=Duration calculated automatically from intervention related
+TicketDurationAutoInfos=Süre ilgili müdahaleden otomatik olarak hesaplanır
 TicketUpdated=Destek bildirimi güncellendi
 SendMessageByEmail=Mesajı e-posta ile gönder
 TicketNewMessage=Yeni mesaj
 ErrorMailRecipientIsEmptyForSendTicketMessage=Alıcı boş. E-posta gönderilmedi
 TicketGoIntoContactTab=Onları seçmek için lütfen "Kişiler" sekmesine gidin
-TicketMessageMailIntro=Message header
-TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
-TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailFooter=Message footer
-TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
-TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
+TicketMessageMailIntro=Mesaj başlığı
+TicketMessageMailIntroHelp=Bu metin yalnızca e-postanın başına eklenir ve kaydedilmez.
+TicketMessageMailIntroText=Merhaba,<br>Takip ettiğiniz bir desteğe yeni bir yanıt eklendi. Mesaj şu:<br>
+TicketMessageMailIntroHelpAdmin=Dolibarr'dan gelen bir bildirime yanıt verirken bu metin yanıttan önce eklenecektir
+TicketMessageMailFooter=Mesaj altbilgisi
+TicketMessageMailFooterHelp=Bu metin yalnızca e-posta ile gönderilen mesajın sonuna eklenir ve kaydedilmez.
+TicketMessageMailFooterText=<b>%s</b> tarafından Dolibarr aracılığıyla gönderilen mesaj
 TicketMessageMailFooterHelpAdmin=Bu metin cevap mesajının sonuna eklenecektir.
 TicketMessageHelp=Destek bildirimi kartı üzerindeki mesaj listesinde sadece bu metin kaydedilecektir.
-TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
-ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
-TimeElapsedSince=Time elapsed since
-TicketTimeToRead=Time elapsed before read
-TicketTimeElapsedBeforeSince=Time elapsed before / since
+TicketMessageSubstitutionReplacedByGenericValues=İkame değişkenleri genel değerlerle değiştirilir.
+ForEmailMessageWillBeCompletedWith=Harici kullanıcılara gönderilen e-posta iletileri için ileti şu şekilde tamamlanacaktır:
+TimeElapsedSince=O tarihten bu yana geçen süre
+TicketTimeToRead=Okumadan önce geçen süre
+TicketTimeElapsedBeforeSince=Önce / beri geçen süre
 TicketContacts=Kişilerin destek bildirimleri
 TicketDocumentsLinked=Destek bildirimine bağlı dokümanlar
 ConfirmReOpenTicket=Bu destek bildirimini yeniden açmayı onaylıyor musunuz?
 TicketMessageMailIntroAutoNewPublicMessage=Destek bildirimi üzerinden %s konulu yeni bir mesaj gönderildi:
 TicketAssignedToYou=Destek bildirimi atandı
 TicketAssignedEmailBody=#%s destek bildirimine %s tarafından atandınız
-TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerEmail=Biletiniz işleme alınmak üzere atandı.
+TicketAssignedCustomerBody=Bu, biletinizin işlenmek üzere atandığını onaylamak için gönderilen otomatik bir e-postadır.
 MarkMessageAsPrivate=Mesajı özel olarak işaretle
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact
-TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
-TicketMessagePrivateHelp=This message will not be visible to external users
-TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
-TicketEmailOriginIssuer=Issuer at origin of the tickets
+TicketMessageSendEmailHelp=Atanan tüm kişilere bir e-posta gönderilecektir
+TicketMessageSendEmailHelp2a=(dahili kişiler, aynı zamanda "%s" seçeneğinin işaretli olması dışında harici kişiler de)
+TicketMessageSendEmailHelp2b=(dahili kişiler, aynı zamanda harici kişiler)
+TicketMessagePrivateHelp=Bu mesaj harici kullanıcılar tarafından görülmeyecek
+TicketMessageRecipientsHelp=Bilete bağlı etkin kişilerle doldurulmuş alıcı alanı
+TicketEmailOriginIssuer=Biletlerin menşei düzenleyen kuruluş
 InitialMessage=İlk Mesaj
 LinkToAContract=Bir sözleşmeye bağlantı
 TicketPleaseSelectAContract=Bir sözleşme seçiniz
-UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
-TicketMailExchanges=Mail exchanges
+UnableToCreateInterIfNoSocid=Üçüncü taraf tanımlanmadığında müdahale oluşturulamıyor
+TicketMailExchanges=Posta alışverişleri
 TicketInitialMessageModified=İlk mesaj değiştirildi
 TicketMessageSuccesfullyUpdated=Mesaj başarıyla güncellendi
 TicketChangeStatus=Durumu değiştir
 TicketConfirmChangeStatus=Durum değişikliğini onayla: %s?
-TicketLogStatusChanged=Status changed: %s to %s
-TicketNotNotifyTiersAtCreate=Not notify company at create
-NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
-TicketNotifyAllTiersAtClose=All related contacts
-TicketNotNotifyTiersAtClose=No related contact
+TicketLogStatusChanged=Durum değiştirildi: %s, %s olarak değiştirildi
+TicketNotNotifyTiersAtCreate=Create sırasında şirkete bildirimde bulunma
+NotifyThirdpartyOnTicketClosing=Bileti kapatırken bilgilendirilecek kişiler
+TicketNotifyAllTiersAtClose=İlgili tüm kişiler
+TicketNotNotifyTiersAtClose=İlgili kişi yok
 Unread=Okunmamış
 TicketNotCreatedFromPublicInterface=Mevcut değil. Destek bildirimi genel arayüzden oluşturulmadı.
 ErrorTicketRefRequired=Destek bildirimi referans adı gerekli
-TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
-TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
-TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
-TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
+TicketsDelayForFirstResponseTooLong=Bilet açılışından bu yana çok fazla zaman geçti ve cevap gelmedi.
+TicketsDelayFromLastResponseTooLong=Bu destek bildirimindeki son yanıttan bu yana çok fazla zaman geçti.
+TicketNoContractFoundToLink=Bu bilete otomatik olarak bağlanacak bir sözleşme bulunamadı. Lütfen bir sözleşmeyi manuel olarak bağlayın.
+TicketManyContractsLinked=Birçok sözleşme otomatik olarak bu bilete bağlandı. Hangisinin seçilmesi gerektiğini doğruladığınızdan emin olun.
+TicketRefAlreadyUsed=[%s] referansı zaten kullanılıyor, yeni referansınız şu: [%s]
 # Logs
-#
 TicketLogMesgReadBy=%s destek bildirimi %s tarafından okundu
 NoLogForThisTicket=Bu destek bildirimi için henüz kayıt yok
 TicketLogAssignedTo=%s destek bildirimi şuna atandı: %s
 TicketLogPropertyChanged=%s destek bildirimi değiştirildi: %s'den %s'e sınıflandırma
 TicketLogClosedBy=Destek bildirimi %s, %s tarafından kapatıldı
 TicketLogReopen=%s destek bildirimi tekrar açıldı
-
-#
 # Public pages
-#
 TicketSystem=Destek bildirimi sistemi
 ShowListTicketWithTrackId=Takip numarasından destek bildirim listesini görüntüle
 ShowTicketWithTrackId=Takip numarasından destek bildirimi görüntüle
@@ -305,21 +273,21 @@ TicketNewEmailBody=Yeni bir destek bildirim kaydınızı onaylamak için bu e-po
 TicketNewEmailBodyCustomer=Bu, hesabınızda yeni bir destek bildiriminin oluşturulduğunu onaylamak için otomatik olarak gönderilen bir e-postadır.
 TicketNewEmailBodyInfosTicket=Destek bildiriminin izlenmesi için bilgiler
 TicketNewEmailBodyInfosTrackId=Destek bildirim takip numarası: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=Aşağıdaki bağlantıya tıklayarak destek bildiriminin ilerlemesini belirli bir arayüzde görebilirsiniz
-TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
+TicketNewEmailBodyInfosTrackUrl=Aşağıdaki bağlantıya tıklayarak biletin ilerlemesini görebilirsiniz.
+TicketNewEmailBodyInfosTrackUrlCustomer=Biletin ilerleyişini aşağıdaki bağlantıya tıklayarak genel bilet portalında görebilirsiniz.
+TicketCloseEmailBodyInfosTrackUrlCustomer=Aşağıdaki bağlantıya tıklayarak bu biletin geçmişini inceleyebilirsiniz.
 TicketEmailPleaseDoNotReplyToThisEmail=Lütfen doğrudan bu e-postayı yanıtlamayın! Arayüzde cevap vermek için bağlantıyı kullanın.
 TicketPublicInfoCreateTicket=Bu form yönetim sistemimizde bir destek bildirimi kaydetmenizi sağlar
-TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
+TicketPublicPleaseBeAccuratelyDescribe=Lütfen talebinizi doğru bir şekilde açıklayın. Talebinizi doğru bir şekilde tanımlayabilmemiz için mümkün olan en fazla bilgiyi sağlayın.
 TicketPublicMsgViewLogIn=Lütfen destek bildirimi takip numarasını girin
-TicketTrackId=Genel Takip Numarası
+TicketTrackId=İzleme Kimliği
 OneOfTicketTrackId=Takip numaralarınızdan biri
 ErrorTicketNotFound=%s takip numaralı destek bildirimi bulunamadı!
 Subject=Konu
 ViewTicket=Destek bildirimini görüntüle
 ViewMyTicketList=Destek bildirimi listemi görüntüle
 ErrorEmailMustExistToCreateTicket=Hata: e-posta adresi veritabanımızda bulunamadı
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectAdmin=Yeni bilet oluşturuldu - Ref %s (genel bilet kimliği %s)
 TicketNewEmailBodyAdmin=<p>Destek bildirimi #%s kimlik numarası ile oluşturuldu, detaylı bilgi:</p>
 SeeThisTicketIntomanagementInterface=Yönetim arayüzünde destek bildirimini gör
 TicketPublicInterfaceForbidden=Destek bildirimi için genel arayüz etkin değil
@@ -328,26 +296,21 @@ OldUser=Eski kullanıcı
 NewUser=Yeni Kullanıcı
 NumberOfTicketsByMonth=Aylık destek bildirim sayısı
 NbOfTickets=Destek bildirim sayısı
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=Dış katkıda bulunanlar
+AddContributor=Dışarıdan katkıda bulunan ekle
 # notifications
-TicketCloseEmailSubjectCustomer=Ticket closed
-TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
-TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
-TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
+TicketCloseEmailSubjectCustomer=Bilet kapatıldı
+TicketCloseEmailBodyCustomer=Bu, %s biletinin henüz kapatıldığını size bildiren otomatik bir mesajdır.
+TicketCloseEmailSubjectAdmin=Bilet kapatıldı - Réf %s (genel bilet kimliği %s)
+TicketCloseEmailBodyAdmin=#%s kimliğine sahip bir bilet az önce kapatıldı, bilgilere bakın:
 TicketNotificationEmailSubject=%s destek bildirimi güncellendi
 TicketNotificationEmailBody=%s destek bildiriminin güncellendiği konusunda sizi bilgilendirmek için bu e-posta otomatik olarak gönderilmiştir
 TicketNotificationRecipient=Bildirim alıcısı
 TicketNotificationLogMessage=Günlük mesajı
 TicketNotificationEmailBodyInfosTrackUrlinternal=Destek bildirimini arayüzde görüntüle
 TicketNotificationNumberEmailSent=Bildirim e-postası gönderildi: %s
-
 ActionsOnTicket=Destek bildirimindeki etkinlikler
-
-#
 # Boxes
-#
 BoxLastTicket=En son oluşturulan destek bildirimleri
 BoxLastTicketDescription=Oluşturulan son %s destek bildirimi
 BoxLastTicketContent=
@@ -356,14 +319,14 @@ BoxLastModifiedTicket=En son değiştirilen destek bildirimleri
 BoxLastModifiedTicketDescription=Değiştirilen son %s destek bildirimi
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Yakın zamanda değiştirilmiş destek bildirimi yok
-BoxTicketType=Distribution of open tickets by type
-BoxTicketSeverity=Number of open tickets by severity
-BoxNoTicketSeverity=No tickets opened
-BoxTicketLastXDays=Number of new tickets by days the last %s days
-BoxTicketLastXDayswidget = Number of new tickets by days the last X days
-BoxNoTicketLastXDays=No new tickets the last %s days
-BoxNumberOfTicketByDay=Number of new tickets by day
-BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
-TicketCreatedToday=Ticket created today
-TicketClosedToday=Ticket closed today
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+BoxTicketType=Açık biletlerin türlerine göre dağılımı
+BoxTicketSeverity=Önem derecesine göre açık bilet sayısı
+BoxNoTicketSeverity=Bilet açılmadı
+BoxTicketLastXDays=Son %s günde günlere göre yeni biletlerin sayısı
+BoxTicketLastXDayswidget = Son X günün günlerine göre yeni bilet sayısı
+BoxNoTicketLastXDays=Son %s günde yeni bilet yok
+BoxNumberOfTicketByDay=Gün bazında yeni bilet sayısı
+BoxNewTicketVSClose=Bilet sayısı ve kapalı bilet sayısı (bugün)
+TicketCreatedToday=Bilet bugün oluşturuldu
+TicketClosedToday=Bilet bugün kapalı
+KMFoundForTicketGroup=Bileti göndermeden önce kontrol ettiğiniz için sorunuza cevap verebilecek konular ve SSS'ler bulduk

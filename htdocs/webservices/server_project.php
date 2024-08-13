@@ -281,7 +281,7 @@ function createProject($authentication, $project)
 
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('projet', 'creer')) {
 			$newobject = new Project($db);
@@ -376,7 +376,7 @@ function getProject($authentication, $id = '', $ref = '')
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		if ($fuser->hasRight('projet', 'lire')) {
 			$project = new Project($db);

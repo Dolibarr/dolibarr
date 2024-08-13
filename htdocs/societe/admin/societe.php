@@ -31,6 +31,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $langs->loadLangs(array("admin", "companies", "other"));
@@ -68,7 +69,7 @@ if ($action == 'setcodecompta') {
 }
 
 if ($action == 'updateoptions') {
-	if (GETPOST('COMPANY_USE_SEARCH_TO_SELECT')) {
+	if (GETPOSTISSET('COMPANY_USE_SEARCH_TO_SELECT')) {
 		$companysearch = GETPOST('activate_COMPANY_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $companysearch, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -81,7 +82,7 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('CONTACT_USE_SEARCH_TO_SELECT')) {
+	if (GETPOSTISSET('CONTACT_USE_SEARCH_TO_SELECT')) {
 		$contactsearch = GETPOST('activate_CONTACT_USE_SEARCH_TO_SELECT', 'alpha');
 		$res = dolibarr_set_const($db, "CONTACT_USE_SEARCH_TO_SELECT", $contactsearch, 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
@@ -94,9 +95,22 @@ if ($action == 'updateoptions') {
 		}
 	}
 
-	if (GETPOST('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
+	if (GETPOSTISSET('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
 		$customertypedefault = GETPOSTINT('defaultcustomertype');
 		$res = dolibarr_set_const($db, "THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT", $customertypedefault, 'chaine', 0, '', $conf->entity);
+		if (!($res > 0)) {
+			$error++;
+		}
+		if (!$error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
+	}
+
+	if (GETPOSTISARRAY('CONTACTS_DEFAULT_ROLES')) {
+		$rolessearch = GETPOST('activate_CONTACTS_DEFAULT_ROLES', 'array:aZ09');
+		$res = dolibarr_set_const($db, "CONTACTS_DEFAULT_ROLES", implode(',', $rolessearch), 'chaine', 0, '', $conf->entity);
 		if (!($res > 0)) {
 			$error++;
 		}
@@ -424,7 +438,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = (isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] != $conf->entity)));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&token='.newToken().'&value='.urlencode($file).'">';
@@ -703,9 +717,9 @@ foreach ($profid as $key => $val) {
 		$idprof_mandatory = 'SOCIETE_'.$key.'_MANDATORY';
 		$idprof_invoice_mandatory = 'SOCIETE_'.$key.'_INVOICE_MANDATORY';
 
-		$verif = (empty($conf->global->$idprof_unique) ? false : true);
-		$mandatory = (empty($conf->global->$idprof_mandatory) ? false : true);
-		$invoice_mandatory = (empty($conf->global->$idprof_invoice_mandatory) ? false : true);
+		$verif = !empty($conf->global->$idprof_unique);
+		$mandatory = !empty($conf->global->$idprof_mandatory);
+		$invoice_mandatory = !empty($conf->global->$idprof_invoice_mandatory);
 
 		if ($verif) {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';
@@ -923,6 +937,26 @@ if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	print '<td class="center">';
 	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 	print '</td>';
+	print '</tr>';
+}
+
+if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
+	print '<tr class="oddeven">';
+	print '<td width="80%">'.$langs->trans('ContactsDefaultRoles').'</td>';
+	if (!$conf->use_javascript_ajax) {
+		print '<td class="nowrap right" colspan="2">';
+		print $langs->trans("NotAvailableWhenAjaxDisabled");
+		print "</td>";
+	} else {
+		print '<td width="60" class="right">';
+		$contact = new Contact($db);	// InfraS add
+		$contactType = $contact->listeTypeContacts('external', 0, 1);
+		$selected = explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
+		print $form->multiselectarray('activate_CONTACTS_DEFAULT_ROLES', $contactType, $selected, 0, 0, 'minwidth75imp');
+		print '</td><td class="right">';
+		print '<input type="submit" class="button small eposition" name="CONTACTS_DEFAULT_ROLES" value="'.$langs->trans("Modify").'">';
+		print "</td>";
+	}
 	print '</tr>';
 }
 

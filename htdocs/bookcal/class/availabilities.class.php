@@ -124,22 +124,73 @@ class Availabilities extends CommonObject
 		'endHour' => array('type' => 'integer', 'label' => 'End Hour', 'enabled' => 1, 'position' => 46.5, 'notnull' => 1, 'visible' => 1,),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Closed'), 'default' => '1', 'validate' => 1),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $label;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
+	/**
+	 * @var int
+	 */
 	public $status;
+	/**
+	 * @var string
+	 */
 	public $start;
+	/**
+	 * @var string
+	 */
 	public $end;
+	/**
+	 * @var int
+	 */
 	public $duration;
+	/**
+	 * @var int
+	 */
 	public $startHour;
+	/**
+	 * @var int
+	 */
 	public $endHour;
+	/**
+	 * @var int
+	 */
 	public $fk_bookcal_calendar;
 	// END MODULEBUILDER PROPERTIES
 
@@ -969,7 +1020,7 @@ class Availabilities extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
