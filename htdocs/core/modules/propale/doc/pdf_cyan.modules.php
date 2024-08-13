@@ -2050,7 +2050,7 @@ class pdf_cyan extends ModelePDFPropales
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !(!getDolGlobalString('PDF_PROPAL_SHOW_PRICE_INCL_TAX')),
+			'status' => getDolGlobalString('PDF_PROPAL_SHOW_PRICE_INCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),
