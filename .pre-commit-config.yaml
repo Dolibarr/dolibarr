@@ -227,7 +227,18 @@ repos:
           - dev/tools/codespell/codespell-lines-ignore.txt
           - --uri-ignore-words-list
           - ned
-
+      - alias: codespell-ignores
+        #
+        # Update codespell ignore file.
+        #
+        # Execute with `pre-commit run codespell -a --hook-stage manual`
+        id: codespell
+        stages: [manual]
+        name: Update file with codespell exceptions
+        additional_dependencies: [tomli]
+        language: python
+        entry: bash -c '[ ! -x dev/tools/codespell/addCodespellIgnores.sh ] || dev/tools/codespell/addCodespellIgnores.sh'
+        pass_filenames: false
   # Check some shell scripts
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.9.0.6
