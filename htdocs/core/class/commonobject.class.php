@@ -8205,10 +8205,12 @@ abstract class CommonObject
 						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1, 1, '2');
 					}
 
-					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
+					$hidden = 0; // label and form input are not hidden by default
+					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
-					} elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) {
-						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
+					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
+						// hide label and add input hidden on form
+						$hidden = 1; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
 					}
@@ -8358,54 +8360,59 @@ abstract class CommonObject
 							}
 						}
 
-						$labeltoshow = $langs->trans($label);
-						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
+						if (empty($hidden)) {
+							$labeltoshow = $langs->trans($label);
+							$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
-						if ($display_type == 'card') {
-							$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
-							if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
-								$out .= '<td></td>';
+							if ($display_type == 'card') {
+								$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="field_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
+								if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER) && ($action == 'view' || $action == 'valid' || $action == 'editline' || $action == 'confirm_valid' || $action == 'confirm_cancel')) {
+									$out .= '<td></td>';
+								}
+								$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldcreate' : $params['tdclass']).' wordbreak';
+							} elseif ($display_type == 'line') {
+								$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
+								$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
 							}
-							$out .= '<td class="'.(empty($params['tdclass']) ? 'titlefieldcreate' : $params['tdclass']).' wordbreak';
-						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="fieldline_options_'.$key.' '.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$collapse_group.'" '.$domData.' >';
-							$out .= '<div style="display: inline-block; padding-right:4px" class="wordbreak';
-						}
-						//$out .= "titlefield";
-						//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
-						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
-						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
-						if ($tpl_context != "public") {	// Public page : red dot instead of fieldrequired characters
-							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= ' fieldrequired';
+							//$out .= "titlefield";
+							//if (GETPOST('action', 'restricthtml') == 'create') $out.='create';
+							// BUG #11554 : For public page, use red dot for required fields, instead of bold label
+							$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
+							if ($tpl_context != "public") {    // Public page : red dot instead of fieldrequired characters
+								if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
+									$out .= ' fieldrequired';
+								}
 							}
-						}
-						$out .= '">';
-						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
-							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
-								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
+							$out .= '">';
+							if ($tpl_context == "public") {    // Public page : red dot instead of fieldrequired characters
+								if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
+									$out .= $form->textwithpicto($labeltoshow, $helptoshow);
+								} else {
+									$out .= $labeltoshow;
+								}
+								if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
+									$out .= '&nbsp;<span style="color: red">*</span>';
+								}
 							} else {
-								$out .= $labeltoshow;
+								if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
+									$out .= $form->textwithpicto($labeltoshow, $helptoshow);
+								} else {
+									$out .= $labeltoshow;
+								}
 							}
-							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) {
-								$out .= '&nbsp;<span style="color: red">*</span>';
-							}
-						} else {
-							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) {
-								$out .= $form->textwithpicto($labeltoshow, $helptoshow);
-							} else {
-								$out .= $labeltoshow;
-							}
+
+							$out .= ($display_type == 'card' ? '</td>' : '</div>');
 						}
 
-						$out .= ($display_type == 'card' ? '</td>' : '</div>');
-
-						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-						if ($display_type == 'card') {
-							// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
-							$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
-						} elseif ($display_type == 'line') {
-							$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.' extra_inline_'.$extrafields->attributes[$this->table_element]['type'][$key].'">';
+						// Second column
+						if (empty($hidden)) {
+							$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
+							if ($display_type == 'card') {
+								// a first td column was already output (and may be another on before if MAIN_VIEW_LINE_NUMBER set), so this td is the next one
+								$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').' class="valuefieldcreate '.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+							} elseif ($display_type == 'line') {
+								$out .= '<div '.($html_id ? 'id="'.$html_id.'" ' : '').' style="display: inline-block" class="valuefieldcreate '.$this->element.'_extras_'.$key.' extra_inline_'.$extrafields->attributes[$this->table_element]['type'][$key].'">';
+							}
 						}
 
 						switch ($mode) {
@@ -8420,14 +8427,10 @@ abstract class CommonObject
 								break;
 						}
 
-						$out .= ($display_type=='card' ? '</td>' : '</div>');
-
-						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) {
-							$out .= ($display_type=='card' ? '</tr>' : '</div>');
-						} else {
-							$out .= ($display_type=='card' ? '</tr>' : '</div>');
+						if (empty($hidden)) {
+							$out .= ($display_type == 'card' ? '</td>' : '</div>');
+							$out .= ($display_type == 'card' ? '</tr>'."\n" : '</div>');
 						}
-
 						$e++;
 					}
 				}
