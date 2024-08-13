@@ -4611,7 +4611,7 @@ class Form
 							}
 
 							return true;
-						});
+						}).trigger("change");
 					});
 				</script>';
 		}
