@@ -66,7 +66,7 @@ class MastodonHandler
 	/**
 	 * Constructor to set the necessary credentials.
 	 *
-	 * @param array   $authParams  parameters for authentification
+	 * @param array   $authParams  parameters for authentication
 	 */
 	public function __construct($authParams)
 	{
@@ -112,7 +112,7 @@ class MastodonHandler
 			];
 
 			$result = getURLContent($urlAPI, 'GET', '', 1, $headers, array('http', 'https'), 0);
-
+			$data = array();
 			if (!empty($result['content'])) {
 				$data = $result['content'];
 
