@@ -39,6 +39,8 @@ repos:
       # Remove trailing whitespace
       - id: trailing-whitespace
         exclude_types: [markdown]
+        exclude: |
+          (?x)^(dev/tools/codespell/codespell-lines-ignore.txt)$
       # Fix the end of file
       - id: end-of-file-fixer
       # Check that there are no completely merged file conflicts
@@ -231,7 +233,7 @@ repos:
         #
         # Update codespell ignore file.
         #
-        # Execute with `pre-commit run codespell -a --hook-stage manual`
+        # Execute with `pre-commit run codespell-ignores -a --hook-stage manual`
         id: codespell
         stages: [manual]
         name: Update file with codespell exceptions
