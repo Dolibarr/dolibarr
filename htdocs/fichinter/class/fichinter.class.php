@@ -709,7 +709,7 @@ class Fichinter extends CommonObject
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
@@ -860,7 +860,7 @@ class Fichinter extends CommonObject
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			$langs->load("fichinter");
+			$langs->load("interventions");
 
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
@@ -890,7 +890,7 @@ class Fichinter extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('fichinter');
+		$langs->load('interventions');
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
