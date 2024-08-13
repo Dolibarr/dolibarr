@@ -261,9 +261,9 @@ function getAllOauth2Array()
 		'OAUTH_YAMMER_SECRET',
 	),
 	array(
-		'OAUTH_OTHER_NAME',
-		'OAUTH_OTHER_ID',
-		'OAUTH_OTHER_SECRET',
+		'OAUTH_GENERIC_NAME',
+		'OAUTH_GENERIC_ID',
+		'OAUTH_GENERIC_SECRET',
 	)
 	);
 
@@ -341,10 +341,10 @@ function getSupportedOauth2Array()
 		'returnurl' => '/core/modules/oauth/microsoft_oauthcallback.php'
 	);
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$supportedoauth2array['OAUTH_OTHER_NAME'] = array(
+		$supportedoauth2array['OAUTH_GENERIC_NAME'] = array(
 			'callbackfile' => 'generic',
 			'picto' => 'generic',
-			'urlforapp' => 'OAUTH_OTHER_DESC',
+			'urlforapp' => 'OAUTH_GENERIC_DESC',
 			'name' => 'Other',
 			'urlforcredentials' => '',
 			'availablescopes' => 'Standard',

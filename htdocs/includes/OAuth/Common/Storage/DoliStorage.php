@@ -380,4 +380,14 @@ class DoliStorage implements TokenStorageInterface
 
 		return $this->tenant;
 	}
+
+	/**
+	 * Return the keyforprovider
+	 *
+	 * @return string	String for the accurate key provider identification
+	 */
+	public function getKeyForProvider()
+	{
+		return $this->keyforprovider;
+	}
 }
