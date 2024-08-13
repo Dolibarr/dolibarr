@@ -1926,7 +1926,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !(!getDolGlobalString('PDF_ORDER_SHOW_PRICE_INCL_TAX')),
+			'status' => getDolGlobalBool('PDF_ORDER_SHOW_PRICE_INCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),
