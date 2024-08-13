@@ -9,7 +9,7 @@ parameters:
 		# minimumNumberOfJobsPerProcess: 2  # default is 2
 		# buffer: 134217728 # 128 MB  # Not documented
 	customRulesetUsed: true
-	level: 3
+	level: 5
 	fileExtensions:
 		- php
 	paths:
@@ -81,6 +81,7 @@ parameters:
 		- '#convert.* expects int, string#'
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
+		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'
@@ -99,11 +100,18 @@ parameters:
 		- '#expects string, int<0, 10> given.#'
 		- '#expects string, DateTime given.#'
 		- '#expects string, bool\|mysqli_result\|resource given.#'
-		- '#expects array#'
+		- '#expects array\{#'
+		- '#expects array<array\{#'
+		- '#expects array\|LDAP#'
+		- '#expects array<int#'
+		- '#expects array\|string#'
+		- '#expects array\|null#'
+		- '#expects array<string#'
 		- '#expects array, string given.#'
 		- '#expects array, null given.#'
 		- '#expects array<string>, null given.#'
 		- '#expects array<string>, string given.#'
+		- '#expects array<string>\|string#'
 		- '#expects resource#'
 		- '#expects resource, object given.#'
 		- '#expects object#'
@@ -120,7 +128,6 @@ parameters:
 		- '#expects Societe#'
 		- '#expects ''''\|Societe#'
 		- '#expects SupplierProposal#'
-		- '#expects User#'
 		- '#expects CommonObjectLine#'
 		- '#check_authentication expects#'
 		- '#colorHexToHsl expects#'

@@ -41,7 +41,7 @@
  * @param 	int				$pid				Product id
  * @param 	int				$socid				Third party id
  * @param	string			$action				Action string
- * @param	array			$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	array|int		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|array	$actioncode			Preselected value(s) of actioncode for filter on event type
  * @param	int				$usergroupid		Id of group to filter on users
  * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')

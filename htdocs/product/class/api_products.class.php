@@ -1972,7 +1972,7 @@ class Products extends DolibarrApi
 	 *
 	 * @param  int $id ID of Product
 	 * @param  int $selected_warehouse_id ID of warehouse
-	 * @return array
+	 * @return array|mixed                 Data without useless information
 	 *
 	 * @throws RestException 500	System error
 	 * @throws RestException 403
@@ -1995,6 +1995,7 @@ class Products extends DolibarrApi
 		$product_model->load_stock();
 
 		$stockData = $this->_cleanObjectDatas($product_model)->stock_warehouse;
+
 		if ($selected_warehouse_id) {
 			foreach ($stockData as $warehouse_id => $warehouse) {
 				if ($warehouse_id != $selected_warehouse_id) {
@@ -2002,8 +2003,10 @@ class Products extends DolibarrApi
 				}
 			}
 		}
+		$obj_ret = $this->_filterObjectProperties($this->_cleanObjectDatas($product_model), 'stock_warehouses,stock_reel,stock_theorique');
+		$obj_ret->stock_warehouses = $stockData;
 
-		return array('stock_warehouses'=>$stockData);
+		return $obj_ret;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
