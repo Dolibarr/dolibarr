@@ -345,7 +345,7 @@ function getSupportedOauth2Array()
 			'callbackfile' => 'generic',
 			'picto' => 'generic',
 			'urlforapp' => 'OAUTH_GENERIC_DESC',
-			'name' => 'Other',
+			'name' => 'Generic',
 			'urlforcredentials' => '',
 			'availablescopes' => 'Standard',
 			'returnurl' => '/core/modules/oauth/generic_oauthcallback.php'

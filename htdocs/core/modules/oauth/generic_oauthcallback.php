@@ -179,7 +179,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 
 	// Save more data into session
 	// No need to save more data in sessions. We have several info into $_SESSION['datafromloginform'], saved when form is posted with a click
-	// on "Login with Google" with param actionlogin=login and beforeoauthloginredirect=google, by the functions_googleoauth.php.
+	// on "Login with Generic" with param actionlogin=login and beforeoauthloginredirect=generic, by the functions_genericoauth.php.
 
 	// Set approval_prompt. Note: A refresh token will be provided only if prompt is done.
 	if ($forlogin) {
@@ -196,11 +196,14 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	// This may create record into oauth_state before the header redirect.
 	// Creation of record with state, create record or just update column state of table llx_oauth_token (and create/update entry in llx_oauth_state) depending on the Provider used (see its constructor).
 	if ($state) {
-		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'state' => $state));
+		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code', 'state' => $state));
 	} else {
-		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid))); // Parameter state will be randomly generated
+		$url = $apiService->getAuthorizationUri(array('client_id' => getDolGlobalString($keyforparamid), 'response_type' => 'code')); // Parameter state will be randomly generated
 	}
 	// The redirect_uri is included into this $url
+
+	// Add scopes
+	$url .= '&scope='.str_replace(',', '+', $statewithscopeonly);
 
 	// Add more param
 	$url .= '&nonce='.bin2hex(random_bytes(64/8));
@@ -249,15 +252,14 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	} else {
 		// This was a callback request from service, get the token
 		try {
-			//var_dump($state);
-			//var_dump($apiService);      // OAuth\OAuth2\Service\Google
+			//var_dump($apiService);      // OAuth\OAuth2\Service\Generic
 			//dol_syslog("_GET=".var_export($_GET, true));
 
 			$errorincheck = 0;
 
 			$db->begin();
 
-			// This requests the token from the received OAuth code (call of the https://oauth2.googleapis.com/token endpoint)
+			// This requests the token from the received OAuth code (call of the endpoint)
 			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
 
@@ -267,13 +269,14 @@ if (!GETPOST('code') && !GETPOST('error')) {
 
 			// Note: The extraparams has the 'id_token' than contains a lot of information about the user.
 			$extraparams = $token->getExtraParams();
-			$jwt = explode('.', $extraparams['id_token']);
 
 			$username = '';
 			$useremail = '';
 
 			// Extract the middle part, base64 decode, then json_decode it
 			/*
+			$jwt = explode('.', $extraparams['id_token']);
+
 			if (!empty($jwt[1])) {
 				$userinfo = json_decode(base64_decode($jwt[1]), true);
 
@@ -286,7 +289,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 				// Verify that the state is the one expected
 				// TODO
 
-				// Verify that the ID token is properly signed by the issuer. Google-issued tokens are signed using one of the certificates found at the URI specified in the jwks_uri metadata value of the Discovery document.
+				// Verify that the ID token is properly signed by the issuer.
 				// TODO
 
 				// Verify that the value of the iss claim in the ID token is equal to https://accounts.google.com or accounts.google.com.
@@ -322,7 +325,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
 
 					// Delete the old token
-					$storage->clearToken($genericstring);	// Delete the token called ("Google-".$storage->keyforprovider)
+					$storage->clearToken($genericstring);	// Delete the token called ("Generic-".$storage->keyforprovider)
 
 					$tmpuser = new User($db);
 					$res = $tmpuser->fetch(0, '', '', 0, $entitytosearchuser, $useremail, 0, 1);	// Load user. Can load with email_oauth2.
@@ -330,8 +333,8 @@ if (!GETPOST('code') && !GETPOST('error')) {
 					if ($res > 0) {
 						$username = $tmpuser->login;
 
-						$_SESSION['googleoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
-						dol_syslog('We set $_SESSION[\'googleoauth_receivedlogin\']='.$_SESSION['googleoauth_receivedlogin']);
+						$_SESSION['genericoauth_receivedlogin'] = dol_hash($conf->file->instance_unique_id.$username, '0');
+						dol_syslog('We set $_SESSION[\'genericoauth_receivedlogin\']='.$_SESSION['genericoauth_receivedlogin']);
 					} else {
 						$errormessage = "Failed to login using '.$genericstring.'. User with the Email '".$useremail."' was not found";
 						if ($entitytosearchuser > 0) {
@@ -366,7 +369,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
-				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
+				// _SESSION['genericoauth_receivedlogin'] has been set to the key to validate the next test by function_genericoauth(), so we can make the redirect
 				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];

@@ -394,7 +394,9 @@ if (count($listinsetup) > 0) {
 
 			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
-				print '<td>'.$langs->trans("URLOfOAuthServiceEndpoints").'</td>';
+				print '<td>';
+				print $form->textwithpicto($langs->trans("URLOfOAuthServiceEndpoints"), $langs->trans("URLOfOAuthServiceEndpointsExample"));
+				print '</td>';
 				print '<td><input style="width: 80%" type="text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
 				print '</td>';
 				print '<td></td>';
@@ -439,7 +441,9 @@ if (count($listinsetup) > 0) {
 		if ($supported) {
 			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
-				print '<td>'.$langs->trans("Scopes").'</td>';
+				print '<td>';
+				print $form->textwithpicto($langs->trans("Scopes"), $langs->trans("ScopesDesc"));
+				print '</td>';
 				print '<td>';
 				print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
 				print '</td>';

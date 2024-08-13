@@ -17,6 +17,11 @@ class Generic extends AbstractService
 	 */
 	const SCOPE_READ = 'read';
 	const SCOPE_WRITE = 'write';
+	const SCOPE_FOLLOW = 'follow';
+	const SCOPE_PUSH = 'push';
+
+	const SCOPE_ADMIN_READ = 'admin:read';
+	const SCOPE_ADMIN_WRITE = 'admin:write';
 
 
     public function __construct(
@@ -65,7 +70,7 @@ class Generic extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-    	return new Uri($this->baseApiUri.'/oauth/authorize');
+    	return new Uri($this->baseApiUri.'/oauth/token');
     }
 
     /**
@@ -112,6 +117,8 @@ class Generic extends AbstractService
      */
     protected function parseRequestTokenResponse($responseBody)
     {
+    	$data = array();
+
         parse_str($responseBody, $data);
 
         if (null === $data || !is_array($data)) {
@@ -128,8 +135,12 @@ class Generic extends AbstractService
     public function requestAccessToken($code, $state = null)
     {
         $bodyParams = array(
-            'consumer_key'     => $this->credentials->getConsumerId(),
+        	'client_id'     => $this->credentials->getConsumerId(),
+        	'client_secret' => $this->credentials->getConsumerSecret(),
+        	'redirect_uri'  => $this->credentials->getCallbackUrl(),
+        	'grant_type'    => 'authorization_code',
             'code'             => $code,
+        	'consumer_key'     => $this->credentials->getConsumerId(),
         );
 
         $responseBody = $this->httpClient->retrieveResponse(
@@ -148,19 +159,22 @@ class Generic extends AbstractService
      */
     protected function parseAccessTokenResponse($responseBody)
     {
-        parse_str($responseBody, $data);
+    	$data = json_decode($responseBody, true);
 
         if ($data === null || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
         } elseif (isset($data['error'])) {
-            throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
+        	throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . (isset($data['error_description']) ? ' - '.$data['error_description'] : '').'"');
         }
 
         $token = new StdOAuth2Token();
         #$token->setRequestToken($data['access_token']);
         $token->setAccessToken($data['access_token']);
+
         $token->setEndOfLife(StdOAuth2Token::EOL_NEVER_EXPIRES);
+
         unset($data['access_token']);
+
         $token->setExtraParams($data);
 
         return $token;
