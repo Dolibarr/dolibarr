@@ -224,18 +224,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Product		$product			Object product
-	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *	@param	Product|Societe	$product			Object product
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
-	 *  @return int								0 if OK
+	 *  @return int<-7,0>						0 if OK
 	 * 											-1 ErrorBadCustomerCodeSyntax
 	 * 											-2 ErrorCustomerCodeRequired
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
 	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $product, $thirdparty_type, $type)
 	{
-		global $conf;
+		if (!$product instanceof Product) {
+			dol_syslog(get_class($this)."::verif called with ".get_class($product)." Expected Product", LOG_ERR);
+			return -7;
+		}
 
 		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
 

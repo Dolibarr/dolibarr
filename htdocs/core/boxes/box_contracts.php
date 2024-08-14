@@ -128,6 +128,7 @@ class box_contracts extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					// fin_validite is no more on contract but on services

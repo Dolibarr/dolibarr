@@ -634,7 +634,13 @@ class BonPrelevement extends CommonObject
 							$addbankurl = 'direct-debit';	// = 'directdebit'
 						}
 
-						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+
+						if ($paiement instanceof PaymentSalary) {
+							// Only 6 arguments for PaymentSalary
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '');
+						} else {
+							$result = $paiement->addPaymentToBank($user, $modeforaddpayment, $labelforaddpayment, $fk_bank_account, '', '', 0, '', $addbankurl);
+						}
 
 						if ($result < 0) {
 							$error++;

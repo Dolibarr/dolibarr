@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array  Array
+	 *  @return array<string,array{icon?:string,widget?:string,map:string,default:string}>  Array
 	 */
 	public function getWidgets()
 	{
@@ -91,7 +92,7 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 *	Return collected data
 	 *
-	 *  @return array  Array of collected data
+	 *  @return array{count:int,messages:string[]}  Array of collected data
 	 */
 	public function collect()
 	{
@@ -111,6 +112,7 @@ class DolLogsCollector extends MessagesCollector
 				foreach ($log_levels as $level_key => $level) {
 					if (strpos(strtolower($line), strtolower($level_key)) == 20) {
 						$this->nboflines++;
+						// Use parent method to add the message
 						$this->addMessage($line, $level, false);
 					}
 				}
@@ -155,9 +157,9 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get latest file lines
 	 *
-	 * @param string       $file       File
-	 * @param int          $lines      Lines
-	 * @return array       Array
+	 * @param string       $file	File
+	 * @param int          $lines	Lines
+	 * @return string[]				Array
 	 */
 	protected function tailFile($file, $lines)
 	{
@@ -192,8 +194,8 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Search a string for log entries into the log file. Used when debug bar scan log file (very slow).
 	 *
-	 * @param  string  $file       File
-	 * @return array               Lines of logs
+	 * @param  string  $file							File
+	 * @return list<array{level:string,line:string}>	Lines of log entries
 	 */
 	public function getLogs($file)
 	{
@@ -218,10 +220,11 @@ class DolLogsCollector extends MessagesCollector
 	/**
 	 * Get the log levels from psr/log.
 	 *
-	 * @return array       Array of log level
+	 * @return array<string,string>	Array of log level
 	 */
 	public function getLevels()
 	{
+		// @phan-suppress-next-line PhanRedefinedClassReference	 // Psr/LogLevel also provided by Sabre setup
 		$class = new ReflectionClass(new LogLevel());
 		$levels = $class->getConstants();
 		$levels['ERR'] = 'error';

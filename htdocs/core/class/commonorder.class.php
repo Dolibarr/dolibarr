@@ -205,7 +205,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Percent line discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 
@@ -217,7 +217,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * VAT %
-	 * @var float
+	 * @var float|string
 	 */
 	public $tva_tx;
 

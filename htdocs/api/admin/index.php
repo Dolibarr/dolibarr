@@ -117,7 +117,7 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ApiProductionMode").'</td>';
-$production_mode = !(!getDolGlobalString('API_PRODUCTION_MODE'));
+$production_mode = getDolGlobalBool('API_PRODUCTION_MODE');
 if ($production_mode) {
 	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&token='.newToken().'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
@@ -132,7 +132,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("API_DISABLE_COMPRESSION").'</td>';
-$disable_compression = !(!getDolGlobalString('API_DISABLE_COMPRESSION'));
+$disable_compression = getDolGlobalBool('API_DISABLE_COMPRESSION');
 if ($disable_compression) {
 	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecompression&token='.newToken().'&status=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');

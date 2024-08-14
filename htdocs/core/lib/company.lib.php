@@ -2473,6 +2473,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$socstatic->code_client = $obj->code_client;
 			$socstatic->code_fournisseur = $obj->code_fournisseur;
 			$socstatic->code_compta = $obj->code_compta;
+			$socstatic->code_compta_client = $obj->code_compta;
 			$socstatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 			$socstatic->email = $obj->email;
 			$socstatic->canvas = $obj->canvas;

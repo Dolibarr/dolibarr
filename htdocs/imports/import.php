@@ -820,6 +820,7 @@ if ($step == 4 && $datatoimport) {
 				$fieldssource[$i]['example1'] = $langs->trans('Empty');
 				$i++;
 			}
+			$fieldssource[$i]['imported'] = 0;
 		}
 		$obj->import_close_file();
 	}
@@ -1085,20 +1086,22 @@ if ($step == 4 && $datatoimport) {
 
 	$optionsall = array();
 	foreach ($fieldstarget as $code => $line) {
-		//var_dump($line);
-
 		$tmparray = explode('|', $line["label"]);	// If label of field is several translation keys separated with |
 		$labeltoshow = '';
 		foreach ($tmparray as $tmpkey => $tmpval) {
 			$labeltoshow .= ($labeltoshow ? ' '.$langs->trans('or').' ' : '').$langs->transnoentities($tmpval);
 		}
-		$optionsall[$code] = array('labelkey' => $line['label'], 'labelkeyarray' => $tmparray, 'label' => $labeltoshow, 'required' => (empty($line["required"]) ? 0 : 1), 'position' => !empty($line['position']) ? $line['position'] : 0);
 		// TODO Get type from a new array into module descriptor.
-		//$picto = 'email';
+		// $picto = 'email';
 		$picto = '';
-		if ($picto) {
-			$optionsall[$code]['picto'] = $picto;
-		}
+		$optionsall[$code] = array(
+			'labelkey' => $line['label'],
+			'labelkeyarray' => $tmparray,
+			'label' => $labeltoshow,
+			'required' => (empty($line["required"]) ? 0 : 1),
+			'position' => (!empty($line['position']) ? $line['position'] : 0),
+			'picto' => $picto,
+		);
 	}
 	// $optionsall is an array of all possible target fields. key=>array('label'=>..., 'xxx')
 
@@ -1136,9 +1139,6 @@ if ($step == 4 && $datatoimport) {
 
 		print '<td class="nowraponall hideonsmartphone" style="font-weight: normal">=> </td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
-
-		//var_dump($_SESSION['dol_array_match_file_to_database_select']);
-		//var_dump($_SESSION['dol_array_match_file_to_database']);
 
 		$selectforline = '';
 		$selectforline .= '<select id="selectorderimport_'.($i + 1).'" class="targetselectchange minwidth300" name="select_'.($i + 1).'">';

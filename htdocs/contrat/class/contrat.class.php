@@ -112,8 +112,10 @@ class Contrat extends CommonObject
 	 */
 	public $fk_soc;
 
-
-	public $societe; // Object societe
+	/**
+	 * @var Societe thirdparty Object
+	 */
+	public $societe;
 
 	/**
 	 * Status of the contract
@@ -170,6 +172,7 @@ class Contrat extends CommonObject
 	public $fk_commercial_suivi;
 
 	/**
+	 * @var int
 	 * @deprecated Use fk_project instead
 	 * @see $fk_project
 	 */
@@ -599,7 +602,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
