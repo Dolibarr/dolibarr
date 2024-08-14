@@ -1518,11 +1518,11 @@ class Categorie extends CommonObject
 	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
 	 * Should be named getListOfCategForObject
 	 *
-	 * @param   int    		$id     Id of element
-	 * @param   string|int	$type   Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
-	 * @param   string 		$mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                      	    labels, 'id'= Get array of category IDs
-	 * @return  Categorie[]|int     Array of category objects or < 0 if KO
+	 * @param   int    		$id     	Id of element
+	 * @param   string|int	$type   	Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
+	 * @param   string 		$mode   	'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
+	 *                      	    	labels, 'id'= Get array of category IDs
+	 * @return  Categorie[]|int[]|int   Array of category objects (slow) or Array of category id or < 0 if KO
 	 */
 	public function containing($id, $type, $mode = 'object')
 	{
