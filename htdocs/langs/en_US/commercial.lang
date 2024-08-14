@@ -94,3 +94,7 @@ SignatureContractRef=Signature of contract %s
 SignatureFichinterRef=Signature of intervention %s
 SignatureSociete_ribRef=Signature of SEPA Mandate %s
 FeatureOnlineSignDisabled=Feature for online signing disabled or document generated before the feature was enabled
+NoSignature=Not signed
+SignedSender=Signed by sender
+SignedReceiver=Signed by recipient
+SignedAll=Signed by all parties
