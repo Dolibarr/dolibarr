@@ -112,6 +112,7 @@ if (empty($reshook)) {
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
@@ -131,6 +132,7 @@ if (empty($reshook)) {
 		if ($object->id == $user->id) {
 			$user->clearrights();
 			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
