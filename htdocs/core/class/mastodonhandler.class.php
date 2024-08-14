@@ -58,10 +58,6 @@ class MastodonHandler
 	 */
 	private $redirectUri;
 
-	/**
-	 * @var string The base URL of the Mastodon instance
-	 */
-	private $authUrl = 'https://mastodon.social/oauth/token';
 
 	/**
 	 * Constructor to set the necessary credentials.
@@ -138,6 +134,7 @@ class MastodonHandler
 					$this->posts[$count] = $this->normalizeData($postData);
 					$count++;
 				}
+				return $this->posts;
 			} else {
 				$this->error = 'Invalid data format or empty response';
 				return false;
@@ -187,5 +184,41 @@ class MastodonHandler
 	public function getPosts()
 	{
 		return $this->posts;
+	}
+
+	/**
+	 * Getter for url to redirect
+	 * @return   string    url
+	 */
+	public function getRedirectUri()
+	{
+		return $this->redirectUri;
+	}
+
+	/**
+	 * Getter for access token
+	 * @return string  token
+	 */
+	public function getAccessToken()
+	{
+		return $this->accessToken;
+	}
+
+	/**
+	 * Getter for client Id
+	 * @return  string  client Id
+	 */
+	public function getClientId()
+	{
+		return $this->clientId;
+	}
+
+	/**
+	 * Getter for secret client
+	 * @return string  secret client
+	 */
+	public function getClientSecret()
+	{
+		return $this->clientSecret;
 	}
 }
