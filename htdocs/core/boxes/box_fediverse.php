@@ -83,6 +83,7 @@ class box_fediverse extends ModeleBoxes
 			$socialNetworkTitle = $socialNetworkData['title'];
 			$socialNetworkUrl = $socialNetworkData['url'];
 
+			$authParams = [];
 			foreach ($socialNetworkData as $key => $value) {
 				if ($key !== 'title' && $key !== 'url') {
 					$authParams[$key] = $value;
@@ -93,7 +94,7 @@ class box_fediverse extends ModeleBoxes
 		$fediverseParser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
-		$result = $fediverseParser->fetchPosts($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse);
+		$result = $fediverseParser->fetchPosts($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse, $authParams);
 
 		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_escape_htmltag($socialNetworkTitle));
 		if ($result < 0 || !empty($fediverseParser->error)) {

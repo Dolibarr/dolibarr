@@ -58,7 +58,6 @@ if (!isModEnabled('socialnetworks')) {
 /*
  * Actions
  */
-
 if ($action == 'add') {
 	$error = 0;
 
@@ -69,11 +68,11 @@ if ($action == 'add') {
 	$socialNetworkName = GETPOST('socialnetwork_name', 'alpha');
 	$socialNetworkUrl = GETPOST('socialnetwork_url', 'alpha');
 
-	// other params if exist
-	$paramNames = GETPOST('param_name', 'array');
-	$paramValues = GETPOST('param_value', 'array');
+	 // other params if exist
+	 $paramNames = GETPOST('param_name', 'array');
+	 $paramValues = GETPOST('param_value', 'array');
 
-	$additionalParams = [];
+	 $additionalParams = [];
 	if (!empty($paramNames) && is_array($paramNames)) {
 		foreach ($paramNames as $index => $paramName) {
 			if (!empty($paramName) && isset($paramValues[$index])) {
@@ -153,7 +152,6 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 /*
  * View
  */
-
 $form = new Form($db);
 
 llxHeader('', $langs->trans("FediverseSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-dict');
@@ -180,15 +178,15 @@ print '<td>'.$langs->trans("Example").'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("Title").'</td>';
+print '<td width="100">'.$langs->trans("Title").'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name"></td>';
-print '<td>Mastodon</td>';
+print '<td>'.$langs->trans('Example').'</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans('SocialNetworkUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url"></td>';
-print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
+print '<td>https://twitter.social<br>http://www.dolibarr.org/</td>';
 print '</tr>';
 
 print '<tr class="oddeven"><td>';
@@ -261,7 +259,7 @@ if ($resql) {
 
 		$socialNetworkTitle = $socialNetworkData['title'];
 		$socialNetworkUrl = $socialNetworkData['url'];
-		$socialNetworkId = $obj->rowid;
+		$key = $obj->rowid;
 
 		$fediverseparser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
@@ -273,28 +271,30 @@ if ($resql) {
 				$authParams[$key] = $value;
 			}
 		}
-
-		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse, $authParams);
-
+		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 10, $path_fediverse, $authParams);
+		$posts = $fediverseparser->getPosts();
 		print "<br>";
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
-		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<table class="noborder centpercent">'."\n";
+		print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 
 		print '<tr class="liste_titre">';
 		print "<td>".$langs->trans("SocialNetworks")." ".($i+1)."</td>";
 		print '<td class="right">';
-		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_edit().'</a>';
-		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_delete().'</a>';
-		print '<input type="hidden" name="id" value="'.$socialNetworkId.'">';
+		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($key).'">'.img_edit().'</a>';
+		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+
+		print '<input type="hidden" name="id" value="'.$key.'">';
 		print '</td>';
 		print '</tr>'."\n";
 
+
 		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans("Title")."</td>";
+		print '<td class="titlefield">'.$langs->trans("Title")."</td>";
 		print '<td><input type="text" class="flat minwidth300" name="socialnetwork_name" value="'.dol_escape_htmltag($socialNetworkTitle).'" '.($action != "editsocialnetwork" ? 'disabled' : '').'></td>';
 		print '</tr>'."\n";
+
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("URL")."</td>";
@@ -318,7 +318,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Active
-		$active = _isInBoxListFediverse((int) $socialNetworkId, $boxlist) ? 'yes' : 'no';
+		$active = _isInBoxListFediverse((int) $key, $boxlist) ? 'yes' : 'no';
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';

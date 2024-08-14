@@ -1,5 +1,9 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+<<<<<<< HEAD
+=======
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+>>>>>>> d784bceeef02e94a0f2a5f337fe4bd4e38d91c1c
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +25,7 @@
  *      \brief      Class to manage each socialNetwork (Mastodon, etc.)
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/mastodonhandler.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/diasporahandler.class.php';
 
 /**
  * Class to manage Social network posts
@@ -51,30 +55,28 @@ class SocialNetworkManager
 	/**
 	 * @var int
 	 */
-	private $lastFetchDate;
+	private $lastFetchDate; // @phpstan-ignore-line
 
 	/**
 	 *	Constructor
 	 *
 	 *  @param		string		$platform      name of social network
-	 *  @param      array       $authParams    other parameters
 	 */
-	public function __construct($platform, $authParams = [])
+	public function __construct($platform)
 	{
 		$this->platform = $platform;
-		$this->initializeHandler($authParams);
+		$this->initializeHandler();
 	}
 
 	/**
 	 * Initialize the social network needed
-	 *  @param      array       $authParams    other parameters
 	 * @return void   new instance if founded
 	 */
-	private function initializeHandler($authParams)
+	private function initializeHandler()
 	{
 		$handlerClass = dol_ucfirst($this->platform).'Handler';
 		if (class_exists($handlerClass)) {
-			$this->handler = new $handlerClass($authParams);
+			$this->handler = new $handlerClass();
 		} else {
 			$this->error = "Handler for $this->platform not found.";
 		}
@@ -87,7 +89,7 @@ class SocialNetworkManager
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
-	 * @param array $authParams Authentication parameters
+	 * @param array     $authParams (Optional) Parameters for authentication, if needed.
 	 * @return bool      Status code: false if error,  array if success.
 	 */
 	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
