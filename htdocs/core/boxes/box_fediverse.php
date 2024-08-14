@@ -89,11 +89,10 @@ class box_fediverse extends ModeleBoxes
 				}
 			}
 		}
-
-		$fediverseParser = new SocialNetworkManager($socialNetworkTitle);
+		$fediverseParser = new SocialNetworkManager($socialNetworkTitle, $authParams);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
-		$result = $fediverseParser->fetchPosts($socialNetworkUrl, $this->max, $cachedelay, $path_fediverse);
+		$result = $fediverseParser->fetchPosts('https://oauth.reddit.com/best', $this->max, $cachedelay, $path_fediverse, $authParams);
 
 		$title = $langs->trans("BoxTitleLastFediverseInfos", $max, dol_escape_htmltag($socialNetworkTitle));
 		if ($result < 0 || !empty($fediverseParser->error)) {
