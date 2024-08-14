@@ -316,6 +316,7 @@ class Projects extends DolibarrApi
 			$classname = '';
 			$filefound = 0;
 			$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
 				$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -325,26 +326,33 @@ class Projects extends DolibarrApi
 					break;
 				}
 			}
-			if ($filefound) {
-				$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-				if ($result !== false) {
+			if ($filefound && !empty($classname)) {
+				$result = dol_include_once($reldir . "core/modules/project/" . $modele . '.php');
+				if ($result !== false && class_exists($classname)) {
 					$modProject = new $classname();
 					$defaultref = $modProject->getNextValue(null, $this->project);
 				} else {
-					dol_syslog("Failed to include module file: " . $reldir."core/modules/project/".$modele. '.php', LOG_ERR);
+					dol_syslog("Failed to include module file or invalid classname: " . $reldir . "core/modules/project/" . $modele . '.php', LOG_ERR);
 				}
+			} else {
+				dol_syslog("Module file not found or classname is empty: " . $modele, LOG_ERR);
 			}
+
 			if (is_numeric($defaultref) && $defaultref <= 0) {
 				$defaultref = '';
 			}
+
 			if (empty($defaultref)) {
-				$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
+				$defaultref = 'PJ' . dol_print_date(dol_now(), 'dayrfc');
 			}
+
 			$this->project->ref = $defaultref;
 		}
+
 		if ($this->project->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
 		}
+
 		return $this->project->id;
 	}
 
