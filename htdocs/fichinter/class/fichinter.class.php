@@ -890,7 +890,7 @@ class Fichinter extends CommonObject
 			$statuscode = 'status6';
 		}
 
-		$signed_label = ' (' . $langs->transnoentitiesnoconv('Signed') . ')';
+		$signed_label = ' (' . $this->getLibSignedStatus() . ')';
 		$status_label = $this->signed_status ? $this->labelStatus[$status] . $signed_label : $this->labelStatus[$status];
 		$status_label_short = $this->signed_status ? $this->labelStatusShort[$status] . $signed_label : $this->labelStatusShort[$status];
 
@@ -908,8 +908,8 @@ class Fichinter extends CommonObject
 		global $langs;
 		$langs->load("commercial");
 		$list_signed_status = $this->getSignedStatusLocalisedArray();
-		$signed_status_label = $langs->transnoentitiesnoconv($list_signed_status[$this->signed_status]);
-		$signed_status_label_short = $langs->transnoentitiesnoconv($list_signed_status[$this->signed_status]);
+		$signed_status_label = $list_signed_status[$this->signed_status];
+		$signed_status_label_short = $list_signed_status[$this->signed_status];
 		$signed_status_code = 'status'.$this->signed_status;
 		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
 	}
