@@ -33,12 +33,13 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force array<int,BOM> $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("bom");
 
+'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type before use
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type after dol_sort_array which looses typing
 
 $total = 0;
 $ilink = 0;
