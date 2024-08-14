@@ -191,7 +191,8 @@ class MyModuleApi extends DolibarrApi
 	/**
 	 * Create myobject object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param array<string,null|int|float|string|mixed[]> $request_data
 	 * @return int  				ID of myobject
 	 *
 	 * @throws RestException 403 Not allowed
@@ -239,6 +240,7 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param 	int   		$id             Id of myobject to update
 	 * @param 	array 		$request_data   Datas
+	 * @phan-param array<string,null|int|float|string|mixed[]> $request_data
 	 * @return 	Object						Object after update
 	 *
 	 * @phan-return  MyObject
@@ -340,7 +342,7 @@ class MyModuleApi extends DolibarrApi
 	 * Validate fields before creating or updating object
 	 *
 	 * @param	array		$data   Array of data to validate
-	 * @phan-param MyObject[] $data
+	 * @phan-param array<string,null|int|float|string|mixed[]> $data
 	 * @return	array
 	 * @phan-return array<string,null|int|float|string> $data
 	 *
@@ -367,7 +369,7 @@ class MyModuleApi extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensible object data fields
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
