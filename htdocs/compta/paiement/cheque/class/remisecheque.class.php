@@ -450,7 +450,8 @@ class RemiseCheque extends CommonObject
 			}
 
 			$obj = new $classname();
-			'@phan-var-force CommonNumRefGenerator $obj';
+			'@phan-var-force ModeleNumRefChequeReceipts $obj';
+
 			$numref = "";
 			$numref = $obj->getNextValue($mysoc, $this);
 
@@ -459,7 +460,7 @@ class RemiseCheque extends CommonObject
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db, "ChequeReceipts::getNextNumRef ".$obj->error);
+				dol_print_error($db, "ChequeReceipts::getNextValue ".$obj->error);
 				return "";
 			}
 
