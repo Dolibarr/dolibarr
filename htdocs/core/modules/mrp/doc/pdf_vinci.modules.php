@@ -5,8 +5,9 @@
  * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017      Ferran Marcet         <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024 Frédéric France       <frederic.france@free.fr>
+ * Copyright (C) 2024      MDW                   <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Josep Lluís Amador    <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1334,9 +1335,15 @@ class pdf_vinci extends ModelePDFMo
 			'status' => true,
 			'width' => 35, // in mm
 			'title' => array(
-				'textkey' => 'Ref'
+				'textkey' => 'Ref',
+				'align' => 'L',
+				'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 			),
 			'border-left' => true, // add left line separator
+			'content' => array(
+				'align' => 'L',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
 		);
 
 		$rank = 1; // do not use negative rank

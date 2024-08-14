@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024 MDW                 <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +19,19 @@
 /**
  *      \file       htdocs/core/class/mastodonhandler.class.php
  *      \ingroup    social
- *      \brief      Class to manage each socialNetwork (Mastodon, etc.)
+ *      \brief      Class to manage social network Mastodon
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/socialnetworkmanager.class.php';
- /**
-  * Class for handler Mastodan
-  */
+
+
+/**
+ * Class for handler Mastodon
+ */
 class MastodonHandler
 {
-
 	/**
-	 * @var  Array   $osts   posts of social network (Mastodon)
+	 * @var array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>    Posts of social network (Mastodon)
 	 */
 	private $posts;
 
@@ -70,8 +72,8 @@ class MastodonHandler
 	/**
 	 * Normalize data of retrieved posts
 	 *
-	 * @param  string   $postData   post retrieved
-	 * @return array    return array if OK , empty if KO
+	 * @param  array{content?:string,created_at?:string,url?:string,media_attachments?:array<array{url:string}>}	$postData   post retrieved
+	 * @return array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}    return array with normalized postData
 	 */
 	public function normalizeData($postData)
 	{
@@ -101,7 +103,7 @@ class MastodonHandler
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>    List of posts
 	 */
 	public function getPosts()
 	{
