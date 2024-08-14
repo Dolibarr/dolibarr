@@ -84,7 +84,7 @@ abstract class ModeleNumRefTicket extends CommonNumRefGenerator
 	 *
 	 *  @param	Societe	$objsoc		Object third party
 	 *  @param	Ticket	$ticket 	Object ticket
-	 *  @return	string|<-1,1>		Next value if OK, <=-1 if KO
+	 *  @return	string|int<-1,0>	Next value if OK, <=-1 if KO
 	 */
 	abstract public function getNextValue($objsoc, $ticket);
 }

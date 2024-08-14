@@ -1033,6 +1033,7 @@ abstract class CommonDocGenerator
 							dol_include_once($InfoFieldList[1]);
 							if ($classname && class_exists($classname)) {
 								$tmpobject = new $classname($this->db);
+								'@phan-var-force CommonObject $tmpobject';
 								$tmpobject->fetch($id);
 								// completely replace the id with the linked object name
 								$formatedarrayoption['options_'.$key] = $tmpobject->name;

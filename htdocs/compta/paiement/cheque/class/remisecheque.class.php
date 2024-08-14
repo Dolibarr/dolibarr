@@ -591,7 +591,7 @@ class RemiseCheque extends CommonObject
 
 			$classname = 'BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);
-			'@phan-var-force CommonDocGenerator $module';
+			'@phan-var-force ModeleChequeReceipts $docmodel';
 
 			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";

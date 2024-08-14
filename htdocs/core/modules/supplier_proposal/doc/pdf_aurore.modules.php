@@ -1200,11 +1200,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	float|int                   Return topshift value
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  CommonObject	$object     	Object to show
+	 *  @param  int<0,1>		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
+	 *  @return	float|int						Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
