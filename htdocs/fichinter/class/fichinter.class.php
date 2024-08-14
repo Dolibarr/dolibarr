@@ -224,6 +224,24 @@ class Fichinter extends CommonObject
 	 */
 	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
+	const SIGNED_STATUSES = [
+		0	=> [
+			'STATUS_NAME' => 'STATUS_NO_SIGNATURE',
+			'STATUS_LABEL_KEY' => 'NoSignature'
+		],
+		1	=> [
+			'STATUS_NAME' => 'STATUS_SIGNED_SENDER',
+			'STATUS_LABEL_KEY' => 'SignedSender'
+		],
+		2	=> [
+			'STATUS_NAME' => 'STATUS_SIGNED_RECEIVER',
+			'STATUS_LABEL_KEY' => 'SignedReceiver'
+		],
+		9	=> [ // To handle future kind of signature (ex: tripartite contract)
+			'STATUS_NAME' => 'STATUS_SIGNED_ALL',
+			'STATUS_LABEL_KEY' => 'SignedAll'
+		]
+	];
 
 	/**
 	 * Date delivery
@@ -886,6 +904,22 @@ class Fichinter extends CommonObject
 		$status_label_short = $this->signed_status ? $this->labelStatusShort[$status] . $signed_label : $this->labelStatusShort[$status];
 
 		return dolGetStatus($status_label, $status_label_short, '', $statuscode, $mode);
+	}
+
+	/**
+	 *	Returns the label for signed status
+	 *
+	 *	@param		int		$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@return		string			Label
+	 */
+	public function getLibSignedStatus(int $mode = 0): string
+	{
+		global $langs;
+		$langs->load("commercial");
+		$signed_status_label = $langs->transnoentitiesnoconv(self::SIGNED_STATUSES[$this->signed_status]['STATUS_LABEL_KEY']);
+		$signed_status_label_short = $langs->transnoentitiesnoconv(self::SIGNED_STATUSES[$this->signed_status]['STATUS_LABEL_KEY']);
+		$signed_status_code = 'status'.$this->signed_status;
+		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
 	}
 
 	/**
