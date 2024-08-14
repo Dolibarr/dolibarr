@@ -3621,7 +3621,7 @@ class Facture extends CommonInvoice
 						$line = $this->lines[$i];
 						'@phan-var-force FactureLigne $line';
 						if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
-							$previousprogress = $line->getAllprevProgress($line->fk_facture);
+							$previousprogress = $line->getAllPrevProgress($line->fk_facture);
 							$current_progress = (float) $line->situation_percent;
 							$full_progress = $previousprogress + $current_progress;
 							$final = ($full_progress == 100);
