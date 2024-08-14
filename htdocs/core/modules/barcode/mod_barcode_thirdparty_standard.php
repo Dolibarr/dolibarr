@@ -39,22 +39,22 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	public $name = 'Standard'; // Model Name
 
 	/**
-	 * @var int Editable code
+	 * @var int<0,1> Editable code
 	 */
 	public $code_modifiable;
 
 	/**
-	 * @var int Modified code if it is invalid
+	 * @var int<0,1> Modified code if it is invalid
 	 */
 	public $code_modifiable_invalide;
 
 	/**
-	 * @var int Modified code if it is null
+	 * @var int<0,1> Modified code if it is null
 	 */
 	public $code_modifiable_null;
 
 	/**
-	 * @var int Optional code
+	 * @var int<0,1> Optional code
 	 */
 	public $code_null;
 
