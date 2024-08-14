@@ -1209,8 +1209,8 @@ if ($action == 'create') {
 		$formquestion[] = [
 			'type' 		=> 'select',
 			'name' 		=> 'signed_status',
-			'label'		=> '<span class="fieldrequired">'.$langs->trans('Sign').'</span>',
-			'values'	=> fichinter::SIGNED_STATUSES
+			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}

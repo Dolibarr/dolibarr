@@ -98,3 +98,4 @@ NoSignature=Not signed
 SignedSender=Signed by sender
 SignedReceiver=Signed by recipient
 SignedAll=Signed by all parties
+SignStatus=Signature status

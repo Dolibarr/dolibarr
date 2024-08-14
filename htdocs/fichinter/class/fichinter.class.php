@@ -228,10 +228,10 @@ class Fichinter extends CommonObject
 	 * Signed statuses dictionary. Label used as key for string localizations.
 	 */
 	const SIGNED_STATUSES = [
-		0	=> 'NoSignature',
-		1	=> 'SignedSender',
-		2	=> 'SignedReceiver',
-		9	=> 'SignedAll' // To handle future kind of signature (ex: tripartite contract)
+		'STATUS_NO_SIGNATURE' => 0,
+		'STATUS_SIGNED_SENDER' => 1,
+		'STATUS_SIGNED_RECEIVER' => 2,
+		'STATUS_SIGNED_ALL' => 9 // To handle future kind of signature (ex: tripartite contract)
 	];
 
 	/**
@@ -907,10 +907,35 @@ class Fichinter extends CommonObject
 	{
 		global $langs;
 		$langs->load("commercial");
-		$signed_status_label = $langs->transnoentitiesnoconv(self::SIGNED_STATUSES[$this->signed_status]);
-		$signed_status_label_short = $langs->transnoentitiesnoconv(self::SIGNED_STATUSES[$this->signed_status]);
+		$list_signed_status = $this->getSignedStatusLocalisedArray();
+		$signed_status_label = $langs->transnoentitiesnoconv($list_signed_status[$this->signed_status]);
+		$signed_status_label_short = $langs->transnoentitiesnoconv($list_signed_status[$this->signed_status]);
 		$signed_status_code = 'status'.$this->signed_status;
 		return dolGetStatus($signed_status_label, $signed_status_label_short, '', $signed_status_code, $mode);
+	}
+
+	/**
+	 *	Returns an array of signed statuses with associated localized labels
+	 *
+	 *	@return array
+	 */
+	public function getSignedStatusLocalisedArray(): array
+	{
+		global $langs;
+		$langs->load("commercial");
+
+		$l10n_signed_status_labels = [
+			self::SIGNED_STATUSES['STATUS_NO_SIGNATURE']	=> 'NoSignature',
+			self::SIGNED_STATUSES['STATUS_SIGNED_SENDER']	=> 'SignedSender',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']	=> 'SignedReceiver',
+			self::SIGNED_STATUSES['STATUS_SIGNED_ALL']		=> 'SignedAll'
+		];
+
+		$l10n_signed_status = [];
+		foreach (self::SIGNED_STATUSES as $signed_status_code) {
+			$l10n_signed_status[$signed_status_code] = $langs->transnoentitiesnoconv($l10n_signed_status_labels[$signed_status_code]);
+		}
+		return $l10n_signed_status;
 	}
 
 	/**
