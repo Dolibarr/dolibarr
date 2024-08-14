@@ -32,6 +32,7 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force array<int,BOM> $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("bom");
