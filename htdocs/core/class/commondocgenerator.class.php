@@ -43,7 +43,7 @@ abstract class CommonDocGenerator
 	public $name = '';
 
 	/**
-	 * @var string Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Version
 	 */
 	public $version = '';
 

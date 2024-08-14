@@ -36,7 +36,7 @@ abstract class CommonNumRefGenerator
 	public $name = '';
 
 	/**
-	 * @var ''|'development'|'experimental'|'dolibarr'	Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'experimental'|'dolibarr'	Version
 	 */
 	public $version = '';
 

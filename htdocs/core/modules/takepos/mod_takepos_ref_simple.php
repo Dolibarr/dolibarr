@@ -36,7 +36,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 {
 	/**
 	 * Dolibarr version of the loaded document 'development', 'experimental', 'dolibarr'
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
