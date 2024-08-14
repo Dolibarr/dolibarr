@@ -567,6 +567,8 @@ if ($action == "importSignature") {
 					// Document format not supported to insert online signature.
 					// We should just create an image file with the signature.
 				}
+				$user = new User($db);
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER'], 0, 'FICHINTER_SIGN');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
