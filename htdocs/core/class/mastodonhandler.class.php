@@ -95,6 +95,7 @@ class MastodonHandler
 		}
 		$cacheFile = $cacheDir.'/'.dol_hash($urlAPI, 3);
 		$foundInCache = false;
+		$data = null;
 
 		// Check cache
 		if ($cacheDelay > 0 && $cacheDir && dol_is_file($cacheFile)) {
@@ -112,7 +113,6 @@ class MastodonHandler
 			];
 
 			$result = getURLContent($urlAPI, 'GET', '', 1, $headers, array('http', 'https'), 0);
-			$data = array();
 			if (!empty($result['content'])) {
 				$data = $result['content'];
 
@@ -125,21 +125,25 @@ class MastodonHandler
 				return false;
 			}
 		}
+		if (!is_null($data)) {
+			$data = json_decode($data, true);
+			if (is_array($data)) {
+				$this->posts = [];
+				$count = 0;
 
-		$data = json_decode($data, true);
-		if (is_array($data)) {
-			$this->posts = [];
-			$count = 0;
-
-			foreach ($data as $postData) {
-				if ($count >= $maxNb) {
-					break;
+				foreach ($data as $postData) {
+					if ($count >= $maxNb) {
+						break;
+					}
+					$this->posts[$count] = $this->normalizeData($postData);
+					$count++;
 				}
-				$this->posts[$count] = $this->normalizeData($postData);
-				$count++;
+			} else {
+				$this->error = 'Invalid data format or empty response';
+				return false;
 			}
 		} else {
-			$this->error = 'Invalid data format or empty response';
+			$this->error = 'Failed to retrieve or decode data';
 			return false;
 		}
 	}
