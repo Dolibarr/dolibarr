@@ -2707,7 +2707,7 @@ class ActionComm extends CommonObject
 						$errormesg = '';
 
 						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
 						complete_substitutions_array($substitutionarray, $langs, $this);
 

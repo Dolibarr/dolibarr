@@ -150,10 +150,16 @@ if ($action == 'refreshtoken' && $user->admin) {
 		$credentials = new Credentials(
 			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_ID'),
 			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_SECRET'),
-			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_URLAUTHORIZE')
+			getDolGlobalString('OAUTH_'.$keyforoauthservice.'_URLCALLBACK')
 			);
 
 		$serviceFactory = new \OAuth\ServiceFactory();
+		$httpClient = new \OAuth\Common\Http\Client\CurlClient();
+		// TODO Set options for proxy and timeout
+		// $params=array('CURLXXX'=>value, ...)
+		//$httpClient->setCurlParameters($params);
+		$serviceFactory->setHttpClient($httpClient);
+
 		// ex service is Google-Emails we need only the first part Google
 		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
 
@@ -225,7 +231,7 @@ if ($mode == 'setup' && $user->admin) {
 				$provider.'_NAME',
 				$provider.'_ID',
 				$provider.'_SECRET',
-				$provider.'_URLAUTHORIZE',	// For custom oauth links
+				$provider.'_URL',			// For custom oauth links
 				$provider.'_SCOPE'			// For custom oauth links
 			);
 		}
