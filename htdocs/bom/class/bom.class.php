@@ -468,6 +468,7 @@ class BOM extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
 					$newline = new $objectlineclassname($this->db);
+					'@phan-var-force BOMLine $objectline';
 					$newline->setVarsFromFetchObj($obj);
 
 					$this->lines[] = $newline;
