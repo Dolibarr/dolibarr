@@ -1799,7 +1799,7 @@ if ($action == 'create') {
 				}
 
 				// Sign
-				if ($object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
+				if ($object->statut > Fichinter::STATUS_DRAFT) {
 					if ($object->signed_status == Fichinter::STATUS_NO_SIGNATURE) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("InterventionSign") . '</a></div>';
 					} else {
