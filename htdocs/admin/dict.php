@@ -1262,7 +1262,7 @@ $title = $langs->trans("DictionarySetup");
 
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-dict');
 
-if (GETPOST('id') && GETPOST('id') == DICT_SOCIALNETWORKS) {
+if (GETPOSTINT('id') == DICT_SOCIALNETWORKS && $from == 'socialnetworksetup') {
 	$head = socialnetwork_prepare_head();
 	print dol_get_fiche_head($head, 'dict', $langs->trans('MenuDict'), -1, 'user');
 }

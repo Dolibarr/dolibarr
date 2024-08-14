@@ -384,6 +384,8 @@ if (empty($reshook)) {
 		//$creditnote->remise_percent = $invoice->remise_percent;
 		$creditnote->create($user);
 
+		$fk_parent_line = 0; // Initialise
+
 		foreach ($invoice->lines as $line) {
 			// Extrafields
 			if (method_exists($line, 'fetch_optionals')) {

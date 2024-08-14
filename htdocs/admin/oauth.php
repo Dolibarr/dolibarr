@@ -395,7 +395,8 @@ if (count($listinsetup) > 0) {
 			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
 				print '<td>';
-				print $form->textwithpicto($langs->trans("URLOfOAuthServiceEndpoints"), $langs->trans("URLOfOAuthServiceEndpointsExample"));
+				$tooltiphelp = $langs->trans("Example").'<br>https://mastodon.example.com<br>https://mastodon.social';
+				print $form->textwithpicto($langs->trans("URLOfOAuthServiceEndpoints"), $tooltiphelp);
 				print '</td>';
 				print '<td><input style="width: 80%" type="text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
 				print '</td>';
