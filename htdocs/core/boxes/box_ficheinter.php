@@ -118,6 +118,7 @@ class box_ficheinter extends ModeleBoxes
 					//$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
 					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta_client = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;

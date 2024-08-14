@@ -2716,6 +2716,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					//$thirdpartystatic->name_alias = $objp->name_alias;
 					//$thirdpartystatic->code_client = $objp->code_client;
 					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta_client = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
 					//$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
