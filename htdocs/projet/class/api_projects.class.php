@@ -310,11 +310,12 @@ class Projects extends DolibarrApi
 
 		// Auto-generate the "ref" field if it is set to "auto"
 		if ($this->project->ref == -1 || $this->project->ref === 'auto') {
+			$reldir = '';
 			$defaultref = '';
-			$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 			$file = '';
 			$classname = '';
 			$filefound = 0;
+			$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
 				$file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
@@ -326,8 +327,12 @@ class Projects extends DolibarrApi
 			}
 			if ($filefound) {
 				$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-				$modProject = new $classname();
-				$defaultref = $modProject->getNextValue(null, $this->project);
+				if ($result !== false) {
+					$modProject = new $classname();
+					$defaultref = $modProject->getNextValue(null, $this->project);
+				} else {
+					dol_syslog("Failed to include module file: " . $reldir."core/modules/project/".$modele. '.php', LOG_ERR);
+				}
 			}
 			if (is_numeric($defaultref) && $defaultref <= 0) {
 				$defaultref = '';
