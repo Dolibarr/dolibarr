@@ -1,9 +1,6 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
-<<<<<<< HEAD
-=======
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
->>>>>>> d784bceeef02e94a0f2a5f337fe4bd4e38d91c1c
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
