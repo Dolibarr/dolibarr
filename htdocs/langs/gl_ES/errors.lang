@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Terceiro ou membro da sociedade é obrigato
 ErrorFailedToWriteInTempDirectory=Produciuse un erro ao escribir no directorio temporal
 ErrorQuantityIsLimitedTo=A cantidade está limitada a %s
 ErrorFailedToLoadThirdParty=Produciuse un erro ao atopar/cargar un terceiro desde id=%s, correo electrónico=%s, nome= %s
-ErrorThisPaymentModeIsNotSepa=Este modo de pagamento non é unha conta bancaria
+ErrorThisPaymentModeIsNotDirectDebit=O modo de pagamento non é a domiciliación bancaria
+ErrorThisPaymentModeIsNotCreditTransfer=O modo de pagamento non é a transferencia de crédito
 ErrorStripeCustomerNotFoundCreateFirst=O cliente de Stripe non está configurado para este terceiro (ou definido nun valor eliminado no lado de Stripe). Créeo (ou volte engadir) primeiro.
 ErrorCharPlusNotSupportedByImapForSearch=A busca IMAP non é capaz de buscar no remitente ou destinatario unha cadea que conteña o carácter +
 ErrorTableNotFound=Non se atopou a táboa <b> %s </b>
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Non se atopou o dicionario <b> %s </b>
 ErrorFailedToCreateSymLinkToMedias=Produciuse un erro ao crear a ligazón simbólica %s para apuntar a %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Revise a orde usada para a exportación ns opcións avanzadas da exportación
 ErrorEndTimeMustBeGreaterThanStartTime=A data de finalización debe ser maior que a data de inicio
-ErrorIncoherentDates=Data de inicio debe ser menor que a data de ininalización
-ErrorEndHourIsNull=A data de finalización non pode ser cero
-ErrorStartHourIsNull=A data de inicio non pode ser cero
+ErrorIncoherentDates=A data de inicio debe ser anterior á data de finalización
+ErrorEndHourIsNull=O campo da data de finalización non pode estar baleiro
+ErrorStartHourIsNull=O campo da data de inicio non pode estar baleiro
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Demasiadas liñas para procesar. Utilice un filtro máis selectivo.
 ErrorEmptyValueForQty=A cantidade non pode ser cero.
 # Warnings

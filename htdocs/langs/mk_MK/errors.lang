@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Трето лице или член на п
 ErrorFailedToWriteInTempDirectory=Не успеа да се запише во директориумот за време
 ErrorQuantityIsLimitedTo=Количината е ограничена на %s
 ErrorFailedToLoadThirdParty=Не успеа да се најде/вчита трета страна од id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Овој начин на плаќање не е банкарска сметка
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Клиентот Stripe не е поставен за оваа трета страна (или е поставен на вредност избришана од страната на Stripe). Прво креирајте го (или повторно прикачете го).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP пребарувањето не може да бара низ испраќачот или примачот низа што го содржи знакот +
 ErrorTableNotFound=Табелата <b>%s</b> не е пронајдена
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Речник <b>%s</b> не е пронајден
 ErrorFailedToCreateSymLinkToMedias=Не успеа да се создаде симболична врска %s за да укаже на %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Проверете ја командата што се користи за извоз во Напредните опции на извозот
 ErrorEndTimeMustBeGreaterThanStartTime=Времето на завршување мора да биде поголемо од времето на почеток
-ErrorIncoherentDates=Датумот на почеток мора да биде помал од крајот на датумот
-ErrorEndHourIsNull=Крајниот датум не може да биде нула
-ErrorStartHourIsNull=Датумот на почеток не може да биде нула
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Премногу линии за обработка. Користете поселективен филтер.
 ErrorEmptyValueForQty=Количината не може да биде нула.
 # Warnings

@@ -46,10 +46,16 @@ LineLabel=Label of line
 LineDescription=線路說明
 LineUnitPrice=線路單價
 LineVATRate=線路增值稅稅率
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=線路數量
 LineTotalHT=金額不含稅線路稅
 LineTotalTTC=線路含稅金額
 LineTotalVAT=線路增值稅金額
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=產品線類型（0=產品，1=服務）
 FileWithDataToImport=包含要導入的數據的文件
 FileToImport=要導入的源文件
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=Choose the file format to use as import file format b
 ChooseFileToImport=上傳文件，然後點擊%s 圖標選擇文件作為源導入文件...
 SourceFileFormat=源文件格式
 FieldsInSourceFile=源文件中的字段
-FieldsInTargetDatabase=Dolibarr 數據庫中的目標字段（粗體=必填）
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=沒有字段
 MoveField=移動字段列號 %s
 ExampleOfImportFile=導入文件示例
@@ -124,7 +130,7 @@ SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for 
 UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
 NoUpdateAttempt=No update attempt was performed, only insert
 ImportDataset_user_1=Users (employees or not) and properties
-ComputedField=Computed field
+ComputedField=電腦字段
 ## filters
 SelectFilterFields=如果您想過濾某些值，只需在此處輸入值即可。
 FilteredFields=過濾字段

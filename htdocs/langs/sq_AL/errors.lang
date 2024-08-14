@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Pala e tretë ose Anëtari i partneritetit 
 ErrorFailedToWriteInTempDirectory=Dështoi të shkruani në direktorinë temp
 ErrorQuantityIsLimitedTo=Sasia është e kufizuar në %s
 ErrorFailedToLoadThirdParty=Dështoi gjetja/ngarkimi i palës së tretë nga id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Kjo mënyrë pagese nuk është llogari bankare
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Klienti Stripe nuk është caktuar për këtë palë të tretë (ose është vendosur në një vlerë të fshirë në anën e shiritit). Krijo (ose ri-bashkëngjit) atë së pari.
 ErrorCharPlusNotSupportedByImapForSearch=Kërkimi IMAP nuk është në gjendje të kërkojë te dërguesi ose marrësi për një varg që përmban karakterin +
 ErrorTableNotFound=Tabela <b>%s</b> nuk u gjet
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Fjalori <b>%s</b> nuk u gjet
 ErrorFailedToCreateSymLinkToMedias=Dështoi në krijimin e lidhjes simbolike %s për të treguar në %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Kontrolloni komandën e përdorur për eksportin në opsionet e avancuara të eksportit
 ErrorEndTimeMustBeGreaterThanStartTime=Koha e përfundimit duhet të jetë më e madhe se koha e fillimit
-ErrorIncoherentDates=Data e fillimit duhet të jetë më e vogël se data e përfundimit
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
