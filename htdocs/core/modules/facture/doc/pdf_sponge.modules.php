@@ -109,7 +109,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -1360,7 +1360,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
-					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, 0, '', '');
+					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -2708,7 +2708,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !(!getDolGlobalString('PDF_PROPAL_SHOW_PRICE_INCL_TAX')),
+			'status' => getDolGlobalBool('PDF_PROPAL_SHOW_PRICE_INCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),

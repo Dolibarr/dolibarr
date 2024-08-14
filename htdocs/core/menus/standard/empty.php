@@ -23,6 +23,8 @@
 
 /**
  *	    Class to manage empty menu
+ *
+ *	    @phan-suppress PhanRedefineClass
  */
 class MenuManager
 {
@@ -31,26 +33,47 @@ class MenuManager
 	 */
 	public $db;
 
-	public $type_user = 0; // Put 0 for internal users, 1 for external users
-	public $atarget = ""; // To store default target to use onto links
+	/**
+	 * @var int<0,1>	0 for internal users, 1 for external users
+	 */
+	public $type_user = 0;
+	/**
+	 * @var string Default target to use in links
+	 */
+	public $atarget = "";
+	/**
+	 * @var string
+	 */
 	public $name = "empty";
 
 	/**
 	 * @var Menu
 	 */
 	public $menu;
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $menu_array_after;
 
+	/**
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 */
 	public $tabMenu;
 
+	/**
+	 * @var Menu
+	 */
 	public $topmenu;
+	/**
+	 * @var Menu
+	 */
 	public $leftmenu;
 
 	/**
 	 *  Constructor
 	 *
 	 *  @param	DoliDB		$db     		Database handler
-	 *  @param	int			$type_user		Type of user
+	 *  @param	int<0,1>	$type_user		Type of user
 	 */
 	public function __construct($db, $type_user)
 	{
@@ -76,9 +99,9 @@ class MenuManager
 	/**
 	 *  Show menu
 	 *
-	 *	@param	string	$mode			'top', 'left', 'jmobile'
-	 *  @param	array	$moredata		An array with more data to output
-	 *  @return int|string				0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
+	 *	@param	string					$mode		'top', 'left', 'jmobile'
+	 *  @param	?array<string,mixed>	$moredata	An array with more data to output
+	 *  @return int<0,max>|string					0 or nb of top menu entries if $mode = 'topnb', string inc ase of bad parameter
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -508,7 +531,7 @@ function print_start_menu_entry_empty($idsel, $classname, $showmode)
  * @param	string	$idsel			Id sel
  * @param	string	$classname		Class name
  * @param	string	$atarget		Target
- * @param	array	$menuval		All the $menuval array
+ * @param	array{}|array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string} 	$menuval		All the $menuval array
  * @return	void
  */
 function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())

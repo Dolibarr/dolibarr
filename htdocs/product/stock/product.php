@@ -68,8 +68,8 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$stocklimit = (float) GETPOST('seuil_stock_alerte');
-$desiredstock = GETPOST('desiredstock');
+$stocklimit = GETPOSTFLOAT('seuil_stock_alerte');
+$desiredstock = GETPOSTFLOAT('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
@@ -175,10 +175,12 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StockLimit")), null, 'errors');
 		$maj_ok = false;
 	}
-	if ($desiredstock == '') {
+	if ($desiredstock == '' || is_array($desiredstock)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DesiredStock")), null, 'errors');
 		$maj_ok = false;
 	}
+
+	$desiredstock = (float) $desiredstock;
 
 	if ($maj_ok) {
 		$pse = new ProductStockEntrepot($db);
@@ -195,7 +197,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 			$pse->fk_entrepot = GETPOSTINT('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
-			$pse->desiredstock  	 = GETPOST('desiredstock');
+			$pse->desiredstock  	 = GETPOSTFLOAT('desiredstock');
 			if ($pse->create($user) > 0) {
 				setEventMessages($langs->trans('ProductStockWarehouseCreated'), null, 'mesgs');
 			}

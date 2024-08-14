@@ -194,6 +194,23 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 		// phpcs:enable
 		return 0;
 	}
+
+	/**
+	 * 	Check validity of code according to its rules
+	 *
+	 *	@param	DoliDB		$db		Database handler
+	 *	@param	string		$code	Code to check/correct
+	 *	@param	Societe		$soc	Object third party
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
+	 * 								-1 ErrorBadCustomerCodeSyntax
+	 * 								-2 ErrorCustomerCodeRequired
+	 * 								-3 ErrorCustomerCodeAlreadyUsed
+	 * 								-4 ErrorPrefixRequired
+	 * 								-5 NotConfigured - Setup empty so any value may be ok or not
+	 * 								-6 Other (see this->error)
+	 */
+	abstract public function verif($db, &$code, $soc, $type);
 }
 
 

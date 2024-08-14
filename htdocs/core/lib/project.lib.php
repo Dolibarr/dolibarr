@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
@@ -2385,7 +2385,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				// Fields to show current time
 				$tableCell = '';
 				$modeinput = 'hours';
-				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y', $firstdaytoshow));
+				$TFirstDay = getFirstDayOfEachWeek($TWeek, (int) date('Y', $firstdaytoshow));
 				$TFirstDay[reset($TWeek)] = 1;
 
 				$firstdaytoshowarray = dol_getdate($firstdaytoshow);

@@ -474,7 +474,7 @@ class Ticket extends CommonObject
 	 * @param string $getRef    Reference of object
 	 * @return bool
 	 */
-	public function checkExistingRef(string $action, string $getRef): bool
+	public function checkExistingRef(string $action, string $getRef)
 	{
 		$test = new self($this->db);
 
