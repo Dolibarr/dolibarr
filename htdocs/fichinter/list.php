@@ -668,8 +668,8 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 if (!empty($arrayfields['f.signed_status']['checked'])) {
 	print '<td class="liste_titre center">';
 	$list_signed_status = [];
-	foreach ($object::SIGNED_STATUSES as $signed_status_key => $signed_status) {
-		$list_signed_status[$signed_status_key] = $langs->transnoentitiesnoconv($signed_status['STATUS_LABEL_KEY']);
+	foreach ($object::SIGNED_STATUSES as $signed_status_key => $signed_status_label) {
+		$list_signed_status[$signed_status_key] = $langs->transnoentitiesnoconv($signed_status_label);
 	}
 	print $form->selectarray('search_signed_status', $list_signed_status, $search_signed_status, 1, 0, 0, '', 1, 0, 0, '', 'search_status');
 	print '</td>';

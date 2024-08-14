@@ -1205,7 +1205,14 @@ if ($action == 'create') {
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('FICHINTER_SIGN', $object->socid, $object);
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', '', 0, 1);
+		$formquestion = [];
+		$formquestion[] = [
+			'type' 		=> 'select',
+			'name' 		=> 'signed_status',
+			'label'		=> '<span class="fieldrequired">'.$langs->trans('Sign').'</span>',
+			'values'	=> fichinter::SIGNED_STATUSES
+		];
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}
 
 	// Confirm unsign
