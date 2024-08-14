@@ -1456,7 +1456,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
-	 *	@return	int|array Return integer <0 KO, array OK
+	 *	@return	int|Categorie[] Return integer <0 KO, array OK
 	 */
 	public function get_meres()
 	{

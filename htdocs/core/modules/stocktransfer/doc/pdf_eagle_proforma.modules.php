@@ -1158,11 +1158,11 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param	string		$titlekey		Translation key to show as title of document
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  CommonObject	$object     	Object to show
+	 *  @param  int<0,1>		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
+	 *  @param	string			$titlekey		Translation key to show as title of document
 	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "StockTransferSheetProforma")
@@ -1474,7 +1474,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	CommonObject	$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc
