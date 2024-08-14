@@ -10857,7 +10857,7 @@ abstract class CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
-	 * @return	int							Array of category objects or < 0 if KO
+	 * @return	int|array					Array of category objects or < 0 if KO
 	 */
 	public function getCategoriesCommon($type_categ)
 	{
