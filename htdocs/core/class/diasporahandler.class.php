@@ -131,7 +131,7 @@ class DiasporaHandler
 					$this->posts[$count] = $this->normalizeData($postData);
 					$count++;
 				}
-				return $this->posts;
+				return true;
 			} else {
 				$this->error = 'Invalid data format or empty response';
 				return false;
