@@ -227,7 +227,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
-		$result = $object->setSignedStatus($user, $object::STATUS_NO_SIGNATURE);
+		$result = $object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_NO_SIGNATURE']);
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				// Define output language
