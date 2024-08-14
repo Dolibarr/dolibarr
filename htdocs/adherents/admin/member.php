@@ -183,7 +183,7 @@ if ($action == 'set_default') {
 		}
 	}
 
-	$consttype = GETPOST('consttype', 'alpha');
+	$consttype = GETPOSTINT('consttype');
 	$constnote = GETPOST('constnote');
 	$res = dolibarr_set_const($db, $constname, $constvalue, $choices[$consttype], 0, $constnote, $conf->entity);
 
