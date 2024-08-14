@@ -73,7 +73,7 @@ return [
         'htdocs/accountancy/tpl/export_journal.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/adherents/admin/member.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchDimFetch', 'PhanUndeclaredMethod'],
         'htdocs/adherents/agenda.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/adherents/canvas/actions_adherentcard_common.class.php' => ['PhanPluginUnknownObjectMethodCall'],
+        'htdocs/adherents/canvas/actions_adherentcard_common.class.php' => ['PhanPluginUnknownObjectMethodCall', /* Traverses Adherent as array, ignore */ 'PhanTypeSuspiciousNonTraversableForeach'],
         'htdocs/adherents/card.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/adherents/class/adherent.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/adherents/class/adherent_type.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanTypeMismatchArgumentProbablyReal'],
