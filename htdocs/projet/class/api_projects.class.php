@@ -285,7 +285,6 @@ class Projects extends DolibarrApi
 	public function post($request_data = null)
 	{
 		global $conf;
-		
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
 			throw new RestException(403, "Insuffisant rights");
 		}
@@ -310,9 +309,9 @@ class Projects extends DolibarrApi
 		}*/
 
 		// Auto-generate the "ref" field if it is set to "auto"
-		 if ($this->project->ref == -1 || $this->project->ref === 'auto') {
+		if ($this->project->ref == -1 || $this->project->ref === 'auto') {
 			$defaultref = '';
-			$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;	
+			$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 			$file = '';
 			$classname = '';
 			$filefound = 0;
@@ -325,28 +324,22 @@ class Projects extends DolibarrApi
 					break;
 				}
 			}
-	
 			if ($filefound) {
 				$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 				$modProject = new $classname();
 				$defaultref = $modProject->getNextValue(null, $this->project);
 			}
-	
 			if (is_numeric($defaultref) && $defaultref <= 0) {
 				$defaultref = '';
 			}
-	
 			if (empty($defaultref)) {
 				$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
 			}
-	
 			$this->project->ref = $defaultref;
 		}
-		
 		if ($this->project->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating project", array_merge(array($this->project->error), $this->project->errors));
 		}
-
 		return $this->project->id;
 	}
 
