@@ -274,7 +274,6 @@ if ($resql) {
 
 		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 10, $path_fediverse, $authParams);
 		$posts = $fediverseparser->getPosts();
-		var_dump($socialNetworkData);
 		print "<br>";
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 
