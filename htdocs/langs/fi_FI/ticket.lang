@@ -285,6 +285,7 @@ OneOfTicketTrackId=Syötä yksi seurantatunnuksestasi
 ErrorTicketNotFound=Tikettiä seurantatunnuksella %s ei löytynyt!
 Subject=Aihe
 Message=Viesti
+Progression=Edistyminen
 ViewTicket=Näytä tiketti
 ViewMyTicketList=Katso omat tiketit
 ErrorEmailMustExistToCreateTicket=Virhe: sähköpostiosoitetta ei löydy järjestelmästä
