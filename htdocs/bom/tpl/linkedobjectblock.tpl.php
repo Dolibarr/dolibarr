@@ -31,6 +31,7 @@ global $user, $db;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force array<int,BOM> $linkedObjectBlock';
 
