@@ -66,7 +66,7 @@ class BlockedLog
 	public $signature_line = '';
 
 	/**
-	 * @var ?float|?string
+	 * @var float|string|null
 	 */
 	public $amounts = null;
 
@@ -837,7 +837,7 @@ class BlockedLog
 	/**
 	 * Encode data
 	 *
-	 * @param	string		$data	Data to serialize
+	 * @param	?stdClass	$data	Data to serialize
 	 * @param	int<0,1>	$mode	0=serialize, 1=json_encode
 	 * @return 	string				Value serialized, an object (stdClass)
 	 */
