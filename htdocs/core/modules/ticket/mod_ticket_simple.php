@@ -119,9 +119,9 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe $objsoc    	Object third party
-	 *  @param  Ticket 	$ticket 	Object ticket
-	 *  @return string|-1           Value if OK, -1 if KO
+	 *  @param	Societe	$objsoc		Object third party
+	 *  @param	Ticket	$ticket 	Object ticket
+	 *  @return	string|<-1,1>		Value if OK, <=-1 if KO
 	 */
 	public function getNextValue($objsoc, $ticket)
 	{

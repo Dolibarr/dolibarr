@@ -130,6 +130,7 @@ class Dolistore
 			// Call
 			dol_syslog("Call API with opt = ".var_export($opt, true));
 			$xml              = $this->api->get($opt);
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			$this->categories = $xml->categories->children();
 		} catch (PrestaShopWebserviceException $e) {
 			// Here we are dealing with errors
@@ -185,6 +186,7 @@ class Dolistore
 				$xml         = $this->api->get($opt2);
 
 				$products    = array();
+				// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 				foreach ($xml->products->children() as $product) {
 					$products[] = (int) $product['id'];
 				}
@@ -199,6 +201,7 @@ class Dolistore
 				$xml              = $this->api->get($opt2);
 
 				$products         = array();
+				// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 				foreach ($xml->category->associations->products->children() as $product) {
 					$products[] = (int) $product->id;
 				}
@@ -213,6 +216,7 @@ class Dolistore
 			// Call API to get the detail
 			dol_syslog("Call API with opt = ".var_export($opt, true));
 			$xml                   = $this->api->get($opt);
+			// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 			$this->products        = $xml->products->children();
 		} catch (PrestaShopWebserviceException $e) {
 			// Here we are dealing with errors

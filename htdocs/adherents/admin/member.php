@@ -63,6 +63,8 @@ $modulepart = GETPOST('modulepart', 'aZ09');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+global $conf;
+
 if ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
