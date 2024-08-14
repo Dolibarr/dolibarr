@@ -1133,7 +1133,7 @@ class CMailFile
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1297,7 +1297,7 @@ class CMailFile
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);

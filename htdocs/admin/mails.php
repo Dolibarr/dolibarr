@@ -169,7 +169,7 @@ if (!getDolGlobalString('MAIN_MAIL_SENDMODE')) {
 	$conf->global->MAIN_MAIL_SENDMODE = 'mail';
 }
 
-$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT', ini_get('smtp_port'));
+$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT', (int) ini_get('smtp_port'));
 if (!$port) {
 	$port = 25;
 }

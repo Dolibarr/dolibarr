@@ -1177,7 +1177,7 @@ class EmailCollector extends CommonObject
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
-							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
+							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLCALLBACK')
 						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
