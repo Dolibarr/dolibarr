@@ -40,6 +40,13 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	public $db;
 
 	/**
+	 * Must be defined in the box class
+	 *
+	 * @var ''|'development'|'experimental'|'dolibarr'
+	 */
+	public $version;
+
+	/**
 	 * @var string param
 	 */
 	public $param;
@@ -129,6 +136,24 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
 	 */
 	public $widgettype = '';
+
+
+	//! Must be provided in child classes
+	/**
+	 * Note $picto is deprecated
+	 *
+	 * @var string  Example "accountancy"
+	 */
+	public $boximg;
+	/**
+	 * @var string  Example "BoxLastManualEntries"
+	 */
+	public $boxlabel;
+	/**
+	 * @var string[]  Example  array("accounting")
+	 */
+	public $depends;
+
 
 
 	/**
@@ -417,7 +442,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *  List is sorted by widget filename so by priority to run.
 	 *
 	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
-	*	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:int<0,1>,version:string,status:string,info:string}>	Array list of widgets
+	*	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
+	*
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
@@ -503,6 +529,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 			}
 
 			$objMod = new $modName($db);
+			'@phan-var-force ModeleBoxes $objMod';
 			if (is_object($objMod)) {
 				// Define disabledbyname and disabledbymodule
 				$disabledbyname = 0;
@@ -514,7 +541,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 					$disabledbyname = 1;
 				}
 				// We set info of modules
-				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
+				$widget[$j]['picto'] = ((!property_exists($objMod, 'picto') || empty($objMod->picto)) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
 				$widget[$j]['relpath'] = $relpath[$key];
