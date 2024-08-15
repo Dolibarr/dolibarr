@@ -315,7 +315,7 @@ class Projects extends DolibarrApi
 			$file = '';
 			$classname = '';
 			$filefound = 0;
-			$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+			$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 			foreach ($dirmodels as $reldir) {
