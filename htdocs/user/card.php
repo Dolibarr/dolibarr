@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $canedituser) {
+	if ($action == 'update' && ($canedituser || $caneditpasswordandsee)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield) {    // Case we can edit all field
