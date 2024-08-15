@@ -7,8 +7,8 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1654,9 +1654,9 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	for ($iter_day = 0; $iter_day < 7; $iter_day++) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');		// $firstdaytoshow is in timezone of server
-		$tmpday = dol_print_date($curtime, '%d', 'tzuserrel');
-		$tmpmonth = dol_print_date($curtime, '%m', 'tzuserrel');
-		$tmpyear = dol_print_date($curtime, '%Y', 'tzuserrel');
+		$tmpday = (int) dol_print_date($curtime, '%d', 'tzuserrel');
+		$tmpmonth = (int) dol_print_date($curtime, '%m', 'tzuserrel');
+		$tmpyear = (int) dol_print_date($curtime, '%Y', 'tzuserrel');
 
 		$style = 'cal_current_month';
 		if ($iter_day == 6) {

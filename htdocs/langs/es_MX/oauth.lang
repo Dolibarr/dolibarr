@@ -15,3 +15,5 @@ OAUTH_GOOGLE_NAME=Servicio de Google OAuth
 OAUTH_GOOGLE_ID=ID de Google OAuth
 OAUTH_GITHUB_NAME=Servicio OAuth GitHub
 OAUTH_GITHUB_ID=Id OAuth GitHub
+TokenExpired=Expirado
+ExpirationDate=Fecha de vencimiento

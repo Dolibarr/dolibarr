@@ -200,7 +200,7 @@ if ($result < 0) {
 		$i = 0;
 		$dataall = array();
 		while ($xmonth == $month) {
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > time()) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -345,7 +345,7 @@ if ($result < 0) {
 
 		$i = 0;
 		while ($xyear == $year && $day <= $datetime) {
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > $now) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -462,7 +462,7 @@ if ($result < 0) {
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max + 86400)) {	// On va au dela du dernier jour
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 			if ($day > ($max + 86400)) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph

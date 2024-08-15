@@ -144,7 +144,7 @@ $form = new Form($db);
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
 	$help_url = 'EN:Module_Agenda_En|DE:Modul_Terminplanung';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

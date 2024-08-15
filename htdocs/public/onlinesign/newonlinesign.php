@@ -497,7 +497,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'fichinter') {
 	// Signature on fichinter
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -602,7 +602,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'expedition') {
 	// Signature on expedition
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 

@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,9 +75,9 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 
 $form = new Form($db);
 
-$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 //$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
@@ -182,7 +183,7 @@ if ($result) {
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name);
+		$tabcompany[$obj->rowid] = array('id' => $obj->socid, 'name' => $obj->name);
 
 		$i++;
 	}

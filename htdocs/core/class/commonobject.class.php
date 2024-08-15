@@ -843,8 +843,8 @@ abstract class CommonObject
 	public $cond_reglement_supplier_id;
 
 	/**
-	 * @var float       Deposit percent for payment terms.
-	 *                  Populated by setPaymentTerms().
+	 * @var float|string Deposit percent for payment terms.
+	 *                   Populated by setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
@@ -2160,13 +2160,13 @@ abstract class CommonObject
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
 	 *
-	 *	@param	string		$field			Field to update
-	 *	@param	mixed		$value			New value
-	 *	@param	string		$table			To force other table element or element line (should not be used)
-	 *	@param	int			$id				To force other object id (should not be used)
-	 *	@param	string		$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
-	 *	@param	string		$id_field		To force rowid field name. 'rowid' is used if not defined
-	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
+	 *	@param	string			$field			Field to update
+	 *	@param	mixed			$value			New value
+	 *	@param	string			$table			To force other table element or element line (should not be used)
+	 *	@param	?int			$id				To force other object id (should not be used)
+	 *	@param	string			$format			Data format ('text', 'int', 'date'). 'text' is used if not defined
+	 *	@param	string			$id_field		To force rowid field name. 'rowid' is used if not defined
+	 *	@param	User|string|null	$fuser	Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
 	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
 	 *  @param	string		$fk_user_field	Name of field to save user id making change
 	 *	@return	int<-2,1>					Return integer <0 if KO, >0 if OK
@@ -5780,6 +5780,19 @@ abstract class CommonObject
 
 		$obj = new $classname($this->db);
 
+		// TODO: Check the following classes that seem possible for $obj, but removed for compatibility:
+		//  ModeleBankAccountDoc|ModeleExpenseReport|ModelePDFBom|ModelePDFCommandes|ModelePDFContract|
+		//  ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|
+		//  ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|
+		//  ModelePDFRecruitmentJobPosition|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|
+		//  ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePdfExpedition|ModelePdfReception|
+		//  ModelePDFStock|ModelePDFStockTransfer|
+		//  ModeleDon|ModelePDFTask|
+		//  ModelePDFAsset|ModelePDFTicket|ModelePDFUserGroup|ModeleThirdPartyDoc|ModelePDFUser
+		//  Has no write_file: ModeleBarCode|ModeleImports|ModeleExports|
+		'@phan-var-force ModelePDFMember $obj';
+		// '@phan-var-force ModelePDFMember|ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+
 		// If generator is ODT, we must have srctemplatepath defined, if not we set it.
 		if ($obj->type == 'odt' && empty($srctemplatepath)) {
 			$varfortemplatedir = $obj->scandir;
@@ -5834,9 +5847,8 @@ abstract class CommonObject
 		// update model_pdf in object
 		$this->model_pdf = $saved_model;
 
-		if (in_array(get_class($this), array('Adherent'))) {
-			'@phan-var-force Adherent $this';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards', $moreparams);
+		if ($obj instanceof ModelePDFMember) {
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
 		} else {
 			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
@@ -8594,7 +8606,7 @@ abstract class CommonObject
 
 		$this->clearFieldError($fieldKey);
 
-		if (!isset($fields[$fieldKey]) || $fields[$fieldKey] === null) {
+		if (!array_key_exists($fieldKey, $fields) || !is_array($fields[$fieldKey])) {
 			$this->setFieldError($fieldKey, $langs->trans('FieldNotFoundInObject'));
 			return false;
 		}
@@ -10857,7 +10869,7 @@ abstract class CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
-	 * @return	int							Array of category objects or < 0 if KO
+	 * @return	int[]|int					Array of category IDs or < 0 if KO
 	 */
 	public function getCategoriesCommon($type_categ)
 	{

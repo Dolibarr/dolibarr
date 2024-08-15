@@ -216,10 +216,10 @@ if (empty($reshook)) {
 							$object->delivery_date = $date_delivery;
 							foreach ($object->lines as $line) {
 								if (isset($line->date_start)) {
-									$line->date_start = $line->date_start + $difference;
+									$line->date_start +=  $difference;
 								}
 								if (isset($line->date_end)) {
-									$line->date_end = $line->date_end + $difference;
+									$line->date_end += $difference;
 								}
 							}
 						}
@@ -744,7 +744,10 @@ if (empty($reshook)) {
 			if ($object->statut == $object::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
 
-				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOSTINT('note_private'));
+				$oldstatus = $object->status;
+
+				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('note_private'));
+
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -758,7 +761,7 @@ if (empty($reshook)) {
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
-					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOSTINT('generate_deposit') == 'on'
+					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOST('generate_deposit') == 'on'
 					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -777,7 +780,7 @@ if (empty($reshook)) {
 						$locationTarget = DOL_URL_ROOT . '/compta/facture/card.php?id=' . $deposit->id;
 					} else {
 						$error++;
-						setEventMessages($object->error, $object->errors, 'errors');
+						setEventMessages("Failed to create down payment - ".$object->error, $object->errors, 'errors');
 					}
 				}
 
@@ -806,6 +809,9 @@ if (empty($reshook)) {
 						exit;
 					}
 				} else {
+					$object->status = $oldstatus;
+					$object->statut = $oldstatus;
+
 					$db->rollback();
 					$action = '';
 				}
@@ -969,7 +975,7 @@ if (empty($reshook)) {
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
 		$remise_percent = str_replace('*', '', $remise_percent);
 		foreach ($object->lines as $line) {
-			$tvatx= $line->tva_tx;
+			$tvatx = $line->tva_tx;
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
@@ -1231,9 +1237,9 @@ if (empty($reshook)) {
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					}
 				}
 
@@ -1894,7 +1900,7 @@ if ($action == 'create') {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}

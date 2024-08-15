@@ -81,7 +81,7 @@ class Expedition extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -159,7 +159,7 @@ class Expedition extends CommonObject
 	public $weight;
 
 	/**
-	 * @var integer|string Date delivery planned
+	 * @var int|string Date delivery planned
 	 */
 	public $date_delivery;
 
@@ -177,12 +177,12 @@ class Expedition extends CommonObject
 
 	/**
 	 * Effective delivery date
-	 * @var integer|string
+	 * @var int|string
 	 */
 	public $date_shipping;
 
 	/**
-	 * @var integer|string date_valid
+	 * @var int|string date_valid
 	 */
 	public $date_valid;
 
@@ -1877,7 +1877,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto      			Add picto into link
 	 *	@param      string		$option         			Where the link point to
@@ -2001,7 +2001,7 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

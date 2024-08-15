@@ -117,7 +117,7 @@ if ($action == 'specimen') {  // For invoices
 		require_once $file;
 
 		$module = new $classname($db, $facture);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFSuppliersInvoices $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture_fournisseur&file=SPECIMEN.pdf");

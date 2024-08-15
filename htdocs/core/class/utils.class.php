@@ -1360,7 +1360,7 @@ class Utils
 			if ($filesize > $sizelimit) {
 				$message .= '<br>'.$langs->trans("BackupIsTooLargeSend");
 				$documenturl =  $dolibarr_main_url_root.'/document.php?modulepart=systemtools&atachement=1&file=backup/'.urlencode($filename[0]);
-				$message .= '<br><a href='.$documenturl.'>Lien de téléchargement</a>';
+				$message .= '<br><a href='.$documenturl.'>Download link</a>';
 				$filepath = '';
 				$mimetype = '';
 				$filename = '';
@@ -1390,7 +1390,7 @@ class Utils
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$this->error = "Error sending backp file ".((string) $error);
+		$this->error = "Error sending backup file ".((string) $error);
 		$this->output = $output;
 
 		if ($result) {

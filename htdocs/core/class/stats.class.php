@@ -133,7 +133,7 @@ abstract class Stats
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) {
-				$year = $year - 1;
+				$year -= 1;
 			}
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getNbByMonth($year, $format);
@@ -234,7 +234,7 @@ abstract class Stats
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) {
-				$year = $year - 1;
+				$year -= 1;
 			}
 			while ($year <= $endyear) {
 				$datay[$year] = $this->getAmountByMonth($year, $format);
@@ -420,7 +420,7 @@ abstract class Stats
 	 * 	Return nb of elements, total amount and avg amount each year
 	 *
 	 *	@param	string	$sql	SQL request
-	 * 	@return	array			Array with nb, total amount, average for each year
+	 * 	@return	array<array{year:string,nb:string,nb_diff:float,total_diff:float,avg_diff:float,avg_weighted:float}>	Array with nb, total amount, average for each year
 	 */
 	protected function _getAllByYear($sql)
 	{
@@ -474,9 +474,9 @@ abstract class Stats
 	 *	Renvoie le nombre de documents par mois pour une annee donnee
 	 *	Return number of documents per month for a given year
 	 *
-	 *	@param	int		$year       Year
-	 *	@param	string	$sql        SQL
-	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int			$year       Year
+	 *	@param	string		$sql        SQL
+	 *	@param	int<0,2>	$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array of nb each month
 	 */
 	protected function _getNbByMonth($year, $sql, $format = 0)
@@ -531,9 +531,9 @@ abstract class Stats
 	/**
 	 *	Return the amount per month for a given year
 	 *
-	 *	@param	int		$year       Year
-	 *	@param   string	$sql		SQL
-	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *	@param	int			$year       Year
+	 *	@param	string		$sql		SQL
+	 *	@param	int<0,2>	$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of nb each month
 	 */
 	protected function _getAmountByMonth($year, $sql, $format = 0)
@@ -588,9 +588,9 @@ abstract class Stats
 	/**
 	 *  Return the amount average par month for a given year
 	 *
-	 *  @param  int     $year       Year
-	 *  @param  string  $sql        SQL
-	 *  @param  int     $format     0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
+	 *  @param  int			$year       Year
+	 *  @param  string		$sql        SQL
+	 *  @param  int<0,2>	$format     0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *	@return	array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of average each month
 	 */
 	protected function _getAverageByMonth($year, $sql, $format = 0)

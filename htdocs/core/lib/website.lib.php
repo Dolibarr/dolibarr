@@ -331,9 +331,9 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
 		// Replace occurrence like _service_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
+		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
 		// Replace occurrence like _library_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
+		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 
@@ -570,7 +570,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
 	}
 
 	if ($newurl) {
@@ -1188,15 +1188,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
 	*/
-		$tmparrayoftype = explode(',', $type);
-		/*foreach ($tmparrayoftype as $tmptype) {
-			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
-				$error++;
-				$arrayresult['code'] = 'KO';
-				$arrayresult['message'] = 'Bad value for parameter type';
-				break;
-			}
-		}*/
+	$tmparrayoftype = explode(',', $type);
+	/*foreach ($tmparrayoftype as $tmptype) {
+		if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+			$error++;
+			$arrayresult['code'] = 'KO';
+			$arrayresult['message'] = 'Bad value for parameter type';
+			break;
+		}
+	}*/
 	//}
 
 	$searchdone = 0;

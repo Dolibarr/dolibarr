@@ -37,8 +37,6 @@ class modSocialNetworks extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 3400;
 
@@ -61,7 +59,7 @@ class modSocialNetworks extends DolibarrModules
 		$this->dirs = array();
 
 		// Config pages
-		$this->config_page_url = array(DOL_URL_ROOT.'/admin/dict.php?id=38');
+		$this->config_page_url = array(DOL_URL_ROOT.'/admin/dict.php?id=38&from=socialnetworksetup');
 
 		// Dependencies
 		$this->hidden = getDolGlobalInt('MODULE_SOCIALNETWORKS_DISABLED'); // A condition to hide module

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2020-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -313,7 +314,7 @@ $features = $object->element;
 if (!empty($object->element_for_permission)) {
 	$features = $object->element_for_permission;
 } else {
-	$features = $features.(empty($object->module) ? '' : '@'.$object->module);
+	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
 restrictedArea($user, $features, 0, '');

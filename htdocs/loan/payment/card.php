@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +203,7 @@ if ($resql) {
 			if ($objp->paid == 1) {	// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount_capital;
+			$total += $objp->amount_capital;
 			$i++;
 		}
 	}

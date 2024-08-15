@@ -84,10 +84,10 @@ class box_contacts extends ModeleBoxes
 			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-				$sql .= ", spe.accountancy_code_customer as code_compta";
+				$sql .= ", spe.accountancy_code_customer as code_compta_client";
 				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 			} else {
-				$sql .= ", s.code_compta";
+				$sql .= ", s.code_compta as code_compta_client";
 				$sql .= ", s.code_compta_fournisseur";
 			}
 			$sql .= ", s.logo, s.email, s.entity";
@@ -146,7 +146,8 @@ class box_contacts extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;
 					$societestatic->code_compta_fournisseur = $objp->code_compta_fournisseur;

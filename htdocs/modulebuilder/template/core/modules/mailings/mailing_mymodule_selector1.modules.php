@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -61,7 +62,7 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 		global $langs;
 		$langs->load("members");
 
-		$arraystatus = array(1=>'Option 1', 2=>'Option 2');
+		$arraystatus = array(1 => 'Option 1', 2 => 'Option 2');
 
 		$s = '';
 		$s .= $langs->trans("Status").': ';
@@ -81,7 +82,7 @@ class mailing_mailing_mymodule_selector1 extends MailingTargets
 	 *  Returns url link to file of the source of the recipient of the mailing
 	 *
 	 *  @param      int         $id     ID
-	 *  @return     string              Url lien
+	 *  @return     string              Url link
 	 */
 	public function url($id)
 	{

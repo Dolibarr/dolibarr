@@ -80,7 +80,7 @@ class box_actions extends ModeleBoxes
 			$sql .= ", ta.code";
 			$sql .= ", ta.libelle as type_label";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -126,6 +126,7 @@ class box_actions extends ModeleBoxes
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
 					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
