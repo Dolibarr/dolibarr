@@ -1374,7 +1374,7 @@ class Form
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalInt('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
 			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
@@ -1453,7 +1453,7 @@ class Form
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, $events);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT'), 0, $events);
 		} else {
 			// Immediate load of all database
 			$multiple = false;
