@@ -77,7 +77,6 @@ parameters:
 		- '#color.* expects int, string#'
 		- '#imap.* expects int, string#'
 		- '#show.* expects int, string#'
-		- '#dol.* expects int, string#'
 		- '#convert.* expects int, string#'
 		- '#\(\) expects int, string#'
 		- '#run_sql expects int, string#'
