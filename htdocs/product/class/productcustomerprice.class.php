@@ -186,12 +186,12 @@ class ProductCustomerPrice extends CommonObject
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
 				$this->price_ttc = price2num($this->price, 'MU');
-				$this->price = price2num($this->price) / (1 + ($this->tva_tx / 100));
+				$this->price = (float) price2num($this->price) / (1 + ($this->tva_tx / 100));
 				$this->price = price2num($this->price, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min_ttc = price2num($this->price_min, 'MU');
-					$this->price_min = price2num($this->price_min) / (1 + ($this->tva_tx / 100));
+					$this->price_min = (float) price2num($this->price_min) / (1 + ($this->tva_tx / 100));
 					$this->price_min = price2num($this->price_min, 'MU');
 				} else {
 					$this->price_min = 0;
@@ -199,12 +199,12 @@ class ProductCustomerPrice extends CommonObject
 				}
 			} else {
 				$this->price = price2num($this->price, 'MU');
-				$this->price_ttc = ($this->recuperableonly != 1) ? price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
+				$this->price_ttc = ($this->recuperableonly != 1) ? (float) price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
 				$this->price_ttc = price2num($this->price_ttc, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min = price2num($this->price_min, 'MU');
-					$this->price_min_ttc = price2num($this->price_min) * (1 + ($this->tva_tx / 100));
+					$this->price_min_ttc = (float) price2num($this->price_min) * (1 + ($this->tva_tx / 100));
 					$this->price_min_ttc = price2num($this->price_min_ttc, 'MU');
 					// print 'X'.$newminprice.'-'.$price_min;
 				} else {
@@ -689,12 +689,12 @@ class ProductCustomerPrice extends CommonObject
 		if ($this->price != '' || $this->price == 0) {
 			if ($this->price_base_type == 'TTC') {
 				$this->price_ttc = price2num($this->price, 'MU');
-				$this->price = price2num($this->price) / (1 + ($this->tva_tx / 100));
+				$this->price = (float) price2num($this->price) / (1 + ($this->tva_tx / 100));
 				$this->price = price2num($this->price, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min_ttc = price2num($this->price_min, 'MU');
-					$this->price_min = price2num($this->price_min) / (1 + ($this->tva_tx / 100));
+					$this->price_min = (float) price2num($this->price_min) / (1 + ($this->tva_tx / 100));
 					$this->price_min = price2num($this->price_min, 'MU');
 				} else {
 					$this->price_min = 0;
@@ -702,12 +702,12 @@ class ProductCustomerPrice extends CommonObject
 				}
 			} else {
 				$this->price = price2num($this->price, 'MU');
-				$this->price_ttc = ($this->recuperableonly != 1) ? price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
+				$this->price_ttc = ($this->recuperableonly != 1) ? (float) price2num($this->price) * (1 + ($this->tva_tx / 100)) : $this->price;
 				$this->price_ttc = price2num($this->price_ttc, 'MU');
 
 				if ($this->price_min != '' || $this->price_min == 0) {
 					$this->price_min = price2num($this->price_min, 'MU');
-					$this->price_min_ttc = price2num($this->price_min) * (1 + ($this->tva_tx / 100));
+					$this->price_min_ttc = (float) price2num($this->price_min) * (1 + ($this->tva_tx / 100));
 					$this->price_min_ttc = price2num($this->price_min_ttc, 'MU');
 					// print 'X'.$newminprice.'-'.$price_min;
 				} else {

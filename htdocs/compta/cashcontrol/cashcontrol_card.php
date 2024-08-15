@@ -830,7 +830,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
 					if ($key == 'cash') {
-						$deltaforcash = ($object->opening - $initialbalanceforterminal[$terminalid]['cash']);
+						$deltaforcash = ((float) $object->opening - $initialbalanceforterminal[$terminalid]['cash']);
 						print price($theoricalamountforterminal[$terminalid][$key] + $deltaforcash).'<br>';
 					} else {
 						print price($theoricalamountforterminal[$terminalid][$key]).'<br>';

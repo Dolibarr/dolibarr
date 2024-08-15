@@ -1337,11 +1337,11 @@ class Product extends CommonObject
 		// Automated compute surface and volume if not filled
 		if (empty($this->surface) && !empty($this->length) && !empty($this->width) && $this->length_units == $this->width_units) {
 			$this->surface = (float) $this->length * (float) $this->width;
-			$this->surface_units = measuring_units_squared($this->length_units);
+			$this->surface_units = measuring_units_squared((int) $this->length_units);
 		}
 		if (empty($this->volume) && !empty($this->surface) && !empty($this->height) && $this->length_units == $this->height_units) {
 			$this->volume = $this->surface * (float) $this->height;
-			$this->volume_units = measuring_units_cubed($this->height_units);
+			$this->volume_units = measuring_units_cubed((int) $this->height_units);
 		}
 
 		if (empty($this->tva_tx)) {
@@ -2602,7 +2602,7 @@ class Product extends CommonObject
 				}
 			} else {
 				$price = (float) price2num($newprice, 'MU');
-				$price_ttc = ($newnpr != 1) ? price2num($newprice) * (1 + ($newvat / 100)) : $price;
+				$price_ttc = ($newnpr != 1) ? (float) price2num($newprice) * (1 + ($newvat / 100)) : $price;
 				$price_ttc = (float) price2num($price_ttc, 'MU');
 
 				if ($newminprice !== '' || $newminprice == 0) {
