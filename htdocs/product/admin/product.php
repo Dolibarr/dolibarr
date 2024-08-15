@@ -183,6 +183,8 @@ if ($action == 'specimen') { // For products
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProduct $module';
+
 		if ($module->write_file($product, $langs, '') > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
