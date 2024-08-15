@@ -1,45 +1,44 @@
-<h1 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elit sit amet consectetur</h1>
+<h1 style="margin-left:120px;">__LIST_PRODUCTS___</h1>
 <h2 style="margin-left:120px;">Lorem, ipsum dolor sit amet consectetur adipisicing elitsit amet consectetur adipisicing </h2>
 
 <div style="font-family: Arial, sans-serif; background-color: #f7f7f7; padding: 16px; max-width: 600px; margin: 0 auto; box-sizing: border-box;">
-    <div style="display: flex;">
-        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="__GRAY_RECTANGLE__">
-            </div>
-            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>
+   
+<!-- PHP_START -->
+require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="__GRAY_RECTANGLE__">
-            </div>
-            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>
-    </div>
+$user = new User($db);
+$product = new Product($db);
+$products = $product->getProductsToPreviewInEmail(4);
+   
 
-    <div style="display: flex;">
+    if (empty($products)){
+        print '<p>No Products</p>';
+    }else {
+        foreach($products as $product){
+            if ($i % 2 == 0) {
+                print '<div style="display: flex; justify-content: space-between; margin-bottom: 20px;">';
+            }
+        
+            print '<div style="flex: 1; padding-right: 10px;">
+            
+                    <div>
+                        <img alt="Gray rectangle" style="margin-left: 120px; margin-top: 30px;" width="350px" height="100px" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=produit&file='.$product['ref'].'/'.$product['filename'].'" />
+                    </div>  
+                    <div style="margin-left: 120px; background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
+                        <h3>'.$product["ref"].'</h3>
+                        <p>'.$product["description"].'</p>
+                    </div>
+                </div>';
 
-        <div style="margin-bottom: 50px; flex: 1; padding-right: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="__GRAY_RECTANGLE__">
-            </div>
-            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>
+            if ($i % 2 == 1 || $i == $num - 1) {
+                print '</div>';
+            }
 
-        <div style="margin-bottom: 10px; flex: 1; padding-left: 8px;">
-            <div>
-                <img alt="Gray rectangle" style="margin-left:120px;margin-top:30px;" width="350px" height="100px" src="__GRAY_RECTANGLE__">
-            </div>
-            <div style="margin-left:120px;background-color: #e0e0e0; padding: 8px; margin-bottom: 8px; text-indent: 50px;">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit<br>Lorem ipsum dolor sit amet, consectetur adipiscing elit...
-            </div>
-        </div>
+            $i++;
+        }
+    }
+<!-- PHP_END -->  
     </div>
 </div>

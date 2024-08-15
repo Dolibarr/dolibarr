@@ -6944,6 +6944,51 @@ class Product extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 * Retrieve and display products.
+	 *
+	 * @param int $limit The maximum number of results to return.
+	 * @return array<int, array<string, mixed>>|int  return array if OK, -1 if KO
+	 */
+	public function getProductsToPreviewInEmail($limit)
+	{
+
+		if (!is_numeric($limit)) {
+			return -1;
+		}
+
+		$sql = "SELECT p.rowid, p.ref, p.label, p.description, p.entity, ef.filename
+				FROM ".MAIN_DB_PREFIX."product AS p
+				JOIN ".MAIN_DB_PREFIX."ecm_files AS ef ON p.rowid = ef.src_object_id
+				WHERE ef.entity IN (".getEntity('product').")
+				AND (ef.filename LIKE '%.png' OR ef.filename LIKE '%.jpeg' OR ef.filename LIKE '%.svg')
+				GROUP BY p.rowid, p.ref, p.label, p.description, p.entity, ef.filename
+				ORDER BY p.datec ASC
+				LIMIT " . ((int) $limit);
+
+		$resql = $this->db->query($sql);
+		$products = array();
+
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$products[] = array(
+					'rowid' => $obj->rowid,
+					'ref' => $obj->ref,
+					'label' => $obj->label,
+					'description' => $obj->description,
+					'entity' => $obj->entity,
+					'filename' => $obj->filename
+				);
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+		if (empty($products)) {
+			return -1;
+		}
+		return $products;
+	}
 }
 
 /**
