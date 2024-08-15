@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Mae trydydd parti neu Aelod o bartneriaeth 
 ErrorFailedToWriteInTempDirectory=Wedi methu ag ysgrifennu yn y cyfeiriadur dros dro
 ErrorQuantityIsLimitedTo=Cyfyngir y nifer i %s
 ErrorFailedToLoadThirdParty=Wedi methu canfod/llwytho trydydd parti o id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Nid yw'r dull talu hwn yn gyfrif banc
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Nid yw cwsmer stripe wedi'i osod ar gyfer y trydydd parti hwn (neu wedi'i osod i werth wedi'i ddileu ar ochr Stripe). Creu (neu ail-atodi) yn gyntaf.
 ErrorCharPlusNotSupportedByImapForSearch=Nid yw chwiliad IMAP yn gallu chwilio i mewn i'r anfonwr na'r derbynnydd am linyn sy'n cynnwys y nod +
 ErrorTableNotFound=Tabl <b>%s</b> heb ei ganfod
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Geiriadur <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=Wedi methu creu'r cyswllt symbolaidd %s i bwyntio at %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Gwiriwch y gorchymyn a ddefnyddir ar gyfer allforio i'r opsiynau Uwch yr allforio
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Uchinchi tomon yoki sheriklik a'zosi majbur
 ErrorFailedToWriteInTempDirectory=Vaqtinchalik katalogga yozib bo‘lmadi
 ErrorQuantityIsLimitedTo=Miqdor chegaralangan: %s
 ErrorFailedToLoadThirdParty=id=%s, email=%s, name= saytidan uchinchi tomonni topib/yuklab bo‘lmadi %s
-ErrorThisPaymentModeIsNotSepa=Bu toʻlov usuli bank hisobi emas
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe mijozi bu uchinchi tomon uchun sozlanmagan (yoki Stripe tomonida oʻchirilgan qiymatga oʻrnatilgan). Avval uni yarating (yoki qayta biriktiring).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP qidiruvi yuboruvchi yoki qabul qiluvchida + belgisini o'z ichiga olgan qatorni qidira olmaydi
 ErrorTableNotFound=Jadval <b>%s</b> topilmadi
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Lug'at <b>%s</b> topilmadi
 ErrorFailedToCreateSymLinkToMedias=%s ga ishora qilish uchun %s ramziy havolasini yaratib bo‘lmadi.
 ErrorCheckTheCommandInsideTheAdvancedOptions=Eksport uchun ishlatiladigan buyruqni eksportning Kengaytirilgan parametrlariga tekshiring
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
