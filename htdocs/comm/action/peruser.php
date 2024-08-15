@@ -6,8 +6,8 @@
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023 Florian HENRY <florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023       Florian HENRY           <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1026,9 +1026,9 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			// Show days of the current week
 			$curtime = dol_time_plus_duree($currentdaytoshow, $iter_day, 'd');
 			// $curtime is a gmt time, but we want the day, month, year in user TZ
-			$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
-			$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
-			$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+			$tmpday = (int) dol_print_date($curtime, "%d", "tzuserrel");
+			$tmpmonth = (int) dol_print_date($curtime, "%m", "tzuserrel");
+			$tmpyear = (int) dol_print_date($curtime, "%Y", "tzuserrel");
 			//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 			$style = 'cal_current_month';
