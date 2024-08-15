@@ -1564,7 +1564,7 @@ class FormMail extends Form
 					$.ajax({
 						type: "POST",
 						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: { content: contentHtml, token: csrfToken },
+						data: { template: template, content: contentHtml, token: csrfToken },
 						success: function(response) {
 							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
 							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
