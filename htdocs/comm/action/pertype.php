@@ -853,9 +853,9 @@ foreach ($typeofevents as $typeofevent) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
 		// $curtime is a gmt time, but we want the day, month, year in user TZ
-		$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
-		$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
-		$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+		$tmpday = (int) dol_print_date($curtime, "%d", "tzuserrel");
+		$tmpmonth = (int) dol_print_date($curtime, "%m", "tzuserrel");
+		$tmpyear = (int) dol_print_date($curtime, "%Y", "tzuserrel");
 		//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 		$style = 'cal_current_month';
