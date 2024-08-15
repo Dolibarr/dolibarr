@@ -513,6 +513,7 @@ class Product extends CommonObject
 	 * @var float|string
 	 */
 	public $weight;
+
 	/**
 	 * @var int|string
 	 */
