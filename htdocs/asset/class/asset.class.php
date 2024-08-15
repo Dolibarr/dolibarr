@@ -1032,7 +1032,7 @@ class Asset extends CommonObject
 					$fiscal_period_start = $depreciation_date_start;
 					$fiscal_period_end = $depreciation_date_start;
 				} elseif ($fields['duration_type'] == 1) { // Monthly
-					$date_temp = dol_getdate($depreciation_date_start);
+					$date_temp = dol_getdate((int) $depreciation_date_start);
 					$fiscal_period_start = dol_get_first_day($date_temp['year'], $date_temp['mon'], false);
 					$fiscal_period_end = dol_get_last_day($date_temp['year'], $date_temp['mon'], false);
 				} else { // Annually
