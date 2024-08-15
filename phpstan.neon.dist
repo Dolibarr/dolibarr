@@ -73,7 +73,6 @@ parameters:
 		- '#expects int<-2, 2>, bool given.#'
 		- '#expects int<0, 1>#'
 		- '#ajax.* expects int, string#'
-		- '#measu.* expects int, string#'
 		- '#color.* expects int, string#'
 		- '#imap.* expects int, string#'
 		- '#show.* expects int, string#'
