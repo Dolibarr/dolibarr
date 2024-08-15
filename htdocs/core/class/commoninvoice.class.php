@@ -944,8 +944,8 @@ abstract class CommonInvoice extends CommonObject
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
 			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim)); // Sans les heures minutes et secondes
-			$date_lim_current = dol_mktime(0, 0, 0, date('m', $datelim), $cdr_decalage, date('Y', $datelim)); // Sans les heures minutes et secondes
-			$date_lim_next = dol_time_plus_duree($date_lim_current, 1, 'm'); // Add 1 month
+			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_next = dol_time_plus_duree((int) $date_lim_current, 1, 'm'); // Add 1 month
 
 			$diff = $date_piece - $date_lim_current;
 
