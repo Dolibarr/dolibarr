@@ -231,17 +231,22 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Societe		$thirdparty			Object third-party
-	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *	@param	Societe|Product	$thirdparty	Object third party
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
-	 *  @return int								0 if OK
+	 *  @return int<-7,0>						0 if OK
 	 * 											-1 ErrorBadCustomerCodeSyntax
 	 * 											-2 ErrorCustomerCodeRequired
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
 	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $thirdparty, $thirdparty_type, $type)
 	{
+		if (!$thirdparty instanceof Societe) {
+			dol_syslog(get_class($this)."::verif called with ".get_class($thirdparty)." Expected Societe", LOG_ERR);
+			return -7;
+		}
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$result = 0;

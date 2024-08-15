@@ -165,7 +165,7 @@ PurgeAreaDesc=This page allows you to delete all files generated or stored by Do
 PurgeDeleteLogFile=Избришете ги датотеките за евиденција, вклучително и <b>%sb09a4b739f17f8zno за модулот Synlog ( дефиниран ризик од губење податоци)
 PurgeDeleteTemporaryFiles=Избришете ги сите дневници и привремени датотеки (без ризик од губење податоци). Параметарот може да биде „tempfilesold“, „logfiles“ или и двата „tempfilesold+logfiles“. Забелешка: Бришењето на привремените датотеки се врши само ако директориумот за темп е креиран пред повеќе од 24 часа.
 PurgeDeleteTemporaryFilesShort=Избришете дневник и привремени датотеки (без ризик од губење податоци)
-PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory: <b>%s</b>.<br>This will delete all generated documents related to elements (third parties, invoices etc...), files uploaded into the ECM module, database backup dumps and temporary files.
+PurgeDeleteAllFilesInDocumentsDir=Delete all files in directory: <b>%s</b>.<br>This will delete all generated documents related to elements (third parties, invoices etc...), files uploaded into the ECM module, database backup dumps and temporary files.    
 PurgeRunNow=Чистете сега
 PurgeNothingToDelete=Нема директориум или датотеки за бришење.
 PurgeNDirectoriesDeleted=<b>%s</b> се избришани датотеки или директориуми.
@@ -365,13 +365,17 @@ UpdateServerOffline=Ажурирајте го серверот офлајн
 WithCounter=Управувајте со бројач
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
+GenericMaskCodes2b=<b>{uuuu}</b> презимето на n корисникот од знаците го создава објектот (n е број на „u“).
 GenericMaskCodes3=Сите други знаци во маската ќе останат недопрени.<br>Просторите не се дозволени.<br>
 GenericMaskCodes3EAN=Сите други знаци во маската ќе останат недопрени (освен * или ? на 13-та позиција во EAN13).<br>Просторите не се дозволени.<br>Во EAN13, последниот знак по последниот } на 13-та позиција треба да биде * или ? . Ќе се замени со пресметаниот клуч.<br>
-GenericMaskCodes4a=<u>Пример на 99-та %s на третата страна TheCompany, со датум 2023-01-31:<span class='notrans '></u></span><br>
-GenericMaskCodes4b=<u>Пример на трета страна создадена на 31.01.2023:</u>b0349fccf
+GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany, with date 2023-01-31:</u><br>
+GenericMaskCodes4b=<u>Example on third party created on 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> ќе даде b0ae</83738 Span> ABC2301-000099 <Span Class = 'Notranslate'> </b>   b0342fcfda19bz0 }-ZZZ/{dd}/XXX<span class='notranslate'></b> ќе даде <b>0199-ZZZ/31/XXX<span class='notrans '></b></span>
+GenericMaskCodes5b=<b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Враќа приспособлив број според дефинирана маска.
+DateStartThatModel=Оневозможете ја употребата на ова правило за нумерирање за сите трети страни создадени претходно
+DateStartThatModelHelp=You can disable elephant numbering rule for thirdparties created before a date (for example, because they were imported by a migration, from another software using a different rule). Let that field empty to have the rule applied on all thirdparties.
 ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s</b>
 ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on port <b>%s</b>
 DoTestServerAvailability=Тестирајте ја поврзаноста на серверот
@@ -392,9 +396,9 @@ LanguageFilesCachedIntoShmopSharedMemory=Датотеки .lang вчитани �
 LanguageFile=Јазична датотека
 ExamplesWithCurrentSetup=Примери со моментална конфигурација
 ListOfDirectories=Список на директориуми со шаблони на OpenDocument
-ListOfDirectoriesForModelGenODT=Список на директориуми што содржат датотеки со шаблони со формат OpenDocument.<br><br>Ставете ја тука целосната патека на директориумите.<br>Додајте повратен превоз помеѓу директориумот eah.<br>За да додадете директориум на GED модулот, додадете овде b0aee833z0583f >DOL_DATA_ROOT/ecm/yourdirectoryname<span class='notranslate'></b>.<br>b031panFibccf0349fcc мора да завршува со <span class='notranslate'><b>.odt</b> или <b>sod. ='notranslate'></b></span>.
+ListOfDirectoriesForModelGenODT=List of directories containing templates files with OpenDocument format.<br><br>Put here full path of directories.<br>Add a carriage return between eah directory.<br>To add a directory of the GED module, add here <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b>.<br><br>Files in those directories must end with <b>.odt</b> or <b>.ods</b>.
 NumberOfModelFilesFound=Пронајден е број на датотеки со шаблони ODT/ODS
-ExampleOfDirectoriesForModelGen=Примери за синтакса:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mydocumentdir/my 'notranslate'><br></span>DOL_DATA_ROOT/ecm/ecmdir
+ExampleOfDirectoriesForModelGen=Примери за синтакса:<br>c:\\myapp\\mydocumentdir\\mysubdir<br>/home/myapp/mydocumentdir/mydocumentdir/mysubdir<br>DOL_DATA_ROOT/ecm/ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br>За да знаете како да ги креирате вашите шаблони за документи odt, пред да ги зачувате во тие директориуми, прочитајте ја вики документацијата:
 FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Позиција на име/презиме
@@ -463,15 +467,15 @@ ExtrafieldMultiPointGeo=Геометриски повеќе точки
 ExtrafieldLinestringGeo=Геометриска линија
 ExtrafieldPolygonGeo=Геометриски многуаголник
 ComputedFormula=Пресметано поле
-ComputedFormulaDesc=Овде можете да внесете формула користејќи други својства на објектот или кое било PHP кодирање за да добиете динамична пресметана вредност. Можете да користите какви било формули компатибилни со PHP вклучувајќи го и „?" оператор на состојба и следен глобален објект: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>ПРЕДУПРЕДУВАЊЕ</strong> ако ви требаат својства на објектот: не е вчитан, само внесете го објектот во вашата формула како во вториот пример.<span class='notranslate'><br>Користењето на пресметано поле значи дека не можете да внесете никаква вредност од интерфејсот. Исто така, ако има синтаксичка грешка, формулата може да не врати ништо.<br><br>Пример за формула:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * ( int) substr($mysoc->zip, 1, 2)<br><br>Пример за повторно вчитување на објектот<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->options_array_options['options_*-$reloadedobj'] >capital / 5: '-1')<br><br>Друг пример на формула за принудно оптоварување на објектот и неговиот родител: <br>(($reloadedobj = нова задача($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = нов проект( $db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: „Не е пронајден родителски проект“
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield</strong>.<br><strong>WARNING</strong>: If you need properties of an object not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1')<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Чувајте го пресметаното поле
 ComputedpersistentDesc=Пресметаните дополнителни полиња ќе се складираат во базата на податоци, но вредноста ќе се пресметува само кога ќе се смени објектот на ова поле. Ако пресметаното поле зависи од други објекти или глобални податоци, оваа вредност може да биде погрешна!!
 ExtrafieldParamHelpPassword=Ако го оставите ова поле празно значи дека оваа вредност ќе се зачува БЕЗ шифрирање (полето е само скриено со ѕвезди на екранот).<br><br>Внесете вредност „dolcrypt“ за да се шифрира вредноста со реверзибилен алгоритам за шифрирање. Чистите податоци сè уште може да се знаат и уредуваат, но се шифрираат во базата на податоци.<br><br>Внесете „автоматски“ (или „md5“, „sha256“, „password_hash“, ...) за користење на стандардниот алгоритам за шифрирање на лозинка (или md5, sha256, password_hash...) за зачувување на неповратната хаширана лозинка во базата на податоци (нема можност за враќање на оригиналната вредност)
-ExtrafieldParamHelpselect=Списокот на вредности мора да биде линии со клуч за формат, вредност (каде клучот не може да биде „0“)<br><br> на пример : <br>1,value1<br>2,value2<br>, span class='notranslate'><br>...<br><br>За да има список во зависност од друг комплементарен список на атрибути:<br>1,value1|options_<i>parent_list_code<span class='notranslate'4z:7s>bac>0 родителски клуч<br>2,value2|options_<i>parent_list_code7par_pakey3>b0pansbacey3> class='notranslate'><br><br>За да ја имате листата во зависност од друга листа:<br>1, value1|<i>parent_list_code</i>:parent_key,b0342fccfda1, b0342zvalue</29>b0342zvalue</29>| class='notranslate'><i>parent_list_code</i>:parent_key
+ExtrafieldParamHelpselect=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>code3,value3<br>...<br><br>In order to have the list depending on another complementary attribute list:<br>1,value1|options_<i>parent_list_code</i>:parent_key<br>2,value2|options_<i>parent_list_code</i>:parent_key <br><br>In order to have the list depending on another list:<br>1,value1|<i>parent_list_code</i>:parent_key<br>2,value2|<i>parent_list_code</i>:parent_key
 ExtrafieldParamHelpcheckbox=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=List of values must be lines with format key,value (where key can't be '0')<br><br> for example: <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Списокот на вредности потекнува од табела<br>Синтакса: table_name:label_field:id_field::filtersql<br>Пример: cclibelle_typident: ::filtersql<br><br>- id_field е нужно примарен int клучb03492ccf - filtersql е состојба на SQL. Може да биде едноставен тест (на пр. active=1) за прикажување само активна вредност<br>Можете и да користите $ID$ во филтерот кој е тековниот id на тековниот објект<br>За да користите SELECT во филтерот, користете го клучниот збор $SEL$ за да ја заобиколите заштитата против инјектирање.<br>ако сакате да филтрирате на дополнителни полиња користете синтакса extra.fieldcode=... (каде кодот на полето е кодот на extrafield)<br><br>За да имате листа во зависност од друга комплементарна листа на атрибути:<br>c_typent:libelle:id:options_<i>parent_list_codenotranslate' class=' </i></span>|parent_column:filter <br><br>За да го имате списокот во зависност од друга листа: 'notranslate'><br></span>c_typent:libelle:id:<i>parent_list_code<span class='notranslate'>b0ae64758spanter:
-ExtrafieldParamHelpchkbxlst=Списокот на вредности потекнува од табела<br>Синтакса: table_name:label_field:id_field::filtersql<br>Пример: cclibelle_typident: ::filtersql<br><br>филтерот може да биде едноставен тест (на пр. active=1) за прикажување само активна вредност<br>Можете да користите и $ID$ во филтер што е тековниот id на тековниот објект<br>За да направите SELECT во филтер, користете $SEL$<br>ако сакате да филтрирате на дополнителни полиња, користете синтакса extra.fieldcode=... (каде што кодот на полето е кодот на extrafield)<br><br>За да ја имате листата во зависност од друга комплементарна листа на атрибути:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter b0342fccfda19'0b0342fccfda190 bz0 За да ја имате листата во зависност од друга листа:<br>c_typent:libelle:id:<i>parent_list_code<s class='notranslate'></i></span>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a condition. It must use the USF syntax. Example: (active:=:1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>If you want to filter on extrafields use syntax  extra.fieldcode=... (where fieldcode is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpchkbxlst=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntax  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelplink=Параметрите мора да бидат ObjectName:Classpath<br>Синтакса: ObjectName:Classpath
 ExtrafieldParamHelpSeparator=Чувајте го празно за едноставен сепаратор<br>Поставете го ова на 1 за разделувач што се собира (отворен стандардно за нова сесија, а потоа статусот се задржува за секоја корисничка сесија)<br>Поставете го ова на 2 за сепаратор што се собира (стандардно се собира за нова сесија, а потоа статусот се задржува за секоја корисничка сесија)
 LibraryToBuildPDF=Библиотека која се користи за генерирање PDF
@@ -479,7 +483,7 @@ LocalTaxDesc=Некои земји може да применуваат два �
 SMS=порака
 LinkToTestClickToDial=Enter a phone number to call to show a link to test the ClickToDial url for user <strong>%s</strong>
 RefreshPhoneLink=Освежи ја врската
-LinkToTest=Врската што може да се кликне генерирана за корисникот <strong>%s<span class='notranslate'>b0a65d071f6fc9zli</span тест за телефонски број> ( )
+LinkToTest=Clickable link generated for user <strong>%s</strong> (click phone number to test)
 KeepEmptyToUseDefault=Чувајте го празно за да ја користите стандардната вредност
 KeepThisEmptyInMostCases=Во повеќето случаи, можете да го задржите ова поле празно.
 DefaultLink=Стандардна врска
@@ -524,7 +528,7 @@ DependsOn=Овој модул има потреба од модул(и)
 RequiredBy=Овој модул е потребен од модулите
 TheKeyIsTheNameOfHtmlField=Ова е името на полето HTML. Потребно е техничко знаење за читање на содржината на страницата HTML за да се добие клучното име на полето.
 PageUrlForDefaultValues=Мора да ја внесете релативната патека на URL-то на страницата. Ако вклучите параметри во URL-то, ќе биде ефективно ако сите параметри во прегледаната URL-адреса ја имаат вредноста дефинирана овде.
-PageUrlForDefaultValuesCreate=<br>Пример:<br>За формата да создаде нова трета страна, тоа е b0e7843bz947c<0 /span><span class='notranslate'>%s</strong>.<br>Инсталирана URL на надворешни модули прилагоден директориум, не вклучувајте го „прилагодениот/“, затоа користете патека како <strong>mymodule/mypage.php</strong> и не прилагодена /mymodule/mypage.php.<br>Ако сакате стандардна вредност само ако URL-то има некој параметар, можете да користите <strong>%s</strong>
+PageUrlForDefaultValuesCreate=<br>Example:<br>For the form to create a new third party, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/", so use path like <strong>mymodule/mypage.php</strong> and not custom/mymodule/mypage.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 PageUrlForDefaultValuesList=<br>Example:<br>For the page that lists third parties, it is <strong>%s</strong>.<br>For URL of external modules installed into custom directory, do not include the "custom/" so use a path like <strong>mymodule/mypagelist.php</strong> and not custom/mymodule/mypagelist.php.<br>If you want default value only if url has some parameter, you can use <strong>%s</strong>
 AlsoDefaultValuesAreEffectiveForActionCreate=Исто така, забележете дека препишувањето на стандардните вредности за креирање формулари работи само за страници кои биле правилно дизајнирани (така со параметарот action=create или present...)
 EnableDefaultValues=Овозможете прилагодување на стандардните вредности
@@ -662,7 +666,7 @@ Module2200Desc=Користете математички изрази за ав�
 Module2300Name=Scheduled jobs
 Module2300Desc=Управување со закажани работни места (алијас cron или хроно табела)
 Module2400Name=Настани/Агенда
-Module2400Desc=Управувајте со рачни и автоматски настани. Обезбедете календар за рачно снимање на настаните. Пријавувајте ги и настаните автоматски за целите на следење или снимајте рачни настани или состаноци. Ова е главниот модул за добро управување со односите со клиентите или добавувачите.
+Module2400Desc=Manage manual and automatic events. Use the calendar to record events manually. Log also events automatically for tracking purposes or record manual events or meetings. This is the principal module for good Customer and/or Vendor Relationship Management.
 Module2430Name=Онлајн закажување состаноци
 Module2430Desc=Обезбедува онлајн систем за резервација на состаноци. Ова му овозможува на секој да резервира ранде-ву, според однапред дефинирани опсези или достапности.
 Module2500Name=DMS / ECM
@@ -1170,7 +1174,7 @@ LabelUsedByDefault=Стандардно се користи етикета ак�
 LabelOnDocuments=Етикета на документите
 LabelOrTranslationKey=Етикета или клуч за превод
 TranslationFound=Пронајден е превод
-TheTranslationIsSearchedFromKey=Преводот се пребарува од клучот за превод: <b>%s<span class='notranslate'></b></s
+TheTranslationIsSearchedFromKey=Преводот се пребарува од клучот за превод: <b>%s</b>
 TranslationKey=Клучот за превод
 ValueOfConstantKey=Вредност на конфигурациска константа
 ConstantIsOn=Опцијата %s е вклучена
@@ -1286,7 +1290,7 @@ ListOfSecurityEvents=Список на безбедносни настани Dol
 SecurityEventsPurged=Безбедносните настани се исчистени
 SecurityEvent=Безбедносен настан
 TrackableSecurityEvents=Безбедносни настани што може да се следат
-LogEventDesc=Овозможете евиденција за одредени безбедносни настани. Администраторите дневникот преку менито <b>%s - %s</span'span notranslate'></b>. Предупредување, оваа функција може да генерира голема количина на податоци во базата на податоци.
+LogEventDesc=Enable logging for specific security events. Administrators the log via menu <b>%s - %s</b>. Warning, this feature can generate a large amount of data in the database.
 AreaForAdminOnly=Параметрите за поставување може да се постават само од <b>администраторски корисници</b>.
 SystemInfoDesc=Системските информации се разни технички информации што ги добивате во режим само за читање и видливи само за администраторите.
 SystemAreaForAdminOnly=Оваа област е достапна само за администраторските корисници. Корисничките дозволи на Dolibarr не можат да го променат ова ограничување.
@@ -1299,13 +1303,13 @@ AvailableModules=Достапна апликација/модули
 ToActivateModule=За да ги активирате модулите, одете во областа за поставување (Дома-> Поставување-> Модули).
 SessionTimeOut=Тајм аут за сесија
 SessionExplanation=Овој број гарантира дека сесијата никогаш нема да истече пред ова одложување, ако чистењето на сесијата го прави внатрешен чистач на сесии PHP (и ништо друго). Внатрешното чистење на сесиите на PHP не гарантира дека сесијата ќе истече по ова одложување. Ќе истече по ова одложување и кога ќе се изврши чистењето на сесиите, така што секој <b>%s/%s</b> пристап, но само за време на пристапот направен од други сесии (ако вредноста е 0, тоа значи дека чистењето на сесијата се врши само со надворешен процес) .<br>Забелешка: на некои сервери со надворешен механизам за чистење сесии (cron под debian, ubuntu ...), сесиите може да се уништат по период дефиниран со надворешно поставување, без разлика која е вредноста внесена овде.
-SessionsPurgedByExternalSystem=Се чини дека сесиите на овој сервер се чистат со надворешен механизам (cron под debian, ubuntu ...), веројатно секој <b>%s</b> секунди (= вредност на параметарот <b>session.gc_maxlifetime<span class='notranslate'>8f391>b09>b09 , така што менувањето на вредноста овде нема ефект. Мора да побарате од администраторот на серверот да го промени одложувањето на сесијата.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=Достапни предизвикувачи
-TriggersDesc=Активаторите се датотеки што ќе го модифицираат однесувањето на работниот тек на Dolibarr штом ќе се копираат во директориумот <b>htdocs/core/triggers<span class='notranslate'></b></s>. Тие реализираат нови акции, активирани на настаните на Dolibarr (создавање нова компанија, валидација на фактура, ...).
+TriggersDesc=Triggers are files that will modify the behavior of Dolibarr workflow once copied into the directory <b>htdocs/core/triggers</b>. They realize new actions, activated on Dolibarr events (new company creation, invoice validation, ...).
 TriggerDisabledByName=Активаторите во оваа датотека се оневозможени со наставката <b>-NORUN</b> во нивното име.
 TriggerDisabledAsModuleDisabled=Triggers in this file are disabled as module <b>%s</b> is disabled.
 TriggerAlwaysActive=Активаторите во оваа датотека се секогаш активни, без оглед на активираните Dolibarr модули.
-TriggerActiveAsModuleActive=Активаторите во оваа датотека се активни како модул <b>%s<span class='notranslate'></b>.
+TriggerActiveAsModuleActive=Triggers in this file are active as module <b>%s</b> is enabled.
 GeneratedPasswordDesc=Изберете го методот што ќе се користи за автоматски генерирани лозинки.
 DictionaryDesc=Вметнете ги сите референтни податоци. Можете да ги додадете вашите вредности на стандардните.
 ConstDesc=Оваа страница ви овозможува да ги уредите (преотфрлите) параметрите кои не се достапни на други страници. Овие се главно резервирани параметри само за програмери/напредно решавање проблеми.
@@ -1325,7 +1329,7 @@ NoEventFoundWithCriteria=Не е пронајден безбедносен на�
 SeeLocalSendMailSetup=Видете ја вашата локална поставка за испраќање пошта
 BackupDesc=За <b>комплетна</b> резервната копија на Dolibarr инсталација бара два чекори.
 BackupDesc2=Backup the contents of the "documents" directory (<b>%s</b>) containing all uploaded and generated files. This will also include all the dump files generated in Step 1. This operation may last several minutes.
-BackupDesc3=Направете резервна копија на структурата и содржината на вашата база на податоци (<b>%s<span class='notranslate'>b09a4b739f17f8z) во</s0 депонија. За ова, можете да го користите следниов асистент.
+BackupDesc3=Backup the structure and contents of your database (<b>%s</b>) into a dump file. For this, you can use the following assistant.
 BackupDescX=Архивираниот директориум треба да се чува на безбедно место.
 BackupDescY=Генерираната депонија треба да се чува на безбедно место.
 BackupPHPWarning=Резервната копија не може да се гарантира со овој метод. Препорачливо е претходниот.
@@ -1390,7 +1394,7 @@ SendmailOptionMayHurtBuggedMTA=Функцијата за испраќање по
 TranslationSetup=Поставување на превод
 TranslationKeySearch=Пребарајте клуч за превод или низа
 TranslationOverwriteKey=Презапишете низа за превод
-TranslationDesc=Како да го поставите јазикот на екранот:<br>* Стандардно/системски: мени <strong>Дома -> Поставување -> Екран</strong><br>* По корисник: кликнете на корисничкото име на горниот дел од екранот и изменете ја b0e7843947c</0 span>Поставување на кориснички екран<span class='notranslate'></strong> картичката на корисничката картичка.
+TranslationDesc=How to set the display language:<br>* Default/Systemwide: menu <strong>Home -> Setup -> Display</strong><br>* Per user: Click on the username at the top of the screen and modify the <strong>User Display Setup</strong> tab on the user card.
 TranslationOverwriteDesc=Можете исто така да ги отфрлите низите што ја пополнуваат следната табела. Изберете го вашиот јазик од паѓачкото мени „%s“, вметнете ја низата копчиња за превод во „%s“ и вашиот нов превод во „%s"
 TranslationOverwriteDesc2=Можете да го користите другото јазиче за да ви помогне да знаете кој клуч за превод да го користите
 TranslationString=Низа за превод
@@ -1398,7 +1402,7 @@ CurrentTranslationString=Тековна низа за превод
 WarningAtLeastKeyOrTranslationRequired=Потребен е критериум за пребарување барем за клучот или низата за превод
 NewTranslationStringToShow=Да се прикаже нова низа за превод
 OriginalValueWas=Оригиналниот превод е препишан. Оригиналната вредност беше:<br><br>%s
-TransKeyWithoutOriginalValue=Принудивте нов превод за клучот за превод '<strong>%s<span class='notranslate'>b0a65d071f6fc9>'s што не постои во ниедна јазична датотека
+TransKeyWithoutOriginalValue=You forced a new translation for the translation key '<strong>%s</strong>' that does not exist in any language files
 TitleNumberOfActivatedModules=Активирани модули
 TotalNumberOfActivatedModules=Activated modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=Мора да овозможите барем 1 модул
@@ -1416,7 +1420,7 @@ SearchOptim=Оптимизација за пребарување
 YouHaveXObjectUseComboOptim=Имате %s %s во базата на податоци. Може да влезете во поставувањето на модулот за да овозможите вчитување на комбо-листа на притиснат копче настан.
 YouHaveXObjectUseSearchOptim=Имате %s %s во базата на податоци. Можете да ја додадете константата %s на 1 во Home-Setup-Other.
 YouHaveXObjectUseSearchOptimDesc=Ова го ограничува пребарувањето на почетокот на низите што овозможува базата на податоци да користи индекси и треба веднаш да добиете одговор.
-YouHaveXObjectAndSearchOptimOn=Имате %s %s во базата на податоци и константата %s е поставена на span class='notranslate'>%s</span> во Home-Setup-Other.
+YouHaveXObjectAndSearchOptimOn=You have %s %s in the database and constant %s is set to %s in Home-Setup-Other.
 BrowserIsOK=Го користите веб-прелистувачот %s. Овој прелистувач е во ред за безбедност и перформанси.
 BrowserIsKO=Го користите веб-прелистувачот %s. Овој прелистувач е познат како лош избор за безбедност, перформанси и доверливост. Препорачуваме да користите Firefox, Chrome, Opera или Safari.
 PHPModuleLoaded=PHP компонентата %s е вчитана
@@ -1492,16 +1496,16 @@ InvoiceOptionCategoryOfOperations=Прикажете го споменување
 InvoiceOptionCategoryOfOperationsHelp=Во зависност од ситуацијата, споменувањето ќе се појави во форма:<br>- Категорија на операции: Испорака на стоки<br>- Категорија на операции: Обезбедување услуги<br>- Категорија на операции: Мешани - Испорака на стоки и обезбедување услуги
 InvoiceOptionCategoryOfOperationsYes1=Да, под блокот за адреси
 InvoiceOptionCategoryOfOperationsYes2=Да, во долниот лев агол
-InvoiceClassifyBilledSupplierOrderWithoutInvoice=Не дозволувајте класифицирање на фактурирана нарачка без фактура.
-InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=Стандардно е дозволено класифицирање на фактурирана нарачка без фактура. Ако оваа конфигурација е поставена на точно, нема да биде.
+InvoiceClassifyBilledSupplierOrderWithoutInvoice=Disallow the classification of an order as billed without invoice.
+InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified as billed by default. If this conf is set to true, it will be not.
 ##### Supplier Orders #####
-SupplierOrderClassifyBilledWithoutInvoice=Не дозволувајте класифицирање на фактурирана нарачка од добавувач без фактура.
-SupplierOrderClassifyBilledWithoutInvoiceHelp=Класифицирајте фактурирана нарачка од добавувач без фактура стандардно е дозволена. Ако оваа конфигурација е поставена на точно, нема да биде.
+SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
+SupplierOrderClassifyBilledWithoutInvoiceHelp=A supplier order can be classified as billed by default. If this conf is set to true, it will be not.
 ##### Proposals #####
 PropalSetup=Поставување модул за комерцијални предлози
 ProposalsNumberingModules=Модели за нумерирање на комерцијални предлози
 ProposalsPDFModules=Модели на документи за комерцијален предлог
-SuggestedPaymentModesIfNotDefinedInProposal=Стандардно, предложен режим на плаќање по предлог, доколку не е дефиниран во предлогот
+SuggestedPaymentModesIfNotDefinedInProposal=Suggested payment mode by default if not defined on the proposal
 FreeLegalTextOnProposal=Бесплатен текст за комерцијални предлози
 WatermarkOnDraftProposal=Воден печат на нацрт комерцијални предлози (ниту еден ако е празен)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Побарајте дестинација на предлогот за банкарска сметка
@@ -1543,10 +1547,10 @@ MemberCodeChecker=Опции за автоматско генерирање на
 AdherentLoginRequired=Управувајте со најава/лозинка за секој член
 AdherentLoginRequiredDesc=Додадете вредност за најавување и лозинка во датотеката за член. Ако членот е поврзан со корисник, ажурирањето на најавувањето и лозинката за член ќе ги ажурира и корисничкиот најава и лозинката.
 AdherentMailRequired=Потребна е е-пошта за создавање нов член
-MemberSendInformationByMailByDefault=Полето за избор за испраќање потврда по пошта до членовите (валидација или нова претплата) е стандардно вклучено
-MemberCreateAnExternalUserForSubscriptionValidated=Создадете најава за надворешен корисник за секоја потврдена претплата на нов член
+MemberSendInformationByMailByDefault=The checkbox to send an email confirmation to members (validation or new subscription) is on by default
+MemberCreateAnExternalUserForSubscriptionValidated=Create automatically an external user (with a login to connect to the application) after an online payment of a membership subscription
 VisitorCanChooseItsPaymentMode=Посетителот може да избере од сите достапни начини на плаќање
-MEMBER_REMINDER_EMAIL=Овозможете автоматски потсетник <b>по е-пошта</b> за истечените претплати. Забелешка: модулот <strong>%s<span class='notranslate'></strong> и правилно да се постави и да се испрати потсетници.
+MEMBER_REMINDER_EMAIL=Enable automatic reminder <b>by email</b> of expired subscriptions. Note: Module <strong>%s</strong> must be enabled and correctly setup to send reminders.
 MembersDocModules=Шаблони за документи за документи генерирани од евиденција на членови
 ##### LDAP setup #####
 LDAPSetup=Поставување LDAP
@@ -1841,7 +1845,7 @@ DetailTarget=Цел за врски (_blank top отвора нов прозор
 DetailLevel=Ниво (-1: горе мени, 0: мени со заглавие, >0 мени и подмени)
 ModifMenu=Промена на менито
 DeleteMenu=Избришете го записот во менито
-ConfirmDeleteMenu=Дали сте сигурни дека сакате да го избришете записот од менито <b>%s<span class='notranslate'></b></s?
+ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b>?
 FailedToInitializeMenu=Не успеа да се иницијализира менито
 ##### Tax #####
 TaxSetup=Поставување модул за даноци, социјални или фискални даноци и дивиденди
@@ -1886,7 +1890,7 @@ PastDelayVCalExport=Не извезувајте настан постар од
 SecurityKey = Безбедносен клуч
 ##### ClickToDial #####
 ClickToDialSetup=Кликнете За да бирате поставување на модулот
-ClickToDialUrlDesc=УРЛ се повикува кога ќе завршите кликнување на сликата на телефонот.  Во URL-то, можете да користите ознаки<br><b>__PHONETO__b09a4b78z0f тоа ќе биде</7> заменет со телефонскиот број на лицето што треба да се јави<span class='notranslate'><br><b>__PHONEFROM__b09f17f7>b09f17f73 ќе биде заменет со телефонскиот број на лицето што се јавува (вашиот)<span class='notranslate'><br><b>__LOGIN__<span class='notranslate'8f3091 span> што ќе биде заменето со кликно-бирање најава (дефинирано на корисничката картичка)<br><b>__PASS__<span class='notrans </b></span> што ќе се замени со кликна лозинка (дефинирана на корисничката картичка).
+ClickToDialUrlDesc=URL called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
 ClickToDialDesc=Овој модул ги менува телефонските броеви, кога користите десктоп компјутер, во врски што може да се кликаат. Еден клик ќе го повика бројот. Ова може да се користи за започнување на телефонскиот повик кога користите мек телефон на вашиот десктоп или кога користите систем CTI базиран на SIP протокол, на пример. Забелешка: Кога користите паметен телефон, телефонските броеви секогаш може да се кликаат.
 ClickToDialUseTelLink=Користете само врска „тел:“ на телефонските броеви
 ClickToDialUseTelLinkDesc=Користете го овој метод ако вашите корисници имаат мек телефон или софтверски интерфејс, инсталиран на истиот компјутер како и прелистувачот и се повикуваат кога ќе кликнете на врска што започнува со „tel:“ во вашиот прелистувач. Ако ви треба врска што започнува со „sip:“ или целосно решение за серверот (нема потреба од локална инсталација на софтвер), мора да го поставите ова на „Не“ и да го пополните следното поле.
@@ -1948,7 +1952,7 @@ IfSetToYesDontForgetPermission=Ако е поставена на вреднос�
 GeoIPMaxmindSetup=Поставување на GeoIP Maxmind модул
 PathToGeoIPMaxmindCountryDataFile=Патека до датотеката што содржи превод на IP на Maxmind во земја
 NoteOnPathLocation=Забележете дека вашата датотека со податоци од ip до земја мора да биде во директориум што вашиот PHP може да го чита (Проверете го поставувањето на PHP open_basedir и дозволите за датотечен систем).
-YouCanDownloadFreeDatFileTo=Можете да преземете <b>бесплатна демо верзија</b> на датотеката за земја на Maxmind GeoIP на <span class='notranslate'8070<4bec /span>.
+YouCanDownloadFreeDatFileTo=You can download a <b>free demo version</b> of the Maxmind GeoIP country file at %s.
 YouCanDownloadAdvancedDatFileTo=Можете исто така да преземете повеќе <b>комплетна верзија, со ажурирања,</b> од датотеката за земја на Maxmind GeoIP на %s.
 TestGeoIPResult=Тест на IP на конверзија -> земја
 ##### Projects #####
@@ -2028,6 +2032,7 @@ MinimumNoticePeriod=Минимален отказен период (Вашето
 NbAddedAutomatically=Број на денови додадени на бројачите на корисници (автоматски) секој месец
 EnterAnyCode=Ова поле содржи референца за да се идентификува линијата. Внесете која било вредност по ваш избор, но без специјални знаци.
 Enter0or1=Внесете 0 или 1
+EnterYesOrNo=Enter Yes or No
 UnicodeCurrency=Внесете овде помеѓу заградите, список со број на бајти што го претставуваат симболот на валутата. На пример: за $, внесете [36] - за бразилски вистински R$ [82,36] - за €, внесете [8364]
 ColorFormat=RGB бојата е во HEX формат, на пр.: FF0000
 PictoHelp=Име на иконата во формат:<br>- image.png за датотека со слика во тековниот директориум со теми<br>- image.png@module ако датотеката е во директориумот /img/ на модулот<br>- fa-xxx за FontAwesome fa-xxx picto<br>- fontawesome_xxx_fa_color_size за FontAwesome fa-xxx слика (со префикс, боја и сет на големина)
@@ -2099,7 +2104,7 @@ DetectionNotPossible=Откривањето не е можно
 UrlToGetKeyToUseAPIs=УРЛ за да се добие токен за користење API (штом ќе се прими токен, тој се зачувува во табела за корисници на базата на податоци и мора да се обезбеди при секој повик на API)
 ListOfAvailableAPIs=Список на достапни API
 activateModuleDependNotSatisfied=Модулот „%s“ зависи од модулот „%s“, што недостасува, па затоа модулот „ %1$s" може да не работи правилно. Инсталирајте го модулот „%2$s“ или оневозможете го модулот „%1$s“ ако сакате да бидете безбедни од какво било изненадување
-CommandIsNotInsideAllowedCommands=Командата што се обидувате да ја извршите не е во списокот со дозволени команди дефинирани во параметарот <strong>$dolibarr_main_restrict_os_commandsb0a65d071f6span>in <s class='notranslate'><strong>conf.php</strong> датотека.
+CommandIsNotInsideAllowedCommands=The command you are trying to run is not in the list of allowed commands defined in parameter <strong>$dolibarr_main_restrict_os_commands</strong> in the <strong>conf.php</strong> file.
 LandingPage=Целна страница
 SamePriceAlsoForSharedCompanies=Доколку користите повеќекомпаниски модул, со избор „Единствена цена“, цената исто така ќе биде иста за сите компании доколку производите се делат помеѓу средини
 ModuleEnabledAdminMustCheckRights=Модулот е активиран. Дозволите за активираните модули беа дадени само на администраторските корисници. Можеби ќе треба рачно да им дадете дозволи на други корисници или групи доколку е потребно.
@@ -2213,7 +2218,7 @@ CreateCandidature=Креирајте апликација за работа
 FormatZip=Поштенски
 MainMenuCode=Код за влез во менито (главно мени)
 ECMAutoTree=Прикажи автоматско ECM дрво
-OperationParamDesc=Дефинирајте ги правилата што ќе ги користите за извлекување некои податоци или поставете вредности што ќе ги користите за работа.<br><br>Пример за извлекување име на компанија од предмет на е-пошта во привремена променлива:<br>tmp_var=EXTRACT:SUBJECT:Порака од компанијата ([^\n]*)<br><br>Примери за поставување на својствата на објектот за создавање:b0342fccfda<9 /span>objproperty1=SET:тврда шифрирана вредност<span class='notranslate'><br>objproperty2=SET:__tmp_var__<br></spanTYaFE вредност</spanty3=obj се поставува само ако својството не е веќе дефинирано)<span class='notranslate'><br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY е компанија s([^\\s]*)<br><br>Користете нова линија за да извлечете или поставите неколку својства.
+OperationParamDesc=Define the rules to use to extract some data or set values to use for operation.<br><br>Example to extract a company name from email subject into a temporary variable:<br>tmp_var=EXTRACT:SUBJECT:Message from company ([^\n]*)<br><br>Examples to set the properties of an object to create:<br>objproperty1=SET:a hard coded value<br>objproperty2=SET:__tmp_var__<br>objproperty3=SETIFEMPTY:a value (value is set only if property is not already defined)<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a new line to extract or set several properties.
 OpeningHours=Работно време
 OpeningHoursDesc=Внесете го овде редовното работно време на вашата компанија.
 ResourceSetup=Конфигурација на модулот за ресурси
@@ -2267,6 +2272,7 @@ ConfirmDeleteEmailCollector=Дали сте сигурни дека сакате
 RecipientEmailsWillBeReplacedWithThisValue=Е-поштата на примачите секогаш ќе се заменуваат со оваа вредност
 AtLeastOneDefaultBankAccountMandatory=Мора да се дефинира најмалку 1 стандардна банкарска сметка
 RESTRICT_ON_IP=Дозволете пристап до API само до одредени IP-адреси на клиентот (не е дозволена буква, користете простор помеѓу вредностите). Празен значи дека секој клиент може да пристапи.
+StaticIPsOfUsers=If applicable, list of all static IPs of users
 IPListExample=127.0.0.1 192.168.0.2 [::1]
 BaseOnSabeDavVersion=Врз основа на верзијата на библиотеката SabreDAV
 NotAPublicIp=Не е јавна IP адреса
@@ -2326,9 +2332,9 @@ DatabasePasswordObfuscated=Лозинката за базата на подат�
 DatabasePasswordNotObfuscated=Лозинката за базата на податоци НЕ е замаглена во датотеката conf
 APIsAreNotEnabled=Модулите на API не се овозможени
 YouShouldSetThisToOff=Треба да го поставите ова на 0 или исклучено
-InstallAndUpgradeLockedBy=Инсталирањето и надградбите се заклучени со датотеката <b>%s<span class='notranslate'>b09a4b739f17f
-InstallLockedBy=Инсталирањето/реинсталирањето е заклучено со датотеката <b>%s<span class='notranslate'>b09a4b739f17>b09a4b739f17>
-InstallOfAddonIsNotBlocked=Инсталациите на додатоците не се заклучени. Создајте датотека <b>installmodules.lock</b> во директориумот b0aee3panf83065 ='notranslate'>%s</b> за блокирање на инсталации на надворешни додатоци/модули.
+InstallAndUpgradeLockedBy=Install and upgrades are locked by the file <b>%s</b>
+InstallLockedBy=Install/Reinstall is locked by the file <b>%s</b>
+InstallOfAddonIsNotBlocked=Installations of addons are not locked. Create a file <b>installmodules.lock</b> into directory <b>%s</b> to block installations of external addons/modules.
 OldImplementation=Стара имплементација
 PDF_SHOW_LINK_TO_ONLINE_PAYMENT=Ако се овозможени некои модули за онлајн плаќање (Paypal, Stripe, ...), додајте врска на PDF за да извршите онлајн плаќање
 DashboardDisableGlobal=Оневозможете ги глобално сите палци на отворените објекти
@@ -2388,6 +2394,8 @@ INVOICE_ADD_EPC_QR_CODEMore=Оваа функција ви овозможува 
 INVOICE_ADD_EPC_QR_CODEPay=Скенирајте го овој QR-код за да платите со паметен телефон што поддржува плаќање со EPC QR-код.
 INVOICE_SHOW_SHIPPING_ADDRESS=Прикажи адреса за испорака
 INVOICE_SHOW_SHIPPING_ADDRESSMore=Задолжителна индикација во некои земји (Франција, ...)
+SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Show billing contact on proposal
+SUPPLIER_PROPOSAL_ADD_BILLING_CONTACTMore=By default the contact only appears for billing
 UrlSocialNetworksDesc=УРЛ-врска на социјалната мрежа. Користете {socialid} за променливиот дел што го содржи ID на социјалната мрежа.
 IfThisCategoryIsChildOfAnother=Ако оваа категорија е дете на друга
 DarkThemeMode=Режим на темна тема
@@ -2413,7 +2421,7 @@ MaxNumberOfPostOnPublicPagesByIP=Максимален број на објави
 CIDLookupURL=Модулот носи URL што може да се користи од надворешна алатка за да се добие името на трето лице или контакт од неговиот телефонски број. УРЛ за користење е:
 ScriptIsEmpty=Сценариото е празно
 ShowHideTheNRequests=Прикажи/сокриј ги %s барањата за SQL
-DefinedAPathForAntivirusCommandIntoSetup=Дефинирајте патека за антивирусна програма во <b>%s<span class='notranslate'></b></s
+DefinedAPathForAntivirusCommandIntoSetup=Define a path for an antivirus program into <b>%s</b>
 TriggerCodes=Активирани настани
 TriggerCodeInfo=Внесете ги овде шифрите за активирање што мора да генерира објава на веб-барање (дозволени се само надворешни URL). Можете да внесете неколку активирачки кодови одделени со запирка.
 EditableWhenDraftOnly=Ако не е штиклирано, вредноста може да се измени само кога објектот има нацрт статус
@@ -2421,7 +2429,7 @@ CssOnEdit=CSS на страниците за уредување
 CssOnView=CSS на страници за преглед
 CssOnList=CSS на списоци
 HelpCssOnEditDesc=CSS што се користи при уредување на полето.<br>Пример: "minwiwdth100 maxwidth500 widthcentpercentminusx"
-HelpCssOnViewDesc=CSS што се користи при прегледување на полето.
+HelpCssOnViewDesc=The CSS used when viewing the field.<br>Example: "longmessagecut"
 HelpCssOnListDesc=CSS што се користи кога полето е во табела со список.<br>Пример: "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=Сокријте ја нарачаната количина на генерираните документи за приеми
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=Покажете ја цената на генерираните документи за приеми
@@ -2446,8 +2454,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Не е стандардно со
 CSSPage=CSS стил
 Defaultfortype=Стандардно
 DefaultForTypeDesc=Шаблон стандардно се користи при креирање нова е-пошта за типот на шаблон
-OptionXShouldBeEnabledInModuleY=Опцијата „<b>%s</b>“ во модулите треба да биде <pan en class ='notranslate'><b></span>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=Опцијата "<b>%s</b>" е овозможена во модулот 'notranslate'><b></span>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Дозволи On Line потпис
 AllowOnLineSignDesc=Во списокот на начини на плаќање на трети лица за банкарски сметки е достапен линк за да се овозможи онлајн потпишување банкарски документ (мандат за директно задолжување на пример)
 AtBottomOfPage=На дното на страницата
@@ -2479,6 +2487,7 @@ CustomPrompt=Прилагодени инструкции
 AiDescription=Карактеристики на AI (Вештачка интелигенција).
 AiDescriptionLong=Обезбедува функции за вештачка интелигенција во различни делови од апликацијата. Потребен е надворешен AI API.
 AI_API_KEY=Клуч за AI api
+AI_API_URL=Endpoint URL for AI api
 AI_API_SERVICE=Услуга за користење за карактеристики на вештачка интелигенција
 AiSetup=Поставување модул за вештачка интелигенција
 AiCustomPrompt=Прилагодено барање за вештачка интелигенција
@@ -2486,7 +2495,7 @@ AI_CONFIGURATIONS_PROMPT=Прилагодено барање
 TextGeneration=Генерирање на текст
 ImageGeneration=Генерирање слики
 VideoGeneration=Видео генерирање
-AudioText=Аудио - Текст
+AudioGeneration=Audio generation
 AIPromptForFeatures=Вештачката интелигенција прилагодено прашува за функции
 EnterAnIP=Внесете IP адреса
 ConvertInto=Претворете во
@@ -2507,3 +2516,28 @@ SendToUrl=Испрати на УРЛ
 WebsiteTemplateWasCopied=Шаблонот(ите) на веб-локацијата „%s“ обезбеден од овој модул е зачуван во директориумот на шаблони за веб-локации (/doctemplates/websites) и е подготвен да се увезе како нова веб-локација сајт.
 EnabledByDefaultAtInstall=Стандардно е овозможено при инсталацијата
 VulnerableToRCEAttack=Вие сте ранливи на RCE напади со користење на прилагодената функција dol_json_decode
+OpenIDconnectSetup=Configuration of the OpenID Connect module
+MainAuthenticationOidcClientIdName=Client ID
+MainAuthenticationOidcClientIdDesc=OpenID Connect Client ID
+MainAuthenticationOidcClientSecretName=Client secret
+MainAuthenticationOidcClientSecretDesc=OpenID Connect Client Secret
+MainAuthenticationOidcScopesName=Scopes
+MainAuthenticationOidcScopesDesc=OpenID scopes to allow access to user information
+MainAuthenticationOidcAuthorizeUrlName=Authorize URL
+MainAuthenticationOidcAuthorizeUrlDesc=(example: https://example.com/oauth2/authorize)
+MainAuthenticationOidcTokenUrlName=Token URL
+MainAuthenticationOidcTokenUrlDesc=(example: https://example.com/oauth2/token)
+MainAuthenticationOidcUserinfoUrlName=User info URL
+MainAuthenticationOidcUserinfoUrlDesc=(example: https://example.com/oauth2/userinfo)
+MainAuthenticationOidcLogoutUrlName=Logout URL
+MainAuthenticationOidcLogoutUrlDesc=(example: https://example.com/oauth2/logout)
+MainAuthenticationOidcRedirectUrlName=Redirect URL
+MainAuthenticationOidcRedirectUrlDesc=Redirect URL to authorize on the OpenID provider side
+MainAuthenticationOidcLogoutRedirectUrlName=Dolibarr logout URL
+MainAuthenticationOidcLogoutRedirectUrlDesc=Dolibarr logout URL to authorize on the OpenID provider side
+MainAuthenticationOidcLoginClaimName=Login claim
+MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr user login. If not set or empty, defaults to email
+BlackListWords=Black list of words
+AddBlackList=Add to black list
+AnOwnerMustBeSetIfEmailTemplateIsPrivate=An owner must be set if the email template is set as private
+ContactsDefaultRoles=For third parties of the "individual" type, a contact can be created simultaneously. Define here the roles that will be systematically assigned to this contact.

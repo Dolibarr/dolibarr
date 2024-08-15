@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Трето лице или член на п
 ErrorFailedToWriteInTempDirectory=Неуспешен запис във временната директория
 ErrorQuantityIsLimitedTo=Количеството е ограничено до %s
 ErrorFailedToLoadThirdParty=Неуспешно намиране/зареждане на трета страна от id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Този плащане режим не е банкова сметка
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe Клиент не е зададено за тази трета страна (или е зададено на стойност, изтрита от страната на Stripe). Първо го създайте (или прикачете отново).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP търсенето не може да търси в подателя или получателя за низ, съдържащ знака +
 ErrorTableNotFound=Таблица <b>%s</b> не е намерена
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Речникът <b>%s</b> не е намерен
 ErrorFailedToCreateSymLinkToMedias=Неуспешно създаване на символна връзка %s, която да сочи към %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Проверете командата, използвана за експортиране в разширените опции на експортирането
 ErrorEndTimeMustBeGreaterThanStartTime=Крайното време трябва да е по-голямо от началното
-ErrorIncoherentDates=Началната дата трябва да е преди крайната дата
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

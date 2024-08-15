@@ -1136,9 +1136,9 @@ if (empty($reshook)) {
 			// de ceux du produit par default (par example si pays different entre vendeur et acheteur).
 			if ($tmpvat != $tmpprodvat) {
 				if ($price_base_type != 'HT') {
-					$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$pu_ht = price2num($pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 				} else {
-					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = price2num($pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 				}
 			}
 

@@ -1718,13 +1718,13 @@ function weight_convert($weight, &$from_unit, $to_unit)
 	$weight = is_numeric($weight) ? $weight : 0;
 	while ($from_unit != $to_unit) {
 		if ($from_unit > $to_unit) {
-			$weight = $weight * 10;
-			$from_unit = $from_unit - 1;
+			$weight *= 10;
+			$from_unit -= 1;
 			$weight = weight_convert($weight, $from_unit, $to_unit);
 		}
 		if ($from_unit < $to_unit) {
-			$weight = $weight / 10;
-			$from_unit = $from_unit + 1;
+			$weight /= 10;
+			$from_unit += 1;
 			$weight = weight_convert($weight, $from_unit, $to_unit);
 		}
 	}
@@ -1895,7 +1895,7 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
- * 	@return	array|int			    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
@@ -2051,13 +2051,13 @@ function getSoapParams()
 	global $conf;
 
 	$params = array();
-	$proxyuse = (!getDolGlobalString('MAIN_PROXY_USE') ? false : true);
-	$proxyhost = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_HOST);
-	$proxyport = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PORT);
-	$proxyuser = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_USER);
-	$proxypass = (!getDolGlobalString('MAIN_PROXY_USE') ? false : $conf->global->MAIN_PROXY_PASS);
-	$timeout = (!getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 10 : $conf->global->MAIN_USE_CONNECT_TIMEOUT); // Connection timeout
-	$response_timeout = (!getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT); // Response timeout
+	$proxyuse = getDolGlobalString('MAIN_PROXY_USE');
+	$proxyhost = (!$proxyuse ? false : $conf->global->MAIN_PROXY_HOST);
+	$proxyport = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PORT);
+	$proxyuser = (!$proxyuse ? false : $conf->global->MAIN_PROXY_USER);
+	$proxypass = (!$proxyuse ? false : $conf->global->MAIN_PROXY_PASS);
+	$timeout = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 10); // Connection timeout
+	$response_timeout = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30); // Response timeout
 	//print extension_loaded('soap');
 	if ($proxyuse) {
 		$params = array('connection_timeout' => $timeout,
@@ -2246,7 +2246,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 
 /**
- * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
+ * Clean corrupted database tree (orphelins linked to a not existing parent), record linked to themself, and also child-parent loop
  *
  * @param	DoliDB	$db					Database handler
  * @param	string	$tabletocleantree	Table to clean
@@ -2309,6 +2309,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 					$listofidtoclean[$cursor] = $id;
 					break;
 				}
+				// @phpstan-ignore-next-line PHPStan thinks this line is never reached
 				$cursor = $listofparentid[$cursor];
 			}
 
@@ -2317,8 +2318,8 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			}
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
 		$sql .= " WHERE rowid IN (".$db->sanitize(implode(',', $listofidtoclean)).")"; // So we update only records detected wrong
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -2334,9 +2335,9 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		//else dol_print_error($db);
 
 		// Check and clean orphelins
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
-		$sql .= " SET ".$fieldfkparent." = 0";
-		$sql .= " WHERE ".$fieldfkparent." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$db->sanitize($tabletocleantree);
+		$sql .= " SET ".$db->sanitize($fieldfkparent)." = 0";
+		$sql .= " WHERE ".$db->sanitize($fieldfkparent)." NOT IN (".$db->sanitize(implode(',', $listofid), 1).")"; // So we update only records linked to a non existing parent
 		$resql = $db->query($sql);
 		if ($resql) {
 			$nb = $db->affected_rows($sql);

@@ -11,6 +11,7 @@
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
  * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -618,7 +619,7 @@ if ($object->id > 0) {
 	}
 
 	// Other attributes
-	$parameters = array('socid'=>$object->id);
+	$parameters = array('socid' => $object->id);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Sales representative
@@ -697,7 +698,7 @@ if ($object->id > 0) {
 	// Nbre max d'elements des petites listes
 	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
-	// Lien recap
+	// Link summary/status board
 	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
@@ -926,7 +927,7 @@ if ($object->id > 0) {
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$param ="";
+		$param = "";
 
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
@@ -1237,7 +1238,7 @@ if ($object->id > 0) {
 				print $late;
 				print "</td>\n";
 				print '<td class="nowrap">';
-				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ?  $objp->refcus : $objp->refsup, 12);
+				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ? $objp->refcus : $objp->refsup, 12);
 				print "</td>\n";
 				//print '<td class="right" width="80px"><span title="'.$langs->trans("DateCreation").'">'.dol_print_date($db->jdate($objp->dc), 'day')."</span></td>\n";
 				print '<td class="right" width="80px"><span title="'.$langs->trans("DateContract").'">'.dol_print_date($db->jdate($objp->dcon), 'day')."</span></td>\n";
@@ -1646,7 +1647,7 @@ if ($object->id > 0) {
 		}
 
 		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
-			$langs->load("fichinter");
+			$langs->load("interventions");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
 

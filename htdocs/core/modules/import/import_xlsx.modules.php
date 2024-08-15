@@ -645,7 +645,7 @@ class ImportXlsx extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirdpartyobject->get_codecompta('customer');
-										$newval = $this->thirdpartyobject->code_compta;
+										$newval = $this->thirdpartyobject->code_compta_client;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {

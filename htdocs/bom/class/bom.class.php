@@ -101,7 +101,7 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -155,7 +155,7 @@ class BOM extends CommonObject
 	public $description;
 
 	/**
-	 * @var integer|string date_valid
+	 * @var int|string date_valid
 	 */
 	public $date_valid;
 
@@ -193,8 +193,17 @@ class BOM extends CommonObject
 	 * @var int product Id
 	 */
 	public $fk_product;
+	/**
+	 * @var float
+	 */
 	public $qty;
+	/**
+	 * @var float
+	 */
 	public $duration;
+	/**
+	 * @var float
+	 */
 	public $efficiency;
 	// END MODULEBUILDER PROPERTIES
 
@@ -301,7 +310,7 @@ class BOM extends CommonObject
 	 *
 	 * @param  	User 	$user      	User that creates
 	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @return 	BOM|int<-1,-1> 		New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -330,7 +339,8 @@ class BOM extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		$object->ref = empty($this->fields['ref']['default']) ? $langs->trans("copy_of_").$object->ref : $this->fields['ref']['default'];
+		$default_ref = $this->fields['ref']['default'] ?? null;
+		$object->ref = empty($default_ref) ? $langs->trans("copy_of_").$object->ref : $default_ref;
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
 		// ...
@@ -364,6 +374,7 @@ class BOM extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
+			// @phan-suppress-next-line PhanUndeclaredProperty
 			if (property_exists($this, 'socid') && $this->socid == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
@@ -390,9 +401,9 @@ class BOM extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param int		$id	Id object
+	 * @param string	$ref	Ref
+	 * @return int<-1,1>	Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
@@ -422,9 +433,9 @@ class BOM extends CommonObject
 	/**
 	 * Load object lines in memory from the database by type of product
 	 *
-	 * 	@param int    $typeproduct   0 type product, 1 type service
+	 * @param int<0,1>	$typeproduct	0 type product, 1 type service
 
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
 	{
@@ -476,11 +487,11 @@ class BOM extends CommonObject
 	 *
 	 * @param  string      		$sortorder    Sort Order
 	 * @param  string      		$sortfield    Sort field
-	 * @param  int         		$limit        Limit
-	 * @param  int         		$offset       Offset
+	 * @param  int<0,max>  		$limit        Limit
+	 * @param  int<0,max>		$offset       Offset
 	 * @param  string   		$filter       Filter USF
 	 * @param  string      		$filtermode   Filter mode (AND or OR)
-	 * @return array|int        			  int <0 if KO, array of pages if OK
+	 * @return BOM[]|int<-1,-1>    			  int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -537,9 +548,9 @@ class BOM extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User			$user		User that modifies
+	 * @param  int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 1)
 	{
@@ -553,9 +564,9 @@ class BOM extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       	User that deletes
-	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param User		$user      	User that deletes
+	 * @param int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 1)
 	{
@@ -566,18 +577,18 @@ class BOM extends CommonObject
 	/**
 	 * Add an BOM line into database (linked to BOM)
 	 *
-	 * @param	int		$fk_product				Id of product
-	 * @param	float	$qty					Quantity
-	 * @param	int<0,1> $qty_frozen			If the qty is Frozen
-	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
-	 * @param	float	$efficiency				Efficiency in MO
-	 * @param	int		$position				Position of BOM-Line in BOM-Lines
-	 * @param	int		$fk_bom_child			Id of BOM Child
-	 * @param	string	$import_key				Import Key
-	 * @param	int 	$fk_unit				Unit
-	 * @param	array	$array_options			extrafields array
-	 * @param	int		$fk_default_workstation	Default workstation
-	 * @return	int								Return integer <0 if KO, Id of created object if OK
+	 * @param	int			$fk_product				Id of product
+	 * @param	float		$qty					Quantity
+	 * @param	int<0,1> 	$qty_frozen			If the qty is Frozen
+	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
+	 * @param	float		$efficiency				Efficiency in MO
+	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
+	 * @param	?int		$fk_bom_child			Id of BOM Child
+	 * @param	?string		$import_key				Import Key
+	 * @param	int 		$fk_unit				Unit
+	 * @param	array		$array_options			extrafields array
+	 * @param	?int		$fk_default_workstation	Default workstation
+	 * @return	int<-3,max>							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function addLine($fk_product, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $fk_bom_child = null, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
@@ -607,7 +618,7 @@ class BOM extends CommonObject
 				$fk_bom_child = null;
 			}
 			if (empty($import_key)) {
-				$import_key = null;
+				$import_key = '';
 			}
 			if (empty($position)) {
 				$position = -1;
@@ -675,17 +686,17 @@ class BOM extends CommonObject
 	/**
 	 * Update an BOM line into database
 	 *
-	 * @param 	int		$rowid					Id of line to update
-	 * @param	float	$qty					Quantity
-	 * @param	float	$qty_frozen				Frozen quantity
-	 * @param 	int		$disable_stock_change	Disable stock change on using in MO
-	 * @param	float	$efficiency				Efficiency in MO
-	 * @param	int		$position				Position of BOM-Line in BOM-Lines
-	 * @param	string	$import_key				Import Key
-	 * @param	int		$fk_unit				Unit of line
-	 * @param	array	$array_options			extrafields array
-	 * @param	int		$fk_default_workstation	Default workstation
-	 * @return	int								Return integer <0 if KO, Id of updated BOM-Line if OK
+	 * @param 	int			$rowid					Id of line to update
+	 * @param	float		$qty					Quantity
+	 * @param	float		$qty_frozen				Frozen quantity
+	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
+	 * @param	float		$efficiency				Efficiency in MO
+	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
+	 * @param	?string		$import_key				Import Key
+	 * @param	int			$fk_unit				Unit of line
+	 * @param	array		$array_options			extrafields array
+	 * @param	?int		$fk_default_workstation	Default workstation
+	 * @return	int<-3,max>						Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
 	public function updateLine($rowid, $qty, $qty_frozen = 0, $disable_stock_change = 0, $efficiency = 1.0, $position = -1, $import_key = null, $fk_unit = 0, $array_options = array(), $fk_default_workstation = null)
 	{
@@ -712,7 +723,7 @@ class BOM extends CommonObject
 				$efficiency = 1.0;
 			}
 			if (empty($import_key)) {
-				$import_key = null;
+				$import_key = '';
 			}
 			if (empty($position)) {
 				$position = -1;
@@ -794,10 +805,10 @@ class BOM extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param  User		$user       User that delete
+	 *  @param	int			$idline		Id of line to delete
+	 *  @param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *  @return int<-2,-1>|int<1,1>		>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -866,7 +877,7 @@ class BOM extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -890,9 +901,9 @@ class BOM extends CommonObject
 	/**
 	 *	Validate bom
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
+	 *	@param		User		$user     	User making status change
+	 *  @param		int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return  	int<-1,1>				Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -1009,9 +1020,9 @@ class BOM extends CommonObject
 	/**
 	 *	Set draft status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -1026,9 +1037,9 @@ class BOM extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -1041,11 +1052,11 @@ class BOM extends CommonObject
 	}
 
 	/**
-	 *	Set cancel status
+	 *	Reopen if canceled
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1061,7 +1072,7 @@ class BOM extends CommonObject
 	 * getTooltipContentArray
 	 * @param array $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1098,11 +1109,11 @@ class BOM extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to ('nolink', ...)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int<0,2>	$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string		$option						On what the link point to ('nolink', ...)
+	 *  @param	int<0,1>	$notooltip					1=Disable tooltip
+	 *  @param  string		$morecss            		Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -1196,8 +1207,8 @@ class BOM extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int			$status        Id status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -1256,7 +1267,7 @@ class BOM extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return BOMLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -1280,11 +1291,11 @@ class BOM extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
 	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @return     int<0,1>       				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -1347,7 +1358,7 @@ class BOM extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return int
+	 * @return int<1,1>
 	 */
 	public function initAsSpecimen()
 	{
@@ -1502,9 +1513,9 @@ class BOM extends CommonObject
 	/**
 	 * Function used to replace a product id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old product id
-	 * @param int $dest_id New product id
+	 * @param DoliDB	$db Database handler
+	 * @param int		$origin_id Old product id
+	 * @param int		$dest_id New product id
 	 * @return bool
 	 */
 	public static function replaceProduct(DoliDB $db, $origin_id, $dest_id)
@@ -1548,8 +1559,8 @@ class BOM extends CommonObject
 	 * Get/add Net needs Tree by product or bom
 	 *
 	 * @param array<int,array{product:array,bom:BOM,parentid:int,qty:float,level:int,fk_unit:?int}> 	$TNetNeeds 	Array of ChildBom and infos linked to
-	 * @param float		$qty       qty needed (used as a factor to produce 1 unit)
-	 * @param int   	$level     level of recursivity
+	 * @param float			$qty       qty needed (used as a factor to produce 1 unit)
+	 * @param int<0,1000>  	$level     level of recursivity
 	 * @return void
 	 */
 	public function getNetNeedsTree(&$TNetNeeds = array(), $qty = 0, $level = 0)
@@ -1590,9 +1601,9 @@ class BOM extends CommonObject
 	/**
 	 * Recursively retrieves all parent bom in the tree that leads to the $bom_id bom
 	 *
-	 * @param 	array	$TParentBom		We put all found parent bom in $TParentBom
-	 * @param 	int		$bom_id			ID of bom from which we want to get parent bom ids
-	 * @param 	int		$level		Protection against infinite loop
+	 * @param 	BOM[]		$TParentBom		We put all found parent bom in $TParentBom
+	 * @param 	int			$bom_id			ID of bom from which we want to get parent bom ids
+	 * @param 	int<0,1000>	$level			Protection against infinite loop
 	 * @return 	void
 	 */
 	public function getParentBomTreeRecursive(&$TParentBom, $bom_id = 0, $level = 1)
@@ -1622,7 +1633,7 @@ class BOM extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data
@@ -1644,12 +1655,13 @@ class BOM extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fields') && !empty($this->fields['bomtype']['arrayofkeyval'])) {
+		$arrayofkeyval = $this->fields['bomtype']['arrayofkeyval'] ?? null;
+		if (!empty($arrayofkeyval)) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Type").' : </span>';
 			if ($this->bomtype == 0) {
-				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][0].'</span>';
+				$return .= '<span class="info-box-label">'.$arrayofkeyval[0].'</span>';
 			} else {
-				$return .= '<span class="info-box-label">'.$this->fields['bomtype']['arrayofkeyval'][1].'</span>';
+				$return .= '<span class="info-box-label">'.$arrayofkeyval[1].'</span>';
 			}
 		}
 		if (!empty($arraydata['prod'])) {
@@ -1720,7 +1732,7 @@ class BOMLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'LineID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -1754,7 +1766,7 @@ class BOMLine extends CommonObjectLine
 	public $fk_product;
 
 	/**
-	 * @var int Id of parent bom
+	 * @var ?int Id of parent bom
 	 */
 	public $fk_bom_child;
 
@@ -1791,7 +1803,7 @@ class BOMLine extends CommonObjectLine
 	public $fk_unit;
 
 	/**
-	 * @var int Service Workstation
+	 * @var ?int Service Workstation
 	 */
 	public $fk_default_workstation;
 
@@ -1807,17 +1819,17 @@ class BOMLine extends CommonObjectLine
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var float		Calculated cost for the BOM line
+	 * @var int|float		Calculated cost for the BOM line
 	 */
 	public $total_cost = 0;
 
 	/**
-	 * @var float		Line unit cost based on product cost price or pmp
+	 * @var int|float	Line unit cost based on product cost price or pmp
 	 */
 	public $unit_cost = 0;
 
 	/**
-	 * @var array     array of Bom in line
+	 * @var BOM[]     array of Bom in line
 	 */
 	public $childBom = array();
 
@@ -1902,7 +1914,7 @@ class BOMLine extends CommonObjectLine
 	 * @param  string		$filter       	Filter as an Universal Search string.
 	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string		$filtermode		No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @return BOMLine[]|int<-1,-1>			int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -1989,11 +2001,11 @@ class BOMLine extends CommonObjectLine
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option						On what the link point to ('nolink', ...)
-	 *  @param	int  	$notooltip					1=Disable tooltip
-	 *  @param  string  $morecss            		Add more css on link
-	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param	int<0,2>	$withpicto				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string		$option					On what the link point to ('nolink', ...)
+	 *  @param	int<0,1>  	$notooltip				1=Disable tooltip
+	 *  @param  string		$morecss				Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
@@ -2077,9 +2089,9 @@ class BOMLine extends CommonObjectLine
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       Label of status
+	 *  @param	int			$status		Id status
+	 *  @param  int<0,6>	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 					Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

@@ -1783,7 +1783,7 @@ while ($i < $imaxinloop) {
 	}
 
 	$marginInfo = array();
-	if ($with_margin_info === true) {
+	if ($with_margin_info) {
 		$objectstatic->fetch_lines();
 		$marginInfo = $formmargin->getMarginInfosArray($objectstatic);
 		$total_ht += $obj->total_ht;

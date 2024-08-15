@@ -113,7 +113,7 @@ class Tva extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 
@@ -723,7 +723,7 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 *	Send name clicable (with possibly the picto)
+	 *	Send name clickable (with possibly the picto)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
@@ -915,7 +915,7 @@ class Tva extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

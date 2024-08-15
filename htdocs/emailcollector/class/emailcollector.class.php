@@ -111,13 +111,13 @@ class EmailCollector extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => 2, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1),
 		'entity'        => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => 1, 'notnull' => 1, 'index' => 1, 'position' => 20),
 		'ref'           => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'help' => 'Example: MyCollector1', 'csslist' => 'tdoverflowmax200'),
-		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150', 'tdcss'=>'titlefieldmiddle'),
+		'label'         => array('type' => 'varchar(255)', 'label' => 'Label', 'visible' => 1, 'enabled' => 1, 'position' => 30, 'notnull' => -1, 'searchall' => 1, 'help' => 'Example: My Email collector', 'csslist' => 'tdoverflowmax150', 'tdcss' => 'titlefieldmiddle'),
 		'description'   => array('type' => 'text', 'label' => 'Description', 'visible' => -1, 'enabled' => 1, 'position' => 60, 'notnull' => -1, 'cssview' => 'small', 'csslist' => 'small tdoverflowmax200'),
 		'host'          => array('type' => 'varchar(255)', 'label' => 'EMailHost', 'visible' => 1, 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'searchall' => 1, 'comment' => "IMAP server", 'help' => 'Example: imap.gmail.com', 'csslist' => 'tdoverflowmax125'),
 		'port'          => array('type' => 'varchar(10)', 'label' => 'EMailHostPort', 'visible' => 1, 'enabled' => 1, 'position' => 91, 'notnull' => 1, 'searchall' => 0, 'comment' => "IMAP server port", 'help' => 'Example: 993', 'csslist' => 'tdoverflowmax50', 'default' => '993'),
@@ -207,7 +207,7 @@ class EmailCollector extends CommonObject
 	public $maxemailpercollect;
 
 	/**
-	 * @var integer|string $datelastresult
+	 * @var int|string $datelastresult
 	 */
 	public $datelastresult;
 
@@ -1151,16 +1151,16 @@ class EmailCollector extends CommonObject
 				if (array_key_exists($keyforsupportedoauth2array, $supportedoauth2array)
 					&& array_key_exists('name', $supportedoauth2array[$keyforsupportedoauth2array])
 					&& !empty($supportedoauth2array[$keyforsupportedoauth2array]['name'])) {
-						$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
+					$OAUTH_SERVICENAME = $supportedoauth2array[$keyforsupportedoauth2array]['name'].(!empty($keyforprovider) ? '-'.$keyforprovider : '');
 				}
 
-					require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-					//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
-					//dol_syslog($debugtext);
+				require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+				//$debugtext = "Host: ".$this->host."<br>Port: ".$this->port."<br>Login: ".$this->login."<br>Password: ".$this->password."<br>access type: ".$this->acces_type."<br>oauth service: ".$this->oauth_service."<br>Max email per collect: ".$this->maxemailpercollect;
+				//dol_syslog($debugtext);
 
-					$token = '';
+				$token = '';
 
-					$storage = new DoliStorage($db, $conf, $keyforprovider);
+				$storage = new DoliStorage($db, $conf, $keyforprovider);
 
 				try {
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
@@ -1177,8 +1177,8 @@ class EmailCollector extends CommonObject
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$this->oauth_service.'_SECRET'),
-							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLAUTHORIZE')
-							);
+							getDolGlobalString('OAUTH_'.$this->oauth_service.'_URLCALLBACK')
+						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
@@ -1203,17 +1203,17 @@ class EmailCollector extends CommonObject
 					return -1;
 				}
 
-					$cm = new ClientManager();
-					$client = $cm->make([
-						'host'           => $this->host,
-						'port'           => $this->port,
-						'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
-						'validate_cert'  => true,
-						'protocol'       => 'imap',
-						'username'       => $this->login,
-						'password'       => $token,
-						'authentication' => "oauth",
-					]);
+				$cm = new ClientManager();
+				$client = $cm->make([
+					'host'           => $this->host,
+					'port'           => $this->port,
+					'encryption'     => !empty($this->imap_encryption) ? $this->imap_encryption : false,
+					'validate_cert'  => true,
+					'protocol'       => 'imap',
+					'username'       => $this->login,
+					'password'       => $token,
+					'authentication' => "oauth",
+				]);
 			} else {
 				// Mode LOGIN (login/pass) with PHP-IMAP
 				$this->debuginfo .= 'doCollectOneCollector is using method MAIN_IMAP_USE_PHPIMAP=1, access_type=0 (LOGIN)<br>';
@@ -1804,7 +1804,7 @@ class EmailCollector extends CommonObject
 						$isreplytook = 0;
 						foreach ($rulesreplyto as $key => $rulereplyto) {
 							if (preg_match('/'.preg_quote($rulereplyto, '/').'/', $headers['Reply-To'])) {
-								$isreplytook ++;
+								$isreplytook++;
 							}
 						}
 
@@ -2220,7 +2220,7 @@ class EmailCollector extends CommonObject
 								} else {
 									foreach ($arrayofreferences as $key => $referencetmp) {
 										if (!str_contains($objectemail->origin_references, $referencetmp)) {
-											$objectemail->origin_references.= " ".$referencetmp;
+											$objectemail->origin_references .= " ".$referencetmp;
 											$changeonticket_references = true;
 										}
 									}
@@ -3092,7 +3092,7 @@ class EmailCollector extends CommonObject
 								if (empty($projecttocreate->ref)) {
 									// Get next Ref
 									$defaultref = '';
-									$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+									$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 									// Search template files
 									$file = '';
@@ -3541,7 +3541,7 @@ class EmailCollector extends CommonObject
 
 				if (empty($mode) && empty($error)) {
 					$res = imap_mail_move($connection, $imapemail, $targetdir, CP_UID);
-					if ($res == false) {
+					if (!$res) {
 						// $errorforemail++;  // Not in loop, not needed, not initialised
 						$this->error = imap_last_error();
 						$this->errors[] = $this->error;

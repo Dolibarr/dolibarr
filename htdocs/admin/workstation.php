@@ -108,7 +108,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFWorkstation $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -227,13 +227,8 @@ if ($action == 'edit') {
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectKey == 'MyObject') {
-		continue;
-	}
 	if ($myTmpObjectArray['includerefgeneration']) {
-		/*
-		 * Orders Numbering model
-		 */
+		// Orders Numbering model
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
@@ -340,9 +335,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	}
 
 	if ($myTmpObjectArray['includedocgeneration']) {
-		/*
-		 * Document templates generators
-		 */
+		// Document templates generators
 		$setupnotempty++;
 		$type = strtolower($myTmpObjectKey);
 

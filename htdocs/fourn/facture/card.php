@@ -1186,7 +1186,7 @@ if (empty($reshook)) {
 									$coef = $total / $srcobject->total_ttc; // Calc coef
 									$am = $amount * $coef;
 									$amount_ttc_diff += $am;
-									$amountdeposit[$tva] += $am / (1 + $tva / 100); // Convert into HT for the addline
+									$amountdeposit[$tva] += $am / (1 + (float) $tva / 100); // Convert into HT for the addline
 								}
 							} else {
 								if ($typeamount == 'amount') {

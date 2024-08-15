@@ -261,9 +261,9 @@ function getAllOauth2Array()
 		'OAUTH_YAMMER_SECRET',
 	),
 	array(
-		'OAUTH_OTHER_NAME',
-		'OAUTH_OTHER_ID',
-		'OAUTH_OTHER_SECRET',
+		'OAUTH_GENERIC_NAME',
+		'OAUTH_GENERIC_ID',
+		'OAUTH_GENERIC_SECRET',
 	)
 	);
 
@@ -340,17 +340,16 @@ function getSupportedOauth2Array()
 		'availablescopes' => 'openid,offline_access,profile,email,User.Read,https://outlook.office.com/.default',
 		'returnurl' => '/core/modules/oauth/microsoft_oauthcallback.php'
 	);
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		$supportedoauth2array['OAUTH_OTHER_NAME'] = array(
-			'callbackfile' => 'generic',
-			'picto' => 'generic',
-			'urlforapp' => 'OAUTH_OTHER_DESC',
-			'name' => 'Other',
-			'urlforcredentials' => '',
-			'availablescopes' => 'Standard',
-			'returnurl' => '/core/modules/oauth/generic_oauthcallback.php'
-		);
-	}
+	// Add a generic Oauth token handler. Tested with Mastodon.
+	$supportedoauth2array['OAUTH_GENERIC_NAME'] = array(
+		'callbackfile' => 'generic',
+		'picto' => 'generic',
+		'urlforapp' => 'OAUTH_GENERIC_DESC',
+		'name' => 'Generic',
+		'urlforcredentials' => '',
+		'availablescopes' => 'Standard',
+		'returnurl' => '/core/modules/oauth/generic_oauthcallback.php'
+	);
 
 	return $supportedoauth2array;
 }

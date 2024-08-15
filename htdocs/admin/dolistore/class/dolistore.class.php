@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2017		 Oscss-Shop       <support@oscss-shop.fr>.
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -39,18 +40,48 @@ class Dolistore
 	 */
 	public $end;
 
-	public $per_page; // pagination: display per page
-	public $categorie; // the current categorie
+	/**
+	 * @var int Pagination: display per page
+	 */
+	public $per_page;
+	/**
+	 * @var int The current categorie
+	 */
+	public $categorie;
+	/**
+	 * @var ?SimpleXMLElement
+	 */
 	public $categories; // an array of categories
-	public $search; // the search keywords
+
+	/**
+	 * @var string The search keywords
+	 */
+	public $search;
 
 	// setups
+	/**
+	 * @var string
+	 */
 	public $url; // the url of this page
+	/**
+	 * @var string
+	 */
 	public $shop_url; // the url of the shop
+	/**
+	 * @var int
+	 */
 	public $lang; // the integer representing the lang in the store
+	/**
+	 * @var bool
+	 */
 	public $debug_api; // useful if no dialog
-
+	/**
+	 * @var PrestaShopWebservice
+	 */
 	public $api;
+	/**
+	 * @var ?SimpleXMLElement
+	 */
 	public $products;
 
 	/**
@@ -118,7 +149,7 @@ class Dolistore
 	 * Load data from remote Dolistore market place.
 	 * This fills ->products
 	 *
-	 * @param 	array 	$options	Options. If 'categorie' is defined, we filter products on this category id
+	 * @param 	array{start:int,end:int,per_page:int,categorie:int,search:string}	$options	Options. If 'categorie' is defined, we filter products on this category id
 	 * @return	void
 	 */
 	public function getRemoteProducts($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0, 'search' => ''))
@@ -222,14 +253,14 @@ class Dolistore
 			if ($cat->is_root_category == 1 && $parent == 0) {
 				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.((int) $cat->id).'" ';
 				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a></h3>';
-				$html .= self::get_categories($cat->id);
+				$html .= self::get_categories((int) $cat->id);
 				$html .= "</li>\n";
 			} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
 				$select = ($cat->id == $this->categorie) ? ' selected' : '';
 				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.((int) $cat->id).'"';
 				$html .= ' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" ';
 				$html .= '>'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a>';
-				$html .= self::get_categories($cat->id);
+				$html .= self::get_categories((int) $cat->id);
 				$html .= "</li>\n";
 			}
 		}
@@ -401,7 +432,7 @@ class Dolistore
 	{
 		// phpcs:enable
 		$param_array = array();
-		if (count($this->products) < $this->per_page) {
+		if ($this->products !== null && count($this->products) < $this->per_page) {
 			$add = 0;
 		} else {
 			$add = $this->per_page;

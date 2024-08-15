@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent   <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('commande', 'lire')) {
-		$total = $total + $objectlink->total_ht;
+		$total += $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}
 	echo '</td>';

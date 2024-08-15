@@ -445,9 +445,6 @@ class modEventOrganization extends DolibarrModules
 		$myTmpObjects['ConferenceOrBooth'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'ConferenceOrBooth') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/eventorganization/template_conferenceorbooths.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/eventorganization';

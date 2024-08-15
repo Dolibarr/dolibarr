@@ -246,7 +246,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') {

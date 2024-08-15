@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Шахси сеюм ё узви шарик�
 ErrorFailedToWriteInTempDirectory=Дар феҳристи муваққатӣ навиштан муяссар нашуд
 ErrorQuantityIsLimitedTo=Миқдор бо %s маҳдуд аст
 ErrorFailedToLoadThirdParty=Наёфт/бор кардани тарафи сеюм аз id=%s, email=%s, name= натавонистанд %s
-ErrorThisPaymentModeIsNotSepa=Ин усули пардохт ҳисоби бонкӣ нест
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Муштарии Stripe барои ин тарафи сеюм муқаррар карда нашудааст (ё ба арзиши дар тарафи Stripe ҳазфшуда муқаррар карда шудааст). Аввал онро эҷод кунед (ё аз нав замима кунед).
 ErrorCharPlusNotSupportedByImapForSearch=Ҷустуҷӯи IMAP қодир нест, ки дар ирсолкунанда ё қабулкунанда сатри дорои аломати +-ро ҷустуҷӯ кунад
 ErrorTableNotFound=Ҷадвали <b>%s</b> ёфт нашуд
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Луғати <b>%s</b> ёфт нашуд
 ErrorFailedToCreateSymLinkToMedias=Эҷоди истиноди рамзии %s барои ишора ба %s натавонист.
 ErrorCheckTheCommandInsideTheAdvancedOptions=Фармонеро, ки барои содирот истифода мешавад, дар имконоти пешрафтаи содирот санҷед
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

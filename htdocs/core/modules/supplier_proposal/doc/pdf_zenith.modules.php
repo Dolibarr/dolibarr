@@ -136,15 +136,15 @@ class pdf_zenith extends ModelePDFSupplierProposal
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		SupplierProposal	$object				Id of object to generate
-	 *  @param		Translate			$outputlangs		Lang output object
-	 *  @param		string				$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int					$hidedetails		Do not show line details
-	 *  @param		int					$hidedesc			Do not show desc
-	 *  @param		int					$hideref			Do not show ref
-	 *  @return		int										1=OK, 0=KO
+	 *	@param	SupplierProposal	$object				Object source to build document
+	 *	@param	Translate			$outputlangs		Lang output object
+	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>			$hidedetails		Do not show line details
+	 *	@param	int<0,1>			$hidedesc			Do not show desc
+	 *	@param	int<0,1>			$hideref			Do not show ref
+	 *	@return	int<-1,1>								1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs = null, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $hookmanager, $mysoc, $nblines;
@@ -468,7 +468,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -1497,7 +1497,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
 			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
@@ -1517,7 +1517,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 		}
 
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
@@ -1532,7 +1532,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['vat']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1547,7 +1547,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['subprice']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1558,7 +1558,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
 			'width' => 11, // in mm
@@ -1572,7 +1572,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['unit']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
 			'width' => 13, // in mm
@@ -1586,7 +1586,7 @@ class pdf_zenith extends ModelePDFSupplierProposal
 			$this->cols['discount']['status'] = true;
 		}
 
-		$rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
+		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm

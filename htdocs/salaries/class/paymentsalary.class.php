@@ -153,7 +153,7 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -209,7 +209,7 @@ class PaymentSalary extends CommonObject
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
-		//deprecatd
+		//deprecated
 		if (!empty($this->datepaye) && empty($this->datep)) {
 			dol_syslog(__METHOD__.": using datepaye is deprecated, please use datep instead", LOG_WARNING);
 			$this->datep = $this->datepaye;
@@ -711,7 +711,7 @@ class PaymentSalary extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Mise a jour du lien entre le paiement de  salaire et la ligne dans llx_bank generee
+	 *  Update the relation between the salary paiment and the line generated in llx_bank
 	 *
 	 *  @param	int		$id_bank         Id if bank
 	 *  @return	int			             >0 if OK, <=0 if KO
@@ -850,7 +850,7 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen						Longueur max libelle
@@ -987,7 +987,7 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

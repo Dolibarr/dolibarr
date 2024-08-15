@@ -200,7 +200,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			// User seems valid
-			$fuser->getrights();
+			$fuser->loadRights();
 
 			// Set the property $user to the $user of API
 			static::$user = $fuser;
