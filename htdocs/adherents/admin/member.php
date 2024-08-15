@@ -315,7 +315,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	}
 
 	print '<td class="center">';
-	$s = $modCodeMember->getToolTip($langs, null, -1);
+	$s = $modCodeMember->getToolTip($langs, null);
 	print $form->textwithpicto('', $s, 1);
 	print '</td>';
 

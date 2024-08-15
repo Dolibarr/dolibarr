@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Kolmas osapuoli tai kumppanuusjäsen on pak
 ErrorFailedToWriteInTempDirectory=Kirjoittaminen väliaikaiseen hakemistoon epäonnistui
 ErrorQuantityIsLimitedTo=Määrä on rajoitettu %s
 ErrorFailedToLoadThirdParty=Kolmannen osapuolen löytäminen/lataus epäonnistui osoitteesta id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Tämä maksu-tila ei ole pankkitili
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe-asiakasta ei ole asetettu tälle kolmannelle osapuolelle (tai asetettu arvoon, joka on poistettu Stripen puolelta). luo (tai liitä se uudelleen).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP-haku ei voi etsiä +-merkin sisältävää merkkijonoa lähettäjästä tai vastaanottajasta
 ErrorTableNotFound=Taulukkoa <b>%s</b> ei löydy
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Sanakirjaa <b>%s</b> ei löydy
 ErrorFailedToCreateSymLinkToMedias=Epäonnistunut luo symbolisen linkin %s osoittaminen kohteeseen %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Tarkista viennissä käytetty komento viennin lisäasetuksista
 ErrorEndTimeMustBeGreaterThanStartTime=Päättymisajan on oltava myöhemmin kuin alkamisajan
-ErrorIncoherentDates=Alkamisajan on oltava aikaisemmin kuin päättymisaika
-ErrorEndHourIsNull=Loppuaika ei voi olla nolla
-ErrorStartHourIsNull=Alkamisaika ei voi olla nolla
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

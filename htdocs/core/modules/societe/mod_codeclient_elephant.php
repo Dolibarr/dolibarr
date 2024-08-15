@@ -289,8 +289,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed

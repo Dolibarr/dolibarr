@@ -673,7 +673,7 @@ if (empty($reshook)) {
 				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			} else {
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
+				$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
 			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'CU');
@@ -799,7 +799,7 @@ if (empty($reshook)) {
 			}
 
 			$ttc = price2num(GETPOST('price_ttc'), '', 2);
-			$ht = (float) $ttc / (1 + ($vatratecleaned / 100));
+			$ht = (float) $ttc / (1 + ((float) $vatratecleaned / 100));
 			$price_base_type = 'HT';
 		}
 

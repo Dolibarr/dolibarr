@@ -29,9 +29,10 @@ GCP_connectionStatus=Online State
 GCP_Type=Printer Type
 PrintIPPDesc=This driver allows sending of documents directly to a printer. It requires a Linux system with CUPS installed.
 PRINTIPP_HOST=Print server
-PRINTIPP_PORT=Port
+PRINTIPP_PORT=端口
 PRINTIPP_USER=Login
-PRINTIPP_PASSWORD=Password
+PRINTIPP_PASSWORD=密碼
+PRINTIPP_SSL=Use SSL
 NoDefaultPrinterDefined=No default printer defined
 DefaultPrinter=Default printer
 Printer=Printer
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cl
 PrintingDriverDescprintipp=Configuration variables for printing driver Cups.
 PrintTestDescprintgcp=List of Printers for Google Cloud Print.
 PrintTestDescprintipp=List of Printers for Cups.
+Testbbbb

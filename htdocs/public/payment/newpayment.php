@@ -489,7 +489,7 @@ if ($action == 'dopayment') {
 // When using the old Charge API architecture, this code is called after clicking the 'dopayment' with the Charge API architecture.
 // When using the PaymentIntent API architecture, the Stripe customer was already created when creating PaymentIntent when showing payment page, and the payment is already ok when action=charge.
 if ($action == 'charge' && isModEnabled('stripe')) {
-	$amountstripe = $amount;
+	$amountstripe = (float) $amount;
 
 	// Correct the amount according to unit of currency
 	// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support

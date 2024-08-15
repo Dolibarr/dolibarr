@@ -485,6 +485,7 @@ if (isModEnabled('debugbar') && !GETPOST('dol_use_jmobile') && empty($_SESSION['
 	}
 	$conf->global->MAIN_HTML_HEADER .= $renderer->renderHead();
 
+	'@phan-var-force array{time:DebugBar\DataCollector\TimeDataCollector} $debugbar';
 	$debugbar['time']->startMeasure('pageaftermaster', 'Page generation (after environment init)');
 }
 
@@ -791,6 +792,8 @@ if (!defined('NOLOGIN')) {
 	// At the end of this phase, the variable $login is defined.
 	$resultFetchUser = '';
 	$test = true;
+	$dol_authmode = null;
+
 	if (!isset($_SESSION["dol_login"])) {
 		// It is not already authenticated and it requests the login / password
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -939,10 +942,8 @@ if (!defined('NOLOGIN')) {
 				$login = '';
 			}
 
-			$dol_authmode = '';
-
 			if ($login) {
-				$dol_authmode = $conf->authmode; // This properties is defined only when logged, to say what mode was successfully used
+				$dol_authmode = $conf->authmode; // This property is defined only when logged, to say what mode was successfully used
 				$dol_tz = empty($_POST["tz"]) ? (empty($_SESSION["tz"]) ? '' : $_SESSION["tz"]) : $_POST["tz"];
 				$dol_tz_string = empty($_POST["tz_string"]) ? (empty($_SESSION["tz_string"]) ? '' : $_SESSION["tz_string"]) : $_POST["tz_string"];
 				$dol_tz_string = preg_replace('/\s*\(.+\)$/', '', $dol_tz_string);
@@ -1019,7 +1020,7 @@ if (!defined('NOLOGIN')) {
 			exit;
 		}
 
-		$resultFetchUser = $user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1)); // value for $login was retrieved previously when checking password.
+		$resultFetchUser = $user->fetch(0, $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1)); // value for $login was retrieved previously when checking password.
 		if ($resultFetchUser <= 0 || $user->isNotIntoValidityDateRange()) {
 			dol_syslog('User not found or not valid, connection refused');
 			session_destroy();
@@ -1088,7 +1089,7 @@ if (!defined('NOLOGIN')) {
 		$entity = isset($_SESSION["dol_entity"]) ? $_SESSION["dol_entity"] : 0;
 		dol_syslog("- This is an already logged session. _SESSION['dol_login']=".$login." _SESSION['dol_entity']=".$entity, LOG_DEBUG);
 
-		$resultFetchUser = $user->fetch('', $login, '', 1, ($entity > 0 ? $entity : -1));
+		$resultFetchUser = $user->fetch(0, $login, '', 1, ($entity > 0 ? $entity : -1));
 
 		//var_dump(dol_print_date($user->flagdelsessionsbefore, 'dayhour', 'gmt')." ".dol_print_date($_SESSION["dol_logindate"], 'dayhour', 'gmt'));
 
@@ -1142,7 +1143,7 @@ if (!defined('NOLOGIN')) {
 			// Hooks on failed login
 			$action = '';
 			$hookmanager->initHooks(array('login'));
-			$parameters = array('dol_authmode' => (isset($dol_authmode) ? $dol_authmode : ''), 'dol_loginmesg' => $_SESSION["dol_loginmesg"]);
+			$parameters = array('dol_authmode' => (string) $dol_authmode, 'dol_loginmesg' => $_SESSION["dol_loginmesg"]);
 			$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $user, $action); // Note that $action and $object may have been modified by some hooks
 			if ($reshook < 0) {
 				$error++;
@@ -1538,6 +1539,7 @@ if (!defined('NOREQUIREMENU')) {
 	if (GETPOST('menu', 'alpha')) {
 		$file_menu = GETPOST('menu', 'alpha'); // example: menu=eldy_menu.php
 	}
+
 	if (!class_exists('MenuManager')) {
 		$menufound = 0;
 		$dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
@@ -1553,7 +1555,9 @@ if (!defined('NOREQUIREMENU')) {
 			include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
 		}
 	}
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager->loadMenu();
 }
 
@@ -1580,14 +1584,15 @@ if (!function_exists("llxHeader")) {
 	 * @param	string			$target				Target to use on links
 	 * @param 	int<0,1>		$disablejs			More content into html header
 	 * @param 	int<0,1>		$disablehead		More content into html header
-	 * @param 	array|string  	$arrayofjs			Array of complementary js files
-	 * @param 	array|string  	$arrayofcss			Array of complementary css files
+	 * @param 	string[]|string  	$arrayofjs			Array of complementary js files
+	 * @param 	string[]|string  	$arrayofcss			Array of complementary css files
 	 * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
 	 * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
 	 * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
 	 * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
 	 * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
 	 * @return	void
+	 * @phan-suppress PhanRedefineFunction (Also defined in htdocs/asterisk/wrapper)
 	 */
 	function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 	{
@@ -1639,7 +1644,7 @@ if (!function_exists("llxHeader")) {
 		}
 
 		if (empty($conf->dol_hide_leftmenu) && !GETPOST('dol_openinpopup', 'aZ09')) {
-			left_menu(array(), $help_url, '', array(), 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
+			left_menu('', $help_url, '', array(), 1, $title, 1); // $menumanager is retrieved with a global $menumanager inside this function
 		}
 
 		// main area
@@ -2262,7 +2267,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Show menu entries
 		print '<div id="tmenu_tooltip'.(!getDolGlobalString('MAIN_MENU_INVERT') ? '' : 'invert').'" class="tmenu">'."\n";
+		// @phan-suppress-next-line PhanRedefinedClassReference
 		$menumanager->atarget = $target;
+		// @phan-suppress-next-line PhanRedefinedClassReference
 		$menumanager->showmenu('top', array('searchform' => $searchform)); // This contains a \n
 		print "</div>\n";
 
@@ -2556,7 +2563,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	if (!empty($user->admin)) {
 		$dropdownBody .= '<br><b>'.$langs->trans("Administrator").'</b>: '.yn($user->admin);
 	}
-	if (!empty($user->socid)) {	// Add thirdparty for external users
+	$company = '';
+	if (!empty($user->socid)) {	// Add third party for external users
 		$thirdpartystatic = new Societe($db);
 		$thirdpartystatic->fetch($user->socid);
 		$companylink = ' '.$thirdpartystatic->getNomUrl(2); // picto only of company
@@ -2576,6 +2584,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	$dropdownBody .= '<br><b>'.$langs->trans("ConnectedSince").':</b> '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("PreviousConnexion").':</b> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser');
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentTheme").':</b> '.$conf->theme;
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentMenuManager").':</b> '.(isset($menumanager) ? $menumanager->name : 'unknown');
 	$langFlag = picto_from_langcode($langs->getDefaultLang());
 	$dropdownBody .= '<br><b>'.$langs->trans("CurrentUserLanguage").':</b> '.($langFlag ? $langFlag.' ' : '').$langs->getDefaultLang();
@@ -2662,6 +2671,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	                '.$userDropDownImage.'
 	                <p>
 	                    '.$profilName.'<br>';
+		$title = '';
 		if ($user->datelastlogin) {
 			$title = $langs->trans("ConnectedSince").' : '.dol_print_date($user->datelastlogin, "dayhour", 'tzuser');
 			if ($user->datepreviouslogin) {
@@ -3141,6 +3151,7 @@ function top_menu_search()
 	$defaultAction = '';
 	$buttonList = '<div class="dropdown-global-search-button-list" >';
 	// Menu with all searchable items
+	// @phan-suppress-next-line PhanEmptyForeach // array is really empty
 	foreach ($arrayresult as $keyItem => $item) {
 		if (empty($defaultAction)) {
 			$defaultAction = $item['url'];
@@ -3280,12 +3291,12 @@ function top_menu_search()
 /**
  *  Show left menu bar
  *
- *  @param  string		$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprecated and must be provided to ''.
+ *  @param  ''			$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprecated and must be provided to ''.
  *  @param  string		$helppagename    	       	Name of wiki page for help ('' by default).
  *                                                  Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
  *                                                  For other external page: http://server/url
  *  @param  string		$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
- *  @param  array		$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int			$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string		$title                      Title of web page
  *  @param  int<0,1>	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
@@ -3340,6 +3351,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				$searchform .= $form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, 'accesskey="s"', 1, 0, (!getDolGlobalString('MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY') ? 1 : 0), 'vmenusearchselectcombo', 1, $textsearch, 1, $stringforfirstkey.' s');
 			} else {
 				if (is_array($arrayresult)) {
+					// @phan-suppress-next-line PhanEmptyForeach // array is really empty in else case.
 					foreach ($arrayresult as $key => $val) {
 						$searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'search_all', (empty($val['shortcut']) ? '' : $val['shortcut']), 'searchleft'.$key, $val['img']);
 					}
@@ -3396,11 +3408,15 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 		print '<div class="vmenu"'.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? ' alt="Left menu"' : '').'>'."\n\n";
 
 		// Show left menu with other forms
+		// @phan-suppress-next-line PhanRedefinedClassReference
 		$menumanager->menu_array = $menu_array_before;
+		// @phan-suppress-next-line PhanRedefinedClassReference
 		$menumanager->menu_array_after = $menu_array_after;
 		if (getDolGlobalInt('MAIN_MENU_LEFT_DROPDOWN')) {
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->showmenu('leftdropdown', array('searchform' => $searchform)); // output menu_array and menu found in database
 		} else {
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->showmenu('left', array('searchform' => $searchform)); // output menu_array and menu found in database
 		}
 
@@ -3708,6 +3724,7 @@ if (!function_exists("llxFooter")) {
 	 * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
 	 * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
 	 * @return	void
+	 * @phan-suppress PhanRedefineFunction // Also defined at asterisk/wrapper.php
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{

@@ -40,6 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
  */
 class Setup extends DolibarrApi
 {
+	/**
+	 * @var ?Translate
+	 */
 	private $translations = null;
 
 	/**
@@ -59,6 +62,7 @@ class Setup extends DolibarrApi
 	 * @param int       $limit      Number of items per page
 	 * @param int       $page       Page number {@min 0}
 	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
+	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
 	 *
@@ -67,7 +71,7 @@ class Setup extends DolibarrApi
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of action triggers
 	 */
-	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $sqlfilters = '')
+	public function getListOfActionTriggers($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $elementtype = '', $lang = '', $sqlfilters = '')
 	{
 		$list = array();
 
@@ -108,7 +112,9 @@ class Setup extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			for ($i = 0; $i < $min; $i++) {
-				$list[] = $this->db->fetch_object($result);
+				$type = $this->db->fetch_object($result);
+				$this->translateLabel($type, $lang, 'Notify_', array('other'));
+				$list[] = $type;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving list of action triggers : '.$this->db->lasterror());
@@ -1196,8 +1202,9 @@ class Setup extends DolibarrApi
 	{
 		$list = array();
 
-		if (!DolibarrApiAccess::$user->admin) {
-			throw new RestException(403, 'Only an admin user can get list of extrafields');
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELDS');
 		}
 
 		if ($elementtype == 'thirdparty') {
@@ -2259,7 +2266,7 @@ class Setup extends DolibarrApi
 		global $conf, $mysoc;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_COMPANY)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_COMPANY'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_COMPANY');
 		}
 
@@ -2411,7 +2418,7 @@ class Setup extends DolibarrApi
 		global $langs, $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_INTEGRITY_CHECK');
 		}
 
@@ -2729,7 +2736,7 @@ class Setup extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->admin
-			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != $conf->global->API_LOGINS_ALLOWED_FOR_GET_MODULES)) {
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
 		}
 

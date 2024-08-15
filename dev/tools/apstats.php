@@ -98,7 +98,7 @@ while ($i < $argc) {
 }
 
 // PHPSTAN setup
-$PHPSTANLEVEL = 4;
+$PHPSTANLEVEL = 6;
 
 // PHAN setup. Configuration is required, otherwise phan is disabled.
 $PHAN_CONFIG = "{$path}phan/config_extended.php";

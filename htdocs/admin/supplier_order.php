@@ -1,27 +1,27 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
-* Copyright (C) 2004-2011 Laurent Destailleur     <eldy@users.sourceforge.net>
-* Copyright (C) 2005-2011 Regis Houssin           <regis.houssin@inodbox.com>
-* Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
-* Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
-* Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
-* Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <https://www.gnu.org/licenses/>.
-*/
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /**
  *  \file       htdocs/admin/supplier_order.php
@@ -107,7 +107,7 @@ if ($action == 'specimen') {  // For orders
 		require_once $file;
 
 		$module = new $classname($db, $commande);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFSuppliersOrders $module';
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");

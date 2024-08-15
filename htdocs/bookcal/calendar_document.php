@@ -120,7 +120,7 @@ $form = new Form($db);
 $title = $langs->trans("Calendar").' - '.$langs->trans("Files");
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_document');
 
 // Show tabs
 $head = calendarPrepareHead($object);

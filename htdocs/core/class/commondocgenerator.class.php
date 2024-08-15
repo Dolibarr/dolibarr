@@ -154,7 +154,7 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
 	 */
 	public $cols;
 
@@ -309,7 +309,8 @@ abstract class CommonDocGenerator
 			$mysoc->country = $outputlangs->transnoentitiesnoconv("Country".$mysoc->country_code);
 		}
 		if (empty($mysoc->state) && !empty($mysoc->state_code)) {
-			$mysoc->state = getState($mysoc->state_code, '0');
+			$state_id = dol_getIdFromCode($this->db, $mysoc->state_code, 'c_departements', 'code_departement', 'rowid');
+			$mysoc->state = getState($state_id, '0');
 		}
 
 		$logotouse = $conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small;
@@ -365,7 +366,8 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, '0');
+			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
+			$object->state = getState($state_id, '0');
 		}
 
 		$array_thirdparty = array(
@@ -431,7 +433,8 @@ abstract class CommonDocGenerator
 			$object->country = $outputlangs->transnoentitiesnoconv("Country".$object->country_code);
 		}
 		if (empty($object->state) && !empty($object->state_code)) {
-			$object->state = getState($object->state_code, '0');
+			$state_id = dol_getIdFromCode($this->db, $object->state_code, 'c_departements', 'code_departement', 'rowid');
+			$object->state = getState($state_id, '0');
 		}
 
 		$array_contact = array(

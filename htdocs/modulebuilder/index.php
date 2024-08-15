@@ -2103,7 +2103,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	if (!empty(GETPOST('dictionnarykey'))) {
-		$newdicname = $dicts['tabname'][GETPOST('dictionnarykey') - 1];
+		$newdicname = $dicts['tabname'][GETPOSTINT('dictionnarykey') - 1];
 	}
 
 	//chercher la table dicname
@@ -2153,7 +2153,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 }
 if ($dirins && $action == 'updatedictionary' && GETPOST('dictionnarykey')) {
-	$keydict = GETPOST('dictionnarykey') - 1 ;
+	$keydict = GETPOSTINT('dictionnarykey') - 1 ;
 
 	$pathtofile = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
 	$destdir = $dirins.'/'.strtolower($module);
@@ -3707,7 +3707,7 @@ if ($module == 'initmodule') {
 
 				print dol_get_fiche_head($head2, $tab, '', -1, '', 0, '', '', 0, 'formodulesuffix');
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 
@@ -5051,7 +5051,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5486,7 +5486,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5737,7 +5737,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5793,7 +5793,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -5860,7 +5860,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -6100,7 +6100,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -6303,7 +6303,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';
@@ -6607,7 +6607,7 @@ if ($module == 'initmodule') {
 				print '<input type="hidden" name="tab" value="'.$tab.'">';
 				print '<input type="hidden" name="module" value="'.$module.'">';
 
-				$posCursor = (empty($find)) ? array() : array('find'=>$find);
+				$posCursor = (empty($find)) ? array() : array('find' => $find);
 				$doleditor = new DolEditor('editfilecontent', $content, '', 300, 'Full', 'In', true, false, 'ace', 0, '99%', 0, $posCursor);
 				print $doleditor->Create(1, '', false, $langs->trans("File").' : '.$file, (GETPOST('format', 'aZ09') ? GETPOST('format', 'aZ09') : 'html'));
 				print '<br>';

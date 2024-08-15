@@ -119,13 +119,13 @@ class pdf_standard_actions
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Write the object to document file to disk
+	 * Write the object to document file to disk
 	 *
-	 *      @param	int			$socid			Thirdparty id
-	 *      @param  Translate	$outputlangs    Lang object for output language
-	 *      @return int             			1=OK, 0=KO
+	 * @param  ?CommonObject	$object			Order/...
+	 * @param  Translate		$outputlangs    Lang object for output language
+	 * @return int<0,1>     			    	1=OK, 0=KO
 	 */
-	public function write_file($socid, $outputlangs)
+	public function write_file($object, $outputlangs)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager;

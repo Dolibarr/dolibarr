@@ -21,12 +21,12 @@ DeleteAUser=Избришете корисник
 EnableAUser=Овозможи корисник
 DeleteGroup=Delete
 DeleteAGroup=Избришете група
-ConfirmDisableUser=Дали сте сигурни дека сакате да го оневозможите корисникот <b>%s<span class='notranslate'></b></s>?
-ConfirmDeleteUser=Дали сте сигурни дека сакате да го избришете корисникот <b>%s<span class='notranslate'></b></s>?
-ConfirmDeleteGroup=Дали сте сигурни дека сакате да ја избришете групата <b>%s<span class='notranslate'></b></s>?
-ConfirmEnableUser=Дали сте сигурни дека сакате да го овозможите корисникот <b>%s<span class='notranslate'></b></s>?
-ConfirmReinitPassword=Дали сте сигурни дека сакате да генерирате нова лозинка за корисникот <b>%s<span class='notranslate'>b09a4b739f17f80 >?
-ConfirmSendNewPassword=Дали сте сигурни дека сакате да генерирате и испратите нова лозинка за корисникот <b>%s<span class='notranslate'>b09a4b739f17f8z распон>?
+ConfirmDisableUser=Are you sure you want to disable user <b>%s</b>?
+ConfirmDeleteUser=Are you sure you want to delete user <b>%s</b>?
+ConfirmDeleteGroup=Are you sure you want to delete group <b>%s</b>?
+ConfirmEnableUser=Are you sure you want to enable user <b>%s</b>?
+ConfirmReinitPassword=Are you sure you want to generate a new password for user <b>%s</b>?
+ConfirmSendNewPassword=Are you sure you want to generate and send new password for user <b>%s</b>?
 NewUser=Нов корисник
 CreateUser=Креирај корисник
 LoginNotDefined=Најавата не е дефинирана.
@@ -35,7 +35,7 @@ ListOfUsers=Список на корисници
 SuperAdministrator=Администратор на повеќе компании
 SuperAdministratorDesc=Системски администратор на повеќе компании (може да ги промени поставките и корисниците)
 DefaultRights=Стандардни дозволи
-DefaultRightsDesc=Овде дефинирајте ги <u>стандардните</u> дозволите кои автоматски се доделуваат на b0b5ba1a823> нов<span class='notranslate'></u> корисник (за да ги измените дозволите за постоечките корисници, одете на корисничката картичка).
+DefaultRightsDesc=Define here the <u>default</u> permissions that are automatically granted to a <u>new</u> user (to modify permissions for existing users, go to the user card).
 DolibarrUsers=Корисници на Dolibarr
 LastName=Презиме
 FirstName=Име

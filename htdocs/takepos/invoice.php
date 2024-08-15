@@ -384,6 +384,8 @@ if (empty($reshook)) {
 		//$creditnote->remise_percent = $invoice->remise_percent;
 		$creditnote->create($user);
 
+		$fk_parent_line = 0; // Initialise
+
 		foreach ($invoice->lines as $line) {
 			// Extrafields
 			if (method_exists($line, 'fetch_optionals')) {
@@ -935,9 +937,9 @@ if (empty($reshook)) {
 					//$vatratecode = $reg[2];
 				}
 
-				$pu_ht = price2num($number / (1 + ((float) $vatratecleaned / 100)), 'MU');
+				$pu_ht = price2num((float) price2num($number, 'MU') / (1 + ((float) $vatratecleaned / 100)), 'MU');
 				// Check min price
-				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min)))) {
+				if ($usercanproductignorepricemin && (!empty($price_min) && ((float) price2num($pu_ht) * (1 - (float) price2num($line->remise_percent) / 100) < price2num($price_min)))) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 					// echo $langs->trans("CantBeLessThanMinPrice");
@@ -983,7 +985,7 @@ if (empty($reshook)) {
 				$pu_ht = price2num($line->subprice / (1 + ($line->tva_tx / 100)), 'MU');
 
 				// Check min price
-				if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->subprice) * (1 - price2num($number) / 100) < price2num($price_min)))) {
+				if ($usercanproductignorepricemin && (!empty($price_min) && ((float) price2num($line->subprice) * (1 - (float) price2num($number) / 100) < (float) price2num($price_min)))) {
 					$langs->load("products");
 					dol_htmloutput_errors($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency)));
 				} else {
@@ -1016,7 +1018,7 @@ if (empty($reshook)) {
 
 	if ($action == "setbatch" && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-		$warehouseid = getDolGlobalInt($constantforkey);	// TODO Get the wrehouse id from GETPOSTINT('warehouseid');
+		$warehouseid = getDolGlobalInt($constantforkey);	// TODO Get the warehouse id from GETPOSTINT('warehouseid');
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET batch = '".$db->escape($batch)."', fk_warehouse = ".((int) $warehouseid);
 		$sql .= " WHERE rowid=".((int) $idoflineadded);
 		$db->query($sql);

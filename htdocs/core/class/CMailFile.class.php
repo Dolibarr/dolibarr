@@ -848,6 +848,7 @@ class CMailFile
 				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
+				dol_syslog("A hook has replaced code to send email", LOG_DEBUG);
 				return true;
 			}
 
@@ -1133,7 +1134,7 @@ class CMailFile
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1297,7 +1298,7 @@ class CMailFile
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1436,7 +1437,7 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int|string			    Return integer <0 if KO, encoded string if OK
+	 * @return 	int<-1,-1>|string		Return integer <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
@@ -1800,8 +1801,8 @@ class CMailFile
 	 * @param	string[]	$filename_list		Tableau
 	 * @param	string[]	$mimetype_list		Tableau
 	 * @param 	string[]	$mimefilename_list	Tableau
-	 * @param	string[]	$cidlist			Array of CID if file must be completed with CID code
-	 * @return	string|int						String with files encoded
+	 * @param	?string[]	$cidlist			Array of CID if file must be completed with CID code
+	 * @return	string|int<-1,-1>	 			String with files encoded or -1 when error
 	 */
 	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
 	{
