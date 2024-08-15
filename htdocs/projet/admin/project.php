@@ -117,6 +117,8 @@ if ($action == 'updateMaskTask') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProjects $module';
+
 		if ($module->write_file($project, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project&file=SPECIMEN.pdf");
 			return;
@@ -150,6 +152,8 @@ if ($action == 'updateMaskTask') {
 		require_once $file;
 
 		$module = new $classname($db);
+
+		'@phan-var-force ModelePDFTask $module';
 
 		if ($module->write_file($project, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project_task&file=SPECIMEN.pdf");

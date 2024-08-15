@@ -113,7 +113,7 @@ $idpays = $p[0];
 
 $sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
+$sql .= " s.rowid as socid, s.nom as name, s.code_compta as code_compta_client, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell,";
@@ -167,7 +167,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 		// les variables
 		$cptcli = ((getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-		$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
+		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {

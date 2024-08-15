@@ -93,7 +93,7 @@ NewSoldeCP=新百倫
 alreadyCPexist=在此期間已提出請假請求。
 UseralreadyCPexist=A leave request has already been done on this period for %s.
 groups=Groups
-users=Users
+users=用戶
 AutoSendMail=Automatic mailing
 NewHolidayForGroup=New collective leave
 SendRequestCollectiveCP=Create collective leave
@@ -120,7 +120,7 @@ UpdateConfCPOK=更新成功。
 Module27130Name= 休假申請管理
 Module27130Desc= 休假申請管理
 ErrorMailNotSend=發送電子郵件時發生錯誤：
-NoticePeriod=Notice period
+NoticePeriod=通知期間
 #Messages
 HolidaysToValidate=驗證休假請求
 HolidaysToValidateBody=以下是要驗證的請假請求

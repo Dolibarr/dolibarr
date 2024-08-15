@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=طرف ثالث أو عضو في الشرا
 ErrorFailedToWriteInTempDirectory=فشل في الكتابة في الدليل المؤقت
 ErrorQuantityIsLimitedTo=الكمية محدودة بـ %s
 ErrorFailedToLoadThirdParty=فشل العثور على/تحميل جهة خارجية من المعرف=%s، البريد الإلكتروني=%s، الاسم= %s
-ErrorThisPaymentModeIsNotSepa=وضع الدفع هذا ليس حسابًا مصرفيًا
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=لم يتم تعيين Stripe العميل لهذا الطرف الثالث (أو تم تعيينه على قيمة محذوفة من جانب Stripe). قم بإنشائه (أو إعادة إرفاقه) أولاً.
 ErrorCharPlusNotSupportedByImapForSearch=بحث IMAP غير قادر على البحث في المرسل أو المستلم عن سلسلة تحتوي على الحرف +
 ErrorTableNotFound=الجدول <b>%s</b> غير موجود
@@ -315,7 +316,7 @@ ErrorTooMuchFileInForm=يوجد عدد كبير جدًا من الملفات ف�
 ErrorSessionInvalidatedAfterPasswordChange=تم إبطال الجلسة بعد تغيير كلمة المرور أو البريد الإلكتروني حالة أو تواريخ الصلاحية. الرجاء إعادة تسجيل الدخول.
 ErrorExistingPermission = الإذن <b>%s</b> للكائن  <b>%s</b> موجود بالفعل
 ErrorFieldExist=قيمة <b>%s</b> موجودة بالفعل
-ErrorEqualModule=نموذج غير صالح في <b>%s</b> 
+ErrorEqualModule=نموذج غير صالح في <b>%s</b>
 ErrorFieldValue=قيمة <b>%s</b> غير صحيحة
 ErrorCoherenceMenu=<b>%s</b> مطلوب عندما  <b>%s</b> هو "يسار"
 ErrorUploadFileDragDrop=حدث خطأ أثناء تحميل الملف (الملفات).
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=لم يتم العثور على القاموس <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=فشل إنشاء الرابط الرمزي %s للإشارة إلى %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=تحقق من الأمر المستخدم للتصدير في الخيارات المتقدمة للتصدير
 ErrorEndTimeMustBeGreaterThanStartTime=يجب أن يكون وقت الانتهاء أكبر من وقت البدء
-ErrorIncoherentDates=يجب أن يكون تاريخ البدء أقل من تاريخ الانتهاء
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
