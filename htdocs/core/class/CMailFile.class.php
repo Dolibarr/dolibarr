@@ -848,6 +848,7 @@ class CMailFile
 				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
+				dol_syslog("A hook has replaced code to send email", LOG_DEBUG);
 				return true;
 			}
 
