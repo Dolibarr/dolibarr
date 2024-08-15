@@ -29,7 +29,6 @@ InterventionValidatedInDolibarr=Intervención%s validada
 InterventionModifiedInDolibarr=Intervención%s modificada
 InterventionClassifiedBilledInDolibarr=Intervención%s establecida como facturada
 InterventionClassifiedUnbilledInDolibarr=Intervención%s establecida como no facturada
-InterventionSentByEMail=Intervención %s enviada por correo electrónico
 InterventionDeletedInDolibarr=Intervención%s eliminada
 InterventionsArea=Área de intervenciones
 DraftFichinter=Proyectos de intervención

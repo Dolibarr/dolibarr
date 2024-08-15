@@ -22,7 +22,6 @@ SendInterventionByMail=Enviar intervención por correo electrónico
 InterventionModifiedInDolibarr=Intervención %s modificado
 InterventionClassifiedBilledInDolibarr=Intervención %s establecida como facturada
 InterventionClassifiedUnbilledInDolibarr=Intervención %s establecida como no facturada
-InterventionSentByEMail=Intervención %s enviada por correo electrónico
 InterventionDeletedInDolibarr=Intervención %s eliminado
 InterventionsArea=Área de intervenciones
 DraftFichinter=Proyecto de intervenciones

@@ -202,7 +202,7 @@ LastMemberDate=Најновиот датум за членство
 LatestSubscriptionDate=Најновиот датум за придонес
 MemberNature=Природата на членот
 MembersNature=Природата на членовите
-Public=%s може да го објави моето членство во <a target="_blank" href="%s">јавниот регистар<span class='notranslate'></a></s>
+Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
 MembershipPublic=Јавно членство
 NewMemberbyWeb=Додаден е нов член. Чека одобрување
 NewMemberForm=Формулар за нов член
