@@ -3639,7 +3639,7 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 
 			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
@@ -8402,7 +8402,7 @@ class Form
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
-			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0);
+			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
