@@ -1560,11 +1560,10 @@ class FormMail extends Form
 					// Remplacer la variable de substitution dans le contenu HTML
 					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
 
-
 					// Envoyer le contenu HTML à process_template.php pour traitement PHP
 					$.ajax({
 						type: "POST",
-						url: "/core/ajax/mailtemplate.php",
+						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
 						data: { content: contentHtml, token: csrfToken },
 						success: function(response) {
 							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
