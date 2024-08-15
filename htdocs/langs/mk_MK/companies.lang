@@ -255,16 +255,16 @@ CustomerRelativeDiscount=Релативен клиент попуст
 SupplierRelativeDiscount=Релативен попуст на продавачот
 CustomerRelativeDiscountShort=Релативен попуст
 CustomerAbsoluteDiscountShort=апсолутен попуст
-CompanyHasRelativeDiscount=Овој клиент има стандарден попуст од <b>%s%%</span class=span 'notranslate'></b>
+CompanyHasRelativeDiscount=This customer has a default discount of <b>%s%%</b>
 CompanyHasNoRelativeDiscount=Овој клиент стандардно нема релативен попуст
-HasRelativeDiscountFromSupplier=Имате стандарден попуст од <b>%s%%<s class='pan><s notranslate'></b></span> со овој продавач
+HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> with this vendor
 HasNoRelativeDiscountFromSupplier=Нема стандарден релативен попуст со овој продавач
-CompanyHasAbsoluteDiscount=Овој клиент има достапни попусти (кредитни белешки или авансни плаќања) за <b>%sb09a17f839f span> <span class='notranslate'>%s
-CompanyHasDownPaymentOrCommercialDiscount=Овој клиент има достапни попусти (комерцијални, авансни плаќања) за <b>%s<span class='notranslate'>b09a4b78z01s >
+CompanyHasAbsoluteDiscount=This customer has discounts available (credits notes or down payments) for <b>%s</b> %s
+CompanyHasDownPaymentOrCommercialDiscount=This customer has discounts available (commercial, down payments) for <b>%s</b>
 CompanyHasCreditNote=Овој клиент сè уште има кредитни белешки за <b>%s</b>
 HasNoAbsoluteDiscountFromSupplier=Нема достапен попуст/кредит од овој продавач
-HasAbsoluteDiscountFromSupplier=Имате достапни попусти (кредитни белешки или авансни плаќања) за <b>%sb09a47f839f > <span class='notranslate'>%s од овој продавач
-HasDownPaymentOrCommercialDiscountFromSupplier=Имате достапни попусти (комерцијални, авансни плаќања) за <b>%s<span class='notranslate'>b09a4b78z09f1>f од овој продавач
+HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this vendor
+HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> from this vendor
 HasCreditNoteFromSupplier=Имате кредитни белешки за <b>%s</b> од овој продавач
 CompanyHasNoAbsoluteDiscount=Овој клиент нема достапен кредит за попуст
 CustomerAbsoluteDiscountAllUsers=Апсолутни клиентски попусти (доделени од сите корисници)
@@ -337,7 +337,7 @@ VATIntraCheck=Проверете
 VATIntraCheckDesc=ID на ДДВ мора да го содржи префиксот на земјата. Врската <b>%s</b> ја користи европската проверка на VAT) (VIES) кој бара пристап до интернет од серверот Dolibarr.
 VATIntraCheckURL=https://ec.europa.eu/taxation_customs/vies/#/vat-validation
 VATIntraCheckableOnEUSite=Проверете го ИД за ДДВ во заедницата на веб-страницата на Европската комисија
-VATIntraManualCheck=Може да проверите и рачно на веб-страницата на Европската комисија <a href="%s" target="_blank" rel="noopener noreferrer">%s<span class='notranslate'></a></s>
+VATIntraManualCheck=You can also check manually on the European Commission website <a href="%s" target="_blank" rel="noopener noreferrer">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Проверете не е можно. Услугата за проверка не ја обезбедува земјата-членка (%s).
 NorProspectNorCustomer=Ниту потенцијален, ниту клиент
 JuridicalStatus=Тип на деловен субјект
@@ -395,7 +395,7 @@ AddAddress=Додадете адреса
 SupplierCategory=Категорија на продавач
 JuridicalStatus200=Независен
 DeleteFile=Избришете датотека
-ConfirmDeleteFile=Дали сте сигурни дека сакате да ја избришете оваа датотека <b>%s<span class='notranslate'></b></s?
+ConfirmDeleteFile=Are you sure you want to delete this file <b>%s</b>?
 AllocateCommercial=Доделете им на продажните претставници
 UnallocateCommercial=Неназначени претставници за продажба
 Organization=Организација

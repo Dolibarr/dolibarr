@@ -207,7 +207,7 @@ TicketMessageMailIntroText=Здраво,<br>Додаден е нов одгов�
 TicketMessageMailIntroHelpAdmin=Овој текст ќе биде вметнат пред одговорот кога одговарате на билет од Dolibarr
 TicketMessageMailFooter=Подножјето на пораката
 TicketMessageMailFooterHelp=Овој текст се додава само на крајот од пораката испратена по е-пошта и нема да се зачува.
-TicketMessageMailFooterText=Порака испратена од <b>%s<span class='notranslate'></b></spanr> преку
+TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
 TicketMessageMailFooterHelpAdmin=Овој текст ќе биде вметнат по пораката за одговор.
 TicketMessageHelp=Само овој текст ќе биде зачуван во списокот со пораки на картичката за билети.
 TicketMessageSubstitutionReplacedByGenericValues=Променливите за замена се заменуваат со генерички вредности.
@@ -288,7 +288,7 @@ ViewTicket=Погледнете билет
 ViewMyTicketList=Погледнете го мојот список со билети
 ErrorEmailMustExistToCreateTicket=Грешка: адресата на е-пошта не е пронајдена во нашата база на податоци
 TicketNewEmailSubjectAdmin=Создаден нов билет - Реф %s (јавен ID на билет %s)
-TicketNewEmailBodyAdmin=<p>Билтот штотуку е создаден со ID #%s, видете ги информациите:<span class='notranslate'>b0679c9a6a6a64 >
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=Видете билет во интерфејсот за управување
 TicketPublicInterfaceForbidden=Јавниот интерфејс за билетите не беше овозможен
 ErrorEmailOrTrackingInvalid=Лоша вредност за следење ID или е-пошта

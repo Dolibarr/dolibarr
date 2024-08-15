@@ -148,7 +148,7 @@ LinkedToAnotherCompany=Поврзан со трета страна
 TaskIsNotAssignedToUser=Задачата не е доделена на корисникот. Користете го копчето '<strong>%s</strong>' за да доделите задача сега.
 ErrorTimeSpentIsEmpty=Времето поминато е празно
 TimeRecordingRestrictedToNMonthsBack=Снимањето време е ограничено на %s месеци наназад
-ThisWillAlsoRemoveTasks=Ова дејство ќе ги избрише и сите задачи на проектот (<b>%s<span class='notranslate'>b09a4b739f17f8z во моментот) и сите инпути на потрошеното време.
+ThisWillAlsoRemoveTasks=This action will also delete all tasks of project (<b>%s</b> tasks at the moment) and all inputs of time spent.
 IfNeedToUseOtherObjectKeepEmpty=Ако некои објекти (фактура, нарачка, ...), кои припаѓаат на друга трета страна, мора да бидат поврзани со проектот за да се создадат, чувајте го ова празно за проектот да биде повеќе трети страни.
 CloneTasks=Клонирање задачи
 CloneContacts=Клонирајте ги контактите

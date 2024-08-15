@@ -114,7 +114,6 @@ ForAnswersSeeForum=Pour toute autre question/aide, vous pouvez utiliser le forum
 HelpCenterDesc1=Voici quelques ressources pour obtenir de l'aide et du support avec Dolibarr.
 HelpCenterDesc2=Certaines de ces ressources ne sont disponibles qu'en <b>anglais</b>.
 ContentForLines=Contenu à afficher pour chaque produit ou service (à partir de la variable __LINES__ de Contenu)
-NoticePeriod=Période de préavis
 NewByMonth=Nouveau par mois
 Emails=Courriels
 EMailsSetup=Configuration des courriels

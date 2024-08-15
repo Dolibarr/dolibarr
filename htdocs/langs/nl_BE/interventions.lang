@@ -6,7 +6,6 @@ ValidateIntervention=Inteverntie valideren
 DocumentModelStandard=Standaard modeldocument voor interventies
 InterventionCardsAndInterventionLines=Inteventiebladen en -regels
 SendInterventionRef=Indiening van de interventie %s
-InterventionSentByEMail=Interventie %s per e-mail verzonden
 InterventionsArea=Interventieruimte
 DraftFichinter=Concept interventie
 LastModifiedInterventions=Laatste %s gemodificeerde interventies

@@ -21,7 +21,6 @@ InterventionClassifyDone=Marcar como "Listo"
 SendInterventionByMail=Enviar intervención por correo
 InterventionClassifiedBilledInDolibarr=Intervención %s marcada como facturada
 InterventionClassifiedUnbilledInDolibarr=Intervención %s marcada como sin facturar
-InterventionSentByEMail=Intervención %s enviada por correo
 InterventionsArea=Área de Intervenciones
 DraftFichinter=Intervenciones en borrador
 LastModifiedInterventions=Ultimas %s intervenciones modificadas
