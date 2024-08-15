@@ -7,7 +7,7 @@
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2023 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2023-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -83,8 +83,8 @@ if ($complete == 'na' || $complete == -2) {
 if ($fulldayevent) {
 	$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 	// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-	$datep = dol_mktime('00', '00', 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-	$datef = dol_mktime('23', '59', '59', GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
+	$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 	//print $db->idate($datep); exit;
 } else {
 	$datep = dol_mktime($aphour, $apmin, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
