@@ -41,7 +41,8 @@ if (empty($object) || !is_object($object)) {
 }
 
 '@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+ @phan-var-force CommonObject $object
+ @phan-var-force int $num';
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
