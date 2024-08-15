@@ -633,7 +633,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		}
 	}
 
-	if ($filefound) {
+	if ($filefound && !empty($classname)) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 		$modProject = new $classname();
 
