@@ -1545,17 +1545,15 @@ class FormMail extends Form
 			$(document).ready(function() {
 				$(".template-option").click(function() {
 					var template = $(this).data("template");
+					var subject = jQuery("#subject").val();
 
-					console.log("We choose a layout for email template " + template);
+					console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 					$(".template-option").removeClass("selected");
 					$(this).addClass("selected");
 
 					var contentHtml = $(this).data("content");
 					var csrfToken = "'.newToken().'";
-
-					// get value of sujet input
-					var subject = $("#sujet").val();
 
 					// Remplacer la variable de substitution dans le contenu HTML
 					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
@@ -1564,7 +1562,7 @@ class FormMail extends Form
 					$.ajax({
 						type: "POST",
 						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: { template: template, content: contentHtml, token: csrfToken },
+						data: { template: template, subject: subject, content: contentHtml, token: csrfToken },
 						success: function(response) {
 							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
 							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
