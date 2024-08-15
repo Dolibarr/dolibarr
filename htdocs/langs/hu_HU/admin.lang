@@ -62,7 +62,7 @@ UploadNewTemplate=Új sablon(ok) feltöltése
 FormToTestFileUploadForm=A fájlfeltöltés tesztelésének űrlapja (beállítás szerint)
 ModuleMustBeEnabled=A(z) <b>%s</b> modult/alkalmazást engedélyezni kell
 ModuleIsEnabled=A(z) <b>%s</b> modul/alkalmazás engedélyezve van
-IfModuleEnabled=Megjegyzés: az 'igen' csak akkor eredményes, ha a <b>%s</b> modul engedélyezve van
+IfModuleEnabled=Megjegyzés: az 'igen' csak akkor eredményes, ha a <b>%s</b> modul engedélyezve van 
 RemoveLock=Távolítsa el / nevezze át a(z) <b>%s</b> fájlt, ha létezik, hogy engedélyezze a Frissítés / Telepítés eszközt.
 RestoreLock=Állítsa vissza az <b>%s</b> fájlt, csak olvasási jogokat engedélyezzen, hogy le lehessen tiltani a Frissítés / Telepítés eszköz további használatát.
 SecuritySetup=Biztonsági beállítások
@@ -1691,7 +1691,7 @@ LDAPDescUsers=Ez az oldal lehetővé teszi, hogy meghatározza az LDAP attribút
 LDAPDescGroups=Ez az oldal lehetővé teszi, hogy meghatározza az LDAP attribútumok név LDAP fa minden egyes adat található Dolibarr csoportok.
 LDAPDescMembers=Ez az oldal lehetővé teszi, hogy meghatározza az LDAP attribútumok név LDAP-fában minden adat megtalálható Dolibarr tagjai modul.
 LDAPDescMembersTypes=Ez az oldal lehetővé teszi az LDAP attribútumok nevének meghatározását az LDAP fában a Dolibarr tagtípusokon található minden egyes adathoz.
-LDAPDescValues=Példaértékek a következő betöltött sémákkal: <b>OpenLDAP</b>: b0aee83365837fz core.schema, cosine.schema, inetorgperson.schema<span class='notranslate'></b>). Ha ezeket az értékeket és az OpenLDAP-t használja, módosítsa az LDAP konfigurációs fájlt <b>slapd.conf</b>, hogy az összes sémát betöltse.
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use those values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all those schemas loaded.
 ForANonAnonymousAccess=A hitelesített hozzáférés (egy írási például)
 PerfDolibarr=Teljesítménybeállítási/optimalizálási jelentés
 YouMayFindPerfAdviceHere=Ez az oldal a teljesítménnyel kapcsolatos ellenőrzéseket vagy tanácsokat tartalmaz.
