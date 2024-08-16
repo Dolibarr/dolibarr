@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -252,7 +252,7 @@ function dol_listshmop()
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
- *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
+ *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@param	string	$data			Data to save. Must be a not null value.
  *  @param 	int		$expire			ttl in seconds, 0 never expire
  * 	@return	int						Return integer <0 if KO, 0=Caching not available, Nb of bytes written if OK
