@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2013	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +50,8 @@ $action = GETPOST('action', 'aZ09');
 if ($action == 'set') {
 	$db->begin();
 
-	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", GETPOSTINT('DEBUGBAR_LOGS_LINES_NUMBER'), 'chaine', 0, '', 0);
-	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", GETPOSTINT('DEBUGBAR_USE_LOG_FILE'), 'chaine', 0, '', 0);
+	$result1 = dolibarr_set_const($db, "DEBUGBAR_LOGS_LINES_NUMBER", (string) GETPOSTINT('DEBUGBAR_LOGS_LINES_NUMBER'), 'chaine', 0, '', 0);
+	$result2 = dolibarr_set_const($db, "DEBUGBAR_USE_LOG_FILE", (string) GETPOSTINT('DEBUGBAR_USE_LOG_FILE'), 'chaine', 0, '', 0);
 	if ($result1 < 0 || $result2 < 0) {
 		$error++;
 	}
