@@ -72,6 +72,7 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
+
 if (!$error && $massaction == 'confirm_presend') {
 	$resaction = '';
 	$nbsent = 0;
@@ -765,16 +766,18 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 	// build list of files with full path
 	$files = array();
-	foreach ($listofobjectref as $basename) {
-		$basename = dol_sanitizeFileName($basename);
-		foreach ($listoffiles as $filefound) {
-			if (strstr($filefound["name"], $basename)) {
-				$files[] = $uploaddir.'/'.$basename.'/'.$filefound["name"];
-				break;
-			}
-		}
-	}
 
+
+    foreach ($listofobjectref as $basename) {
+        $basename = dol_sanitizeFileName($basename);
+        foreach ($listoffiles as $filefound) {
+            if (strstr($filefound["name"], $basename)) {
+                $files[] = $filefound['fullname'];
+                break;
+            }
+        }
+    }
+    
 	// Define output language (Here it is not used because we do only merging existing PDF)
 	$outputlangs = $langs;
 	$newlang = '';
@@ -798,7 +801,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -854,7 +857,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
-
+        
 		// Add all others
 		foreach ($files as $file) {
 			// Charge un document PDF depuis un fichier.
@@ -873,9 +876,10 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		// Defined name of merged file
 		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
+        
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
