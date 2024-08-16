@@ -1,11 +1,11 @@
 # List of words codespell will ignore
-# one per line, case-sensitive (when not lowercase)
+# one per line, must be in lower case.
 # PROVid
 provid
 # PostgreSQL
 postgresql
 # ZAR currency
-ZAR
+zar
 
 alltime
 ba
