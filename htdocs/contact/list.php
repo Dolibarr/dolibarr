@@ -720,7 +720,7 @@ if (strlen($search_town)) {
 	$sql .= natural_search("p.town", $search_town);
 }
 if (count($search_roles) > 0) {
-	$sql .= " AND p.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
+	$sql .= " AND EXISTS (SELECT sc.rowid FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE p.rowid = sc.fk_socpeople AND sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
 }
 if ($search_no_email != -1 && $search_no_email > 0) {
 	$sql .= " AND (SELECT count(*) FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = p.email) > 0";
@@ -1043,8 +1043,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 }
 
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Roles').': ';
-$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles);
+$moreforfilter .= $formcompany->showRoles("search_roles", $objecttmp, 'edit', $search_roles, 'minwidth500', $langs->trans('ContactRoles'));
 $moreforfilter .= '</div>';
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';

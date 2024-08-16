@@ -96,7 +96,7 @@ if ($action == 'specimen') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFSupplierProposal $module';
 
 		if ($module->write_file($supplier_proposal, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=supplier_proposal&file=SPECIMEN.pdf");

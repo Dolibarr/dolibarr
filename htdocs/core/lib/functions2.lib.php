@@ -1124,9 +1124,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// $yearoffsettype is - or +
 			$currentyear = (int) date("Y", $date);
-			$fiscaldate = dol_mktime('0', '0', '0', $maskraz, '1', $currentyear);
-			$newyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear);
-			$nextnewyeardate = dol_mktime('0', '0', '0', '1', '1', $currentyear + 1);
+			$fiscaldate = dol_mktime(0, 0, 0, $maskraz, 1, $currentyear);
+			$newyeardate = dol_mktime(0, 0, 0, 1, 1, $currentyear);
+			$nextnewyeardate = dol_mktime(0, 0, 0, 1, 1, $currentyear + 1);
 			//echo 'currentyear='.$currentyear.' date='.dol_print_date($date, 'day').' fiscaldate='.dol_print_date($fiscaldate, 'day').'<br>';
 
 			// If after or equal of current fiscal date
@@ -1895,7 +1895,7 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
- * 	@return	array|int			    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename".
+ * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {

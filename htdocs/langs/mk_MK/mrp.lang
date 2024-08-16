@@ -51,7 +51,7 @@ DateEndPlannedMo=Планиран крај на датумот
 KeepEmptyForAsap=Празно значи „што е можно побрзо“
 EstimatedDuration=Проценето времетраење
 EstimatedDurationDesc=Проценето времетраење за производство (или расклопување) на овој производ користејќи го овој BOM
-ConfirmValidateBom=Дали сте сигурни дека сакате да го потврдите BOM со референцата <strong>%s<span class='notranslate'>b0a65d071f6f6 > (ќе можете да го користите за да изградите нови нарачки за производство)
+ConfirmValidateBom=Are you sure you want to validate the BOM with the reference <strong>%s</strong> (you will be able to use it to build new Manufacturing Orders)
 ConfirmCloseBom=Дали сте сигурни дека сакате да го откажете овој BOM (повеќе нема да можете да го користите за создавање нови нарачки за производство)?
 ConfirmReopenBom=Дали сте сигурни дека сакате повторно да го отворите овој BOM (ќе можете да го користите за да изградите нови нарачки за производство)
 StatusMOProduced=Произведен
@@ -105,9 +105,9 @@ WorkstationSetupPage = Страница за поставување работн
 WorkstationList=Список на работни станици
 WorkstationCreate=Додадете нова работна станица
 NewWorkstation=Нова работна станица
-ConfirmEnableWorkstation=Дали сте сигурни дека сакате да ја овозможите работната станица <b>%s<span class='notranslate'>b09a4b739f17panf8z0?
+ConfirmEnableWorkstation=Are you sure you want to enable workstation <b>%s</b> ?
 EnableAWorkstation=Овозможете работна станица
-ConfirmDisableWorkstation=Дали сте сигурни дека сакате да ја оневозможите работната станица <b>%s<span class='notranslate'>b09a4b739f17panf8z0?
+ConfirmDisableWorkstation=Are you sure you want to disable workstation <b>%s</b> ?
 DisableAWorkstation=Оневозможи работна станица
 DeleteWorkstation=Delete
 NbOperatorsRequired=Број на потребни оператори

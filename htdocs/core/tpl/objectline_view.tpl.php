@@ -50,6 +50,7 @@ if (empty($object) || !is_object($object)) {
 '@phan-var-force CommonObject $this
  @phan-var-force CommonObject $object
  @phan-var-force 0|1 $forceall
+ @phan-var-force int $num
 ';
 
 global $mysoc;

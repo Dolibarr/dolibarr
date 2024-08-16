@@ -1798,7 +1798,7 @@ if ($step == 5 && $datatoimport) {
 		}
 		//print $code.'-'.$label;
 		$alias = preg_replace('/(\..*)$/i', '', $label);
-		$listfields[$i] = '<span class="nowrap">'.$langs->trans("Column").' '.num2Alpha($code - 1).' -> '.$label.'</span>';
+		$listfields[$i] = '<span class="nowrap">'.$langs->trans("Column").' '.num2Alpha((int) $code - 1).' -> '.$label.'</span>';
 	}
 	print count($listfields) ? (implode(', ', $listfields)) : $langs->trans("Error");
 	print '</td></tr>';

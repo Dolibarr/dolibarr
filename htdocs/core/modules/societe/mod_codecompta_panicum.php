@@ -100,7 +100,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 			if ($type == 'supplier') {
 				$this->code = (($societe->code_compta_fournisseur != "") ? $societe->code_compta_fournisseur : '');
 			} else {
-				$this->code = (($societe->code_compta != "") ? $societe->code_compta : '');
+				$this->code = (($societe->code_compta_client != "") ? $societe->code_compta_client : '');
 			}
 		}
 

@@ -476,6 +476,7 @@ function createThirdParty($authentication, $thirdparty)
 		$newobject->code_client = $thirdparty['customer_code'];
 		$newobject->code_fournisseur = $thirdparty['supplier_code'];
 		$newobject->code_compta = $thirdparty['customer_code_accountancy'];
+		$newobject->code_compta_client = $thirdparty['customer_code_accountancy'];
 		$newobject->code_compta_fournisseur = $thirdparty['supplier_code_accountancy'];
 		$newobject->date_creation = $now;
 		$newobject->note_private = $thirdparty['note_private'];
@@ -614,6 +615,7 @@ function updateThirdParty($authentication, $thirdparty)
 			$object->code_client = $thirdparty['customer_code'];
 			$object->code_fournisseur = $thirdparty['supplier_code'];
 			$object->code_compta = $thirdparty['customer_code_accountancy'];
+			$object->code_compta_client = $thirdparty['customer_code_accountancy'];
 			$object->code_compta_fournisseur = $thirdparty['supplier_code_accountancy'];
 			$object->date_creation = $now;
 			$object->note_private = $thirdparty['note_private'];

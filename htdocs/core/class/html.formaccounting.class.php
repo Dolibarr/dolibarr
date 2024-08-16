@@ -488,7 +488,7 @@ class FormAccounting extends Form
 			dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 
 			// Auxiliary thirdparties account
-			$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
+			$sql = "SELECT code_compta as code_compta_client, code_compta_fournisseur, nom as name";
 			$sql .= " FROM ".$this->db->prefix()."societe";
 			$sql .= " WHERE entity IN (".getEntity('societe').")";
 			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
@@ -496,8 +496,8 @@ class FormAccounting extends Form
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					if (!empty($obj->code_compta)) {
-						$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
+					if (!empty($obj->code_compta_client)) {
+						$aux_account[$obj->code_compta_client] = $obj->code_compta_client.' <span class="opacitymedium">('.$obj->name.')</span>';
 					}
 					if (!empty($obj->code_compta_fournisseur)) {
 						$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';

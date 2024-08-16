@@ -1518,25 +1518,30 @@ class FormMail extends Form
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
 	{
+		global $langs;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$out = '<div id="template-selector" class="template-container hidden">';
 		$templates = array(
 			'empty' => 'empty',
-			'basic' => 'basic',
 		);
-		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-			$templates['news'] = 'news';
-			$templates['commerce'] = 'commerce';
-			//$templates['text'] = 'text';
+
+		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
+		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
+			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
+			$templates[$layoutname] = ucfirst($layoutname);
+		}
 		//}
+		// TODO Add a hook to allow to complete the list
 
 		foreach ($templates as $template => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($template);
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
-			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
+			$out .= '<span class="template-option-text">'.$langs->trans($templateFunction).'</span>';
 			$out .= '</div>';
 		}
 		$out .= '</div>';
@@ -1545,8 +1550,13 @@ class FormMail extends Form
 			$(document).ready(function() {
 				$(".template-option").click(function() {
 					var template = $(this).data("template");
+					var subject = jQuery("#subject").val();
+					var fromtype = jQuery("#fromtype").val();
+					var sendto = jQuery("#sendto").val();
+					var sendtocc = jQuery("#sendtocc").val();
+					var sendtoccc = jQuery("#sendtoccc").val();
 
-					console.log("We choose a layout for email template " + template);
+					console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 					$(".template-option").removeClass("selected");
 					$(this).addClass("selected");
@@ -1554,18 +1564,14 @@ class FormMail extends Form
 					var contentHtml = $(this).data("content");
 					var csrfToken = "'.newToken().'";
 
-					// get value of sujet input
-					var subject = $("#sujet").val();
-
 					// Remplacer la variable de substitution dans le contenu HTML
 					contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
-
 
 					// Envoyer le contenu HTML à process_template.php pour traitement PHP
 					$.ajax({
 						type: "POST",
-						url: "/core/ajax/mailtemplate.php",
-						data: { content: contentHtml, token: csrfToken },
+						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
+						data: { template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc, content: contentHtml, token: csrfToken },
 						success: function(response) {
 							jQuery("#'.dol_sanitizeKeyCode($htmlContent).'").val(response);
 							var editorInstance = CKEDITOR.instances["'.dol_sanitizeKeyCode($htmlContent).'"];
