@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2014-2017	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2020	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2018-2020	Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -383,6 +383,15 @@ class BookKeeping extends CommonObject
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
 				}
+
+                if (empty($this->label_compte)) {
+                    $accountingaccount = new AccountingAccount($this->db);
+                    $accountingaccount->fetch('', $this->numero_compte);
+
+                    dol_syslog(get_class($this).":: fetch label_compte if empty for number =".$accountingaccount->label, LOG_DEBUG);
+
+                    $this->label_compte = $accountingaccount->label;
+                }
 
 				$now = dol_now();
 
@@ -2692,7 +2701,6 @@ class BookKeeping extends CommonObject
 
 				$sql = 'SELECT';
 				$sql .= " t.numero_compte,";
-				$sql .= " t.label_compte,";
 				if ($separate_auxiliary_account) {
 					$sql .= " t.subledger_account,";
 					$sql .= " t.subledger_label,";
@@ -2707,7 +2715,7 @@ class BookKeeping extends CommonObject
 				$sql .= ' AND aa.pcg_type IN (' . $this->db->sanitize(implode(',', $pcg_type_filter), 1) . ')';
 				$sql .= " AND DATE(t.doc_date) >= '" . $this->db->idate($fiscal_period->date_start) . "'";
 				$sql .= " AND DATE(t.doc_date) <= '" . $this->db->idate($fiscal_period->date_end) . "'";
-				$sql .= ' GROUP BY t.numero_compte, t.label_compte, aa.pcg_type';
+				$sql .= ' GROUP BY t.numero_compte, aa.pcg_type';
 				if ($separate_auxiliary_account) {
 					$sql .= ' ,t.subledger_account, t.subledger_label';
 				}
@@ -2732,10 +2740,10 @@ class BookKeeping extends CommonObject
 							$bookkeeping = new BookKeeping($this->db);
 							$bookkeeping->doc_date = $new_fiscal_period->date_start;
 							$bookkeeping->date_lim_reglement = '';
-							$bookkeeping->doc_ref = $new_fiscal_period->label;
+							$bookkeeping->doc_ref = $fiscal_period->label;
 							$bookkeeping->date_creation = $now;
 							$bookkeeping->doc_type = 'closure';
-							$bookkeeping->fk_doc = $new_fiscal_period->id;
+							$bookkeeping->fk_doc = $fiscal_period->id;
 							$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 							$bookkeeping->thirdparty_code = '';
 
@@ -2750,7 +2758,7 @@ class BookKeeping extends CommonObject
 							$bookkeeping->numero_compte = $obj->numero_compte;
 							$bookkeeping->label_compte = $obj->label_compte;
 
-							$bookkeeping->label_operation = $new_fiscal_period->label;
+							$bookkeeping->label_operation = $fiscal_period->label;
 							$bookkeeping->montant = $mt;
 							$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 							$bookkeeping->debit = ($mt < 0) ? -$mt : 0;
@@ -2779,10 +2787,10 @@ class BookKeeping extends CommonObject
 						$bookkeeping = new BookKeeping($this->db);
 						$bookkeeping->doc_date = $new_fiscal_period->date_start;
 						$bookkeeping->date_lim_reglement = '';
-						$bookkeeping->doc_ref = $new_fiscal_period->label;
+						$bookkeeping->doc_ref = $fiscal_period->label;
 						$bookkeeping->date_creation = $now;
 						$bookkeeping->doc_type = 'closure';
-						$bookkeeping->fk_doc = $new_fiscal_period->id;
+						$bookkeeping->fk_doc = $fiscal_period->id;
 						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 						$bookkeeping->thirdparty_code = '';
 
