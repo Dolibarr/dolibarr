@@ -1698,7 +1698,7 @@ class FormMail extends Form
 			return -1;
 		}
 
-		$ret = new ModelMail();
+		$ret = new ModelMail($dbs);
 
 		$languagetosearch = (is_object($outputlangs) ? $outputlangs->defaultlang : '');
 		// Define $languagetosearchmain to fall back on main language (for example to get 'es_ES' for 'es_MX')
@@ -1708,7 +1708,7 @@ class FormMail extends Form
 			$languagetosearchmain = '';
 		}
 
-		$sql = "SELECT rowid, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
+		$sql = "SELECT rowid, entity, module, label, type_template, topic, email_from, joinfiles, content, content_lines, lang, email_from, email_to, email_tocc, email_tobcc";
 		$sql .= " FROM ".$dbs->prefix().'c_email_templates';
 		$sql .= " WHERE (type_template = '".$dbs->escape($type_template)."' OR type_template = 'all')";
 		$sql .= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1731,6 +1731,7 @@ class FormMail extends Form
 		if ($id == -1) {
 			$sql .= " AND position = 0";
 		}
+		$sql .= " AND entity IN(".getEntity('c_email_templates', 1).")";
 		if ($languagetosearch) {
 			$sql .= $dbs->order("position,lang,label", "ASC,DESC,ASC"); // We want line with lang set first, then with lang null or ''
 		} else {
@@ -1868,7 +1869,7 @@ class FormMail extends Form
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
-		global $conf;
+		global $db, $conf;
 
 		$sql = "SELECT rowid, module, label, topic, content, content_lines, lang, fk_user, private, position";
 		$sql .= " FROM ".$this->db->prefix().'c_email_templates';
@@ -1895,7 +1896,7 @@ class FormMail extends Form
 					}
 				}
 
-				$line = new ModelMail();
+				$line = new ModelMail($db);
 				$line->id = $obj->rowid;
 				$line->label = $obj->label;
 				$line->lang = $obj->lang;
@@ -2103,10 +2104,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class ModelMail extends CommonObject
 {
 
-	/*
+	/**
 	 * @var string ID to identify managed object.
 	 */
 	public $element = 'email_template';
+
 
 	/**
 	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
