@@ -48,6 +48,7 @@ udo
 ue
 ro
 ws
+zar
 # Code string
 ect
 tempdate
