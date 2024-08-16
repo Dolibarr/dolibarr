@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2021  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2022  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014	    Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ $year_current = $year_start;
 // Validate History
 $action = GETPOST('action', 'aZ09');
 
-$chartaccountcode = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+$chartaccountcode = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 // Security check
 if (!isModEnabled('accounting')) {
