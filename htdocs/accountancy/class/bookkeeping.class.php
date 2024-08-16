@@ -384,14 +384,14 @@ class BookKeeping extends CommonObject
 					$this->piece_num = 1;
 				}
 
-                if (empty($this->label_compte)) {
-                    $accountingaccount = new AccountingAccount($this->db);
-                    $accountingaccount->fetch('', $this->numero_compte);
+				if (empty($this->label_compte)) {
+					$accountingaccount = new AccountingAccount($this->db);
+					$accountingaccount->fetch('', $this->numero_compte);
 
-                    dol_syslog(get_class($this).":: fetch label_compte if empty for number =".$accountingaccount->label, LOG_DEBUG);
+					dol_syslog(get_class($this).":: fetch label_compte if empty for number =".$accountingaccount->label, LOG_DEBUG);
 
-                    $this->label_compte = $accountingaccount->label;
-                }
+					$this->label_compte = $accountingaccount->label;
+				}
 
 				$now = dol_now();
 
