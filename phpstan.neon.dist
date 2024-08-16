@@ -86,7 +86,6 @@ parameters:
 		- '#expects float\|null#'
 		- '#expects float, string given.#'
 		- '#expects string\|null,#'
-		- '#expects string, int#'
 		- '#expects string, \(float\|int\) given.#'
 		- '#expects string, array#'
 		- '#expects string, float#'
