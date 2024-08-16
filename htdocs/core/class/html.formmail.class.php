@@ -2103,12 +2103,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class ModelMail extends CommonObject
 {
-
 	/**
 	 * @var string ID to identify managed object.
 	 */
 	public $element = 'email_template';
-
 
 	/**
 	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
@@ -2198,8 +2196,8 @@ class ModelMail extends CommonObject
 	 * @var int Position of template in a combo list
 	 */
 	public $position;
-
 	// END MODULEBUILDER PROPERTIES
+
 
 
 	/**
@@ -2246,6 +2244,7 @@ class ModelMail extends CommonObject
 			}
 		}
 	}
+
 
 	/**
 	 * Load object in memory from the database
