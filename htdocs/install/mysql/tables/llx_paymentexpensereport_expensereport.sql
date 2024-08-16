@@ -17,7 +17,7 @@
 --
 -- ===================================================================
 
--- Table to manage the relation n-n between a payment of expense reports and all expense reports payed
+-- Table to manage the relation n-n between a payment of expense reports and all expense reports paid
 
 create table llx_paymentexpensereport_expensereport
 (
