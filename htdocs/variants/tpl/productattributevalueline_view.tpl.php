@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,8 @@ if (empty($object) || !is_object($object)) {
 }
 
 '@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+ @phan-var-force CommonObject $object
+ @phan-var-force int $num';
 
 // add html5 elements
 $domData  = ' data-element="'.$line->element.'"';
@@ -57,7 +59,8 @@ $coldisplay = 0;
 		<?php print $line->ref ?>
 	</td>
 
-	<td class="linecolvalue nowrap"><?php $coldisplay++; print $line->value ?></td>
+	<td class="linecolvalue nowrap"><?php $coldisplay++;
+	print $line->value ?></td>
 <?php
 if (!empty($object_rights->write) && $action != 'selectlines') {
 	print '<td class="linecoledit center width25">';
@@ -97,7 +100,7 @@ if (!empty($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') { ?>

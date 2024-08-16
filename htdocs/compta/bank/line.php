@@ -338,7 +338,7 @@ if ($result) {
 	if ($db->num_rows($result)) {
 		$objp = $db->fetch_object($result);
 
-		$total = $total + $objp->amount;
+		$total += $objp->amount;
 
 		$acct = new Account($db);
 		$acct->fetch($objp->fk_account);

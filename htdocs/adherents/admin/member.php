@@ -302,7 +302,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	} else {
-		$disabled = (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
+		$disabled = isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity));
 		print '<td class="center">';
 		if (!$disabled) {
 			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodemember&token='.newToken().'&value='.urlencode($file).'">';
@@ -315,7 +315,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	}
 
 	print '<td class="center">';
-	$s = $modCodeMember->getToolTip($langs, null, -1);
+	$s = $modCodeMember->getToolTip($langs, null);
 	print $form->textwithpicto('', $s, 1);
 	print '</td>';
 

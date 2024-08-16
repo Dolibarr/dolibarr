@@ -10,6 +10,7 @@
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +68,8 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$stocklimit = (float) GETPOST('seuil_stock_alerte');
-$desiredstock = GETPOST('desiredstock');
+$stocklimit = GETPOSTFLOAT('seuil_stock_alerte');
+$desiredstock = GETPOSTFLOAT('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = GETPOSTISSET("ref") ? 'ref' : 'rowid';
 $d_eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
@@ -174,10 +175,12 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StockLimit")), null, 'errors');
 		$maj_ok = false;
 	}
-	if ($desiredstock == '') {
+	if ($desiredstock == '' || is_array($desiredstock)) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DesiredStock")), null, 'errors');
 		$maj_ok = false;
 	}
+
+	$desiredstock = (float) $desiredstock;
 
 	if ($maj_ok) {
 		$pse = new ProductStockEntrepot($db);
@@ -194,7 +197,7 @@ if ($action == 'addlimitstockwarehouse' && $user->hasRight('produit', 'creer')) 
 			$pse->fk_entrepot = GETPOSTINT('fk_entrepot');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
-			$pse->desiredstock  	 = GETPOST('desiredstock');
+			$pse->desiredstock  	 = GETPOSTFLOAT('desiredstock');
 			if ($pse->create($user) > 0) {
 				setEventMessages($langs->trans('ProductStockWarehouseCreated'), null, 'mesgs');
 			}
@@ -1124,8 +1127,8 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 			if (price2num($object->pmp)) {
 				$totalwithpmp += $obj->reel;
 			}
-			$totalvalue = $totalvalue + ($object->pmp * $obj->reel);
-			$totalvaluesell = $totalvaluesell + ($object->price * $obj->reel);
+			$totalvalue += ($object->pmp * $obj->reel);
+			$totalvaluesell += ($object->price * $obj->reel);
 			// Batch Detail
 			if ((isModEnabled('productbatch')) && $object->hasbatch()) {
 				$details = Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);

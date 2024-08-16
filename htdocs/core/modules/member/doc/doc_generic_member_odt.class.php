@@ -190,11 +190,11 @@ class doc_generic_member_odt extends ModelePDFMember
 	 *	@param	Translate	$outputlangs		Lang output object
 	 * 	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
-	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
+	 *  @param  int<0,1>	$nooutput           1=Generate only file on disk and do not return it on response
 	 *  @param	string		$filename			Name of output file (without extension)
-	 *	@return	int         					1 if OK, <=0 if KO
+	 *	@return	int<-1,1>       				1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $mode = 'member', $nooutput = 0, $filename = 'tmp_cards')
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
@@ -339,10 +339,10 @@ class doc_generic_member_odt extends ModelePDFMember
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
 				$parameters = array(
-					'file'=>$file,
-					'object'=>$object,
-					'outputlangs'=>$outputlangs,
-					'substitutionarray'=>&$tmparray
+					'file' => $file,
+					'object' => $object,
+					'outputlangs' => $outputlangs,
+					'substitutionarray' => &$tmparray
 				);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				foreach ($tmparray as $key => $value) {
@@ -374,7 +374,7 @@ class doc_generic_member_odt extends ModelePDFMember
 				}
 
 				// Call the beforeODTSave hook
-				$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				$reshook = $hookmanager->executeHooks('beforeODTSave', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
@@ -402,7 +402,7 @@ class doc_generic_member_odt extends ModelePDFMember
 
 				$odfHandler = null; // Destroy object
 
-				$this->result = array('fullpath'=>$file);
+				$this->result = array('fullpath' => $file);
 
 				return 1; // Success
 			} else {

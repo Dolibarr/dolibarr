@@ -3,6 +3,7 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,7 +184,7 @@ if ($massaction == 'withdrawrequest') {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				$totalpaid = $objecttmp->getSommePaiement();
-				$objecttmp->resteapayer = price2num($objecttmp->amount - $totalpaid, 'MT');
+				$objecttmp->resteapayer = price2num((float) $objecttmp->amount - $totalpaid, 'MT');
 
 				// hook to finalize the remaining amount, considering e.g. cash discount agreements
 				$parameters = array('remaintopay' => $objecttmp->resteapayer);

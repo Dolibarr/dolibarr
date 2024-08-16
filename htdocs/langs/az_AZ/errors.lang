@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Üçüncü tərəf və ya tərəfdaşlığ�
 ErrorFailedToWriteInTempDirectory=Müvəqqəti qovluğa yazmaq alınmadı
 ErrorQuantityIsLimitedTo=Kəmiyyət %s ilə məhdudlaşır
 ErrorFailedToLoadThirdParty=id=%s, email=%s, name= ünvanından üçüncü tərəfi tapmaq/yükləmək alınmadı %s
-ErrorThisPaymentModeIsNotSepa=Bu ödəniş rejimi bank hesabı deyil
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe müştərisi bu üçüncü tərəf üçün təyin edilməyib (yaxud Zolaq tərəfində silinmiş dəyərə ayarlanıb). Əvvəlcə onu yaradın (və ya yenidən əlavə edin).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP axtarışı + simvolu olan sətir üçün göndərən və ya alıcıda axtarış edə bilmir
 ErrorTableNotFound=Cədvəl <b>%s</b> tapılmadı
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Lüğət <b>%s</b> tapılmadı
 ErrorFailedToCreateSymLinkToMedias=%s-a işarə etmək üçün %s simvolik linki yaratmaq alınmadı.
 ErrorCheckTheCommandInsideTheAdvancedOptions=İxrac üçün istifadə olunan əmri İxracın Qabaqcıl seçimlərində yoxlayın
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

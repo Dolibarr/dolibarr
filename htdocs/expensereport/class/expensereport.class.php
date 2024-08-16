@@ -1785,7 +1785,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)

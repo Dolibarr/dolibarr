@@ -72,7 +72,9 @@ if (empty($user->id) && !empty($_SESSION['dol_login'])) {
 	$user->loadRights();
 
 	// Reload menu now we have the good user (and we need the good menu to have ->showmenu('topnb') correct.
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+	// @phan-suppress-next-line PhanRedefinedClassReference
 	$menumanager->loadMenu();
 }
 
@@ -275,6 +277,7 @@ $colortexttitle = implode(',', colorStringToArray($colortexttitle));
 $colortext = implode(',', colorStringToArray($colortext));
 $colortextlink = implode(',', colorStringToArray($colortextlink));
 
+// @phan-suppress-next-line PhanRedefinedClassReference
 $nbtopmenuentries = $menumanager->showmenu('topnb');
 $nbtopmenuentriesreal = $nbtopmenuentries;
 if ($conf->browser->layout == 'phone') {
@@ -288,18 +291,18 @@ $disableimages = 0;
 $maxwidthloginblock = 180;
 if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$disableimages = 1;
-	$maxwidthloginblock = $maxwidthloginblock + 50;
+	$maxwidthloginblock += 50;
 	$minwidthtmenu = 0;
 }
 
 if (getDolGlobalString('MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN')) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 if (getDolGlobalString('MAIN_USE_TOP_MENU_SEARCH_DROPDOWN')) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 if (!empty($conf->bookmark->enabled)) {
-	$maxwidthloginblock = $maxwidthloginblock + 55;
+	$maxwidthloginblock += 55;
 }
 
 

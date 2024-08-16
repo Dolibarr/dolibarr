@@ -177,7 +177,7 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * Proforma invoice.
-	 * @deprectad Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
+	 * @deprecated Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
 	 */
 	const TYPE_PROFORMA = 4;
 
@@ -676,7 +676,7 @@ abstract class CommonInvoice extends CommonObject
 		} elseif ($this->type == CommonInvoice::TYPE_DEPOSIT) {
 			$labellong = "InvoiceDeposit";
 			$labelshort = "Deposit";
-		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) {
+		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) { // @phan-suppress-current-line PhanDeprecatedClassConstant
 			$labellong = "InvoiceProForma"; // Not used.
 			$labelshort = "ProForma";
 		} elseif ($this->type == CommonInvoice::TYPE_SITUATION) {
@@ -1203,7 +1203,7 @@ abstract class CommonInvoice extends CommonObject
 					$arrayzerounitcurrency = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
 					$amountstripe = $amounttopay;
 					if (!in_array($currency, $arrayzerounitcurrency)) {
-						$amountstripe = $amountstripe * 100;
+						$amountstripe *= 100;
 					}
 
 					$fk_bank_account = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');		// Bank account used for SEPA direct debit or credit transfer. Must be the Stripe account in Dolibarr.

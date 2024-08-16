@@ -891,7 +891,7 @@ class Paiement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *      Mise a jour du lien entre le paiement et la ligne generee dans llx_bank
+	 *      Update the link between the Payment and the line generated in llx_bank
 	 *
 	 *      @param	int		$id_bank    Id compte bancaire
 	 *      @return	int					Return integer <0 if KO, >0 if OK
@@ -1282,10 +1282,10 @@ class Paiement extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			Sur quoi pointe le lien
+	 *	@param	string	$option			What the link points to
 	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *  @param	int  	$notooltip		1=Disable tooltip
 	 *  @param	string	$morecss		Add more CSS

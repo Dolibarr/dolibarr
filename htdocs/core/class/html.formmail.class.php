@@ -1518,35 +1518,35 @@ class FormMail extends Form
 	 */
 	public function getModelEmailTemplate($htmlContent = 'message')
 	{
-		global $websitepage, $langs, $user, $keyword;
+		global $websitepage, $langs, $user;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-		$websitepage = new WebsitePage($this->db);
-
 		// Fetch blogs
-		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost', 'keywords' => $keyword));
+		$websitepage = new WebsitePage($this->db);
+		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
 
 		$out = '<div id="template-selector" class="template-container">';
 		$templates = array(
 			'empty' => 'empty',
-			'basic' => 'basic',
-			'news' => 'news',
-			'commerce' => 'commerce'
 		);
-		//if (getDolGlobalInt('MAIN_FEATURES_LEVEL') > 1) {
-			$templates['news'] = 'news';
-			$templates['commerce'] = 'commerce';
-			//$templates['text'] = 'text';
+
+		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
+		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
+			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
+			$templates[$layoutname] = ucfirst($layoutname);
+		}
 		//}
+		// TODO Add a hook to allow to complete the list
 
 		foreach ($templates as $template => $templateFunction) {
 			$contentHtml = getHtmlOfLayout($template);
 
 			$out .= '<div class="template-option" data-template="'.$template.'" data-content="'.htmlentities($contentHtml).'">';
 			$out .= '<img class="maillayout" alt="'.$template.'" src="'.DOL_URL_ROOT.'/theme/common/maillayout/'.$template.'.png" />';
-			$out .= '<span class="template-option-text">'.ucfirst($template).'</span>';
+			$out .= '<span class="template-option-text">'.$langs->trans($templateFunction).'</span>';
 			$out .= '</div>';
 		}
 		$out .= '</div>';
@@ -1566,9 +1566,16 @@ class FormMail extends Form
 		$out .= '</div>';
 
 		$out .= '<script type="text/javascript">
-		$(document).ready(function() {
-			$(".template-option").click(function() {
-				var template = $(this).data("template");
+      $(document).ready(function() {
+        $(".template-option").click(function() {
+          var template = $(this).data("template");
+          var subject = jQuery("#subject").val();
+          var fromtype = jQuery("#fromtype").val();
+          var sendto = jQuery("#sendto").val();
+          var sendtocc = jQuery("#sendtocc").val();
+          var sendtoccc = jQuery("#sendtoccc").val();
+
+					console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 				console.log("We choose a layout for email template " + template);
 
@@ -1589,8 +1596,11 @@ class FormMail extends Form
 					var csrfToken = "' .newToken().'";
 					$.ajax({
 						type: "POST",
+						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
+						data: {  content: contentHtml, token: csrfToken },
 						url: "/core/ajax/mailtemplate.php",
 						data: {
+              template: template, subject: subject, fromtype: fromtype, sendto: sendto, sendtocc: sendtocc, sendtoccc: sendtoccc,
 							content: contentHtml,
 							selectedPosts: "[]",
 							token: csrfToken

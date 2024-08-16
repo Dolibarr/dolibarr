@@ -77,7 +77,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 		$ldapdn = $dolibarr_main_auth_ldap_dn;
 		$ldapadminlogin = $dolibarr_main_auth_ldap_admin_login;
 		$ldapadminpass = $dolibarr_main_auth_ldap_admin_pass;
-		$ldapdebug = ((empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false") ? false : true);
+		$ldapdebug = !(empty($dolibarr_main_auth_ldap_debug) || $dolibarr_main_auth_ldap_debug == "false");
 
 		if ($ldapdebug) {
 			print "DEBUG: Logging LDAP steps<br>\n";

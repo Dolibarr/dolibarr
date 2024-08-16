@@ -183,6 +183,8 @@ if ($action == 'specimen') { // For products
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProduct $module';
+
 		if ($module->write_file($product, $langs, '') > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
@@ -343,7 +345,7 @@ foreach ($dirproduct as $dirroot) {
 					print "</td>\n";
 				} else {
 					$disabled = false;
-					if (isModEnabled('multicompany') && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true) {
+					if (!(isModEnabled('multicompany') && ((is_object($mc) && !empty($mc->sharings['referent'])) && ($mc->sharings['referent'] == $conf->entity)))) {
 					}
 					print '<td class="center">';
 					if (!$disabled) {

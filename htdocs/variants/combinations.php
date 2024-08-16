@@ -3,6 +3,7 @@
  * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -309,7 +310,7 @@ if (($action == 'add' || $action == 'create') && empty($massaction) && !GETPOST(
 	// Update product variant ref
 	$product_child = new Product($db);
 	$product_child->fetch($prodcomb->fk_product_child);
-	$product_child->oldcopy = clone $product_child;
+	$product_child->oldcopy = clone $product_child;  // @phan-ignore-current-line PhanTypeMismatchProperty
 	$product_child->ref = $reference;
 
 	$result = $product_child->update($product_child->id, $user);

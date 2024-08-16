@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Bên thứ ba hoặc Thành viên hợp dan
 ErrorFailedToWriteInTempDirectory=Không thể ghi vào thư mục tạm thời
 ErrorQuantityIsLimitedTo=Số lượng được giới hạn ở %s
 ErrorFailedToLoadThirdParty=Không tìm thấy/tải bên thứ ba từ id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Chế độ thanh toán này không phải là tài khoản ngân hàng
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Khách hàng Stripe không được đặt cho bên thứ ba này (hoặc được đặt thành giá trị bị xóa ở phía Stripe). Tạo (hoặc đính kèm lại) nó trước.
 ErrorCharPlusNotSupportedByImapForSearch=Tìm kiếm IMAP không thể tìm kiếm người gửi hoặc người nhận cho chuỗi chứa ký tự +
 ErrorTableNotFound=Không tìm thấy bảng <b>%s</b>
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Không tìm thấy từ điển <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=Không tạo được liên kết tượng trưng %s để trỏ tới %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Kiểm tra lệnh được sử dụng để xuất vào Tùy chọn nâng cao của xuất
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

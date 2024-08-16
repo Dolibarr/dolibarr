@@ -157,7 +157,7 @@ foreach my $file (keys %filelist) {
     		print OUT "\\c ". $1;
     		next;
     	}
-    	if ($create_sql ne "") { 		# we are inside create table statement so lets process datatypes
+    	if ($create_sql ne "") { 		# we are inside create table statement so let's process datatypes
 
     		if (/\);/i) {	# end of create table sequence
     			$create_sql =~ s/,$//g;	# strip last , inside create table

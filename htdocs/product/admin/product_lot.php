@@ -130,6 +130,8 @@ if ($action == 'updateMaskLot') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProductBatch $module';
+
 		if ($module->write_file($product_batch, $langs) > 0) {
 			header("Location: " . DOL_URL_ROOT . "/document.php?modulepart=product_batch&file=SPECIMEN.pdf");
 			return;
