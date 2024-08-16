@@ -60,7 +60,7 @@ Numberspad=Подлога за броеви
 BillsCoinsPad=Пад за монети и банкноти
 DolistorePosCategory=TakePOS модули и други POS решенија за Dolibarr
 TakeposNeedsCategories=На TakePOS му треба најмалку една категорија на производи за да работи
-TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=На TakePOS му треба најмалку 1 категорија производи во категоријата <b>%s<span class='notranslate'>b09a4b739f17f>z до работа
+TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=TakePOS needs at least 1 product category under the category <b>%s</b> to work
 OrderNotes=Може да додаде неколку белешки на секоја нарачана ставка
 CashDeskBankAccountFor=Стандардна сметка за користење за плаќања во
 NoPaimementModesDefined=Не е дефиниран режим на плаќање во конфигурацијата на TakePOS
@@ -139,7 +139,7 @@ PrintWithoutDetailsLabelDefault=Стандардна етикета на лин�
 PrintWithoutDetails=Печатете без детали
 YearNotDefined=Годината не е дефинирана
 TakeposBarcodeRuleToInsertProduct=Правило за баркод за вметнување производ
-TakeposBarcodeRuleToInsertProductDesc=Правило за извлекување на референцата на производот + количина од скениран бар-код.<br>Ако е празна (стандардна вредност), апликацијата ќе го користи целосниот бар-код скениран за да го пронајде производот.<br><br>Ако е дефинирано, синтаксата мора да биде:<br></spanno><span' class=' <b>ref:NB+qu:NB+qd:NB+other:NB</b><br> е NB0 број на знаци што ќе се користат за извлекување податоци од скенираниот бар-код со:<span class='notranslate'><br><b>refb09f14b309174  : референца на производот<br><b>qub09a4b739f17panf8z: кол.</s0 постави при вметнување ставка (единици)<span class='notranslate'><br><b>qdb09a4b739f17f to поставете при вметнување ставка (децимали)<span class='notranslate'><br><b>друго<span class='notranslate'>b09a4b78z09f1s7 други знаци
+TakeposBarcodeRuleToInsertProductDesc=Rule to extract the product reference + a quantity from a scanned barcode.<br>If empty (default value), application will use the full barcode scanned to find the product.<br><br>If defined, syntax must be:<br><b>ref:NB+qu:NB+qd:NB+other:NB</b><br>where NB is the number of characters to use to extract data from the scanned barcode with:<br><b>ref</b> : product reference<br><b>qu</b> : quantity to set when inserting item (units)<br><b>qd</b> : quantity to set when inserting item (decimals)<br><b>other</b> : others characters
 AlreadyPrinted=Веќе испечатено
 HideCategories=Сокриј го целиот дел од изборот на категории
 HideStockOnLine=Скриј акции на линија

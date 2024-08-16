@@ -1417,7 +1417,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '</td></tr>';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
 		print '</table>';
 		print dol_get_fiche_end();
@@ -2083,7 +2083,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			print '</div><div class="fichehalfright">';
 
-			$MAX = 10;
+			$MAXEVENT = 10;
 
 			$morehtmlcenter = '';
 			$messagingUrl = DOL_URL_ROOT.'/adherents/messaging.php?rowid='.$object->id;
@@ -2093,7 +2093,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAX, '', $morehtmlcenter);
+			$somethingshown = $formactions->showactions($object, $object->element, $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
 			print '</div></div>';
 		}

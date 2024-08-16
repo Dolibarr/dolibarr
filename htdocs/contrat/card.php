@@ -1743,7 +1743,7 @@ if ($action == 'create') {
 					if ($objp->fk_product > 0) {
 						$canchangeproduct = 1;
 
-						// TODO: As $canchangeproduct is set just before, in what usecase it can be empty ?
+						// @TODO: As $canchangeproduct is set just before, in what usecase it can be empty ?
 						if (empty($canchangeproduct)) {
 							$productstatic->id = $objp->fk_product;
 							$productstatic->type = $objp->ptype;
@@ -1753,9 +1753,9 @@ if ($action == 'create') {
 							print $objp->label ? ' - '.dol_trunc($objp->label, 32) : '';
 							print '<input type="hidden" name="idprod" value="'.$currentLineProductId.'">';
 						} else {
-							$senderissupplier = 0;
+							$senderissupplier = 0;	// @TODO Option to allow purchased products ?
 							if (empty($senderissupplier)) {
-								print $form->select_produits($currentLineProductId, 'idprod');
+								print $form->select_produits($currentLineProductId, 'idprod', '', 0, 0, 1, 2, '', 0, array(), 0, 1, 0, 'minwidth250onall maxwidth500 widthcentpercentminusx');
 							} else {
 								$form->select_produits_fournisseurs($currentLineProductId, 'idprod');
 							}
@@ -1801,7 +1801,7 @@ if ($action == 'create') {
 					}
 
 					// Discount
-					print '<td class="nowrap right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent).'">%</td>';
+					print '<td class="nowraponall right"><input size="1" type="text" name="elremise_percent" value="'.(GETPOSTISSET('elremise_percent')?GETPOST('elremise_percent'):$objp->remise_percent).'">%</td>';
 
 					if (!empty($usemargins)) {
 						print '<td class="right">';

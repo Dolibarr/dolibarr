@@ -743,7 +743,10 @@ if (empty($reshook)) {
 			if ($object->statut == $object::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $object->statut == $object::STATUS_DRAFT)) {
 				$db->begin();
 
-				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOSTINT('note_private'));
+				$oldstatus = $object->status;
+
+				$result = $object->closeProposal($user, GETPOSTINT('statut'), GETPOST('note_private'));
+
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -757,7 +760,7 @@ if (empty($reshook)) {
 				$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (
-					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOSTINT('generate_deposit') == 'on'
+					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOST('generate_deposit') == 'on'
 					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
 					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
@@ -776,7 +779,7 @@ if (empty($reshook)) {
 						$locationTarget = DOL_URL_ROOT . '/compta/facture/card.php?id=' . $deposit->id;
 					} else {
 						$error++;
-						setEventMessages($object->error, $object->errors, 'errors');
+						setEventMessages("Failed to create down payment - ".$object->error, $object->errors, 'errors');
 					}
 				}
 
@@ -805,6 +808,9 @@ if (empty($reshook)) {
 						exit;
 					}
 				} else {
+					$object->status = $oldstatus;
+					$object->statut = $oldstatus;
+
 					$db->rollback();
 					$action = '';
 				}
@@ -1892,7 +1898,7 @@ if ($action == 'create') {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}

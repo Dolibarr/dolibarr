@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Tredjepart eller medlem av partnerskap er o
 ErrorFailedToWriteInTempDirectory=Kunne ikke skrive i midlertidig katalog
 ErrorQuantityIsLimitedTo=Antallet er begrenset til %s
 ErrorFailedToLoadThirdParty=Kunne ikke finne/laste inn tredjepart fra id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Denne betalingsmåten er ikke en bankkonto
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe-kunden er ikke satt for denne tredjeparten (eller satt til en verdi slettet på Stripe-siden). Opprett (eller fest den på nytt) først.
 ErrorCharPlusNotSupportedByImapForSearch=IMAP-søk kan ikke søke i avsender eller mottaker etter en streng som inneholder tegnet +
 ErrorTableNotFound=Tabell <b> %s </b> ble ikke funnet
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Ordbok <b> %s </b> ikke funnet
 ErrorFailedToCreateSymLinkToMedias=Kunne ikke opprette den symbolske lenken %s for å peke til %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Sjekk kommandoen som brukes for eksporten til de avanserte alternativene for eksporten
 ErrorEndTimeMustBeGreaterThanStartTime=Sluttid må være etter starttid
-ErrorIncoherentDates=Startdato må være før sluttdato
-ErrorEndHourIsNull=Sluttdatoen kan ikke være null
-ErrorStartHourIsNull=Startdatoen kan ikke være null
+ErrorIncoherentDates=Startdatoen må være tidligere enn sluttdatoen
+ErrorEndHourIsNull=Sluttdato-feltet kan ikke være tomt
+ErrorStartHourIsNull=Startdato-feltet kan ikke være tomt
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=For mange linjer å behandle. Vennligst bruk et mer selektivt filter.
 ErrorEmptyValueForQty=Mengden kan ikke være null.
 # Warnings

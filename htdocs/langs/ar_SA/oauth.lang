@@ -9,17 +9,17 @@ HasAccessToken=تم إنشاء رمز مميز وحفظها في قاعدة ال
 NewTokenStored=تم استلام الرمز وحفظه
 ToCheckDeleteTokenOnProvider=انقر هنا للتحقق / حذف التفويض المحفوظ بواسطة موفر %s OAuth
 TokenDeleted=حذف رمز
-GetAccess=انقر هنا للحصول على رمز مميز
+GetAccess=Get new Token
 RequestAccess=انقر هنا لطلب / تجديد الوصول والحصول على رمز جديد
-DeleteAccess=انقر هنا لحذف الرمز المميز
-RedirectURL=Redirect URL
-UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URL when creating your credentials with your OAuth provider
+DeleteAccess=Delete Token
+RedirectURL=إعادة توجيه URL
+UseTheFollowingUrlAsRedirectURI=استخدم عنوان URL التالي كعنوان URL لإعادة التوجيه عند إنشاء بيانات الاعتماد الخاصة بك مع موفر OAuth الخاص بك
 ListOfSupportedOauthProviders=أضف موفري رمز OAuth2 المميز. بعد ذلك ، انتقل إلى صفحة مشرف موفر OAuth لإنشاء / الحصول على معرّف وسر OAuth وحفظهما هنا. بمجرد الانتهاء من ذلك ، قم بتشغيل علامة التبويب الأخرى لإنشاء الرمز المميز الخاص بك.
 OAuthSetupForLogin=صفحة لإدارة (إنشاء / حذف) رموز OAuth المميزة
 SeePreviousTab=انظر علامة التبويب السابقة
 OAuthProvider=مزود OAuth
 OAuthIDSecret=معرف وسر OAuth
-TOKEN_REFRESH=رمزي تحميل الحاضر
+TOKEN_REFRESH=Refresh Token
 TOKEN_EXPIRED=انتهت صلاحية الرمز
 TOKEN_EXPIRE_AT=رمز تنتهي في
 TOKEN_DELETE=حذف رمز المحفوظة
@@ -40,3 +40,12 @@ AOAuthEntryForThisProviderAndLabelAlreadyHasAKey=إدخال OAuth لهذا ال�
 URLOfServiceForAuthorization=عنوان URL المقدم من خدمة OAuth للمصادقة
 Scopes=الأذونات (النطاقات)
 ScopeUndefined=الأذونات (النطاقات) غير محددة (راجع علامة التبويب السابقة)
+TokenRawValue=Full Token (object)
+AccessToken=Access Token
+TokenExpired=انتهى
+TokenNotExpired=غير منتهي
+ExpirationDate=تاريخ الانتهاء
+RefreshToken=Refresh token
+RefreshTokenHelp=Use the Refresh Token to get a new Access Token
+OldTokenWasExpiredItHasBeenRefresh=Old token was expired, it has been refreshed
+OldTokenWasNotExpiredButItHasBeenRefresh=Old token was not expired but it has been refreshed

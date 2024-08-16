@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=送貨
 DeliveryRef=Ref Delivery
-DeliveryCard=庫存收據
+DeliveryCard=Delivery receipt
 DeliveryOrder=交貨收據
 DeliveryDate=交貨日期
 CreateDeliveryOrder=生成交貨收據
@@ -14,8 +14,8 @@ DeleteDeliveryReceiptConfirm=您確定要刪除送貨收據<b> %s </b> ？
 DeliveryMethod=運輸方式
 TrackingNumber=追踪號碼
 DeliveryNotValidated=交貨未驗證
-StatusDeliveryCanceled=Canceled
-StatusDeliveryDraft=Draft
+StatusDeliveryCanceled=已取消
+StatusDeliveryDraft=草稿
 StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=姓名和簽名：

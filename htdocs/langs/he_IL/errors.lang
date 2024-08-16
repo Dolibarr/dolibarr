@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (exam
 ErrorUserCannotBeDelete=לא ניתן למחוק את המשתמש. אולי זה משויך לישויות Dolibarr.
 ErrorFieldsRequired=כמה שדות חובה נותרו ריקים.
 ErrorSubjectIsRequired=נושא הדוא"ל נדרש
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=יצירת ספרייה נכשלה. בדוק שלמשתמש שרת האינטרנט יש הרשאות לכתוב לתוך ספריית המסמכים של Dolibarr. אם הפרמטר <b>safe_mode</b> מופעל ב-PHP הזה, בדוק שקובצי php של Dolibarr הם הבעלים של משתמש (או קבוצה) של שרת האינטרנט.
 ErrorNoMailDefinedForThisUser=לא הוגדר דואר עבור משתמש זה
 ErrorSetupOfEmailsNotComplete=הגדרת המיילים לא הושלמה
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=שגיאה, המחרוזת להחלפה ריקה
 ErrorProductNeedBatchNumber=שגיאה, המוצר '<b>%s</b>' צריך הרבה/מספר סידורי
 ErrorProductDoesNotNeedBatchNumber=שגיאה, המוצר '<b>%s</b>' אינו מקבל הרבה/ מספר סידורי
 ErrorFailedToReadObject=שגיאה, כשל בקריאת אובייקט מסוג <b>%s</b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=שגיאה, התחברות זו היא מחוץ לטווח תאריכי התוקף
 ErrorValueLength=אורך השדה '<b>%s</b>' חייב להיות גבוה מ-'<b>%s</b>'
 ErrorReservedKeyword=המילה '<b>%s</b>' היא מילת מפתח שמורה
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=צד שלישי או חבר בשותפות 
 ErrorFailedToWriteInTempDirectory=נכשל כתיבה בספריה הזמנית
 ErrorQuantityIsLimitedTo=הכמות מוגבלת ל-%s
 ErrorFailedToLoadThirdParty=כשל באיתור/טעינת צד שלישי מ-id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=מצב תשלום זה אינו חשבון בנק
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=לקוח Stripe אינו מוגדר עבור צד שלישי זה (או מוגדר לערך שנמחק בצד Stripe). תחילה צור (או צרף מחדש) אותו.
 ErrorCharPlusNotSupportedByImapForSearch=חיפוש IMAP אינו יכול לחפש בשולח או בנמען מחרוזת המכילה את התו +
 ErrorTableNotFound=הטבלה <b>%s</b> לא נמצאה
@@ -322,16 +325,21 @@ ErrorFixThisHere=<a href="%s">תקן זאת כאן</a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=שגיאה: כתובת האתר של המופע הנוכחי שלך (%s) אינה תואמת לכתובת האתר שהוגדרה בהגדרת ההתחברות שלך ל-OAuth2 (%s). ביצוע התחברות OAuth2 בתצורה כזו אסור.
 ErrorMenuExistValue=תפריט כבר קיים עם הכותרת או כתובת האתר הזו
 ErrorSVGFilesNotAllowedAsLinksWithout=קובצי SVG אינם מותרים כקישורים חיצוניים ללא האפשרות %s
-ErrorTypeMenu=בלתי אפשרי להוסיף תפריט נוסף עבור אותו מודול בסרגל הניווט, עדיין לא לטפל
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = האובייקט <b>%s</b> לא נמצא, אנא בדוק את כתובת האתר שלך
 ErrorCountryCodeMustBe2Char=קוד המדינה חייב להיות מחרוזת בת 2 תווים
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=הטבלה <b>%s</b> כבר קיימת
 ErrorDictionaryNotFound=מילון <b>%s</b> לא נמצא
 ErrorFailedToCreateSymLinkToMedias=יצירת הקישור הסמלי %s נכשל כדי להצביע על %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=בדוק את הפקודה המשמשת לייצוא אל האפשרויות המתקדמות של הייצוא
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=פרמטר PHP שלך upload_max_filesize (%s) גבוה יותר מפרמטר PHP post_max_size (%s). זו לא הגדרה עקבית.
 WarningPasswordSetWithNoAccount=הוגדרה סיסמה לחבר זה. עם זאת, לא נוצר חשבון משתמש. אז הסיסמה הזו מאוחסנת אבל לא ניתן להשתמש בה כדי להיכנס ל-Dolibarr. זה עשוי לשמש על ידי מודול/ממשק חיצוני, אבל אם אינך צריך להגדיר שום כניסה או סיסמה עבור חבר, אתה יכול לבטל את האפשרות "נהל התחברות עבור כל חבר" מהגדרת מודול חבר. אם אתה צריך לנהל התחברות אבל לא צריך שום סיסמה, אתה יכול להשאיר שדה זה ריק כדי להימנע מהאזהרה זו. הערה: דואר אלקטרוני יכול לשמש גם ככניסה אם החבר מקושר למשתמש.
@@ -344,6 +352,7 @@ WarningConfFileMustBeReadOnly=אזהרה, ניתן להחליף את קובץ ה
 WarningsOnXLines=אזהרות על <b>%s</b> רשומות מקור
 WarningNoDocumentModelActivated=שום דגם, להפקת מסמכים, לא הופעל. דגם ייבחר כברירת מחדל עד שתבדוק את הגדרת המודול שלך.
 WarningLockFileDoesNotExists=אזהרה, לאחר סיום ההגדרה, עליך להשבית את כלי ההתקנה/הגירה על ידי הוספת קובץ <b>install.lock</b> לספרייה <b>%s</b>. השמטת יצירת קובץ זה מהווה סיכון אבטחה חמור.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=אזהרת אבטחה זו תישאר פעילה כל עוד הפגיעות קיימת.
 WarningCloseAlways=אזהרה, הסגירה מתבצעת גם אם הכמות שונה בין רכיבי המקור והמטרה. הפעל תכונה זו בזהירות.
 WarningUsingThisBoxSlowDown=אזהרה, שימוש בתיבה זו האט ברצינות את כל הדפים המציגים את התיבה.
@@ -373,16 +382,18 @@ WarningModuleNeedRefresh = מודול <b>%s</b> הושבת. אל תשכח להפ
 WarningPermissionAlreadyExist=הרשאות קיימות עבור אובייקט זה
 WarningGoOnAccountancySetupToAddAccounts=אם רשימה זו ריקה, היכנס לתפריט %s - %s - %s כדי לטעון או ליצור חשבונות עבור תרשים החשבון שלך.
 WarningCorrectedInvoiceNotFound=חשבונית מתוקנת לא נמצאה
-WarningCommentNotFound=אנא בדוק את מיקום הערות ההתחלה והסיום עבור הקטע <b>%s</b> ב קובץ <b>%s</b> לפני שליחת הפעולה שלך
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=תנועת המניה כבר התהפכה
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = ניתן להוסיף חשבונית SwissQR רק בחשבוניות המוגדרות לתשלום באמצעות תשלומי העברה אשראי.
 SwissQrCreditorAddressInvalid = כתובת הנושה אינה חוקית (האם מיקוד ועיר מוגדרים? (%s)
 SwissQrCreditorInformationInvalid = פרטי הנושה אינם חוקיים עבור IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN עדיין לא מיושם
 SwissQrPaymentInformationInvalid = פרטי התשלום היו לא חוקיים עבור סך %s : %s
 SwissQrDebitorAddressInvalid = פרטי החייב לא היו חוקיים (%s)
-
 # Validate
 RequireValidValue = ערך לא חוקי
 RequireAtLeastXString = דורש לפחות %s תווים
@@ -404,10 +415,10 @@ BadSetupOfFieldClassNotFoundForValidation = שגיאה בהגדרה שגויה �
 BadSetupOfFieldFileNotFound = שגיאה בהגדרה שגויה של השדה: הקובץ לא נמצא להכללה
 BadSetupOfFieldFetchNotCallable = שגיאה בהגדרה שגויה של השדה: לא ניתן להתקשר לאחזור בכיתה
 ErrorTooManyAttempts= יותר מדי ניסיונות, אנא נסה שוב מאוחר יותר
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed
