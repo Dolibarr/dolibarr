@@ -75,7 +75,7 @@ $group = GETPOSTINT("group", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
-if (empty($id) && $action != 'create') {
+if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
 }
 
@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $canedituser) {
+	if ($action == 'update' && ($canedituser || $caneditpasswordandsee)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield) {    // Case we can edit all field

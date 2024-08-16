@@ -206,9 +206,9 @@ if (empty($reshook)) {
 							12,
 							0,
 							0,
-							dol_print_date($date_delivery_old, '%m'),
-							dol_print_date($date_delivery_old, '%d'),
-							dol_print_date($date_delivery_old, '%Y')
+							(int) dol_print_date($date_delivery_old, '%m'),
+							(int) dol_print_date($date_delivery_old, '%d'),
+							(int) dol_print_date($date_delivery_old, '%Y')
 						);
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;
@@ -1237,9 +1237,9 @@ if (empty($reshook)) {
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = price2num((float) $pu_ttc / (1 + ((float) $tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = price2num((float) $pu_ht * (1 + ((float) $tmpvat / 100)), 'MU');
 					}
 				}
 

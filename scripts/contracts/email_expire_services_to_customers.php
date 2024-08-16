@@ -99,10 +99,10 @@ $sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product";
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut < 5";
 if (is_numeric($duration_value2)) {
-	$sql .= " AND cd.date_fin_validite >= '".$db->idate(dol_time_plus_duree($now, $duration_value2, "d"))."'";
+	$sql .= " AND cd.date_fin_validite >= '".$db->idate(dol_time_plus_duree($now, (int) $duration_value2, "d"))."'";
 }
 if (is_numeric($duration_value)) {
-	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, (int) $duration_value, "d"))."'";
 }
 if ($targettype == 'contacts') {
 	$sql .= " AND s.rowid = sp.fk_soc";

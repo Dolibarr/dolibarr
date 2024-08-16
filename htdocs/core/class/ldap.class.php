@@ -1545,13 +1545,19 @@ class Ldap
 	/**
 	 *	Converts ActiveDirectory time to Unix timestamp
 	 *
-	 *	@param	string	$value		AD time to convert
+	 *	@param	string	$value		AD time to convert (ns since 1601)
 	 *	@return	integer				Unix timestamp
 	 */
 	public function convertTime($value)
 	{
 		$dateLargeInt = $value; // nano secondes depuis 1601 !!!!
-		$secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		if (PHP_INT_SIZE < 8) {
+			// 32 bit platform
+			$secsAfterADEpoch = (float) $dateLargeInt / (10000000.); // secondes depuis le 1 jan 1601
+		} else {
+			// At least 64 bit platform
+			$secsAfterADEpoch = (int) $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+		}
 		$ADToUnixConvertor = ((1970 - 1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
 		$unixTimeStamp = intval($secsAfterADEpoch - $ADToUnixConvertor); // Unix time stamp
 		return $unixTimeStamp;
