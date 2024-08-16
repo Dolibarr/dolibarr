@@ -4,6 +4,8 @@
 provid
 # PostgreSQL
 postgresql
+# ZAR currency
+ZAR
 
 alltime
 ba
