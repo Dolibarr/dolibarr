@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2019       Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2019       Frédéric FRANCE      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,29 +28,23 @@
  *  \brief      Page list of expenses
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('expensereportindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
 
-// Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', '', '');
-
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -61,9 +55,18 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "d.date_create";
+	$sortfield = "d.tms";
 }
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$result = restrictedArea($user, 'expensereport', '', '');
 
 
 /*
@@ -77,7 +80,7 @@ $childids[] = $user->id;
 
 $help_url = "EN:Module_Expense_Reports|FR:Module_Notes_de_frais";
 
-llxHeader('', $langs->trans("ListOfFees"), $help_url);
+llxHeader('', $langs->trans("TripsAndExpenses"), $help_url);
 
 
 $label = $somme = $nb = array();
@@ -87,11 +90,11 @@ $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km"
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensereport_det as de, ".MAIN_DB_PREFIX."c_type_fees as tf";
 $sql .= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 
 $sql .= " GROUP BY tf.code, tf.label";
@@ -128,6 +131,7 @@ print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listoftype = $tripandexpense_static->listOfTypes();
+$dataseries = array();
 foreach ($listoftype as $code => $label) {
 	$dataseries[] = array($label, (isset($somme[$code]) ? (int) $somme[$code] : 0));
 }
@@ -135,7 +139,7 @@ foreach ($listoftype as $code => $label) {
 // Sort array with most important first
 $dataseries = dol_sort_array($dataseries, 1, 'desc');
 
-// Merge all entrie after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
+// Merge all entries after the $KEEPNFIRST one into one entry called "Other..." (to avoid to have too much entries in graphic).
 $KEEPNFIRST = 7;	// Keep first $KEEPNFIRST one + 1 with the remain
 $i = 0;
 if (count($dataseries) > ($KEEPNFIRST + 1)) {
@@ -163,7 +167,7 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
 	$dolgraph->setHeight(350);
-	$dolgraph->combine = empty($conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT) ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
+	$dolgraph->combine = !getDolGlobalString('MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT') ? 0.05 : $conf->global->MAIN_EXPENSEREPORT_COMBINE_GRAPH_STAT;
 	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
@@ -188,8 +192,6 @@ print '</div>';
 print '</div><div class="fichetwothirdright">';
 
 
-$max = 10;
-
 $langs->load("boxes");
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo, u.email, u.admin,";
@@ -197,11 +199,11 @@ $sql .= " d.rowid, d.ref, d.date_debut as dated, d.date_fin as datef, d.date_cre
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = d.fk_user_author";
 // RESTRICT RIGHTS
-if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
-	&& (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance))) {
+if (!$user->hasRight('expensereport', 'readall') && !$user->hasRight('expensereport', 'lire_tous')
+	&& (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || !$user->hasRight('expensereport', 'writeall_advance'))) {
 	$childids = $user->getAllChildIds();
 	$childids[] = $user->id;
-	$sql .= " AND d.fk_user_author IN (".$db->sanitize(join(',', $childids)).")\n";
+	$sql .= " AND d.fk_user_author IN (".$db->sanitize(implode(',', $childids)).")\n";
 }
 $sql .= ' AND d.entity IN ('.getEntity('expensereport').')';
 $sql .= $db->order($sortfield, $sortorder);
@@ -221,7 +223,11 @@ if ($result) {
 	print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 	print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 	print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
-	print '<th>&nbsp;</th>';
+	print '<th>';
+	print '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?sortfield=d.tms&sortorder=DESC">';
+	print img_picto($langs->trans("FullList"), 'expensereport');
+	print '</a>';
+	print '</th>';
 	print '</tr>';
 	if ($num) {
 		$total_ttc = $totalam = $total = 0;
@@ -241,7 +247,7 @@ if ($result) {
 			$userstatic->lastname = $obj->lastname;
 			$userstatic->firstname = $obj->firstname;
 			$userstatic->login = $obj->login;
-			$userstatic->statut = $obj->user_status;
+			$userstatic->status = $obj->user_status;
 			$userstatic->photo = $obj->photo;
 
 			print '<tr class="oddeven">';

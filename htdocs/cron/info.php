@@ -20,6 +20,7 @@
  *  \brief      	Page of info of a cron job
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
@@ -30,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 $langs->loadLangs(array('admin', 'cron'));
 
 // Security check
-if (!$user->rights->cron->read) {
+if (!$user->hasRight('cron', 'read')) {
 	accessforbidden();
 }
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 $object = new Cronjob($db);
 

@@ -43,35 +43,37 @@ if (!defined('CSRFCHECK_WITH_TOKEN')) {
 	define('CSRFCHECK_WITH_TOKEN', '1'); // Token is required even in GET mode
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 $action = GETPOST('action', 'aZ09'); // set or del
 $name = GETPOST('name', 'alpha');
-$entity = GETPOST('entity', 'int');
-$value = ((GETPOST('value', 'int') || GETPOST('value', 'int') == '0') ? GETPOST('value', 'int') : 1);
+$entity = GETPOSTINT('entity');
+$value = (GETPOST('value', 'aZ09') != '' ? GETPOST('value', 'aZ09') : 1);
+
+// Security check
+if (empty($user->admin)) {
+	httponly_accessforbidden('This ajax component can be called by admin user only');
+}
 
 
 /*
  * View
  */
 
-// Ajout directives pour resoudre bug IE
-//header('Cache-Control: Public, must-revalidate');
-//header('Pragma: public');
-
-//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the new value of constant
 if (!empty($action) && !empty($name)) {
-	if ($user->admin) {
-		if ($action == 'set') {
-			dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
-		} elseif ($action == 'del') {
-			dolibarr_del_const($db, $name, $entity);
+	if ($action == 'set') {
+		dolibarr_set_const($db, $name, $value, 'chaine', 0, '', $entity);
+	} elseif ($action == 'del') {
+		dolibarr_del_const($db, $name, $entity);
+		if ($entity == 1) {	// Sometimes the param was saved in both entity 0 and 1. When we work on master entity, we should clean also if entity is 0
+			dolibarr_del_const($db, $name, 0);
 		}
 	}
 } else {

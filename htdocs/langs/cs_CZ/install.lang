@@ -51,7 +51,6 @@ DatabaseName=Název databáze
 DatabasePrefix=Předpona - prefix tabulek v databázi
 DatabasePrefixDescription=Databáze tabulky prefix. Pokud je prázdný, defaultní hodnota je llx_.
 AdminLogin=Uživatelský účet pro vlastníka Dolibarr database.
-PasswordAgain=Zopakujte potvrzení hesla
 AdminPassword=Heslo pro vlastníka databáze Dolibarr.
 CreateDatabase=Vytvořit databázi
 CreateUser=Vytvořte uživatelský účet nebo udělte uživatelskému účtu oprávnění pro databázi Dolibarr
@@ -89,7 +88,7 @@ LoginAlreadyExists=Již existuje
 DolibarrAdminLogin=Login Dolibarr administrátora
 AdminLoginAlreadyExists=Účet administrátora Dolibarru '<b>%s</b>' již existuje. Běžte zpět, pro vytvoření jiného účtu.
 FailedToCreateAdminLogin=Nepodařilo se vytvořit administrátorský účet Dolibarru.
-WarningRemoveInstallDir=Varování, z bezpečnostních důvodů, jakmile instalace nebo upgrade je dokončen, měli byste přidat soubor s názvem<b> install.lock</b> v adresáři dokumentů Dolibarr. Předejdete nechtěnému/škodlivému spuštění instalace nástrojů.
+WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
 FunctionNotAvailableInThisPHP=Není k dispozici na této instalaci PHP
 ChoosedMigrateScript=Vyberte migrační skript
 DataMigration=Migrace databáze (data)
@@ -130,7 +129,7 @@ MigrationCustomerOrderShipping=Migrace přepravy úložiště zákaznických obj
 MigrationShippingDelivery=Aktualizace úložiště přepravy
 MigrationShippingDelivery2=Aktualizace úložiště přepravy 2
 MigrationFinished=Migrace dokončena
-LastStepDesc= <strong> Poslední krok </strong>: Definujte zde přihlašovací jméno a heslo, které chcete použít pro připojení k Dolibarr. <b> Toto heslo neztraťte, protože je to hlavní účet, který spravuje všechny ostatní / další uživatelské účty. </b>
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the main account to administer all other/additional user accounts.</b>
 ActivateModule=Aktivace modulu %s
 ShowEditTechnicalParameters=Klikněte zde pro zobrazení / editaci pokročilých parametrů (pro experty)
 WarningUpgrade=Varování:\nSpustili jste nejdříve zálohu databáze?\nTo je důrazně doporučeno. Ztráta dat (kvůli například chybám v mysql verzi 5.5.40 / 41/42/43) může být během tohoto procesu možná, takže je nezbytné před zahájením jakékoliv migrace provést kompletní zálohu databáze.\n\nKlepnutím na tlačítko OK spustíte proces migrace ...
@@ -140,7 +139,7 @@ KeepDefaultValuesDeb=Použili jste Průvodce nastavením Dolibarr z balíku Linu
 KeepDefaultValuesMamp=Použili jste průvodce nastavením Dolibarr z nástroje DoliMamp, takže zde navrhované hodnoty jsou již optimalizovány. Změňte je pouze tehdy, pokud víte, co děláte.
 KeepDefaultValuesProxmox=Použili jste průvodce nastavení Dolibarr z virtuálního zařízení Proxmox, takže zde navrhované hodnoty jsou již optimalizovány. Změňte je pouze tehdy, pokud víte, co děláte.
 UpgradeExternalModule=Spusťte vyhrazený proces upgradu externího modulu
-SetAtLeastOneOptionAsUrlParameter=Nastavte alespoň jednu možnost jako parametr v adrese URL. Například: '... repair.php? Standard = confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nic, co je třeba vyčistit / odstranit
 NothingToDo=Není co dělat
 #########
@@ -209,7 +208,12 @@ HideNotAvailableOptions=Skrýt nedostupné možnosti
 ErrorFoundDuringMigration=Byly hlášeny chyb(a)y během procesu migrace, takže další krok není k dispozici. Chcete-li ignorovat chyby, můžete <a href="%s"> kliknout zde </a>, ale aplikace nebo některé funkce nemusí pracovat správně, dokud nejsou chyby vyřešeny.
 YouTryInstallDisabledByDirLock=Aplikace se pokoušela samoinnicializovat, ale stránky pro instalaci / upgrade byly pro zabezpečení zakázány (adresář byl přejmenován na příponu .lock). <br>
 YouTryInstallDisabledByFileLock=Aplikace se pokoušela o vlastní inovaci, ale stránky s instalací / upgradem byly zakázány z důvodu zabezpečení (existence souboru zámku <strong> install.lock </strong> v adresáři dokumentů dolibarr). <br>
+YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=Kliknutím sem přejdete do aplikace
 ClickOnLinkOrRemoveManualy=Pokud probíhá aktualizace, počkejte prosím. Pokud ne, klikněte na následující odkaz. Pokud vždy vidíte stejnou stránku, musíte odebrat / přejmenovat soubor install.lock v adresáři dokumentů.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Načteno
 FunctionTest=Test funkce
+NodoUpgradeAfterDB=No action requested by external modules after upgrade of database
+NodoUpgradeAfterFiles=No action requested by external modules after upgrade of files or directories
+MigrationContractLineRank=Migrate Contract Line to use Rank (and enable Reorder)

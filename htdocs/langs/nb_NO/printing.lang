@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - printing
 Module64000Name=Ettklikksutskrift
-Module64000Desc=Enable One click Printing System
-PrintingSetup=Setup of One click Printing System
-PrintingDesc=This module adds a Print button to various modules to allow documents to be printed directly to a printer with no need to open the document into another application.
+Module64000Desc=Aktiver ett klikks utskriftssystem
+PrintingSetup=Oppsett av Ett Klikks utskriftssystem
+PrintingDesc=Denne modulen legger til en Skriv ut-knapp til ulike moduler for å tillate at dokumenter skrives ut direkte til en skriver uten behov for å åpne dokumentet i et annet program.
 MenuDirectPrinting=Ettklikks utskriftsjobber
 DirectPrint=Ettklikks utskrift
 PrintingDriverDesc=Oppsett av skrivervariabler
@@ -32,6 +32,7 @@ PRINTIPP_HOST=Skriver-server
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Logg inn
 PRINTIPP_PASSWORD=Passord
+PRINTIPP_SSL=Bruk SSL
 NoDefaultPrinterDefined=Ingen standardskriver definert
 DefaultPrinter=Standardskriver
 Printer=Skriver
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Konfigurasjonsvariabler for drivere til Google Cloud 
 PrintingDriverDescprintipp=Konfigurasjonsvariabler for skriverdrivere til Cups.
 PrintTestDescprintgcp=Liste over skrivere for Google Cloud Print.
 PrintTestDescprintipp=Liste over skrivere for Cups.
+Testbbbb

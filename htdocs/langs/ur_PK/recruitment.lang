@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = بھرتی
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = نئی ملازمت کے عہدوں کے لیے بھرتی مہم کا نظم کریں اور ان کی پیروی کریں۔
-
-#
 # Admin page
-#
 RecruitmentSetup = بھرتی سیٹ اپ
-Settings = ترتیبات
 RecruitmentSetupPage = ریکروٹمنٹ ماڈیول کے لیے مین آپشنز کا سیٹ اپ یہاں درج کریں۔
 RecruitmentArea=بھرتی کا علاقہ
 PublicInterfaceRecruitmentDesc=نوکریوں کے عوامی صفحات عوامی یو آر ایل ہیں جو نوکریوں کو دکھانے اور جواب دینے کے لیے ہیں۔ ہر اوپن جاب کے لیے ایک مختلف لنک ہوتا ہے، جو ہر جاب ریکارڈ پر پایا جاتا ہے۔
 EnablePublicRecruitmentPages=کھلی ملازمتوں کے عوامی صفحات کو فعال کریں۔
 
-#
-# About page
-#
-About = کے بارے میں
-RecruitmentAbout = بھرتی کے بارے میں
-RecruitmentAboutPage = صفحہ کے بارے میں بھرتی
 NbOfEmployeesExpected=ملازمین کی متوقع تعداد
 JobLabel=ملازمت کی پوزیشن کا لیبل
 WorkPlace=کام کی جگہ
@@ -49,7 +34,6 @@ PositionToBeFilled=عہدہ
 PositionsToBeFilled=ملازمت کے عہدے
 ListOfPositionsToBeFilled=ملازمت کے عہدوں کی فہرست
 NewPositionToBeFilled=نوکری کی نئی پوزیشنیں
-
 JobOfferToBeFilled=ملازمت کی پوزیشن کو پُر کرنا ہے۔
 ThisIsInformationOnJobPosition=پُر کی جانے والی ملازمت کی پوزیشن کی معلومات
 ContactForRecruitment=بھرتی کے لیے رابطہ کریں۔
@@ -57,15 +41,16 @@ EmailRecruiter=ای میل بھرتی کرنے والا
 ToUseAGenericEmail=ایک عام ای میل استعمال کرنے کے لیے۔ اگر وضاحت نہیں کی گئی ہے تو، بھرتی کے ذمہ دار کا ای میل استعمال کیا جائے گا۔
 NewCandidature=نئی درخواست
 ListOfCandidatures=درخواستوں کی فہرست
-RequestedRemuneration=معاوضے کی درخواست کی۔
-ProposedRemuneration=مجوزہ معاوضہ
+Remuneration=تنخواہ
+RequestedRemuneration=تنخواہ مانگی۔
+ProposedRemuneration=مجوزہ تنخواہ
 ContractProposed=معاہدہ تجویز کیا گیا۔
 ContractSigned=معاہدے پر دستخط کیے گئے۔
 ContractRefused=معاہدہ کرنے سے انکار کر دیا۔
 RecruitmentCandidature=درخواست
 JobPositions=ملازمت کے عہدے
 RecruitmentCandidatures=ایپلی کیشنز
-InterviewToDo=انٹرویو کرنا ہے۔
+InterviewToDo=پیروی کرنے کے لیے رابطے
 AnswerCandidature=درخواست کا جواب
 YourCandidature=آپ کی درخواست
 YourCandidatureAnswerMessage=آپ کی درخواست کے لیے آپ کا شکریہ۔ <br>...
@@ -74,3 +59,8 @@ JobClosedTextCanceled=ملازمت کی پوزیشن بند ہے۔
 ExtrafieldsJobPosition=تکمیلی صفات (ملازمت کی پوزیشنیں)
 ExtrafieldsApplication=تکمیلی صفات (نوکری کی درخواستیں)
 MakeOffer=ایک پیشکش کریں۔
+WeAreRecruiting=ہم بھرتی کر رہے ہیں۔ یہ پُر کیے جانے والے کھلے عہدوں کی فہرست ہے...
+NoPositionOpen=اس وقت کوئی عہدہ نہیں کھلا ہے۔
+ConfirmClose=منسوخی کی تصدیق کریں۔
+ConfirmCloseAsk=کیا آپ واقعی اس بھرتی کی امیدواری کو منسوخ کرنا چاہتے ہیں؟
+Recruitment=Recruitment

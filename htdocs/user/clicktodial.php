@@ -22,6 +22,7 @@
  *       \brief      Page for Click to dial datas
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
@@ -29,18 +30,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 $langs->loadLangs(array('users', 'admin'));
 
 $action = (string) GETPOST('action', 'aZ09');
-$id = (int) GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-$feature2 = (($socid && $user->rights->user->self->creer) ? '' : 'user');
+$feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
 
@@ -75,18 +76,18 @@ if (empty($reshook)) {
 /*
  * View
  */
-
 $form = new Form($db);
-
-llxHeader("", "ClickToDial");
-
 
 if ($id > 0) {
 	$object = new User($db);
 	$object->fetch($id, '', '', 1);
-	$object->getrights();
+	$object->loadRights();
 	$object->fetch_clicktodial();
 
+	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
+	$title = $person_name." - ".$langs->trans('ClickToDial');
+	$help_url = '';
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-clicktodial');
 
 	$head = user_prepare_head($object);
 
@@ -101,15 +102,18 @@ if ($id > 0) {
 
 	$linkback = '';
 
-	if ($user->rights->user->user->lire || $user->admin) {
+	if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	}
 
-	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'" class="refid">';
+	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 	$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
 	$morehtmlref .= '</a>';
 
-	dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin, 'rowid', 'ref', $morehtmlref);
+	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $object->id);
+	$morehtmlref .= dolButtonToOpenUrlInDialogPopup('publicvirtualcard', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").' - '.$object->getFullName($langs), img_picto($langs->trans("PublicVirtualCardUrl"), 'card', 'class="valignmiddle marginleftonly paddingrightonly"'), $urltovirtualcard, '', 'nohover');
+
+	dol_banner_tab($object, 'id', $linkback, $user->hasRight('user', 'user', 'lire') || $user->admin, 'rowid', 'ref', $morehtmlref);
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -122,11 +126,11 @@ if ($id > 0) {
 			print '<tr><td class="titlefield fieldrequired">ClickToDial URL</td>';
 			print '<td class="valeur">';
 			print '<input name="url" value="'.(!empty($object->clicktodial_url) ? $object->clicktodial_url : '').'" size="92">';
-			if (empty($conf->global->CLICKTODIAL_URL) && empty($object->clicktodial_url)) {
+			if (!getDolGlobalString('CLICKTODIAL_URL') && empty($object->clicktodial_url)) {
 				$langs->load("errors");
 				print '<span class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</span>';
 			} else {
-				print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL, $langs->trans("ClickToDialUrlDesc"));
+				print '<br>'.$form->textwithpicto('<span class="opacitymedium">'.$langs->trans("KeepEmptyToUseDefault").'</span>:<br>' . getDolGlobalString('CLICKTODIAL_URL'), $langs->trans("ClickToDialUrlDesc"));
 			}
 			print '</td>';
 			print '</tr>';
@@ -148,15 +152,14 @@ if ($id > 0) {
 		print "</tr>\n";
 
 		print '</table>';
-	} else // View mode
-	{
+	} else { // View mode
 		print '<table class="border centpercent tableforfield">';
 
 		if (!empty($user->admin)) {
-			print '<tr><td class="titlefield">ClickToDial URL</td>';
+			print '<tr><td class="">ClickToDial URL</td>';
 			print '<td class="valeur">';
-			if (!empty($conf->global->CLICKTODIAL_URL)) {
-				$url = $conf->global->CLICKTODIAL_URL;
+			if (getDolGlobalString('CLICKTODIAL_URL')) {
+				$url = getDolGlobalString('CLICKTODIAL_URL');
 			}
 			if (!empty($object->clicktodial_url)) {
 				$url = $object->clicktodial_url;
@@ -171,7 +174,7 @@ if ($id > 0) {
 			print '</tr>';
 		}
 
-		print '<tr><td class="titlefield">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
+		print '<tr><td class="">ClickToDial '.$langs->trans("IdPhoneCaller").'</td>';
 		print '<td class="valeur">'.(!empty($object->clicktodial_poste) ? $object->clicktodial_poste : '').'</td>';
 		print "</tr>";
 
@@ -204,7 +207,7 @@ if ($id > 0) {
 	 */
 	print '<div class="tabsAction">';
 
-	if (!empty($user->admin) && $action <> 'edit') {
+	if (!empty($user->admin) && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
 	}
 

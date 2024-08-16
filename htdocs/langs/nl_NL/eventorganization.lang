@@ -5,146 +5,130 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Evenementenorganisatie
 EventOrganizationDescription = Evenementenorganisatie via moduleproject
-EventOrganizationDescriptionLong= Manage the organization of an event (show, conferences, attendees or speakers, with public pages for suggestion, vote or registration)
-#
-# Menu
-#
+EventOrganizationDescriptionLong= Beheer de organisatie van een evenement (show, conferenties, aanwezigen of sprekers, met openbare pagina's voor suggestie, stemmen of registratie)
 EventOrganizationMenuLeft = Georganiseerde evenementen
 EventOrganizationConferenceOrBoothMenuLeft = Conferentie of stand
-
-PaymentEvent=Payment of event
-
-#
+PaymentEvent=Betaling van evenement
+EventFee=Evenementkosten
 # Admin page
-#
-NewRegistration=Registration
+NewRegistration=Registratie
 EventOrganizationSetup=Evenementorganisatie instellen
-EventOrganization=Event organization
-Settings=Instellingen
+EventOrganization=Evenementenorganisatie
 EventOrganizationSetupPage = Instellingenpagina voor evenementorganisatie
 EVENTORGANIZATION_TASK_LABEL = Label van taken om automatisch te maken wanneer het project is gevalideerd
-EVENTORGANIZATION_TASK_LABELTooltip = Wanneer u een georganiseerd evenement valideert, kunnen sommige taken automatisch worden aangemaakt in het project <br> <br> Bijvoorbeeld: <br> Send Call for Conference <br> Send Call for Booth <br> Send call for conferences a0342fcc Receive call for aanwezigen herinner aan evenement naar sprekers <br> Stuur herinnering aan evenement naar standhoster <br> Stuur herinnering aan evenement naar aanwezigen
+EVENTORGANIZATION_TASK_LABELTooltip = Wanneer u een evenement valideert om te organiseren, kunnen sommige taken automatisch worden aangemaakt in het project <br> <br> Bijvoorbeeld: <br> Stuur oproep voor conferenties <br> Stuur oproep voor standen <br> Valideer suggesties van Openen voor conferenties a0342fz <br> Stuur een herinnering aan het evenement naar sprekers <br> Stuur een herinnering aan het evenement naar standhosters <br> Stuur een herinnering aan het evenement naar deelnemers
+EVENTORGANIZATION_TASK_LABELTooltip2=Houd leeg als u taken niet automatisch hoeft aan te maken.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categorie om toe te voegen aan derden, automatisch aangemaakt wanneer iemand een conferentie voorstelt
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categorie om toe te voegen aan derden, automatisch aangemaakt wanneer ze een stand voorstellen
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Sjabloon van e-mail om te verzenden na ontvangst van een suggestie van een conferentie.
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = Sjabloon van e-mail om te verzenden na ontvangst van een suggestie van een stand.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Template of email to send after a registration to an event has been paid.
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Sjabloon van e-mail om te verzenden nadat een registratie naar een stand is betaald.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = Sjabloon van e-mail om te verzenden nadat een registratie voor een evenement is betaald.
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Sjabloon van e-mail om te gebruiken bij het verzenden van e-mails van de massaction "Stuur e-mails" naar sprekers
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Sjabloon van e-mail om te gebruiken bij het verzenden van e-mails van de massaction "Stuur e-mails" op de deelnemerslijst
+EVENTORGANIZATION_FILTERATTENDEES_CAT = In het formulier om een deelnemer aan te maken/toe te voegen, wordt de lijst met derden beperkt tot derden in de categorie
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = In het formulier om een deelnemer aan te maken/toe te voegen, wordt de lijst van derden beperkt tot derden met de aard
 # Object
-#
+OrganizedEvent=Georganiseerd evenement
 EventOrganizationConfOrBooth= Conferentie of stand
-ManageOrganizeEvent = Manage the organization of an event
+EventOrganizationConfOrBoothes=Conferenties of stands
+ManageOrganizeEvent = Beheer de organisatie van een evenement
 ConferenceOrBooth = Conferentie of stand
 ConferenceOrBoothTab = Conferentie of stand
-AmountPaid = Amount paid
-DateOfRegistration = Date of registration
+AmountPaid = Betaald bedrag
+DateOfRegistration = Registratie datum
 ConferenceOrBoothAttendee = Conference Or Booth Attendee
-
-#
+ApplicantOrVisitor=Aanvrager of bezoeker
+Speaker=Spreker
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Uw verzoek voor een conferentie is ontvangen
 YourOrganizationEventBoothRequestWasReceived = Uw aanvraag voor een stand is ontvangen
 EventOrganizationEmailAskConf = Verzoek om conferentie
 EventOrganizationEmailAskBooth = Aanvraag voor stand
-EventOrganizationEmailBoothPayment = Payment of your booth
-EventOrganizationEmailRegistrationPayment = Registration for an event
+EventOrganizationEmailBoothPayment = Betaling van uw stand
+EventOrganizationEmailRegistrationPayment = Registratie voor een evenement
 EventOrganizationMassEmailAttendees = Communicatie naar deelnemers
 EventOrganizationMassEmailSpeakers = Communicatie naar sprekers
-ToSpeakers=To speakers
-
-#
+ToSpeakers=Naar sprekers
 # Event
-#
-AllowUnknownPeopleSuggestConf=Allow people to suggest conferences
-AllowUnknownPeopleSuggestConfHelp=Allow unknown people to suggest a conference they want to do
-AllowUnknownPeopleSuggestBooth=Allow people to apply for a booth
-AllowUnknownPeopleSuggestBoothHelp=Allow unknown people to apply for a booth
+AllowUnknownPeopleSuggestConf=Toestaan dat mensen conferenties voorstellen
+AllowUnknownPeopleSuggestConfHelp=Laat onbekende mensen een conferentie voorstellen die ze willen doen
+AllowUnknownPeopleSuggestBooth=Laat mensen een stand aanvragen
+AllowUnknownPeopleSuggestBoothHelp=Sta onbekende mensen toe om een stand aan te vragen
 PriceOfRegistration=Prijs van registratie
-PriceOfRegistrationHelp=Price to pay to register or participate in the event
+PriceOfRegistrationHelp=Prijs te betalen om te registreren of deel te nemen aan het evenement
 PriceOfBooth=Abonnementsprijs om een stand te staan
 PriceOfBoothHelp=Abonnementsprijs om een stand te staan
-EventOrganizationICSLink=Link ICS for conferences
-ConferenceOrBoothInformation=Informatie over conferentie of stand Or
+EventOrganizationICSLinkProject=Link ICS voor het evenement
+EventOrganizationICSLink=Koppel ICS voor conferenties
+ConferenceOrBoothInformation=Conferentie- of standinformatie
+ConferenceOrBoothFormat=Conferentie- of standmodus
+ConferenceOrBoothFormatID=ID van conferentie- of standmodus
+ConferenceOrBoothFormatCode=Code voor conferentie- of standmodus
+ConferenceOrBoothFormatLabel=Label van conferentie- of standmodus
 Attendees=deelnemers
-ListOfAttendeesOfEvent=List of attendees of the event project
+ListOfAttendeesOfEvent=Lijst met deelnemers aan evenementenprojecten
+ListOfConfOrBoothOfEvent=Lijst met conferenties of stands van evenementenprojecten
 DownloadICSLink = ICS-link downloaden
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+EVENTORGANIZATION_SECUREKEY = Seed om de sleutel voor de openbare registratiepagina te beveiligen om een conferentie voor te stellen
 SERVICE_BOOTH_LOCATION = Service gebruikt voor de factuurregel over een standlocatie
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service die wordt gebruikt voor de factuurrij over een deelnemersabonnement op een evenement
 NbVotes=Aantal stemmen
-#
 # Status
-#
 EvntOrgDraft = Ontwerp
 EvntOrgSuggested = Suggereerde
 EvntOrgConfirmed = bevestigd
 EvntOrgNotQualified = Niet gekwalificeerd
 EvntOrgDone = Uitgevoerd
 EvntOrgCancelled = Geannuleerd
-#
-# Public page
-#
+# Other
 SuggestForm = Suggestie pagina
-SuggestOrVoteForConfOrBooth = Page for suggestion or vote
-EvntOrgRegistrationHelpMessage = Here, you can vote for a conference or suggest a new one for the event. You can also apply to have a booth during the event.
-EvntOrgRegistrationConfHelpMessage = Here, you can suggest a new conference to animate during the event.
-EvntOrgRegistrationBoothHelpMessage = Here, you can apply to have a booth during the event.
+SuggestOrVoteForConfOrBooth = Pagina voor suggestie of stem
+EvntOrgRegistrationHelpMessage = Hier kunt u stemmen op een conferentie of een nieuwe voorstellen voor het evenement. U kunt zich ook aanmelden voor een stand tijdens het evenement.
+EvntOrgRegistrationConfHelpMessage = Hier kunt u een nieuwe conferentie voorstellen om tijdens het evenement te animeren.
+EvntOrgRegistrationBoothHelpMessage = Hier kunt u zich aanmelden voor een stand tijdens het evenement.
 ListOfSuggestedConferences = Lijst met voorgestelde conferenties
-ListOfSuggestedBooths = Lijst met voorgestelde stands
-ListOfConferencesOrBooths=List of conferences or booths of event project
+ListOfSuggestedBooths=Voorgestelde cabines
+ListOfConferencesOrBooths=Conferenties of stands van evenementenproject
 SuggestConference = Een nieuwe conferentie voorstellen
 SuggestBooth = Stel een stand voor
 ViewAndVote = Bekijk en stem op voorgestelde evenementen
-PublicAttendeeSubscriptionGlobalPage = Public link for registration to the event
-PublicAttendeeSubscriptionPage = Public link for registration to this event only
+PublicAttendeeSubscriptionGlobalPage = Openbare link voor registratie voor het evenement
+PublicAttendeeSubscriptionPage = Openbare link voor registratie alleen voor dit evenement
 MissingOrBadSecureKey = De beveiligingssleutel is ongeldig of ontbreekt
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event : <b>%s</b>
+EvntOrgWelcomeMessage = Met dit formulier kunt u zich aanmelden als nieuwe deelnemer aan het evenement
 EvntOrgDuration = Deze conferentie begint op %s en eindigt op %s.
 ConferenceAttendeeFee = Conferentiebezoekerstarief voor het evenement: '%s' variërend van %s tot %s.
 BoothLocationFee = Standplaats voor het evenement : '%s' van %s tot %s
 EventType = Taak type
 LabelOfBooth=Booth label
 LabelOfconference=Conferentie label
-ConferenceIsNotConfirmed=Registration not available, conference is not confirmed yet
-DateMustBeBeforeThan=%s must be before %s
-DateMustBeAfterThan=%s must be after %s
-
-NewSubscription=Registration
-OrganizationEventConfRequestWasReceived=Your suggestion for a conference has been received
-OrganizationEventBoothRequestWasReceived=Your request for a booth has been received
-OrganizationEventPaymentOfBoothWasReceived=Your payment for your booth has been recorded
-OrganizationEventPaymentOfRegistrationWasReceived=Your payment for your event registration has been recorded
-OrganizationEventBulkMailToAttendees=This is a remind about your participation in the event as an attendee
-OrganizationEventBulkMailToSpeakers=This is a reminder on your participation in the event as a speaker
-OrganizationEventLinkToThirdParty=Link to third party (customer, supplier or partner)
-
-NewSuggestionOfBooth=Application for a booth
-NewSuggestionOfConference=Application for a conference
-
-#
-# Vote page
-#
+ConferenceIsNotConfirmed=Registratie niet beschikbaar, conferentie is nog niet bevestigd
+EventRegistrationAreClosed=De inschrijvingen voor evenementen zijn gesloten
+DateMustBeBeforeThan=%s moet vóór %s zijn
+DateMustBeAfterThan=%s moet na %s
+MaxNbOfAttendeesReached=Het maximum aantal deelnemers is bereikt
+NewSubscription=Registratie
+OrganizationEventConfRequestWasReceived=Uw suggestie voor een conferentie is ontvangen
+OrganizationEventBoothRequestWasReceived=Uw aanvraag voor een stand is ontvangen
+OrganizationEventPaymentOfBoothWasReceived=Uw betaling voor uw stand is geregistreerd
+OrganizationEventPaymentOfRegistrationWasReceived=Uw betaling voor uw evenementregistratie is geregistreerd
+OrganizationEventBulkMailToAttendees=Dit is een herinnering aan uw deelname aan het evenement als deelnemer
+OrganizationEventBulkMailToSpeakers=Dit is een herinnering aan je deelname aan het evenement als spreker
+OrganizationEventLinkToThirdParty=Link naar derde partij (klant, leverancier of partner)
+OrganizationEvenLabelName=Openbare naam van de conferentie of stand
+NewSuggestionOfBooth=Aanvraag voor een stand
+NewSuggestionOfConference=Aanvraag om een conferentie te houden
 EvntOrgRegistrationWelcomeMessage = Welkom op de congres- of standsuggestiepagina.
 EvntOrgRegistrationConfWelcomeMessage = Welkom op de pagina met congressuggesties.
 EvntOrgRegistrationBoothWelcomeMessage = Welkom op de stand suggestie pagina.
@@ -152,16 +136,27 @@ EvntOrgVoteHelpMessage = Hier kunt u de voorgestelde evenementen voor het projec
 VoteOk = Uw stem is geaccepteerd.
 AlreadyVoted = Je hebt al op dit evenement gestemd.
 VoteError = Er is een fout opgetreden tijdens het stemmen, probeer het opnieuw.
-
-SubscriptionOk = Your registration has been validated
-ConfAttendeeSubscriptionConfirmation = Confirmation of your subscription to an event
+SubscriptionOk=Uw aanmelding is geregistreerd
+AmountOfRegistrationPaid=Bedrag van de betaalde inschrijving
+ConfAttendeeSubscriptionConfirmation = Bevestiging van uw inschrijving op een evenement
 Attendee = deelnemer
 PaymentConferenceAttendee = Conferentie deelnemer betaling
 PaymentBoothLocation = Standplaats betaling
-DeleteConferenceOrBoothAttendee=Remove attendee
-RegistrationAndPaymentWereAlreadyRecorder=A registration and a payment were already recorded for the email <b>%s</b>
-EmailAttendee=Attendee email
-EmailCompanyForInvoice=Company email (for invoice, if different of attendee email)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automaticaly your registration. Please contact us at %s for a manual validation
-NoPublicActionsAllowedForThisEvent=No public actions are open to public for this event
+DeleteConferenceOrBoothAttendee=Deelnemer verwijderen
+RegistrationAndPaymentWereAlreadyRecorder=Een registratie en een betaling waren al geregistreerd voor de e-mail <b> %s </b>
+EmailAttendee=E-mailadres van deelnemer
+EmailCompany=Bedrijfs e-mail
+EmailCompanyForInvoice=Bedrijfse-mail (voor factuur, indien anders dan e-mailadres van deelnemer)
+ErrorSeveralCompaniesWithEmailContactUs=Er zijn meerdere bedrijven met dit e-mailadres gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
+ErrorSeveralCompaniesWithNameContactUs=Er zijn meerdere bedrijven met deze naam gevonden, dus we kunnen uw registratie niet automatisch valideren. Neem contact met ons op via %s voor een handmatige validatie
+NoPublicActionsAllowedForThisEvent=Er zijn geen openbare acties voor dit evenement toegankelijk
+MaxNbOfAttendees=Max aantal deelnemers
+DateStartEvent=Startdatum evenement
+DateEndEvent=Einddatum evenement
+ModifyStatus=Status wijzigen
+ConfirmModifyStatus=Bevestig statuswijziging
+ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
+RecordsUpdated=%s Records bijgewerkt
+RecordUpdated=Record bijgewerkt
+NoRecordUpdated=Geen record bijgewerkt
+ProfitPerValidatedAttendee=Winst per deelnemer

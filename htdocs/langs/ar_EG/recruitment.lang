@@ -1,4 +1,2 @@
 # Dolibarr language file - Source file is en_US - recruitment
-ModuleRecruitmentName =توظيف
-ModuleRecruitmentDesc =إدارة ومتابعة حملات التوظيف لشغل وظائف جديدة
-RecruitmentSetup =إعداد التوظيف
+Recruitment=توظيف

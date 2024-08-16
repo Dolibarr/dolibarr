@@ -7,11 +7,11 @@ CountryDE=Deutschland
 CountryCH=Schweiz
 # Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
 CountryGB=Großbritannien
-CountryUK=England
+CountryUK=Vereinigte Königreich
 CountryIE=Irland
 CountryCN=China
 CountryTN=Tunesien
-CountryUS=Vereinigte Staaten
+CountryUS=Vereinigte Staaten von Amerika\n
 CountryMA=Marokko
 CountryDZ=Algerien
 CountryCA=Kanada
@@ -247,10 +247,13 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Frau
+CivilityMMEShort=Frau
 CivilityMR=Herr
+CivilityMRShort=Herr
 CivilityMLE=Frau
 CivilityMTRE=Professor
 CivilityDR=Doktor

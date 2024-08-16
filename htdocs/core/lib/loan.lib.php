@@ -2,6 +2,7 @@
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020	Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +52,7 @@ function loan_prepare_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan');
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'add', 'core');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -66,7 +67,7 @@ function loan_prepare_head($object)
 	$head[$tab][2] = 'documents';
 	$tab++;
 
-	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB)) {
+	if (!getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
 		$nbNote = (empty($object->note_private) ? 0 : 1) + (empty($object->note_public) ? 0 : 1);
 		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
@@ -81,6 +82,8 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
 	$tab++;
+
+	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $tab, 'loan', 'remove');
 
@@ -116,18 +119,18 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 		$int = 0;
 		$cap_rest = $capital;
 	} else {
-		$int = ($capital * ($rate / 12));
+		$int = ((float) $capital * ((float) $rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
-		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
+		$cap_rest = round((float) $capital - ((float) $mens - $int), 2, PHP_ROUND_HALF_UP);
 	}
-	$output[$numactualloadterm] = array('cap_rest'=>$cap_rest, 'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet'=>$int, 'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency), 'mens'=>$mens);
+	$output[$numactualloadterm] = array('cap_rest' => $cap_rest, 'cap_rest_str' => price($cap_rest, 0, '', 1, -1, -1, $conf->currency), 'interet' => $int, 'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency), 'mens' => $mens);
 
 	$numactualloadterm++;
 	$capital = $cap_rest;
 	while ($numactualloadterm <= $nbterm) {
 		$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
 
-		$int = ($capital * ($rate / 12));
+		$int = ($capital * ((float) $rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);
 		$cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
 

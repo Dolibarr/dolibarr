@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL, lai piedāvātu %s tiešsaistes ma
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, lai piedāvātu %s tiešsaistes maksājuma lapu dalībnieka abonementam
 ToOfferALinkForOnlinePaymentOnDonation=URL, lai piedāvātu tiešsaistes maksājuma lapu %s ziedojuma samaksai
 YouCanAddTagOnUrl=Varat arī pievienot URL parametru <b>&amp; tag = <i>vērtību</i></b> jebkuram no šiem URL (obligāts tikai maksājumam, kas nav saistīts ar objektu), lai pievienotu savu maksājuma komentāra tagu. <br> Maksājumu URL, kuriem nav neviena objekta, varat pievienot arī parametru <strong>&amp; noidempotency = 1,</strong> lai vienu un to pašu saiti ar vienu tagu varētu izmantot vairākas reizes (dažos maksājuma režīmos var būt ierobežots maksājums līdz 1 par katru atšķirīgo saiti bez šī parametra).
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Set up your Stripe ar url <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Stripe.
 AccountParameter=Konta parametri
 UsageParameter=Izmantošanas parametri
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhokas tiešraides atslēga
 ONLINE_PAYMENT_WAREHOUSE=Krājums, ko izmanto, lai krājumu samazinātu, kad tiek veikts tiešsaistes maksājums <br> (TODO Kad iespēja samazināt akciju tiek veikta, veicot darbību rēķinā, un tiešsaistes maksājums pats par sevi sagatavo rēķinu?)
 StripeLiveEnabled=Ieslēgta josla dzīvot (citādi tests / smilškastē režīms)
 StripeImportPayment=Importēšanas joslas maksājumi
-ExampleOfTestCreditCard=Kredītkartes paraugs testam: %s =&gt; derīgs, %s =&gt; kļūda CVC, %s =&gt; beidzies, %s =&gt; maksa neizdodas
+ExampleOfTestCreditCard=Kredītkartes piemērs pārbaudes maksājumam: %s => derīga, %s => kļūda CVC, %s => beidzies derīguma termiņš, %s => samaksa neizdodas
+ExampleOfTestBankAcountForSEPA=Bankas konta BAN piemērs tiešā debeta pārbaudei: %s
 StripeGateways=Joslas vārti
 OAUTH_STRIPE_TEST_ID=Stripe Connect klienta ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect klienta ID (ca _...)
@@ -50,6 +52,7 @@ StripeAccount=Joslas konts
 StripeChargeList=Joslu saraksts
 StripeTransactionList=Lentes darījumu saraksts
 StripeCustomerId=Joslu klienta ID
+StripePaymentId=Svītra maksājuma id
 StripePaymentModes=Stripa maksājumu veidi
 LocalID=Lokālais ID
 StripeID=Stripa ID
@@ -61,6 +64,7 @@ DeleteACard=Dzēst karti
 ConfirmDeleteCard=Vai tiešām vēlaties izdzēst šo kredītkarti vai debetkarti?
 CreateCustomerOnStripe=Izveidojiet klientu joslā
 CreateCardOnStripe=Izveidojiet karti joslā
+CreateBANOnStripe=Izveidojiet banku vietnē Stripe
 ShowInStripe=Rādīt joslā
 StripeUserAccountForActions=Lietotāja konts, lai izmantotu e-pasta paziņojumu par dažiem Stripe notikumiem (Stripe izmaksas)
 StripePayoutList=Svītru izmaksu saraksts
@@ -68,4 +72,19 @@ ToOfferALinkForTestWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IP
 ToOfferALinkForLiveWebhook=Saite uz iestatījumu Stripe WebHook, lai izsauktu IPN (tiešraides režīms)
 PaymentWillBeRecordedForNextPeriod=Maksājums tiks reģistrēts par nākamo periodu.
 ClickHereToTryAgain=<a href="%s">Noklikšķiniet šeit, lai mēģinātu vēlreiz ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Stingro klientu autentifikācijas noteikumu dēļ karte jāizveido no Stripe biroja. Jūs varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Stingru klientu autentifikācijas noteikumu dēļ kartes izveide jāveic Stripe back office. Varat noklikšķināt šeit, lai ieslēgtu Stripe klientu ierakstu: %s
+STRIPE_CARD_PRESENT=Stripe termināļiem paredzēta karte
+TERMINAL_LOCATION=Stripe Terminals atrašanās vieta (adrese).
+RequestDirectDebitWithStripe=Pieprasiet tiešo debetu, izmantojot Stripe
+RequesCreditTransferWithStripe=Pieprasīt kredīta pārvedumu ar Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Iespējojiet tiešā debeta maksājumus, izmantojot Stripe
+STRIPE_KLARNA=Iespējojiet maksājumus, izmantojot Klarna
+STRIPE_BANCONTACT=Iespējojiet maksājumus, izmantojot BANCONTACT
+STRIPE_IDEAL=Iespējojiet maksājumus, izmantojot IDEAL
+STRIPE_GIROPAY=Iespējojiet maksājumus, izmantojot GIROPAY
+STRIPE_SOFORT=Iespējojiet maksājumus, izmantojot SOFORT
+StripeConnect_Mode=Stripe Connect režīms
+ExampleOnlyForBECustomers=Tikai Beļģijas klientiem
+ExampleOnlyForDECustomers=Tikai Vācijas klientiem
+ExampleOnlyForNLCustomers=Tikai Nīderlandes klientiem
+ExampleOnlyForATBEDEITNLESCustomers=Tikai klientiem no Austrijas, Beļģijas, Vācijas, Itālijas, Nīderlandes, Spānijas

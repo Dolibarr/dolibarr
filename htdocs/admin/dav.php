@@ -21,6 +21,7 @@
  *      \brief      Page to setup DAV server
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
@@ -36,13 +37,15 @@ if (!$user->admin) {
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-
+if (empty($action)) {
+	$action = 'edit';
+}
 
 $arrayofparameters = array(
 	'DAV_RESTICT_ON_IP'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'DAV_ALLOW_PRIVATE_DIR'=>array('css'=>'minwidth200', 'enabled'=>2),
 	'DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>$conf->ecm->enabled)
+	'DAV_ALLOW_ECM_DIR'=>array('css'=>'minwidth200', 'enabled'=>isModEnabled('ecm'))
 );
 
 // To fix when dire does not exists
@@ -57,6 +60,9 @@ dol_mkdir($conf->dav->dir_output.'/private');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+if ($action == 'update') {
+	$action = 'edit';
+}
 
 
 /*
@@ -65,7 +71,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $help_url = 'EN:Module_DAV';
 
-llxHeader('', $langs->trans("DAVSetup"), $help_url);
+llxHeader('', $langs->trans("DAVSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-dav');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
@@ -76,14 +82,14 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = dav_admin_prepare_head();
 
-print dol_get_fiche_head($head, 'webdav', '', -1, 'action');
+print dol_get_fiche_head($head, 'webdav', '', -1, '');
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
@@ -96,14 +102,14 @@ if ($action == 'edit') {
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$label .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+			$tooltiphelp .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
-			print $form->selectyesno($key, $conf->global->$key, 1);
+			print $form->selectyesno($key, getDolGlobalString($key), 1);
 		} else {
 			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'">';
 		}
@@ -119,25 +125,29 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td class="titlefieldmiddle">';
+		if (isset($val['enabled']) && empty($val['enabled'])) {
+			continue;
+		}
+
+		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
 		if ($key == 'DAV_RESTICT_ON_IP') {
 			$label = $langs->trans("RESTRICT_ON_IP");
-			$label .= ' <span class="opacitymedium">'.$langs->trans("Example").': '.$langs->trans("IPListExample").'</span>';
+			$tooltiphelp .= ' <span class="opacitymedium">'.$langs->trans("Example").': '.$langs->trans("IPListExample").'</span>';
 		}
 		print $form->textwithpicto($label, $tooltiphelp);
-		print '</td><td>';
+		print '</td><td class="minwidth200">';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR') {
 			print $langs->trans("AlwaysActive");
 		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR') {
-			print yn($conf->global->$key);
+			print yn(getDolGlobalString($key));
 		} else {
-			print $conf->global->$key;
+			print getDolGlobalString($key);
 		}
 		print '</td></tr>';
 	}
@@ -184,14 +194,14 @@ $message .= '</div>';
 $message .= ajax_autoselect('webdavpublicurl');
 
 $message .= '<br>';
-if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) {
-	$urlEntity = (!empty($conf->multicompany->enabled) ? '?entity='.$conf->entity : '');
-	$url = '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank" rel="noopener noreferrer">'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'</a>';
+if (getDolGlobalString('DAV_ALLOW_PUBLIC_DIR')) {
+	$urlEntity = (isModEnabled('multicompany') ? '?entity=' . $conf->entity : '');
+	$url = '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '</a>';
 
-	$message .= img_picto('', 'globe').' '.str_replace('{url}', $url, $langs->trans("WebDavServer", 'WebDAV public', ''));
-	$message .= '<div class="urllink"><input type="text" id="webdavurl" class="quatrevingtpercent" value="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'">';
-	$message .= '<a href="'.$urlwithroot.'/dav/fileserver.php/public/'.$urlEntity.'" target="_blank" rel="noopener noreferrer">';
-	$message .= ' '.img_picto('', 'globe');
+	$message .= img_picto('', 'globe') . ' ' . str_replace('{url}', $url, $langs->trans("WebDavServer", 'WebDAV public', ''));
+	$message .= '<div class="urllink"><input type="text" id="webdavurl" class="quatrevingtpercent" value="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '">';
+	$message .= '<a href="' . $urlwithroot . '/dav/fileserver.php/public/' . $urlEntity . '" target="_blank" rel="noopener noreferrer">';
+	$message .= ' ' . img_picto('', 'globe');
 	$message .= '</a>';
 	$message .= '</div>';
 	$message .= ajax_autoselect('webdavurl');

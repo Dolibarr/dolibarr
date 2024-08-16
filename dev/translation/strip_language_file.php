@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2014 by FromDual GmbH, licensed under GPL v2
  * Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,10 +59,10 @@ $rc = 0;
 
 // Get and check arguments
 
-$lPrimary = isset($argv[1])?$argv[1]:'';
-$lSecondary = isset($argv[2])?$argv[2]:'';
+$lPrimary = isset($argv[1]) ? $argv[1] : '';
+$lSecondary = isset($argv[2]) ? $argv[2] : '';
 $lEnglish = 'en_US';
-$filesToProcess = isset($argv[3])?$argv[3]:'';
+$filesToProcess = isset($argv[3]) ? $argv[3] : '';
 
 if (empty($lPrimary) || empty($lSecondary) || empty($filesToProcess)) {
 	$rc = 1;
@@ -141,7 +142,7 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			$a = mb_split('=', trim($line), 2);
 			if (count($a) != 2) {
-				print "ERROR in file $lSecondaryFile, line $cnt: " . trim($line) . "\n";
+				print "File $lSecondaryFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
 			}
 
@@ -149,13 +150,13 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// key is redundant
 			if (array_key_exists($key, $aSecondary)) {
-				print "Key $key is redundant in file $lSecondaryFile (line: $cnt).\n";
+				print "File $lSecondaryFile:WARNING: Key $key is redundant in line $cnt.\n";
 				continue;
 			}
 
 			// String has no value
 			if ($value == '') {
-				print "Key $key has no value in file $lSecondaryFile (line: $cnt).\n";
+				print "File $lSecondaryFile:WARNING: Key $key has no value in line: $cnt.\n";
 				continue;
 			}
 
@@ -195,7 +196,7 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			$a = mb_split('=', trim($line), 2);
 			if (count($a) != 2) {
-				print "ERROR in file $lEnglishFile, line $cnt: " . trim($line) . "\n";
+				print "File $lEnglishFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
 			}
 
@@ -203,13 +204,13 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// key is redundant
 			if (array_key_exists($key, $aEnglish)) {
-				print "Key $key is redundant in file $lEnglishFile (line: $cnt).\n";
+				print "File $lEnglishFile:WARNING: Key $key is redundant in line $cnt.\n";
 				continue;
 			}
 
 			// String has no value
 			if ($value == '') {
-				print "Key $key has no value in file $lEnglishFile (line: $cnt).\n";
+				print "File $lEnglishFile:WARNING: Key $key has no value in line $cnt.\n";
 				continue;
 			}
 
@@ -238,7 +239,7 @@ foreach ($filesToProcess as $fileToProcess) {
 
 	if ($handle = fopen($lPrimaryFile, 'r')) {
 		if (! $oh = fopen($output, 'w')) {
-			print "ERROR in writing to file ".$output."\n";
+			print "ERROR writing to file ".$output."\n";
 			exit;
 		}
 
@@ -264,7 +265,7 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			$a = mb_split('=', trim($line), 2);
 			if (count($a) != 2) {
-				print "ERROR in file $lPrimaryFile, line $cnt: " . trim($line) . "\n";
+				print "File $lPrimaryFile:ERROR: ".trim($line)." in line $cnt.\n";
 				continue;
 			}
 
@@ -272,7 +273,18 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// key is redundant
 			if (array_key_exists($key, $aPrimary)) {
-				print "Key $key is redundant in file $lPrimaryFile (line: $cnt) - Already found into ".$fileFirstFound[$key]." (line: ".$lineFirstFound[$key].").\n";
+				$prefix = "File $lPrimaryFile:WARNING: Key $key is redundant";
+				$postfix = " in line $cnt.\n";
+
+				if (!empty($fileFirstFound[$key])) {
+					print "$prefix [Already found in '".$fileFirstFound[$key];
+					print "' (line: ".$lineFirstFound[$key].")]$postfix";";";
+				} else {
+					$fileFirstFound[$key] = $fileToProcess;
+					$lineFirstFound[$key] = $cnt;
+
+					print "$prefix [Already found in main file]$postfix";
+				}
 				continue;
 			} else {
 				$fileFirstFound[$key] = $fileToProcess;
@@ -281,7 +293,7 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// String has no value
 			if ($value == '') {
-				print "Key $key has no value in file $lPrimaryFile (line: $cnt).\n";
+				print "File $lPrimaryFile:WARNING: Key $key has no value in line $cnt.\n";
 				continue;
 			}
 
@@ -303,12 +315,12 @@ foreach ($filesToProcess as $fileToProcess) {
 
 			// String exists in both files and value into alternative language differs from main language but also from english files
 			// so we keep it.
-			if ((! empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
-				&& ! empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
+			if ((!empty($aSecondary[$key]) && $aSecondary[$key] != $aPrimary[$key]
+				&& !empty($aEnglish[$key]) && $aSecondary[$key] != $aEnglish[$key])
 				|| in_array($key, $arrayofkeytoalwayskeep) || preg_match('/^FormatDate/', $key) || preg_match('/^FormatHour/', $key)
-				) {
+			) {
 				//print "Key $key differs (aSecondary=".$aSecondary[$key].", aPrimary=".$aPrimary[$key].", aEnglish=".$aEnglish[$key].") so we add it into new secondary language (line: $cnt).\n";
-				fwrite($oh, $key."=".(empty($aSecondary[$key])?$aPrimary[$key]:$aSecondary[$key])."\n");
+				fwrite($oh, $key."=".(empty($aSecondary[$key]) ? $aPrimary[$key] : $aSecondary[$key])."\n");
 			}
 		}
 		if (! feof($handle)) {

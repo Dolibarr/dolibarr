@@ -27,6 +27,7 @@
  *		\brief      Page d'administration/configuration du module Ldap
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -90,9 +91,6 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!dolibarr_set_const($db, 'LDAP_FIELD_MOBILE', GETPOST("fieldmobile"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
-	if (!dolibarr_set_const($db, 'LDAP_FIELD_SKYPE', GETPOST("fieldskype"), 'chaine', 0, '', $conf->entity)) {
-		$error++;
-	}
 	if (!dolibarr_set_const($db, 'LDAP_FIELD_FAX', GETPOST("fieldfax"), 'chaine', 0, '', $conf->entity)) {
 		$error++;
 	}
@@ -137,7 +135,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_USERS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -160,14 +158,14 @@ if ($action == 'setvalue' && $user->admin) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_users');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functionality is available
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -177,7 +175,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue&toke
 print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
-print dol_get_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
+print dol_get_fiche_head($head, 'users', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("LDAPDescUsers").'</span><br>';
 print '<br>';
@@ -189,7 +187,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
-// DN Pour les utilisateurs
+// DN (Domain Name) for the users
 print '<!-- LDAP_USER_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPUserDn").'</span></td><td>';
 print '<input size="48" type="text" name="user" value="'.getDolGlobalString('LDAP_USER_DN').'">';
@@ -258,14 +256,14 @@ print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_LOGIN_SAMBA"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_LOGIN_SAMBA') ? ' checked' : '')."></td>";
 print '</tr>';
 
-// Password not crypted
+// Password not encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.getDolGlobalString('LDAP_FIELD_PASSWORD').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td class="right">&nbsp;</td>';
 print '</tr>';
 
-// Password crypted
+// Password encrypted
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.getDolGlobalString('LDAP_FIELD_PASSWORD_CRYPTED').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
@@ -291,13 +289,6 @@ print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.getDolGlobalString('LDAP_FIELD_MOBILE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_MOBILE"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_MOBILE') ? ' checked' : '')."></td>";
-print '</tr>';
-
-// Skype
-print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
-print '<input size="25" type="text" name="fieldskype" value="'.getDolGlobalString('LDAP_FIELD_SKYPE').'">';
-print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SKYPE"'.(getDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString('LDAP_FIELD_SKYPE') ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Fax
@@ -403,7 +394,7 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test de la connection
  */
 if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroUser");
@@ -424,7 +415,7 @@ if (getDolGlobalString('LDAP_SYNCHRO_ACTIVE') == Ldap::SYNCHRO_DOLIBARR_TO_LDAP)
 
 if (function_exists("ldap_connect")) {
 	if ($action == 'testuser') {
-		// Creation objet
+		// Create object
 		$object = new User($db);
 		$object->initAsSpecimen();
 
@@ -432,7 +423,7 @@ if (function_exists("ldap_connect")) {
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -455,7 +446,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';
@@ -467,7 +458,7 @@ if (function_exists("ldap_connect")) {
 	}
 
 	if ($action == 'testsearchuser') {
-		// Creation objet
+		// Create object
 		$object = new User($db);
 		$object->initAsSpecimen();
 
@@ -475,7 +466,7 @@ if (function_exists("ldap_connect")) {
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$required_fields = array(
@@ -500,9 +491,9 @@ if (function_exists("ldap_connect")) {
 			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 			$required_fields = array_unique(array_values(array_filter($required_fields, "dol_validElement")));
 
-			// Get from LDAP database an array of results
+			// Get from LDAP database an array of results by making a search on
+			// $filter = '('.ldap_escape(getDolGlobalString('LDAP_KEY_USERS'), '', LDAP_ESCAPE_FILTER).'=*)';
 			$ldapusers = $ldap->getRecords('*', getDolGlobalString('LDAP_USER_DN'), getDolGlobalString('LDAP_KEY_USERS'), $required_fields, 1);
-			//$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, '', 1);
 
 			if (is_array($ldapusers)) {
 				$liste = array();
@@ -525,7 +516,7 @@ if (function_exists("ldap_connect")) {
 			print "search: *<br>\n";
 			print "userDN: ".getDolGlobalString('LDAP_USER_DN')."<br>\n";
 			print "useridentifier: ".getDolGlobalString('LDAP_KEY_USERS')."<br>\n";
-			print "required_fields: ".implode(',', $required_fields)."<br>\n";
+			print "requested fields: ".implode(',', $required_fields)."<br>\n";
 			print "=> ".count($liste)." records<br>\n";
 			print "\n<br>";
 		} else {

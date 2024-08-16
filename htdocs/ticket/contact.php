@@ -24,6 +24,7 @@
  *       \brief      Contacts of tickets
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
@@ -33,35 +34,43 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (isModEnabled('project')) {
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
 
 // Get parameters
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 $action = GETPOST("action", 'alpha');
 $track_id = GETPOST("track_id", 'alpha');
-$id = GETPOST("id", 'int');
+$id = GETPOSTINT("id");
 $ref = GETPOST('ref', 'alpha');
 
 $type = GETPOST('type', 'alpha');
 $source = GETPOST('source', 'alpha');
 
-$ligne = GETPOST('ligne', 'int');
-$lineid = GETPOST('lineid', 'int');
+$ligne = GETPOSTINT('ligne');
+$lineid = GETPOSTINT('lineid');
 
 
 // Store current page url
 $url_page_current = DOL_URL_ROOT.'/ticket/contact.php';
 
+$hookmanager->initHooks(array('contactticketcard', 'globalcard'));
 $object = new Ticket($db);
-
-
-$permissiontoadd = $user->rights->ticket->write;
+if ($id > 0 || $ref || $track_id) {
+	$result = $object->fetch($id, $ref, $track_id);
+}
 
 // Security check
-$id = GETPOST("id", 'int');
-if ($user->socid > 0) $socid = $user->socid;
+$id = GETPOSTINT("id");
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
 $result = restrictedArea($user, 'ticket', $object->id, '');
 
 // restrict access for externals users
@@ -69,20 +78,27 @@ if ($user->socid > 0 && ($object->fk_soc != $user->socid)) {
 	accessforbidden();
 }
 // or for unauthorized internals users
-if (!$user->socid && (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
 	accessforbidden();
 }
+
+$permissiontoadd = $user->hasRight('ticket', 'write');
 
 
 /*
  * Actions
  */
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if ($action == 'addcontact' && $user->rights->ticket->write) {
+if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 	$result = $object->fetch($id, '', $track_id);
 
 	if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
 		$error = 0;
@@ -113,7 +129,7 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 	}
 
 	if ($result >= 0) {
-		Header("Location: ".$url_page_current."?id=".$object->id);
+		header("Location: ".$url_page_current."?id=".$object->id);
 		exit;
 	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -126,7 +142,7 @@ if ($action == 'addcontact' && $user->rights->ticket->write) {
 }
 
 // bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->ticket->write) {
+if ($action == 'swapstatut' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$result = $object->swapContactStatus($ligne);
 	} else {
@@ -135,7 +151,7 @@ if ($action == 'swapstatut' && $user->rights->ticket->write) {
 }
 
 // Efface un contact
-if ($action == 'deletecontact' && $user->rights->ticket->write) {
+if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 		foreach ($internal_contacts as $key => $contact) {
@@ -150,12 +166,21 @@ if ($action == 'deletecontact' && $user->rights->ticket->write) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			Header("Location: ".$url_page_current."?id=".$object->id);
+			header("Location: ".$url_page_current."?id=".$object->id);
 			exit;
 		}
 	}
 }
 
+// Set parent company
+if ($action == 'set_thirdparty' && $user->hasRight('ticket', 'write')) {
+	if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
+		$result = $object->setCustomer(GETPOSTINT('editcustomer'));
+		$url = $_SERVER["PHP_SELF"].'?track_id='.GETPOST('track_id', 'alpha');
+		header("Location: ".$url);
+		exit();
+	}
+}
 
 
 /*
@@ -163,7 +188,7 @@ if ($action == 'deletecontact' && $user->rights->ticket->write) {
  */
 
 $help_url = 'FR:DocumentationModuleTicket';
-llxHeader('', $langs->trans("TicketContacts"), $help_url);
+llxHeader('', $langs->trans("TicketContacts"), $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card_contacts');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -180,10 +205,10 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 			print dol_get_fiche_end();
 		}
 
-		if (!$user->socid && !empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY)) {
-			$object->next_prev_filter = "te.fk_user_assign = '".$user->id."'";
+		if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
+			$object->next_prev_filter = "te.fk_user_assign ='".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = '".$user->socid."'";
+			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);
@@ -210,46 +235,34 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		// Thirdparty
-		if (isModEnabled('societe')) {
-			$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
-			/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
-				$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&token='.newToken().'&track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
-			}*/
-			$morehtmlref .= ' : ';
-			if ($action == 'editcustomer') {
-				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
-			} else {
-				$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+		if (isModEnabled("societe")) {
+			$morehtmlref .= '<br>';
+			$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
+			if ($action != 'editcustomer' && $permissiontoadd) {
+				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
+			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 		}
 
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");
-			$morehtmlref .= '<br>'.$langs->trans('Project').' ';
-			if ($user->rights->ticket->write) {
+			if (0) {
+				$morehtmlref .= '<br>';
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
-					//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token='.newToken().'&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
-					$morehtmlref .= ' : ';
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				if ($action == 'classify') {
-					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-					$morehtmlref .= '<input type="hidden" name="action" value="classin">';
-					$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-					$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-					$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-					$morehtmlref .= '</form>';
-				} else {
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
+					$morehtmlref .= '<br>';
 					$proj = new Project($db);
 					$proj->fetch($object->fk_project);
 					$morehtmlref .= $proj->getNomUrl(1);
-				} else {
-					$morehtmlref .= '';
+					if ($proj->title) {
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+					}
 				}
 			}
 		}
@@ -258,13 +271,13 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 
 		$linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
-		dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, $param, 0, '', '', 1, '');
+		dol_banner_tab($object, 'ref', $linkback, (empty($user->socid) ? 1 : 0), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1, '');
 
 		print dol_get_fiche_end();
 
 		//print '<br>';
 
-		$permission = $user->rights->ticket->write;
+		$permission = $user->hasRight('ticket', 'write');
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));

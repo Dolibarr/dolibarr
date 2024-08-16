@@ -25,33 +25,36 @@ if (!defined('NOTOKENRENEWAL')) {
 /**
  *      \file       htdocs/admin/dolistore/ajax/image.php
  *      \ingroup    admin
- *      \brief      Page des informations dolistore
+ *      \brief      Page des information dolistore
  */
+
 require "../../../main.inc.php";
-
-// CORE
-
-global $lang, $user, $conf;
-
-
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
+
+
+/*
+ * View
+ */
+
+top_httphead('image');
+
 $dolistore = new Dolistore();
 
-$id_product = GETPOST('id_product', 'int');
-$id_image   = GETPOST('id_image', 'int');
+$id_product = GETPOSTINT('id_product');
+$id_image   = GETPOSTINT('id_image');
 // quality : image resize with this in the URL : "cart_default", "home_default", "large_default", "medium_default", "small_default", "thickbox_default"
 $quality    = GETPOST('quality', 'alpha');
 
 try {
-	$url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
+	$url = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV') . '/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
 	$api = new PrestaShopWebservice(
-		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY,
+		getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'),
+		getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY'),
 		$dolistore->debug_api
 	);
 	//echo $url;
 	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-	header('Content-type:image');
+
 	print $request['response'];
 } catch (PrestaShopWebserviceException $e) {
 	// Here we are dealing with errors
@@ -61,6 +64,6 @@ try {
 	} elseif ($trace[0]['args'][0] == 401) {
 		die('Bad auth key');
 	} else {
-		die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+		die('Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
 	}
 }

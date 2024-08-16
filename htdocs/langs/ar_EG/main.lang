@@ -22,6 +22,7 @@ FormatDateHourText=%B %d, %Y, %I:%M %p
 Closed=مقفول
 Closed2=مقفول
 CloseAs=اضبط الحالة على
+OpenVerb=افتح
 Password=كلمة السر
 Connection=تسجيل دخول
 RefSupplier=المرجع. مورد

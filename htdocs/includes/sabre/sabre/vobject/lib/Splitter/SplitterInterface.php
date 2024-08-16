@@ -15,16 +15,16 @@ namespace Sabre\VObject\Splitter;
  * @author Dominik Tobschall (http://tobschall.de/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SplitterInterface {
-
+interface SplitterInterface
+{
     /**
      * Constructor.
      *
-     * The splitter should receive an readable file stream as it's input.
+     * The splitter should receive an readable file stream as its input.
      *
      * @param resource $input
      */
-    function __construct($input);
+    public function __construct($input);
 
     /**
      * Every time getNext() is called, a new object will be parsed, until we
@@ -32,8 +32,7 @@ interface SplitterInterface {
      *
      * When the end is reached, null will be returned.
      *
-     * @return Sabre\VObject\Component|null
+     * @return \Sabre\VObject\Component|null
      */
-    function getNext();
-
+    public function getNext();
 }

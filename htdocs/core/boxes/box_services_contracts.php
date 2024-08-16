@@ -38,17 +38,6 @@ class box_services_contracts extends ModeleBoxes
 	public $depends = array("service", "contrat");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -60,7 +49,7 @@ class box_services_contracts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !(!empty($user->rights->service->lire) && !empty($user->rights->contrat->lire));
+		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
 	}
 
 	/**
@@ -79,9 +68,11 @@ class box_services_contracts extends ModeleBoxes
 
 		$form = new Form($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxLastProductsInContract", $max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
-		if ($user->rights->service->lire && $user->rights->contrat->lire) {
+		if ($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire')) {
 			$contractstatic = new Contrat($this->db);
 			$contractlinestatic = new ContratLigne($this->db);
 			$thirdpartytmp = new Societe($this->db);
@@ -95,7 +86,7 @@ class box_services_contracts extends ModeleBoxes
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			$sql .= ")";
@@ -124,7 +115,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->label = $objp->label;
 					$contractlinestatic->description = $objp->description;
 					$contractlinestatic->type = $objp->type;
-					$contractlinestatic->product_id = $objp->product_id;
+					$contractlinestatic->fk_product = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 					$contractlinestatic->product_type = $objp->product_type;
 					$contractlinestatic->statut = $objp->contractline_status;
@@ -134,6 +125,7 @@ class box_services_contracts extends ModeleBoxes
 					$contractstatic->ref_customer = $objp->ref_customer;
 					$contractstatic->ref_supplier = $objp->ref_supplier;
 					$contractstatic->statut = $objp->contract_status;
+					$contractstatic->status = $objp->contract_status;
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
@@ -143,10 +135,11 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
+					if ($contractstatic->status == Contrat::STATUS_VALIDATED && $objp->contractline_status == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) {
 						$late = img_warning($langs->trans("Late"));
 					}
 
@@ -169,13 +162,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 						$description = $objp->description;
 
-						// Add description in form
-						if (!empty($conf->global->PRODUIT_DESC_IN_FORM)) {
-							//$text .= (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-							$description = ''; // Already added into main visible desc
-						}
-
-						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, (!empty($objp->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+						$s = $form->textwithtooltip($text, $description, 3, '', '', '', 0, '');
 					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}
@@ -214,8 +201,8 @@ class box_services_contracts extends ModeleBoxes
 				}
 				if ($num == 0) {
 					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoContractedProducts")
+					'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoContractedProducts").'</span>'
 					);
 				}
 
@@ -229,8 +216,8 @@ class box_services_contracts extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

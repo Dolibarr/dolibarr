@@ -24,6 +24,7 @@
  *       \brief      About Dolibarr File page
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -52,7 +53,7 @@ $version = '0.0';
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_about');
 
 
 print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');
@@ -89,31 +90,31 @@ print '</li>';
 if (preg_match('/^fr_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.fr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("France")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.fr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryFR")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^el_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.gr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Greece")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.gr/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryGR")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^es_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.es/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Spain")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.es/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryES")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^it_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.it/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Italy")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.it/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryIT")).'</a>';
 	print '</li>';
 }
 if (preg_match('/^de_/i', $langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="_blank" href="https://www.dolibarr.de/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("Germany")).'</a>';
+	print '<a target="_blank" href="https://www.dolibarr.de/" rel="noopener noreferrer external">'.$langs->trans("OfficialWebSiteLocal", $langs->transnoentitiesnoconv("CountryDE")).'</a>';
 	print '</li>';
 }*/
 print '<li>';

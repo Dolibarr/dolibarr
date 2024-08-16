@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=توصيل
 DeliveryRef=معرف التسليم
-DeliveryCard=بطاقة استلام
+DeliveryCard=إيصال التسليم
 DeliveryOrder=إيصال التسليم
 DeliveryDate=تاريخ التسليم او الوصول
 CreateDeliveryOrder=إنشاء إيصال الاستلام
@@ -30,3 +30,4 @@ NonShippable=غير قابل للشحن
 ShowShippableStatus=إظهار علامة قابل للشحن
 ShowReceiving=عرض إيصال الاستلام
 NonExistentOrder=امر غير موجود
+StockQuantitiesAlreadyAllocatedOnPreviousLines = كميات المخزون المخصصة بالفعل في الأسطر السابقة

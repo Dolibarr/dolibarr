@@ -34,6 +34,8 @@ use DebugBar\DataCollector\Renderable;
  * $debugbar->addCollector(new TwigProfileCollector($profile, $env));
  * // or: $debugbar->addCollector(new TwigProfileCollector($profile, $loader));
  * </code>
+ *
+ * @deprecated Use `\Debugbar\Bridge\NamespacedTwigProfileCollector` instead for Twig 2.x and 3.x
  */
 class TwigProfileCollector extends DataCollector implements Renderable, AssetProvider
 {

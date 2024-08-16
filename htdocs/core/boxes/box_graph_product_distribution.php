@@ -18,7 +18,7 @@
 
 /**
  *	\file       htdocs/core/boxes/box_graph_product_distribution.php
- *	\ingroup    factures
+ *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -34,18 +34,7 @@ class box_graph_product_distribution extends ModeleBoxes
 	public $boxlabel = "BoxProductDistribution";
 	public $depends = array("product|service", "facture|propal|commande");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 	public $widgettype = 'graph';
-
 
 	/**
 	 *  Constructor
@@ -55,14 +44,14 @@ class box_graph_product_distribution extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $user, $conf;
+		global $user;
 
 		$this->db = $db;
 
 		$this->hidden = !(
-			(isModEnabled('facture') && !empty($user->rights->facture->lire))
-			|| (isModEnabled('commande') && !empty($user->rights->commande->lire))
-			|| (isModEnabled('propal') && !empty($user->rights->propale->lire))
+			(isModEnabled('invoice') && $user->hasRight('facture', 'lire'))
+			|| (isModEnabled('order') && $user->hasRight('commande', 'lire'))
+			|| (isModEnabled('propal') && $user->hasRight('propal', 'lire'))
 		);
 	}
 
@@ -91,7 +80,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$param_showordernb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
 		$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
-			$year = GETPOST($param_year, 'int');
+			$year = GETPOSTINT($param_year);
 			$showinvoicenb = GETPOST($param_showinvoicenb, 'alpha');
 			$showpropalnb = GETPOST($param_showpropalnb, 'alpha');
 			$showordernb = GETPOST($param_showordernb, 'alpha');
@@ -107,13 +96,13 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showinvoicenb = 1;
 			$showordernb = 1;
 		}
-		if (!isModEnabled('facture') || empty($user->rights->facture->lire)) {
+		if (!isModEnabled('invoice') || !$user->hasRight('facture', 'lire')) {
 			$showinvoicenb = 0;
 		}
-		if (empty($conf->propal->enabled) || empty($user->rights->propale->lire)) {
+		if (isModEnabled('propal') || !$user->hasRight('propal', 'lire')) {
 			$showpropalnb = 0;
 		}
-		if (empty($conf->commande->enabled) || empty($user->rights->commande->lire)) {
+		if (!isModEnabled('order') || !$user->hasRight('commande', 'lire')) {
 			$showordernb = 0;
 		}
 
@@ -152,7 +141,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		$WIDTH = ($nbofgraph >= 2 || !empty($conf->dol_optimize_smallscreen)) ? '300' : '320';
 		$HEIGHT = '150';	// Height require to have 5+1 entries into legend visible.
 
-		if (!empty($conf->propal->enabled) && !empty($user->rights->propale->lire)) {
+		if (isModEnabled("propal") && $user->hasRight('propal', 'lire')) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb) {
 				$langs->load("propal");
@@ -161,7 +150,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1;
 				$nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid > 0 ? $userid : 0));
-				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 				if (empty($data2)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
@@ -214,7 +203,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
-		if (!empty($conf->commande->enabled) && !empty($user->rights->commande->lire)) {
+		if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb) {
 				$langs->load("orders");
@@ -224,7 +213,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$nocolor = 0;
 				$mode = 'customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
@@ -278,7 +267,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 
 
-		if (isModEnabled('facture') && !empty($user->rights->facture->lire)) {
+		if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb) {
 				$langs->load("bills");
@@ -288,7 +277,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$nocolor = 0;
 				$mode = 'customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), $max);
+				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ? -1 : (3600 * 24)), $max);
 
 				if (empty($data1)) {
 					$showpointvalue = 0;
@@ -352,7 +341,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
 		if (!$mesg) {
 			$stringtoshow = '';
-			$stringtoshow .= '<script type="text/javascript">
+			$stringtoshow .= '<script nonce="'.getNonce().'" type="text/javascript">
 				jQuery(document).ready(function() {
 					jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 						jQuery("#idfilter'.$this->boxcode.'").toggle();
@@ -365,14 +354,14 @@ class box_graph_product_distribution extends ModeleBoxes
 			$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 			$stringtoshow .= '<input type="hidden" name="page_y" value="">';
 			$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showinvoicenb,showpropalnb,showordernb">';
-			if (!empty($conf->propal->enabled) || !empty($user->rights->propale->lire)) {
+			if (isModEnabled("propal") || $user->hasRight('propal', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showpropalnb.'"'.($showpropalnb ? ' checked' : '').'> '.$langs->trans("ForProposals");
 				$stringtoshow .= '&nbsp;';
 			}
-			if (!empty($conf->commande->enabled) || !empty($user->rights->commande->lire)) {
+			if (isModEnabled('order') || $user->hasRight('commande', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showordernb.'"'.($showordernb ? ' checked' : '').'> '.$langs->trans("ForCustomersOrders");
 			}
-			if (isModEnabled('facture') || !empty($user->rights->facture->lire)) {
+			if (isModEnabled('invoice') || $user->hasRight('facture', 'lire')) {
 				$stringtoshow .= '<input type="checkbox" name="'.$param_showinvoicenb.'"'.($showinvoicenb ? ' checked' : '').'> '.$langs->trans("ForCustomersInvoices");
 				$stringtoshow .= ' &nbsp; ';
 			}
@@ -393,15 +382,15 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			if ($nbofgraph == 2) {
 				$stringtoshow .= '<div class="fichecenter"><div class="containercenter"><div class="fichehalfleft">';
-				if ($showpropalnb) {
+				if (isModEnabled('propal') && $showpropalnb) {
 					$stringtoshow .= $px2->show();
-				} elseif ($showordernb) {
+				} elseif (isModEnabled('order') && $showordernb) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div><div class="fichehalfright">';
-				if ($showinvoicenb) {
+				if (isModEnabled('invoice') && $showinvoicenb) {
 					$stringtoshow .= $px1->show();
-				} elseif ($showordernb) {
+				} elseif (isModEnabled('order') && $showordernb) {
 					$stringtoshow .= $px3->show();
 				}
 				$stringtoshow .= '</div></div></div>';
@@ -423,9 +412,9 @@ class box_graph_product_distribution extends ModeleBoxes
 			);
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
+				'td' => 'class="nohover left"',
 				'maxlength'=>500,
-				'text' => $mesg
+				'text' => '<span class="opacitymedium">'.$mesg.'</span>'
 			);
 		}
 	}

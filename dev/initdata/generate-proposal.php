@@ -47,9 +47,9 @@ require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
  * Parameters
  */
 
-define(GEN_NUMBER_PROPAL, 10);
+define('GEN_NUMBER_PROPAL', $argv[1] ?? 10);
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
 	mktime(12, 0, 0, 2, 13, $year),
 	mktime(12, 0, 0, 2, 23, $year),
@@ -152,8 +152,8 @@ $user->rights->propal->creer=1;
 $user->rights->propal->propal_advance->validate=1;
 
 
-if (! empty($conf->global->PROPALE_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php")) {
-	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/".$conf->global->PROPALE_ADDON.".php";
+if (getDolGlobalString('PROPALE_ADDON') && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php")) {
+	require_once DOL_DOCUMENT_ROOT ."/core/modules/propale/" . getDolGlobalString('PROPALE_ADDON').".php";
 }
 
 $i=0;

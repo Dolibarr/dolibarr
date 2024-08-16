@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Aset baru
 AccountancyCodeAsset=Kode akuntansi (aset)
 AccountancyCodeDepreciationAsset=Kode akuntansi (akun penyusutan aset)
@@ -25,58 +21,42 @@ DeleteType=Hapus
 DeleteAnAssetType=Hapus model aset
 ConfirmDeleteAssetType=Anda yakin ingin menghapus aset model ini?
 ShowTypeCard=Tampilkan model '1%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Aset
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Deskripsi Aset
-
-#
 # Admin page
-#
 AssetSetup=Pengaturan aset
 AssetSetupPage=Halaman pengaturan aset
-ExtraFieldsAssetModel=Complementary attributes (Asset's model)
-
-AssetsType=Asset model
-AssetsTypeId=Asset model id
-AssetsTypeLabel=Asset model label
-AssetsTypes=Assets models
+ExtraFieldsAssetModel=Atribut pelengkap (model Aset)
+AssetsType=Model aset
+AssetsTypeId=Id model aset
+AssetsTypeLabel=Label model aset
+AssetsTypes=Model aset
 ASSET_ACCOUNTANCY_CATEGORY=Grup akuntansi aset tetap
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Periode proporsional dalam hari untuk menghitung amortisasi selama satu tahun
 # Menu
-#
 MenuAssets=Aset
 MenuNewAsset=Aset baru
-MenuAssetModels=Model assets
+MenuAssetModels=Aset model
 MenuListAssets=Daftar
-MenuNewAssetModel=New asset's model
+MenuNewAssetModel=Model aset baru
 MenuListAssetModels=Daftar
-
-#
 # Module
-#
 ConfirmDeleteAsset=Anda yakin ingin menghapus aset ini?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Pilihan depresiasi
 AssetAccountancyCodes=Akun akuntansi
 AssetDepreciation=Depresiasi
-
-#
 # Asset
-#
 Asset=Aset
 Assets=Aset
 AssetReversalAmountHT=Nilai pembalikan (tanpa pajak)
 AssetAcquisitionValueHT=Nilai akuisisi (tanpa pajak)
-AssetRecoveredVAT=Recovered VAT
+AssetRecoveredVAT=PPN yang dipulihkan
 AssetReversalDate=Tanggal pembalikan
 AssetDateAcquisition=Tanggal perolehan
-AssetDateStart=Date of start-up
+AssetDateStart=Tanggal permulaan
 AssetAcquisitionType=Jenis akuisisi
 AssetAcquisitionTypeNew=Baru
 AssetAcquisitionTypeOccasion=Digunakan
@@ -89,40 +69,27 @@ AssetNotDepreciated=Tidak terdepresiasi
 AssetDisposal=Pembuangan
 AssetConfirmDisposalAsk=Anda yakin ingin membuang aset <b> %s </b>?
 AssetConfirmReOpenAsk=Anda yakin ingin membuka kembali aset <b> %s </b> ?
-
-#
 # Asset status
-#
 AssetInProgress=Dalam proses
 AssetDisposed=Dibuang
 AssetRecorded=Diperhitungkan
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Tanggal dibuang
-AssetDisposalAmount=Disposal value
-AssetDisposalType=Type of disposal
-AssetDisposalDepreciated=Depreciate the year of transfer
-AssetDisposalSubjectToVat=Disposal subject to VAT
-
-#
+AssetDisposalAmount=Nilai pembuangan
+AssetDisposalType=Jenis pembuangan
+AssetDisposalDepreciated=Depresiasi tahun transfer
+AssetDisposalSubjectToVat=Pembuangannya dikenakan PPN
 # Asset model
-#
-AssetModel=Asset's model
-AssetModels=Asset's models
-
-#
+AssetModel=Model aset
+AssetModels=Model aset
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Depresiasi ekonomi
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetDepreciationOptionAcceleratedDepreciation=Penyusutan yang dipercepat (pajak)
 AssetDepreciationOptionDepreciationType=Jenis depresiasi
 AssetDepreciationOptionDepreciationTypeLinear=Garis lurus
 AssetDepreciationOptionDepreciationTypeDegressive=Menurun
 AssetDepreciationOptionDepreciationTypeExceptional=Pengecualian
 AssetDepreciationOptionDegressiveRate=Tingkat penurunan
-AssetDepreciationOptionAcceleratedDepreciation=Accelerated depreciation (tax)
 AssetDepreciationOptionDuration=Durasi
 AssetDepreciationOptionDurationType=Jenis durasi
 AssetDepreciationOptionDurationTypeAnnual=Tahunan
@@ -131,56 +98,47 @@ AssetDepreciationOptionDurationTypeDaily=Harian
 AssetDepreciationOptionRate=Nilai (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Dasar depresiasi (tanpa PPN)
 AssetDepreciationOptionAmountBaseDeductibleHT=Dasar pengurangan (tanpa PPN)
-AssetDepreciationOptionTotalAmountLastDepreciationHT=Total amount last depreciation (excl. VAT)
-
-#
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Jumlah total penyusutan terakhir (tidak termasuk PPN)
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Depresiasi ekonomi
 AssetAccountancyCodeAsset=Aset
 AssetAccountancyCodeDepreciationAsset=Depresiasi
 AssetAccountancyCodeDepreciationExpense=Biaya depresiasi
 AssetAccountancyCodeValueAssetSold=Nilai aset dibuang
-AssetAccountancyCodeReceivableOnAssignment=Receivable on disposal
-AssetAccountancyCodeProceedsFromSales=Proceeds from disposal
+AssetAccountancyCodeReceivableOnAssignment=Piutang pada pelepasan
+AssetAccountancyCodeProceedsFromSales=Hasil dari pembuangan
 AssetAccountancyCodeVatCollected=PPN dipungut
-AssetAccountancyCodeVatDeductible=Recovered VAT on assets
-AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelerated depreciation (tax)
+AssetAccountancyCodeVatDeductible=PPN yang dipulihkan atas aset
+AssetAccountancyCodeDepreciationAcceleratedDepreciation=Penyusutan yang dipercepat (pajak)
 AssetAccountancyCodeAcceleratedDepreciation=Akun
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Biaya depresiasi
-AssetAccountancyCodeProvisionAcceleratedDepreciation=Repossession/Provision
-
-#
+AssetAccountancyCodeProvisionAcceleratedDepreciation=Pengambilan Kembali/Penyediaan
 # Asset depreciation
-#
-AssetBaseDepreciationHT=Depreciation basis (excl. VAT)
+AssetBaseDepreciationHT=Dasar penyusutan (tidak termasuk PPN)
 AssetDepreciationBeginDate=Mulai depresiasi pada
 AssetDepreciationDuration=Durasi
 AssetDepreciationRate=Nilai (1%%)
 AssetDepreciationDate=Tanggal depresiasi
 AssetDepreciationHT=Depresiasi (tanpa PPN)
-AssetCumulativeDepreciationHT=Cumulative depreciation (excl. VAT)
-AssetResidualHT=Residual value (excl. VAT)
-AssetDispatchedInBookkeeping=Depreciation recorded
-AssetFutureDepreciationLine=Future depreciation
-AssetDepreciationReversal=Reversal
-
-#
+AssetCumulativeDepreciationHT=Penyusutan kumulatif (tidak termasuk PPN)
+AssetResidualHT=Nilai sisa (tidak termasuk PPN)
+AssetDispatchedInBookkeeping=Penyusutan dicatat
+AssetFutureDepreciationLine=Depresiasi di masa depan
+AssetDepreciationReversal=Kemunduran
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Id of the asset or the model sound has not been provided
-AssetErrorFetchAccountancyCodesForMode=Error when retrieving the accounting accounts for the '%s' depreciation mode
-AssetErrorDeleteAccountancyCodesForMode=Error when deleting accounting accounts from the '%s' depreciation mode
-AssetErrorInsertAccountancyCodesForMode=Error when inserting the accounting accounts of the depreciation mode '%s'
-AssetErrorFetchDepreciationOptionsForMode=Error when retrieving options for the '%s' depreciation mode
-AssetErrorDeleteDepreciationOptionsForMode=Error when deleting the '%s' depreciation mode options
-AssetErrorInsertDepreciationOptionsForMode=Error when inserting the '%s' depreciation mode options
-AssetErrorFetchDepreciationLines=Error when retrieving recorded depreciation lines
-AssetErrorClearDepreciationLines=Error when purging recorded depreciation lines (reversal and future)
-AssetErrorAddDepreciationLine=Error when adding a depreciation line
-AssetErrorCalculationDepreciationLines=Error when calculating the depreciation lines (recovery and future)
-AssetErrorReversalDateNotProvidedForMode=The reversal date is not provided for the '%s' depreciation method
-AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=The reversal date must be greater than or equal to the beginning of the current fiscal year for the '%s' depreciation method
-AssetErrorReversalAmountNotProvidedForMode=The reversal amount is not provided for the depreciation mode '%s'.
-AssetErrorFetchCumulativeDepreciation=Error when retrieving the accumulated depreciation amount from the depreciation line
-AssetErrorSetLastCumulativeDepreciation=Error when recording the last accumulated depreciation amount
+AssetErrorAssetOrAssetModelIDNotProvide=Id aset atau model yang ditemukan belum disediakan
+AssetErrorFetchAccountancyCodesForMode=Kesalahan saat mengambil akun akuntansi untuk mode penyusutan '%s'
+AssetErrorDeleteAccountancyCodesForMode=Kesalahan saat menghapus akun akuntansi dari mode penyusutan '%s'
+AssetErrorInsertAccountancyCodesForMode=Kesalahan saat memasukkan akun akuntansi mode penyusutan '%s'
+AssetErrorFetchDepreciationOptionsForMode=Terjadi kesalahan saat mengambil opsi untuk mode penyusutan '%s'
+AssetErrorDeleteDepreciationOptionsForMode=Terjadi kesalahan saat menghapus opsi mode penyusutan '%s'
+AssetErrorInsertDepreciationOptionsForMode=Terjadi kesalahan saat memasukkan opsi mode penyusutan '%s'
+AssetErrorFetchDepreciationLines=Terjadi kesalahan saat mengambil garis penyusutan yang tercatat
+AssetErrorClearDepreciationLines=Kesalahan saat menghapus garis penyusutan yang tercatat (pembalikan dan masa depan)
+AssetErrorAddDepreciationLine=Kesalahan saat menambahkan garis penyusutan
+AssetErrorCalculationDepreciationLines=Kesalahan saat menghitung garis penyusutan (pemulihan dan masa depan)
+AssetErrorReversalDateNotProvidedForMode=Tanggal pembalikan tidak disediakan untuk metode penyusutan '%s'
+AssetErrorReversalDateNotGreaterThanCurrentBeginFiscalDateForMode=Tanggal pembalikan harus lebih besar atau sama dengan awal tahun fiskal berjalan untuk metode penyusutan '%s'
+AssetErrorReversalAmountNotProvidedForMode=Jumlah pembalikan tidak disediakan untuk mode penyusutan '%s'.
+AssetErrorFetchCumulativeDepreciation=Kesalahan saat mengambil jumlah akumulasi penyusutan dari garis penyusutan
+AssetErrorSetLastCumulativeDepreciation=Kesalahan saat mencatat jumlah akumulasi penyusutan terakhir

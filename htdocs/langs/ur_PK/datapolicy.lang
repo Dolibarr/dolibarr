@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = ڈیٹا پرائیویسی پالیسی
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = ڈیٹا پرائیویسی کا انتظام کرنے کے لیے ماڈیول (جی ڈی پی آر کے مطابق)
+# Administration page
+datapolicySetup = ماڈیول ڈیٹا پرائیویسی پالیسی سیٹ اپ
+Deletion = ڈیٹا کو حذف کرنا
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+NB_MONTHS = %s مہینے
+ONE_YEAR = 1 سال
+NB_YEARS = %s سال
+DATAPOLICY_TIERS_CLIENT = صارف
+DATAPOLICY_TIERS_PROSPECT = امکان
+DATAPOLICY_TIERS_PROSPECT_CLIENT = امکان/کسٹمر
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = نہ ہی امکان/نہ ہی گاہک
+DATAPOLICY_TIERS_FOURNISSEUR = سپلائر
+DATAPOLICY_CONTACT_CLIENT = صارف
+DATAPOLICY_CONTACT_PROSPECT = امکان
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = امکان/کسٹمر
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = نہ ہی امکان/نہ ہی گاہک
+DATAPOLICY_CONTACT_FOURNISSEUR = سپلائر
+DATAPOLICY_ADHERENT = رکن
+DATAPOLICY_Tooltip_SETUP = رابطے کی قسم - ہر قسم کے لیے اپنے انتخاب کی نشاندہی کریں۔
+SendAgreementText = آپ اپنے تمام متعلقہ رابطوں کو ایک GDPR ای میل بھیج سکتے ہیں (جن کو ابھی تک کوئی ای میل موصول نہیں ہوئی ہے اور جس کے لیے آپ نے ان کے GDPR معاہدے کے بارے میں کچھ رجسٹر نہیں کیا ہے)۔ ایسا کرنے کے لیے درج ذیل بٹن کا استعمال کریں۔
+SendAgreement = ای میلز بھیجیں۔
+AllAgreementSend = تمام ای میلز بھیج دی گئی ہیں۔
+TXTLINKDATAPOLICYACCEPT = لنک کے لیے متن "معاہدہ"
+TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = جی ڈی پی آر: ذاتی ڈیٹا کی پروسیسنگ
+DATAPOLICY_consentement = ذاتی ڈیٹا کی پروسیسنگ کے لیے رضامندی حاصل کی گئی۔
+DATAPOLICY_opposition_traitement = Opposes to the processing of his personal data
+DATAPOLICY_opposition_prospection = Opposes to the processing of his personal data for the purposes of prospecting
+# Notes added during an anonymization
+DATAPOLICY_date = Date of agreement/disagreement GDPR
+DATAPOLICY_send = Date agreement email sent
+MailSent = ای میل بھیج دیا گیا ہے
+NUMBER_MONTH_BEFORE_DELETION = Number of months before deletion

@@ -47,6 +47,9 @@ session_cache_limiter('public');
 
 require_once '../../main.inc.php';
 
+// Load translation files required by the page
+$langs->loadLangs(array("mrp"));
+
 // Define javascript type
 top_httphead('text/javascript; charset=UTF-8');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
@@ -69,8 +72,8 @@ function addDispatchLine(index, type, mode)
 {
 	mode = mode || 'qtymissing'
 
-	console.log("fourn/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
-	if(mode == 'qtymissingconsume') {
+	console.log("mrp/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
+	if(mode == 'qtymissingconsume' || mode == 'allmissingconsume') {
 		var inputId = 'qtytoconsume';
 		var warehouseId = 'idwarehouse';
 	}
@@ -94,16 +97,72 @@ function addDispatchLine(index, type, mode)
 		console.log($("#qty_dispatched_"+index).val());
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
 		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
-			qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + 1;
-			mode = 'lessone';
+			qtyDispatched = parseFloat($("#qty_dispatched_" + index).val()) + 1;
+
+		}
+		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
+				var qtymax = parseFloat($($row).data('max-qty'));
+				if(qtymax === 'undefined') qtymax = 1;
 		}
 	}
-	console.log("qtyDispatched="+qtyDispatched+" qtyOrdered="+qtyOrdered);
 
+
+	if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
+		var count = 0;
+		var qtyalreadyused = 0;
+		var error = 0;
+
+		while (qtyalreadyused < qty) {
+			//If remaining qty needed is inferior to qty asked, qtymax = qty asked - qty already used
+			if ((qtyalreadyused + qtymax) > qty) qtymax = qty - qtyalreadyused;
+			//If first line, we replace value, not add line
+			if(count === 0){
+				$("#"+inputId+"-"+index+"-"+nbrTrs).val(qtymax);
+			} else {
+				var res = addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qtymax, mode, $row);
+				if(res === -1){
+					error = 1;
+					break;
+				}
+				nbrTrs++;
+			}
+			qtyalreadyused = qtyalreadyused + qtymax;
+			count++;
+			$row = $("tr[name='" + type + '_' + index + "_1']").clone(true);
+		}
+
+		if(error === 0) {
+			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
+		}
+	}
+	else addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row)
+
+}
+
+/**
+ * addDispatchTR
+ * Adds new table row for dispatching to multiple stock locations or multiple lot/serial
+ *
+ * @param qtyOrdered    double
+ * @param qtyDispatched double
+ * @param index         int
+ * @param nbrTrs        int
+ * @param warehouseId   int
+ * @param inputId       int
+ * @param type          string
+ * @param qty           double
+ * @param mode          string
+ * @param $row          object
+ */
+function addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row) {
 	if (qtyOrdered <= 1) {
-		window.alert("Quantity can't be split");
+		let errormsg = '<?php echo dol_escape_js($langs->trans('QtyCantBeSplit')); ?>';
+		$.jnotify(errormsg, 'error', true);
+		return -1;
 	} else if (qtyDispatched >= qtyOrdered) {
-		window.alert("No remain qty to dispatch");
+		let errormsg = '<?php echo dol_escape_js($langs->trans('NoRemainQtyToDispatch')); ?>';
+		$.jnotify(errormsg, 'error', true);
+		return -1;
 	} else if (qtyDispatched < qtyOrdered) {
 		//replace tr suffix nbr
 		var re1 = new RegExp('_'+index+'_1', 'g');
@@ -128,24 +187,27 @@ function addDispatchLine(index, type, mode)
 		/*  Suffix of lines are:  index _ trs.length */
 		$("#"+inputId+"-"+index+"-"+(nbrTrs+1)).focus();
 		if ($("#"+inputId+"-"+index+"-"+(nbrTrs)).val() == 0) {
-			$("#"+inputId+"-"+index+"-"+(nbrTrs)).val(1);
+			if(mode == 'allmissingconsume' || mode == 'alltoproduce') $("#"+inputId+"-"+index+"-"+(nbrTrs)).val(qty);
+			else $("#"+inputId+"-"+index+"-"+(nbrTrs)).val(1);
 		}
 		var totalonallines = 0;
 		for (let i = 1; i <= nbrTrs; i++) {
 			console.log(i+" = "+parseFloat($("#"+inputId+"-"+index+"-"+i).val()));
 			totalonallines = totalonallines + parseFloat($("#"+inputId+"-"+index+"-"+i).val());
 		}
-		console.log("totalonallines="+totalonallines);
-		if (totalonallines == qtyOrdered && qtyOrdered > 1) {
-			var prevouslineqty = $("#"+inputId+"-"+index+"-"+nbrTrs).val();
-			$("#"+inputId+"-"+index+"-"+(nbrTrs)).val(1);
-			$("#"+inputId+"-"+index+"-"+(nbrTrs+1)).val(prevouslineqty - 1);
+
+		if(mode != 'allmissingconsume' && mode != 'alltoproduce') {
+			if (totalonallines == qtyOrdered && qtyOrdered > 1) {
+				var prevouslineqty = $("#" + inputId + "-" + index + "-" + nbrTrs).val();
+				$("#" + inputId + "-" + index + "-" + (nbrTrs)).val(1);
+				$("#" + inputId + "-" + index + "-" + (nbrTrs + 1)).val(prevouslineqty - 1);
+			}
 		}
 		$("#qty_dispatched_"+index).val(qtyDispatched);
 
 		//hide all buttons then show only the last one
-		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
-		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
+		$("tr[name^='"+type+"_"+index+"_'] .splitbutton").hide();
+		$("tr[name^='"+type+"_"+index+"_']:last .splitbutton").show();
 
 		if (mode === 'lessone')
 		{
@@ -156,6 +218,10 @@ function addDispatchLine(index, type, mode)
 		$("#"+inputId+"-"+index+(nbrTrs)).data('qty', qty);
 		$("#"+inputId+"-"+index+(nbrTrs)).data('type', type);
 		$("#"+inputId+"-"+index+(nbrTrs)).data('index', index);
+		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
+			let currentQtyDispatched = qtyDispatched+qty;
+			$row.find("input[id^='"+inputId+"']").val(qty);
+		}
 	}
 }
 

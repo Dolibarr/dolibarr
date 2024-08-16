@@ -34,17 +34,6 @@ class box_bookmarks extends ModeleBoxes
 	public $depends = array("bookmark");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -56,7 +45,7 @@ class box_bookmarks extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->bookmark->lire);
+		$this->hidden = !$user->hasRight('bookmark', 'lire');
 	}
 
 	/**
@@ -76,7 +65,7 @@ class box_bookmarks extends ModeleBoxes
 			'text' => $langs->trans("BoxMyLastBookmarks", $max),
 			'sublink' => DOL_URL_ROOT.'/bookmarks/list.php',
 		);
-		if ($user->rights->bookmark->creer) {
+		if ($user->hasRight("bookmark", "creer")) {
 			$this->info_box_head['subpicto'] = 'bookmark';
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		} else {
@@ -84,7 +73,7 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
 		}
 
-		if ($user->rights->bookmark->lire) {
+		if ($user->hasRight('bookmark', 'lire')) {
 			$sql = "SELECT b.title, b.url, b.target, b.favicon";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bookmark as b";
 			$sql .= " WHERE fk_user = ".((int) $user->id);
@@ -121,7 +110,7 @@ class box_bookmarks extends ModeleBoxes
 
 				if ($num == 0) {
 					$mytxt = $langs->trans("NoRecordedBookmarks");
-					if ($user->rights->bookmark->creer) {
+					if ($user->hasRight("bookmark", "creer")) {
 						$mytxt .= ' '.$langs->trans("ClickToAdd");
 					}
 					$this->info_box_contents[$line][0] = array(
@@ -141,8 +130,8 @@ class box_bookmarks extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

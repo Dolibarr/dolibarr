@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Xml\Property;
 
 use Sabre\DAV\Exception\BadRequest;
@@ -22,10 +24,10 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class ShareAccess implements Element {
-
+class ShareAccess implements Element
+{
     /**
-     * Either SHARED or SHAREDOWNER
+     * Either SHARED or SHAREDOWNER.
      *
      * @var int
      */
@@ -39,10 +41,9 @@ class ShareAccess implements Element {
      *
      * @param int $shareAccess
      */
-    function __construct($shareAccess) {
-
+    public function __construct($shareAccess)
+    {
         $this->value = $shareAccess;
-
     }
 
     /**
@@ -50,10 +51,9 @@ class ShareAccess implements Element {
      *
      * @return int
      */
-    function getValue() {
-
+    public function getValue()
+    {
         return $this->value;
-
     }
 
     /**
@@ -71,32 +71,26 @@ class ShareAccess implements Element {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         switch ($this->value) {
-
-            case SharingPlugin::ACCESS_NOTSHARED :
+            case SharingPlugin::ACCESS_NOTSHARED:
                 $writer->writeElement('{DAV:}not-shared');
                 break;
-            case SharingPlugin::ACCESS_SHAREDOWNER :
+            case SharingPlugin::ACCESS_SHAREDOWNER:
                 $writer->writeElement('{DAV:}shared-owner');
                 break;
-            case SharingPlugin::ACCESS_READ :
+            case SharingPlugin::ACCESS_READ:
                 $writer->writeElement('{DAV:}read');
                 break;
-            case SharingPlugin::ACCESS_READWRITE :
+            case SharingPlugin::ACCESS_READWRITE:
                 $writer->writeElement('{DAV:}read-write');
                 break;
-            case SharingPlugin::ACCESS_NOACCESS :
+            case SharingPlugin::ACCESS_NOACCESS:
                 $writer->writeElement('{DAV:}no-access');
                 break;
-
         }
-
     }
 
     /**
@@ -117,27 +111,25 @@ class ShareAccess implements Element {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-
+    public static function xmlDeserialize(Reader $reader)
+    {
         $elems = $reader->parseInnerTree();
         foreach ($elems as $elem) {
             switch ($elem['name']) {
-                case '{DAV:}not-shared' :
+                case '{DAV:}not-shared':
                     return new self(SharingPlugin::ACCESS_NOTSHARED);
-                case '{DAV:}shared-owner' :
+                case '{DAV:}shared-owner':
                     return new self(SharingPlugin::ACCESS_SHAREDOWNER);
-                case '{DAV:}read' :
+                case '{DAV:}read':
                     return new self(SharingPlugin::ACCESS_READ);
-                case '{DAV:}read-write' :
+                case '{DAV:}read-write':
                     return new self(SharingPlugin::ACCESS_READWRITE);
-                case '{DAV:}no-access' :
+                case '{DAV:}no-access':
                     return new self(SharingPlugin::ACCESS_NOACCESS);
             }
         }
         throw new BadRequest('Invalid value for {DAV:}share-access element');
-
     }
 }

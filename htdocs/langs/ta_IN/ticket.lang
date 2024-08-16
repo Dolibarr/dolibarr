@@ -5,93 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=டிக்கெட்டுகள்
 Module56000Desc=வெளியீடு அல்லது கோரிக்கை மேலாண்மைக்கான டிக்கெட் அமைப்பு
-
 Permission56001=டிக்கெட்டுகளைப் பார்க்கவும்
 Permission56002=டிக்கெட்டுகளை மாற்றவும்
 Permission56003=டிக்கெட்டுகளை நீக்கு
 Permission56004=டிக்கெட்டுகளை நிர்வகிக்கவும்
 Permission56005=அனைத்து மூன்றாம் தரப்பினரின் டிக்கெட்டுகளையும் பார்க்கவும் (வெளிப்புற பயனர்களுக்கு பயனுள்ளதாக இல்லை, எப்போதும் அவர்கள் சார்ந்திருக்கும் மூன்றாம் தரப்பினருக்கு மட்டுமே)
-
+Permission56006=Export tickets
+Tickets=Tickets
 TicketDictType=டிக்கெட் - வகைகள்
-TicketDictCategory=டிக்கெட் - குழுக்கள்
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=டிக்கெட் - தீவிரங்கள்
 TicketDictResolution=டிக்கெட் - தீர்மானம்
-
 TicketTypeShortCOM=வணிக கேள்வி
-TicketTypeShortHELP=செயல்பாட்டு உதவிக்கான கோரிக்கை
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=சிக்கல் அல்லது பிழை
 TicketTypeShortPROBLEM=பிரச்சனை
 TicketTypeShortREQUEST=மாற்றம் அல்லது மேம்படுத்தல் கோரிக்கை
 TicketTypeShortPROJET=திட்டம்
 TicketTypeShortOTHER=மற்றவை
-
 TicketSeverityShortLOW=குறைந்த
 TicketSeverityShortNORMAL=இயல்பானது
 TicketSeverityShortHIGH=உயர்
 TicketSeverityShortBLOCKING=விமர்சனம், தடுப்பது
-
 TicketCategoryShortOTHER=மற்றவை
-
 ErrorBadEmailAddress=புலம் '%s' தவறானது
 MenuTicketMyAssign=எனது டிக்கெட்டுகள்
 MenuTicketMyAssignNonClosed=எனது திறந்த டிக்கெட்டுகள்
 MenuListNonClosed=டிக்கெட்டுகளைத் திறக்கவும்
-
 TypeContact_ticket_internal_CONTRIBUTOR=பங்களிப்பாளர்
 TypeContact_ticket_internal_SUPPORTTEC=ஒதுக்கப்பட்ட பயனர்
 TypeContact_ticket_external_SUPPORTCLI=வாடிக்கையாளர் தொடர்பு / சம்பவம் கண்காணிப்பு
 TypeContact_ticket_external_CONTRIBUTOR=வெளி பங்களிப்பாளர்
-
 OriginEmail=நிருபர் மின்னஞ்சல்
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=மின்னஞ்சல் மூலம் டிக்கெட் செய்தியை அனுப்பவும்
-
+ExportDataset_ticket_1=Tickets
 # Status
 Read=படி
 Assigned=ஒதுக்கப்படும்
-InProgress=நடந்து கொண்டிருக்கிறது
 NeedMoreInformation=நிருபர் கருத்துக்காக காத்திருக்கிறேன்
 NeedMoreInformationShort=கருத்துக்காக காத்திருக்கிறேன்
-Answered=பதிலளித்தார்
 Waiting=காத்திருக்கிறது
 SolvedClosed=தீர்க்கப்பட்டது
 Deleted=நீக்கப்பட்டது
-
 # Dict
-Type=வகை
 Severity=தீவிரம்
 TicketGroupIsPublic=குழு பொது
 TicketGroupIsPublicDesc=ஒரு டிக்கெட் குழு பொதுவில் இருந்தால், பொது இடைமுகத்திலிருந்து டிக்கெட்டை உருவாக்கும் போது அது படிவத்தில் தெரியும்
-
 # Email templates
 MailToSendTicketMessage=டிக்கெட் செய்தியிலிருந்து மின்னஞ்சல் அனுப்ப
-
-#
 # Admin page
-#
 TicketSetup=டிக்கெட் தொகுதி அமைப்பு
 TicketSettings=அமைப்புகள்
-TicketSetupPage=
 TicketPublicAccess=அடையாளம் தேவைப்படாத பொது இடைமுகம் பின்வரும் url இல் உள்ளது
 TicketSetupDictionaries=டிக்கெட்டின் வகை, தீவிரம் மற்றும் பகுப்பாய்வு குறியீடுகள் அகராதிகளிலிருந்து கட்டமைக்கப்படுகின்றன
 TicketParamModule=தொகுதி மாறி அமைவு
 TicketParamMail=மின்னஞ்சல் அமைப்பு
-TicketEmailNotificationFrom=Sender e-mail for ticket answers
-TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationFrom=Sender e-mail for notification on answers
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
 TicketEmailNotificationTo=Notify ticket creation to this e-mail address
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=டிக்கெட்டை உருவாக்கிய பிறகு அனுப்பப்பட்ட குறுஞ்செய்தி
@@ -99,9 +81,11 @@ TicketNewEmailBodyHelp=பொது இடைமுகத்திலிரு�
 TicketParamPublicInterface=பொது இடைமுக அமைப்பு
 TicketsEmailMustExist=டிக்கெட்டை உருவாக்க, ஏற்கனவே உள்ள மின்னஞ்சல் முகவரி தேவை
 TicketsEmailMustExistHelp=பொது இடைமுகத்தில், புதிய டிக்கெட்டை உருவாக்க தரவுத்தளத்தில் மின்னஞ்சல் முகவரி ஏற்கனவே நிரப்பப்பட்டிருக்க வேண்டும்.
+TicketsShowProgression=Display the ticket progress in the public interface
+TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
+TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=பொது இடைமுகம்
-TicketUrlPublicInterfaceLabelAdmin=பொது இடைமுகத்திற்கான மாற்று URL
-TicketUrlPublicInterfaceHelpAdmin=இணைய சேவையகத்திற்கு மாற்றுப்பெயரை வரையறுத்து, மற்றொரு URL உடன் பொது இடைமுகத்தை கிடைக்கச் செய்யலாம் (இந்த புதிய URL இல் சேவையகம் ஒரு ப்ராக்ஸியாக செயல்பட வேண்டும்)
 TicketPublicInterfaceTextHomeLabelAdmin=பொது இடைமுகத்தின் வரவேற்பு உரை
 TicketPublicInterfaceTextHome=நீங்கள் ஒரு ஆதரவு டிக்கெட்டை உருவாக்கலாம் அல்லது அதன் அடையாளங்காட்டி டிராக்கிங் டிக்கெட்டில் இருந்து ஏற்கனவே உள்ளதைப் பார்க்கலாம்.
 TicketPublicInterfaceTextHomeHelpAdmin=இங்கே வரையறுக்கப்பட்ட உரை பொது இடைமுகத்தின் முகப்புப் பக்கத்தில் தோன்றும்.
@@ -119,7 +103,9 @@ TicketParams=பரம்ஸ்
 TicketsShowModuleLogo=பொது இடைமுகத்தில் தொகுதியின் லோகோவைக் காட்டவும்
 TicketsShowModuleLogoHelp=பொது இடைமுகத்தின் பக்கங்களில் லோகோ தொகுதியை மறைக்க இந்த விருப்பத்தை இயக்கவும்
 TicketsShowCompanyLogo=பொது இடைமுகத்தில் நிறுவனத்தின் லோகோவைக் காட்டவும்
-TicketsShowCompanyLogoHelp=பொது இடைமுகத்தின் பக்கங்களில் முக்கிய நிறுவனத்தின் லோகோவை மறைக்க இந்த விருப்பத்தை இயக்கவும்
+TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyFooter=Display the footer of the company in the public interface
+TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
 TicketsEmailAlsoSendToMainAddress=முக்கிய மின்னஞ்சல் முகவரிக்கும் அறிவிப்பை அனுப்பவும்
 TicketsEmailAlsoSendToMainAddressHelp="%s" அமைப்பில் வரையறுக்கப்பட்டுள்ள முகவரிக்கு மின்னஞ்சலை அனுப்ப இந்த விருப்பத்தை இயக்கவும் ("%s" தாவலைப் பார்க்கவும்)
 TicketsLimitViewAssignedOnly=தற்போதைய பயனருக்கு ஒதுக்கப்பட்ட டிக்கெட்டுகளுக்கு காட்சியைக் கட்டுப்படுத்தவும் (வெளிப்புற பயனர்களுக்கு பயனுள்ளதாக இல்லை, எப்போதும் அவர்கள் சார்ந்திருக்கும் மூன்றாம் தரப்பினருக்கு மட்டுமே)
@@ -136,21 +122,22 @@ TicketsPublicNotificationNewMessage=டிக்கெட்டில் பு�
 TicketsPublicNotificationNewMessageHelp=பொது இடைமுகத்திலிருந்து ஒரு புதிய செய்தி சேர்க்கப்படும் போது மின்னஞ்சலை (களை) அனுப்பவும் (ஒதுக்கப்பட்ட பயனருக்கு அல்லது அறிவிப்புகள் மின்னஞ்சலுக்கு (புதுப்பித்தல்) மற்றும்/அல்லது அறிவிப்புகள் மின்னஞ்சலுக்கு)
 TicketPublicNotificationNewMessageDefaultEmail=இதற்கான அறிவிப்புகள் மின்னஞ்சல் (புதுப்பிப்பு)
 TicketPublicNotificationNewMessageDefaultEmailHelp=டிக்கெட்டில் ஒரு பயனர் நியமிக்கப்படாவிட்டாலோ அல்லது பயனருக்குத் தெரிந்த மின்னஞ்சல் ஏதும் இல்லை என்றாலோ ஒவ்வொரு புதிய செய்தி அறிவிப்புகளுக்கும் இந்த முகவரிக்கு மின்னஞ்சலை அனுப்பவும்.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
 TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
 TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
 TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
 TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
 TicketChooseProductCategory=Product category for ticket support
 TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-
-#
+TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
+TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
 TicketsIndex=டிக்கெட் பகுதி
 TicketList=டிக்கெட்டுகளின் பட்டியல்
 TicketAssignedToMeInfos=இந்தப் பக்கம் தற்போதைய பயனரால் உருவாக்கப்பட்ட அல்லது ஒதுக்கப்பட்ட டிக்கெட் பட்டியலைக் காட்டுகிறது
@@ -165,10 +152,7 @@ ShowAsConversation=உரையாடல் பட்டியலாகக் �
 MessageListViewType=அட்டவணைப் பட்டியலாகக் காட்டு
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=டிக்கெட்
 TicketCard=டிக்கெட் அட்டை
 CreateTicket=டிக்கெட்டை உருவாக்கவும்
@@ -178,7 +162,7 @@ CreatedBy=உருவாக்கியது
 NewTicket=புதிய டிக்கெட்
 SubjectAnswerToTicket=டிக்கெட் பதில்
 TicketTypeRequest=கோரிக்கை வகை
-TicketCategory=டிக்கெட் வகைப்பாடு
+TicketCategory=Ticket group
 SeeTicket=சீட்டைப் பார்க்கவும்
 TicketMarkedAsRead=டிக்கெட் படித்ததாகக் குறிக்கப்பட்டுள்ளது
 TicketReadOn=படிக்கவும்
@@ -190,8 +174,8 @@ TicketAssigned=டிக்கெட் இப்போது ஒதுக்க
 TicketChangeType=வகையை மாற்றவும்
 TicketChangeCategory=பகுப்பாய்வு குறியீட்டை மாற்றவும்
 TicketChangeSeverity=தீவிரத்தை மாற்றவும்
-TicketAddMessage=ஒரு செய்தியைச் சேர்க்கவும்
-AddMessage=ஒரு செய்தியைச் சேர்க்கவும்
+TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
 MessageSuccessfullyAdded=டிக்கெட் சேர்க்கப்பட்டது
 TicketMessageSuccessfullyAdded=செய்தி வெற்றிகரமாக சேர்க்கப்பட்டது
 TicketMessagesList=செய்தி பட்டியல்
@@ -202,8 +186,8 @@ TicketSeverity=தீவிரம்
 ShowTicket=சீட்டைப் பார்க்கவும்
 RelatedTickets=தொடர்புடைய டிக்கெட்டுகள்
 TicketAddIntervention=தலையீட்டை உருவாக்குங்கள்
-CloseTicket=மூடு|டிக்கெட்டை தீர்க்கவும்
-AbandonTicket=டிக்கெட்டை கைவிடு
+CloseTicket=Close|Solve
+AbandonTicket=Abandon
 CloseATicket=மூடு|ஒரு டிக்கெட்டை தீர்க்கவும்
 ConfirmCloseAticket=டிக்கெட் மூடுவதை உறுதிப்படுத்தவும்
 ConfirmAbandonTicket='கைவிடப்பட்டது' என்ற நிலைக்கு டிக்கெட் மூடப்படுவதை உறுதிப்படுத்துகிறீர்களா?
@@ -217,18 +201,17 @@ SendMessageByEmail=மின்னஞ்சல் மூலம் செய்�
 TicketNewMessage=புதிய தகவல்
 ErrorMailRecipientIsEmptyForSendTicketMessage=பெறுநர் காலியாக உள்ளார். மின்னஞ்சல் அனுப்பவில்லை
 TicketGoIntoContactTab=அவற்றைத் தேர்ந்தெடுக்க, "தொடர்புகள்" தாவலுக்குச் செல்லவும்
-TicketMessageMailIntro=அறிமுகம்
+TicketMessageMailIntro=Message header
 TicketMessageMailIntroHelp=இந்த உரை மின்னஞ்சலின் தொடக்கத்தில் மட்டுமே சேர்க்கப்படும் மற்றும் சேமிக்கப்படாது.
-TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
 TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
 TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailSignature=கையெழுத்து
-TicketMessageMailSignatureHelp=இந்த உரை மின்னஞ்சலின் முடிவில் மட்டுமே சேர்க்கப்படும் மற்றும் சேமிக்கப்படாது.
-TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailSignatureLabelAdmin=பதில் மின்னஞ்சலின் கையொப்பம்
-TicketMessageMailSignatureHelpAdmin=பதில் செய்திக்குப் பிறகு இந்த உரை செருகப்படும்.
+TicketMessageMailFooter=Message footer
+TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
+TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
+TicketMessageMailFooterHelpAdmin=This text will be inserted after the response message.
 TicketMessageHelp=டிக்கெட் கார்டில் உள்ள செய்தி பட்டியலில் இந்த உரை மட்டுமே சேமிக்கப்படும்.
 TicketMessageSubstitutionReplacedByGenericValues=மாற்று மாறிகள் பொதுவான மதிப்புகளால் மாற்றப்படுகின்றன.
+ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
 TimeElapsedSince=அதிலிருந்து காலம் கழிந்தது
 TicketTimeToRead=படிக்கும் முன் நேரம் கடந்துவிட்டது
 TicketTimeElapsedBeforeSince=முன் / பின் நேரம் கழிந்தது
@@ -238,8 +221,14 @@ ConfirmReOpenTicket=இந்த டிக்கெட்டை மீண்ட�
 TicketMessageMailIntroAutoNewPublicMessage=%s என்ற தலைப்பில் ஒரு புதிய செய்தி டிக்கெட்டில் வெளியிடப்பட்டது:
 TicketAssignedToYou=டிக்கெட் ஒதுக்கப்பட்டது
 TicketAssignedEmailBody=%s மூலம் #%s டிக்கெட் உங்களுக்கு ஒதுக்கப்பட்டுள்ளது
+TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
+TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
 MarkMessageAsPrivate=செய்தியை தனிப்பட்டதாகக் குறிக்கவும்
-TicketMessagePrivateHelp=இந்த செய்தி வெளிப்புற பயனர்களுக்கு காட்டப்படாது
+TicketMessageSendEmailHelp=An email will be sent to all assigned contact
+TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
+TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
+TicketMessagePrivateHelp=This message will not be visible to external users
+TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
 TicketEmailOriginIssuer=டிக்கெட்டுகளின் தோற்றத்தில் வழங்குபவர்
 InitialMessage=ஆரம்ப செய்தி
 LinkToAContract=ஒப்பந்தத்திற்கான இணைப்பு
@@ -262,20 +251,15 @@ TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening w
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-
-#
+TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
 # Logs
-#
 TicketLogMesgReadBy=%s டிக்கெட்டை %s படித்தார்
 NoLogForThisTicket=இந்த டிக்கெட்டுக்கான பதிவு இன்னும் இல்லை
 TicketLogAssignedTo=%s டிக்கெட் %sக்கு ஒதுக்கப்பட்டது
 TicketLogPropertyChanged=டிக்கெட் %s மாற்றப்பட்டது: %s இலிருந்து %s என வகைப்பாடு
 TicketLogClosedBy=%s டிக்கெட்டை %s மூடியது
 TicketLogReopen=டிக்கெட் %s மீண்டும் திறக்கப்பட்டது
-
-#
 # Public pages
-#
 TicketSystem=டிக்கெட் அமைப்பு
 ShowListTicketWithTrackId=டிராக் ஐடியிலிருந்து டிக்கெட் பட்டியலைக் காண்பி
 ShowTicketWithTrackId=டிராக் ஐடியிலிருந்து டிக்கெட்டைக் காண்பி
@@ -290,13 +274,13 @@ TicketNewEmailBodyCustomer=இது உங்கள் கணக்கில்
 TicketNewEmailBodyInfosTicket=டிக்கெட்டை கண்காணிப்பதற்கான தகவல்
 TicketNewEmailBodyInfosTrackId=டிக்கெட் கண்காணிப்பு எண்: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=பின்வரும் இணைப்பைக் கிளிக் செய்வதன் மூலம் குறிப்பிட்ட இடைமுகத்தில் டிக்கெட்டின் முன்னேற்றத்தைக் காணலாம்
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=இந்த மின்னஞ்சலுக்கு நேரடியாக பதிலளிக்க வேண்டாம்! இடைமுகத்தில் பதிலளிக்க இணைப்பைப் பயன்படுத்தவும்.
 TicketPublicInfoCreateTicket=எங்கள் நிர்வாக அமைப்பில் ஆதரவு டிக்கெட்டை பதிவு செய்ய இந்தப் படிவம் உங்களை அனுமதிக்கிறது.
-TicketPublicPleaseBeAccuratelyDescribe=சிக்கலை சரியாக விவரிக்கவும். உங்கள் கோரிக்கையைச் சரியாகக் கண்டறிய எங்களை அனுமதிக்க, முடிந்தவரை அதிகமான தகவல்களை வழங்கவும்.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=டிக்கெட் கண்காணிப்பு ஐடியை உள்ளிடவும்
-TicketTrackId=பொது கண்காணிப்பு ஐடி
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=உங்கள் கண்காணிப்பு ஐடி ஒன்று
 ErrorTicketNotFound=கண்காணிப்பு ஐடி %s கொண்ட டிக்கெட் கிடைக்கவில்லை!
 Subject=பொருள்
@@ -312,6 +296,8 @@ OldUser=பழைய பயனர்
 NewUser=புதிய பயனர்
 NumberOfTicketsByMonth=ஒரு மாதத்திற்கான டிக்கெட்டுகளின் எண்ணிக்கை
 NbOfTickets=டிக்கெட்டுகளின் எண்ணிக்கை
+ExternalContributors=External contributors
+AddContributor=Add external contributor
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -323,12 +309,8 @@ TicketNotificationRecipient=அறிவிப்பு பெறுபவர்
 TicketNotificationLogMessage=பதிவு செய்தி
 TicketNotificationEmailBodyInfosTrackUrlinternal=இடைமுகத்தில் டிக்கெட்டைப் பார்க்கவும்
 TicketNotificationNumberEmailSent=அறிவிப்பு மின்னஞ்சல் அனுப்பப்பட்டது: %s
-
 ActionsOnTicket=டிக்கெட்டில் நிகழ்வுகள்
-
-#
 # Boxes
-#
 BoxLastTicket=சமீபத்தில் உருவாக்கப்பட்ட டிக்கெட்டுகள்
 BoxLastTicketDescription=சமீபத்திய %s டிக்கெட்டுகளை உருவாக்கியது
 BoxLastTicketContent=

@@ -16,77 +16,83 @@
 #
 # Generic
 #
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
+ModulePartnershipName=ניהול שותפות
+PartnershipDescription=ניהול שותפות מודול
+PartnershipDescriptionLong= ניהול שותפות מודול
+Partnership=שׁוּתָפוּת
+Partnerships=שותפויות
+AddPartnership=הוסף שותפות
+CancelPartnershipForExpiredMembers=שותפות: בטל שותפות של חברים עם מנויים שפג תוקפם
+PartnershipCheckBacklink=שותפות: בדוק קישור חוזר מפנה
 
 #
 # Menu
 #
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
+NewPartnership=שותפות חדשה
+NewPartnershipbyWeb=בקשת השותפות שלך נוספה בהצלחה. ייתכן שניצור איתך קשר בקרוב...
+ListOfPartnerships=רשימת שותפות
 
 #
 # Admin page
 #
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
+PartnershipSetup=הגדרת שותפות
+PartnershipAbout=על שותפות
+PartnershipAboutPage=שותפות אודות עמוד
+partnershipforthirdpartyormember=סטטוס שותף חייב להיות מוגדר על 'צד שלישי' או 'חבר'
+PARTNERSHIP_IS_MANAGED_FOR=שותפות מנוהלת עבור
+PARTNERSHIP_BACKLINKS_TO_CHECK=קישורים נכנסים לבדיקה
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=מספר ימים לפני ביטול סטטוס של שותפות כאשר פג תוקף המנוי
+ReferingWebsiteCheck=בדיקת הפניה לאתר
+ReferingWebsiteCheckDesc=אתה יכול להפעיל תכונה כדי לבדוק שהשותפים שלך הוסיפו קישור נכנס לדומיינים של האתר שלך באתר האינטרנט שלהם.
+PublicFormRegistrationPartnerDesc=Dolibarr יכולה לספק לך כתובת אתר/אתר ציבורי כדי לאפשר למבקרים חיצוניים לבקש להיות חלק מתוכנית השותפות.
 
 #
 # Object
 #
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
-DatePartnershipStart=Start date
-DatePartnershipEnd=End date
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
+DeletePartnership=מחק שותפות
+PartnershipDedicatedToThisThirdParty=שותפות המוקדשת לצד שלישי זה
+PartnershipDedicatedToThisMember=שותפות המוקדשת לחבר זה
+DatePartnershipStart=תאריך התחלה
+DatePartnershipEnd=תאריך סיום
+ReasonDecline=סיבת דחייה
+ReasonDeclineOrCancel=Reason for refusal or cancellation
+PartnershipAlreadyExist=השותפות כבר קיימת
+ManagePartnership=ניהול שותפות
+BacklinkNotFoundOnPartnerWebsite=קישור נכנס לא נמצא באתר השותף
+ConfirmClosePartnershipAsk=האם אתה בטוח שברצונך לבטל את השותפות הזו?
+PartnershipType=סוג שותפות
+PartnershipRefApproved=השותפות %s אושרה
+KeywordToCheckInWebsite=אם ברצונך לבדוק שמילת מפתח נתונה קיימת באתר האינטרנט של כל שותף, הגדר את מילת המפתח הזו כאן
+PartnershipDraft=טְיוּטָה
+PartnershipAccepted=מְקוּבָּל
+PartnershipRefused=סירב
+PartnershipCanceled=מבוטל
+PartnershipManagedFor=שותפים הם
 
 #
 # Template Mail
 #
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
+SendingEmailOnPartnershipWillSoonBeCanceled=בקרוב תבוטל השותפות
+SendingEmailOnPartnershipRefused=השותפות סירבה
+SendingEmailOnPartnershipAccepted=השותפות התקבלה
+SendingEmailOnPartnershipCanceled=השותפות בוטלה
 
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
+YourPartnershipWillSoonBeCanceledTopic=בקרוב תבוטל השותפות
+YourPartnershipRefusedTopic=השותפות סירבה
+YourPartnershipAcceptedTopic=השותפות התקבלה
+YourPartnershipCanceledTopic=השותפות בוטלה
 
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
+YourPartnershipWillSoonBeCanceledContent=ברצוננו להודיע לך שהשותפות שלנו תבוטל בקרוב (לא קיבלנו חידוש או שתנאי מוקדם לשותפות שלנו לא התקיים). אנא צור איתנו קשר אם קיבלת זאת עקב שגיאה.
+YourPartnershipRefusedContent=ברצוננו להודיע לך שבקשת השותפות שלך נדחתה. התנאים המוקדמים לא התקיימו. אנא צור איתנו קשר אם אתה צריך מידע נוסף.
+YourPartnershipAcceptedContent=ברצוננו להודיע לך שבקשת השותפות שלך התקבלה.
+YourPartnershipCanceledContent=ברצוננו להודיע לך שהשותפות שלנו בוטלה. אנא צור איתנו קשר אם אתה צריך מידע נוסף.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
+CountLastUrlCheckError=מספר השגיאות עבור בדיקת כתובת האתר האחרונה
+LastCheckBacklink=תאריך בדיקת כתובת האתר האחרונה
 
-#
-# Status
-#
-PartnershipDraft=Draft
-PartnershipAccepted=Accepted
-PartnershipRefused=Refused
-PartnershipCanceled=Canceled
-PartnershipManagedFor=Partners are
+NewPartnershipRequest=בקשת שותפות חדשה
+NewPartnershipRequestDesc=טופס זה מאפשר לך לבקש להיות חלק מתוכנית השותפות שלנו. אם אתה זקוק לעזרה למילוי טופס זה, אנא צור קשר בדוא"ל <b>%s</b> span>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=דף זה חייב להכיל לפחות קישור אחד לאחד מהדומיין הבאים: %s
+
+IPOfApplicant=IP של המבקש
+

@@ -1,11 +1,7 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMSectionManual=Annuaire manuel
-ECMSectionAuto=Annuaire automatique
-ECMSectionsManual=Arbre manuel
-ECMSectionsAuto=Arbre automatique
 ECMAddSection=Ajouter un répertoire
 ECMCreationDate=Date création
-ECMAreaDesc2=* Les répertoires automatiques sont remplis automatiquement lors de l'ajout de documents à partir d'une carte d'un élément. <br> * Les répertoires manuels peuvent être utilisés pour enregistrer des documents non liés à un élément particulier.
 ECMSectionWasRemoved=Le répertoire <b>%s</b> a été supprimé.
 ECMSectionOfDocuments=Répertoires de documents
 ShowECMSection=Afficher le répertoire

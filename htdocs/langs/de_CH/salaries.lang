@@ -1,9 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Buchhaltungskonto für Partner Benutzer
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das Buchhaltungskonto auf der Benutzerkarte wird nur im Nebenbuch journalisiert. Dieser Eintrag wird im Hauptbuch Geführt. Weiter ist das auch das Standardkonto, falls auf der Benutzerkarte kein Konto eingetragen ist.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard - Buchhaltungskonto für Lohnzahlungen
 Salary=Lohn
-Salaries=Löhne
 AddSalaryPayment=Neue Lohnzahlung
 SalaryPayment=Lohnzahlung
 SalariesPayments=Lohnzahlungen

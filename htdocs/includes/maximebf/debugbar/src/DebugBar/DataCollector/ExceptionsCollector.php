@@ -21,6 +21,10 @@ class ExceptionsCollector extends DataCollector implements Renderable
     protected $exceptions = array();
     protected $chainExceptions = false;
 
+    // The HTML var dumper requires debug bar users to support the new inline assets, which not all
+    // may support yet - so return false by default for now.
+    protected $useHtmlVarDumper = false;
+
     /**
      * Adds an exception to be profiled in the debug bar
      *
@@ -65,6 +69,30 @@ class ExceptionsCollector extends DataCollector implements Renderable
         return $this->exceptions;
     }
 
+    /**
+     * Sets a flag indicating whether the Symfony HtmlDumper will be used to dump variables for
+     * rich variable rendering.
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function useHtmlVarDumper($value = true)
+    {
+        $this->useHtmlVarDumper = $value;
+        return $this;
+    }
+
+    /**
+     * Indicates whether the Symfony HtmlDumper will be used to dump variables for rich variable
+     * rendering.
+     *
+     * @return mixed
+     */
+    public function isHtmlVarDumperUsed()
+    {
+        return $this->useHtmlVarDumper;
+    }
+
     public function collect()
     {
         return array(
@@ -102,6 +130,11 @@ class ExceptionsCollector extends DataCollector implements Renderable
             $lines = array("Cannot open the file ($filePath) in which the exception occurred ");
         }
 
+        $traceHtml = null;
+        if ($this->isHtmlVarDumperUsed()) {
+            $traceHtml = $this->getVarDumper()->renderVar($e->getTrace());
+        }
+
         return array(
             'type' => get_class($e),
             'message' => $e->getMessage(),
@@ -109,6 +142,7 @@ class ExceptionsCollector extends DataCollector implements Renderable
             'file' => $filePath,
             'line' => $e->getLine(),
             'stack_trace' => $e->getTraceAsString(),
+            'stack_trace_html' => $traceHtml,
             'surrounding_lines' => $lines,
             'xdebug_link' => $this->getXdebugLink($filePath, $e->getLine())
         );

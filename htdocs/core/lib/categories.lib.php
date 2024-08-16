@@ -18,16 +18,16 @@
 
 /**
  *	\file       htdocs/core/lib/categories.lib.php
- *	\brief      Ensemble de fonctions de base pour le module categorie
+ *	\brief      Ensemble de functions de base pour le module categorie
  *	\ingroup    categorie
  */
 
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @param	string	$type		Type of category
- * @return  array				Array of tabs to show
+ * @param   Categorie	$object		Object related to tabs
+ * @param	string		$type		Type of category
+ * @return  array					Array of tabs to show
  */
 function categories_prepare_head(Categorie $object, $type)
 {
@@ -49,7 +49,7 @@ function categories_prepare_head(Categorie $object, $type)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	if (!empty($conf->global->MAIN_MULTILANGS)) {
+	if (getDolGlobalInt('MAIN_MULTILANGS')) {
 		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
@@ -80,7 +80,10 @@ function categories_prepare_head(Categorie $object, $type)
  */
 function categoriesadmin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf, $user, $db;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('categorie');
 
 	$langs->load("categories");
 
@@ -94,6 +97,10 @@ function categoriesadmin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
+	$nbExtrafields = $extrafields->attributes['categorie']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes_categories';
 	$h++;
 

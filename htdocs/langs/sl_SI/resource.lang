@@ -1,36 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Viri
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceAdd=Nov vir
+DeleteResource=Izbriši vir
+ConfirmDeleteResourceElement=Potrdite brisanje vira za ta element
+NoResourceInDatabase=Ni vira v bazi podatkov.
+NoResourceLinked=Noben vir ni povezan
+ActionsOnResource=Dogodki o tem viru
+ResourcePageIndex=Seznam virov
+ResourceSingular=Vir
+ResourceCard=Kartica virov
+NewResource=Nov vir
+AddResource=Ustvarite vir
+ResourceFormLabel_ref=Ime vira
+ResourceFormLabel_description=Opis vira
+ResourceType=Vrsta vira
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
+ResourcesLinkedToElement=Viri, povezani z elementom
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
-
-ResourcesLinkedToElement=Resources linked to element
-
-ShowResource=Show resource
-
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
-
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+ShowResource=Pokaži vir
+ResourceElementPage=Viri elementov
+ResourceCreatedWithSuccess=Vir je bil uspešno ustvarjen
+RessourceLineSuccessfullyDeleted=Vrstica vira je bila uspešno izbrisana
+RessourceLineSuccessfullyUpdated=Vrstica virov je bila uspešno posodobljena
+ResourceLinkedWithSuccess=Vir, povezan z uspehom
+ConfirmDeleteResource=Potrdite, da izbrišete ta vir
+RessourceSuccessfullyDeleted=Vir je bil uspešno izbrisan
+DictionaryResourceType=Vrsta virov
+SelectResource=Izberite vir
+IdResource=ID vir
+AssetNumber=Serijska številka
+ResourceTypeCode=Koda vrste vira
 ImportDataset_resource_1=Viri
+ErrorResourcesAlreadyInUse=Nekateri viri so v uporabi
+ErrorResourceUseInEvent=%s uporabljeno v dogodku %s
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

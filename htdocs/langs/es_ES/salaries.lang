@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta contable usada para los usuarios
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Se utilizará una cuenta contable dedicada definida en la ficha de usuario para el relleno del Libro Mayor, o como valor predeterminado de la contabilidad del Libro Mayor si no se define una cuenta contable en la ficha del usuario
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta (del plan de cuentas) utilizada de forma predeterminada para los "usuarios" en materia de salarios
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta dedicada definida en la tarjeta de usuario se utilizará únicamente para la contabilidad del Libro mayor auxiliar. Éste se utilizará para el Libro mayor, pero también como valor predeterminado de la contabilidad del Libro mayor auxiliar si no se define ninguna cuenta de contabilidad de usuario dedicada en el usuario.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pagos de salarios
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=De forma predeterminada, deje vacía la opción "Crear automáticamente un pago total" al crear un Salario.
 Salary=Salario
@@ -24,4 +24,10 @@ SalariesStatistics=Estadísticas salariales
 SalariesAndPayments=Salarios y pagos
 ConfirmDeleteSalaryPayment=¿Está seguro de querer eliminar este pago de salario?
 FillFieldFirst=Primero rellene el campo de empleado
-UpdateAmountWithLastSalary=Fijar monto con último salario
+UpdateAmountWithLastSalary=Fijar el monto del último salario
+MakeTransferRequest=Realizar solicitud de transferencia
+VirementOrder=Solicitud de transferencia de crédito
+BankTransferAmount=Monto de la transferencia de crédito
+WithdrawalReceipt=Orden de transferencia bancaria
+OrderWaiting=Orden pendiente
+FillEndOfMonth=Llenar con fin de mes

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class modIncoterm extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("incoterm");
 
@@ -84,16 +85,16 @@ class modIncoterm extends DolibarrModules
 			$conf->incoterm->enabled = 0;
 		}
 		$this->dictionaries = array(
-			'langs'=>'incoterm',
-			'tabname'=>array("c_incoterms"), // List of tables we want to see into dictonnary editor
-			'tablib'=>array("Incoterms"), // Label of tables
-			'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
-			'tabsqlsort'=>array("rowid ASC"), // Sort order
-			'tabfield'=>array("code,libelle"), // List of fields (result of select to show dictionary)
-			'tabfieldvalue'=>array("code,libelle"), // List of fields (list of fields to edit a record)
-			'tabfieldinsert'=>array("code,libelle"), // List of fields (list of fields for insert)
-			'tabrowid'=>array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
-			'tabcond'=>array($conf->incoterm->enabled),
+			'langs' => 'incoterm',
+			'tabname' => array("c_incoterms"), // List of tables we want to see into dictonnary editor
+			'tablib' => array("Incoterms"), // Label of tables
+			'tabsql' => array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'), // Request to select fields
+			'tabsqlsort' => array("rowid ASC"), // Sort order
+			'tabfield' => array("code,libelle"), // List of fields (result of select to show dictionary)
+			'tabfieldvalue' => array("code,libelle"), // List of fields (list of fields to edit a record)
+			'tabfieldinsert' => array("code,libelle"), // List of fields (list of fields for insert)
+			'tabrowid' => array("rowid"), // Name of columns with primary key (try to always name it 'rowid')
+			'tabcond' => array($conf->incoterm->enabled),
 			'tabhelp' => array(array())
 		);
 
@@ -105,7 +106,7 @@ class modIncoterm extends DolibarrModules
 		$r = 0;
 
 		// Main menu entries
-		$this->menus = array(); // List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 	}
 }

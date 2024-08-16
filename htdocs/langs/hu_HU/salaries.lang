@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=A felhasználók harmadik felei számára használt számviteli fiók
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A felhasználói kártyán definiált dedikált könyvelési számla csak alkönyvelésre lesz használva. Ez lesz a főkönyvhöz és az alkönyvi könyvelés alapértelmezett értékeként használatos, ha a felhasználónál nincs dedikált felhasználói fiók.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Számla (a Számlatáblázatból) alapértelmezés szerint a fizetéseknél használt "felhasználók" számára
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A felhasználói kártyán meghatározott dedikált számla kizárólag Alkönyvelésre szolgál. Ez lesz a főkönyvnél, de az alkönyvi könyvelés alapértelmezett értékeként is használható, ha a felhasználónál nincs dedikált felhasználói fiók.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Alapértelmezés szerint könyvelési számla a bérfizetéshez
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=A fizetés létrehozásakor alapértelmezés szerint hagyja üresen az "Összfizetés automatikus létrehozása" lehetőséget
 Salary=Fizetés
@@ -24,4 +24,10 @@ SalariesStatistics=Bérstatisztika
 SalariesAndPayments=Bérek és kifizetések
 ConfirmDeleteSalaryPayment=Törölni szeretné ezt a fizetési kifizetést?
 FillFieldFirst=Először töltse ki az alkalmazott mezőt
-UpdateAmountWithLastSalary=Állítsa be az összeget az utolsó fizetéssel
+UpdateAmountWithLastSalary=Állítsa be az utolsó fizetés összegét
+MakeTransferRequest=Indítsa el az átviteli kérelmet
+VirementOrder=Hitelátutalási kérelem
+BankTransferAmount=Az átutalás összege
+WithdrawalReceipt=Átutalási megbízás
+OrderWaiting=Függőben megrendelés
+FillEndOfMonth=Töltse ki a hónap végével

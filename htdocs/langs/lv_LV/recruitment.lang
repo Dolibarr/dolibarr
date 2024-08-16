@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Darbā pieņemšana
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Pārvaldiet un sekojiet personāla atlases kampaņām jaunām darba vietām
-
-#
 # Admin page
-#
 RecruitmentSetup = Personāla atlases iestatīšana
-Settings = Iestatījumi
 RecruitmentSetupPage = Šeit ievadiet personāla atlases moduļa galveno opciju iestatīšanu
 RecruitmentArea=Darbā pieņemšanas sadaļa
 PublicInterfaceRecruitmentDesc=Darba publiskās lapas ir publiski vietrāži URL, lai parādītu atvērtās darba vietas un atbildētu uz tām. Katram atklātajam darbam ir viena atšķirīga saite, kas atrodama katrā darba ierakstā.
 EnablePublicRecruitmentPages=Iespējojiet atvērto darbu publiskās lapas
 
-#
-# About page
-#
-About = Par
-RecruitmentAbout = Par darbā pieņemšanu
-RecruitmentAboutPage = Darbā pieņemšana par lapu
 NbOfEmployeesExpected=Paredzamais darbinieku skaits
 JobLabel=Amats
 WorkPlace=Darba vieta
@@ -49,7 +34,6 @@ PositionToBeFilled=Ieņemamais amats
 PositionsToBeFilled=Darba vietas
 ListOfPositionsToBeFilled=Darba vietu saraksts
 NewPositionToBeFilled=Jaunas darba vietas
-
 JobOfferToBeFilled=Aizpildāmā amata vieta
 ThisIsInformationOnJobPosition=Informācija par aizpildāmo darba vietu
 ContactForRecruitment=Kontaktpersona personāla atlasei
@@ -57,15 +41,16 @@ EmailRecruiter=E-pasta vervētājs
 ToUseAGenericEmail=Lai izmantotu vispārīgu e-pastu. Ja tas nav noteikts, tiks izmantots e-pasts, kas atbildīgs par personāla atlasi
 NewCandidature=Jauna lietojumprogramma
 ListOfCandidatures=Lietojumprogrammu saraksts
-RequestedRemuneration=Pieprasītā atlīdzība
-ProposedRemuneration=Piedāvātā atlīdzība
+Remuneration=Alga
+RequestedRemuneration=Pieprasītā alga
+ProposedRemuneration=Piedāvātā alga
 ContractProposed=Piedāvātais līgums
 ContractSigned=Parakstīts līgums
 ContractRefused=Līgums atteikts
 RecruitmentCandidature=Pieteikums
 JobPositions=Darba pozīcijas
 RecruitmentCandidatures=Pieteikumi
-InterviewToDo=Intervija, kas jādara
+InterviewToDo=Kontakti, kam sekot
 AnswerCandidature=Pieteikuma atbilde
 YourCandidature=Jūsu pieteikums
 YourCandidatureAnswerMessage=Paldies par jūsu pieteikumu. <br> ...
@@ -76,3 +61,6 @@ ExtrafieldsApplication=Papildu atribūti (darba pieteikumi)
 MakeOffer=Uztaisīt piedāvājumu
 WeAreRecruiting=Mēs vervējam. Šis ir aizpildāmo brīvo vietu saraksts...
 NoPositionOpen=Šobrīd neviena atvērta pozīcija
+ConfirmClose=Apstipriniet atcelšanu
+ConfirmCloseAsk=Vai tiešām vēlaties atcelt šo personāla atlases kandidatūru?
+Recruitment=Darbā pieņemšana

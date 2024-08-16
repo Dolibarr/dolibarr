@@ -24,11 +24,11 @@ FinancialCommitment=Ymrwymiad ariannol
 InterestAmount=Llog
 CapitalRemain=Cyfalaf yn aros
 TermPaidAllreadyPaid = Mae'r tymor hwn eisoes wedi'i dalu
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Methu â chynhyrchu llinell amser ar gyfer benthyciad gyda thaliad wedi dechrau
 CantModifyInterestIfScheduleIsUsed = Ni allwch addasu llog os ydych yn defnyddio amserlen
 # Admin
 ConfigLoan=Ffurfwedd y benthyciad modiwl
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cyfalaf cyfrif cyfrifo yn ddiofyn
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Llog cyfrif cyfrifeg yn ddiofyn
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Yswiriant cyfrif cyfrifo yn ddiofyn
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cyfrif (o'r Siart Cyfrif) i'w ddefnyddio yn ddiofyn ar gyfer cyfalaf (modiwl benthyciad)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cyfrif (o'r Siart Cyfrif) i'w ddefnyddio yn ddiofyn ar gyfer llog (modiwl benthyciad)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cyfrif (o'r Siart Cyfrif) i'w ddefnyddio yn ddiofyn ar gyfer yswiriant (modiwl benthyciad)
 CreateCalcSchedule=Golygu ymrwymiad ariannol

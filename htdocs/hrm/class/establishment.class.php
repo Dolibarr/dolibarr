@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +49,6 @@ class Establishment extends CommonObject
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_establishment';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -130,24 +125,24 @@ class Establishment extends CommonObject
 
 
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
-		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
-		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>2, 'position'=>22),
-		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
-		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'fk_state' =>array('type'=>'integer', 'label'=>'Fkstate', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
-		'fk_country' =>array('type'=>'integer', 'label'=>'Fkcountry', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'profid1' =>array('type'=>'varchar(20)', 'label'=>'Profid1', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'profid2' =>array('type'=>'varchar(20)', 'label'=>'Profid2', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'profid3' =>array('type'=>'varchar(20)', 'label'=>'Profid3', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkuserauthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
-		'fk_user_mod' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusermod', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
-		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 15, 'index' => 1),
+		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 20),
+		'label' => array('type' => 'varchar(128)', 'label' => 'Label', 'enabled' => 1, 'visible' => -1, 'showoncombobox' => 2, 'position' => 22),
+		'address' => array('type' => 'varchar(255)', 'label' => 'Address', 'enabled' => 1, 'visible' => -1, 'position' => 25),
+		'zip' => array('type' => 'varchar(25)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'fk_state' => array('type' => 'integer', 'label' => 'Fkstate', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'fk_country' => array('type' => 'integer', 'label' => 'Fkcountry', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'profid1' => array('type' => 'varchar(20)', 'label' => 'Profid1', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'profid2' => array('type' => 'varchar(20)', 'label' => 'Profid2', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'profid3' => array('type' => 'varchar(20)', 'label' => 'Profid3', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'phone' => array('type' => 'varchar(20)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 65),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkuserauthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 70),
+		'fk_user_mod' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fkusermod', 'enabled' => 1, 'visible' => -1, 'position' => 75),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 80),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 85),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 	);
 
 
@@ -159,13 +154,15 @@ class Establishment extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
 	 *	Create object in database
 	 *
 	 *	@param		User	$user   User making creation
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *	@return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -192,8 +189,8 @@ class Establishment extends CommonObject
 		$sql .= ", address";
 		$sql .= ", zip";
 		$sql .= ", town";
-		$sql .= ", status";
 		$sql .= ", fk_country";
+		$sql .= ", status";
 		$sql .= ", entity";
 		$sql .= ", datec";
 		$sql .= ", fk_user_author";
@@ -243,7 +240,7 @@ class Establishment extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
@@ -285,7 +282,7 @@ class Establishment extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -299,21 +296,24 @@ class Establishment extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
+			if ($obj) {
+				$this->id = $obj->rowid;
+				$this->ref			= $obj->ref;
+				$this->label		= $obj->label;
+				$this->address = $obj->address;
+				$this->zip			= $obj->zip;
+				$this->town			= $obj->town;
+				$this->status = $obj->status;
+				$this->entity = $obj->entity;
 
-			$this->id = $obj->rowid;
-			$this->ref			= $obj->ref;
-			$this->label		= $obj->label;
-			$this->address = $obj->address;
-			$this->zip			= $obj->zip;
-			$this->town			= $obj->town;
-			$this->status = $obj->status;
-			$this->entity = $obj->entity;
+				$this->country_id   = $obj->country_id;
+				$this->country_code = $obj->country_code;
+				$this->country      = $obj->country;
 
-			$this->country_id   = $obj->country_id;
-			$this->country_code = $obj->country_code;
-			$this->country      = $obj->country;
-
-			return 1;
+				return 1;
+			} else {
+				return 0;
+			}
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -323,16 +323,17 @@ class Establishment extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *  @param	User	$user	User making the change
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."establishment WHERE rowid = ".((int) $user->id);
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -405,6 +406,7 @@ class Establishment extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
 
 				$this->user_creation_id = $obj->fk_user_author;
@@ -419,7 +421,7 @@ class Establishment extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -445,12 +447,15 @@ class Establishment extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Residence').':</b> '.$this->address.', '.$this->zip.' '.$this->town;
+
 		$url = DOL_URL_ROOT.'/hrm/establishment/card.php?id='.$this->id;
 
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -460,7 +465,7 @@ class Establishment extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("Establishment");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -489,7 +494,7 @@ class Establishment extends CommonObject
 		}
 
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			$result .= $this->label;
 		}
 
 		$result .= $linkend;
@@ -497,7 +502,7 @@ class Establishment extends CommonObject
 
 		global $action, $hookmanager;
 		$hookmanager->initHooks(array('establishmentdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -534,12 +539,14 @@ class Establishment extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 		$this->ref = '0';
 		$this->label = 'Department AAA';
+
+		return 1;
 	}
 }

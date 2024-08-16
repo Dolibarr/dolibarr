@@ -56,8 +56,8 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
         $this->stateParameterInAuthUrl = $stateParameterInAutUrl;
 
         foreach ($scopes as $scope) {
-            if (!$this->isValidScope($scope)) {
-                throw new InvalidScopeException('Scope ' . $scope . ' is not valid for service ' . get_class($this));
+        	if (!$this->isValidScope($scope)) {
+        		throw new InvalidScopeException('Scope ' . $scope . ' is not valid for service ' . get_class($this));
             }
         }
 
@@ -223,6 +223,8 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
             $parameters,
             $this->getExtraOAuthHeaders()
         );
+        //print $responseBody;exit;	// We must have a result "{"token_type":"Bearer","scope...
+
         $token = $this->parseAccessTokenResponse($responseBody);
         $this->storage->storeAccessToken($this->service(), $token);
 

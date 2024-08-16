@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-module instellen
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Bied uw klanten een online betaalpagina voor betalingen met creditcards/betaalkaarten via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> . Dit kan worden gebruikt om uw klanten ad-hoc betalingen te laten doen of voor betalingen met betrekking tot een bepaald Dolibarr-object (factuur, bestelling, ...)
 StripeOrCBDoPayment=Betaal met creditcard of Stripe
 FollowingUrlAreAvailableToMakePayments=De volgende URL's zijn beschikbaar om een pagina te bieden aan afnemers voor het doen van een betaling van Dolibarr objecten
 PaymentForm=Betalingsformulier
@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL voor het aanbieden van een %s onlin
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL voor het aanbieden van een %s online betalingspagina voor een lidabonnement
 ToOfferALinkForOnlinePaymentOnDonation=URL om een online betalingspagina voor %s aan te bieden voor de betaling van een donatie
 YouCanAddTagOnUrl=U kunt ook een url-parameter <b>&tag = <i>waarde toevoegen</i></b> aan een van die URL's (alleen verplicht voor betaling die niet is gekoppeld aan een object) om uw eigen tag voor betalingscommentaar toe te voegen. <br> Voor de URL van betalingen zonder bestaand object, kunt u ook de parameter <strong>&noidempotency = 1 toevoegen,</strong> zodat dezelfde link met dezelfde tag meerdere keren kan worden gebruikt (sommige betalingsmodus kan de betaling beperken tot 1 voor elke andere link zonder deze parameter)
+YouCanEmbedOnWebsite=Als u de betalingspagina in een Dolibarr-website wilt integreren, kunt u de parameter opnemen: <b>&ws=website_ref</b>.<br>Daarnaast twee pagina's genaamd <b>betalingok</b> en <b>betalingko</b> moet op de website zijn aangemaakt om de omleiding te ontvangen na een succesvolle of mislukte online betaling.
 SetupStripeToHavePaymentCreatedAutomatically=Stel uw Stripe in met url <b>%s</b> zodat de betaling automatisch wordt aangemaakt wanneer deze door Stripe wordt gevalideerd.
 AccountParameter=Accountwaarden
 UsageParameter=Met gebruik van de waarden
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live sleutel
 ONLINE_PAYMENT_WAREHOUSE=Voorraad voor voorraadafname wanneer online betaling is voltooid <br> (TODO Wanneer optie om voorraad te verminderen wordt gedaan op een actie op factuur en de online betaling zelf de factuur genereert?)
 StripeLiveEnabled=Stripe live ingeschakeld (anders test / sandbox-modus)
 StripeImportPayment=Streepbetalingen importeren
-ExampleOfTestCreditCard=Voorbeeld van creditcard voor test: %s => geldig, %s => error CVC, %s => verlopen, %s => belasten mislukt
+ExampleOfTestCreditCard=Voorbeeld van creditcard voor een testbetaling: %s => geldig, %s => fout CVC, %s => verlopen, %s => afschrijving mislukt
+ExampleOfTestBankAcountForSEPA=Voorbeeld bankrekening BAN voor incassotoets: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect-client-ID (ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect-client-ID (ca _...)
@@ -50,6 +52,7 @@ StripeAccount=Stripe-account
 StripeChargeList=Lijst met Stripe kosten
 StripeTransactionList=Lijst met Stripe-transacties
 StripeCustomerId=Stripe klant-ID
+StripePaymentId=Stripe-betalings-ID
 StripePaymentModes=Stripe betaalwijzen
 LocalID=Lokaal ID
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=Kaart verwijderen
 ConfirmDeleteCard=Weet u zeker dat u deze creditcard of betaalpas wilt verwijderen?
 CreateCustomerOnStripe=Creëer klant op Stripe
 CreateCardOnStripe=Maak een kaart op Stripe
+CreateBANOnStripe=Maak een bank op Stripe
 ShowInStripe=Toon in streep
 StripeUserAccountForActions=Gebruikersaccount om te gebruiken voor e-mailmeldingen van sommige Stripe-evenementen (Stripe-uitbetalingen)
 StripePayoutList=Lijst met Stripe uitbetalingen
@@ -68,4 +72,19 @@ ToOfferALinkForTestWebhook=Link om Stripe WebHook in te stellen om de IPN te bel
 ToOfferALinkForLiveWebhook=Link om Stripe WebHook in te stellen om de IPN te bellen (live-modus)
 PaymentWillBeRecordedForNextPeriod=De betaling wordt geregistreerd voor de volgende periode.
 ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de strenge regels voor klantauthenticatie moet het aanmaken van een kaart worden gedaan vanuit Stripe backoffice. U kunt hier klikken om Stripe-klantrecord in te schakelen: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de sterke Klant Authenticatie regels, moet het maken van een kaart worden gedaan vanuit de Stripe-backoffice. U kunt hier klikken om het Stripe Klant record in te schakelen: %s
+STRIPE_CARD_PRESENT=Kaart aanwezig voor Stripe Terminals
+TERMINAL_LOCATION=Locatie (adres) voor Stripe Terminals
+RequestDirectDebitWithStripe=Automatische incasso aanvragen met Stripe
+RequesCreditTransferWithStripe=Vraag een overboeking aan met Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Schakel de automatische incasso via Stripe in
+STRIPE_KLARNA=Schakel de betalingen via Klarna in
+STRIPE_BANCONTACT=Schakel de betalingen in met BANCONTACT
+STRIPE_IDEAL=Schakel de betalingen in via IDEAL
+STRIPE_GIROPAY=Schakel de betalingen in met GIROPAY
+STRIPE_SOFORT=Schakel de betalingen in met SOFORT
+StripeConnect_Mode=Stripe Connect-modus
+ExampleOnlyForBECustomers=Enkel voor Belgische klanten
+ExampleOnlyForDECustomers=Alleen voor Duitse klanten
+ExampleOnlyForNLCustomers=Alleen voor Nederlandse klanten
+ExampleOnlyForATBEDEITNLESCustomers=Alleen voor klanten uit Oostenrijk, België, Duitsland, Italië, Nederland, Spanje

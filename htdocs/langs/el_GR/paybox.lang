@@ -1,28 +1,14 @@
 # Dolibarr language file - Source file is en_US - paybox
-PayBoxSetup=Paybox μονάδα ρύθμισης
-PayBoxDesc=Αυτή η ενότητα προσφέρει σελίδες που επιτρέπουν την πληρωμή στο <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> από πελάτες. Αυτό μπορεί να χρησιμοποιηθεί για ελεύθερη πληρωμή ή για πληρωμή σε συγκεκριμένο αντικείμενο Dolibarr (τιμολόγιο, παραγγελία, ...)
-FollowingUrlAreAvailableToMakePayments=Μετά από τις διευθύνσεις URL είναι διαθέσιμοι να προσφέρουν μια σελίδα σε έναν πελάτη να προβεί σε πληρωμή σε Dolibarr αντικείμενα
-PaymentForm=Έντυπο πληρωμής
-WelcomeOnPaymentPage=Καλώς ήλθατε στην ηλεκτρονική υπηρεσία πληρωμών μας
-ThisScreenAllowsYouToPay=Αυτή η οθόνη σας επιτρέπει να κάνετε μια online πληρωμή %s.
-ThisIsInformationOnPayment=Πρόκειται για πληροφορίες σχετικά με την πληρωμή να γίνει
-ToComplete=Για να ολοκληρώσετε
-YourEMail=E-mail για να λάβετε επιβεβαίωση της πληρωμής
-Creditor=Πιστωτής
-PaymentCode=Κωδικός Πληρωμής
-PayBoxDoPayment=Πληρώστε με το Paybox
-YouWillBeRedirectedOnPayBox=Θα μεταφερθείτε σε προστατευμένη σελίδα Paybox να εισάγετε τα στοιχεία της πιστωτικής σας κάρτας
-Continue=Επόμενη
-SetupPayBoxToHavePaymentCreatedAutomatically=Ρυθμίστε το Paybox με τη διεύθυνση url <b>%s</b> για να δημιουργήσετε αυτόματα πληρωμή όταν επικυρωθεί από το Paybox.
-YourPaymentHasBeenRecorded=Η σελίδα αυτή επιβεβαιώνει ότι η πληρωμή σας έχει καταγραφεί. Σας ευχαριστώ.
-YourPaymentHasNotBeenRecorded=Η πληρωμή σας ΔΕΝ έχει εγγραφεί και η συναλλαγή έχει ακυρωθεί. Σας ευχαριστώ.
-AccountParameter=Παράμετροι λογαριασμού
-UsageParameter=Παράμετροι χρήσης
-InformationToFindParameters=Βοήθεια για να βρείτε %s τα στοιχεία του λογαριασμού σας
-PAYBOX_CGI_URL_V2=Url της ενότητας Paybox CGI για την πληρωμή
-CSSUrlForPaymentForm=Url CSS φύλλο στυλ για το έντυπο πληρωμής
-NewPayboxPaymentReceived=Νέα πληρωμή Paybox που λήφθηκε
-NewPayboxPaymentFailed=Νέα πληρωμή Paybox προσπάθησαν αλλά απέτυχαν
+PayBoxSetup=Ρύθμιση ενότητας PayBox
+PayBoxDesc=Αυτή η ενότητα προσφέρει σελίδες που επιτρέπουν την πληρωμή στο <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> από πελάτες. Αυτό μπορεί να χρησιμοποιηθεί για ελεύθερη πληρωμή ή για πληρωμή σε συγκεκριμένο αντικείμενο του Dolibarr (τιμολόγιο, παραγγελία, ...)
+PayBoxDoPayment=Πληρώστε με Paybox
+YouWillBeRedirectedOnPayBox=Θα ανακατευθυνθείτε σε ασφαλή σελίδα του Paybox για να εισαγάγετε τα στοιχεία της πιστωτικής σας κάρτας
+SetupPayBoxToHavePaymentCreatedAutomatically=Ρυθμίστε το Paybox σας με τη διεύθυνση url <b>%s</b> για την αυτόματη δημιουργία πληρωμής όταν γίνεται επικύρωση από το Paybox.
+YourPaymentHasBeenRecorded=Σελίδα επιβεβαίωσης καταγραφής της πληρωμής σας. Ευχαριστούμε.
+YourPaymentHasNotBeenRecorded=Η πληρωμή σας ΔΕΝ έχει καταγραφεί και η συναλλαγή έχει ακυρωθεί. Ευχαριστούμε.
+PAYBOX_CGI_URL_V2=Διεύθυνση Url της ενότητας Paybox CGI για την πληρωμή
+NewPayboxPaymentReceived=Νέα πληρωμή Paybox ελήφθη
+NewPayboxPaymentFailed=Η πληρωμή Paybox απέτυχε
 PAYBOX_PAYONLINE_SENDEMAIL=Ειδοποίηση ηλεκτρονικού ταχυδρομείου μετά από προσπάθεια πληρωμής (επιτυχία ή αποτυχία)
 PAYBOX_PBX_SITE=Τιμή για PBX SITE
 PAYBOX_PBX_RANG=Τιμή για PBX Rang

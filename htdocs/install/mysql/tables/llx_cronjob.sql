@@ -47,6 +47,7 @@ CREATE TABLE llx_cronjob
     autodelete      integer DEFAULT 0,				-- 0=Job is kept unchanged once nbrun > maxrun or date > dateend, 2=Job must be archived (archive = status 2) once nbrun > maxrun or date > dateend 
   	status 			integer NOT NULL DEFAULT 1,		-- 0=disabled, 1=enabled, 2=archived
   	processing 		integer NOT NULL DEFAULT 0,		-- 1=process currently running
+  	pid             integer,                        -- The cronjob PID, NULL if not in processing
   	test		    varchar(255) DEFAULT '1',
   	fk_user_author 	integer DEFAULT NULL,
   	fk_user_mod 	integer DEFAULT NULL,

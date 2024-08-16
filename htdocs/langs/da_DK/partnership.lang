@@ -20,6 +20,7 @@ ModulePartnershipName=Partnerskabsledelse
 PartnershipDescription=Ledelse af modulpartnerskab
 PartnershipDescriptionLong= Ledelse af modulpartnerskab
 Partnership=Partnerskab
+Partnerships=Partnerskaber
 AddPartnership=Tilføj partnerskab
 CancelPartnershipForExpiredMembers=Partnerskab: Annuller partnerskab med medlemmer med udløbne abonnementer
 PartnershipCheckBacklink=Partnerskab: Tjek henvisende backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerskab: Tjek henvisende backlink
 # Menu
 #
 NewPartnership=Nyt partnerskab
+NewPartnershipbyWeb=Din partnerskabsanmodning er blevet tilføjet. Vi kontakter dig muligvis snart...
 ListOfPartnerships=Liste over partnerskab
 
 #
@@ -39,7 +41,7 @@ PartnershipAboutPage=Partnerskab om side
 partnershipforthirdpartyormember=Partnerstatus skal indstilles på en 'tredjepart' eller et 'medlem'
 PARTNERSHIP_IS_MANAGED_FOR=Partnerskab administreret for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks til kontrol
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dage før annullering af status for et partnerskab, når et abonnement er udløbet
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antal dage før opsigelse af partnerskabsstatus, når et abonnement er udløbet
 ReferingWebsiteCheck=Kontrol af webstedets henvisning
 ReferingWebsiteCheckDesc=Du kan aktivere en funktion til at kontrollere, at dine partnere har tilføjet et backlink til dine webstedsdomæner på deres eget websted.
 PublicFormRegistrationPartnerDesc=Dolibarr kan give dig en offentlig URL/webside, så eksterne besøgende kan anmode om at blive en del af partnerskabsprogrammet.
@@ -53,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnerskab dedikeret til dette medlem
 DatePartnershipStart=Startdato
 DatePartnershipEnd=Slutdato
 ReasonDecline=Afvis grund
-ReasonDeclineOrCancel=Afvis grund
+ReasonDeclineOrCancel=Årsag til afslag eller annullering
 PartnershipAlreadyExist=Partnerskab eksisterer allerede
 ManagePartnership=Administrer partnerskab
 BacklinkNotFoundOnPartnerWebsite=Backlink ikke fundet på partnerwebstedet
@@ -80,15 +82,17 @@ YourPartnershipRefusedTopic=Partnerskab afvist
 YourPartnershipAcceptedTopic=Partnerskab accepteret
 YourPartnershipCanceledTopic=Partnerskab annulleret
 
-YourPartnershipWillSoonBeCanceledContent=Vi informerer dig om, at dit partnerskab snart vil blive annulleret (Backlink ikke fundet)
-YourPartnershipRefusedContent=Vi informerer dig om, at din partnerskabsanmodning er blevet afvist.
-YourPartnershipAcceptedContent=Vi informerer dig om, at din partnerskabsanmodning er accepteret.
-YourPartnershipCanceledContent=Vi informerer dig om, at dit partnerskab er annulleret.
+YourPartnershipWillSoonBeCanceledContent=Vi vil gerne informere dig om, at vores partnerskab snart vil blive annulleret (vi fik ikke fornyelse eller en forudsætning for vores partnerskab er ikke opfyldt). Kontakt os venligst, hvis du har modtaget dette på grund af en fejl.
+YourPartnershipRefusedContent=Vi vil gerne informere dig om, at din anmodning om partnerskab er blevet afvist. Forudsætninger er ikke opfyldt. Kontakt os venligst, hvis du har brug for mere information.
+YourPartnershipAcceptedContent=Vi vil gerne informere dig om, at din anmodning om partnerskab er blevet accepteret.
+YourPartnershipCanceledContent=Vi vil gerne informere dig om, at vores samarbejde er blevet annulleret. Kontakt os venligst, hvis du har brug for mere information.
 
 CountLastUrlCheckError=Antal fejl ved sidste URL -kontrol
 LastCheckBacklink=Dato for sidste URL -kontrol
-ReasonDeclineOrCancel=Afvis grund
 
 NewPartnershipRequest=Ny partnerskabsanmodning
 NewPartnershipRequestDesc=Denne formular giver dig mulighed for at anmode om at blive en del af et af vores partnerskabsprogram. Hvis du har brug for hjælp til at udfylde denne formular, bedes du kontakte via e-mail <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Denne side skal indeholde mindst ét link til et af følgende domæner: %s
+
+IPOfApplicant=IP af ansøger
 

@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/core/ajax/loadinplace.php
- *       \brief      File to load field value
+ *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -33,6 +33,7 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
@@ -40,6 +41,30 @@ $field = GETPOST('field', 'alpha');
 $element = GETPOST('element', 'alpha');
 $table_element = GETPOST('table_element', 'alpha');
 $fk_element = GETPOST('fk_element', 'alpha');
+$id = $fk_element;
+
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
+
 
 /*
  * View
@@ -77,10 +102,10 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$subelement = 'facture';
 	}
 
-	if ($user->rights->$element->lire || $user->rights->$element->read
-	|| (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
-	|| ($element == 'payment' && $user->rights->facture->lire)
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire)) {
+	if ($user->hasRight($element, 'lire') || $user->hasRight($element, 'read')
+	|| (isset($subelement) && ($user->hasRight($element, $subelement, 'lire') || $user->hasRight($element, $subelement, 'read')))
+	|| ($element == 'payment' && $user->hasRight('facture', 'lire'))
+	|| ($element == 'payment_supplier' && $user->hasRight('fournisseur', 'facture', 'lire'))) {
 		if ($type == 'select') {
 			$methodname = 'load_cache_'.$loadmethod;
 			$cachename = 'cache_'.GETPOST('loadmethod', 'alpha');
@@ -93,6 +118,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				}
 			} elseif (!empty($ext_element)) {
 				$module = $subelement = $ext_element;
+				$regs = array();
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs)) {
 					$module = $regs[1];
 					$subelement = $regs[2];

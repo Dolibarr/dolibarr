@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Adatvédelmi szabályzat
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Adatvédelmi modul (a GDPR-nak megfelelő)
+# Administration page
+datapolicySetup = A modul adatvédelmi szabályzatának beállítása
+Deletion = Adatok törlése
+datapolicySetupPage = Az Ön országának jogszabályaitól függően (példa: <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">, a GDPR 5. cikke</a>) a személyes adatokat meghatározott ideig meg kell őrizni. nem haladja meg azt az időtartamot, ameddig az adatokra szükség van arra a célra, amelyre azokat gyűjtötték, kivéve archiválási célokat.<br>A törlés egy bizonyos időtartam után automatikusan megtörténik, események nélkül (az időtartam amelyet alább jelezni fog).
+NB_MONTHS = %s hónap
+ONE_YEAR = 1 év
+NB_YEARS = %s év
+DATAPOLICY_TIERS_CLIENT = Vevő
+DATAPOLICY_TIERS_PROSPECT = Leendő
+DATAPOLICY_TIERS_PROSPECT_CLIENT = jelentkező/vevő
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
+DATAPOLICY_TIERS_FOURNISSEUR = Beszállító
+DATAPOLICY_CONTACT_CLIENT = Vevő
+DATAPOLICY_CONTACT_PROSPECT = Leendő
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = jelentkező/vevő
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
+DATAPOLICY_CONTACT_FOURNISSEUR = Beszállító
+DATAPOLICY_ADHERENT = Tag
+DATAPOLICY_Tooltip_SETUP = Kapcsolat típusa – Jelölje meg választását az egyes típusokhoz.
+SendAgreementText = Küldhet GDPR e-mailt minden érintett kapcsolattartójának (akik még nem kaptak e-mailt, és akikhez még nem regisztrált semmit a GDPR-megállapodásukkal kapcsolatban). Ehhez használja a következő gombot.
+SendAgreement = Emaileket küld
+AllAgreementSend = Minden e-mailt elküldtünk
+TXTLINKDATAPOLICYACCEPT = Szöveg a linkhez "megállapodás"
+TXTLINKDATAPOLICYREFUSE = Szöveg a "nézeteltérés" linkhez
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Személyes adatok feldolgozása
+DATAPOLICY_consentement = A személyes adatok feldolgozásához kapott hozzájárulás
+DATAPOLICY_opposition_traitement = Ellenzi személyes adatainak kezelését
+DATAPOLICY_opposition_prospection = Ellenzi személyes adatainak kutatási célú feldolgozását
+# Notes added during an anonymization
+DATAPOLICY_date = Megállapodás/nézeteltérés dátuma GDPR
+DATAPOLICY_send = Az e-mail elküldésének dátuma
+MailSent = Az e-mail el lett küldve
+NUMBER_MONTH_BEFORE_DELETION = A törlés előtti hónapok száma

@@ -20,6 +20,7 @@ ModulePartnershipName=Διαχείριση συνεργασιών
 PartnershipDescription=Ενότητα Διαχείριση Συνεργασιών
 PartnershipDescriptionLong= Ενότητα Διαχείριση Συνεργασιών
 Partnership=Συνεργασία
+Partnerships=Συνεργασίες
 AddPartnership=Προσθήκη συνεργασίας
 CancelPartnershipForExpiredMembers=Συνεργασία: Ακύρωση συνεργασίας μελών με συνδρομές που έχουν λήξει
 PartnershipCheckBacklink=Συνεργασία: Ελέγξτε την παραπομπή backlink
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Συνεργασία: Ελέγξτε την παραπ�
 # Menu
 #
 NewPartnership=Νέα Συνεργασία
+NewPartnershipbyWeb=Το αίτημα συνεργασίας σας προστέθηκε με επιτυχία. Θα επικοινωνήσουμε μαζί σας σύντομα...
 ListOfPartnerships=Λίστα συνεργασιών
 
 #
@@ -39,7 +41,7 @@ PartnershipAboutPage=Σελίδα σχετικά με τη συνεργασία
 partnershipforthirdpartyormember=Η κατάσταση συνεργάτη πρέπει να οριστεί σε "τρίτο μέρος" ή "μέλος"
 PARTNERSHIP_IS_MANAGED_FOR=Η διαχείριση της συνεργασίας
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks για έλεγχο
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Αριθμός ημερών πριν από την κατάσταση ακύρωσης μιας συνεργασίας όταν έχει λήξει μια συνδρομή
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Αριθμός ημερών πριν από την κατάταξη μιας συνεργασίας σε κατάσταση ακύρωσης όταν έχει λήξει μια συνδρομή
 ReferingWebsiteCheck=Έλεγχος αναφοράς ιστότοπου
 ReferingWebsiteCheckDesc=Μπορείτε να ενεργοποιήσετε μια δυνατότητα για να ελέγχετε ότι οι συνεργάτες σας έχουν προσθέσει έναν σύνδεσμο backlink του ιστότοπου σας στον δικό τους ιστότοπο.
 PublicFormRegistrationPartnerDesc=Το Dolibarr μπορεί να σας παρέχει μια δημόσια διεύθυνση URL/ιστότοπο για να επιτρέπεται σε εξωτερικούς επισκέπτες η αίτηση συμμετοχής στο πρόγραμμα συνεργασίας.
@@ -53,7 +55,7 @@ PartnershipDedicatedToThisMember=Συνεργασία που αφορά αυτό
 DatePartnershipStart=Ημερομηνία έναρξης
 DatePartnershipEnd=Ημερομηνία λήξης
 ReasonDecline=Λόγος απόρριψης
-ReasonDeclineOrCancel=Λόγος απόρριψης
+ReasonDeclineOrCancel=Αιτία απόρριψης ή ακύρωσης
 PartnershipAlreadyExist=Υπάρχει ήδη Συνεργασία 
 ManagePartnership=Διαχείριση της συνεργασίας
 BacklinkNotFoundOnPartnerWebsite=Ο σύνδεσμος Backlink δεν βρέθηκε στον ιστότοπο του συνεργάτη
@@ -80,15 +82,17 @@ YourPartnershipRefusedTopic=Η συνεργασία απορρίφθηκε
 YourPartnershipAcceptedTopic=Η Συνεργασία έγινε αποδεκτή
 YourPartnershipCanceledTopic=Η συνεργασία ακυρώθηκε
 
-YourPartnershipWillSoonBeCanceledContent=Σας ενημερώνουμε ότι η συνεργασία μας θα ακυρωθεί σύντομα (δεν βρέθηκε backlink )
-YourPartnershipRefusedContent=Σας ενημερώνουμε ότι το αίτημα σας για συνεργασία απορρίφθηκε.
-YourPartnershipAcceptedContent=Σας ενημερώνουμε ότι το αίτημα συνεργασίας σας έγινε δεκτό.
-YourPartnershipCanceledContent=Σας ενημερώνουμε ότι η συνεργασία μας έχει ακυρωθεί.
+YourPartnershipWillSoonBeCanceledContent=Θα θέλαμε να σας ενημερώσουμε ότι η συνεργασία μας θα ακυρωθεί σύντομα (δεν ανανεώθηκε ή δεν έχουν πληρωθεί οι προϋποθέσεις για τη συνεργασία μας). Παρακαλούμε επικοινωνήστε μαζί μας αν λάβατε αυτό λόγω σφάλματος.
+YourPartnershipRefusedContent=Θα θέλαμε να σας ενημερώσουμε ότι το αίτημα συνεργασίας σας έχει απορριφθεί. Δεν πληρούνται οι προϋποθέσεις. Επικοινωνήστε μαζί μας εάν χρειάζεστε περισσότερες πληροφορίες.
+YourPartnershipAcceptedContent=Θα θέλαμε να σας ενημερώσουμε ότι το αίτημα σας για συνεργασία έχει γίνει αποδεκτό.
+YourPartnershipCanceledContent=Θα θέλαμε να σας ενημερώσουμε ότι η συνεργασία μας έχει ακυρωθεί. Παρακαλούμε επικοινωνήστε μαζί μας αν χρειάζεστε περισσότερες πληροφορίες.
 
 CountLastUrlCheckError=Αριθμός σφαλμάτων για τον τελευταίο έλεγχο URL
 LastCheckBacklink=Ημερομηνία τελευταίου ελέγχου διεύθυνσης URL
-ReasonDeclineOrCancel=Λόγος απόρριψης
 
 NewPartnershipRequest=Νέο αίτημα συνεργασίας
 NewPartnershipRequestDesc=Αυτή η φόρμα σάς επιτρέπει να ζητήσετε να συμμετάσχετε σε ένα από τα προγράμματα συνεργασίας μας. Εάν χρειάζεστε βοήθεια για να συμπληρώσετε αυτήν τη φόρμα, επικοινωνήστε μέσω email <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Αυτή η σελίδα πρέπει να περιέχει τουλάχιστον έναν σύνδεσμο προς έναν από τους ακόλουθους τομείς: %s
+
+IPOfApplicant=IP του αιτούντος
 

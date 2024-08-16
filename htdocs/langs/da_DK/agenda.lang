@@ -8,8 +8,6 @@ LocalAgenda=Standardkalender
 ActionsOwnedBy=Begivenhed ejes af
 ActionsOwnedByShort=Ejer
 AffectedTo=Tildelt til
-Event=Begivenhed
-Events=Begivenheder
 EventsNb=Antal begivenheder
 ListOfActions=Liste over begivenheder
 EventReports=Hændelsesrapporter
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mine gennemførte
 ListOfEvents=Liste over begivenheder (standardkalender)
 ActionsAskedBy=Begivenheder anmodet af
 ActionsToDoBy=Begivenheder tildelt til
-ActionsDoneBy=Begivenheder udført af
 ActionAssignedTo=Begivenhed tildelt til
 ViewCal=Månedsvisning
 ViewDay=Dagsvisning
@@ -62,12 +59,13 @@ MemberSubscriptionAddedInDolibarr=Abonnement %s for medlem %s tilføjet
 MemberSubscriptionModifiedInDolibarr=Abonnement %s for medlem %s ændret
 MemberSubscriptionDeletedInDolibarr=Abonnement %s for medlem %s slettet
 ShipmentValidatedInDolibarr=Forsendelse %s bekræftet
-ShipmentClassifyClosedInDolibarr=Forsendelse %s klassificeret faktureret
+ShipmentClassifyClosedInDolibarr=Forsendelse %s klassificeret lukket
 ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassificeret igen
 ShipmentBackToDraftInDolibarr=Forsendelse %s gå tilbage til udkast status
 ShipmentDeletedInDolibarr=Forsendelse %s slettet
 ShipmentCanceledInDolibarr=Forsendelse %s annulleret
 ReceptionValidatedInDolibarr=Modtagelse %s valideret
+ReceptionDeletedInDolibarr=Modtagelse %s slettet
 ReceptionClassifyClosedInDolibarr=Receptionen %s klassificeret lukket
 OrderCreatedInDolibarr=Bestil %s oprettet
 OrderValidatedInDolibarr=Ordre %s bekræftet
@@ -87,6 +85,9 @@ SupplierInvoiceSentByEMail=Vendor invoice %s sendt af email
 ShippingSentByEMail=Forsendelse %s sendt af email
 ShippingValidated= Forsendelse %s bekræftet
 InterventionSentByEMail=Intervention %s sendt af email
+ProjectSentByEMail=Projekt %s sendt via e-mail
+ProjectDeletedInDolibarr=Projekt %s slettet
+ProjectClosedInDolibarr=Projekt %s lukket
 ProposalDeleted=Forslag slettet
 OrderDeleted=Ordre slettet
 InvoiceDeleted=Faktura slettet
@@ -126,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO produceret
 MRP_MO_DELETEInDolibarr=MO slettet
 MRP_MO_CANCELInDolibarr=MO annulleret
 PAIDInDolibarr=%s betalt
+ENABLEDISABLEInDolibarr=user aktiveret eller Disabled
+CANCELInDolibarr=Annulleret
 ##### End agenda events #####
 AgendaModelModule=Skabeloner for dokument til begivenhed
 DateActionStart=Startdato
 DateActionEnd=Slutdato
 AgendaUrlOptions1=Du kan også tilføje følgende parametre til at filtrere output:
-AgendaUrlOptions3=<b> logind = %s </b> for at begrænse output til handlinger ejet af en bruger <b> %s </b>.
-AgendaUrlOptionsNotAdmin=<b> logina =! %s </ b> for at begrænse output til handlinger, der ikke ejes af brugeren <b> %s </ b>.
+AgendaUrlOptions3=<b>logina=%s</b> for at begrænse output til handlinger, der ejes af en bruger <b>%s</b> (brug  <b>logina=!%s</b> for begivenheder, der ikke ejes af brugeren).
 AgendaUrlOptions4=<b> logind = %s </b> for at begrænse uddata til handlinger tildelt bruger <b> %s </b> (ejer og andre).
 AgendaUrlOptionsProject=<b>projekt = __ PROJECT_ID __ </b> for at begrænse output til handlinger, der er knyttet til projektet <b> __ PROJECT_ID __ </b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> for at udelukke automatiske begivenheder.
+AgendaUrlOptionsType=<b>actiontype=%s</b> for at få enten automatiske eller manuelle hændelser
+AgendaUrlOptionsCode=<b>actioncode=%s</b> for kun at få begivenheder med en given kode
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> for at inkludere helligdagsbegivenheder.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> for at begrænse til begivenheder i de sidste %s dage (standard er %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> for at begrænse til de seneste 50 hændelser (standard og maks. er %s).
 AgendaShowBirthdayEvents=Fødselsdage for kontakter
 AgendaHideBirthdayEvents=Skjul fødselsdage på kontakter
 Busy=Travl
@@ -175,5 +180,28 @@ ReminderType=Tilbagekaldelsestype
 AddReminder=Opret en automatisk påmindelsesmeddelelse om denne begivenhed
 ErrorReminderActionCommCreation=Fejl ved oprettelse af påmindelsesmeddelelsen for denne begivenhed
 BrowserPush=Browser pop op meddelelse
+Reminders=Påmindelser
 ActiveByDefault=Aktiveret som standard
 Until=indtil
+DataFromWasMerged=Data fra %s blev flettet
+AgendaShowBookcalCalendar=Bookingkalender: %s
+MenuBookcalIndex=Online aftale
+BookcalLabelAvailabilityHelp=Etiket over tilgængelighedsintervallet. For eksempel:<br>Generel tilgængelighed<br>Tilgængelighed i juleferien
+DurationOfRange=Varighed af intervaller
+BookCalSetup = Online aftale opsætning
+BookCalSetupPage = Online aftaleopsætningsside
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interface titel
+BookCalAbout = Om BookCal
+BookCalAboutPage = BookCal om side
+Calendars=Kalendere
+Availabilities=Tilgængeligheder
+NewAvailabilities=Nye tilgængeligheder
+NewCalendar=Ny kalender
+ThirdPartyBookCalHelp=Begivenhed booket i denne kalender vil automatisk blive knyttet til denne tredjepart.
+AppointmentDuration = Aftalevarighed: %s
+BookingSuccessfullyBooked=Din reservation er blevet gemt
+BookingReservationHourAfter=Vi bekræfter reservationen af vores møde på datoen %s
+BookcalBookingTitle=Online aftale
+Transparency = Gennemsigtighed
+ReadMore = Læs mere
+ReadLess = Læs mindre

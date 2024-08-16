@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Sistem za upravljanje znanja
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Upravljajte bazo upravljanja znanja (KM) ali službe za pomoč uporabnikom
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Nastavitev sistema za upravljanje znanja
+KnowledgeManagementSetupPage = Stran z nastavitvami sistema za upravljanje znanja
 # About page
-#
-About = O programu
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = O upravljanju znanja
+KnowledgeManagementAboutPage = Upravljanje znanja o strani
+KnowledgeManagementArea = Upravljanje znanja
+MenuKnowledgeRecord = Baza znanja
+MenuKnowledgeRecordShort = Baza znanja
+ListKnowledgeRecord = Seznam člankov
+NewKnowledgeRecord = Nov članek
+ValidateReply = Potrdite rešitev
+KnowledgeRecords = Članki
 KnowledgeRecord = Artikel
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeRecordExtraFields = Dodatna polja za člen
+GroupOfTicket=Skupina vstopnic
+YouCanLinkArticleToATicketCategory=Članek lahko povežete s skupino vstopnic (tako da bo članek označen na vseh vstopnicah v tej skupini)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=Nastavi kot zastarelo
+ConfirmCloseKM=Ali potrjujete, da je ta članek zaprt kot zastarel?
+ConfirmReopenKM=Ali želite obnoviti ta članek v status "Potrjen"?
+BoxLastKnowledgerecordDescription=Zadnji %s članki
+BoxLastKnowledgerecord=Zadnji članki
+BoxLastKnowledgerecordContent=Zadnji članki
+BoxLastKnowledgerecordModifiedContent=Zadnji spremenjeni članki
+BoxLastModifiedKnowledgerecordDescription=Zadnji %s spremenjeni članki
+BoxLastModifiedKnowledgerecord=Zadnji spremenjeni članki

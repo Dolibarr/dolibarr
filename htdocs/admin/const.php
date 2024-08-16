@@ -24,30 +24,27 @@
  *	\brief      Admin page to define miscellaneous constants
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
-$rowid = GETPOST('rowid', 'int');
-$entity = GETPOST('entity', 'int');
+$rowid = GETPOSTINT('rowid');
+$entity = GETPOSTINT('entity');
 $action = GETPOST('action', 'aZ09');
-$debug = GETPOST('debug', 'int');
+$debug = GETPOSTINT('debug');
 $consts = GETPOST('const', 'array');
 $constname = GETPOST('constname', 'alphanohtml');
 $constvalue = GETPOST('constvalue', 'restricthtml'); // We should be able to send everything here
 $constnote = GETPOST('constnote', 'alpha');
-
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
@@ -61,12 +58,30 @@ if (empty($sortorder)) {
 	$sortorder = 'ASC';
 }
 
+if ($action == 'add' && GETPOST('update')) {	// Click on button update must be used in priority before param $action
+	$action = 'update';
+}
+if ($action == 'add' && GETPOST('delete')) {	// Click on button update must be used in priority before param $action
+	$action = 'delete';
+}
+/*if ($action == 'update' && GETPOST('add')) {	// 'add' button is always clicked as it is the first in form.
+	$action = 'add';
+}*/
+if ($action == 'delete' && GETPOST('add')) {	// Click on button add must be used in priority before param $action
+	$action = 'add';
+}
+
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
  */
 
-if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
+// Add a new record
+if ($action == 'add') {
 	$error = 0;
 
 	if (empty($constname)) {
@@ -144,7 +159,7 @@ if ($action == 'delete') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-const');
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax) {
@@ -155,13 +170,12 @@ jQuery(document).ready(function() {
 	jQuery("#delconst").hide();
 	jQuery(".checkboxfordelete").click(function() {
 		jQuery("#delconst").show();
-		jQuery("#action").val('delete');
 	});
 	jQuery(".inputforupdate").keyup(function() {	// keypress does not support back
 		var field_id = jQuery(this).attr("id");
 		var row_num = field_id.split("_");
 		jQuery("#updateconst").show();
-		jQuery("#action").val('update');
+		jQuery("#action").val('update');			// so default action if we type enter will be update, but correct action is also detected correctly without that when clicking on "Update" button.
 		jQuery("#check_" + row_num[1]).prop("checked",true);
 	});
 });
@@ -173,24 +187,25 @@ print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
 print "<br>\n";
+print "<br>\n";
 
 $param = '';
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug) ? '?debug=1' : '').'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" id="action" name="action" value="">';
+print '<input type="hidden" id="action" name="action" value="add">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
+print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '') . "\n";
 print getTitleFieldOfList("Value", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
 print getTitleFieldOfList("Comment", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
-	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
+if (isModEnabled('multicompany') && !$user->entity) {
+	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center ') . "\n";
 }
 print getTitleFieldOfList("", 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 print "</tr>\n";
@@ -211,16 +226,16 @@ print '</td>';
 print '<td>';
 print '</td>';
 // Limit to superadmin
-if (!empty($conf->multicompany->enabled) && !$user->entity) {
+if (isModEnabled('multicompany') && !$user->entity) {
 	print '<td>';
-	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
+	print '<input type="text" class="flat" size="1" name="entity" value="' . $conf->entity . '">';
 	print '</td>';
 	print '<td class="center">';
 } else {
 	print '<td class="center">';
-	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+	print '<input type="hidden" name="entity" value="' . $conf->entity . '">';
 }
-print '<input type="submit" class="button button-add small" name="add" value="'.$langs->trans("Add").'">';
+print '<input type="submit" class="button button-add small" id="add" name="add" value="'.$langs->trans("Add").'">';
 print "</td>\n";
 print '</tr>';
 
@@ -255,21 +270,23 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 
+		$value = dolDecrypt($obj->value);
+
 		print "\n";
 
-		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven" data-checkbox-id="check_'.$i.'"><td>'.dol_escape_htmltag($obj->name).'</td>'."\n";
 
 		// Value
 		print '<td>';
 		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
 		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
 		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate minwidth150" name="const['.$i.'][value]" value="'.(isset($value) ? htmlspecialchars($value) : '').'">';
 		print '</td>';
 
 		// Note
 		print '<td>';
-		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate minwidth200" name="const['.$i.'][note]" value="'.(empty($obj->note) ? '' : htmlspecialchars($obj->note, 1)).'">';
 		print '</td>';
 
 		// Date last change
@@ -278,17 +295,17 @@ if ($result) {
 		print '</td>';
 
 		// Entity limit to superadmin
-		if (!empty($conf->multicompany->enabled) && !$user->entity) {
+		if (isModEnabled('multicompany') && empty($user->entity)) {
 			print '<td>';
-			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 			print '</td>';
 			print '<td class="center">';
 		} else {
 			print '<td class="center">';
-			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
+			print '<input type="hidden" name="const['.$i.'][entity]" value="'.((int) $obj->entity).'">';
 		}
 
-		if ($conf->use_javascript_ajax) {
+		if (!empty($conf->use_javascript_ajax)) {
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';
 		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete&token='.newToken().((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';

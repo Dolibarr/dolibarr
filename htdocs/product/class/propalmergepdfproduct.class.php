@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2015 	Laurent Destailleur   	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Florian HENRY 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 
 /**
@@ -41,23 +42,42 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public $table_element = 'propal_merge_pdf_product';
 
+	/**
+	 * @var int Id of product
+	 */
 	public $fk_product;
+
+	/**
+	 * @var string Filename
+	 */
 	public $file_name;
+
+	/**
+	 * @var int Id user
+	 */
 	public $fk_user_author;
+
+	/**
+	 * @var int Id user
+	 */
 	public $fk_user_mod;
 	public $datec = '';
-	public $tms = '';
+
+	/**
+	 * @var string lang code
+	 */
 	public $lang;
 
+	/**
+	 * @var PropalmergepdfproductLine[]
+	 */
 	public $lines = array();
-
-
 
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -70,7 +90,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *  @param	User	$user        User that creates
 	 *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return int      		   	 <0 if KO, Id of created object if OK
+	 *  @return int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -80,16 +100,16 @@ class Propalmergepdfproduct extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->file_name)) {
 			$this->file_name = trim($this->file_name);
 		}
 		if (isset($this->fk_user_author)) {
-			$this->fk_user_author = trim($this->fk_user_author);
+			$this->fk_user_author = (int) $this->fk_user_author;
 		}
 		if (isset($this->fk_user_mod)) {
-			$this->fk_user_mod = trim($this->fk_user_mod);
+			$this->fk_user_mod = (int) $this->fk_user_mod;
 		}
 		if (isset($this->lang)) {
 			$this->lang = trim($this->lang);
@@ -99,7 +119,6 @@ class Propalmergepdfproduct extends CommonObject
 		}
 
 
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -107,7 +126,7 @@ class Propalmergepdfproduct extends CommonObject
 		$sql = "INSERT INTO ".$this->db->prefix()."propal_merge_pdf_product(";
 		$sql .= "fk_product,";
 		$sql .= "file_name,";
-		if ($conf->global->MAIN_MULTILANGS) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= "lang,";
 		}
 		$sql .= "fk_user_author,";
@@ -116,7 +135,7 @@ class Propalmergepdfproduct extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : ((int) $this->fk_product)).",";
 		$sql .= " ".(!isset($this->file_name) ? 'NULL' : "'".$this->db->escape($this->file_name)."'").",";
-		if ($conf->global->MAIN_MULTILANGS) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= " ".(!isset($this->lang) ? 'NULL' : "'".$this->db->escape($this->lang)."'").",";
 		}
 		$sql .= " ".((int) $user->id).",";
@@ -128,7 +147,8 @@ class Propalmergepdfproduct extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		if (!$error) {
@@ -154,7 +174,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *  Load object in memory from the database
 	 *
 	 *  @param	int		$id    Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
@@ -186,7 +206,7 @@ class Propalmergepdfproduct extends CommonObject
 
 				$this->fk_product = $obj->fk_product;
 				$this->file_name = $obj->file_name;
-				if ($conf->global->MAIN_MULTILANGS) {
+				if (getDolGlobalInt('MAIN_MULTILANGS')) {
 					$this->lang = $obj->lang;
 				}
 				$this->fk_user_author = $obj->fk_user_author;
@@ -211,7 +231,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *  @param	int		$product_id    	Id object
 	 *  @param	string	$lang  			Lang string code
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @return int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_by_product($product_id, $lang = '')
 	{
@@ -233,7 +253,7 @@ class Propalmergepdfproduct extends CommonObject
 
 		$sql .= " FROM ".$this->db->prefix()."propal_merge_pdf_product as t";
 		$sql .= " WHERE t.fk_product = ".((int) $product_id);
-		if (!empty($conf->global->MAIN_MULTILANGS) && !empty($lang)) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($lang)) {
 			$sql .= " AND t.lang = '".$this->db->escape($lang)."'";
 		}
 
@@ -242,13 +262,13 @@ class Propalmergepdfproduct extends CommonObject
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					$line = new PropalmergepdfproductLine();
+					$line = new PropalmergepdfproductLine($this->db);
 
 					$line->id = $obj->rowid;
 
 					$line->fk_product = $obj->fk_product;
 					$line->file_name = $obj->file_name;
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS')) {
 						$line->lang = $obj->lang;
 					}
 					$line->fk_user_author = $obj->fk_user_author;
@@ -258,7 +278,7 @@ class Propalmergepdfproduct extends CommonObject
 					$line->import_key = $obj->import_key;
 
 
-					if (!empty($conf->global->MAIN_MULTILANGS)) {
+					if (getDolGlobalInt('MAIN_MULTILANGS')) {
 						$this->lines[$obj->file_name.'_'.$obj->lang] = $line;
 					} else {
 						$this->lines[$obj->file_name] = $line;
@@ -281,9 +301,9 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 <0 if KO, >0 if OK
+	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
 	 */
-	public function update($user = 0, $notrigger = 0)
+	public function update(User $user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -291,13 +311,13 @@ class Propalmergepdfproduct extends CommonObject
 		// Clean parameters
 
 		if (isset($this->fk_product)) {
-			$this->fk_product = trim($this->fk_product);
+			$this->fk_product = (int) $this->fk_product;
 		}
 		if (isset($this->file_name)) {
 			$this->file_name = trim($this->file_name);
 		}
 		if (isset($this->fk_user_mod)) {
-			$this->fk_user_mod = trim($this->fk_user_mod);
+			$this->fk_user_mod = (int) $this->fk_user_mod;
 		}
 		if (isset($this->lang)) {
 			$this->lang = trim($this->lang);
@@ -311,7 +331,7 @@ class Propalmergepdfproduct extends CommonObject
 
 		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
 		$sql .= " file_name=".(isset($this->file_name) ? "'".$this->db->escape($this->file_name)."'" : "null").",";
-		if ($conf->global->MAIN_MULTILANGS) {
+		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= " lang=".(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
 		}
 		$sql .= " fk_user_mod=".$user->id;
@@ -324,7 +344,8 @@ class Propalmergepdfproduct extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error++; $this->errors[] = "Error ".$this->db->lasterror();
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
 		}
 
 		// Commit or rollback
@@ -347,7 +368,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *
 	 *	@param  User	$user        User that deletes
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -363,7 +384,8 @@ class Propalmergepdfproduct extends CommonObject
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -389,7 +411,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *	@param  int		$product_id	 product_id
 	 *  @param  string	$lang_id	 language
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete_by_product($user, $product_id, $lang_id = '', $notrigger = 0)
 	{
@@ -403,14 +425,15 @@ class Propalmergepdfproduct extends CommonObject
 			$sql = "DELETE FROM ".$this->db->prefix()."propal_merge_pdf_product";
 			$sql .= " WHERE fk_product = ".((int) $product_id);
 
-			if ($conf->global->MAIN_MULTILANGS && !empty($lang_id)) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($lang_id)) {
 				$sql .= " AND lang = '".$this->db->escape($lang_id)."'";
 			}
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -433,7 +456,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *  Delete object in database
 	 *
 	 *	@param  User	$user        User that deletes
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete_by_file($user)
 	{
@@ -450,7 +473,8 @@ class Propalmergepdfproduct extends CommonObject
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error++; $this->errors[] = "Error ".$this->db->lasterror();
+				$error++;
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
@@ -524,26 +548,28 @@ class Propalmergepdfproduct extends CommonObject
 	 *	Initialise object with example values
 	 *	Id must be 0 if object instance is a specimen
 	 *
-	 *	@return	void
+	 *	@return int
 	 */
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
 
-		$this->fk_product = '';
+		$this->fk_product = 0;
 		$this->file_name = '';
-		$this->fk_user_author = '';
-		$this->fk_user_mod = '';
+		$this->fk_user_author = 0;
+		$this->fk_user_mod = 0;
 		$this->datec = '';
-		$this->tms = '';
+		$this->tms = dol_now();
 		$this->import_key = '';
+
+		return 1;
 	}
 }
 
 /**
  * Class to manage propal merge of product line
  */
-class PropalmergepdfproductLine
+class PropalmergepdfproductLine extends CommonObjectLine
 {
 	/**
 	 * @var int ID
@@ -555,7 +581,14 @@ class PropalmergepdfproductLine
 	 */
 	public $fk_product;
 
+	/**
+	 * @var string Filename
+	 */
 	public $file_name;
+
+	/**
+	 * @var string Code lang
+	 */
 	public $lang;
 
 	/**
@@ -569,14 +602,6 @@ class PropalmergepdfproductLine
 	public $fk_user_mod;
 
 	public $datec = '';
-	public $tms = '';
-	public $import_key;
 
-	/**
-	 *  Constructor
-	 */
-	public function __construct()
-	{
-		return 1;
-	}
+	public $import_key;
 }

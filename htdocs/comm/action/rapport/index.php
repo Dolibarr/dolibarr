@@ -24,25 +24,25 @@
  *		\brief      Page with reports of actions
  */
 
+// Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
 
 $action = GETPOST('action', 'aZ09');
-$month = GETPOST('month', 'int');
-$year = GETPOST('year', 'int');
+$month = GETPOSTINT('month');
+$year = GETPOSTINT('year');
 
 $optioncss = GETPOST('optioncss', 'alpha');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -56,13 +56,9 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
-if ($user->socid && $socid) {
-	$result = restrictedArea($user, 'societe', $socid);
+//$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if (!$user->hasRight("agenda", "allactions", "read")) {
+	accessforbidden();
 }
 
 
@@ -71,8 +67,10 @@ if ($user->socid && $socid) {
  */
 
 if ($action == 'builddoc') {
-	$cat = new CommActionRapport($db, $month, $year);
-	$result = $cat->write_file(GETPOST('id', 'int'));
+	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
+
+	$cat = new pdf_standard_actions($db, $month, $year);
+	$result = $cat->write_file(null, $langs);
 	if ($result < 0) {
 		setEventMessages($cat->error, $cat->errors, 'errors');
 	}
@@ -100,7 +98,7 @@ $sql .= " GROUP BY year, month, df";
 $sql .= " ORDER BY year DESC, month DESC, df DESC";
 
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
@@ -132,6 +130,7 @@ if ($resql) {
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("EventReports"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
@@ -172,14 +171,14 @@ if ($resql) {
 			$modulepart = 'actionsreport';
 			$documenturl = DOL_URL_ROOT.'/document.php';
 			if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-				$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP; // To use another wrapper
+				$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'); // To use another wrapper
 			}
 
 			if (file_exists($file)) {
 				print '<td class="tdoverflowmax300">';
 				//print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?page='.$page.'&amp;file='.urlencode($relativepath).'&amp;modulepart=actionsreport">'.img_pdf().'</a>';
 
-				$filearray = array('name'=>basename($file), 'fullname'=>$file, 'type'=>'file');
+				$filearray = array('name' => basename($file), 'fullname' => $file, 'type' => 'file');
 				$out = '';
 
 				// Show file name with link to download

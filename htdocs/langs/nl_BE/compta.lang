@@ -22,6 +22,7 @@ DeleteSocialContribution=Verwijder betaling sociale bijdrage/belasting
 ExportDataset_tax_1=sociale bijdragen/belastingen en betalingen
 CalcModeLT1Debt=Modus <b>%sRE op afnemersfacturen%s</b>
 CalcModeLT1Rec=Modus <b>%sRE op leveranciersfacturen%s</b>
+OptionVatInfoModuleComptabilite=Opmerking: Voor materiële activa, zou het gebruik moeten maken van de afleverdatum om eerlijker te zijn.
 PurchasesJournal=Inkoopdagboek
 DescPurchasesJournal=Inkoopdagboek
 OtherCountriesCustomersReport=Buitenlands klantenrapport

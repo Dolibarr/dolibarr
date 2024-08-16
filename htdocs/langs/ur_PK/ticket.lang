@@ -5,33 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=ٹکٹ
 Module56000Desc=ایشو یا درخواست کے انتظام کے لیے ٹکٹ کا نظام
-
 Permission56001=ٹکٹیں دیکھیں
 Permission56002=ٹکٹوں میں ترمیم کریں۔
 Permission56003=ٹکٹیں حذف کریں۔
 Permission56004=ٹکٹوں کا انتظام کریں۔
 Permission56005=تمام فریق ثالث کے ٹکٹ دیکھیں (بیرونی صارفین کے لیے موثر نہیں، ہمیشہ ان تیسرے فریق تک محدود رہیں جس پر وہ انحصار کرتے ہیں)
-
+Permission56006=ٹکٹ برآمد کریں۔
+Tickets=ٹکٹ
 TicketDictType=ٹکٹ - اقسام
 TicketDictCategory=ٹکٹ - گروپس
 TicketDictSeverity=ٹکٹ - شدت
 TicketDictResolution=ٹکٹ - قرارداد
-
 TicketTypeShortCOM=تجارتی سوال
 TicketTypeShortHELP=فنکشنل مدد کی درخواست کریں۔
 TicketTypeShortISSUE=مسئلہ یا بگ
@@ -39,69 +33,59 @@ TicketTypeShortPROBLEM=مسئلہ
 TicketTypeShortREQUEST=تبدیلی یا اضافہ کی درخواست
 TicketTypeShortPROJET=پروجیکٹ
 TicketTypeShortOTHER=دیگر
-
 TicketSeverityShortLOW=کم
 TicketSeverityShortNORMAL=نارمل
 TicketSeverityShortHIGH=اعلی
 TicketSeverityShortBLOCKING=تنقیدی، مسدود کرنا
-
 TicketCategoryShortOTHER=دیگر
-
 ErrorBadEmailAddress=فیلڈ '%s' غلط ہے۔
 MenuTicketMyAssign=میرے ٹکٹ
 MenuTicketMyAssignNonClosed=میرے کھلے ٹکٹ
 MenuListNonClosed=ٹکٹیں کھولیں۔
-
 TypeContact_ticket_internal_CONTRIBUTOR=تعاون کرنے والا
 TypeContact_ticket_internal_SUPPORTTEC=تفویض کردہ صارف
 TypeContact_ticket_external_SUPPORTCLI=گاہک سے رابطہ / واقعہ سے باخبر رہنا
 TypeContact_ticket_external_CONTRIBUTOR=بیرونی تعاون کرنے والا
-
 OriginEmail=رپورٹر ای میل
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=ٹکٹ کا پیغام بذریعہ ای میل بھیجیں۔
-
+ExportDataset_ticket_1=ٹکٹ
 # Status
 Read=پڑھیں
 Assigned=تفویض کردہ
-InProgress=کام جاری ہے
 NeedMoreInformation=رپورٹر کی رائے کا انتظار ہے۔
 NeedMoreInformationShort=رائے کا انتظار ہے۔
-Answered=جواب دیا۔
 Waiting=انتظار کر رہا ہے۔
 SolvedClosed=حل ہو گیا۔
 Deleted=حذف کر دیا گیا۔
-
 # Dict
-Type=قسم
 Severity=شدت
 TicketGroupIsPublic=گروپ عوامی ہے۔
 TicketGroupIsPublicDesc=اگر ٹکٹ گروپ عوامی ہے، تو عوامی انٹرفیس سے ٹکٹ بناتے وقت یہ فارم میں نظر آئے گا۔
-
 # Email templates
 MailToSendTicketMessage=ٹکٹ کے پیغام سے ای میل بھیجنے کے لیے
-
-#
 # Admin page
-#
 TicketSetup=ٹکٹ ماڈیول سیٹ اپ
 TicketSettings=ترتیبات
-TicketSetupPage=
 TicketPublicAccess=ایک عوامی انٹرفیس جس کے لیے کسی شناخت کی ضرورت نہیں ہے درج ذیل یو آر ایل پر دستیاب ہے۔
 TicketSetupDictionaries=ٹکٹ کی قسم، شدت اور تجزیاتی کوڈ لغات سے قابل ترتیب ہیں۔
 TicketParamModule=ماڈیول متغیر سیٹ اپ
 TicketParamMail=ای میل سیٹ اپ
-TicketEmailNotificationFrom=Sender e-mail for ticket answers
-TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
-TicketEmailNotificationTo=Notify ticket creation to this e-mail address
-TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketEmailNotificationFrom=جوابات پر اطلاع کے لیے بھیجنے والا ای میل
+TicketEmailNotificationFromHelp=بھیجنے والا ای میل اطلاعی ای میل بھیجنے کے لیے استعمال کرنا ہے جب بیک آفس کے اندر جواب فراہم کیا جاتا ہے۔ مثال کے طور پر noreply@example.com
+TicketEmailNotificationTo=اس ای میل ایڈریس پر ٹکٹ بنانے کی اطلاع دیں۔
+TicketEmailNotificationToHelp=اگر موجود ہو تو، اس ای میل ایڈریس کو ٹکٹ بنانے کی اطلاع دی جائے گی۔
 TicketNewEmailBodyLabel=ٹکٹ بنانے کے بعد ٹیکسٹ میسج بھیجا گیا۔
 TicketNewEmailBodyHelp=یہاں بیان کردہ متن عوامی انٹرفیس سے ایک نیا ٹکٹ بنانے کی تصدیق کرنے والے ای میل میں داخل کیا جائے گا۔ ٹکٹ کی مشاورت سے متعلق معلومات خود بخود شامل ہوجاتی ہیں۔
 TicketParamPublicInterface=عوامی انٹرفیس سیٹ اپ
 TicketsEmailMustExist=ٹکٹ بنانے کے لیے موجودہ ای میل ایڈریس کی ضرورت ہے۔
 TicketsEmailMustExistHelp=پبلک انٹرفیس میں، نیا ٹکٹ بنانے کے لیے ڈیٹا بیس میں ای میل ایڈریس کو پہلے سے ہی بھرنا چاہیے۔
+TicketsShowProgression=عوامی انٹرفیس میں ٹکٹ کی پیشرفت دکھائیں۔
+TicketsShowProgressionHelp=عوامی انٹرفیس کے صفحات میں ٹکٹ کی پیشرفت کو چھپانے کے لیے اس اختیار کو فعال کریں۔
+TicketCreateThirdPartyWithContactIfNotExist=نامعلوم ای میلز کے لیے نام اور کمپنی کا نام پوچھیں۔
+TicketCreateThirdPartyWithContactIfNotExistHelp=چیک کریں کہ آیا درج کردہ ای میل کے لیے کوئی تھرڈ پارٹی یا کوئی رابطہ موجود ہے۔ اگر نہیں، تو رابطہ کے ساتھ تھرڈ پارٹی بنانے کے لیے نام اور کمپنی کا نام پوچھیں۔
 PublicInterface=عوامی انٹرفیس
-TicketUrlPublicInterfaceLabelAdmin=عوامی انٹرفیس کے لیے متبادل URL
-TicketUrlPublicInterfaceHelpAdmin=ویب سرور کے لیے ایک عرف کی وضاحت کرنا اور اس طرح عوامی انٹرفیس کو دوسرے یو آر ایل کے ساتھ دستیاب کرنا ممکن ہے (سرور کو اس نئے یو آر ایل پر پراکسی کے طور پر کام کرنا چاہیے)
 TicketPublicInterfaceTextHomeLabelAdmin=عوامی انٹرفیس کا خوش آمدید متن
 TicketPublicInterfaceTextHome=آپ سپورٹ ٹکٹ بنا سکتے ہیں یا اس کے شناخت کنندہ ٹریکنگ ٹکٹ سے موجودہ کو دیکھ سکتے ہیں۔
 TicketPublicInterfaceTextHomeHelpAdmin=یہاں بیان کردہ متن عوامی انٹرفیس کے ہوم پیج پر ظاہر ہوگا۔
@@ -119,7 +103,9 @@ TicketParams=پارمس
 TicketsShowModuleLogo=عوامی انٹرفیس میں ماڈیول کا لوگو ڈسپلے کریں۔
 TicketsShowModuleLogoHelp=لوگو ماڈیول کو عوامی انٹرفیس کے صفحات میں چھپانے کے لیے اس اختیار کو فعال کریں۔
 TicketsShowCompanyLogo=پبلک انٹرفیس میں کمپنی کا لوگو ڈسپلے کریں۔
-TicketsShowCompanyLogoHelp=عوامی انٹرفیس کے صفحات میں مرکزی کمپنی کا لوگو چھپانے کے لیے اس اختیار کو فعال کریں۔
+TicketsShowCompanyLogoHelp=عوامی انٹرفیس کے صفحات میں مرکزی کمپنی کا لوگو دکھانے کے لیے اس اختیار کو فعال کریں۔
+TicketsShowCompanyFooter=عوامی انٹرفیس میں کمپنی کا فوٹر ڈسپلے کریں۔
+TicketsShowCompanyFooterHelp=عوامی انٹرفیس کے صفحات میں مرکزی کمپنی کا فوٹر دکھانے کے لیے اس اختیار کو فعال کریں۔
 TicketsEmailAlsoSendToMainAddress=مرکزی ای میل ایڈریس پر بھی ایک اطلاع بھیجیں۔
 TicketsEmailAlsoSendToMainAddressHelp=سیٹ اپ "%s" (ٹیب "%s" دیکھیں) میں بیان کردہ پتے پر ای میل بھیجنے کے لیے بھی اس اختیار کو فعال کریں۔
 TicketsLimitViewAssignedOnly=ڈسپلے کو موجودہ صارف کو تفویض کردہ ٹکٹوں تک محدود رکھیں (بیرونی صارفین کے لیے مؤثر نہیں، ہمیشہ اس تیسرے فریق تک محدود رہیں جس پر وہ انحصار کرتے ہیں)
@@ -136,21 +122,22 @@ TicketsPublicNotificationNewMessage=ٹکٹ میں نیا پیغام/تبصرہ �
 TicketsPublicNotificationNewMessageHelp=جب عوامی انٹرفیس سے نیا پیغام شامل کیا جائے تو ای میل بھیجیں ( تفویض کردہ صارف کو یا نوٹیفیکیشن ای میل کو (اپ ڈیٹ) اور/یا نوٹیفیکیشن ای میل کو)
 TicketPublicNotificationNewMessageDefaultEmail=نوٹیفیکیشن ای میل پر (اپ ڈیٹ)
 TicketPublicNotificationNewMessageDefaultEmailHelp=ہر نئے پیغام کی اطلاع کے لیے اس پتے پر ایک ای میل بھیجیں اگر ٹکٹ کے لیے کوئی صارف تفویض نہیں کیا گیا ہے یا صارف کے پاس کوئی معلوم ای میل نہیں ہے۔
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
-TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
-TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
-TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
-TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
-TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
-TicketChooseProductCategory=Product category for ticket support
-TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-
-#
+TicketsAutoReadTicket=ٹکٹ کو خود بخود پڑھا ہوا نشان زد کریں (جب بیک آفس سے بنایا گیا ہو)
+TicketsAutoReadTicketHelp=بیک آفس سے بنائے جانے پر ٹکٹ کو خود بخود پڑھا ہوا نشان زد کریں۔ جب ٹکٹ پبلک انٹرفیس سے بنتا ہے، تو ٹکٹ "ناٹ پڑھا" کی حیثیت کے ساتھ رہتا ہے۔
+TicketsDelayBeforeFirstAnswer=ایک نئے ٹکٹ کو (گھنٹے) سے پہلے پہلا جواب موصول ہونا چاہیے:
+TicketsDelayBeforeFirstAnswerHelp=اگر کسی نئے ٹکٹ کو اس مدت کے بعد (گھنٹوں میں) جواب نہیں ملتا ہے، تو فہرست کے منظر میں ایک اہم انتباہی آئیکن ظاہر ہوگا۔
+TicketsDelayBetweenAnswers=ایک غیر حل شدہ ٹکٹ (گھنٹوں) کے دوران غیر فعال نہیں ہونا چاہئے:
+TicketsDelayBetweenAnswersHelp=اگر ایک غیر حل شدہ ٹکٹ جس کا جواب پہلے ہی موصول ہو چکا ہے اس وقت کے بعد (گھنٹوں میں) مزید تعامل نہیں ہوا ہے، فہرست کے منظر میں ایک انتباہی آئیکن ظاہر ہوگا۔
+TicketsAutoNotifyClose=ٹکٹ بند کرتے وقت تیسرے فریق کو خود بخود مطلع کریں۔
+TicketsAutoNotifyCloseHelp=ٹکٹ بند کرتے وقت، آپ کو تیسرے فریق کے رابطوں میں سے کسی ایک کو پیغام بھیجنے کی تجویز دی جائے گی۔ بڑے پیمانے پر بند ہونے پر، ٹکٹ سے منسلک تیسرے فریق کے ایک رابطے کو ایک پیغام بھیجا جائے گا۔
+TicketWrongContact=فراہم کردہ رابطہ موجودہ ٹکٹ کے رابطوں کا حصہ نہیں ہے۔ ای میل نہیں بھیجی گئی۔
+TicketChooseProductCategory=ٹکٹ کی حمایت کے لئے مصنوعات کی قسم
+TicketChooseProductCategoryHelp=ٹکٹ سپورٹ کے پروڈکٹ کیٹیگری کو منتخب کریں۔ یہ خود بخود کسی معاہدے کو ٹکٹ سے منسلک کرنے کے لیے استعمال کیا جائے گا۔
+TicketUseCaptchaCode=ٹکٹ بناتے وقت گرافیکل کوڈ (کیپچا) استعمال کریں۔
+TicketUseCaptchaCodeHelp=نیا ٹکٹ بناتے وقت کیپچا کی تصدیق شامل کرتا ہے۔
+TicketsAllowClassificationModificationIfClosed=بند ٹکٹوں کی درجہ بندی میں ترمیم کرنے کی اجازت دیں۔
+TicketsAllowClassificationModificationIfClosedHelp=ٹکٹ بند ہونے کے باوجود درجہ بندی (قسم، ٹکٹ گروپ، شدت) میں ترمیم کرنے کی اجازت دیں۔
 # Index & list page
-#
 TicketsIndex=ٹکٹوں کا علاقہ
 TicketList=ٹکٹوں کی فہرست
 TicketAssignedToMeInfos=یہ صفحہ ڈسپلے ٹکٹ کی فہرست موجودہ صارف کے ذریعہ تخلیق یا تفویض کی گئی ہے۔
@@ -163,12 +150,9 @@ OrderByDateAsc=صعودی تاریخ کے حساب سے ترتیب دیں۔
 OrderByDateDesc=نزولی تاریخ کے مطابق ترتیب دیں۔
 ShowAsConversation=گفتگو کی فہرست کے بطور دکھائیں۔
 MessageListViewType=ٹیبل لسٹ کے بطور دکھائیں۔
-ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
-ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
+ConfirmMassTicketClosingSendEmail=ٹکٹ بند کرتے وقت خودکار طور پر ای میلز بھیجیں۔
+ConfirmMassTicketClosingSendEmailQuestion=کیا آپ ان ٹکٹوں کو بند کرتے وقت فریق ثالث کو مطلع کرنا چاہتے ہیں؟
 # Ticket card
-#
 Ticket=ٹکٹ
 TicketCard=ٹکٹ کارڈ
 CreateTicket=ٹکٹ بنائیں
@@ -178,7 +162,7 @@ CreatedBy=بنائی گئی
 NewTicket=نیا ٹکٹ
 SubjectAnswerToTicket=ٹکٹ کا جواب
 TicketTypeRequest=درخواست کی قسم
-TicketCategory=ٹکٹ کی درجہ بندی
+TicketCategory=ٹکٹ گروپ
 SeeTicket=ٹکٹ دیکھیں
 TicketMarkedAsRead=ٹکٹ کو پڑھا ہوا نشان زد کر دیا گیا ہے۔
 TicketReadOn=پڑھیں
@@ -190,8 +174,8 @@ TicketAssigned=ٹکٹ اب تفویض کیا گیا ہے۔
 TicketChangeType=قسم تبدیل کریں۔
 TicketChangeCategory=تجزیاتی کوڈ کو تبدیل کریں۔
 TicketChangeSeverity=شدت کو تبدیل کریں۔
-TicketAddMessage=ایک پیغام شامل کریں۔
-AddMessage=ایک پیغام شامل کریں۔
+TicketAddMessage=شامل کریں یا پیغام بھیجیں۔
+TicketAddPrivateMessage=ایک نجی پیغام شامل کریں۔
 MessageSuccessfullyAdded=ٹکٹ شامل کیا گیا۔
 TicketMessageSuccessfullyAdded=پیغام کامیابی کے ساتھ شامل ہو گیا۔
 TicketMessagesList=پیغام کی فہرست
@@ -202,8 +186,8 @@ TicketSeverity=شدت
 ShowTicket=ٹکٹ دیکھیں
 RelatedTickets=متعلقہ ٹکٹ
 TicketAddIntervention=مداخلت پیدا کریں۔
-CloseTicket=بند کریں | ٹکٹ حل کریں۔
-AbandonTicket=ٹکٹ چھوڑ دیں۔
+CloseTicket=بند کریں | حل کریں۔
+AbandonTicket=ترک کرنا
 CloseATicket=بند کریں | ٹکٹ حل کریں۔
 ConfirmCloseAticket=ٹکٹ بند ہونے کی تصدیق کریں۔
 ConfirmAbandonTicket=کیا آپ ٹکٹ کے بند ہونے کی تصدیق کرتے ہیں اسٹیٹس 'Abandonned'
@@ -217,18 +201,17 @@ SendMessageByEmail=ای میل کے ذریعے پیغام بھیجیں۔
 TicketNewMessage=نیا پیغام
 ErrorMailRecipientIsEmptyForSendTicketMessage=وصول کنندہ خالی ہے۔ کوئی ای میل نہیں بھیجا۔
 TicketGoIntoContactTab=براہ کرم انہیں منتخب کرنے کے لیے "رابطے" ٹیب میں جائیں۔
-TicketMessageMailIntro=تعارف
+TicketMessageMailIntro=پیغام کا ہیڈر
 TicketMessageMailIntroHelp=یہ متن صرف ای میل کے شروع میں شامل کیا گیا ہے اور محفوظ نہیں کیا جائے گا۔
-TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
-TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailSignature=دستخط
-TicketMessageMailSignatureHelp=یہ متن صرف ای میل کے آخر میں شامل کیا گیا ہے اور محفوظ نہیں کیا جائے گا۔
-TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailSignatureLabelAdmin=جوابی ای میل کے دستخط
-TicketMessageMailSignatureHelpAdmin=یہ متن جوابی پیغام کے بعد داخل کیا جائے گا۔
+TicketMessageMailIntroText=ہیلو،<br>ایک ٹکٹ میں ایک نیا جواب شامل کیا گیا ہے جس کی آپ پیروی کرتے ہیں۔ یہ پیغام ہے:<br>
+TicketMessageMailIntroHelpAdmin=Dolibarr سے ٹکٹ کا جواب دیتے وقت یہ متن جواب سے پہلے داخل کیا جائے گا۔
+TicketMessageMailFooter=پیغام کا فوٹر
+TicketMessageMailFooterHelp=یہ متن صرف ای میل کے ذریعے بھیجے گئے پیغام کے آخر میں شامل کیا جاتا ہے اور محفوظ نہیں کیا جائے گا۔
+TicketMessageMailFooterText=Dolibarr کے ذریعے <b>%s</b> کے ذریعے بھیجا گیا پیغام
+TicketMessageMailFooterHelpAdmin=یہ متن جوابی پیغام کے بعد داخل کیا جائے گا۔
 TicketMessageHelp=ٹکٹ کارڈ پر پیغام کی فہرست میں صرف یہ متن محفوظ کیا جائے گا۔
 TicketMessageSubstitutionReplacedByGenericValues=متبادل متغیرات کو عام اقدار سے تبدیل کیا جاتا ہے۔
+ForEmailMessageWillBeCompletedWith=بیرونی صارفین کو بھیجے گئے ای میل پیغامات کے لیے، پیغام کو مکمل کیا جائے گا۔
 TimeElapsedSince=تب سے وقت گزر گیا۔
 TicketTimeToRead=پڑھنے سے پہلے وقت گزر گیا۔
 TicketTimeElapsedBeforeSince=وقت سے پہلے / بعد سے گزر گیا
@@ -238,8 +221,14 @@ ConfirmReOpenTicket=اس ٹکٹ کو دوبارہ کھولنے کی تصدیق �
 TicketMessageMailIntroAutoNewPublicMessage=ٹکٹ پر %s موضوع کے ساتھ ایک نیا پیغام پوسٹ کیا گیا تھا:
 TicketAssignedToYou=ٹکٹ تفویض کر دیا گیا۔
 TicketAssignedEmailBody=آپ کو %s کی طرف سے ٹکٹ #%s تفویض کیا گیا ہے
+TicketAssignedCustomerEmail=آپ کا ٹکٹ پروسیسنگ کے لیے تفویض کر دیا گیا ہے۔
+TicketAssignedCustomerBody=یہ ایک خودکار ای میل ہے اس بات کی تصدیق کرنے کے لیے کہ آپ کا ٹکٹ پروسیسنگ کے لیے تفویض کر دیا گیا ہے۔
 MarkMessageAsPrivate=پیغام کو نجی کے بطور نشان زد کریں۔
-TicketMessagePrivateHelp=یہ پیغام بیرونی صارفین کو نہیں دکھایا جائے گا۔
+TicketMessageSendEmailHelp=تمام تفویض کردہ رابطہ کو ایک ای میل بھیجا جائے گا۔
+TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
+TicketMessageSendEmailHelp2b=(اندرونی رابطے بلکہ بیرونی رابطے بھی)
+TicketMessagePrivateHelp=یہ پیغام بیرونی صارفین کو نظر نہیں آئے گا۔
+TicketMessageRecipientsHelp=وصول کنندہ کا فیلڈ ٹکٹ سے منسلک فعال رابطوں کے ساتھ مکمل ہوا۔
 TicketEmailOriginIssuer=ٹکٹوں کی اصل پر جاری کنندہ
 InitialMessage=ابتدائی پیغام
 LinkToAContract=ایک معاہدے سے لنک کریں۔
@@ -252,30 +241,25 @@ TicketChangeStatus=حیثیت تبدیل کریں۔
 TicketConfirmChangeStatus=حالت کی تبدیلی کی تصدیق کریں: %s؟
 TicketLogStatusChanged=حالت بدل گئی: %s سے %s
 TicketNotNotifyTiersAtCreate=بنانے پر کمپنی کو مطلع نہ کریں۔
-NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
-TicketNotifyAllTiersAtClose=All related contacts
-TicketNotNotifyTiersAtClose=No related contact
+NotifyThirdpartyOnTicketClosing=ٹکٹ بند کرتے وقت مطلع کرنے کے لیے رابطے
+TicketNotifyAllTiersAtClose=تمام متعلقہ رابطے
+TicketNotNotifyTiersAtClose=کوئی متعلقہ رابطہ نہیں۔
 Unread=ان پڑھ
 TicketNotCreatedFromPublicInterface=دستیاب نہیں ہے. ٹکٹ عوامی انٹرفیس سے نہیں بنایا گیا تھا۔
 ErrorTicketRefRequired=ٹکٹ کا حوالہ نام درکار ہے۔
-TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
-TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
-TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
-TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-
-#
+TicketsDelayForFirstResponseTooLong=بغیر کسی جواب کے ٹکٹ کھلنے میں کافی وقت گزر گیا۔
+TicketsDelayFromLastResponseTooLong=اس ٹکٹ پر آخری جواب کے بعد بہت زیادہ وقت گزر گیا۔
+TicketNoContractFoundToLink=کوئی معاہدہ اس ٹکٹ سے خود بخود منسلک نہیں پایا گیا۔ براہ کرم ایک معاہدے کو دستی طور پر لنک کریں۔
+TicketManyContractsLinked=بہت سے معاہدے خود بخود اس ٹکٹ سے منسلک ہو گئے ہیں۔ اس بات کو یقینی بنائیں کہ کون سا انتخاب کیا جانا چاہئے۔
+TicketRefAlreadyUsed=حوالہ [%s] پہلے ہی استعمال ہو چکا ہے، آپ کا نیا حوالہ ہے [%s]
 # Logs
-#
 TicketLogMesgReadBy=ٹکٹ %s %s کے ذریعے پڑھا گیا
 NoLogForThisTicket=اس ٹکٹ کے لیے ابھی تک کوئی لاگ نہیں ہے۔
 TicketLogAssignedTo=ٹکٹ %s %s کو تفویض کیا گیا
 TicketLogPropertyChanged=ٹکٹ %s میں ترمیم کی گئی: %s سے %s تک درجہ بندی
 TicketLogClosedBy=ٹکٹ %s %s سے بند
 TicketLogReopen=ٹکٹ %s دوبارہ کھولیں۔
-
-#
 # Public pages
-#
 TicketSystem=ٹکٹ کا نظام
 ShowListTicketWithTrackId=ٹریک ID سے ٹکٹ کی فہرست دکھائیں۔
 ShowTicketWithTrackId=ٹریک ID سے ٹکٹ ڈسپلے کریں۔
@@ -289,14 +273,14 @@ TicketNewEmailBody=یہ ایک خودکار ای میل ہے اس بات کی ت
 TicketNewEmailBodyCustomer=یہ ایک خودکار ای میل ہے اس بات کی تصدیق کرنے کے لیے کہ ابھی آپ کے اکاؤنٹ میں ایک نیا ٹکٹ بنایا گیا ہے۔
 TicketNewEmailBodyInfosTicket=ٹکٹ کی نگرانی کے لیے معلومات
 TicketNewEmailBodyInfosTrackId=ٹکٹ ٹریکنگ نمبر: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=آپ درج ذیل لنک پر کلک کرکے مخصوص انٹرفیس میں ٹکٹ کی پیشرفت دیکھ سکتے ہیں۔
-TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
+TicketNewEmailBodyInfosTrackUrl=آپ درج ذیل لنک پر کلک کرکے ٹکٹ کی پیشرفت دیکھ سکتے ہیں۔
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
+TicketCloseEmailBodyInfosTrackUrlCustomer=آپ درج ذیل لنک پر کلک کر کے اس ٹکٹ کی تاریخ سے مشورہ کر سکتے ہیں۔
 TicketEmailPleaseDoNotReplyToThisEmail=براہ کرم اس ای میل کا براہ راست جواب نہ دیں! انٹرفیس میں جواب دینے کے لیے لنک کا استعمال کریں۔
 TicketPublicInfoCreateTicket=یہ فارم آپ کو ہمارے انتظامی نظام میں سپورٹ ٹکٹ ریکارڈ کرنے کی اجازت دیتا ہے۔
-TicketPublicPleaseBeAccuratelyDescribe=براہ کرم مسئلہ کی درست وضاحت کریں۔ ہمیں آپ کی درخواست کی درست شناخت کرنے کی اجازت دینے کے لیے زیادہ سے زیادہ معلومات فراہم کریں۔
+TicketPublicPleaseBeAccuratelyDescribe=براہ کرم اپنی درخواست کو درست طریقے سے بیان کریں۔ ہمیں آپ کی درخواست کی درست شناخت کرنے کی اجازت دینے کے لیے زیادہ سے زیادہ معلومات فراہم کریں۔
 TicketPublicMsgViewLogIn=براہ کرم ٹکٹ ٹریکنگ ID درج کریں۔
-TicketTrackId=عوامی ٹریکنگ ID
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=آپ کی ٹریکنگ آئی ڈی میں سے ایک
 ErrorTicketNotFound=ٹریکنگ ID %s والا ٹکٹ نہیں ملا!
 Subject=مضمون
@@ -312,23 +296,21 @@ OldUser=پرانا صارف
 NewUser=نیا صارف
 NumberOfTicketsByMonth=ہر ماہ ٹکٹوں کی تعداد
 NbOfTickets=ٹکٹوں کی تعداد
+ExternalContributors=بیرونی تعاون کرنے والے
+AddContributor=بیرونی تعاون کنندہ شامل کریں۔
 # notifications
-TicketCloseEmailSubjectCustomer=Ticket closed
-TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
-TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
-TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
+TicketCloseEmailSubjectCustomer=ٹکٹ بند
+TicketCloseEmailBodyCustomer=یہ آپ کو مطلع کرنے کے لیے ایک خودکار پیغام ہے کہ ٹکٹ %s ابھی بند کر دیا گیا ہے۔
+TicketCloseEmailSubjectAdmin=ٹکٹ بند - Réf %s (عوامی ٹکٹ ID %s)
+TicketCloseEmailBodyAdmin=ID #%s والا ٹکٹ ابھی بند ہوا ہے، معلومات دیکھیں:
 TicketNotificationEmailSubject=ٹکٹ %s اپ ڈیٹ ہو گیا۔
 TicketNotificationEmailBody=یہ آپ کو مطلع کرنے کے لیے ایک خودکار پیغام ہے کہ ٹکٹ %s کو ابھی اپ ڈیٹ کیا گیا ہے۔
 TicketNotificationRecipient=اطلاع وصول کنندہ
 TicketNotificationLogMessage=لاگ پیغام
 TicketNotificationEmailBodyInfosTrackUrlinternal=انٹرفیس میں ٹکٹ دیکھیں
 TicketNotificationNumberEmailSent=اطلاعی ای میل بھیجی گئی: %s
-
 ActionsOnTicket=ٹکٹ پر واقعات
-
-#
 # Boxes
-#
 BoxLastTicket=تازہ ترین تیار کردہ ٹکٹ
 BoxLastTicketDescription=تازہ ترین %s نے ٹکٹ بنائے
 BoxLastTicketContent=

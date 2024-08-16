@@ -29,17 +29,13 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
 }
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-// Avoid warnings with strict mode E_STRICT
-$conf = new stdClass(); // instantiate $conf explicitely
-$conf->global	= new stdClass();
-$conf->file = new stdClass();
-$conf->db = new stdClass();
-$conf->syslog	= new stdClass();
+$conf = new Conf();
 
 // Force $_REQUEST["logtohtml"]
 $_REQUEST["logtohtml"] = 1;
@@ -59,11 +55,12 @@ $conffiletoshowshort = "conf.php";
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
 // For debian/redhat like systems
+/*
 if (!file_exists($conffile)) {
 	$conffile = "/etc/dolibarr/conf.php";
 	$conffiletoshow = "/etc/dolibarr/conf.php";
 }
-
+*/
 
 // Load conf file if it is already defined
 if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8) { // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
@@ -78,16 +75,16 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$dolibarr_main_db_type = 'mysqli';
 		}
 
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
+		if (!isset($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
 			$dolibarr_main_db_port = '3306'; // For backward compatibility
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root        = isset($dolibarr_main_data_root) ?trim($dolibarr_main_data_root) : '';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ?trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ?trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ?trim($dolibarr_main_document_root) : '';
-		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ?trim($dolibarr_main_document_root_alt) : '';
+		$dolibarr_main_data_root        = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : '';
+		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
 		if (!empty($dolibarr_main_document_root) && !preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) {
@@ -108,7 +105,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 
 		// Create conf object
 		if (!empty($dolibarr_main_document_root)) {
-			$result = conf($dolibarr_main_document_root);
+			$result = loadconf($dolibarr_main_document_root);
 		}
 		// Load database driver
 		if ($result) {
@@ -133,7 +130,7 @@ if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
 }
 define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
 
-define('DOL_CLASS_PATH', 'class/'); // Filsystem path to class dir
+define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
 define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root) ? $dolibarr_main_data_root : ''));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root) ? $dolibarr_main_url_root : '')); // URL relative root
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
@@ -169,7 +166,7 @@ if (empty($conf->db->user)) {
 }
 
 
-// Defini objet langs
+// Defini object langs
 $langs = new Translate('..', $conf);
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09'));
@@ -177,17 +174,14 @@ if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang('auto');
 }
 
-$bc[false] = ' class="bg1"';
-$bc[true] = ' class="bg2"';
-
 
 /**
  *	Load conf file (file must exists)
  *
  *	@param	string	$dolibarr_main_document_root		Root directory of Dolibarr bin files
- *	@return	int											<0 if KO, >0 if OK
+ *	@return	int											Return integer <0 if KO, >0 if OK
  */
-function conf($dolibarr_main_document_root)
+function loadconf($dolibarr_main_document_root)
 {
 	global $conf;
 	global $dolibarr_main_db_type;
@@ -198,7 +192,10 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_pass;
 	global $character_set_client;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	$return = 1;
+	if (!class_exists('Conf')) {
+		$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	}
 	if (!$return) {
 		return -1;
 	}
@@ -235,6 +232,8 @@ function pHeader($soutitre, $next, $action = 'none')
 
 	// On force contenu dans format sortie
 	header("Content-type: text/html; charset=".$conf->file->character_set_client);
+
+	// Security options
 	header("X-Content-Type-Options: nosniff");
 	header("X-Frame-Options: SAMEORIGIN"); // Frames allowed only if on same domain (stop some XSS attacks)
 

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
 Permission23103 = Delete Scheduled job
@@ -11,10 +10,10 @@ URLToLaunchCronJobs=URL til at kontrollere og starte kvalificerede cron-job fra 
 OrToLaunchASpecificJob=Eller for at kontrollere og starte et bestemt job fra en browser
 KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Kommandolinje for at kontrollere og starte kvalificerede cron-job
-CronExplainHowToRunUnix=On Unix environment you should use the following crontab entry to run the command line each 5 minutes
+CronExplainHowToRunUnix=På Unix systemer skal du bruge den følgende crontab instilling for at afvikle kommandolinien hvert 5 minut
 CronExplainHowToRunWin=På Microsoft (tm) Windows-miljø kan du bruge Scheduled Task-værktøjer til at køre kommandolinjen hvert 5. minut
-CronMethodDoesNotExists=Class %s does not contains any method %s
-CronMethodNotAllowed=Metode %s af klasse %s er i sortliste over forbudte metoder
+CronMethodDoesNotExists=Klasse %s indeholder ikke nogen metode %s
+CronMethodNotAllowed=Metoden %s af klassen %s er på bloklisten over forbudte metoder
 CronJobDefDesc=Cron-jobprofiler er defineret i modulbeskrivelsesfilen. Når modulet er aktiveret, er de indlæst og tilgængeligt, så du kan administrere jobene fra adminværktøjsmenuen %s.
 CronJobProfiles=Liste over forud definerede cron jobprofiler
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Command
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch scheduled job
+CronExecute=Start nu
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=Job
-CronNone=Ingen
+CronNone=Næste kørsel af planlagt opgave
+CronNotYetRan=Aldrig køre
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Next execution
@@ -49,8 +49,8 @@ CronEach=Every
 JobFinished=Job startet og gennemført
 Scheduled=Planlagt
 #Page card
-CronAdd= Add jobs
-CronEvery=Execute job each
+CronAdd=Add jobs
+CronEvery=Kør job hver
 CronObject=Instance/Object to create
 CronArgs=Parametre
 CronSaveSucess=Gemt med succes
@@ -58,8 +58,8 @@ CronNote=Kommentar
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
 StatusAtInstall=Status ved modul installation
-CronStatusActiveBtn=Tidsplan
-CronStatusInactiveBtn=Deaktivere
+CronStatusActiveBtn=Aktiver planlægning
+CronStatusInactiveBtn=Deaktiver
 CronTaskInactive=Dette job er deaktiveret (ikke planlagt)
 CronId=Id
 CronClassFile=Filename with class
@@ -67,7 +67,7 @@ CronModuleHelp=Navn på Dolibarr modul bibliotek (også arbejde med ekstern Doli
 CronClassFileHelp=Den relative sti og filnavn, der skal indlæses (stien er i forhold til webserverens rodmappe). <BR> For eksempel for at kalde hentningsmetoden for Dolibarr Produktobjekt htdocs / product / class / <u> product.class.php </u> er værdien for klassefilenavnet <br> <i> produkt / klasse / product.class.php </i>
 CronObjectHelp=Objektnavnet, der skal indlæses. <BR> For at f.eks. Kalde hentningsmetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, er værdien for klassefilenavnet <br> <i> Produkt </ i>
 CronMethodHelp=Objektmetoden til at starte. <BR> For at f.eks. Kalde hentningsmetoden for Dolibarr Product-objektet /htdocs/product/class/product.class.php, er værdien for metoden <i> hent </ i>
-CronArgsHelp=Metodargumenterna. <BR> For eksempel for at kalde hente metode til Dolibarr Produkt objekt /htdocs/product/class/product.class.php, kan værdien for paramters være <i> 0, ProductRef </i>
+CronArgsHelp=Metodens argumenter. <BR> For at kalde hentemetoden for Dolibarr-produktobjektet /htdocs/product/class/product.class.php kan værdien for parametre f.eks. være<br><i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
 CronFrom=Fra
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Gå til menuen "<a href="%s">Hjem - Administrati
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Opret en lokal database dump. Parametre er: komprimering ('gz' eller 'bz' eller 'ingen'), backup type ('mysql', 'pgsql', 'auto'), 1, 'auto' eller filnavn til opbygning, antal backupfiler
+MakeSendLocalDatabaseDumpShort=Send backup af lokal database
+MakeSendLocalDatabaseDump=Send lokal database backup via e-mail. Parametre er: til, fra, emne, besked, filnavn (navn på fil sendt), filter ('sql' kun til backup af database)
+BackupIsTooLargeSend=Beklager, sidste backup-fil er for stor til at kunne sendes via e-mail
+CleanUnfinishedCronjobShort=Rens ufærdige cronjob
+CleanUnfinishedCronjob=Ren cronjob sidder fast i behandlingen, når processen ikke længere kører
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
 DATAPOLICYJob=Datarenser og anonymizer
 JobXMustBeEnabled=Job %s skal være aktiveret
+EmailIfError=E-mail for advarsel om fejl
+JobNotFound=Job %s ikke fundet på listen over job (prøv at deaktivere/aktivere modulet)
+ErrorInBatch=Fejl ved kørsel af jobbet %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Sidste udførte planlagte job
 NextScheduledJobExecute=Næste planlagte job, der skal udføres
 NumberScheduledJobError=Antal planlagte job med fejl
+NumberScheduledJobNeverFinished=Antal planlagte job, der aldrig blev afsluttet

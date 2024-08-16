@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,24 +27,26 @@
  */
 
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals'));
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'paymentbybanktransfer', '', '');
 
-$usercancreate = $user->rights->paymentbybanktransfer->create;
+$usercancreate = $user->hasRight('paymentbybanktransfer', 'create');
 
 
 /*
@@ -64,6 +67,12 @@ if (prelevement_check_config('bank-transfer') < 0) {
 	setEventMessages($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("PaymentByBankTransfer")), null, 'errors');
 }
 
+$thirdpartystatic = new Societe($db);
+$invoicestatic = new FactureFournisseur($db);
+$bprev = new BonPrelevement($db);
+$salary = new Salary($db);
+$user = new User($db);
+
 $newcardbutton = '';
 if ($usercancreate) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewPaymentByBankTransfer'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php?type=bank-transfer');
@@ -75,123 +84,193 @@ print load_fiche_titre($langs->trans("SuppliersStandingOrdersArea"), $newcardbut
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-$thirdpartystatic = new Societe($db);
-$invoicestatic = new FactureFournisseur($db);
-$bprev = new BonPrelevement($db);
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
-print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
-print $bprev->nbOfInvoiceToPay('bank-transfer');
-print '</a>';
-print '</td></tr>';
+$totaltoshow = 0;
 
-print '<tr class="oddeven"><td>'.$langs->trans("AmountToTransfer").'</td>';
-print '<td class="right"><span class="amount">';
-print price($bprev->SommeAPrelever('bank-transfer'), '', '', 1, -1, -1, 'auto');
+if (isModEnabled('supplier_invoice')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
+	print '<td class="right">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer" title="'.price($amounttoshow).'">';
+	print $bprev->nbOfInvoiceToPay('bank-transfer');
+	print '</a>';
+	print '</td></tr>';
+	$totaltoshow += $amounttoshow;
+}
+
+if (isModEnabled('salaries')) {
+	print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransferForSalaries").'</td>';
+	print '<td class="right">';
+	$amounttoshow = $bprev->SommeAPrelever('bank-transfer', 'salary');
+	print '<a class="badge badge-info" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer&sourcetype=salary" title="'.price($amounttoshow).'">';
+	print $bprev->nbOfInvoiceToPay('bank-transfer', 'salary');
+	print '</a>';
+	print '</td></tr>';
+	$totaltoshow += $amounttoshow;
+}
+
+print '<tr class="oddeven"><td>'.$langs->trans("Total").'</td>';
+print '<td class="right"><span class="amount nowraponall">';
+print price($totaltoshow, 0, '', 1, -1, -1, 'auto');
 print '</span></td></tr></table></div><br>';
 
 
-
 /*
- * Invoices waiting for withdraw
+ * Invoices waiting for credit transfer
  */
-$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
-$sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
-$sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql .= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql .= " WHERE s.rowid = f.fk_soc";
-$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
-$sql .= " AND f.total_ttc > 0";
-if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS)) {
-	$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
-}
-$sql .= " AND pfd.traite = 0";
-$sql .= " AND pfd.ext_payment_id IS NULL";
-$sql .= " AND pfd.fk_facture_fourn = f.rowid";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($socid) {
-	$sql .= " AND f.fk_soc = ".((int) $socid);
-}
-
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
-	if ($num) {
-		while ($i < $num && $i < 20) {
-			$obj = $db->fetch_object($resql);
-
-			$invoicestatic->id = $obj->rowid;
-			$invoicestatic->ref = $obj->ref;
-			$invoicestatic->statut = $obj->fk_statut;
-			$invoicestatic->paye = $obj->paye;
-			$invoicestatic->type = $obj->type;
-			$alreadypayed = $invoicestatic->getSommePaiement();
-
-			$thirdpartystatic->id = $obj->socid;
-			$thirdpartystatic->name = $obj->name;
-			$thirdpartystatic->email = $obj->email;
-			$thirdpartystatic->tva_intra = $obj->tva_intra;
-			$thirdpartystatic->siren = $obj->idprof1;
-			$thirdpartystatic->siret = $obj->idprof2;
-			$thirdpartystatic->ape = $obj->idprof3;
-			$thirdpartystatic->idprof1 = $obj->idprof1;
-			$thirdpartystatic->idprof2 = $obj->idprof2;
-			$thirdpartystatic->idprof3 = $obj->idprof3;
-			$thirdpartystatic->idprof4 = $obj->idprof4;
-			$thirdpartystatic->idprof5 = $obj->idprof5;
-			$thirdpartystatic->idprof6 = $obj->idprof6;
-
-			print '<tr class="oddeven"><td class="nowraponall">';
-			print $invoicestatic->getNomUrl(1, 'withdraw');
-			print '</td>';
-
-			print '<td class="tdoverflowmax150">';
-			print $thirdpartystatic->getNomUrl(1, 'supplier');
-			print '</td>';
-
-			print '<td class="right">';
-			print '<span class="amount">'.price($obj->amount).'</span>';
-			print '</td>';
-
-			print '<td class="right">';
-			print dol_print_date($db->jdate($obj->date_demande), 'day');
-			print '</td>';
-
-			print '<td class="right">';
-			print $invoicestatic->getLibStatut(3, $alreadypayed);
-			print '</td>';
-			print '</tr>';
-			$i++;
-		}
-	} else {
-		print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $langs->transnoentitiesnoconv("BankTransfer")).'</span></td></tr>';
+if (isModEnabled('supplier_invoice')) {
+	$sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type, f.datef, f.date_lim_reglement,";
+	$sql .= " pfd.date_demande, pfd.amount,";
+	$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
+	$sql .= " ".MAIN_DB_PREFIX."societe as s,";
+	$sql .= " ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	$sql .= " WHERE s.rowid = f.fk_soc";
+	$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
+	$sql .= " AND f.total_ttc > 0";
+	if (!getDolGlobalString('WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS')) {
+		$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 	}
-	print "</table></div><br>";
-} else {
-	dol_print_error($db);
+	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
+	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+	if ($socid) {
+		$sql .= " AND f.fk_soc = ".((int) $socid);
+	}
+
+	$resql = $db->query($sql);
+
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="5">'.$langs->trans("SupplierInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$num.')</span></th></tr>';
+		if ($num) {
+			while ($i < $num && $i < 20) {
+				$obj = $db->fetch_object($resql);
+
+				$invoicestatic->id = $obj->rowid;
+				$invoicestatic->ref = $obj->ref;
+				$invoicestatic->status = $obj->fk_statut;
+				$invoicestatic->statut = $obj->fk_statut;	// For backward compatibility
+				$invoicestatic->paye = $obj->paye;
+				$invoicestatic->paid = $obj->paye;
+				$invoicestatic->type = $obj->type;
+				$invoicestatic->date = $db->jdate($obj->datef);
+				$invoicestatic->date_echeance = $db->jdate($obj->date_lim_reglement);
+				$invoicestatic->total_ttc = $obj->total_ttc;
+
+				$alreadypayed = $invoicestatic->getSommePaiement();
+
+				$thirdpartystatic->id = $obj->socid;
+				$thirdpartystatic->name = $obj->name;
+				$thirdpartystatic->email = $obj->email;
+				$thirdpartystatic->tva_intra = $obj->tva_intra;
+				$thirdpartystatic->idprof1 = $obj->idprof1;
+				$thirdpartystatic->idprof2 = $obj->idprof2;
+				$thirdpartystatic->idprof3 = $obj->idprof3;
+				$thirdpartystatic->idprof4 = $obj->idprof4;
+				$thirdpartystatic->idprof5 = $obj->idprof5;
+				$thirdpartystatic->idprof6 = $obj->idprof6;
+
+
+				print '<tr class="oddeven"><td class="nowraponall">';
+				print $invoicestatic->getNomUrl(1, 'withdraw');
+				print '</td>';
+
+				print '<td class="tdoverflowmax150">';
+				print $thirdpartystatic->getNomUrl(1, 'supplier');
+				print '</td>';
+
+				print '<td class="right">';
+				print '<span class="amount">'.price($obj->amount).'</span>';
+				print '</td>';
+
+				print '<td class="right">';
+				print dol_print_date($db->jdate($obj->date_demande), 'day');
+				print '</td>';
+
+				print '<td class="right">';
+				print $invoicestatic->getLibStatut(3, $alreadypayed);
+				print '</td>';
+				print '</tr>';
+				$i++;
+			}
+		} else {
+			$titlefortab = $langs->transnoentitiesnoconv("BankTransfer");
+			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSupplierInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
+		}
+		print "</table></div><br>";
+	} else {
+		dol_print_error($db);
+	}
+}
+
+if (isModEnabled('salaries')) {
+	$sqlForSalary = "SELECT * FROM ".MAIN_DB_PREFIX."salary as s, ".MAIN_DB_PREFIX."prelevement_demande as pd";
+	$sqlForSalary .= " WHERE s.rowid = pd.fk_salary AND s.paye = 0 AND pd.traite = 0";
+	$sqlForSalary .= " AND s.entity IN (".getEntity('salary').")";
+
+	$resql2 = $db->query($sqlForSalary);
+	if ($resql2) {
+		$numRow = $db->num_rows($resql2);
+		$j = 0 ;
+
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder rightpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="5">'.$langs->trans("SalaryInvoiceWaitingWithdraw").' <span class="opacitymedium">('.$numRow.')</span></th></tr>';
+
+		if ($numRow) {
+			while ($j < $numRow && $j < 10) {
+				$objSalary = $db->fetch_object($resql2);
+
+				$user->fetch($objSalary->fk_user);
+
+				$salary->fetch($objSalary->fk_salary);
+
+				$alreadypayedS = $salary->getSommePaiement();
+
+				print '<tr class="oddeven"><td class="nowraponall">';
+				print $salary->getNomUrl(1);
+				print '</td>';
+
+				print '<td class="tdoverflowmax150">';
+				print $user->getNomUrl(-1);
+				print '</td>';
+
+				print '<td class="right">';
+				print '<span class="amount">'.price($objSalary->amount).'</span>';
+				print '</td>';
+
+				print '<td class="right" title="'.$langs->trans("DateRequest").'">';
+				print dol_print_date($db->jdate($objSalary->date_demande), 'day');
+				print '</td>';
+
+				print '<td class="right">';
+				print $salary->getLibStatut(3, $alreadypayedS);
+				print '</td>';
+				print '</tr>';
+				$j++;
+			}
+		} else {
+			$titlefortab = $langs->transnoentitiesnoconv("BankTransfer");
+			print '<tr class="oddeven"><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoSalaryInvoiceToWithdraw", $titlefortab, $titlefortab).'</span></td></tr>';
+		}
+		print "</table></div><br>";
+	} else {
+		dol_print_error($db);
+	}
 }
 
 
 print '</div><div class="fichetwothirdright">';
-
 
 /*
  * Withdraw receipts

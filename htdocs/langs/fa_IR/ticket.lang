@@ -5,93 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=برگه‌های پشتیبانی
 Module56000Desc=سامانۀ برگه‌های پشتیبانی برای مدیریت مشکلات و درخواست‌ها
-
 Permission56001=نمایش برگه‌ها
 Permission56002=ویرایش برگه‌ه
 Permission56003=حذف برگه‌ها
 Permission56004=مدیریت برگه‌ها
 Permission56005=نمایش همۀ برگه‌های مربوط به اشخاص سوم (برای کاربران خارجی مؤثر نیست و همواره به شخص‌سومی که به‌آن وصل است وابسته است)
-
+Permission56006=Export tickets
+Tickets=برگه‌های پشتیبانی
 TicketDictType=برگه‌ها - انواع
-TicketDictCategory=برگه‌ها - دسته‌بندی‌ها
+TicketDictCategory=Ticket - Groups
 TicketDictSeverity=برگه‌ها - سطح اهمیت
 TicketDictResolution=Ticket - Resolution
-
 TicketTypeShortCOM=سوال تجاری
-TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Issue or bug
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=طرح
 TicketTypeShortOTHER=سایر
-
 TicketSeverityShortLOW=کم
 TicketSeverityShortNORMAL=عادی
 TicketSeverityShortHIGH=زیاد
 TicketSeverityShortBLOCKING=Critical, Blocking
-
 TicketCategoryShortOTHER=سایر
-
 ErrorBadEmailAddress=بخش '%s' نادرست است
 MenuTicketMyAssign=برگه‌ها من
 MenuTicketMyAssignNonClosed=برگه‌های باز من
 MenuListNonClosed=برگه‌های باز
-
 TypeContact_ticket_internal_CONTRIBUTOR=مشارکت‌کننده
 TypeContact_ticket_internal_SUPPORTTEC=کاربر نسبت داده شده
 TypeContact_ticket_external_SUPPORTCLI=طرف‌تماس‌مشتری / ره‌گیری حادثه
 TypeContact_ticket_external_CONTRIBUTOR=مشارکت‌کنندۀ بیرونی
-
 OriginEmail=Reporter Email
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=ارسال پیام برگه با رایانامه
-
+ExportDataset_ticket_1=برگه‌های پشتیبانی
 # Status
 Read=خوانده‌شده
 Assigned=نسبت‌داده شده
-InProgress=در حال انجام
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
-Answered=پاسخ داده شده
 Waiting=در انتظار
 SolvedClosed=Solved
 Deleted=حذف شده
-
 # Dict
-Type=نوع
 Severity=حساسیت
 TicketGroupIsPublic=Group is public
 TicketGroupIsPublicDesc=If a ticket group is public, it will be visible in the form when creating a ticket from the public interface
-
 # Email templates
 MailToSendTicketMessage=برای ارسال رایانامه از برگۀ پیا
-
-#
 # Admin page
-#
 TicketSetup=برپاسازی واحد برگه‌های پشتیبانی
 TicketSettings=تنظیمات
-TicketSetupPage=
 TicketPublicAccess=یک رابط عمومی که بدون نیاز به تائید اعتبار شناسه است در نشانی زیر فعال است
 TicketSetupDictionaries=نوع برگه، حساسیت آن و کدهای تحلیلی از طریق واژه‌نامه‌ها قابل پیگربندی است
 TicketParamModule=برپاسازی متغیرهای واحد
 TicketParamMail=برپاسازی رایانامه
-TicketEmailNotificationFrom=Sender e-mail for ticket answers
-TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
+TicketEmailNotificationFrom=Sender e-mail for notification on answers
+TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification email when an answer is provided inside the back office. For example noreply@example.com
 TicketEmailNotificationTo=Notify ticket creation to this e-mail address
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
 TicketNewEmailBodyLabel=پیام متنی ارسال شده پس از ساخت یک برگه
@@ -99,9 +81,11 @@ TicketNewEmailBodyHelp=نوشته‌ای که اینجا وارد می‌شود�
 TicketParamPublicInterface=برپاسازی رابط عمومی
 TicketsEmailMustExist=نیاز به یک نشانی رایانامه برای ساخت برگۀ پشتیبانی
 TicketsEmailMustExistHelp=در رابط عمومی، نشانی رایانامه باید در بانک داده پر شود تا امکان ساخت برگۀ پشتیبانی وجود داشته باشد
+TicketsShowProgression=Display the ticket progress in the public interface
+TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
+TicketCreateThirdPartyWithContactIfNotExist=Ask name and company name for unknown emails.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Check if a third party or a contact exists for the email entered. If not, ask a name and a company name to create a third party with contact.
 PublicInterface=رابط عمومی
-TicketUrlPublicInterfaceLabelAdmin=نشانی جایگزین برای رابط عمومی
-TicketUrlPublicInterfaceHelpAdmin=امکان تعریف یک نشانی جایگزین برای سرور وب و دسترسی به رابط عمومی با یک نشانی دیگر وجود دارد (سرور باید به عنوان یک پراکسی روی این نشانی جدید کار کند)
 TicketPublicInterfaceTextHomeLabelAdmin=نوشتۀ خوش‌آمدگوئی رابط عمومی
 TicketPublicInterfaceTextHome=شما می‌توانید یک برگۀ‌پشتیبانی ساخته یا یک برگۀ‌پشتیبانی موجود را با استفاده از شناسۀ‌رهگیری آن مشاهده کنید
 TicketPublicInterfaceTextHomeHelpAdmin=نوشتۀ تعریف شده در این قسمت در بخش رابط عمومی نمایش داده خواهد شد
@@ -119,7 +103,9 @@ TicketParams=مؤلفه‌ها
 TicketsShowModuleLogo=نمایش نماد واحد، در رابط عمومی
 TicketsShowModuleLogoHelp=این گزینه را برای پنهان کردن نماد واحد در صفحات رابط عمومی استفاده کنید
 TicketsShowCompanyLogo=نمایش نماد شرکت در رابط عمومی
-TicketsShowCompanyLogoHelp=این گزینه را برای پنعان کردن نماد شرکت اصلی در صفحات رابط عمومی استفاده کنید
+TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
+TicketsShowCompanyFooter=Display the footer of the company in the public interface
+TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
 TicketsEmailAlsoSendToMainAddress=Also send a notification to the main email address
 TicketsEmailAlsoSendToMainAddressHelp=Enable this option to also send an email to the address defined into setup "%s" (see tab "%s")
 TicketsLimitViewAssignedOnly=محدود کردن نمایش برگۀ‌پشتیبانی به کاربر فعلی (برای کاربران خارجی مؤثر نیست، همواره محدود به شخص‌سومی که بدان مربوطند دارد)
@@ -136,21 +122,22 @@ TicketsPublicNotificationNewMessage=Send email(s) when a new message/comment is 
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
 TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send an email to this address for each new message notifications if the ticket doesn't have a user assigned to it or if the user doesn't have any known email.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
+TicketsAutoReadTicket=Automatically mark the ticket as read (when created from back office)
+TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from back office. When ticket is create from the public interface, ticket remains with the status "Not Read".
 TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
 TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
 TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
 TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
+TicketsAutoNotifyClose=Automatically notify the third party when closing a ticket
+TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of third-party contacts. On mass closing, a message will be sent to one contact of the third party linked to the ticket.
 TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
 TicketChooseProductCategory=Product category for ticket support
 TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-
-#
+TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
+TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
+TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
+TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
 # Index & list page
-#
 TicketsIndex=Tickets area
 TicketList=فهرست برگه‌ها
 TicketAssignedToMeInfos=این برگه نمایش دهندۀ برگه‌های پشتیبانی است که به کاربر جاری نسبت داشته شده یا توسط وی ساخته شده است
@@ -165,10 +152,7 @@ ShowAsConversation=Show as conversation list
 MessageListViewType=Show as table list
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=برگۀ پشتیبانی
 TicketCard=کارت برگۀ‌پشتیبانی
 CreateTicket=ساخت برگه
@@ -178,7 +162,7 @@ CreatedBy=ساخته‌شده توسط
 NewTicket=برگۀ جدید
 SubjectAnswerToTicket=پاسخ برگه
 TicketTypeRequest=نوع درخواست
-TicketCategory=Ticket categorization
+TicketCategory=Ticket group
 SeeTicket=نمایش برگه
 TicketMarkedAsRead=برگه به صورت خوانده شده علامت‌گذاری شد
 TicketReadOn=خواندن
@@ -190,8 +174,8 @@ TicketAssigned=اکنون برگه نسبت داده‌شد
 TicketChangeType=تغییر نوع
 TicketChangeCategory=تغییر کد تحلیلی-آنالیتیک
 TicketChangeSeverity=تغییر درجۀ اهمیت
-TicketAddMessage=افزودن یک پیام
-AddMessage=افزودن یک پیام
+TicketAddMessage=Add or send a message
+TicketAddPrivateMessage=Add a private message
 MessageSuccessfullyAdded=برگه اضافه شد
 TicketMessageSuccessfullyAdded=پیام با موفقیت افزوده شد
 TicketMessagesList=فهرست پیام‌ها
@@ -202,8 +186,8 @@ TicketSeverity=درجۀ اهمیت
 ShowTicket=نمایش برگه
 RelatedTickets=برگه‌های مرتبط
 TicketAddIntervention=ایجاد پادرمیانی
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
+CloseTicket=Close|Solve
+AbandonTicket=Abandon
 CloseATicket=Close|Solve a ticket
 ConfirmCloseAticket=توقف پشتیبانی را تائید کنید
 ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
@@ -217,18 +201,17 @@ SendMessageByEmail=ارسال پیام توسط رایانامه
 TicketNewMessage=پیام جدید
 ErrorMailRecipientIsEmptyForSendTicketMessage=گیرنده خالی است. رایانامه‌ای ارسال نشد.
 TicketGoIntoContactTab=به زبانۀ "طرف‌های تماس" رفته تا آنان را انتخاب کنید
-TicketMessageMailIntro=مقدمه
+TicketMessageMailIntro=Message header
 TicketMessageMailIntroHelp=این نوشته تنها در ابتدای رایانامه اضافه خواهد شد و قابل ذخیره نیست
-TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
 TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
 TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailSignature=امضا
-TicketMessageMailSignatureHelp=این نوشته در انتهای متن رایانامه آمده و ذخیره نخواهد شد.
-TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailSignatureLabelAdmin=امضای نامۀ پاسخ
-TicketMessageMailSignatureHelpAdmin=این نوشته پس از پیام پاسخ درج خواهد شد
+TicketMessageMailFooter=Message footer
+TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
+TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
+TicketMessageMailFooterHelpAdmin=این نوشته پس از پیام پاسخ درج خواهد شد
 TicketMessageHelp=تنها این نوشته در فهرست پیام در کارت برگۀ‌پشتیبانی ذخیره خواهد شد
 TicketMessageSubstitutionReplacedByGenericValues=متغیرهای جایگزین با مقادیر عمومی جایگزین خواهند شد
+ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
 TimeElapsedSince=زمان سپری شده از
 TicketTimeToRead=زمان سپری شد قبل از خوانده‌شدن
 TicketTimeElapsedBeforeSince=Time elapsed before / since
@@ -238,8 +221,14 @@ ConfirmReOpenTicket=تائید بازگشائی این برگه؟
 TicketMessageMailIntroAutoNewPublicMessage=یک پیام جدید بر روی برگه با عنوان %s ارسال شده است:
 TicketAssignedToYou=برگه نسبت داده شد
 TicketAssignedEmailBody=شما به برگۀ #%s نسبت داده شده‌اید، توسط %s
+TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
+TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
 MarkMessageAsPrivate=علامت‌زدن پیام به عنوان خصوصی
-TicketMessagePrivateHelp=این پیام به کاربران خارجی نمایش داده نخواهد شد
+TicketMessageSendEmailHelp=An email will be sent to all assigned contact
+TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
+TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
+TicketMessagePrivateHelp=This message will not be visible to external users
+TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
 TicketEmailOriginIssuer=صادر کننده در اصل برگه‌ها
 InitialMessage=پیام ابتدائی
 LinkToAContract=پیوند به یک قرارداد
@@ -262,20 +251,15 @@ TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening w
 TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-
-#
+TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
 # Logs
-#
 TicketLogMesgReadBy=برگۀ %s توسط %s خوانده شد
 NoLogForThisTicket=هنوز گزارشی برای این برگه وجود ندارد
 TicketLogAssignedTo=برگۀ %s به %s نسبت داده شد
 TicketLogPropertyChanged=برگۀ %s ویرایش شد: طبقه‌بندی از %s به %s
 TicketLogClosedBy=برگۀ %s توسط %s بسته شد
 TicketLogReopen=Ticket %s re-open
-
-#
 # Public pages
-#
 TicketSystem=سامانۀ برگۀ‌پشتیبانی
 ShowListTicketWithTrackId=نمایش فهرست برگه‌ها از شناسۀ رهگیری
 ShowTicketWithTrackId=نمایش برگۀ پشتیبانی از شناسۀ رهگیری
@@ -290,13 +274,13 @@ TicketNewEmailBodyCustomer=این یک رایانامۀ خودکار است که
 TicketNewEmailBodyInfosTicket=اطلاعات برای زیرنظرگرفتن برگۀ‌پشتیبانی
 TicketNewEmailBodyInfosTrackId=شمارۀ رهگیری برگه: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=شما می‌توانید میزان پیش‌رفت برگه را در یک رابط اختصاصی با کلیک بر روی پیوند خود مشاهده کنید
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=لطفا این رایانامه را مستقیما جواب ندهید! برای پاسخ دادن در رابط اختصاصی، روی پیوند کلیک نمائید
 TicketPublicInfoCreateTicket=این برگه به شما امکان ثبت یک برگۀ پشتیبانی در سامانۀ مدیریت ما را می‌دهد.
-TicketPublicPleaseBeAccuratelyDescribe=لطفا مشکل را با دقت توضیح دهید. حداکثر اطلاعاتی که ممکن است درج کنید تا ما بتوانیم درخواست شما را به‌درستی تشخیص دهیم.
+TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=لطفا شناسۀ رهگیری برگه را وارد نمائید
-TicketTrackId=شناسۀ رهگیری عمومی
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=یکی از شناسه‌های رهگیری شما
 ErrorTicketNotFound=برگه‌ای با شناسۀ رهگیری %s پیدا نشد
 Subject=موضوع
@@ -312,6 +296,8 @@ OldUser=کاربر قدیمی
 NewUser=کاربر جدید
 NumberOfTicketsByMonth=تعداد برگه‌های پشتیبانی در ماه
 NbOfTickets=تعداد برگه‌های پشتیبانی
+ExternalContributors=External contributors
+AddContributor=Add external contributor
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -323,12 +309,8 @@ TicketNotificationRecipient=گیرندۀ آگاهی‌رسانی
 TicketNotificationLogMessage=پیام گزارش
 TicketNotificationEmailBodyInfosTrackUrlinternal=نمایش برگۀ پشتیبانی در رابط
 TicketNotificationNumberEmailSent=رایانامۀ اطلاع‌رسانی ارسال شد: %s
-
 ActionsOnTicket=روی‌دادهای مربوط به برگه
-
-#
 # Boxes
-#
 BoxLastTicket=آخرین برگه‌های ساخته شده
 BoxLastTicketDescription=آخرین %s برگۀ ساخته شده
 BoxLastTicketContent=

@@ -5,32 +5,34 @@ DeleteResource=حذف الموارد
 ConfirmDeleteResourceElement=تأكيد حذف المورد لهذا العنصر
 NoResourceInDatabase=أي مورد في قاعدة البيانات.
 NoResourceLinked=ربط أي مورد
-
+ActionsOnResource=أحداث حول هذا المورد
 ResourcePageIndex=قائمة الموارد
 ResourceSingular=مورد
 ResourceCard=بطاقة الموارد
+NewResource=مورد جديد
 AddResource=إنشاء مورد
 ResourceFormLabel_ref=اسم المورد
-ResourceType=نوع المورد
 ResourceFormLabel_description=وصف المصادر
-
+ResourceType=نوع المورد
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=موارد مرتبطة عنصر
 
 ShowResource=مشاهدة الموارد
-
 ResourceElementPage=الموارد العنصر
 ResourceCreatedWithSuccess=الموارد التي تم إنشاؤها بنجاح
 RessourceLineSuccessfullyDeleted=خط الموارد حذف بنجاح
 RessourceLineSuccessfullyUpdated=تحديث خط الموارد بنجاح
 ResourceLinkedWithSuccess=ربط الموارد بنجاح
-
 ConfirmDeleteResource=تأكيد لحذف هذا المورد
 RessourceSuccessfullyDeleted=الموارد حذف بنجاح
 DictionaryResourceType=نوع الموارد
-
 SelectResource=حدد الموارد
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=معرف المورد
+AssetNumber=رقم سري
+ResourceTypeCode=رمز نوع المورد
 ImportDataset_resource_1=مصادر
+ErrorResourcesAlreadyInUse=بعض الموارد قيد الاستخدام
+ErrorResourceUseInEvent=%s المستخدم في حدث %s
+MaxUsers=الحد الأقصى للمستخدمين (الأماكن، المقاعد، الخ)
+MaxUsersLabel=الحد الأقصى للمستخدمين

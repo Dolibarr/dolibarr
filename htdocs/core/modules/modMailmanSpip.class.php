@@ -32,7 +32,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modMailmanSpip extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -53,7 +52,7 @@ class modMailmanSpip extends DolibarrModules
 		$this->description = "Mailman or Spip interface for member module";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
-		$this->version = 'dolibarr';
+		$this->version = 'dolibarr_deprecated';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		$this->picto = 'technic';
@@ -66,7 +65,7 @@ class modMailmanSpip extends DolibarrModules
 		$this->depends = array('modAdherent'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array('mailman.php');
@@ -82,7 +81,7 @@ class modMailmanSpip extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$this->rights_class = 'clicktodial';
+		$this->rights_class = 'mailmanspip';
 
 		// Menus
 		//-------

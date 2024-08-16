@@ -24,11 +24,11 @@ FinancialCommitment=Komitmen keuangan
 InterestAmount=Bunga
 CapitalRemain=Modal tersisa
 TermPaidAllreadyPaid = Istilah ini sudah dibayar
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Tidak dapat membuat garis waktu untuk pinjaman dengan pembayaran dimulai
 CantModifyInterestIfScheduleIsUsed = Anda tidak dapat mengubah minat jika Anda menggunakan jadwal
 # Admin
 ConfigLoan=Konfigurasi pinjaman modul
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Modal akun akuntansi secara default
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Bunga akun akuntansi secara default
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Akuntansi akun asuransi secara default
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Akun (dari Chart Of Account) yang akan digunakan secara default untuk modal (modul Pinjaman)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Akun (dari Chart Of Account) yang akan digunakan secara default untuk bunga (modul Pinjaman)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Akun (dari Chart Of Account) yang akan digunakan secara default untuk asuransi (modul Pinjaman)
 CreateCalcSchedule=Edit komitmen keuangan

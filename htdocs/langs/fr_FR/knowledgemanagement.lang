@@ -26,29 +26,34 @@ ModuleKnowledgeManagementDesc=Gérer une base de connaissance ou d'assistance (K
 # Admin page
 #
 KnowledgeManagementSetup = Configuration du système de gestion des connaissances
-Settings = Paramètres
 KnowledgeManagementSetupPage = Paramétrages du module de base de connaissance
 
 
 #
 # About page
 #
-About = À propos
 KnowledgeManagementAbout = A propos de la base de connaissances
 KnowledgeManagementAboutPage = A propos de la base de connaissances
 
 KnowledgeManagementArea = Base de connaissances
 MenuKnowledgeRecord = Base de connaissance
+MenuKnowledgeRecordShort = Base de connaissance
 ListKnowledgeRecord = Liste des articles
 NewKnowledgeRecord = Nouvel article
 ValidateReply = Valider la réponse
 KnowledgeRecords = Articles
 KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Atribut supplémentaires (articles)
+KnowledgeRecordExtraFields = Attributs supplémentaires pour les articles
 GroupOfTicket=Catégorisation de tickets
 YouCanLinkArticleToATicketCategory=Vous pouvez lier l'article à un groupe de tickets (ainsi l'article sera mis en évidence sur tous les tickets de ce groupe)
-SuggestedForTicketsInGroup=Suggéré pour les tickets lorsque le groupe est
+SuggestedForTicketsInGroup=Suggéré lors de la création de tickets
 
 SetObsolete=Définir comme obsolète
 ConfirmCloseKM=Confirmez-vous la fermeture de cet article comme obsolète ?
 ConfirmReopenKM=Souhaitez-vous remettre cet article au statut "Validé" ?
+BoxLastKnowledgerecordDescription=Les %s derniers articles
+BoxLastKnowledgerecord=Derniers articles
+BoxLastKnowledgerecordContent=Derniers articles
+BoxLastKnowledgerecordModifiedContent=Derniers articles modifiés
+BoxLastModifiedKnowledgerecordDescription=Les %s derniers articles modifiés
+BoxLastModifiedKnowledgerecord=Derniers articles modifiés

@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Convalidata
 StatusSendingProcessedShort=Processato
 SendingSheet=Documento di spedizione
 ConfirmDeleteSending=Sei sicuro di voler eliminare questa spedizione?
-ConfirmValidateSending=Sei sicuro di voler convalidare questa spedizioni con il riferimento <b>%s</b>?
+ConfirmValidateSending=Sei sicuro che vuoi per convalidare questa spedizione con il riferimento <b>%s</b>?
 ConfirmCancelSending=Sei sicuro di voler eliminar questa spedizione?
 DocumentModelMerou=Merou modello A5
 WarningNoQtyLeftToSend=Attenzione, non sono rimasti prodotti per la spedizione.
@@ -48,11 +48,11 @@ DateDeliveryPlanned=Data prevista di consegna
 RefDeliveryReceipt=Rif. ricevuta di consegna
 StatusReceipt=Stato ricevuta di consegna
 DateReceived=Data di consegna ricevuto
-ClassifyReception=Classifica ricevuto
+ClassifyReception=Classificare ricevuto
 SendShippingByEMail=Invia spedizione via EMail
 SendShippingRef=Invio della spedizione %s
 ActionsOnShipping=Azioni sulla spedizione
-LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
+LinkToTrackYourPackage=Link per monitorare la spedizione
 ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene eseguita dal record dell'ordine di vendita.
 ShipmentLine=Filiera di spedizione
 ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
@@ -62,6 +62,10 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Quantità prodotto dall'ordine forn
 NoProductToShipFoundIntoStock=Nessun prodotto da spedire presente all'interno del magazzino <b>%s</b>
 WeightVolShort=Peso/Vol.
 ValidateOrderFirstBeforeShipment=È necessario convalidare l'ordine prima di poterlo spedire
+NoLineGoOnTabToAddSome=No linea, vai sulla scheda "%s" per aggiungere
+CreateInvoiceForThisCustomerFromSendings=Invii di fatture
+IfValidateInvoiceIsNoSendingStayUnbilled=Se la convalida fattura è 'No', l'invio rimarrà nello stato 'Non fatturato' fino alla convalida di fattura.
+OptionToSetSendingBilledNotEnabled=Opzione dal flusso di lavoro modulo, per impostare l'invio a 'fatturato' automaticamente quando fattura è convalidato, non è abilitato, quindi dovrai impostare lo stato degli invii su 'fatturato' manualmente dopo che fattura è stato generato.
 
 # Sending methods
 # ModelDocument
@@ -70,7 +74,12 @@ DocumentModelStorm=Modello di documento più completo per ricevute di consegna e
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
 SumOfProductVolumes=Totale volume prodotti
 SumOfProductWeights=Totale peso prodotti
-
 # warehouse details
 DetailWarehouseNumber= Dettagli magazzino
 DetailWarehouseFormat= Peso:%s (Qtà : %d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Visualizza l'ultimo data di entrata in magazzino durante la creazione della spedizione per il numero di serie numero o batch
+CreationOptions=Opzioni disponibili durante la creazione della spedizione
+ShipmentDistribution=Distribuzione delle spedizioni
+ErrorTooManyCombinationBatchcode=Nessuna spedizione per linea %s poiché troppe combinazioni di magazzino, prodotto, è stato trovato il batch codice (%s).
+ErrorNoCombinationBatchcode=Impossibile salvare linea %s come combinazione di magazzino-prodotto- lotto/seriale (%s, %s, %s) non è stato trovato in azione.
+ErrorTooMuchShipped=La quantità spedita non deve essere superiore alla quantità ordinata per linea %s

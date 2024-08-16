@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
@@ -54,14 +56,20 @@ if (! defined("NOSESSION")) {
 
 require_once dirname(__FILE__).'/../../htdocs/main.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/website.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/core/lib/website2.lib.php';
+require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
 
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
+
+	if (empty($user->rights->website)) {
+		$user->rights->website = new stdClass();
+	}
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -71,88 +79,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class WebsiteTest extends PHPUnit\Framework\TestCase
+class WebsiteTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return SecurityTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass()
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass()
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp()
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown()
-	{
-		print __METHOD__."\n";
-	}
-
-
 	/**
 	 * testGetPagesFromSearchCriterias
 	 *
@@ -160,14 +88,16 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testGetPagesFromSearchCriterias()
 	{
-		global $db;
+		global $db, $website;	// We need the $website as global, it is used by the getPagesFromSearchCriterias()
+
+		$website = new Website($db);	// $website must be defined globally for getPagesFromSearchCriterias()
 
 		$s = "123') OR 1=1-- \' xxx";
 		/*
-		var_dump($s);
-		var_dump($db->escapeforlike($s));
-		var_dump($db->escape($db->escapeforlike($s)));
-		*/
+		 var_dump($s);
+		 var_dump($db->escapeforlike($s));
+		 var_dump($db->escape($db->escapeforlike($s)));
+		 */
 
 		$res = getPagesFromSearchCriterias('page,blogpost', 'meta,content', $s, 2, 'date_creation', 'DESC', 'en');
 		//var_dump($res);
@@ -192,5 +122,53 @@ class WebsiteTest extends PHPUnit\Framework\TestCase
 		$s = "abc\n<?PHP echo 'def'\n// comment\n ?>ghi";
 		$result = dolStripPhpCode($s);
 		$this->assertEquals("abc\n<span phptag></span>ghi", $result);
+	}
+
+	/**
+	 * testCheckPHPCode
+	 *
+	 * @return	void
+	 */
+	public function testCheckPHPCode()
+	{
+		global $user;
+
+		// Force permission so this is not the permission that will affect result of checkPHPCode
+		$user->rights->website->writephp = 1;
+
+		$t = '';
+		$s = '<?php exec("eee"); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php $_="{"; $_=($_^"<").($_^">;").($_^"/"); ?><?=${\'_\'.$_}["_"](${\'_\'.$_}["__"]);?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+	}
+
+	/**
+	 * testDolKeepOnlyPhpCode
+	 *
+	 * @return void
+	 */
+	public function testDolKeepOnlyPhpCode()
+	{
+		$s = 'HTML content <?php exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <? exec("eee"); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php exec("eee"); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+
+		$s = 'HTML content <?php test() <?php test2(); ?> and more HTML content';
+		$result = dolKeepOnlyPhpCode($s);
+		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
+		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
 	}
 }

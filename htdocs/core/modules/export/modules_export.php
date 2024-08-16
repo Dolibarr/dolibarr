@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 /**
  *	Parent class for export modules
  */
-class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
+class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance properties loaded by listOfAvailableExportFormat
 {
 	/**
 	 * @var string Error code (or message)
@@ -37,14 +37,44 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 
 	public $driverlabel = array();
 
+	public $driverdesc = array();
+
 	public $driverversion = array();
 
 	public $liblabel = array();
 
 	public $libversion = array();
 
+	/**
+	 * @var string picto
+	 */
+	public $picto;
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * @var string description
+	 */
+	public $desc;
+
+	/**
+	 * @var string escape
+	 */
+	public $escape;
+
+	/**
+	 * @var string enclosure
+	 */
+	public $enclosure;
+
+	/**
+	 * @var int col
+	 */
+	public $col;
+
+	/**
+	 * @var int disabled
+	 */
+	public $disabled;
+
 	/**
 	 *  Load into memory list of available export format
 	 *
@@ -52,10 +82,11 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  @param  integer	$maxfilenamelength  Max length of value to show
 	 *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
-	public function liste_modeles($db, $maxfilenamelength = 0)
+	public function listOfAvailableExportFormat($db, $maxfilenamelength = 0)
 	{
-		// phpcs:enable
-		dol_syslog(get_class($this)."::liste_modeles");
+		global $langs;
+
+		dol_syslog(get_class($this)."::listOfAvailableExportFormat");
 
 		$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 		$handle = opendir($dir);
@@ -64,8 +95,12 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$i = 0;
 		if (is_resource($handle)) {
 			while (($file = readdir($handle)) !== false) {
+				$reg = array();
 				if (preg_match("/^export_(.*)\.modules\.php$/i", $file, $reg)) {
 					$moduleid = $reg[1];
+					if ($moduleid == 'csv') {
+						continue;	// This may happen if on old file export_csv.modules.php was not correctly deleted
+					}
 
 					// Loading Class
 					$file = $dir."export_".$moduleid.".modules.php";
@@ -74,11 +109,17 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 					require_once $file;
 					if (class_exists($classname)) {
 						$module = new $classname($db);
+						// var_dump($classname);
 
 						// Picto
 						$this->picto[$module->id] = $module->picto;
 						// Driver properties
 						$this->driverlabel[$module->id] = $module->getDriverLabel().(empty($module->disabled) ? '' : ' __(Disabled)__'); // '__(Disabled)__' is a key
+						if (method_exists($module, 'getDriverLabelBis')) {
+							if ($module->getDriverLabelBis()) {
+								$this->driverlabel[$module->id] .= ' <span class="opacitymedium">('.$module->getDriverLabelBis().')</span>';
+							}
+						}
 						$this->driverdesc[$module->id] = $module->getDriverDesc();
 						$this->driverversion[$module->id] = $module->getDriverVersion();
 						// If use an external lib
@@ -109,7 +150,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi libelle d'un driver export
+	 *  Return label of driver export
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label
@@ -142,7 +183,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi libelle de librairie externe du driver
+	 *  Renvoi label of driver lib
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Label of library
@@ -153,7 +194,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	}
 
 	/**
-	 *  Renvoi version de librairie externe du driver
+	 *  Return version of driver lib
 	 *
 	 *  @param	string	$key	Key of driver
 	 *  @return	string			Version of library

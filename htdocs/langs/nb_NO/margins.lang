@@ -6,6 +6,7 @@ TotalMargin=Totalmargin
 MarginOnProducts=Margin - Varer
 MarginOnServices=Margin - Tjenester
 MarginRate=Margin/påslag
+ModifyMarginRates=Endre marginsatser
 MarkRate=Dekningsbidrag
 DisplayMarginRates=Vis marginrater
 DisplayMarkRates=Vis dekningsbidrag

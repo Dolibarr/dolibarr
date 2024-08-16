@@ -38,20 +38,6 @@ class box_scheduled_jobs extends ModeleBoxes
 	public $depends = array("cron");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string params
-	 */
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -63,7 +49,7 @@ class box_scheduled_jobs extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->hasRight('service', 'lire') && $user->hasRight('contrat', 'lire'));
+		$this->hidden = !($user->hasRight('cron', 'read'));
 	}
 
 	/**
@@ -79,14 +65,14 @@ class box_scheduled_jobs extends ModeleBoxes
 		$langs->load("cron");
 		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max));
 
-		if ($user->rights->cron->read) {
+		if ($user->hasRight('cron', 'read')) {
 			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 			$cronstatic = new Cronjob($this->db);
 			$resultarray = array();
 
 			$result = 0;
 			$sql = "SELECT t.rowid, t.datelastrun, t.datenextrun, t.datestart,";
-			$sql .= " t.label, t.status, t.test, t.lastresult";
+			$sql .= " t.label, t.status, t.test, t.lastresult, t.processing";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "cronjob as t";
 			$sql .= " WHERE status <> ".$cronstatic::STATUS_DISABLED;
 			$sql .= " AND entity IN (0, ".$conf->entity.")";
@@ -95,6 +81,7 @@ class box_scheduled_jobs extends ModeleBoxes
 			$result = $this->db->query($sql);
 			$line = 0;
 			$nbjobsinerror = 0;
+			$nbjobsnotfinished = 0;
 			if ($result) {
 				$num = $this->db->num_rows($result);
 
@@ -102,21 +89,25 @@ class box_scheduled_jobs extends ModeleBoxes
 				while ($i < $num) {
 					$objp = $this->db->fetch_object($result);
 
-					if (dol_eval($objp->test, 1, 1, '')) {
+					if ((int) dol_eval($objp->test, 1, 1, '2')) {
 						$nextrun = $this->db->jdate($objp->datenextrun);
 						if (empty($nextrun)) {
 							$nextrun = $this->db->jdate($objp->datestart);
 						}
 
 						if ($line == 0 || ($nextrun < $cronstatic->datenextrun && (empty($objp->nbrun) || empty($objp->maxrun) || $objp->nbrun < $objp->maxrun))) {
+							// Save in cronstatic the job if it is a job to run in future
 							$cronstatic->id = $objp->rowid;
 							$cronstatic->ref = $objp->rowid;
 							$cronstatic->label = $langs->trans($objp->label);
 							$cronstatic->status = $objp->status;
+							$cronstatic->processing = $objp->processing;
+							$cronstatic->lastresult = $objp->lastresult ?? '';
 							$cronstatic->datenextrun = $this->db->jdate($objp->datenextrun);
 							$cronstatic->datelastrun = $this->db->jdate($objp->datelastrun);
 						}
 						if ($line == 0) {
+							// Save the first line in loop that is the most recent executed job (due to the sort on datelastrun DESC)
 							$resultarray[$line] = array(
 								$langs->trans("LastExecutedScheduledJob"),
 								$cronstatic->getNomUrl(1),
@@ -127,6 +118,9 @@ class box_scheduled_jobs extends ModeleBoxes
 							$line++;
 						}
 
+						if ($objp->processing && $this->db->jdate($objp->datelastrun) < (dol_now() - 3600 * 24)) {
+							$nbjobsnotfinished++;
+						}
 						if (!empty($objp->lastresult)) {
 							$nbjobsinerror++;
 						}
@@ -168,9 +162,19 @@ class box_scheduled_jobs extends ModeleBoxes
 					'td' => 'class="tdoverflowmax300" colspan="3"',
 					'text' => $langs->trans("NumberScheduledJobError")
 				);
+				$textnoformat = '';
+				if ($nbjobsnotfinished) {
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php" title="'.$langs->trans("NumberScheduledJobNeverFinished").'"><div class="center badge badge-warning nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsnotfinished.'</div></a>';
+				}
+				if ($nbjobsinerror) {
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'" title="'.$langs->trans("NumberScheduledJobError").'"><div class="badge badge-danger nounderlineimp"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>';
+				}
+				if (empty($nbjobsnotfinished) && empty($nbjobsinerror)) {
+					$textnoformat .= '<a class="inline-block paddingleft paddingright marginleftonly marginrightonly minwidth25 nounderlineimp" href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge badge-status4 nounderline">0</div></a>';
+				}
 				$this->info_box_contents[$line][] = array(
 					'td' => 'class="center"',
-					'textnoformat' => ($nbjobsinerror ? '<a href="'.DOL_URL_ROOT.'/cron/list.php?search_lastresult='.urlencode('<>0').'"><div class="badge badge-danger"><i class="fa fa-exclamation-triangle"></i> '.$nbjobsinerror.'</div></a>' : '<a href="'.DOL_URL_ROOT.'/cron/list.php"><div class="center badge-status4">0</div></a>')
+					'textnoformat' => $textnoformat
 				);
 			} else {
 				$this->info_box_contents[0][0] = array(
@@ -181,8 +185,8 @@ class box_scheduled_jobs extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

@@ -33,6 +33,11 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
+/* We do now force CSRF check so we can logout using logout.php page (required for DoliDroid for example)
+if (!defined('CSRFCHECK_WITH_TOKEN')) {
+	define('CSRFCHECK_WITH_TOKEN', '1');
+}
+*/
 //if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');	// We need company to get correct logo onto home page
 if (!defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 	define('EVEN_IF_ONLY_LOGIN_ALLOWED', '1');
@@ -40,13 +45,15 @@ if (!defined('EVEN_IF_ONLY_LOGIN_ALLOWED')) {
 
 require_once '../main.inc.php';
 
-// This can happen only with a bookmark or forged url call.
+// This can happen only with a bookmark or a forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http')) {
 	unset($_SESSION["dol_login"]);
-	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
+	unset($_SESSION['dol_entity']);
+	unset($_SESSION['urlfrom']);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);	// TODO Really ? It at least delete the session file ?!
 }
 
-global $conf, $langs, $user;
+//global $conf, $langs, $user;
 
 // Call trigger
 $result = $user->call_trigger('USER_LOGOUT', $user);
@@ -65,15 +72,15 @@ if ($reshook < 0) {
 }
 
 // Define url to go after disconnect
-$urlfrom = empty($_SESSION["urlfrom"]) ? '' : $_SESSION["urlfrom"];
+$urlfrom = empty($_SESSION["urlfrom"]) ? GETPOST('urlfrom') : $_SESSION["urlfrom"];
 
 // Define url to go
 $url = DOL_URL_ROOT."/index.php"; // By default go to login page
 if ($urlfrom) {
 	$url = DOL_URL_ROOT.$urlfrom;
 }
-if (!empty($conf->global->MAIN_LOGOUT_GOTO_URL)) {
-	$url = $conf->global->MAIN_LOGOUT_GOTO_URL;
+if (getDolGlobalString('MAIN_LOGOUT_GOTO_URL')) {
+	$url = getDolGlobalString('MAIN_LOGOUT_GOTO_URL');
 }
 
 if (GETPOST('dol_hide_topmenu')) {
@@ -90,6 +97,15 @@ if (GETPOST('dol_no_mouse_hover')) {
 }
 if (GETPOST('dol_use_jmobile')) {
 	$url .= (preg_match('/\?/', $url) ? '&' : '?').'dol_use_jmobile=1';
+}
+
+// Logout openid_connect sessions using OIDC logout URL if defined
+if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && !empty($_SESSION['OPENID_CONNECT']) && getDolGlobalString("MAIN_AUTHENTICATION_OIDC_LOGOUT_URL")) {
+	// We need the full URL
+	if (strpos($url, '/') === 0) {
+		$url = DOL_MAIN_URL_ROOT . $url;
+	}
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_LOGOUT_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&returnTo=' . urlencode($url);
 }
 
 // Destroy session

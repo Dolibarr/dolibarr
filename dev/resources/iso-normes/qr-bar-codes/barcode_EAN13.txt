@@ -10,8 +10,7 @@ Signification des chiffres.
 - 1 chiffre pour la somme de controle
 
 Cette regle subit de nombreuses entorses pour ameliorer l'usage des chiffres disponibles.
-Voici la liste des codes pays ou systeme :
-
+Voici la liste des codes pays ou systeme, les préfixes qui ne sont pas explicitement mentionnés sont réservés par GS1 :
 
 
 EN
@@ -25,105 +24,139 @@ Meaning of the numbers:
 
 This rule has been twisted many times to improve the use of the available numbers.
 
-Here is the list of country codes or system:
+Here is the list of country codes or system, prefixes not explicitly listed are reserved by GS1:
 
 
-List
-====
+List (https://www.gs1.org/prefixes)
+===================================
 
-00 - 13  UCC  (U.S.A / États-Unis & Canada)
-20 - 29  Flag for internal numbering / Codification interne en magasin
-30 - 37  GENCOD-EAN  France
-380      BCCI  (Bulgaria)
-383      SANA  (Slovenia)
-385      CRO-EAN  (Croatia)
-387      EAN-BIH  (Bosnia-Herzegovina)
-400-440  CCG  (DE/Germany/Allemagne)
-45 + 49  Distribution Code Center - DCC  (Japan)
-460-469  UNISCAN - EAN Russia  (Federation de Russie)
-471      CAN  Taiwan
-474      EAN  Estonia
-475      EAN  Latvia
-476      EAN  Azerbaijan
-477      EAN  Lithuania
-478      EAN  Uzbekistan
-479      EAN  Sri Lanka
-480      PANC Philippines
-481      EAN  Belarus
-482      EAN  Ukraine
-484      EAN  Moldova 
-485      EAN  Armenia
-486      EAN  Georgia
-487      EAN  Kazakhstan
-489      HKANA Hong Kong
-50       E Centre UK - United Kingdom 
-520      HELLCAN-EAN HELLAS - Greece
-528      EAN  Lebanon
-529      EAN  Cyprus
-531      EAN-MAC (FYR Macedonia)
-535      EAN  Malta
-539      EAN  Ireland
-54       ICODIF/EAN  Belgium & Luxembourg
-560      CODIPOR (Portugal)
-569      EAN  Iceland/Islande
-57       EAN  Denmark
-590      EAN  Poland
-594      EAN  Romania
-599      H.A.P.M.H. (Hungary)
-600-601  EAN  South Africa
-609      EAN  Mauritius Island
-611      EAN  Morocco
-613      EAN  Algeria
-619      Tunicode (Tunisia)
-621      EAN  Syria
-622      EAN  Egypt
-625      EAN  Jordan/Jordanie
-626      EAN  Iran
-628      EAN  Saudi Arabia
-64       EAN  Finland
-690-693  ANCC - Article Numbering Centre of China
-70  EAN Norge (Norvege)
-729 Israeli Bar Code Association - EAN Israel
-73  EAN Suede
-740 EAN Guatemala
-741 EAN El Salvador
-742 ICCC (Honduras)
-743 EAN Nicaragua
-744 EAN Costa Rica Panama
-746 746 EAN Republique Dominicaine
-750 AMECE (Mexique)
-759 EAN Venezuela
-76  EAN (Schweiz, Suisse, Svizzera)
-770 IAC (Colombie)
-773 EAN Uruguay
-775 APC - EAN Peru (Perou)
-777 EAN Bolivie
-779 CODIGO - EAN Argentine
-780 EAN Chili
-784 EAN Paraguay
-786 ECOP (Equateur)
-789 EAN Bresil
-80 - 83 INDICOD (Italy)
-84  AECOC (Espagne)
-850 Camera de Comercio de la Republica de Cuba (Cuba)
-858 EAN Slovaquie
-859 EAN Republique Tcheque
-860 EAN YU (Yougoslavie)
-867 EAN DPR Korea (Coree du Nord)
-869 Union of Chambers of Commerce of Turkey (Turquie)
-87  EAN Nederland (Hollande)
-880 EAN Korea (Coree du Sud)
-885 EAN Thailande
-888 SANC (Singapour)
-890 EAN Inde
-893 EAN Vietnam
-899 EAN Indonesie
-90 - 91 EAN Autriche
-93  EAN Australie
-94  EAN Nouvelle Zelande
-955 Malaysian Article Numbering Council (MANC) - Malaisie
-977 Publications sirielles (ISSN)
-978 - 979 Livres (ISBN)
-980 Refus de remboursement
-981 - 982 Coupons (monnaie courante)
-99  Coupons
+0000000      Flag for internal numbering / Codification interne en magasin
+00001–01999  GS1 US (U.S.A / États-Unis & Canada)
+020-029      Restricted / Restreint
+030-039      GS1 US (U.S.A / États-Unis & Canada)
+040-049      Flag for internal numbering / Codification interne en magasin
+050-059      GS1 US (U.S.A / États-Unis & Canada)
+060-139      GS1 US (U.S.A / États-Unis & Canada)
+300-379      GS1 France
+380          GS1 Bulgaria
+383          GS1 Slovenija
+385          GS1 Croatia
+387          GS1 BIH (Bosnia-Herzegovina)
+389          GS1 Montenegro
+400-440      GS1 Germany
+450-459      GS1 Japan
+460-469      GS1 Russia
+470          GS1 Kyrgyzstan
+471          GS1 Chinese Taipei
+474          GS1 Estonia
+475          GS1 Latvia
+476          GS1 Azerbaijan
+477          GS1 Lithuania
+478          GS1 Uzbekistan
+479          GS1 Sri Lanka
+480          GS1 Philippines
+481          GS1 Belarus
+482          GS1 Ukraine
+483          GS1 Turkmenistan
+484          GS1 Moldova
+485          GS1 Armenia
+486          GS1 Georgia
+487          GS1 Kazakstan
+488          GS1 Tajikistan
+489          GS1 Hong Kong, China
+490-499      GS1 Japan
+500-509      GS1 UK
+520-521      GS1 Association Greece
+528          GS1 Lebanon
+529          GS1 Cyprus
+530          GS1 Albania
+531          GS1 Macedonia
+535          GS1 Malta
+539          GS1 Ireland
+540-549      GS1 Belgium & Luxembourg
+560          GS1 Portugal
+569          GS1 Iceland
+570-579      GS1 Denmark
+590          GS1 Poland
+594          GS1 Romania
+599          GS1 Hungary
+600-601      GS1 South Africa
+603          GS1 Ghana
+604          GS1 Senegal
+607          GS1 Oman
+608          GS1 Bahrain
+609          GS1 Mauritius
+611          GS1 Morocco
+613          GS1 Algeria
+615          GS1 Nigeria
+616          GS1 Kenya
+617          GS1 Cameroon
+618          GS1 Côte d'Ivoire
+619          GS1 Tunisia
+620          GS1 Tanzania
+621          GS1 Syria
+622          GS1 Egypt
+624          GS1 Libya
+625          GS1 Jordan
+626          GS1 Iran
+627          GS1 Kuwait
+628          GS1 Saudi Arabia
+629          GS1 Emirates
+630          GS1 Qatar
+631          GS1 Namibia
+640-649      GS1 Finland
+690-699      GS1 China
+700-709      GS1 Norway
+729          GS1 Israel
+730-739      GS1 Sweden
+740          GS1 Guatemala
+741          GS1 El Salvador
+742          GS1 Honduras
+743          GS1 Nicaragua
+744          GS1 Costa Rica
+745          GS1 Panama
+746          GS1 Republica Dominicana
+750          GS1 Mexico
+754-755      GS1 Canada
+759          GS1 Venezuela
+760-769      GS1 Schweiz, Suisse, Svizzera
+770-771      GS1 Colombia
+773          GS1 Uruguay
+775          GS1 Peru
+777          GS1 Bolivia
+778-779      GS1 Argentina
+780          GS1 Chile
+784          GS1 Paraguay
+786          GS1 Ecuador
+789-790      GS1 Brasil
+800-839      GS1 Italy
+840-849      GS1 Spain
+850          GS1 Cuba
+858          GS1 Slovakia
+859          GS1 Czech
+860          GS1 Serbia
+865          GS1 Mongolia
+867          GS1 North Korea
+868-869      GS1 Türkiye
+870-879      GS1 Netherlands
+880          GS1 South Korea
+883          GS1 Myanmar
+884          GS1 Cambodia
+885          GS1 Thailand
+888          GS1 Singapore
+890          GS1 India
+893          GS1 Vietnam
+896          GS1 Pakistan
+899          GS1 Indonesia
+900-919      GS1 Austria
+930-939      GS1 Australia
+940-949      GS1 New Zealand
+950          GS1 Global Office
+955          GS1 Malaysia
+958          GS1 Macao, China
+960-969      Global Office - GTIN-8
+977          Serial publications / Publications en série (ISSN)
+978-979      Bookland / Livres (ISBN)
+980          Refund receipts / Remboursements
+981-983      GS1 Coupons
+99           GS1 Coupons

@@ -137,7 +137,7 @@ CountryLV=拉脫維亞
 CountryLB=黎巴嫩
 CountryLS=萊索托
 CountryLR=利比裏亞
-CountryLY=利比亞
+CountryLY=Libya
 CountryLI=列支敦士登
 CountryLT=立陶宛
 CountryLU=盧森堡
@@ -247,10 +247,13 @@ CountryJE=澤西
 CountryME=蒙特內哥羅
 CountryBL=聖巴瑟米
 CountryMF=聖馬丁
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=夫人
+CivilityMMEShort=夫人
 CivilityMR=先生
+CivilityMRShort=先生
 CivilityMLE=女士
 CivilityMTRE=主人
 CivilityDR=醫生

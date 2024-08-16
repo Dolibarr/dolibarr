@@ -35,50 +35,103 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
 
+// Load Dolibarr environment
 require '../../main.inc.php';
-
-$objectdesc = GETPOST('objectdesc', 'alpha');
-$htmlname = GETPOST('htmlname', 'aZ09');
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$id = GETPOST('id', 'int');
-
-
-/*
- * View
- */
-
-//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-//print_r($_GET);
-
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-$form = new Form($db);
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-//$langs->load("companies");
+$extrafields = new ExtraFields($db);
 
-top_httphead();
+$objectdesc = GETPOST('objectdesc', 'alphanohtml', 0, null, null, 1);
+$htmlname = GETPOST('htmlname', 'aZ09');
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
+$id = GETPOSTINT('id');
+$objectfield = GETPOST('objectfield', 'alpha');	// 'MyObject:field' or 'MyModule_MyObject:field' or 'MyObject:option_field' or 'MyModule_MyObject:option_field'
 
 if (empty($htmlname)) {
-	return;
+	httponly_accessforbidden('Bad value for param htmlname');
 }
 
+if (!empty($objectfield)) {
+	// Recommended method to call selectobject.
+	// $objectfield is Object:Field that contains the definition (in table $fields or extrafield). Example: 'Societe:t.ddd' or 'Societe:options_xxx'
 
-$InfoFieldList = explode(":", $objectdesc);
-$classname = $InfoFieldList[0];
-$classpath = $InfoFieldList[1];
-if (!empty($classpath)) {
-	dol_include_once($classpath);
-	if ($classname && class_exists($classname)) {
-		$objecttmp = new $classname($db);
+	$tmparray = explode(':', $objectfield);
+	$objectdesc = '';
+
+	// Load object according to $id and $element
+	$objectforfieldstmp = fetchObjectByElement(0, strtolower($tmparray[0]));
+
+	$reg = array();
+	if (preg_match('/^options_(.*)$/', $tmparray[1], $reg)) {
+		// For a property in extrafields
+		$key = $reg[1];
+		// fetch optionals attributes and labels
+		$extrafields->fetch_name_optionals_label($objectforfieldstmp->table_element);
+
+		if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key]) && $extrafields->attributes[$objectforfieldstmp->table_element]['type'][$key] == 'link') {
+			if (!empty($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options'])) {
+				$tmpextrafields = array_keys($extrafields->attributes[$objectforfieldstmp->table_element]['param'][$key]['options']);
+				$objectdesc = $tmpextrafields[0];
+			}
+		}
+	} else {
+		// For a property in ->fields
+		$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
+		$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
 	}
 }
-if (!is_object($objecttmp)) {
-	dol_syslog('Error bad param objectdesc', LOG_WARNING);
-	print 'Error bad param objectdesc';
+
+if ($objectdesc) {
+	// Example of value for $objectdesc:
+	// Bom:bom/class/bom.class.php:0:t.status=1
+	// Bom:bom/class/bom.class.php:0:t.status=1:ref
+	// Bom:bom/class/bom.class.php:0:(t.status:=:1) OR (t.field2:=:2):ref
+	$InfoFieldList = explode(":", $objectdesc, 4);
+	$vartmp = (empty($InfoFieldList[3]) ? '' : $InfoFieldList[3]);
+	$reg = array();
+	if (preg_match('/^.*:(\w*)$/', $vartmp, $reg)) {
+		$InfoFieldList[4] = $reg[1];    // take the sort field
+	}
+	$InfoFieldList[3] = preg_replace('/:\w*$/', '', $vartmp);    // take the filter field
+
+	$classname = $InfoFieldList[0];
+	$classpath = $InfoFieldList[1];
+	//$addcreatebuttonornot = empty($InfoFieldList[2]) ? 0 : $InfoFieldList[2];
+	$filter = empty($InfoFieldList[3]) ? '' : $InfoFieldList[3];
+	$sortfield = empty($InfoFieldList[4]) ? '' : $InfoFieldList[4];
+
+	// Load object according to $id and $element
+	$objecttmp = fetchObjectByElement(0, strtolower($InfoFieldList[0]));
+
+	// Fallback to another solution to get $objecttmp
+	if (empty($objecttmp) && !empty($classpath)) {
+		dol_include_once($classpath);
+
+		if ($classname && class_exists($classname)) {
+			$objecttmp = new $classname($db);
+		}
+	}
 }
+
+// Make some replacement
+$sharedentities = getEntity(strtolower($objecttmp->element));
+
+$filter = str_replace(
+	array('__ENTITY__', '__SHARED_ENTITIES__', '__USER_ID__', '$ID$'),
+	array($conf->entity, $sharedentities, $user->id, $id),
+	$filter
+);
+
+/*
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+*/
 
 // When used from jQuery, the search term is added as GET param "term".
 $searchkey = (($id && GETPOST($id, 'alpha')) ? GETPOST($id, 'alpha') : (($htmlname && GETPOST($htmlname, 'alpha')) ? GETPOST($htmlname, 'alpha') : ''));
@@ -90,7 +143,18 @@ if (!empty($objecttmp->module)) {
 	restrictedArea($user, $objecttmp->element, $id);
 }
 
-$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1);
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+top_httphead($outjson ? 'application/json' : 'text/html');
+
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
+
+$arrayresult = $form->selectForFormsList($objecttmp, $htmlname, '', 0, $searchkey, '', '', '', 0, 1, 0, '', $filter);
 
 $db->close();
 

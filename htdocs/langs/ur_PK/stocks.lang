@@ -24,6 +24,7 @@ StockAtDateInFuture=مستقبل میں تاریخ
 StocksByLotSerial=لاٹ/سیریل کے حساب سے اسٹاک
 LotSerial=لاٹس/سیریلز
 LotSerialList=لاٹ/سیریلز کی فہرست
+SubjectToLotSerialOnly=مصنوعات صرف لاٹ/سیریل سے مشروط ہیں۔
 Movements=حرکتیں
 ErrorWarehouseRefRequired=گودام کے حوالے کا نام درکار ہے۔
 ListOfWarehouses=گوداموں کی فہرست
@@ -48,7 +49,7 @@ StockCorrection=اسٹاک کی اصلاح
 CorrectStock=درست اسٹاک
 StockTransfer=اسٹاک کی منتقلی
 TransferStock=اسٹاک منتقل کریں۔
-MassStockTransferShort=بڑے پیمانے پر اسٹاک کی منتقلی
+MassStockTransferShort=بلک اسٹاک کی تبدیلی
 StockMovement=اسٹاک کی نقل و حرکت
 StockMovements=اسٹاک کی نقل و حرکت
 NumberOfUnit=یونٹوں کی تعداد
@@ -98,8 +99,9 @@ RealStockWillAutomaticallyWhen=اصلی اسٹاک میں اس اصول کے م�
 VirtualStock=ورچوئل اسٹاک
 VirtualStockAtDate=مستقبل کی تاریخ پر ورچوئل اسٹاک
 VirtualStockAtDateDesc=ورچوئل اسٹاک ایک بار تمام زیر التواء آرڈرز جن پر عمل درآمد کی منصوبہ بندی کی گئی ہے منتخب تاریخ سے پہلے ختم ہو جائے گی۔
-VirtualStockDesc=ورچوئل اسٹاک وہ حسابی اسٹاک ہوتا ہے جب تمام کھلی/ زیر التواء کارروائیاں (جو اسٹاک کو متاثر کرتی ہیں) بند ہو جانے کے بعد دستیاب ہوتی ہیں (خریداری کے آرڈر موصول ہوتے ہیں، سیلز آرڈرز بھیجے جاتے ہیں، مینوفیکچرنگ آرڈرز تیار ہوتے ہیں، وغیرہ)
-AtDate=تاریخ میں
+VirtualStockDesc=ورچوئل اسٹاک وہ اسٹاک ہے جو تمام کھلی/ زیر التواء کارروائیوں (جو اسٹاک کو متاثر کرتا ہے) انجام دینے کے بعد باقی رہے گا (خریداری کے آرڈر موصول ہوئے، سیلز آرڈر بھیجے گئے، مینوفیکچرنگ آرڈرز تیار کیے گئے، وغیرہ)
+QtyAtDate=Quantity in stock at date
+MovementsSinceDate=Movements since the date
 IdWarehouse=آئی ڈی گودام
 DescWareHouse=تفصیل گودام
 LieuWareHouse=لوکلائزیشن گودام
@@ -118,6 +120,7 @@ PersonalStock=ذاتی اسٹاک %s
 ThisWarehouseIsPersonalStock=یہ گودام %s %s کے ذاتی اسٹاک کی نمائندگی کرتا ہے
 SelectWarehouseForStockDecrease=اسٹاک میں کمی کے لیے استعمال کرنے کے لیے گودام کا انتخاب کریں۔
 SelectWarehouseForStockIncrease=اسٹاک میں اضافے کے لیے گودام کا انتخاب کریں۔
+RevertProductsToStock=مصنوعات کو سٹاک میں لوٹائیں؟
 NoStockAction=کوئی اسٹاک ایکشن نہیں۔
 DesiredStock=مطلوبہ اسٹاک
 DesiredStockDesc=اسٹاک کی یہ رقم وہ قیمت ہوگی جو اسٹاک کو بھرنے کی خصوصیت سے بھرنے کے لیے استعمال ہوتی ہے۔
@@ -146,8 +149,9 @@ Replenishments=دوبارہ بھرنے
 NbOfProductBeforePeriod=منتخب مدت سے پہلے اسٹاک میں پروڈکٹ %s کی مقدار (<%s)
 NbOfProductAfterPeriod=منتخب مدت کے بعد اسٹاک میں پروڈکٹ %s کی مقدار (> %s)
 MassMovement=عوامی تحریک
-SelectProductInAndOutWareHouse=ایک ذریعہ گودام اور ہدف گودام، ایک پروڈکٹ اور مقدار منتخب کریں پھر "%s" پر کلک کریں۔ ایک بار جب یہ تمام مطلوبہ حرکتوں کے لیے ہو جائے تو "%s" پر کلک کریں۔
+SelectProductInAndOutWareHouse=ایک ذریعہ گودام (اختیاری)، ایک ہدف گودام، ایک پروڈکٹ اور مقدار کو منتخب کریں پھر "%s" پر کلک کریں۔ ایک بار جب یہ تمام مطلوبہ حرکتوں کے لیے ہو جائے تو، "%s" پر کلک کریں۔
 RecordMovement=ریکارڈ کی منتقلی
+RecordMovements=اسٹاک کی نقل و حرکت ریکارڈ کریں۔
 ReceivingForSameOrder=اس آرڈر کی رسیدیں
 StockMovementRecorded=اسٹاک کی نقل و حرکت ریکارڈ کی گئی۔
 RuleForStockAvailability=اسٹاک کی ضروریات پر قواعد
@@ -165,6 +169,7 @@ qtyToTranferLotIsNotEnough=آپ کے پاس کافی سٹاک نہیں ہے، ا
 ShowWarehouse=گودام دکھائیں۔
 MovementCorrectStock=پروڈکٹ %s کے لیے اسٹاک کی اصلاح
 MovementTransferStock=پراڈکٹ %s کو دوسرے گودام میں سٹاک منتقل کرنا
+BatchStockMouvementAddInGlobal=بیچ اسٹاک عالمی اسٹاک میں منتقل ہوتا ہے (پروڈکٹ اب بیچ استعمال نہیں کرتی ہے)
 InventoryCodeShort=Inv./Mov. کوڈ
 NoPendingReceptionOnSupplierOrder=اوپن پرچیز آرڈر کی وجہ سے کوئی زیر التواء استقبالیہ
 ThisSerialAlreadyExistWithDifferentDate=یہ بہت / سیریل نمبر (<strong> %s </strong>) پہلے سے موجود ہے لیکن مختلف eatby یا sellby تاریخ کے ساتھ (مل گیا <strong> %s </strong> لیکن آپ <strong> %s </strong> درج کریں).
@@ -175,8 +180,9 @@ OptionMULTIPRICESIsOn=آپشن "کئی قیمتیں فی سیگمنٹ" آن ہے
 ProductStockWarehouseCreated=انتباہ کے لیے اسٹاک کی حد اور مطلوبہ بہترین اسٹاک درست طریقے سے بنایا گیا ہے۔
 ProductStockWarehouseUpdated=الرٹ کے لیے اسٹاک کی حد اور مطلوبہ بہترین اسٹاک کو درست طریقے سے اپ ڈیٹ کیا گیا۔
 ProductStockWarehouseDeleted=الرٹ کے لیے اسٹاک کی حد اور مطلوبہ بہترین اسٹاک کو صحیح طریقے سے حذف کر دیا گیا۔
+ProductStockWarehouse=پروڈکٹ اور گودام کے لحاظ سے الرٹ اور مطلوبہ بہترین اسٹاک کے لیے اسٹاک کی حد
 AddNewProductStockWarehouse=الرٹ اور مطلوبہ بہترین اسٹاک کے لیے نئی حد مقرر کریں۔
-AddStockLocationLine=مقدار کو کم کریں پھر اس پروڈکٹ کے لیے دوسرا گودام شامل کرنے کے لیے کلک کریں۔
+AddStockLocationLine=مقدار کو کم کریں پھر لائن کو تقسیم کرنے کے لیے کلک کریں۔
 InventoryDate=انوینٹری کی تاریخ
 Inventories=انوینٹریز
 NewInventory=نئی انوینٹری
@@ -234,13 +240,13 @@ StockIncrease=اسٹاک میں اضافہ
 StockDecrease=اسٹاک میں کمی
 InventoryForASpecificWarehouse=مخصوص گودام کے لیے انوینٹری
 InventoryForASpecificProduct=کسی مخصوص پروڈکٹ کے لیے انوینٹری
-StockIsRequiredToChooseWhichLotToUse=کون سا لاٹ استعمال کرنا ہے اس کا انتخاب کرنے کے لیے اسٹاک کی ضرورت ہے۔
+StockIsRequiredToChooseWhichLotToUse=کون سا لاٹ استعمال کرنا ہے اس کا انتخاب کرنے کے لیے ایک موجودہ اسٹاک کی ضرورت ہے۔
 ForceTo=کرنے پر مجبور کریں۔
-AlwaysShowFullArbo=گودام کے لنکس کے پاپ اپ پر گودام کا پورا درخت دکھائیں (انتباہ: یہ ڈرامائی طور پر کارکردگی کو کم کر سکتا ہے)
+AlwaysShowFullArbo=گودام کے لنکس کے پاپ اپ پر گودام (والدین کے گوداموں) کا پورا راستہ دکھائیں (انتباہ: یہ ڈرامائی طور پر کارکردگی کو کم کر سکتا ہے)
 StockAtDatePastDesc=آپ یہاں ماضی میں دی گئی تاریخ پر اسٹاک (اصلی اسٹاک) دیکھ سکتے ہیں۔
 StockAtDateFutureDesc=آپ یہاں مستقبل میں دی گئی تاریخ پر اسٹاک (ورچوئل اسٹاک) دیکھ سکتے ہیں۔
 CurrentStock=موجودہ اسٹاک
-InventoryRealQtyHelp=qty <br> کو ری سیٹ کرنے کے لیے قدر کو 0 پر سیٹ کریں فیلڈ کو خالی رکھیں یا لائن کو ہٹا دیں، کوئی تبدیلی نہیں
+InventoryRealQtyHelp=The quantity you found in stock when making the inventory. Set value to 0 to reset qty<br>Keep field empty, or remove line, to keep unchanged
 UpdateByScaning=اسکین کرکے اصلی مقدار کو مکمل کریں۔
 UpdateByScaningProductBarcode=اسکین کے ذریعے اپ ڈیٹ کریں (پروڈکٹ بارکوڈ)
 UpdateByScaningLot=اسکین کے ذریعے اپ ڈیٹ کریں (لاٹ | سیریل بارکوڈ)
@@ -250,11 +256,10 @@ ChooseFileToImport=فائل اپ لوڈ کریں پھر %s آئیکن پر کل�
 SelectAStockMovementFileToImport=درآمد کرنے کے لیے اسٹاک موومنٹ فائل منتخب کریں۔
 InfoTemplateImport=اپ لوڈ کردہ فائل میں یہ فارمیٹ ہونا ضروری ہے (* لازمی فیلڈز ہیں): <br> Source Warehouse* | ہدف گودام* | پروڈکٹ* | مقدار* | لاٹ/سیریل نمبر <br> CSV کریکٹر الگ کرنے والا "<b> %s </b>" ہونا چاہیے
 LabelOfInventoryMovemement=انوینٹری %s
-ReOpen=دوبارہ کھولیں۔
 ConfirmFinish=کیا آپ انوینٹری کے بند ہونے کی تصدیق کرتے ہیں؟ یہ آپ کے اسٹاک کو آپ کی انوینٹری میں داخل کردہ اصلی مقدار میں اپ ڈیٹ کرنے کے لیے تمام اسٹاک کی نقل و حرکت پیدا کرے گا۔
 ObjectNotFound=%s نہیں ملا
 MakeMovementsAndClose=نقل و حرکت پیدا کریں اور بند کریں۔
-AutofillWithExpected=حقیقی مقدار کو متوقع مقدار سے بدل دیں۔
+AutofillWithExpected=متوقع مقدار کے ساتھ حقیقی مقدار کو بھریں۔
 ShowAllBatchByDefault=بطور ڈیفالٹ، پروڈکٹ "اسٹاک" ٹیب پر بیچ کی تفصیلات دکھائیں۔
 CollapseBatchDetailHelp=آپ اسٹاک ماڈیول کنفیگریشن میں بیچ ڈیٹیل ڈیفالٹ ڈسپلے سیٹ کر سکتے ہیں۔
 ErrorWrongBarcodemode=نامعلوم بارکوڈ وضع
@@ -265,9 +270,70 @@ ProductBarcodeDoesNotExist=بارکوڈ والا پروڈکٹ موجود نہی�
 WarehouseId=گودام کی شناخت
 WarehouseRef=گودام ریف
 SaveQtyFirst=سٹاک کی نقل و حرکت کے بارے میں پوچھنے سے پہلے پہلے اصلی انوینٹری شدہ مقداروں کو محفوظ کریں۔
+ToStart=شروع کریں۔
 InventoryStartedShort=شروع
 ErrorOnElementsInventory=مندرجہ ذیل وجہ سے آپریشن منسوخ کر دیا گیا:
 ErrorCantFindCodeInInventory=انوینٹری میں درج ذیل کوڈ نہیں مل سکتا
 QtyWasAddedToTheScannedBarcode=کامیابی !! مقدار کو تمام درخواست کردہ بار کوڈ میں شامل کیا گیا تھا۔ آپ سکینر ٹول کو بند کر سکتے ہیں۔
-StockChangeDisabled=اسٹاک پر تبدیلی غیر فعال ہے۔
+StockChangeDisabled=اسٹاک کی تبدیلی غیر فعال ہے۔
 NoWarehouseDefinedForTerminal=ٹرمینل کے لیے کوئی گودام متعین نہیں ہے۔
+ClearQtys=تمام مقداریں صاف کریں۔
+ProductValuesUsedBecauseNoValuesForThisWarehouse=No value has been defined for this warehouse so we assume it is zero (no need for this product into the warehouse)
+ModuleStockTransferName=اعلی درجے کی اسٹاک کی منتقلی
+ModuleStockTransferDesc=ٹرانسفر شیٹ کی نسل کے ساتھ اسٹاک ٹرانسفر کا جدید انتظام
+StockTransferNew=نیا اسٹاک ٹرانسفر
+StockTransferList=اسٹاک کی منتقلی کی فہرست
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
+ConfirmDestock=منتقلی کے ساتھ اسٹاک کی کمی %s
+ConfirmDestockCancel=منتقلی کے ساتھ اسٹاک کی کمی کو منسوخ کریں %s
+DestockAllProduct=اسٹاک کی کمی
+DestockAllProductCancel=اسٹاک کی کمی کو منسوخ کریں۔
+ConfirmAddStock=منتقلی کے ساتھ اسٹاک میں اضافہ کریں %s
+ConfirmAddStockCancel=منتقلی کے ساتھ اسٹاک میں اضافہ منسوخ کریں %s
+AddStockAllProduct=اسٹاک میں اضافہ
+AddStockAllProductCancel=اسٹاک میں اضافہ منسوخ کریں۔
+DatePrevueDepart=روانگی کی مطلوبہ تاریخ
+DateReelleDepart=روانگی کی حقیقی تاریخ
+DatePrevueArrivee=آمد کی مطلوبہ تاریخ
+DateReelleArrivee=آمد کی حقیقی تاریخ
+HelpWarehouseStockTransferSource=اگر یہ گودام سیٹ کیا جاتا ہے تو صرف خود اور اس کے بچے بطور ذریعہ گودام دستیاب ہوں گے۔
+HelpWarehouseStockTransferDestination=اگر یہ گودام سیٹ ہو جاتا ہے تو صرف خود اور اس کے بچے منزل کے گودام کے طور پر دستیاب ہوں گے۔
+LeadTimeForWarning=الرٹ سے پہلے لیڈ ٹائم (دنوں میں)
+TypeContact_stocktransfer_internal_STFROM=اسٹاک کی منتقلی کا بھیجنے والا
+TypeContact_stocktransfer_internal_STDEST=اسٹاک کی منتقلی کا وصول کنندہ
+TypeContact_stocktransfer_internal_STRESP=اسٹاک کی منتقلی کے ذمہ دار
+StockTransferSheet=اسٹاک ٹرانسفر شیٹ
+StockTransferSheetProforma=پروفارما اسٹاک ٹرانسفر شیٹ
+StockTransferDecrementation=ذرائع کے گوداموں کو کم کریں۔
+StockTransferIncrementation=منزل کے گوداموں میں اضافہ کریں۔
+StockTransferDecrementationCancel=ماخذ گوداموں کی کمی کو منسوخ کریں۔
+StockTransferIncrementationCancel=منزل گوداموں میں اضافہ منسوخ کریں۔
+StockStransferDecremented=ذرائع کے گوداموں میں کمی آئی
+StockStransferDecrementedCancel=منبع گوداموں کی کمی منسوخ کر دی گئی۔
+StockStransferIncremented=بند - اسٹاک منتقل کر دیا گیا۔
+StockStransferIncrementedShort=اسٹاک منتقل کر دیا گیا۔
+StockStransferIncrementedShortCancel=منزل کے گوداموں میں اضافہ منسوخ کر دیا گیا۔
+StockTransferNoBatchForProduct=پروڈکٹ %s بیچ استعمال نہیں کرتا، لائن پر بیچ صاف کریں اور دوبارہ کوشش کریں
+StockTransferSetup = اسٹاکس ٹرانسفر ماڈیول کی ترتیب
+StockTransferSetupPage = اسٹاک ٹرانسفر ماڈیول کے لیے ترتیب کا صفحہ
+StockTransferRightRead=اسٹاک کی منتقلی پڑھیں
+StockTransferRightCreateUpdate=اسٹاک کی منتقلی بنائیں/اپ ڈیٹ کریں۔
+StockTransferRightDelete=اسٹاک کی منتقلی کو حذف کریں۔
+BatchNotFound=اس پروڈکٹ کے لیے لاٹ/سیریل نہیں ملا
+StockEntryDate=اسٹاک میں <br>داخلے کی تاریخ
+StockMovementWillBeRecorded=اسٹاک کی نقل و حرکت ریکارڈ کی جائے گی۔
+StockMovementNotYetRecorded=اسٹاک کی نقل و حرکت اس قدم سے متاثر نہیں ہوگی۔
+ReverseConfirmed=اسٹاک کی نقل و حرکت کامیابی کے ساتھ تبدیل کردی گئی ہے۔
+WarningThisWIllAlsoDeleteStock=انتباہ، یہ گودام میں موجود تمام مقداروں کو بھی تباہ کر دے گا۔
+ValidateInventory=انوینٹری کی توثیق
+IncludeSubWarehouse=ذیلی گودام شامل کریں؟
+IncludeSubWarehouseExplanation=اگر آپ انوینٹری میں متعلقہ گودام کے تمام ذیلی گوداموں کو شامل کرنا چاہتے ہیں تو اس باکس کو چیک کریں۔
+DeleteBatch=لاٹ/سیریل کو حذف کریں۔
+ConfirmDeleteBatch=کیا آپ واقعی لاٹ/سیریل کو حذف کرنا چاہتے ہیں؟
+WarehouseUsage=گودام کا استعمال
+InternalWarehouse=اندرونی گودام
+ExternalWarehouse=بیرونی گودام
+LatestModifiedWarehouses=Latest %s modified warehouses
+LatestStockMovements=Latest %s stock movements
+QtyCurrentlyKnownInStock=System estimated quantity you have in stock. As long as the inventory is not closed, this is a realtime value and it may change if you continue to make stock movement during the inventory (not recommended).
+QtyInStockWhenInventoryWasValidated=System estimated quantity you had in stock when the inventory was validated (before the stock correction)

@@ -20,11 +20,12 @@
  */
 
 /**
- *	\file       htdocs/product/traduction.php
- *	\ingroup    product
- *	\brief      Page of translation of products
+ *	\file       htdocs/categories/traduction.php
+ *	\ingroup    categories
+ *	\brief      Page of translation of categories
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -35,13 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('categories', 'languages'));
 
-$id = GETPOST('id', 'int');
-$label = GETPOST('label', 'alpha');
+$id     = GETPOSTINT('id');
+$label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 
 if ($id == '' && $label == '') {
-	dol_print_error('', 'Missing parameter id');
+	dol_print_error(null, 'Missing parameter id');
 	exit();
 }
 
@@ -51,29 +52,32 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 $object = new Categorie($db);
 $result = $object->fetch($id, $label);
 if ($result <= 0) {
-	dol_print_error($db, $object->error); exit;
+	dol_print_error($db, $object->error);
+	exit;
 }
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[$type];   // For backward compatibility
 }
+
 
 /*
  * Actions
  */
+
 $error = 0;
 
-// retour a l'affichage des traduction si annulation
+// return to translation view if cancelled
 if ($cancel == $langs->trans("Cancel")) {
 	$action = '';
 }
 
 
-// Validation de l'ajout
+// validation of addition
 if ($action == 'vadd' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer)) {
+($user->hasRight('categorie', 'creer'))) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
@@ -94,7 +98,7 @@ $cancel != $langs->trans("Cancel") &&
 		}
 
 		if (!$error) {
-			// update de l'objet
+			// update the object
 			if ($forcelangprod == $current_lang) {
 				$object->label = $libelle;
 				$object->description = dol_htmlcleanlastbr($desc);
@@ -103,7 +107,7 @@ $cancel != $langs->trans("Cancel") &&
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);
 			}
 
-			// sauvegarde en base
+			// save in base / sauvegarde en base
 			$res = $object->setMultiLangs($user);
 			if ($res < 0) {
 				$error++;
@@ -119,16 +123,16 @@ $cancel != $langs->trans("Cancel") &&
 	}
 }
 
-// Validation de l'edition
+// validation of the edition
 if ($action == 'vedit' &&
 $cancel != $langs->trans("Cancel") &&
-($user->rights->categorie->creer)) {
+($user->hasRight('categorie', 'creer'))) {
 	$object->fetch($id);
 	$current_lang = $langs->getDefaultLang();
 
-	foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
+	foreach ($object->multilangs as $key => $value) {     // recording of new values in the object
 		$libelle = GETPOST('libelle-'.$key, 'alpha');
-		$desc = GETPOST('desc-'.$key);
+		$desc = GETPOST('desc-'.$key, 'restricthtml');
 
 		if (empty($libelle)) {
 			$error++;
@@ -164,7 +168,7 @@ $cancel != $langs->trans("Cancel") &&
  * View
  */
 
-$form = new Form($db);
+$form      = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
@@ -186,7 +190,7 @@ print dol_get_fiche_head($head, 'translation', $langs->trans($title), -1, 'categ
 
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.urlencode($type));
 $linkback = '<a href="'.dol_sanitizeUrl($backtolist).'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = ' type = '.$object->type;
+$object->next_prev_filter = 'type = '.((int) $object->type);
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
@@ -223,14 +227,14 @@ print dol_get_fiche_end();
 
 
 
-
 /*
  * Action bar
  */
+
 print "\n<div class=\"tabsAction\">\n";
 
 if ($action == '') {
-	if ($user->rights->produit->creer || $user->rights->service->creer) {
+	if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=add&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Add').'</a>';
 		if ($cnt_trans > 0) {
 			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().'&id='.$object->id.'&type='.$type.'">'.$langs->trans('Update').'</a>';
@@ -243,7 +247,7 @@ print "\n</div>\n";
 
 
 if ($action == 'edit') {
-	//WYSIWYG Editor
+	// WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -258,12 +262,13 @@ if ($action == 'edit') {
 			print '<table class="border centpercent">';
 
 			// Label
-			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : $object->multilangs[$key]['label']);
+			$libelle = (GETPOST('libelle-'.$key, 'alpha') ? GETPOST('libelle-'.$key, 'alpha') : ($object->multilangs[$key]['label'] ?? ''));
 			print '<tr><td class="titlefield fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$libelle.'"></td></tr>';
+
 			// Desc
-			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : $object->multilangs[$key]['description']);
+			$desc = (GETPOST('desc-'.$key) ? GETPOST('desc-'.$key) : ($object->multilangs[$key]['description'] ?? ''));
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
-			$doleditor = new DolEditor("desc-$key", $desc, '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+			$doleditor = new DolEditor("desc-$key", $desc, '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 			$doleditor->Create();
 			print '</td></tr>';
 
@@ -287,10 +292,10 @@ if ($action == 'edit') {
 			$s = picto_from_langcode($key);
 			print '<table class="border centpercent">';
 			print '<tr class="liste_titre"><td colspan="2">'.($s ? $s.' ' : '')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'&type='.$type.'">'.img_delete('', '').'</a></td></tr>';
-			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
-			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
-			if (!empty($conf->global->CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION)) {
-				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+			print '<tr><td class="titlefield">'.$langs->trans('Label').'</td><td>'.($object->multilangs[$key]["label"] ?? '').'</td></tr>';
+			print '<tr><td>'.$langs->trans('Description').'</td><td>'.($object->multilangs[$key]["description"] ?? '').'</td></tr>';
+			if (getDolGlobalString('CATEGORY_USE_OTHER_FIELD_IN_TRANSLATION')) {
+				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotYetAvailable").')</td><td>'.($object->multilangs[$key]["other"] ?? '').'</td></tr>';
 			}
 			print '</table>';
 		}
@@ -305,7 +310,7 @@ if ($action == 'edit') {
  * Form to add a new translation
  */
 
-if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service->creer)) {
+if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -323,7 +328,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td>';
 	print '<td><input name="libelle" class="minwidth200 maxwidth300" value="'.GETPOST('libelle', 'alpha').'"></td></tr>';
 	print '<tr><td>'.$langs->trans('Description').'</td><td>';
-	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_PRODUCTDESC'), ROWS_3, '90%');
+	$doleditor = new DolEditor('desc', GETPOST('desc', 'restricthtml'), '', 160, 'dolibarr_notes', '', false, true, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_3, '90%');
 	$doleditor->Create();
 	print '</td></tr>';
 

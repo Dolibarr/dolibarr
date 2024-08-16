@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
  *       \ingroup    core
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *      Classe permettant la generation du formulaire d'envoi de Sms
+ *      Class permettant la generation du formulaire d'envoi de Sms
  *      Usage: $formsms = new FormSms($db)
  *             $formsms->proprietes=1 ou chaine ou tableau de valeurs
  *             $formsms->show_form() affiche le formulaire
@@ -41,6 +41,10 @@ class FormSms
 	public $fromid;
 	public $fromname;
 	public $fromsms;
+
+	/**
+	 * @var string
+	 */
 	public $fromtype;
 	public $replytoname;
 	public $replytomail;
@@ -48,9 +52,25 @@ class FormSms
 	public $tomail;
 
 	public $withsubstit; // Show substitution array
+
+	/**
+	 * @var int
+	 */
 	public $withfrom;
+
+	/**
+	 * @var int
+	 */
 	public $withto;
+
+	/**
+	 * @var int
+	 */
 	public $withtopic;
+
+	/**
+	 * @var int
+	 */
 	public $withbody;
 
 	/**
@@ -62,6 +82,7 @@ class FormSms
 	public $withreplytoreadonly;
 	public $withtoreadonly;
 	public $withtopicreadonly;
+	public $withbodyreadonly;
 	public $withcancel;
 
 	public $substit = array();
@@ -104,13 +125,13 @@ class FormSms
 	 *	Show the form to input an sms.
 	 *
 	 *	@param	string	$morecss Class on first column td
-	 *  @param int $showform Show form tags and submit button (recommanded is to use with value 0)
+	 *  @param int $showform Show form tags and submit button (recommended is to use with value 0)
 	 *	@return	void
 	 */
 	public function show_form($morecss = 'titlefield', $showform = 1)
 	{
-	 // phpcs:enable
-		global $conf, $langs, $user, $form;
+		// phpcs:enable
+		global $conf, $langs, $form;
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
@@ -127,7 +148,7 @@ class FormSms
 		print "\n<!-- Begin form SMS -->\n";
 
 		print '
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 function limitChars(textarea, limit, infodiv)
 {
     var text = textarea.value;
@@ -185,21 +206,14 @@ function limitChars(textarea, limit, infodiv)
 				print "</td></tr>\n";
 			} else {
 				print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom")."</td><td>";
-				//print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
-				if ($conf->global->MAIN_SMS_SENDMODE == 'ovh') {        // For backward compatibility        @deprecated
-					dol_include_once('/ovh/class/ovhsms.class.php');
-					try {
-						$sms = new OvhSms($this->db);
-						if (empty($conf->global->OVHSMS_ACCOUNT)) {
-							$resultsender = 'ErrorOVHSMS_ACCOUNT not defined';
-						} else {
-							$resultsender = $sms->SmsSenderList();
-						}
-					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+				if (getDolGlobalString('MAIN_SMS_SENDMODE')) {
+					$sendmode = getDolGlobalString('MAIN_SMS_SENDMODE');	// $conf->global->MAIN_SMS_SENDMODE looks like a value 'module'
+					$classmoduleofsender = getDolGlobalString('MAIN_MODULE_'.strtoupper($sendmode).'_SMS', $sendmode);	// $conf->global->MAIN_MODULE_XXX_SMS looks like a value 'class@module'
+					if ($classmoduleofsender == 'ovh') {
+						$classmoduleofsender = 'ovhsms@ovh';	// For backward compatibility
 					}
-				} elseif (!empty($conf->global->MAIN_SMS_SENDMODE)) {    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
-					$tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
+
+					$tmp = explode('@', $classmoduleofsender);
 					$classfile = $tmp[0];
 					$module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
 					dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
@@ -210,10 +224,10 @@ function limitChars(textarea, limit, infodiv)
 							$resultsender = $sms->SmsSenderList();
 						} else {
 							$sms = new stdClass();
-							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
+							$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_MODULE_'.strtoupper($sendmode).'_SMS is not found';
 						}
 					} catch (Exception $e) {
-						dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
+						dol_print_error(null, 'Error to get list of senders: '.$e->getMessage());
 						exit;
 					}
 				} else {
@@ -229,7 +243,7 @@ function limitChars(textarea, limit, infodiv)
 					}
 					print '</select>';
 				} else {
-					print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
+					print '<span class="error wordbreak">'.$langs->trans("SmsNoPossibleSenderFound");
 					if (is_object($sms) && !empty($sms->error)) {
 						print ' '.$sms->error;
 					}
@@ -250,7 +264,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (isset($_REQUEST["sendto"]) ?GETPOST("sendto") : $this->withto) : "+")."\">";
+				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {
@@ -260,7 +274,7 @@ function limitChars(textarea, limit, infodiv)
 					//var_dump($_REQUEST);exit;
 					print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
 				}
-				print ' <span class="opacitymedium">'.$langs->trans("SmsInfoNumero").'</span>';
+				print '<span class="opacitymedium hideonsmartphone"> '.$langs->trans("SmsInfoNumero").'</span>';
 			}
 			print "</td></tr>\n";
 		}
@@ -285,7 +299,7 @@ function limitChars(textarea, limit, infodiv)
 				print '<input type="hidden" name="message" value="'.dol_escape_htmltag($defaultmessage).'">';
 			} else {
 				print '<textarea class="quatrevingtpercent" name="message" id="message" rows="'.ROWS_4.'" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
-				print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160 - dol_strlen($defaultmessage)).'</span></div></td>';
+				print '<div id="charlimitinfo" class="opacitymedium">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160 - dol_strlen($defaultmessage)).'</span></div></td>';
 			}
 			print "</td></tr>\n";
 		}

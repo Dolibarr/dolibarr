@@ -3,6 +3,7 @@
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021 SuperAdmin
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +132,7 @@ class modKnowledgeManagement extends DolibarrModules
 		// Dependencies
 		// A condition to hide module
 		$this->hidden = false;
-		// List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
+		// List of module class names as string that must be enabled if this module is enabled. Example: array('always'=>array('modModuleToEnable1','modModuleToEnable2'), 'FR'=>array('modModuleToEnableFR'...))
 		$this->depends = array();
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
@@ -140,7 +141,7 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->langfiles = array("knowledgemanagement");
 
 		// Prerequisites
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, -3); // Minimum version of Dolibarr required by module
 
 		// Messages at activation
@@ -182,9 +183,9 @@ class modKnowledgeManagement extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -201,12 +202,14 @@ class modKnowledgeManagement extends DolibarrModules
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in knowledgemanagement/core/boxes that contains a class to show a widget.
 		$this->boxes = array(
-			//  0 => array(
-			//      'file' => 'knowledgemanagementwidget1.php@knowledgemanagement',
-			//      'note' => 'Widget provided by KnowledgeManagement',
-			//      'enabledbydefaulton' => 'Home',
-			//  ),
-			//  ...
+			0 => array(
+				'file' => 'box_last_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
+			1 => array(
+				'file' => 'box_last_modified_knowledgerecord.php',
+				'enabledbydefaulton' => 'ticketindex',
+			),
 		);
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
@@ -264,80 +267,80 @@ class modKnowledgeManagement extends DolibarrModules
 			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'top', // This is a Top menu entry
 			'titre'=>'ModuleKnowledgeManagementName',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth em092"'),
 			'mainmenu'=>'knowledgemanagement',
 			'leftmenu'=>'',
 			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
 			'langs'=>'knowledgemanagement', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>1000 + $r,
 			'enabled'=>'$conf->knowledgemanagement->enabled', // Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read' if you want your menu with a permission rules
+			'perms'=>'1', // Use 'perms'=>'$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		*/
 		/* END MODULEBUILDER TOPMENU */
 
-		$this->menu[$r++]=array(
+		$this->menu[$r++] = array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=ticket',
+			'fk_menu' => 'fk_mainmenu=ticket',
 			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'MenuKnowledgeRecord',
+			'type' => 'left',
+			'titre' => 'MenuKnowledgeRecord',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
-			'mainmenu'=>'ticket',
-			'leftmenu'=>'knowledgemanagement_knowledgerecord',
-			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
+			'mainmenu' => 'ticket',
+			'leftmenu' => 'knowledgemanagement_knowledgerecord',
+			'url' => '/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'knowledgemanagement',
-			'position'=>101,
+			'langs' => 'knowledgemanagement',
+			'position' => 101,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->knowledgemanagement->enabled',
+			'enabled' => '$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',
-			'target'=>'',
+			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2,
+			'user' => 2,
 		);
-		$this->menu[$r++]=array(
+		$this->menu[$r++] = array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'ListKnowledgeRecord',
-			'mainmenu'=>'ticket',
-			'leftmenu'=>'knowledgemanagement_list',
-			'url'=>'/knowledgemanagement/knowledgerecord_list.php',
+			'type' => 'left',
+			'titre' => 'ListKnowledgeRecord',
+			'mainmenu' => 'ticket',
+			'leftmenu' => 'knowledgemanagement_list',
+			'url' => '/knowledgemanagement/knowledgerecord_list.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'knowledgemanagement',
-			'position'=>111,
+			'langs' => 'knowledgemanagement',
+			'position' => 111,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->knowledgemanagement->enabled',
+			'enabled' => '$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->read',
-			'target'=>'',
+			'perms' => '$user->rights->knowledgemanagement->knowledgerecord->read',
+			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2,
+			'user' => 2,
 		);
-		$this->menu[$r++]=array(
+		$this->menu[$r++] = array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
+			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
 			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'NewKnowledgeRecord',
-			'mainmenu'=>'ticket',
-			'leftmenu'=>'knowledgemanagement_new',
-			'url'=>'/knowledgemanagement/knowledgerecord_card.php?action=create',
+			'type' => 'left',
+			'titre' => 'NewKnowledgeRecord',
+			'mainmenu' => 'ticket',
+			'leftmenu' => 'knowledgemanagement_new',
+			'url' => '/knowledgemanagement/knowledgerecord_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'knowledgemanagement',
-			'position'=>110,
+			'langs' => 'knowledgemanagement',
+			'position' => 110,
 			// Define condition to show or hide menu entry. Use '$conf->knowledgemanagement->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->knowledgemanagement->enabled',
+			'enabled' => '$conf->knowledgemanagement->enabled',
 			// Use 'perms'=>'$user->rights->knowledgemanagement->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->knowledgemanagement->knowledgerecord->write',
-			'target'=>'',
+			'perms' => '$user->hasRight("knowledgemanagement", "knowledgerecord", "write")',
+			'target' => '',
 			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2
+			'user' => 2
 		);
 		$this->menu[$r++] = array(
 			'fk_menu' => 'fk_mainmenu=ticket,fk_leftmenu=knowledgemanagement_knowledgerecord',
@@ -441,12 +444,9 @@ class modKnowledgeManagement extends DolibarrModules
 		// Document templates
 		$moduledir = 'knowledgemanagement';
 		$myTmpObjects = array();
-		$myTmpObjects['KnowledgeRecord'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['KnowledgeRecord'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'KnowledgeRecord') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/knowledgemanagement/template_knowledgerecords.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/knowledgemanagement';

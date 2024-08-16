@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL\Xml\Request;
 
 use Sabre\Xml\Deserializer;
@@ -17,8 +19,8 @@ use Sabre\Xml\XmlDeserializable;
  * @author Evert Pot (https://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AclPrincipalPropSetReport implements XmlDeserializable {
-
+class AclPrincipalPropSetReport implements XmlDeserializable
+{
     public $properties = [];
 
     /**
@@ -39,11 +41,10 @@ class AclPrincipalPropSetReport implements XmlDeserializable {
      * $reader->parseInnerTree() will parse the entire sub-tree, and advance to
      * the next element.
      *
-     * @param Reader $reader
      * @return mixed
      */
-    static function xmlDeserialize(Reader $reader) {
-       
+    public static function xmlDeserialize(Reader $reader)
+    {
         $reader->pushContext();
         $reader->elementMap['{DAV:}prop'] = 'Sabre\Xml\Deserializer\enum';
 
@@ -61,7 +62,5 @@ class AclPrincipalPropSetReport implements XmlDeserializable {
         }
 
         return $report;
-
     }
-
 }

@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL bietet eine %s Online Zahlungsseite
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL bietet eine %s Online Zahlungsseite für ein Mitgliederabo
 ToOfferALinkForOnlinePaymentOnDonation=URL bietet eine %s Online-Zahlungsseite für die Zahlung einer Spende an
 YouCanAddTagOnUrl=Es können URL-Parameter angegeben werden <b>&tag=<i>value</i></b> für jede dieser URLs (nur erforderlich für Zahlungen, die nicht mit einem Objekt verknüpft sind) kann ein eigener Zahlungskommentar-Tag hinzugefügt werden.<br>Für eine Zahlungs-URL ohne existierendes Objekt, kann der Parameter auch hinzugefügt werden <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (einige Zahlungsmodi beschränken ggf. Zahlungen auf eine je unterschiedlichen Link ohne diesen Parameter)
+YouCanEmbedOnWebsite=Wenn Sie die Zahlungsseite in eine Dolibarr-Website integrieren möchten, können Sie den folgenden Parameter nutzen: <b>&ws=website_ref</b>.<br>Zusätzlich müssen zwei Seiten mit dem Namen <b>paymentok</b> und <b>paymentko</b> erstellt werden, um die Weiterleitung nach einer erfolgreichen oder fehlgeschlagenen Online-Zahlung zu realisieren.
 SetupStripeToHavePaymentCreatedAutomatically=Richten Sie Stripe mit der URL <b>%s</b> ein, um nach Freigabe durch Stripe eine Zahlung anzulegen.
 AccountParameter=Account Parameter
 UsageParameter=Einsatzparameter
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook Produktivschlüssel
 ONLINE_PAYMENT_WAREHOUSE=Warenlager für die Bestandsminderung bei Onlinezahlung<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice?)
 StripeLiveEnabled=Stripe live aktiviert (Nicht im Test/Sandbox Modus)
 StripeImportPayment=Stripe Zahlungen importieren
-ExampleOfTestCreditCard=Beispiel für eine zu testende Kreditkarte: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
+ExampleOfTestCreditCard=Beispiel Kreditkarte für Testzahlungen: %s => gültig, %s => Fehler CVC, %s => abgelaufen, %s => Belastung fehlgeschlagen
+ExampleOfTestBankAcountForSEPA=Beispiel Bankkonto IBAN für Lastschrifttest: %s
 StripeGateways=Stripe Gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca_...)
@@ -50,6 +52,7 @@ StripeAccount=Stripe Konto
 StripeChargeList=Liste der Bezahlvorgänge
 StripeTransactionList=Liste aller Transaktionen
 StripeCustomerId=Stripe Kunden-ID
+StripePaymentId=Stripe-Payment-ID
 StripePaymentModes=Stripe Zahlungsarten
 LocalID=Lokale ID
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=Karte löschen
 ConfirmDeleteCard=Wollen Sie diese Debit- oder Kreditkarte wirklich löschen?
 CreateCustomerOnStripe=Kunden auf Stripe erstellen
 CreateCardOnStripe=Karte auf Stripe erstellen
+CreateBANOnStripe=Bank auf Stripe erstellen
 ShowInStripe=In Stripe anzeigen
 StripeUserAccountForActions=Benutzerkonto zur E-Mail-Benachrichtigung über einige Stripe-Ereignisse (Stripe-Auszahlungen)
 StripePayoutList=Liste der Auszahlungen
@@ -69,4 +73,18 @@ ToOfferALinkForLiveWebhook=Link zum Einrichten von Stripe WebHook zum Aufruf von
 PaymentWillBeRecordedForNextPeriod=Die Zahlung wird für den folgenden Zeitraum erfasst.
 ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um zum Stripe-Kundendatensatz zu wechseln: %s
-TERMINAL_LOCATION=Standort (Adresse) für Terminals
+STRIPE_CARD_PRESENT='Card present' für Stripe-Terminals
+TERMINAL_LOCATION=Standort (Adresse) für Stripe-Terminals
+RequestDirectDebitWithStripe=Lastschrift über Stripe anfordern
+RequesCreditTransferWithStripe=Anfrage für eine Stripe-Guthabenauszahlung
+STRIPE_SEPA_DIRECT_DEBIT=Aktivieren Sie die Lastschriftzahlungen über Stripe
+STRIPE_KLARNA=Zahlungen mit Klarna aktivieren
+STRIPE_BANCONTACT=Zahlungen mit BANCONTACT aktivieren
+STRIPE_IDEAL=Zahlungen mit IDEAL aktivieren
+STRIPE_GIROPAY=Zahlungen mit GIROPAY aktivieren
+STRIPE_SOFORT=Zahlung per SOFORT aktivieren
+StripeConnect_Mode=Stripe Connect-Modus
+ExampleOnlyForBECustomers=Nur für Kunden aus Belgien
+ExampleOnlyForDECustomers=Nur für Kunden aus Deutschland
+ExampleOnlyForNLCustomers=Nur für Kunden aus den Niederlanden
+ExampleOnlyForATBEDEITNLESCustomers=Nur für Kunden aus Österreich, Belgien, Deutschland, Italien, den Niederlanden, Spanien

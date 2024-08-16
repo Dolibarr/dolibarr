@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2014	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2021  Frederic France		<frederic.france@free.fr>
- * Copyright (C) 2017	    Regis Houssin		<regis.houssin@inodbox.com>
+/* Copyright (C) 2014-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015-2021	Frederic France			<frederic.france@free.fr>
+ * Copyright (C) 2017		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  *       \brief      Page with attached files on contact
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -33,7 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'companies', 'contact'));
 
-$id = GETPOST('id', 'int');
+// Get parameters
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -50,10 +53,10 @@ if (!empty($canvas)) {
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -61,11 +64,11 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) {
-	$sortfield = $conf->global->MAIN_DOC_SORT_FIELD;
+if (getDolGlobalString('MAIN_DOC_SORT_FIELD')) {
+	$sortfield = getDolGlobalString('MAIN_DOC_SORT_FIELD');
 }
-if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) {
-	$sortorder = $conf->global->MAIN_DOC_SORT_ORDER;
+if (getDolGlobalString('MAIN_DOC_SORT_ORDER')) {
+	$sortorder = getDolGlobalString('MAIN_DOC_SORT_ORDER');
 }
 
 if (!$sortorder) {
@@ -82,7 +85,7 @@ if ($id > 0) {
 $upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contact';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contactdocument'));
 
 // Security check
@@ -91,7 +94,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', 0); // If we create a contact with no company (shared contacts), no check on write permission
 
-$permissiontoadd = $user->rights->societe->contact->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');	// Used by the include of actions_dellink.inc.php
 
 
 /*
@@ -107,22 +110,23 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = $langs->trans("ContactLinkedFiles");
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_documents');
 
 if ($object->id) {
 	$head = contact_prepare_head($object);
-	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
 	print dol_get_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -135,15 +139,14 @@ if ($object->id) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS)) {
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
 		$objsoc = new Societe($db);
 		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
 		if ($objsoc->id > 0) {
 			$morehtmlref .= $objsoc->getNomUrl(1);
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';
@@ -189,8 +192,8 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'contact';
-	$permissiontoadd = $user->rights->societe->contact->creer;
-	$permtoedit = $user->rights->societe->contact->creer;
+	$permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
+	$permtoedit = $user->hasRight('societe', 'contact', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

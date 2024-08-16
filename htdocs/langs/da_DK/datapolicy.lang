@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Databeskyttelsespolitik
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Modul til at administrere databeskyttelse (overensstemmelse med GDPR)
+# Administration page
+datapolicySetup = Opsætning af moduldatabeskyttelsespolitik
+Deletion = Sletning af data
+datapolicySetupPage = Afhængigt af lovene i dine lande (eksempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> i GDPR), skal personoplysninger opbevares i en periode ikke overskrider den varighed, dataene er nødvendige til det formål, hvortil de blev indsamlet, undtagen til arkiveringsformål.<br>Sletningen vil ske automatisk efter en vis varighed uden begivenheder (varigheden som du vil have angivet nedenfor).
+NB_MONTHS = %s måneder
+ONE_YEAR = 1 år
+NB_YEARS = %s års
+DATAPOLICY_TIERS_CLIENT = Kunde
+DATAPOLICY_TIERS_PROSPECT = Kundeemne
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospekt/kunde
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Heller kunde/kunde
+DATAPOLICY_TIERS_FOURNISSEUR = Leverandør
+DATAPOLICY_CONTACT_CLIENT = Kunde
+DATAPOLICY_CONTACT_PROSPECT = Kundeemne
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Kundeemne/kunde
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Heller kunde/kunde
+DATAPOLICY_CONTACT_FOURNISSEUR = Leverandør
+DATAPOLICY_ADHERENT = Medlem
+DATAPOLICY_Tooltip_SETUP = Kontakttype - Angiv dine valg for hver type.
+SendAgreementText = Du kan sende en GDPR-e-mail til alle dine relevante kontakter (som endnu ikke har modtaget en e-mail, og som du ikke har registreret noget om deres GDPR-aftale for). For at gøre dette skal du bruge følgende knap.
+SendAgreement = Send emails
+AllAgreementSend = Alle e-mails er blevet sendt
+TXTLINKDATAPOLICYACCEPT = Tekst til linket "aftale"
+TXTLINKDATAPOLICYREFUSE = Tekst til linket "uenighed"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Behandling af personoplysninger
+DATAPOLICY_consentement = Indhentet samtykke til behandling af personoplysninger
+DATAPOLICY_opposition_traitement = Modsætter sig behandlingen af hans personoplysninger
+DATAPOLICY_opposition_prospection = Modsætter sig behandlingen af hans personoplysninger med henblik på efterforskning
+# Notes added during an anonymization
+DATAPOLICY_date = Dato for aftale/uenighed GDPR
+DATAPOLICY_send = Dato aftalemail sendt
+MailSent = Emailen er sendt
+NUMBER_MONTH_BEFORE_DELETION = Antal måneder før sletning

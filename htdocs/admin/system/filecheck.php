@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  *  \brief      Page to check Dolibarr files integrity
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -43,7 +45,7 @@ $error = 0;
 
 @set_time_limit(300);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_filecheck');
 
 print load_fiche_titre($langs->trans("FileCheckDolibarr"), '', 'title_setup');
 
@@ -57,15 +59,15 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastInstall")
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionLastUpgrade").'</td><td>'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE').'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</td><td>'.DOL_VERSION;
 // If current version differs from last upgrade
-if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE)) {
-	// Compare version with last install database version (upgrades never occured)
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
+if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
+	// Compare version with last install database version (upgrades never occurred)
+	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
 	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
-		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
+		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }
 print '</td></tr>'."\n";
@@ -78,38 +80,38 @@ print '<br>';
 $file_list = array('missing' => array(), 'updated' => array());
 
 // Local file to compare to
-$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.(empty($conf->global->MAIN_FILECHECK_LOCAL_SUFFIX) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_SUFFIX).'.xml'.(empty($conf->global->MAIN_FILECHECK_LOCAL_EXT) ? '' : $conf->global->MAIN_FILECHECK_LOCAL_EXT));
+$xmlshortfile = dol_sanitizeFileName(GETPOST('xmlshortfile', 'alpha') ? GETPOST('xmlshortfile', 'alpha') : 'filelist-'.DOL_VERSION.getDolGlobalString('MAIN_FILECHECK_LOCAL_SUFFIX').'.xml'.getDolGlobalString('MAIN_FILECHECK_LOCAL_EXT'));
 
 $xmlfile = DOL_DOCUMENT_ROOT.'/install/'.$xmlshortfile;
 if (!preg_match('/\.zip$/i', $xmlfile) && dol_is_file($xmlfile.'.zip')) {
-	$xmlfile = $xmlfile.'.zip';
+	$xmlfile .= '.zip';
 }
 
 // Remote file to compare to
 $xmlremote = GETPOST('xmlremote', 'alphanohtml');
-if (empty($xmlremote) && !empty($conf->global->MAIN_FILECHECK_URL)) {
-	$xmlremote = $conf->global->MAIN_FILECHECK_URL;
+if (empty($xmlremote) && getDolGlobalString('MAIN_FILECHECK_URL')) {
+	$xmlremote = getDolGlobalString('MAIN_FILECHECK_URL');
 }
 $param = 'MAIN_FILECHECK_URL_'.DOL_VERSION;
-if (empty($xmlremote) && !empty($conf->global->$param)) {
-	$xmlremote = $conf->global->$param;
+if (empty($xmlremote) && getDolGlobalString($param)) {
+	$xmlremote = getDolGlobalString($param);
 }
 if (empty($xmlremote)) {
 	$xmlremote = 'https://www.dolibarr.org/files/stable/signatures/filelist-'.DOL_VERSION.'.xml';
 }
 if ($xmlremote && !preg_match('/^https?:\/\//', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustStartWithHttp", $xmlremote), null, 'errors');
 	$error++;
 } elseif ($xmlremote && !preg_match('/\.xml$/', $xmlremote)) {
 	$langs->load("errors");
-	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), '', 'errors');
+	setEventMessages($langs->trans("ErrorURLMustEndWith", $xmlremote, '.xml'), null, 'errors');
 	$error++;
 }
 
 // Test if remote test is ok
 $enableremotecheck = true;
-if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || !empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) {
+if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || getDolGlobalString('MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE')) {
 	$enableremotecheck = false;
 }
 $enableremotecheck = true;
@@ -175,7 +177,14 @@ if (GETPOST('target') == 'remote') {
 	if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
 		$xmlfile = $xmlarray['content'];
 		//print "xmlfilestart".$xmlfile."xmlfileend";
-		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA|LIBXML_NONET);
+		if (LIBXML_VERSION < 20900) {
+			// Avoid load of external entities (security problem).
+			// Required only if LIBXML_VERSION < 20900
+			// @phan-suppress-next-line PhanDeprecatedFunctionInternal
+			libxml_disable_entity_loader(true);
+		}
+
+		$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
 	} else {
 		$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].(($xmlarray['http_code'] == 400 && $xmlarray['content']) ? ' '.$xmlarray['content'] : '').' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
 		setEventMessages($errormsg, null, 'errors');
@@ -251,11 +260,11 @@ if (empty($error) && !empty($xml)) {
 			$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
 			if (!in_array($tmprelativefilename, $file_list['insignature'])) {
 				$md5newfile = @md5_file($valfile['fullname']); // Can fails if we don't have permission to open/read file
-				$file_list['added'][] = array('filename'=>$tmprelativefilename, 'md5'=>$md5newfile);
+				$file_list['added'][] = array('filename' => $tmprelativefilename, 'md5' => $md5newfile);
 			}
 		}
 
-		// Files missings
+		// Files missing
 		$out .= load_fiche_titre($langs->trans("FilesMissing"));
 
 		$out .= '<div class="div-table-responsive-no-min">';
@@ -410,7 +419,7 @@ if (empty($error) && !empty($xml)) {
 
 	asort($checksumconcat); // Sort list of checksum
 	//var_dump($checksumconcat);
-	$checksumget = md5(join(',', $checksumconcat));
+	$checksumget = md5(implode(',', $checksumconcat));
 	$checksumtoget = trim((string) $xml->dolibarr_htdocs_dir_checksum);
 
 	//var_dump(count($file_list['added']));

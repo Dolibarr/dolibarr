@@ -23,6 +23,7 @@
  *   \brief      Page to setup module ClickToDial
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -35,8 +36,8 @@ if (!$user->admin) {
 
 $action = GETPOST('action', 'aZ09');
 
-if (!in_array('clicktodial', $conf->modules)) {
-	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
+if (!isModEnabled('clicktodial')) {
+	accessforbidden($langs->transnoentitiesnoconv("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
 }
 
 
@@ -66,7 +67,7 @@ $form = new Form($db);
 $user->fetch_clicktodial();
 
 $wikihelp = 'EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
-llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp);
+llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-clicktodial');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setup');
@@ -88,7 +89,7 @@ print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'), 1).'<br>';
 print '<br>';
 print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';
@@ -107,7 +108,7 @@ print '* https://myphoneserver/phoneurl?login=__LOGIN__&password=__PASS__&caller
 print '* sip:__PHONETO__@my.sip.server';
 print '</span>';
 
-//if (! empty($user->clicktodial_url))
+//if (!empty($user->clicktodial_url))
 //{
 	print '<br>';
 	print info_admin($langs->trans("ValueOverwrittenByUserSetup"));
@@ -128,7 +129,6 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 
 // Url for CIDLookup
 //print '<div class="div-table-responsive-no-min">';
-//print $langs->trans("URLToLaunchCronJobs").':<br>';
 $url = $urlwithroot.'/public/clicktodial/cidlookup.php?securitykey='.getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP', 'ValueToDefine').'&phone=...';
 //print img_picto('', 'globe').' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.$url."</a><br>\n";
 //print '</div>';
@@ -139,7 +139,7 @@ print '<span class="opacitymedium">'.$langs->trans("CIDLookupURL").'</span>';
 print '<br>'.$url;
 print '<br>';
 print '<br>';
-print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (!empty($conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP) ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
+print '<input type="text" class="flat minwidth300" id="CLICKTODIAL_KEY_FOR_CIDLOOKUP" name="CLICKTODIAL_KEY_FOR_CIDLOOKUP" value="'.(GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? GETPOST('CLICKTODIAL_KEY_FOR_CIDLOOKUP') : (getDolGlobalString('CLICKTODIAL_KEY_FOR_CIDLOOKUP') ? $conf->global->CLICKTODIAL_KEY_FOR_CIDLOOKUP : '')).'">';
 if (!empty($conf->use_javascript_ajax)) {
 	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 }
@@ -154,7 +154,7 @@ print $form->buttonsSaveCancel("Modify", '');
 print '</form><br><br>';
 
 
-if (!empty($conf->global->CLICKTODIAL_URL)) {
+if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
 	$phonefortest = $mysoc->phone;
@@ -188,22 +188,10 @@ if (!empty($conf->global->CLICKTODIAL_URL)) {
 	}
 }
 
-if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-			$("#generate_token").click(function() {
-				console.log("Click done");
-				$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-					action: \'getrandompassword\',
-					generic: true
-				},
-					function(token) {
-						$("#CLICKTODIAL_KEY_FOR_CIDLOOKUP").val(token);
-					});
-				});
-			});';
-	print '</script>';
-}
+// Add button to autosuggest a key
+include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+print dolJSToSetRandomPassword('CLICKTODIAL_KEY_FOR_CIDLOOKUP');
+
 
 // End of page
 llxFooter();

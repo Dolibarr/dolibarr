@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2018  Charlene BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2015-2021  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,17 +36,7 @@ class box_task extends ModeleBoxes
 	public $boxlabel;
 	public $depends = array("projet");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $enabled = 1; // enable because fixed ;-).
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $enabled = 1;
 
 	/**
 	 *  Constructor
@@ -64,7 +54,7 @@ class box_task extends ModeleBoxes
 		$this->boxlabel = "Tasks";
 		$this->db = $db;
 
-		$this->hidden = (!empty($conf->global->PROJECT_HIDE_TASKS) || empty($user->rights->projet->lire));
+		$this->hidden = (getDolGlobalString('PROJECT_HIDE_TASKS') || !$user->hasRight('projet', 'lire'));
 	}
 
 	/**
@@ -115,7 +105,7 @@ class box_task extends ModeleBoxes
 		);
 
 		// list the summary of the orders
-		if ($user->rights->projet->lire) {
+		if ($user->hasRight('projet', 'lire')) {
 			$boxcontent .= '<div id="ancor-idfilter'.$this->boxcode.'" style="display: block; position: absolute; margin-top: -100px"></div>'."\n";
 			$boxcontent .= '<div id="idfilter'.$this->boxcode.'" class="center" >'."\n";
 			$boxcontent .= '<form class="flat " method="POST" action="'.$_SERVER["PHP_SELF"].'#ancor-idfilter'.$this->boxcode.'">'."\n";
@@ -126,7 +116,7 @@ class box_task extends ModeleBoxes
 			$boxcontent .= '</form>'."\n";
 			$boxcontent .= '</div>'."\n";
 			if (!empty($conf->use_javascript_ajax)) {
-				$boxcontent .= '<script type="text/javascript">
+				$boxcontent .= '<script nonce="'.getNonce().'" type="text/javascript">
 						jQuery(document).ready(function() {
 							jQuery("#idsubimg'.$this->boxcode.'").click(function() {
 								jQuery(".showiffilter'.$this->boxcode.'").toggle();
@@ -134,7 +124,7 @@ class box_task extends ModeleBoxes
 						});
 						</script>';
 				// set cookie by js
-				$boxcontent .= '<script>date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+				$boxcontent .= '<script nonce="'.getNonce().'">date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ ; SameSite=Lax"; </script>';
 			}
 			$this->info_box_contents[0][] = array(
 				'tr' => 'class="nohover showiffilter'.$this->boxcode.' hideobject"',
@@ -145,7 +135,7 @@ class box_task extends ModeleBoxes
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -168,7 +158,7 @@ class box_task extends ModeleBoxes
 			$sql .= " AND p.fk_statut = ".Project::STATUS_VALIDATED;
 			$sql .= " AND (pt.progress < 100 OR pt.progress IS NULL ) "; // 100% is done and not displayed
 			$sql .= " AND p.usage_task = 1 ";
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 
@@ -184,7 +174,7 @@ class box_task extends ModeleBoxes
 					$taskstatic->ref = $objp->ref;
 					$taskstatic->label = $objp->label;
 					$taskstatic->progress = $objp->progress;
-					$taskstatic->fk_statut = $objp->fk_statut;
+					$taskstatic->status = $objp->fk_statut;
 					$taskstatic->date_end = $this->db->jdate($objp->datee);
 					$taskstatic->planned_workload = $objp->planned_workload;
 					$taskstatic->duration_effective = $objp->duration_effective;

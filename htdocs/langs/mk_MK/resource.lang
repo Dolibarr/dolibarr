@@ -5,32 +5,34 @@ DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 NoResourceInDatabase=No resource in database.
 NoResourceLinked=No resource linked
-
+ActionsOnResource=Настани за овој ресурс
 ResourcePageIndex=Resources list
 ResourceSingular=Resource
 ResourceCard=Resource card
+NewResource=New resource
 AddResource=Create a resource
 ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
 ResourceFormLabel_description=Resource description
-
+ResourceType=Resource type
+ResourceTypeID=ИД на тип на ресурси
+ResourceTypeLabel=Ознака за тип на ресурси
 ResourcesLinkedToElement=Resources linked to element
 
 ShowResource=Show resource
-
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource successfully created
 RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 ResourceLinkedWithSuccess=Resource linked with success
-
 ConfirmDeleteResource=Confirm to delete this resource
 RessourceSuccessfullyDeleted=Resource successfully deleted
 DictionaryResourceType=Type of resources
-
 SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=ИД ресурс
+AssetNumber=Сериски број
+ResourceTypeCode=Код за тип на ресурси
 ImportDataset_resource_1=Resources
+ErrorResourcesAlreadyInUse=Некои ресурси се користат
+ErrorResourceUseInEvent=%s се користи во настанот %s
+MaxUsers=Максимални корисници (места, седишта, итн.)
+MaxUsersLabel=Максимални корисници

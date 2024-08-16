@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Zásady ochrany osobných údajov
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Modul na správu ochrany osobných údajov (v súlade s GDPR)
+# Administration page
+datapolicySetup = Nastavenie zásad ochrany osobných údajov modulu
+Deletion = Vymazanie údajov
+datapolicySetupPage = V závislosti od zákonov vašich krajín (príklad <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">článok 5</a> GDPR) musia byť osobné údaje uchovávané po dobu nepresahuje dobu, po ktorú sú údaje potrebné na účel, na ktorý boli zhromaždené, s výnimkou archívnych účelov.<br>Vymazanie sa vykoná automaticky po určitom čase bez udalostí (trvanie ktoré uvediete nižšie).
+NB_MONTHS = %s mesiacov
+ONE_YEAR = 1 rok
+NB_YEARS = %s rokov
+DATAPOLICY_TIERS_CLIENT = Zákazník
+DATAPOLICY_TIERS_PROSPECT = Vyhliadka
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Záujemca/zákazník
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ani potenciálny zákazník/ani zákazník
+DATAPOLICY_TIERS_FOURNISSEUR = Dodávateľ
+DATAPOLICY_CONTACT_CLIENT = Zákazník
+DATAPOLICY_CONTACT_PROSPECT = Vyhliadka
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Záujemca/zákazník
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ani potenciálny zákazník/ani zákazník
+DATAPOLICY_CONTACT_FOURNISSEUR = Dodávateľ
+DATAPOLICY_ADHERENT = Člen
+DATAPOLICY_Tooltip_SETUP = Typ kontaktu – uveďte svoje možnosti pre každý typ.
+SendAgreementText = Všetkým svojim relevantným kontaktom (ktorým ešte e-mail neprišiel a u ktorých ste nezaregistrovali nič o ich dohode s GDPR) môžete poslať GDPR email. Ak to chcete urobiť, použite nasledujúce tlačidlo.
+SendAgreement = Pošli e-maily
+AllAgreementSend = Všetky e-maily boli odoslané
+TXTLINKDATAPOLICYACCEPT = Text pre odkaz "dohoda"
+TXTLINKDATAPOLICYREFUSE = Text pre odkaz "nesúhlas"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR : Spracúvanie osobných údajov
+DATAPOLICY_consentement = Získaný súhlas so spracovaním osobných údajov
+DATAPOLICY_opposition_traitement = Namieta proti spracovaniu svojich osobných údajov
+DATAPOLICY_opposition_prospection = Namieta proti spracovaniu svojich osobných údajov na účely vyhľadávania
+# Notes added during an anonymization
+DATAPOLICY_date = Dátum súhlasu/nesúhlasu GDPR
+DATAPOLICY_send = Dátum odoslania e-mailu so zmluvou
+MailSent = E-mail bol odoslaný
+NUMBER_MONTH_BEFORE_DELETION = Počet mesiacov pred odstránením

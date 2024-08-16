@@ -8,8 +8,6 @@ LocalAgenda=التقويم الافتراضي
 ActionsOwnedBy=الحدث مملوك بواسطة
 ActionsOwnedByShort=مالك
 AffectedTo=مخصص ل
-Event=حدث
-Events=الأحداث
 EventsNb=عدد الأحداث
 ListOfActions=قائمة الأحداث
 EventReports=تقارير الحدث
@@ -23,7 +21,6 @@ MenuDoneMyActions=أحداثي الملغاة
 ListOfEvents=قائمة الأحداث (التقويم الافتراضي)
 ActionsAskedBy=أحداث تم إعداد التقرير عنها بواسطة
 ActionsToDoBy=أحداث عينت لـ
-ActionsDoneBy=أحداث تم اتمامها بواسطة
 ActionAssignedTo=الحدث مخصص ل
 ViewCal=عرض شهري
 ViewDay=عرض يومي
@@ -62,12 +59,13 @@ MemberSubscriptionAddedInDolibarr=تمت إضافة اشتراك %s للعضو %
 MemberSubscriptionModifiedInDolibarr=اشتراك %s للعضو %s معدّل
 MemberSubscriptionDeletedInDolibarr=تم حذف الاشتراك %s للعضو %s
 ShipmentValidatedInDolibarr=شحنة%s التأكد من صلاحيتها
-ShipmentClassifyClosedInDolibarr=الشحنة %sتم تصنيفها مدفوعة
+ShipmentClassifyClosedInDolibarr=الشحنة %s مصنفة مغلقة
 ShipmentUnClassifyCloseddInDolibarr=إعادة فتح الشحنة %s المصنفة
 ShipmentBackToDraftInDolibarr=تعود الشحنة %s إلى حالة المسودة
 ShipmentDeletedInDolibarr=الشحنة%sتم حذفها
 ShipmentCanceledInDolibarr=تم إلغاء الشحنة %s
 ReceptionValidatedInDolibarr=تم التحقق من صحة الاستقبال %s
+ReceptionDeletedInDolibarr=تم حذف الاستقبال %s
 ReceptionClassifyClosedInDolibarr=الاستقبال %s مصنف مغلق
 OrderCreatedInDolibarr=الطلب %s تم إنشاؤة
 OrderValidatedInDolibarr=الطلب %s تم التحقق منه
@@ -87,6 +85,9 @@ SupplierInvoiceSentByEMail=فاتورة البائع %s مُرسلة عبر ال
 ShippingSentByEMail=شحنة %s أرسلت عن طريق البريد الإلكتروني
 ShippingValidated= الشحنة %s تم التأكد من صلاحيتها
 InterventionSentByEMail=تم إرسال التدخل %s عبر البريد الإلكتروني
+ProjectSentByEMail=مشروع %s تم إرساله عبر البريد الإلكتروني
+ProjectDeletedInDolibarr=المشروع %s تم حذفة
+ProjectClosedInDolibarr=مشروع %s مغلق
 ProposalDeleted=تم حذف العرض
 OrderDeleted=تم حذف الطلب
 InvoiceDeleted=تم حذف الفاتورة
@@ -126,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=أنتجت MO
 MRP_MO_DELETEInDolibarr=تم حذف MO
 MRP_MO_CANCELInDolibarr=تم إلغاء MO
 PAIDInDolibarr=%s المدفوعة
+ENABLEDISABLEInDolibarr=تم تمكين المستخدم أو تعطيله
+CANCELInDolibarr=ملغي
 ##### End agenda events #####
 AgendaModelModule=نماذج المستندات للحدث
 DateActionStart=تاريخ البدء
 DateActionEnd=تاريخ النهاية
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لتصفية النتائج :
-AgendaUrlOptions3=<b>وجينا =%sإلى</b> تقييد الإخراج إلى الإجراءات التي يملكها المستخدم<b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>لوجينا=!%s</b> لمنع اخراج الجراءات التى لا يمتلكها المستخدم <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>لوجينت =%s</b> لتقييد الإخراج على الإجراءات المعينة للمستخدم <b>%s</b> (المالك والآخرين).
 AgendaUrlOptionsProject= مشروع <b> = __ PROJECT_ID__ </b> لتقييد الإخراج بالإجراءات المرتبطة بالمشروع <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = systemauto </b> لاستبعاد الأحداث التلقائية.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> تشمل الإجازات = 1 </b> لتضمين أحداث الأعياد.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=أعياد ميلاد جهات الاتصال
 AgendaHideBirthdayEvents=إخفاء تواريخ ميلاد جهات الإتصال
 Busy=مشغول
@@ -175,5 +180,28 @@ ReminderType=نوع رد الاتصال
 AddReminder=إنشاء إشعار تذكير تلقائي لهذا الحدث
 ErrorReminderActionCommCreation=خطأ في إنشاء إشعار التذكير لهذا الحدث
 BrowserPush=إعلام المتصفح المنبثق
+Reminders=تذكيرات
 ActiveByDefault=يتم التمكين افتراضيًا
 Until=حتى
+DataFromWasMerged=تم دمج البيانات من %s
+AgendaShowBookcalCalendar=تقويم الحجز: %s
+MenuBookcalIndex=موعد عبر الإنترنت
+BookcalLabelAvailabilityHelp=تسمية من نطاق التوفر. على سبيل المثال:<br>التوفر العام<br>التوفر خلال عطلات عيد الميلاد
+DurationOfRange=مدة النطاقات
+BookCalSetup = إعداد الموعد عبر الإنترنت
+BookCalSetupPage = صفحة إعداد الموعد عبر الإنترنت
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = عنوان الواجهة
+BookCalAbout = حول بوك كال
+BookCalAboutPage = BookCal حول الصفحة
+Calendars=التقاويم
+Availabilities=التوفر
+NewAvailabilities=الإمكانيات الجديدة
+NewCalendar=تقويم جديد
+ThirdPartyBookCalHelp=سيتم ربط الحدث المحجوز في هذا التقويم تلقائيًا بهذا الطرف الثالث.
+AppointmentDuration = مدة الموعد : %s
+BookingSuccessfullyBooked=لقد تم حفظ حجزك
+BookingReservationHourAfter=نؤكد حجز اجتماعنا في التاريخ %s
+BookcalBookingTitle=موعد عبر الإنترنت
+Transparency = الشفافية
+ReadMore = Read more
+ReadLess = Read less

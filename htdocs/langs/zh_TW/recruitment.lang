@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = 招募
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = 管理和追蹤招募活動中的新職位
-
-#
 # Admin page
-#
 RecruitmentSetup = 招募設定
-Settings = 設定
 RecruitmentSetupPage = 在此處輸入招募模組主要選項的設定
 RecruitmentArea=招募區域
 PublicInterfaceRecruitmentDesc=職缺的公共頁面是顯示和回答開放職缺的公開URL。每個職缺記錄上都有一個針對每個開放職缺的不同連結。
 EnablePublicRecruitmentPages=啟用開放工作的公共頁面
 
-#
-# About page
-#
-About = 關於
-RecruitmentAbout = 關於招募
-RecruitmentAboutPage = 關於頁面的招募
 NbOfEmployeesExpected=預期員工人數
 JobLabel=工作職位標籤
 WorkPlace=工作地點
@@ -49,7 +34,6 @@ PositionToBeFilled=工作職稱
 PositionsToBeFilled=工作職位
 ListOfPositionsToBeFilled=工作職位清單
 NewPositionToBeFilled=新職位
-
 JobOfferToBeFilled=職位空缺
 ThisIsInformationOnJobPosition=工作職位空缺訊息
 ContactForRecruitment=招募連絡人
@@ -57,15 +41,16 @@ EmailRecruiter=招募電子郵件
 ToUseAGenericEmail=使用普通電子郵件。如果未定義，將使用招募負責人的電子郵件
 NewCandidature=新申請
 ListOfCandidatures=申請清單
-RequestedRemuneration=要求的薪資
-ProposedRemuneration=擬議薪資
+Remuneration=薪資
+RequestedRemuneration=Requested salary
+ProposedRemuneration=Proposed salary
 ContractProposed=擬議合約
 ContractSigned=合約已簽訂
 ContractRefused=合約被拒絕
 RecruitmentCandidature=申請
 JobPositions=工作職位
 RecruitmentCandidatures=申請
-InterviewToDo=面試事項
+InterviewToDo=Contacts to follow
 AnswerCandidature=申請回覆
 YourCandidature=您的申請
 YourCandidatureAnswerMessage=感謝您的申請。 <br> ...
@@ -76,3 +61,6 @@ ExtrafieldsApplication=補充屬性（工作申請）
 MakeOffer=同意要求的薪資
 WeAreRecruiting=我們正在招聘。這是一個待填補的空缺職位清單...
 NoPositionOpen=暫時沒有職位空缺
+ConfirmClose=Confirm cancellation
+ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+Recruitment=招募

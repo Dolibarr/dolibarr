@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Politica de confidențialitate a datelor
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Modul de gestionare a confidențialității datelor cu caracter personal (conformitate cu GDPR)
+# Administration page
+datapolicySetup = Configurare modul Confidențialitatea datelor cu caracter personal
+Deletion = Ștergere date
+datapolicySetupPage = În funcție de legile din țara ta (Exemplu <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Articolul 5</a> din GDPR), datele cu caracter personal trebuie păstrate pentru o perioadă care nu depășește durata în care datele sunt necesare pentru scopul pentru care au fost colectate, cu excepția scopurilor de arhivare.<br>Ștergerea va fi se face automat după o anumită durată fără evenimente (durata pe care o vei indica mai jos).
+NB_MONTHS = %s luni
+ONE_YEAR = 1 an
+NB_YEARS = %s ani
+DATAPOLICY_TIERS_CLIENT = Client
+DATAPOLICY_TIERS_PROSPECT = Prospect
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Client
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nici prospect/Nici client
+DATAPOLICY_TIERS_FOURNISSEUR = Furnizor
+DATAPOLICY_CONTACT_CLIENT = Client
+DATAPOLICY_CONTACT_PROSPECT = Prospect
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Client
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nici prospect/Nici client
+DATAPOLICY_CONTACT_FOURNISSEUR = Furnizor
+DATAPOLICY_ADHERENT = Membru
+DATAPOLICY_Tooltip_SETUP = Tip de contact - Indică opțiunile tale pentru fiecare tip. 
+SendAgreementText = Poți trimite un email de acord GDPR tuturor persoanelor de contact relevante (care nu au primit încă un email și pentru care nu ai înregistrat nimic despre acordul lor GDPR). Pentru a face acest lucru, utilizează următorul buton.
+SendAgreement = Trimite email-uri
+AllAgreementSend = Toate email-urile au fost trimise
+TXTLINKDATAPOLICYACCEPT = Text pentru linkul "acord"
+TXTLINKDATAPOLICYREFUSE = Text pentru link "dezacord"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Prelucrarea datelor cu caracter personal
+DATAPOLICY_consentement = Consimțământul obținut pentru prelucrarea datelor cu caracter personal
+DATAPOLICY_opposition_traitement = Se opune prelucrării datelor sale personale
+DATAPOLICY_opposition_prospection = Se opune prelucrării datelor sale personale în scopuri de prospectare
+# Notes added during an anonymization
+DATAPOLICY_date = Dată acord/dezacord GDPR
+DATAPOLICY_send = Dată trimitere email acord
+MailSent = Email-ul a fost trimis
+NUMBER_MONTH_BEFORE_DELETION = Număr de luni înainte de ștergere

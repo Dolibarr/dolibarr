@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +22,7 @@
 /**
  *       \file       htdocs/core/modules/product/mod_codeproduct_leopard.php
  *       \ingroup    product
- *       \brief      Fichier de la classe des gestion leopard des codes produits
+ *       \brief      Fichier de la class des gestion leopard des codes produits
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
@@ -28,48 +30,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 
 /**
  *	\class 		mod_codeproduct_leopard
- *	\brief 		Classe permettant la gestion leopard des codes produits
+ *	\brief 		Class permettant la gestion leopard des codes produits
  */
 class mod_codeproduct_leopard extends ModeleProductCode
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
+	 * Please note this module is used by default if no module has been defined in the configuration
 	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+	 * Its operation must therefore remain as open as possible
 	 */
 
-	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see $name
-	 */
-	public $nom = 'Leopard';
-
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModelProductCode class
 	public $name = 'Leopard';
-
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
+	public $version = 'dolibarr';
 
 	/**
 	 *	Constructor
@@ -96,17 +69,28 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	Translate	$langs		Object langs
+	 * @param	Product		$objproduct		Object product
+	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string					Return string example
+	 */
+	public function getExample($langs, $objproduct = null, $type = -1)
+	{
+		return '';
+	}
 
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	product		$objproduct		Object product
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
-	 * @return	string					Return next value
+	 * @param	Product|string	$objproduct	Object product
+	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return next value
 	 */
-	public function getNextValue($objproduct = 0, $type = -1)
+	public function getNextValue($objproduct = '', $type = -1)
 	{
-		global $langs;
 		return '';
 	}
 
@@ -131,9 +115,9 @@ class mod_codeproduct_leopard extends ModeleProductCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED)) {
+		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED))) {
+		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
 			$result = -2;
 		}
 

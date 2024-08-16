@@ -21,32 +21,23 @@
 /**
  *	\file       htdocs/core/boxes/box_clients.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module for generating box to show last customers
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
- * Class to manage the box to show last thirdparties
+ * Class to manage the box to show last customers
  */
 class box_clients extends ModeleBoxes
 {
-	public $boxcode = "lastcustomers";
-	public $boximg = "object_company";
+	public $boxcode  = "lastcustomers";
+	public $boximg   = "object_company";
 	public $boxlabel = "BoxLastCustomers";
-	public $depends = array("societe");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
+	public $depends  = array("societe");
 
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -56,16 +47,16 @@ class box_clients extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-		global $conf, $user;
+		global $user;
 
 		$this->db = $db;
 
 		// disable box for such cases
-		if (!empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+		if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 			$this->enabled = 0; // disabled by this option
 		}
 
-		$this->hidden = !($user->rights->societe->lire && empty($user->socid));
+		$this->hidden = !($user->hasRight('societe', 'read') && empty($user->socid));
 	}
 
 	/**
@@ -84,20 +75,22 @@ class box_clients extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 		$thirdpartystatic = new Client($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedCustomers", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedCustomers", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/societe/list.php?type=c&sortfield=s.tms&sortorder=DESC"><span class="badge">...</span></a>',
+		);
 
-		if ($user->rights->societe->lire) {
+		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE s.client IN (1, 3)";
 			$sql .= " AND s.entity IN (".getEntity('societe').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks
@@ -127,7 +120,8 @@ class box_clients extends ModeleBoxes
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
-					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta = $objp->code_compta_client;
+					$thirdpartystatic->code_compta_client = $objp->code_compta_client;
 					$thirdpartystatic->client = $objp->client;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
@@ -154,8 +148,8 @@ class box_clients extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedCustomers")
+					'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedCustomers").'</span>'
 					);
 				}
 
@@ -169,8 +163,8 @@ class box_clients extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

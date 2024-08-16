@@ -31,6 +31,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -58,11 +59,11 @@ if (!$conf->global->TAKEPOS_QR_MENU) {
 
 <?php
 $categorie = new Categorie($db);
-$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+$categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 $levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {
+if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	foreach ($categories as $key => $categorycursor) {
-		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
+		if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
 		}
@@ -97,7 +98,7 @@ foreach ($maincategories as $cat) {
 			<div class="item">
                 <h4>'.$pro->label.'</h4>
                 <span class="dots"></span>
-                <span class="price">'.price($pro->price_ttc, 1).'</span>
+                <span class="price">'.price($pro->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</span>
             </div>
         </div>';
 	}

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=ユーザの取引先に使用される勘定科目
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=ユーザカードで定義された専用の勘定科目は、補助元帳の会計にのみ使用される。これは総勘定元帳に使用され、ユーザの専用ユーザ勘定科目が定義されていない場合は補助元帳会計のデフォルト値として使用される。
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=給与の「ユーザー」にデフォルトで使用される勘定科目 (勘定科目表から)
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=ユーザ カードで定義された専用アカウントは、補助元帳会計にのみ使用される。このアカウントは総勘定元帳に使用されるが、ユーザ に専用の ユーザ 会計アカウントが定義されていない場合は、補助元帳会計のデフォルト値としても使用される。
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=賃金支払のデフォルトの勘定科目
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=デフォルトでは、給与を作成するときに ”支払合計を自動的に作成" オプションを空のままにする
 Salary=給料
@@ -24,4 +24,10 @@ SalariesStatistics=給与統計
 SalariesAndPayments=給与と支払
 ConfirmDeleteSalaryPayment=この給与支払を削除するか？
 FillFieldFirst=最初に従業員フィールドに入力する
-UpdateAmountWithLastSalary=最終給与で金額を設定する
+UpdateAmountWithLastSalary=最終給与額の設定
+MakeTransferRequest=転送リクエストを行う
+VirementOrder=単位振替リクエスト
+BankTransferAmount=振込金額
+WithdrawalReceipt=債権譲渡注文
+OrderWaiting=未決注文
+FillEndOfMonth=月末を記入

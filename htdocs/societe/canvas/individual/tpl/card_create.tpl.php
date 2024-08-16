@@ -19,7 +19,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 ?>
@@ -57,7 +57,7 @@ if (empty($conf) || !is_object($conf)) {
 <tr>
 	<td><span class="fieldrequired"><?php echo $langs->trans('LastName'); ?></span></td>
 	<td><input type="text" size="30" maxlength="60" name="nom" value="<?php echo $this->control->tpl['nom']; ?>"></td>
-	<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+	<?php if (getDolGlobalString('SOCIETE_USEPREFIX')) { ?>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td><input type="text" size="5" maxlength="5" name="prefix_comm" value="<?php echo $this->control->tpl['prefix_comm']; ?>"></td>
 	<?php } ?>
@@ -113,7 +113,7 @@ if (empty($conf) || !is_object($conf)) {
 	<?php }
 }
 
-if (!empty($conf->barcode->enabled)) { ?>
+if (isModEnabled('barcode')) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>
@@ -122,7 +122,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 
 <tr>
 	<td class="tdtop"><?php echo $langs->trans('Address'); ?></td>
-	<td colspan="3"><textarea name="adresse" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
+	<td colspan="3"><textarea name="address" cols="40" rows="3"><?php echo $this->control->tpl['address']; ?></textarea></td>
 </tr>
 
 <tr>
@@ -144,7 +144,9 @@ if (!empty($conf->barcode->enabled)) { ?>
 
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
-	<td><input type="text" name="tel" value="<?php echo $this->control->tpl['tel']; ?>"></td>
+	<td><input type="text" name="phone" value="<?php echo $this->control->tpl['phone']; ?>"></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><input type="text" name="phone_mobile" value="<?php echo $this->control->tpl['phone_mobile']; ?>"></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><input type="text" name="fax" value="<?php echo $this->control->tpl['fax']; ?>"></td>
 </tr>
@@ -156,7 +158,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 	<td><input type="text" name="url" size="32" value="<?php echo $this->control->tpl['url']; ?>"></td>
 </tr>
 
-<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (getDolGlobalInt('MAIN_MULTILANGS')) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_lang']; ?></td>
@@ -172,7 +174,7 @@ if (!empty($conf->barcode->enabled)) { ?>
 	echo $this->control->tpl['localtax'];
 } ?>
 
-<?php if ($user->rights->societe->client->voir) { ?>
+<?php if ($user->hasRight('societe', 'client', 'voir')) { ?>
 <tr>
 	<td><?php echo $langs->trans("AllocateCommercial"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_users']; ?></td>

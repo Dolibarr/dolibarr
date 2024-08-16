@@ -26,23 +26,31 @@
  *   \ingroup    societe
  */
 
+
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$action = GETPOST('action', 'aZ09');
 
+// Load translation files required by the page
 $langs->load("companies");
 
-$id = GETPOST('id') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 
+// Get parameters
+$id = GETPOST('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
+$action = GETPOST('action', 'aZ09');
+
+
+// Initialize objects
 $object = new Societe($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
 
-$permissionnote = $user->rights->societe->creer; // Used by the include of actions_setnotes.inc.php
+// Permissions
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartynote', 'globalcard'));
 
 // Security check
@@ -50,18 +58,21 @@ if ($user->socid > 0) {
 	unset($action);
 	$socid = $user->socid;
 }
+
 $result = restrictedArea($user, 'societe', $object->id, '&societe');
 
 
 /*
  * Actions
  */
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -72,7 +83,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $title = $langs->trans("ThirdParty").' - '.$langs->trans("Notes");
-if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 	$title = $object->name.' - '.$langs->trans("Notes");
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
@@ -82,9 +93,6 @@ if ($object->id > 0) {
 	/*
 	 * Affichage onglets
 	 */
-	if (!empty($conf->notification->enabled)) {
-		$langs->load("mails");
-	}
 
 	$head = societe_prepare_head($object);
 
@@ -108,7 +116,7 @@ if ($object->id > 0) {
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
 
-	if (!empty($conf->global->SOCIETE_USEPREFIX)) {  // Old not used prefix field
+	if (getDolGlobalString('SOCIETE_USEPREFIX')) {  // Old not used prefix field
 		print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 	}
 

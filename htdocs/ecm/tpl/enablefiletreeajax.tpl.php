@@ -24,6 +24,7 @@ if (empty($conf) || !is_object($conf)) {
 	print "Error, template enablefiletreeajax.tpl.php can't be called as URL";
 	exit;
 }
+// Must have set $module, $nameforformuserfile, $preopened
 
 ?>
 
@@ -57,7 +58,7 @@ $(document).ready(function() {
 		multiFolder: false  },
 		// Called if we click on a file (not a dir)
 		function(file) {
-			console.log("We click on a file");
+			console.log("We click on a file "+file);
 			$("#mesg").hide();
 			loadandshowpreview(file,0);
 		},
@@ -65,7 +66,7 @@ $(document).ready(function() {
 		function(elem) {
 			id=elem.attr('id').substr(12);	// We get id that is 'fmdirlia_id_xxx' (id we want is xxx)
 			rel=elem.attr('rel')
-			console.log("We click on a dir, we call the ajaxdirtree.php with modulepart=<?php echo $module; ?>, param=<?php echo $paramwithoutsection; ?>");
+			console.log("We click on a dir id="+id+", we call the ajaxdirtree.php with modulepart=<?php echo $module; ?>, param=<?php echo $paramwithoutsection; ?>");
 			console.log("We also save id and dir name into <?php echo $nameforformuserfile ?>_section_id|dir (vars into form to attach new file in filemanager.tpl.php) with id="+id+" and rel="+rel);
 			jQuery("#<?php echo $nameforformuserfile ?>_section_dir").val(rel);
 			jQuery("#<?php echo $nameforformuserfile ?>_section_id").val(id);
@@ -101,7 +102,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection) ? '' : "+'".$paramwithoutsection."'"); ?>;
+	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo(empty($paramwithoutsection) ? '' : "+'".$paramwithoutsection."'"); ?>;
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);

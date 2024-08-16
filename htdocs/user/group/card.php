@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Herve Prot				<herve.prot@symeos.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,55 +26,58 @@
  *       \brief      Tab of a user group
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-// Defini si peux lire/modifier utilisateurs et permisssions
-$canreadperms = ($user->admin || $user->rights->user->user->lire);
-$caneditperms = ($user->admin || $user->rights->user->user->creer);
-$candisableperms = ($user->admin || $user->rights->user->user->supprimer);
+// Define if user can read permissions
+$canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
+$caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
+$candisableperms = ($user->admin || $user->hasRight("user", "user", "delete"));
 $feature2 = 'user';
 
 // Advanced permissions
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
-	$caneditperms = ($user->admin || $user->rights->user->group_advance->write);
-	$candisableperms = ($user->admin || $user->rights->user->group_advance->delete);
+$advancedpermsactive = false;
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$advancedpermsactive = true;
+	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
+	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
+	$candisableperms = ($user->admin || $user->hasRight("user", "group_advance", "delete"));
 	$feature2 = 'group_advance';
 }
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$userid = GETPOST('user', 'int');
+$userid = GETPOSTINT('user');
 
-$object = new Usergroup($db);
+$object = new UserGroup($db);
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-$object->getrights();
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+$object->loadRights();
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', $feature2);
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE) {
 	accessforbidden();
 }
 
@@ -135,7 +139,7 @@ if (empty($reshook)) {
 					$error++;
 				}
 
-				if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					$object->entity = 0;
 				} else {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {		// Same permissions test than the one used to show the combo of entities into the form
@@ -208,6 +212,7 @@ if (empty($reshook)) {
 
 			$object->name = GETPOST("nom", 'alphanohtml');
 			$object->note = dol_htmlcleanlastbr(trim(GETPOST("note", 'restricthtml')));
+			$object->tms = dol_now();
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -215,10 +220,10 @@ if (empty($reshook)) {
 				$error++;
 			}
 
-			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$object->entity = 0;
 			} elseif (GETPOSTISSET("entity")) {
-				$object->entity = GETPOST("entity", "int");
+				$object->entity = GETPOSTINT("entity");
 			}
 
 			$ret = $object->update();
@@ -238,7 +243,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$upload_dir = $conf->user->dir_output.'/usergroups';
-	$permissiontoadd = $user->rights->user->user->creer;
+	$permissiontoadd = $user->hasRight("user", "user", "write");
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -247,7 +252,13 @@ if (empty($reshook)) {
  * View
  */
 
-llxHeader('', $langs->trans("GroupCard"));
+$title = $object->name.' - '.$langs->trans("Card");
+if ($action == 'create') {
+	$title = $langs->trans("NewGroup");
+}
+$help_url = "";
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_card');
+
 
 $form = new Form($db);
 $fuserstatic = new User($db);
@@ -264,13 +275,13 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('', '', '', 0, '');
+	print dol_get_fiche_head(array(), '', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
 	// Multicompany
-	if (!empty($conf->multicompany->enabled) && is_object($mc)) {
-		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+	if (isModEnabled('multicompany') && is_object($mc)) {
+		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
@@ -303,8 +314,6 @@ if ($action == 'create') {
 	/*                                                                            */
 	/* ************************************************************************** */
 	if ($id) {
-		$res = $object->fetch_optionals();
-
 		$head = group_prepare_head($object);
 		$title = $langs->trans("Group");
 
@@ -316,7 +325,7 @@ if ($action == 'create') {
 		}
 
 		/*
-		 * Fiche en mode visu
+		 * Card in view mode
 		 */
 
 		if ($action != 'edit') {
@@ -324,7 +333,7 @@ if ($action == 'create') {
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-			dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
+			dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
@@ -343,7 +352,7 @@ if ($action == 'create') {
 			}
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+			if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -393,7 +402,7 @@ if ($action == 'create') {
 
 			print load_fiche_titre($langs->trans("ListOfUsersInGroup"), '', 'user');
 
-			// On selectionne les users qui ne sont pas deja dans le groupe
+			// Select the users that do not belong to the group yet
 			$exclude = array();
 
 			if (!empty($object->members)) {
@@ -412,6 +421,7 @@ if ($action == 'create') {
 					print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="POST">'."\n";
 					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="adduser">';
+					print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 					print '<table class="noborder centpercent">'."\n";
 					print '<tr class="liste_titre"><td class="titlefield liste_titre">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 					print '<td class="liste_titre">';
@@ -420,15 +430,17 @@ if ($action == 'create') {
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 					print '<input type="submit" class="button buttongen button-add" value="'.$langs->trans("Add").'">';
 					print '</td></tr>'."\n";
-					print '</table></form>'."\n";
-					print '<br>';
+					print '</table>';
+					print '</div>';
+					print '</form>'."\n";
+					//print '<br>';
 				}
 
 				/*
 				 * Group members
 				 */
 
-				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+				print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 				print '<table class="noborder centpercent">';
 				print '<tr class="liste_titre">';
 				print '<td class="liste_titre">'.$langs->trans("Login").'</td>';
@@ -438,15 +450,17 @@ if ($action == 'create') {
 				print '<td class="liste_titre right" width="5">&nbsp;</td>';
 				print "</tr>\n";
 
+				$object->fetch($object->id, '', true);	// true to force load of all users, member of the group
+
 				if (!empty($object->members)) {
 					foreach ($object->members as $useringroup) {
 						print '<tr class="oddeven">';
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
-							print img_picto($langs->trans("SuperAdministrator"), 'redstar');
+							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
 						} elseif ($useringroup->admin) {
-							print img_picto($langs->trans("Administrator"), 'star');
+							print img_picto($langs->trans("AdministratorDesc"), 'star');
 						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';
@@ -463,7 +477,7 @@ if ($action == 'create') {
 						print "</td></tr>\n";
 					}
 				} else {
-					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+					print '<tr><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 				}
 				print "</table>";
 				print '</div>';
@@ -480,8 +494,8 @@ if ($action == 'create') {
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output."/usergroups/".dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->user->user->creer;
-			$delallowed = $user->rights->user->user->supprimer;
+			$genallowed = $user->hasRight("user", "user", "write");
+			$delallowed = $user->hasRight("user", "user", "delete");
 
 			$somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $mysoc->default_lang);
 
@@ -494,13 +508,13 @@ if ($action == 'create') {
 			// List of actions on element
 			/*include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
+			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1, '', $MAXEVENT);*/
 
 			print '</div></div>';
 		}
 
 		/*
-		 * Fiche en mode edition
+		 * Card in edit mode
 		 */
 
 		if ($action == 'edit' && $caneditperms) {
@@ -515,8 +529,8 @@ if ($action == 'create') {
 			print '<table class="border centpercent tableforfieldedit">'."\n";
 
 			// Multicompany
-			if (!empty($conf->multicompany->enabled) && is_object($mc)) {
-				if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+			if (isModEnabled('multicompany') && is_object($mc)) {
+				if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);
 					print "</td></tr>\n";

@@ -1,20 +1,24 @@
 # DOLIBARR ERP & CRM
 
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
-![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
+[![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans).
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
+
 ## LICENCE
 
 Dolibarr est distribué sous les termes de la licence GNU General Public License v3+ ou supérieure.
 
+
 ## INSTALLER DOLIBARR
 
-### Configuration simple
+### Installation simple
 
 Si vous avez peu de compétences techniques et que vous souhaitez installer Dolibarr ERP/CRM en quelques clics, vous pouvez utiliser l'une des versions pré-packagées avec les prérequis:
 
@@ -24,7 +28,7 @@ Si vous avez peu de compétences techniques et que vous souhaitez installer Doli
 
 Les packages peuvent être téléchargés à partir de [site web officiel](https://www.dolibarr.org/).
 
-### Configuration avancée
+### Installation recommandée/avancée
 
 Vous pouvez aussi utiliser un serveur Web et une base de données prise en charge (MariaDB, MySQL ou PostgreSQL) pour installer la version standard.
 
@@ -52,9 +56,14 @@ Vous pouvez aussi utiliser un serveur Web et une base de données prise en charg
 
 - Suivez les instructions de l'installateur
 
+
 ## METTRE A JOUR DOLIBARR
 
 Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
+
+- Faites une sauvegarde de votre instance [voir ce tutorial](https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr)
+
+- Vérifiez que la nouvelle version est compatible avec la version PHP de votre serveur [voir PHP support](https://wiki.dolibarr.org/index.php/Releases).
 
 - Ecrasez les vieux fichiers dans le vieux répertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
@@ -64,9 +73,11 @@ Pour mettre à jour Dolibarr depuis une vieille version vers celle ci:
 
 Note: *Le processus de migration peut être lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
 
+
 ## CE QUI EST NOUVEAU
 
-See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
+Voir le fichier [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog).
+
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
@@ -84,11 +95,11 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Gestion de contrats de services
 - Gestion de stock et inventaires
 - Gestion des expéditions
-- Gestion des demandes de congès
+- Gestion des demandes de congés
 - Gestion des notes de frais
 - Gestion de recrutement
 - GED (Gestion Electronique de Documents)
-- EMailings de masse
+- E-Mailings de masse
 - Réalisation de sondages
 - Gestion d'adhérents
 - Point de vente/Caisse enregistreuse
@@ -103,17 +114,17 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Support des codes barres
 - Calcul des marges
 - Connectivité LDAP
-- Intégratn de ClickToDial
+- Intégration de ClickToDial
 - Intégration RSS
-- Intégation Skype
-- Intégration de système de paiements (Paypal, Stripe, Paybox...)
+- Intégration Skype
+- Intégration de système de paiements (PayPal, Stripe, Paybox...)
 - …
 
 ### Divers
 
 - Multi-langue.
 - Multi-utilisateurs avec différents niveaux de permissions par module.
-- Multi-devise.
+- Multidevise.
 - Peux être multi-société par ajout du module externe multi-société.
 - Plusieurs thèmes visuels.
 - Application simple à utiliser.
@@ -123,7 +134,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 - Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
 - Support natif de nombreuses fonctions spécifiques aux pays comme:
-  - La tax espagnole TE et ISPF
+  - La taxe espagnole TE et ISPF
   - Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
   - La loi française Finance 2016 et logiciels de caisse
   - La double taxe canadienne
@@ -135,7 +146,8 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Extension
 
-Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
+Dolibarr peut aussi être étendu à volonté avec l'ajout de modules/applications externes développées par des développeurs tiers, disponible sur [DoliStore](https://www.dolistore.com).
+
 
 ## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
@@ -146,9 +158,11 @@ Voici un liste de fonctionnalités pas encore gérées par Dolibarr:
 - Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore).
 
+
 ## DOCUMENTATION
 
 La documentation utilisateur, développeur et traducteur est disponible sous forme de ressources de la communauté via le site [Wiki](https://wiki.dolibarr.org).
+
 
 ## CONTRIBUER
 
@@ -156,23 +170,25 @@ Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://gith
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
 
+
 ## CREDITS
 
 Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
 
 Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT)
 
+
 ## ACTUALITES ET RESEAUX SOCIAUX
 
-Suivez le projet Dolibarr project sur les réseaux francophones
+Suivez le projet Dolibarr sur les réseaux francophones
 
 - [Facebook](https://www.facebook.com/dolibarr.fr)
-- [Twitter](https://www.twitter.com/dolibarr_france)
+- [X](https://www.twitter.com/dolibarr_france)
 
 ou sur les réseaux anglophones
 
 - [Facebook](https://www.facebook.com/dolibarr)
-- [Twitter](https://www.twitter.com/dolibarr)
+- [X](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

@@ -24,11 +24,11 @@ FinancialCommitment=Ӯҳдадории молиявӣ
 InterestAmount=Фоиз
 CapitalRemain=Сармоя боқӣ мемонад
 TermPaidAllreadyPaid = Ин мӯҳлат аллакай пардохта шудааст
-CantUseScheduleWithLoanStartedToPaid = Can't generate a timeline for a loan with a payment started
+CantUseScheduleWithLoanStartedToPaid = Ҷадвали қарзро бо пардохт оғоз карда наметавонад
 CantModifyInterestIfScheduleIsUsed = Агар шумо ҷадвалро истифода баред, шумо наметавонед фоизҳоро тағир диҳед
 # Admin
 ConfigLoan=Танзимоти қарзи модул
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Сармояи ҳисоби баҳисобгирӣ бо нобаёнӣ
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Фоизи суратҳисоби баҳисобгирӣ бо нобаёнӣ
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Суғуртаи суратҳисоби баҳисобгирӣ бо нобаёнӣ
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои сармоя истифода мешавад (модули қарз)
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои фоизҳо истифода мешавад (модули қарз)
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Ҳисоб (аз Нақшаи ҳисоб), ки ба таври нобаёнӣ барои суғурта истифода мешавад (модули қарз)
 CreateCalcSchedule=Таҳрири ӯҳдадориҳои молиявӣ

@@ -20,9 +20,10 @@
 /**
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
- *       \brief      Page fiche LDAP groupe
+ *       \brief      Page Record LDAP Group
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
@@ -41,18 +42,18 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$object = new Usergroup($db);
-$object->fetch($id);
-$object->getrights();
+$object = new UserGroup($db);
+$object->fetch($id, '', true);
+$object->loadRights();
 
 // Users/Groups management only in master entity if transverse mode
-if (!empty($conf->multicompany->enabled) && $conf->entity > 1 && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
 $canreadperms = true;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
-	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
+	$canreadperms = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 
@@ -62,13 +63,13 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
 
 		// Get a gid number for objectclass PosixGroup if none was provided
-		if (empty($info[$conf->global->LDAP_GROUP_FIELD_GROUPID]) && in_array('posixGroup', $info['objectclass'])) {
+		if (empty($info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')]) && in_array('posixGroup', $info['objectclass'])) {
 			$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
 		}
 
@@ -92,7 +93,9 @@ if ($action == 'dolibarr2ldap') {
 
 $form = new Form($db);
 
-llxHeader();
+$title = $object->name." - ".$langs->trans('LDAP');
+$help_url = '';
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_ldap');
 
 $head = group_prepare_head($object);
 
@@ -100,12 +103,12 @@ print dol_get_fiche_head($head, 'ldap', $langs->trans("Group"), -1, 'group');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'id', $linkback, (!empty($user->rights->user->user->lire) || !empty($user->admin)));
+dol_banner_tab($object, 'id', $linkback, ($user->hasRight('user', 'user', 'lire') || !empty($user->admin)));
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
 if (!empty($conf->mutlicompany->enabled)) {
@@ -159,7 +162,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisGroup"));
 
 print '<table class="noborder centpercent">';
@@ -171,7 +174,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

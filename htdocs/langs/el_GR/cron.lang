@@ -1,75 +1,75 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
-Permission23101 = Λεπτομέρειες προγραμματισμένης εργασίας
+# Permissions
+Permission23101 = Ανάγνωση Προγραμματισμένης εργασίας
 Permission23102 = Δημιουργία/ενημέρωση προγραμματισμένης εργασίας
 Permission23103 = Διαγραφή προγραμματισμένης εργασίας
 Permission23104 = Εκτέλεση προγραμματισμένης εργασίας
 # Admin
-CronSetup=Προγραμματισμένη ρύθμιση διαχείρισης των εργασιών
+CronSetup=Ρύθμιση διαχείρισης προγραμματισμένων εργασιών
 URLToLaunchCronJobs=URL για να ελέγξετε και να ξεκινήσετε τις κατάλληλες εργασίες cron από ένα πρόγραμμα περιήγησης
 OrToLaunchASpecificJob=Ή για να ελέγξετε και να ξεκινήσετε μια συγκεκριμένη εργασία από ένα πρόγραμμα περιήγησης
 KeyForCronAccess=Κλειδί ασφαλείας για το URL για να ξεκινήσει η εργασία cron
 FileToLaunchCronJobs=Γραμμή εντολών για έλεγχο και εκκίνηση ειδικών εργασιών cron
-CronExplainHowToRunUnix=Στο Unix περιβάλλον θα πρέπει να χρησιμοποιήσετε την ακόλουθη καταχώρηση crontab για να τρέχει η γραμμή εντολών καθένα 5 λεπτά
-CronExplainHowToRunWin=Στο περιβάλλον Microsoft (tm) των Windows μπορείτε να χρησιμοποιήσετε τα εργαλεία προγραμματισμένης εργασίας για να εκτελέσετε τη γραμμή εντολών κάθε 5 λεπτά
-CronMethodDoesNotExists=Class %s does not contains any method %s
-CronMethodNotAllowed=Η μέθοδος %s της κλάσης %s βρίσκεται στη μαύρη λίστα των απαγορευμένων μεθόδων
-CronJobDefDesc=Τα προφίλ εργασίας Cron ορίζονται στο αρχείο περιγραφικής ενότητας. Όταν η ενότητα είναι ενεργοποιημένη, φορτώνεται και είναι διαθέσιμη, ώστε να μπορείτε να διαχειριστείτε τις εργασίες από το μενού εργαλείων admin %s.
-CronJobProfiles=Λίστα προκαθορισμένων προφίλ εργασίας cron
+CronExplainHowToRunUnix=Στο περιβάλλον Unix θα πρέπει να χρησιμοποιήσετε την ακόλουθη καταχώρηση crontab για να εκτελείτε τη γραμμή εντολών κάθε 5 λεπτά
+CronExplainHowToRunWin=Στο περιβάλλον των Microsoft (tm) Windows μπορείτε να χρησιμοποιήσετε τα εργαλεία προγραμματισμένης εργασίας για να εκτελέσετε τη γραμμή εντολών κάθε 5 λεπτά
+CronMethodDoesNotExists=Η κλάση %s δεν περιέχει καμία μέθοδο %s
+CronMethodNotAllowed=Η μέθοδος %s της κλάσης %s βρίσκεται στη λίστα απαγορευμένων μεθόδων.
+CronJobDefDesc=Τα προφίλ εργασίας Cron ορίζονται στο αρχείο παραμετροποιήσεων της ενότητας. Όταν η ενότητα είναι ενεργοποιημένη, φορτώνονται και είναι διαθέσιμες, ώστε να μπορείτε να διαχειριστείτε τις εργασίες από το μενού Εργαλεία διαχειριστή %s.
+CronJobProfiles=Λίστα προκαθορισμένων προφίλ εργασιών cron
 # Menu
-EnabledAndDisabled=Ενεργοποίηση και απενεργοποίηση
+EnabledAndDisabled=Ενεργοποιημένες και απενεργοποιημένες
 # Page list
-CronLastOutput=Latest run output
-CronLastResult=Latest result code
+CronLastOutput=Output τελευταίας εκτέλεσης Cron
+CronLastResult=Αποτέλεσμα τελευταίας εκτέλεσης Cron
 CronCommand=Εντολή
 CronList=Προγραμματισμένες εργασίες
 CronDelete=Διαγραφή προγραμματισμένων εργασιών
-CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
-CronExecute=Launch scheduled job
-CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
-CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
+CronConfirmDelete=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτές τις προγραμματισμένες εργασίες;
+CronExecute=Εκκίνηση τώρα
+CronConfirmExecute=Είστε σίγουροι ότι θέλετε να εκτελέσετε αυτές τις προγραμματισμένες εργασίες τώρα;
+CronInfo=Η ενότητα προγραμματισμένης εργασίας επιτρέπει τον προγραμματισμό εργασιών ώστε να εκτελούνται αυτόματα. Οι εργασίες μπορούν επίσης να ξεκινήσουν χειροκίνητα.
 CronTask=Εργασία
-CronNone=Καμία
+CronNone=Επόμενη εκτέλεση προγραμματισμένης εργασίας
+CronNotYetRan=Δεν εκτελέστηκε ποτέ
 CronDtStart=Όχι πριν
 CronDtEnd=Όχι μετά
 CronDtNextLaunch=Επόμενη εκτέλεση
-CronDtLastLaunch=Start date of latest execution
-CronDtLastResult=End date of latest execution
+CronDtLastLaunch=Ημερομηνία έναρξης της τελευταίας εκτέλεσης
+CronDtLastResult=Ημερομηνία λήξης της τελευταίας εκτέλεσης
 CronFrequency=Συχνότητα
-CronClass=Κατηγορία
+CronClass=Κλάση
 CronMethod=Μέθοδος
-CronModule=Module
+CronModule=Ενότητα
 CronNoJobs=Δεν έχουν καταχωρηθεί εργασίες
 CronPriority=Προτεραιότητα
 CronLabel=Ετικέτα
-CronNbRun=Αριθμός εκτοξεύσεων
-CronMaxRun=Μέγιστος αριθμός εκτοξεύσεων
+CronNbRun=Αριθμός εκκινήσεων Cron
+CronMaxRun=Μέγιστος αριθμός εκκινήσεων
 CronEach=Κάθε
-JobFinished=Ξεκίνησε και τελείωσε
+JobFinished=Η εργασία ξεκίνησε και ολοκληρώθηκε
 Scheduled=Προγραμματισμένες
 #Page card
-CronAdd= Προσθήκη εργασίας
-CronEvery=Execute job each
-CronObject=Instance/Object to create
+CronAdd=Προσθήκη εργασίας
+CronEvery=Εκτέλεση εργασίας κάθε
+CronObject=Αντικείμενο προς δημιουργία
 CronArgs=Παράμετροι
 CronSaveSucess=Επιτυχής αποθήκευση
 CronNote=Σχόλιο
 CronFieldMandatory=Τα πεδία %s είναι υποχρεωτικά
 CronErrEndDateStartDt=Η ημερομηνία λήξης δεν μπορεί να είναι πριν από την ημερομηνία έναρξης
-StatusAtInstall=Κατάσταση κατά την εγκατάσταση της μονάδας
-CronStatusActiveBtn=Προγραμματισμός
+StatusAtInstall=Κατάσταση κατά την εγκατάσταση της ενότητας
+CronStatusActiveBtn=Ενεργοποίηση προγραμματισμού
 CronStatusInactiveBtn=Απενεργοποίηση
 CronTaskInactive=Αυτή η εργασία είναι απενεργοποιημένη (δεν έχει προγραμματιστεί)
 CronId=Id
-CronClassFile=Filename with class
-CronModuleHelp=Όνομα του καταλόγου μονάδων Dolibarr (επίσης λειτουργούν με εξωτερική μονάδα Dolibarr). <BR> Για παράδειγμα, για να καλέσουμε τη μέθοδο fetch του προϊόντος Dolibarr Product / htdocs / <u>product</u> / class / product.class.php, η τιμή για την ενότητα είναι <br> <i>προϊόν</i>
-CronClassFileHelp=Η σχετική διαδρομή και το όνομα του αρχείου για φόρτωση (η διαδρομή είναι σχετική με τον κεντρικό κατάλογο διακομιστή ιστού). <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο λήψης του προϊόντος Dolibarr Product htdocs / product / class / <u>product.class.php</u> , η τιμή για το όνομα αρχείου κλάσης είναι <br> <i>προϊόν / κλάση / product.class.php</i>
-CronObjectHelp=Το όνομα αντικειμένου που θα φορτωθεί. <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο λήψης του προϊόντος Dolibarr Product /htdocs/product/class/product.class.php, η τιμή για το όνομα του αρχείου κλάσης είναι <br> <i>Προϊόν</i>
-CronMethodHelp=Η μέθοδος αντικειμένου για την εκκίνηση. <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο λήψης του προϊόντος Dolibarr Product /htdocs/product/class/product.class.php, η τιμή για τη μέθοδο είναι <br> <i>φέρω</i>
-CronArgsHelp=Τα επιχειρήματα της μεθόδου. <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο λήψης του προϊόντος Dolibarr Product /htdocs/product/class/product.class.php, η τιμή για τους paramters μπορεί να είναι <br> <i>0, ProductRef</i>
+CronClassFile=Όνομα αρχείου με κλάση
+CronModuleHelp=Όνομα του καταλόγου ενοτήτων Dolibarr (επίσης λειτουργούν με εξωτερική ενότητα Dolibarr). <BR> Για παράδειγμα, για να καλέσουμε τη μέθοδο fetch του αντικειμένου προϊόντος Dolibarr / htdocs / <u>product</u> / class / product.class.php, η τιμή για την ενότητα είναι <br> <i>προϊόν</i>
+CronClassFileHelp=Η σχετική διαδρομή και το όνομα του αρχείου για φόρτωση (η διαδρομή είναι σχετική με τον κεντρικό κατάλογο διακομιστή ιστού). <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο fetch του αντικειμένου προϊόντος Dolibarr htdocs/product/class/<u>product.class.php</u> , η τιμή για το όνομα αρχείου κλάσης είναι <br> <i>product/class/product.class.php</i>
+CronObjectHelp=Το όνομα αντικειμένου που θα φορτωθεί. <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο fetch του αντικειμένου προϊόντος Dolibarr /htdocs/product/class/product.class.php, η τιμή για το όνομα του αρχείου κλάσης είναι <br> <i>Product</i>
+CronMethodHelp=Η μέθοδος αντικειμένου για την εκκίνηση. <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο fetch του αντικειμένου προϊόντος Dolibarr /htdocs/product/class/product.class.php, η τιμή για τη μέθοδο είναι <br> <i>fetch</i>
+CronArgsHelp=Οι παράμετροι της μεθόδου. <BR> Για παράδειγμα, για να καλέσετε τη μέθοδο fetch του αντικειμένου προϊόν του Dolibarr  /htdocs/product/class/product.class.php, η τιμή για τις παραμέτρους μπορεί να είναι <br> <i>0, ProductRef</i>
 CronCommandHelp=Γραμμή εντολών του συστήματος προς εκτέλεση.
-CronCreateJob=Create new Scheduled Job
+CronCreateJob=Δημιουργία νέας προγραμματισμένης εργασίας
 CronFrom=Από
 # Info
 # Common
@@ -78,16 +78,24 @@ CronType_method=Μέθοδος κλήσης μιας κλάσης PHP
 CronType_command=Εντολή Shell
 CronCannotLoadClass=Δεν είναι δυνατή η φόρτωση του αρχείου κλάσης %s (για χρήση της κλάσης %s)
 CronCannotLoadObject=Το αρχείο κλάσης %s φορτώθηκε, αλλά το αντικείμενο %s δεν βρέθηκε σε αυτό
-UseMenuModuleToolsToAddCronJobs=Μεταβείτε στο μενού &quot; <a href="%s">Αρχική σελίδα - Εργαλεία διαχειριστή - Προγραμματισμένες εργασίες</a> &quot; για να δείτε και να επεξεργαστείτε προγραμματισμένες εργασίες.
-JobDisabled=Job disabled
-MakeLocalDatabaseDumpShort=Αντίγραφο ασφαλείας τοπικής βάσης δεδομένων
-MakeLocalDatabaseDump=Δημιουργήστε μια τοπική χωματερή βάση δεδομένων. Οι παράμετροι είναι: συμπίεση (&#39;gz&#39; ή &#39;bz&#39; ή &#39;none&#39;), backup type (&#39;mysql&#39;, &#39;pgsql&#39;, &#39;auto&#39;),
-MakeSendLocalDatabaseDumpShort=Αποστολή αντιγράφου ασφαλείας τοπικής βάσης δεδομένων
-MakeSendLocalDatabaseDump=Αποστολή αντιγράφου ασφαλείας τοπικής βάσης δεδομένων μέσω email. Οι παράμετροι είναι: προς, από, θέμα, μήνυμα, όνομα αρχείου (Όνομα αρχείου που εστάλη), φίλτρο ('sql' μόνο για αντίγραφο ασφαλείας της βάσης δεδομένων)
-WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.
-DATAPOLICYJob=Cleaner δεδομένων και ανώνυμος
-JobXMustBeEnabled=Η προγραμματισμένη εργασία %s πρέπει να είναι ενεργοποιηθεί
+UseMenuModuleToolsToAddCronJobs=Μεταβείτε στο μενού "<a href="%s">Αρχική - Εργαλεία διαχειριστή - Προγραμματισμένες εργασίες</a>" για να δείτε και να επεξεργαστείτε προγραμματισμένες εργασίες.
+JobDisabled=Η εργασία απενεργοποιήθηκε
+MakeLocalDatabaseDumpShort=Τοπικό αντίγραφο ασφαλείας βάσης δεδομένων
+MakeLocalDatabaseDump=Δημιουργήστε ένα τοπικό αντίγραφο της βάσης δεδομένων. Οι παράμετροι είναι: συμπίεση ('gz' ή 'bz' ή 'none'), τύπος αντιγράφου ασφαλείας ('mysql', 'pgsql', 'auto'), 1, 'auto' ή όνομα αρχείου προς δημιουργία, αριθμός αρχείων αντιγράφων ασφαλείας προς διατήρηση
+MakeSendLocalDatabaseDumpShort=Αποστολή τοπικού αντιγράφου ασφαλείας της βάσης δεδομένων
+MakeSendLocalDatabaseDump=Αποστολή τοπικού αντιγράφου ασφαλείας της βάσης δεδομένων μέσω email. Οι παράμετροι είναι: προς, από, θέμα, μήνυμα, όνομα αρχείου (Όνομα αρχείου που εστάλη), φίλτρο ('sql' μόνο για αντίγραφο ασφαλείας της βάσης δεδομένων)
+BackupIsTooLargeSend=Λυπούμαστε, το τελευταίο αρχείο αντιγράφου ασφαλείας είναι πολύ μεγάλο για να σταλεί μέσω email
+CleanUnfinishedCronjobShort=Εκκαθάριση ημιτελούς cronjob
+CleanUnfinishedCronjob=Εκκαθάριση cronjob που κόλλησε κατά την εκτέλεση όταν η διεργασία δεν εκτελείται πλέον
+WarningCronDelayed=Προσοχή, για λόγους απόδοσης, όποια και αν είναι η επόμενη ημερομηνία εκτέλεσης των ενεργοποιημένων εργασιών, οι εργασίες σας ενδέχεται να καθυστερήσουν το πολύ %s ώρες, πριν εκτελεστούν.
+DATAPOLICYJob=Καθαρισμός δεδομένων και ανωνυμοποιητής
+JobXMustBeEnabled=Η προγραμματισμένη εργασία %s πρέπει να είναι ενεργοποιημένη
+EmailIfError=Email για προειδοποίηση σφάλματος
+JobNotFound=Η εργασία %s δεν βρέθηκε στη λίστα εργασιών (δοκιμάστε να απενεργοποιήσετε/ενεργοποιήσετε την ενότητα)
+ErrorInBatch=Σφάλμα κατά την εκτέλεση της εργασίας %s
+
 # Cron Boxes
-LastExecutedScheduledJob=Τελευταία προγραμματισμένη εργασία που εκτελέστηκε
+LastExecutedScheduledJob=Τελευταία εκτελεσμένη προγραμματισμένη εργασία
 NextScheduledJobExecute=Επόμενη προγραμματισμένη εργασία προς εκτέλεση
-NumberScheduledJobError=Αριθμός λανθασμένων προγραμματισμένων εργασιών
+NumberScheduledJobError=Αριθμός προγραμματισμένων εργασιών σε κατάσταση σφάλματος
+NumberScheduledJobNeverFinished=Αριθμός προγραμματισμένων εργασιών που δεν ολοκληρώθηκαν ποτέ

@@ -1,436 +1,430 @@
 [main]
-host = https://www.transifex.com
+host     = https://www.transifex.com
 lang_map = uz: uz_UZ, sw: sw_SW, sr@latin: sr_RS
 
-[dolibarr.accountancy]
+[o:dolibarr-association:p:dolibarr:r:accountancy]
 file_filter = htdocs/langs/<lang>/accountancy.lang
 source_file = htdocs/langs/en_US/accountancy.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.admin]
+[o:dolibarr-association:p:dolibarr:r:admin]
 file_filter = htdocs/langs/<lang>/admin.lang
 source_file = htdocs/langs/en_US/admin.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.agenda]
+[o:dolibarr-association:p:dolibarr:r:agenda]
 file_filter = htdocs/langs/<lang>/agenda.lang
 source_file = htdocs/langs/en_US/agenda.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.assets]
+[o:dolibarr-association:p:dolibarr:r:assets]
 file_filter = htdocs/langs/<lang>/assets.lang
 source_file = htdocs/langs/en_US/assets.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.banks]
+[o:dolibarr-association:p:dolibarr:r:banks]
 file_filter = htdocs/langs/<lang>/banks.lang
 source_file = htdocs/langs/en_US/banks.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.bills]
+[o:dolibarr-association:p:dolibarr:r:bills]
 file_filter = htdocs/langs/<lang>/bills.lang
 source_file = htdocs/langs/en_US/bills.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.blockedlog]
+[o:dolibarr-association:p:dolibarr:r:blockedlog]
 file_filter = htdocs/langs/<lang>/blockedlog.lang
 source_file = htdocs/langs/en_US/blockedlog.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.bookmarks]
+[o:dolibarr-association:p:dolibarr:r:bookmarks]
 file_filter = htdocs/langs/<lang>/bookmarks.lang
 source_file = htdocs/langs/en_US/bookmarks.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.boxes]
+[o:dolibarr-association:p:dolibarr:r:boxes]
 file_filter = htdocs/langs/<lang>/boxes.lang
 source_file = htdocs/langs/en_US/boxes.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.cashdesk]
+[o:dolibarr-association:p:dolibarr:r:cashdesk]
 file_filter = htdocs/langs/<lang>/cashdesk.lang
 source_file = htdocs/langs/en_US/cashdesk.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.categories]
+[o:dolibarr-association:p:dolibarr:r:categories]
 file_filter = htdocs/langs/<lang>/categories.lang
 source_file = htdocs/langs/en_US/categories.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.commercial]
+[o:dolibarr-association:p:dolibarr:r:commercial]
 file_filter = htdocs/langs/<lang>/commercial.lang
 source_file = htdocs/langs/en_US/commercial.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.companies]
+[o:dolibarr-association:p:dolibarr:r:companies]
 file_filter = htdocs/langs/<lang>/companies.lang
 source_file = htdocs/langs/en_US/companies.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.compta]
+[o:dolibarr-association:p:dolibarr:r:compta]
 file_filter = htdocs/langs/<lang>/compta.lang
 source_file = htdocs/langs/en_US/compta.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.contracts]
+[o:dolibarr-association:p:dolibarr:r:contracts]
 file_filter = htdocs/langs/<lang>/contracts.lang
 source_file = htdocs/langs/en_US/contracts.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.cron]
+[o:dolibarr-association:p:dolibarr:r:cron]
 file_filter = htdocs/langs/<lang>/cron.lang
 source_file = htdocs/langs/en_US/cron.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.deliveries]
+[o:dolibarr-association:p:dolibarr:r:datapolicy]
+file_filter = htdocs/langs/<lang>/datapolicy.lang
+source_file = htdocs/langs/en_US/datapolicy.lang
+source_lang = en_US
+type        = MOZILLAPROPERTIES
+
+[o:dolibarr-association:p:dolibarr:r:deliveries]
 file_filter = htdocs/langs/<lang>/deliveries.lang
 source_file = htdocs/langs/en_US/deliveries.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.dict]
+[o:dolibarr-association:p:dolibarr:r:dict]
 file_filter = htdocs/langs/<lang>/dict.lang
 source_file = htdocs/langs/en_US/dict.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.donations]
+[o:dolibarr-association:p:dolibarr:r:donations]
 file_filter = htdocs/langs/<lang>/donations.lang
 source_file = htdocs/langs/en_US/donations.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.ecm]
+[o:dolibarr-association:p:dolibarr:r:ecm]
 file_filter = htdocs/langs/<lang>/ecm.lang
 source_file = htdocs/langs/en_US/ecm.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.errors]
+[o:dolibarr-association:p:dolibarr:r:errors]
 file_filter = htdocs/langs/<lang>/errors.lang
 source_file = htdocs/langs/en_US/errors.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.eventorganization]
+[o:dolibarr-association:p:dolibarr:r:eventorganization]
 file_filter = htdocs/langs/<lang>/eventorganization.lang
 source_file = htdocs/langs/en_US/eventorganization.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.exports]
+[o:dolibarr-association:p:dolibarr:r:exports]
 file_filter = htdocs/langs/<lang>/exports.lang
 source_file = htdocs/langs/en_US/exports.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.help]
+[o:dolibarr-association:p:dolibarr:r:help]
 file_filter = htdocs/langs/<lang>/help.lang
 source_file = htdocs/langs/en_US/help.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.holiday]
+[o:dolibarr-association:p:dolibarr:r:holiday]
 file_filter = htdocs/langs/<lang>/holiday.lang
 source_file = htdocs/langs/en_US/holiday.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.hrm]
+[o:dolibarr-association:p:dolibarr:r:hrm]
 file_filter = htdocs/langs/<lang>/hrm.lang
 source_file = htdocs/langs/en_US/hrm.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.install]
+[o:dolibarr-association:p:dolibarr:r:install]
 file_filter = htdocs/langs/<lang>/install.lang
 source_file = htdocs/langs/en_US/install.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.interventions]
+[o:dolibarr-association:p:dolibarr:r:interventions]
 file_filter = htdocs/langs/<lang>/interventions.lang
 source_file = htdocs/langs/en_US/interventions.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.intracommreport]
+[o:dolibarr-association:p:dolibarr:r:intracommreport]
 file_filter = htdocs/langs/<lang>/intracommreport.lang
 source_file = htdocs/langs/en_US/intracommreport.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.knowledgemanagement]
+[o:dolibarr-association:p:dolibarr:r:knowledgemanagement]
 file_filter = htdocs/langs/<lang>/knowledgemanagement.lang
 source_file = htdocs/langs/en_US/knowledgemanagement.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.languages-not-res]
+[o:dolibarr-association:p:dolibarr:r:languages-not-res]
 file_filter = htdocs/langs/<lang>/languages.lang
 source_file = htdocs/langs/en_US/languages.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.ldap]
+[o:dolibarr-association:p:dolibarr:r:ldap]
 file_filter = htdocs/langs/<lang>/ldap.lang
 source_file = htdocs/langs/en_US/ldap.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.link]
-file_filter = htdocs/langs/<lang>/link.lang
-source_file = htdocs/langs/en_US/link.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
-
-[dolibarr.loan]
+[o:dolibarr-association:p:dolibarr:r:loan]
 file_filter = htdocs/langs/<lang>/loan.lang
 source_file = htdocs/langs/en_US/loan.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.mailmanspip]
+[o:dolibarr-association:p:dolibarr:r:mailmanspip]
 file_filter = htdocs/langs/<lang>/mailmanspip.lang
 source_file = htdocs/langs/en_US/mailmanspip.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.mails]
+[o:dolibarr-association:p:dolibarr:r:mails]
 file_filter = htdocs/langs/<lang>/mails.lang
 source_file = htdocs/langs/en_US/mails.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.main]
+[o:dolibarr-association:p:dolibarr:r:main]
 file_filter = htdocs/langs/<lang>/main.lang
 source_file = htdocs/langs/en_US/main.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.margins]
+[o:dolibarr-association:p:dolibarr:r:margins]
 file_filter = htdocs/langs/<lang>/margins.lang
 source_file = htdocs/langs/en_US/margins.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.members]
+[o:dolibarr-association:p:dolibarr:r:members]
 file_filter = htdocs/langs/<lang>/members.lang
 source_file = htdocs/langs/en_US/members.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.modulebuilder]
+[o:dolibarr-association:p:dolibarr:r:modulebuilder]
 file_filter = htdocs/langs/<lang>/modulebuilder.lang
 source_file = htdocs/langs/en_US/modulebuilder.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.mrp]
+[o:dolibarr-association:p:dolibarr:r:mrp]
 file_filter = htdocs/langs/<lang>/mrp.lang
 source_file = htdocs/langs/en_US/mrp.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.multicurrency]
+[o:dolibarr-association:p:dolibarr:r:multicurrency]
 file_filter = htdocs/langs/<lang>/multicurrency.lang
 source_file = htdocs/langs/en_US/multicurrency.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.oauth]
+[o:dolibarr-association:p:dolibarr:r:oauth]
 file_filter = htdocs/langs/<lang>/oauth.lang
 source_file = htdocs/langs/en_US/oauth.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.opensurvey]
+[o:dolibarr-association:p:dolibarr:r:opensurvey]
 file_filter = htdocs/langs/<lang>/opensurvey.lang
 source_file = htdocs/langs/en_US/opensurvey.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.orders]
+[o:dolibarr-association:p:dolibarr:r:orders]
 file_filter = htdocs/langs/<lang>/orders.lang
 source_file = htdocs/langs/en_US/orders.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.other]
+[o:dolibarr-association:p:dolibarr:r:other]
 file_filter = htdocs/langs/<lang>/other.lang
 source_file = htdocs/langs/en_US/other.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.partnership]
+[o:dolibarr-association:p:dolibarr:r:partnership]
 file_filter = htdocs/langs/<lang>/partnership.lang
 source_file = htdocs/langs/en_US/partnership.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.paybox]
+[o:dolibarr-association:p:dolibarr:r:paybox]
 file_filter = htdocs/langs/<lang>/paybox.lang
 source_file = htdocs/langs/en_US/paybox.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.paypal]
+[o:dolibarr-association:p:dolibarr:r:paypal]
 file_filter = htdocs/langs/<lang>/paypal.lang
 source_file = htdocs/langs/en_US/paypal.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.printing]
+[o:dolibarr-association:p:dolibarr:r:printing]
 file_filter = htdocs/langs/<lang>/printing.lang
 source_file = htdocs/langs/en_US/printing.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.productbatch]
+[o:dolibarr-association:p:dolibarr:r:productbatch]
 file_filter = htdocs/langs/<lang>/productbatch.lang
 source_file = htdocs/langs/en_US/productbatch.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.products]
+[o:dolibarr-association:p:dolibarr:r:products]
 file_filter = htdocs/langs/<lang>/products.lang
 source_file = htdocs/langs/en_US/products.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.projects]
+[o:dolibarr-association:p:dolibarr:r:projects]
 file_filter = htdocs/langs/<lang>/projects.lang
 source_file = htdocs/langs/en_US/projects.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.propal]
+[o:dolibarr-association:p:dolibarr:r:propal]
 file_filter = htdocs/langs/<lang>/propal.lang
 source_file = htdocs/langs/en_US/propal.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.receiptprinter]
+[o:dolibarr-association:p:dolibarr:r:receiptprinter]
 file_filter = htdocs/langs/<lang>/receiptprinter.lang
 source_file = htdocs/langs/en_US/receiptprinter.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.receptions]
+[o:dolibarr-association:p:dolibarr:r:receptions]
 file_filter = htdocs/langs/<lang>/receptions.lang
 source_file = htdocs/langs/en_US/receptions.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.recruitment]
+[o:dolibarr-association:p:dolibarr:r:recruitment]
 file_filter = htdocs/langs/<lang>/recruitment.lang
 source_file = htdocs/langs/en_US/recruitment.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.resource]
+[o:dolibarr-association:p:dolibarr:r:resource]
 file_filter = htdocs/langs/<lang>/resource.lang
 source_file = htdocs/langs/en_US/resource.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.salaries]
+[o:dolibarr-association:p:dolibarr:r:salaries]
 file_filter = htdocs/langs/<lang>/salaries.lang
 source_file = htdocs/langs/en_US/salaries.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.sendings]
+[o:dolibarr-association:p:dolibarr:r:sendings]
 file_filter = htdocs/langs/<lang>/sendings.lang
 source_file = htdocs/langs/en_US/sendings.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.sms]
+[o:dolibarr-association:p:dolibarr:r:sms]
 file_filter = htdocs/langs/<lang>/sms.lang
 source_file = htdocs/langs/en_US/sms.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.stocks]
+[o:dolibarr-association:p:dolibarr:r:stocks]
 file_filter = htdocs/langs/<lang>/stocks.lang
 source_file = htdocs/langs/en_US/stocks.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.stripe]
+[o:dolibarr-association:p:dolibarr:r:stripe]
 file_filter = htdocs/langs/<lang>/stripe.lang
 source_file = htdocs/langs/en_US/stripe.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.supplier_proposal]
+[o:dolibarr-association:p:dolibarr:r:supplier_proposal]
 file_filter = htdocs/langs/<lang>/supplier_proposal.lang
 source_file = htdocs/langs/en_US/supplier_proposal.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.suppliers]
+[o:dolibarr-association:p:dolibarr:r:suppliers]
 file_filter = htdocs/langs/<lang>/suppliers.lang
 source_file = htdocs/langs/en_US/suppliers.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.ticket]
+[o:dolibarr-association:p:dolibarr:r:ticket]
 file_filter = htdocs/langs/<lang>/ticket.lang
 source_file = htdocs/langs/en_US/ticket.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.trips]
+[o:dolibarr-association:p:dolibarr:r:trips]
 file_filter = htdocs/langs/<lang>/trips.lang
 source_file = htdocs/langs/en_US/trips.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.users]
+[o:dolibarr-association:p:dolibarr:r:users]
 file_filter = htdocs/langs/<lang>/users.lang
 source_file = htdocs/langs/en_US/users.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.website]
+[o:dolibarr-association:p:dolibarr:r:website]
 file_filter = htdocs/langs/<lang>/website.lang
 source_file = htdocs/langs/en_US/website.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.withdrawals]
+[o:dolibarr-association:p:dolibarr:r:withdrawals]
 file_filter = htdocs/langs/<lang>/withdrawals.lang
 source_file = htdocs/langs/en_US/withdrawals.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 
-[dolibarr.workflow]
+[o:dolibarr-association:p:dolibarr:r:workflow]
 file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang
 source_lang = en_US
-type = MOZILLAPROPERTIES
-
-[dolibarr.zapier]
-file_filter = htdocs/langs/<lang>/zapier.lang
-source_file = htdocs/langs/en_US/zapier.lang
-source_lang = en_US
-type = MOZILLAPROPERTIES
+type        = MOZILLAPROPERTIES
 

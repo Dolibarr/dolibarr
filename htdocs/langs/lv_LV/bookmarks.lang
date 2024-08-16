@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Pievienot pašreizējo lapu grāmatzīmēm
-Bookmark=Grāmatzīme
-Bookmarks=Grāmatzīmes
-ListOfBookmarks=Grāmatzīmju saraksts
-EditBookmarks=Skatīt / rediģēt grāmatzīmes
-NewBookmark=Jauna grāmatzīme
-ShowBookmark=Rādīt grāmatzīmi
-OpenANewWindow=Atvērt jaunu cilni
-ReplaceWindow=Nomainiet pašreizējo cilni
-BookmarkTargetNewWindowShort=Jauna cilne
-BookmarkTargetReplaceWindowShort=Pašreizējā cilne
-BookmarkTitle=Grāmatzīmes nosaukums
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Izveidot grāmatzīmi
-SetHereATitleForLink=Ierakstiet grāmatzīmes nosaukumu
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Izmantojiet ārējo/absolūto saiti (https://externalurl.com) vai iekšējo/relatīvo saiti (/mypage.php). Varat arī izmantot tālruni, piemēram, tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izvēlieties, vai saistītā lapa jāatver pašreizējā cilnē vai jaunā cilnē
-BookmarksManagement=Grāmatzīmju vadība
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=Nav definētu grāmatzīmju
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Pievienot pašreizējo lapu grāmatzīmēm
+BehaviourOnClick = Rīcība, kad ir atlasīts grāmatzīmes URL
+Bookmark = Grāmatzīme
+Bookmarks = Grāmatzīmes
+BookmarkTargetNewWindowShort = Jauna cilne
+BookmarkTargetReplaceWindowShort = Pašreizējā cilne
+BookmarkTitle = Grāmatzīmes nosaukums
+BookmarksManagement = Grāmatzīmju vadība
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Izvēlieties, vai saistītā lapa jāatver pašreizējā cilnē vai jaunā cilnē
+CreateBookmark = Izveidot grāmatzīmi
+EditBookmarks = Skatīt / rediģēt grāmatzīmes
+ListOfBookmarks = Grāmatzīmju saraksts
+NewBookmark = Jauna grāmatzīme
+NoBookmarkFound = Grāmatzīme nav atrasta
+NoBookmarks = Nav definētu grāmatzīmju
+OpenANewWindow = Atvērt jaunu cilni
+ReplaceWindow = Nomainiet pašreizējo cilni
+SetHereATitleForLink = Ierakstiet grāmatzīmes nosaukumu
+ShowBookmark = Rādīt grāmatzīmi
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Izmantojiet ārējo/absolūto saiti (https://externalurl.com) vai iekšējo/relatīvo saiti (/mypage.php). Varat arī izmantot tālruni, piemēram, tel:0123456.

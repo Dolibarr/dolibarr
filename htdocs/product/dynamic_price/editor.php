@@ -21,6 +21,7 @@
  *  \brief	    Page for editing expression
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
@@ -31,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'accountancy')); //"Back" translation is on this accountancy file
 
-$id = GETPOST('id', 'int');
-$eid = GETPOST('eid', 'int');
+$id = GETPOSTINT('id');
+$eid = GETPOSTINT('eid');
 $action = GETPOST('action', 'aZ09');
 $title = GETPOST('expression_title', 'alpha');
 $expression = GETPOST('expression');
@@ -66,7 +67,8 @@ if ($action == 'add') {
 	if ($eid == 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0) { //No existing entry found with title, ok
-			//Check the expression validity by parsing it
+			// Check the expression validity by parsing it
+			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 			$priceparser = new PriceParser($db);
 			$price_result = $priceparser->testExpression($id, $expression);
 			if ($price_result < 0) { //Expression is not valid
@@ -94,7 +96,8 @@ if ($action == 'update') {
 	if ($eid != 0) {
 		$result = $price_expression->find_title($title);
 		if ($result == 0 || $result == $eid) { //No existing entry found with title or existing one is the current one, ok
-			//Check the expression validity by parsing it
+			// Check the expression validity by parsing it
+			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 			$priceparser = new PriceParser($db);
 			$price_result = $priceparser->testExpression($id, $expression);
 			if ($price_result < 0) { //Expression is not valid
@@ -136,7 +139,7 @@ if ($action == 'delete') {
 
 $form = new Form($db);
 
-llxHeader("", "", $langs->trans("CardProduct".$product->type));
+llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-dynamic_price_editor');
 
 print load_fiche_titre($langs->trans("PriceExpressionEditor"));
 
@@ -160,7 +163,7 @@ print '</td></tr>';
 
 // Title input
 print '<tr><td class="fieldrequired">'.$langs->trans("Name").'</td><td>';
-print '<input class="flat" name="expression_title" size="15" value="'.($price_expression->title ? $price_expression->title : '').'">';
+print '<input class="flat" name="expression_title" size="15" value="'.(GETPOSTISSET('expression_title') ? GETPOST('expression_title') : ($price_expression->title ? $price_expression->title : '')).'">';
 print '</td></tr>';
 
 //Help text
@@ -170,7 +173,7 @@ $help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp3");
 $help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp4");
 $help_text .= '<br><br>'.$langs->trans("PriceExpressionEditorHelp5");
 foreach ($price_globals->listGlobalVariables() as $entry) {
-	$help_text .= '<br><b>#globals_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
+	$help_text .= '<br><b>#global_'.$entry->code.'#</b> '.$entry->description.' = '.$entry->value;
 }
 
 //Price expression editor

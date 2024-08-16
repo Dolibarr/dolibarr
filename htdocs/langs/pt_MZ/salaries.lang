@@ -1,17 +1,10 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Conta contábil usada para terceiros usuários
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A conta contábil dedicada definida no cartão de usuário será usada somente para a contabilidade da Subconta. Este será usado para Contabilidade Geral e como valor padrão da contabilidade do Contador, se a conta contábil do usuário dedicada no usuário não estiver definida.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Conta da Contabilidade padrão para pagamentos de salário
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Por padrão, deixe em branco a opção "Criar automaticamente um pagamento total" ao criar um Salário
-NewSalary=Novo salário
 NewSalaryPayment=Novo cartão de salário
-AddSalaryPayment=Adicionar pagamento de salário
 SalaryPayment=Pagamento de salário
 SalariesPayments=Pagamentos de salários
-SalariesPaymentsOf=Pagamentos de salários de %s
 THM=Taxa média horária
 TJM=Taxa média diária
 THMDescription=Este valor pode ser usado para calcular o custo de tempo consumido em um projeto entrado pelos usuários se o módulo projeto for usado
 TJMDescription=Este valor é usado apenas como informação e não será usado em nenhum cálculo
-SalariesStatistics=Estatísticas salariais
-SalariesAndPayments=Salários e pagamentos

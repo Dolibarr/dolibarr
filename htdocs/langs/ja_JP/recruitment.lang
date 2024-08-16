@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = 採用
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = 新規職種の採用キャンペーンを管理およびフォローする
-
-#
 # Admin page
-#
 RecruitmentSetup = 採用設定
-Settings = 設定
 RecruitmentSetupPage = 採用モジュールの主なオプションの設定をここに入力する
 RecruitmentArea=採用エリア
 PublicInterfaceRecruitmentDesc=求人の公開ページは、開いている求人を表示して回答するための公開URLである。開いているジョブごとに1つの異なるリンクがあり、各ジョブレコードごとにある。
-EnablePublicRecruitmentPages=開いている求人の公開ページを有効にする
+EnablePublicRecruitmentPages=開いている求人の公開ページを有効化
 
-#
-# About page
-#
-About = 約
-RecruitmentAbout = 採用について
-RecruitmentAboutPage = 採用に関してページ
 NbOfEmployeesExpected=予想される従業員数
 JobLabel=役職のラベル
 WorkPlace=職場
@@ -49,7 +34,6 @@ PositionToBeFilled=役職
 PositionsToBeFilled=役職
 ListOfPositionsToBeFilled=役職一覧
 NewPositionToBeFilled=新規役職s
-
 JobOfferToBeFilled=募集する職務
 ThisIsInformationOnJobPosition=募集する職務の情報
 ContactForRecruitment=採用担当者
@@ -57,15 +41,16 @@ EmailRecruiter=メール勧誘担当
 ToUseAGenericEmail=一般的な電子メールを使用するには。定義されていない場合は、採用担当者のメールが使用される
 NewCandidature=新規アプリ
 ListOfCandidatures=アプリケーションのリスト
-RequestedRemuneration=要求された報酬
-ProposedRemuneration=提案された報酬
+Remuneration=給料
+RequestedRemuneration=要求された給与
+ProposedRemuneration=提案された給与
 ContractProposed=提案された契約
 ContractSigned=契約締結
 ContractRefused=契約は拒否された
 RecruitmentCandidature=応用
 JobPositions=役職
 RecruitmentCandidatures=アプリケーション
-InterviewToDo=する面接
+InterviewToDo=フォローする連絡先
 AnswerCandidature=アプリケーションの回答
 YourCandidature=あなたの申請
 YourCandidatureAnswerMessage=お申し込みいただきありがとうございる。 <br>..。
@@ -76,3 +61,6 @@ ExtrafieldsApplication=補完的な属性(求人応募)
 MakeOffer=申し出する
 WeAreRecruiting=募集中。これは、募集職種のリスト...
 NoPositionOpen=現在募集職種なし
+ConfirmClose=確定 キャンセル
+ConfirmCloseAsk=この採用候補をキャンセルしてもよいか
+Recruitment=採用

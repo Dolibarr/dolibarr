@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Distribuição
 DeliveryRef=Ref. de entrega
-DeliveryCard=Ficha de recibo
-DeliveryOrder=Delivery receipt
+DeliveryCard=Recibo de entrega
+DeliveryOrder=Recibo de entrega
 DeliveryDate=Data da entrega
 CreateDeliveryOrder=Gerar recibo de entrega
 DeliveryStateSaved=Estado da entrega guardado
@@ -18,16 +18,16 @@ StatusDeliveryCanceled=Cancelada
 StatusDeliveryDraft=Rascunho
 StatusDeliveryValidated=Recebido
 # merou PDF model
-NameAndSignature=Name and Signature:
+NameAndSignature=Nome e assinatura:
 ToAndDate=Em___________________________________ a ____/_____/__________
 GoodStatusDeclaration=Recebi a mercadoria em bom estado,
-Deliverer=Deliverer:
+Deliverer=Distribuidor:
 Sender=Origem
 Recipient=Destinatário
 ErrorStockIsNotEnough=Não existe stock suficiente
 Shippable= Transportável
 NonShippable=Não Transportável
-ShowShippableStatus=Show shippable status
+ShowShippableStatus=Mostrar estado de envio
 ShowReceiving=Mostrar recibo da entrega
-NonExistentOrder=Nonexistent order
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+NonExistentOrder=Ordem inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantidades de stock já alocadas em linhas anteriores

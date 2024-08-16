@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL til at tilbyde en %s online betalin
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL til at tilbyde en %s online betalingsside for et medlemsabonnement
 ToOfferALinkForOnlinePaymentOnDonation=URL til at tilbyde en %s online betalingsside til betaling af en donation
 YouCanAddTagOnUrl=Du kan også tilføje url-parameter <b>& tag =<i> værdi</i></b> til en af disse URL-adresser (kun obligatorisk for betaling, der ikke er knyttet til et objekt) for at tilføje dit eget betalings-kommentar-tag.<br> For URL-adressen til betalinger uden noget eksisterende objekt, kan du også tilføje parameteren <strong>& noidempotency=1</strong>, så det samme link med samme tag kan bruges flere gange (nogle betalingsmetoder begrænser muligvis betalingen til 1 for hvert andet link uden denne parameter)
+YouCanEmbedOnWebsite=Hvis du ønsker at integrere betalingssiden i en Dolibarr websted, kan du inkludere parameteren: <b>&ws=website_ref</b>.<br>Yderligere to sider med navnet <b>paymentok </b> og <b>paymentko</b> skal oprettes i websted for at modtage omdirigeringen efter en vellykket eller mislykket onlinebetaling.
 SetupStripeToHavePaymentCreatedAutomatically=Indstil din stripe med url <b> %s </ b> for at få betaling oprettet automatisk, når bekræftet af Stripe.
 AccountParameter=Kontoparametre
 UsageParameter=Anvendelsesparametre
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook-livenøgle
 ONLINE_PAYMENT_WAREHOUSE=Lager til brug for lagerreduktion, når online betaling er færdig <br> (TODO Når valgmuligheden for at reducere lagerbeholdningen sker på en handling på faktura, og online betaling genererer selve fakturaen?)
 StripeLiveEnabled=Stripe live aktiveret (ellers test / sandbox mode)
 StripeImportPayment=Import Stripe betalinger
-ExampleOfTestCreditCard=Eksempel på kreditkort til test:%s => gyldigt,%s => fejl CVC,%s => udløbet, %s=> gebyr mislykkes
+ExampleOfTestCreditCard=Eksempel på kreditkort til en testbetaling: %s => gyldig, %s => fejl CVC, %s => udløbet, %s => debitering mislykkes
+ExampleOfTestBankAcountForSEPA=Eksempel på bankkonto BAN til test af direkte debitering: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca. _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect Client ID (ca. _...)
@@ -50,6 +52,7 @@ StripeAccount=Stripe konto
 StripeChargeList=Liste over Stripe afgifter
 StripeTransactionList=Liste over Stripe transaktioner
 StripeCustomerId=Stripe kunde id
+StripePaymentId=Stripe betalings-id
 StripePaymentModes=Stripe betalingsformer
 LocalID=Lokalt id
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=Slet kort
 ConfirmDeleteCard=Er du sikker på, at du vil slette dette kredit- eller betalingskort?
 CreateCustomerOnStripe=Opret kunde på Stripe
 CreateCardOnStripe=Opret kort på Stripe
+CreateBANOnStripe=Opret bank på Stripe
 ShowInStripe=Vis i Stripe
 StripeUserAccountForActions=Brugerkonto, der skal bruges til e-mail-meddelelse om nogle Stripe begivenheder (Stripe udbetalinger)
 StripePayoutList=Liste over Stripe udbetalinger
@@ -68,5 +72,19 @@ ToOfferALinkForTestWebhook=Link til opsætning Stripe WebHook for at ringe til I
 ToOfferALinkForLiveWebhook=Link til opsætning Stripe WebHook for at ringe til IPN (live tilstand)
 PaymentWillBeRecordedForNextPeriod=Betaling registreres for den næste periode.
 ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af stærke kunde autentificerings regler skal oprettelse af et kort foretages fra Stripe backoffice. Du kan klikke her for at tænde for Stripe-kundepost:%s
-TERMINAL_LOCATION=Placering (adresse) for terminaler
+CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af Strong Customer Authentication-regler skal oprettelsen af et kort ske fra Stripe back office. Du kan klikke her for at slå Stripe kunderegistrering til: %s
+STRIPE_CARD_PRESENT=Kort til stede til Stripe-terminaler
+TERMINAL_LOCATION=Placering (adresse) for Stripe Terminals
+RequestDirectDebitWithStripe=Anmod om direkte debitering med Stripe
+RequesCreditTransferWithStripe=Anmod om kreditoverførsel med Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Aktiver direkte debitering via Stripe
+STRIPE_KLARNA=Aktiver betalingerne med Klarna
+STRIPE_BANCONTACT=Aktiver betalingerne ved hjælp af BANCONTACT
+STRIPE_IDEAL=Aktiver betalingerne med IDEAL
+STRIPE_GIROPAY=Aktiver betalingerne med GIROPAY
+STRIPE_SOFORT=Aktiver betalingerne ved hjælp af SOFORT
+StripeConnect_Mode=Stripe Connect-tilstand
+ExampleOnlyForBECustomers=Kun for belgiske kunder
+ExampleOnlyForDECustomers=Kun for tyske kunder
+ExampleOnlyForNLCustomers=Kun for hollandske kunder
+ExampleOnlyForATBEDEITNLESCustomers=Kun for kunder fra Østrig, Belgien, Tyskland, Italien, Holland, Spanien

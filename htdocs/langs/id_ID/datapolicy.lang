@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Kebijakan Privasi Data
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Modul untuk mengelola Privasi Data (Kesesuaian dengan GDPR)
+# Administration page
+datapolicySetup = Pengaturan Kebijakan Privasi Data Modul
+Deletion = Penghapusan data
+datapolicySetupPage = Bergantung pada hukum negara Anda (Contoh <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Pasal 5</a> GDPR), data pribadi harus disimpan selama jangka waktu tertentu tidak melebihi durasi data yang diperlukan untuk tujuan pengumpulannya, kecuali untuk keperluan pengarsipan.<br>Penghapusan akan dilakukan secara otomatis setelah jangka waktu tertentu tanpa kejadian (durasi yang akan Anda tunjukkan di bawah).
+NB_MONTHS = %s bulan
+ONE_YEAR = 1 tahun
+NB_YEARS = %s tahun
+DATAPOLICY_TIERS_CLIENT = Pelanggan
+DATAPOLICY_TIERS_PROSPECT = Prospek
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospek/Pelanggan
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Maupun calon pelanggan/Mau pelanggan
+DATAPOLICY_TIERS_FOURNISSEUR = Suplier
+DATAPOLICY_CONTACT_CLIENT = Pelanggan
+DATAPOLICY_CONTACT_PROSPECT = Prospek
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospek/Pelanggan
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Maupun calon pelanggan/Mau pelanggan
+DATAPOLICY_CONTACT_FOURNISSEUR = Suplier
+DATAPOLICY_ADHERENT = Anggota
+DATAPOLICY_Tooltip_SETUP = Jenis kontak - Tunjukkan pilihan Anda untuk setiap jenis.
+SendAgreementText = Anda dapat mengirim email GDPR ke semua kontak Anda yang relevan (yang belum menerima email dan Anda belum mendaftarkan apa pun tentang perjanjian GDPR mereka). Untuk melakukan ini, gunakan tombol berikut.
+SendAgreement = Mengirim email
+AllAgreementSend = Semua email telah terkirim
+TXTLINKDATAPOLICYACCEPT = Teks untuk tautan "perjanjian"
+TXTLINKDATAPOLICYREFUSE = Teks untuk tautan "ketidaksepakatan"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR : Pemrosesan data pribadi
+DATAPOLICY_consentement = Persetujuan diperoleh untuk pemrosesan data pribadi
+DATAPOLICY_opposition_traitement = Menentang pemrosesan data pribadinya
+DATAPOLICY_opposition_prospection = Menentang pemrosesan data pribadinya untuk tujuan pencarian calon pelanggan
+# Notes added during an anonymization
+DATAPOLICY_date = Tanggal persetujuan/ketidaksepakatan GDPR
+DATAPOLICY_send = Email perjanjian tanggal dikirim
+MailSent = Email telah dikirim
+NUMBER_MONTH_BEFORE_DELETION = Jumlah bulan sebelum penghapusan

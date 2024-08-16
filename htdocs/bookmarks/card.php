@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,37 +18,46 @@
  */
 
 /**
- *       \file       htdocs/bookmarks/card.php
- *       \brief      Page display/creation of bookmarks
- *       \ingroup    bookmark
+ *    \file       htdocs/bookmarks/card.php
+ *    \ingroup    bookmark
+ *    \brief      Page display/creation of bookmarks
  */
 
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'other'));
 
-// Security check
-if (empty($user->rights->bookmark->lire)) {
-	restrictedArea($user, 'bookmarks');
-}
 
-$id = GETPOST("id", 'int');
+// Get Parameters
+$id = GETPOSTINT("id");
 $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOST("target", "int");
-$userid = GETPOST("userid", "int");
-$position = GETPOST("position", "int");
+$target = GETPOSTINT("target");
+$userid = GETPOSTINT("userid");
+$position = GETPOSTINT("position");
 $backtopage = GETPOST('backtopage', 'alpha');
 
+
+// Initialize Objects
 $object = new Bookmark($db);
 if ($id > 0) {
 	$object->fetch($id);
 }
+
+// Security check
+restrictedArea($user, 'bookmark', $object);
+
+$permissiontoread = $user->hasRight('bookmark', 'lire');
+$permissiontoadd = $user->hasRight('bookmark', 'creer');
+$permissiontodelete = $user->hasRight('bookmark', 'supprimer');
+
 
 
 /*
@@ -73,7 +82,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 	}
 
 	if ($action == 'update') {
-		$object->fetch(GETPOST("id", 'int'));
+		$object->fetch(GETPOSTINT("id"));
 	}
 	// Check if null because user not admin can't set an user and send empty value here.
 	if (!empty($userid)) {
@@ -124,11 +133,12 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
 }
 
 
+
 /*
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-bookmarks page-card');
 
 $form = new Form($db);
 
@@ -163,7 +173,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input id="titlebookmark" class="flat minwidth250" name="title" value="'.dol_escape_htmltag($title).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("SetHereATitleForLink").'</span></td></tr>';
 	dol_set_focus('#titlebookmark');
 
-	// Url
+	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans("UrlOrLink").'</td><td><input class="flat quatrevingtpercent minwidth500" name="url" value="'.dol_escape_htmltag($url).'"></td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("UseAnExternalHttpLinkOrRelativeDolibarrLink").'</span></td></tr>';
 
 	// Target
@@ -173,17 +183,18 @@ if ($action == 'create') {
 	if ($url && !preg_match('/^http/i', $url)) {
 		$defaulttarget = 0;
 	}
-	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOST('target', 'int') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+	print $form->selectarray('target', $liste, GETPOSTISSET('target') ? GETPOSTINT('target') : $defaulttarget, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone"><span class="opacitymedium">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</span></td></tr>';
 
-	// Owner
+	// Visibility / Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-	print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
+	print img_picto('', 'user', 'class="pictofixedwidth"');
+	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
 	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
+	print '<input class="flat width50" name="position" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : $object->position).'">';
 	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	print '</table>';
@@ -217,6 +228,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
+	// Title
 	print '<tr><td class="titlefield">';
 	if ($action == 'edit') {
 		print '<span class="fieldrequired">';
@@ -236,6 +248,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	}
 	print '</td></tr>';
 
+	// URL
 	print '<tr><td>';
 	if ($action == 'edit') {
 		print '<span class="fieldrequired">';
@@ -244,7 +257,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	if ($action == 'edit') {
 		print '</span>';
 	}
-	print '</td><td>';
+	print '</td><td class="wordbreak">';
 	if ($action == 'edit') {
 		print '<input class="flat minwidth500 quatrevingtpercent" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'">';
 	} else {
@@ -269,14 +282,16 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	}
 	print '</td></tr>';
 
+	// Visibility / owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($action == 'edit' && $user->admin) {
-		print img_picto('', 'user').' '.$form->select_dolusers(GETPOSTISSET('userid') ? GETPOST('userid', 'int') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+		print img_picto('', 'user', 'class="pictofixedwidth"');
+		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
 	} else {
 		if ($object->fk_user > 0) {
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
-			print $fuser->getNomUrl(1);
+			print $fuser->getNomUrl(-1);
 		} else {
 			print '<span class="opacitymedium">'.$langs->trans("Everybody").'</span>';
 		}
@@ -286,7 +301,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
 	if ($action == 'edit') {
-		print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOST("position", 'int') : $object->position).'">';
+		print '<input class="flat" name="position" size="5" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : $object->position).'">';
 	} else {
 		print $object->position;
 	}
@@ -313,13 +328,13 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print "<div class=\"tabsAction\">\n";
 
 	// Edit
-	if ($user->rights->bookmark->creer && $action != 'edit') {
+	if ($permissiontoadd && $action != 'edit') {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken().'">'.$langs->trans("Edit").'</a>'."\n";
 	}
 
 	// Remove
-	if ($user->rights->bookmark->supprimer && $action != 'edit') {
-		print '<a class="butActionDelete" href="list.php?bid='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
+	if ($permissiontodelete && $action != 'edit') {
+		print '<a class="butActionDelete" href="list.php?id='.$object->id.'&action=delete&token='.newToken().'">'.$langs->trans("Delete").'</a>'."\n";
 	}
 
 	print '</div>';

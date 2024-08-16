@@ -6,6 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@
  * 				DOL_URL_ROOT.'/document.php?modulepart=logs&file=dolibarr.log'
  * 				DOL_URL_ROOT.'/document.php?hashp=sharekey'
  */
+
+define('MAIN_SECURITY_FORCECSP', "default-src: 'none'");
 
 //if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
 //if (! defined('NOREQUIREDB'))		define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
@@ -59,6 +62,7 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN")) {
 	}
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
+// Keep $_GET here, GETPOST is not available yet
 if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", 1);
@@ -74,10 +78,24 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 /**
  * Header empty
  *
- * @ignore
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	array|string  	$arrayofjs			Array of complementary js files
+ * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
 }
 /**
@@ -96,18 +114,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
 $action = GETPOST('action', 'aZ09');
-$original_file = GETPOST('file', 'alphanohtml'); // Do not use urldecode here ($_GET are already decoded by PHP).
+$original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity', $conf->entity);
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
-	accessforbidden('Bad link. Bad value for parameter modulepart', 0, 0, 1);
+	httponly_accessforbidden('Bad link. Bad value for parameter modulepart', 400);
 }
 if (empty($original_file) && empty($hashp)) {
-	accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 0, 0, 1);
+	httponly_accessforbidden('Bad link. Missing identification to find file (original_file or hashp)', 400);
 }
 if ($modulepart == 'fckeditor') {
 	$modulepart = 'medias'; // For backward compatibility
@@ -120,7 +138,7 @@ if ($user->socid > 0) {
 
 // For some module part, dir may be privates
 if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
-	if (empty($user->rights->societe->client->voir) || $socid) {
+	if (!$user->hasRight('societe', 'client', 'voir')) {
 		$original_file = 'private/'.$user->id.'/'.$original_file; // If user has no permission to see all, output dir is specific to user
 	}
 }
@@ -158,7 +176,7 @@ if (!empty($hashp)) {
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
 			} else {
-				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
+				httponly_accessforbidden('Bad link. File is from another module part.', 403);
 			}
 		} else {
 			$modulepart = $moduleparttocheck;
@@ -171,7 +189,7 @@ if (!empty($hashp)) {
 		}
 	} else {
 		$langs->load("errors");
-		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
+		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
 	}
 }
 
@@ -183,7 +201,7 @@ if (preg_match('/\.(html|htm)$/i', $original_file)) {
 if (isset($_GET["attachment"])) {
 	$attachment = GETPOST("attachment", 'alpha') ?true:false;
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS')) {
 	$attachment = false;
 }
 
@@ -270,22 +288,19 @@ $fullpath_original_file_osencoded = dol_osencode($fullpath_original_file); // Ne
 // This test if file exists should be useless. We keep it to find bug more easily
 if (!file_exists($fullpath_original_file_osencoded)) {
 	dol_syslog("ErrorFileDoesNotExists: ".$fullpath_original_file);
-	print "ErrorFileDoesNotExists: ".$original_file;
+	print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 	exit;
 }
 
 // Hooks
-if (!is_object($hookmanager)) {
-	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	$hookmanager = new HookManager($this->db);
-}
 $hookmanager->initHooks(array('document'));
 $parameters = array('ecmfile' => $ecmfile, 'modulepart' => $modulepart, 'original_file' => $original_file,
 	'entity' => $entity, 'fullpath_original_file' => $fullpath_original_file,
 	'filename' => $filename, 'fullpath_original_file_osencoded' => $fullpath_original_file_osencoded);
-$reshook = $hookmanager->executeHooks('downloadDocument', $parameters); // Note that $action and $object may have been
+$object = new stdClass();
+$reshook = $hookmanager->executeHooks('downloadDocument', $parameters, $object, $action); // Note that $action and $object may have been
 if ($reshook < 0) {
-	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').join($separator, $hookmanager->errors) : '');
+	$errors = $hookmanager->error.(is_array($hookmanager->errors) ? (!empty($hookmanager->error) ? ', ' : '').implode(', ', $hookmanager->errors) : '');
 	dol_syslog("document.php - Errors when executing the hook 'downloadDocument' : ".$errors);
 	print "ErrorDownloadDocumentHooks: ".$errors;
 	exit;
@@ -294,6 +309,7 @@ if ($reshook < 0) {
 
 // Permissions are ok and file found, so we return it
 top_httphead($type);
+
 header('Content-Description: File Transfer');
 if ($encoding) {
 	header('Content-Encoding: '.$encoding);
@@ -311,7 +327,8 @@ header('Pragma: public');
 $readfile = true;
 
 // on view document, can output images with good orientation according to exif infos
-if (!$attachment && !empty($conf->global->MAIN_USE_EXIF_ROTATION) && image_format_supported($fullpath_original_file_osencoded) == 1) {
+// TODO Why this on document.php and not in viewimage.php ?
+if (!$attachment && getDolGlobalString('MAIN_USE_EXIF_ROTATION') && image_format_supported($fullpath_original_file_osencoded) == 1) {
 	$imgres = correctExifImageOrientation($fullpath_original_file_osencoded, null);
 	$readfile = !$imgres;
 }

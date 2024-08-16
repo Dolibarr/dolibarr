@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési oldal felaj
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL %s online fizetési oldal felajánlásához egy tagi előfizetéshez
 ToOfferALinkForOnlinePaymentOnDonation=URL %s online fizetési oldal felajánlásához adomány kifizetéséhez
 YouCanAddTagOnUrl=A <b>&tag=<i>value</i></b> url paramétert is hozzáadhatja bármelyik URL-hez (csak olyan fizetés esetén kötelező, amely nem kapcsolódik objektumhoz), és hozzáadhatja saját fizetési megjegyzés címkéjét.< br>A meglévő objektum nélküli fizetések URL-jéhez hozzáadhatja a <strong>&noidempotency=1</strong> paramétert is, így ugyanaz a hivatkozás ugyanazzal a címkével többször is használható (egyes fizetési módok 1-re korlátozhatják a fizetést minden egyes hivatkozáshoz e paraméter nélkül)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Állítsa be a Stripe-ot a(z) <b>%s</b> URL-lel, hogy a Stripe ellenőrzésekor automatikusan létrejöjjön a fizetés.
 AccountParameter=Számlaparaméterek
 UsageParameter=Használati paraméterek
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook élő kulcs
 ONLINE_PAYMENT_WAREHOUSE=A készlet csökkentésére használható készlet, amikor online fizetés megtörtént<br>(TODO Amikor a készletcsökkentési lehetőség megtörténik egy számlán végzett műveletnél, és az online fizetés önmagában generálja a számlát?)
 StripeLiveEnabled=Stripe live engedélyezve (egyébként teszt/sandbox mód)
 StripeImportPayment=Stripe fizetések importálása
-ExampleOfTestCreditCard=Példa hitelkártyára a teszteléshez: %s => érvényes, %s => CVC hiba, %s => lejárt, %s => terhelés sikertelen
+ExampleOfTestCreditCard=Példa hitelkártyára próbafizetéshez: %s => érvényes, %s => hiba CVC, %s => lejárt, %s => a töltés sikertelen
+ExampleOfTestBankAcountForSEPA=Példa bankszámla BAN-számára a csoportos beszedési megbízás teszteléséhez: %s
 StripeGateways=Stripe átjárók
 OAUTH_STRIPE_TEST_ID=Stripe Connect kliensazonosító (ca_...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect kliensazonosító (ca_...)
@@ -50,6 +52,7 @@ StripeAccount=Stripe fiók
 StripeChargeList=Stripe töltések listája
 StripeTransactionList=A Stripe tranzakciók listája
 StripeCustomerId=Stripe ügyfél-azonosító
+StripePaymentId=Csíkos fizetési azonosító
 StripePaymentModes=Stripe fizetési módok
 LocalID=Helyi azonosító
 StripeID=Stripe azonosító
@@ -61,6 +64,7 @@ DeleteACard=Kártya törlése
 ConfirmDeleteCard=Biztosan törölni szeretné ezt a hitel- vagy betéti kártyát?
 CreateCustomerOnStripe=Ügyfél létrehozása a Stripe-on
 CreateCardOnStripe=Kártya létrehozása a Stripe-on
+CreateBANOnStripe=Bank létrehozása a Stripe-on
 ShowInStripe=Stripe megjelenítés
 StripeUserAccountForActions=Felhasználói fiók, amely e-mailben értesíti egyes Stripe eseményekről (Stripe kifizetések)
 StripePayoutList=Stripe kifizetések listája
@@ -68,5 +72,19 @@ ToOfferALinkForTestWebhook=Link a Stripe WebHook beállításához az IPN hívá
 ToOfferALinkForLiveWebhook=Link a Stripe WebHook beállításához az IPN hívásához (élő mód)
 PaymentWillBeRecordedForNextPeriod=A fizetés a következő időszakra kerül rögzítésre.
 ClickHereToTryAgain=<a href="%s">Kattintson ide az újrapróbálkozáshoz...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Az erős ügyfél-hitelesítési szabályok miatt a kártyát a Stripe backoffice-ból kell létrehozni. Ide kattintva bekapcsolhatja a Stripe ügyfélrekordot: %s
-TERMINAL_LOCATION=A terminálok helye (címe).
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Az erős vevő hitelesítési szabályok miatt a kártya létrehozását a Stripe háttérirodájából kell elvégezni. Ide kattintva bekapcsolhatja a Stripe vevő rekordot: %s
+STRIPE_CARD_PRESENT=Kártya ajándék a Stripe terminálokhoz
+TERMINAL_LOCATION=A Stripe terminálok helye (címe).
+RequestDirectDebitWithStripe=Kérjen csoportos beszedési megbízást a Stripe segítségével
+RequesCreditTransferWithStripe=Kérjen hitelátutalást a Stripe segítségével
+STRIPE_SEPA_DIRECT_DEBIT=Engedélyezze a csoportos beszedési megbízást a Stripe-on keresztül
+STRIPE_KLARNA=Engedélyezze a fizetést a Klarna használatával
+STRIPE_BANCONTACT=Engedélyezze a fizetést a BANCONTACT használatával
+STRIPE_IDEAL=Engedélyezze a fizetést az IDEAL használatával
+STRIPE_GIROPAY=Engedélyezze a fizetést a GIROPAY használatával
+STRIPE_SOFORT=Engedélyezze a fizetést a SOFORT segítségével
+StripeConnect_Mode=Stripe Connect mód
+ExampleOnlyForBECustomers=Csak belga ügyfelek számára
+ExampleOnlyForDECustomers=Csak német vásárlóknak
+ExampleOnlyForNLCustomers=Csak holland ügyfelek számára
+ExampleOnlyForATBEDEITNLESCustomers=Csak osztrák, belga, német, olasz, holland, spanyol ügyfelek számára

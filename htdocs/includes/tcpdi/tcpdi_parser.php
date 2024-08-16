@@ -104,7 +104,7 @@ class tcpdi_parser {
 	 * XREF data.
 	 * @protected
 	 */
-	protected $xref = array();
+	public $xref = array();
 
 	/**
 	 * Object streams.
@@ -147,7 +147,7 @@ class tcpdi_parser {
      *
      * @private array
      */
-    private $pages;
+	public $pages;
 
     /**
      * Page count
@@ -715,8 +715,7 @@ class tcpdi_parser {
 				$next = strcspn($data, "\r\n", $offset);
 				if ($next > 0) {
 					$offset += $next;
-					list($obj, $unused) = $this->getRawObject($offset, $data);
-					return $obj;
+					return $this->getRawObject($offset, $data);
 				}
 				break;
 			}
@@ -1365,7 +1364,7 @@ class tcpdi_parser {
     	$obj = $this->getObjectVal($obj);
     	if (isset ($obj[1][1]['/Rotate'])) {
     		$res = $this->getObjectVal($obj[1][1]['/Rotate']);
-    		if ($res[0] == PDF_TYPE_OBJECT)
+    		if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
                 return $res[1];
             return $res;
     	} else {
@@ -1373,7 +1372,7 @@ class tcpdi_parser {
     			return false;
     		} else {
                 $res = $this->_getPageRotation($obj[1][1]['/Parent']);
-                if ($res[0] == PDF_TYPE_OBJECT)
+                if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
                     return $res[1];
                 return $res;
     		}

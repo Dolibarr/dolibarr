@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
+}
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
@@ -42,13 +62,13 @@ dol_syslog("Call Dolibarr webservices interfaces");
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
-	   $langs->load("admin");
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
+	$langs->load("admin");
 
-	   dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
-	   print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
-	   print $langs->trans("ToActivateModule");
-	   exit;
+	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
+	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
+	print $langs->trans("ToActivateModule");
+	exit;
 }
 
 // Create the soap Object
@@ -68,11 +88,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey'       => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-	   'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-	   'login'             => array('name'=>'login', 'type'=>'xsd:string'),
-		'password'          => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity'            => array('name'=>'entity', 'type'=>'xsd:string')
+		'dolibarrkey'       => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+	   'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+	   'login'             => array('name' => 'login', 'type' => 'xsd:string'),
+		'password'          => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity'            => array('name' => 'entity', 'type' => 'xsd:string')
 	)
 );
 // Define WSDL Return object
@@ -83,8 +103,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code'  => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code'  => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
@@ -96,15 +116,15 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'amount'          => array('name'=>'amount', 'type'=>'xsd:double'),
-		'num_payment'     => array('name'=>'num_payment', 'type'=>'xsd:string'),
-		'thirdparty_id'   => array('name'=>'thirdparty_id', 'type'=>'xsd:int'),
-			   'bank_account'    => array('name'=>'bank_account', 'type'=>'xsd:int'),
-			   'payment_mode_id' => array('name'=>'payment_mode_id', 'type'=>'xsd:int'),
-			   'invoice_id'      => array('name'=>'invoice_id', 'type'=>'xsd:int'),
-			   'int_label'       => array('name'=>'int_label', 'type'=>'xsd:string'),
-			   'emitter'         => array('name'=>'emitter', 'type'=>'xsd:string'),
-			   'bank_source'     => array('name'=>'bank_source', 'type'=>'xsd:string'),
+		'amount'          => array('name' => 'amount', 'type' => 'xsd:double'),
+		'num_payment'     => array('name' => 'num_payment', 'type' => 'xsd:string'),
+		'thirdparty_id'   => array('name' => 'thirdparty_id', 'type' => 'xsd:int'),
+			   'bank_account'    => array('name' => 'bank_account', 'type' => 'xsd:int'),
+			   'payment_mode_id' => array('name' => 'payment_mode_id', 'type' => 'xsd:int'),
+			   'invoice_id'      => array('name' => 'invoice_id', 'type' => 'xsd:int'),
+			   'int_label'       => array('name' => 'int_label', 'type' => 'xsd:string'),
+			   'emitter'         => array('name' => 'emitter', 'type' => 'xsd:string'),
+			   'bank_source'     => array('name' => 'bank_source', 'type' => 'xsd:string'),
 	)
 );
 
@@ -119,9 +139,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'createPayment',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'payment'=>'tns:payment'),
+	array('authentication' => 'tns:authentication', 'payment' => 'tns:payment'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string', 'ref' => 'xsd:string', 'ref_ext' => 'xsd:string'),
 	$ns,
 	$ns.'#createPayment',
 	$styledoc,
@@ -134,8 +154,8 @@ $server->register(
  * Create a payment
  *
  * @param      array           $authentication         Array of authentication information
- * @param      Object          $payment                Payment
- * @return     array                                   Array result
+ * @param      array{id:int,thirdparty_id:int|string,amount:float|string,num_payment:string,bank_account:int|string,payment_mode_id?:int|string,invoice_id?:int|string,int_label?:string,emitter:string,bank_source:string} $payment	Payment
+ * @return     array{result:array{result_code:string,result_label:string},id?:int}	Array result
  */
 function createPayment($authentication, $payment)
 {
@@ -169,17 +189,12 @@ function createPayment($authentication, $payment)
 		$soc->fetch($payment['thirdparty_id']);
 
 		$new_payment              = new Paiement($db);
-		$new_payment->amount      = floatval($payment['amount']);
 		$new_payment->num_payment = $payment['num_payment'];
 		$new_payment->fk_account  = intval($payment['bank_account']);
 		$new_payment->paiementid  = !empty($payment['payment_mode_id']) ? intval($payment['payment_mode_id']) : $soc->mode_reglement_id;
 		$new_payment->datepaye    = $now;
 		$new_payment->author      = $payment['thirdparty_id'];
-		$new_payment->amounts     = array();
-
-		if (intval($payment['invoice_id']) > 0) {
-			$new_payment->amounts[$payment['invoice_id']] = $new_payment->amount;
-		}
+		$new_payment->amounts     = array($payment['invoice_id'] => (float) $payment['amount']);
 
 		$db->begin();
 		$result = $new_payment->create($fuser, true);
@@ -194,7 +209,7 @@ function createPayment($authentication, $payment)
 
 		if (!$error) {
 			$db->commit();
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$new_payment->id);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $new_payment->id);
 		} else {
 			$db->rollback();
 			$error++;
@@ -205,7 +220,7 @@ function createPayment($authentication, $payment)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

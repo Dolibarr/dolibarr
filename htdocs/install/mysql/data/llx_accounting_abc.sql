@@ -9,6 +9,8 @@
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 -- Copyright (C) 2020      Udo Tamm             <dev@dolibit.de>
+-- Copyright (C) 2023      Nick Fragoulis
+-- Copyright (C) 2023      Santiago Payà        <santiagopim@gmail.com>
 --
 --
 --------------------------------------------------------------------------------------
@@ -55,7 +57,6 @@ INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES 
 INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
 
 
-
 -- Accounting Charts / Plans (Templates) for Countries
 
 -- Description of chart of account FR PCG99-ABREGE
@@ -71,9 +72,14 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account BE PCMN-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  2, 'PCMN-BASE', 'The base accountancy belgium plan', 1);
+-- Description of chart of account BE PCMN-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  2, 'MAR-VERKORT', 'The base accountancy belgium plan Dutch', 1);
 
 -- Description of chart of account ES PCG08-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME', 'The PYME accountancy spanish plan', 1);
+
+-- Description of chart of account ES PCG08-PYME-CAT
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME-CAT', 'The PYME accountancy spanish plan in catalan language', 1);
 
 -- Description of chart of account DE SKR-03
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR03', 'Standardkontenrahmen SKR 03', 1);
@@ -113,6 +119,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account EC EC-SUPERCIAS
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 84, 'EC-SUPERCIAS', 'Plan de cuentas Ecuador', 1);
 
+-- Description of chart of account CO CO-PUC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 70, 'CO-PUC', 'Plan único de cuentas Colombia', 1);
 
 -- Description of chart of account LU PCN2020-LUXEMBURG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN2020-LUXEMBURG', 'Plan comptable normalisé 2020 Luxembourgeois', 1);
@@ -120,7 +128,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account RO RO-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (188, 'RO-BASE', 'Plan de conturi romanesc', 1);
 
-
+-- Description of chart of account GR Ε.Λ.Π.
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (102, 'Ε.Λ.Π.', 'Ελληνικά Λογιστικά Πρότυπα', 1);
 
 
 --DELETE FROM llx_accounting_system WHERE pcg_version = 'SYSCOHADA';
@@ -183,3 +192,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account Mexico SAT/24-2019
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 154, 'SAT/24-2019', 'Catalogo y codigo agrupador fiscal del 2019', 1);
+
+-- Description of chart of account Japan JPN-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 123, 'JPN-BASE', '日本 勘定科目表 基本版', 1);

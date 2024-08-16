@@ -7,24 +7,33 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=வணிக முன்மொழிவு
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=வணிக முன்மொழிவு கையொப்பமிடப்பட்ட பிறகு தானாகவே வாடிக்கையாளர் விலைப்பட்டியலை உருவாக்கவும் (புதிய விலைப்பட்டியல் முன்மொழிவின் அதே தொகையைக் கொண்டிருக்கும்)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=ஒப்பந்தம் சரிபார்க்கப்பட்ட பிறகு தானாகவே வாடிக்கையாளர் விலைப்பட்டியலை உருவாக்கவும்
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=விற்பனை ஆர்டர் மூடப்பட்ட பிறகு தானாகவே வாடிக்கையாளர் விலைப்பட்டியலை உருவாக்கவும் (புதிய விலைப்பட்டியல் ஆர்டரின் அதே தொகையைக் கொண்டிருக்கும்)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=விற்பனை ஆர்டரை பில் செய்யும்போது பில் செய்யப்பட்டதாக இணைக்கப்பட்ட மூல முன்மொழிவை வகைப்படுத்தவும் (மற்றும் ஆர்டரின் தொகையானது கையொப்பமிடப்பட்ட இணைக்கப்பட்ட முன்மொழிவின் மொத்தத் தொகையாக இருந்தால்)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=வாடிக்கையாளர் விலைப்பட்டியல் சரிபார்க்கப்படும் போது இணைக்கப்பட்ட மூல முன்மொழிவை பில் செய்யப்பட்டதாக வகைப்படுத்தவும் (மற்றும் விலைப்பட்டியல் தொகையானது கையொப்பமிடப்பட்ட இணைக்கப்பட்ட திட்டத்தின் மொத்தத் தொகையாக இருந்தால்)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=வாடிக்கையாளர் விலைப்பட்டியல் சரிபார்க்கப்படும்போது பில் செய்யப்பட்டதாக இணைக்கப்பட்ட மூல விற்பனை ஆர்டரை வகைப்படுத்தவும் (மற்றும் விலைப்பட்டியல் தொகையானது இணைக்கப்பட்ட ஆர்டரின் மொத்தத் தொகையாக இருந்தால்)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=வாடிக்கையாளர் விலைப்பட்டியல் செலுத்தப்பட்டதாக அமைக்கப்படும் போது இணைக்கப்பட்ட மூல விற்பனை ஆர்டரை பில் என வகைப்படுத்தவும் (மற்றும் விலைப்பட்டியல் தொகையானது இணைக்கப்பட்ட ஆர்டரின் மொத்தத் தொகையாக இருந்தால்)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=ஷிப்மென்ட் சரிபார்க்கப்படும்போது அனுப்பப்பட்டதாக இணைக்கப்பட்ட மூல விற்பனை ஆர்டரை வகைப்படுத்தவும் (மற்றும் அனைத்து ஷிப்மென்ட்களும் அனுப்பிய அளவு புதுப்பிக்கும் வரிசையைப் போலவே இருந்தால்)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=ஷிப்மென்ட் மூடப்படும்போது அனுப்பப்பட்டதாக இணைக்கப்பட்ட மூல விற்பனை ஆர்டரை வகைப்படுத்தவும் (மற்றும் அனைத்து ஷிப்மென்ட்களும் அனுப்பிய அளவு புதுப்பிக்கும் வரிசையைப் போலவே இருந்தால்)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=விற்பனையாளர் விலைப்பட்டியல் சரிபார்க்கப்படும் போது இணைக்கப்பட்ட மூல விற்பனையாளர் முன்மொழிவை பில் என வகைப்படுத்தவும் (மற்றும் விலைப்பட்டியல் தொகையானது இணைக்கப்பட்ட திட்டத்தின் மொத்தத் தொகையாக இருந்தால்)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=விற்பனையாளர் விலைப்பட்டியல் சரிபார்க்கப்படும் போது இணைக்கப்பட்ட மூல கொள்முதல் ஆர்டரை பில் செய்ததாக வகைப்படுத்தவும் (மற்றும் விலைப்பட்டியல் தொகையானது இணைக்கப்பட்ட ஆர்டரின் மொத்தத் தொகையாக இருந்தால்)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=ஒரு வரவேற்பு சரிபார்க்கப்படும் போது பெறப்பட்ட இணைக்கப்பட்ட மூல கொள்முதல் ஆர்டரை வகைப்படுத்தவும் (மற்றும் அனைத்து வரவேற்புகளிலும் பெறப்பட்ட அளவு வாங்குதல் ஆர்டரில் உள்ளதைப் போலவே புதுப்பிக்கவும்)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=ஒரு வரவேற்பு மூடப்படும் போது பெறப்பட்ட இணைக்கப்பட்ட மூல கொள்முதல் ஆர்டரை வகைப்படுத்தவும் (மற்றும் அனைத்து வரவேற்புகளிலும் பெறப்பட்ட அளவு வாங்குதல் ஆர்டரில் உள்ளதைப் போலவே புதுப்பிக்கவும்)
-# Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=இணைக்கப்பட்ட சப்ளையர் ஆர்டர் சரிபார்க்கப்படும் போது வரவேற்புகளை "பில்" என வகைப்படுத்தவும்
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=டிக்கெட் மூடப்படும் போது, டிக்கெட்டுடன் இணைக்கப்பட்ட அனைத்து தலையீடுகளையும் மூடு
 AutomaticCreation=தானியங்கி உருவாக்கம்
 AutomaticClassification=தானியங்கி வகைப்பாடு
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=வாடிக்கையாளர் இன்வாய்ஸ் சரிபார்க்கப்படும் போது இணைக்கப்பட்ட மூல ஏற்றுமதி மூடப்பட்டதாக வகைப்படுத்தவும்
+AutomaticClosing=Automatic closing
+AutomaticLinking=Automatic linking

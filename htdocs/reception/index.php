@@ -25,13 +25,14 @@
  *       \brief      Home page of reception area.
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('receptionindex'));
 
 $langs->loadLangs(array("orders", "receptions"));
@@ -54,7 +55,7 @@ $orderstatic = new CommandeFournisseur($db);
 $companystatic = new Societe($db);
 
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('', $langs->trans("Reception"), $helpurl);
+llxHeader('', $langs->trans("Reception"), $helpurl, '', 0, 0, '', '', '', 'mod-reception page-dashboard');
 
 print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 
@@ -62,7 +63,7 @@ print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
 	print '<form method="post" action="list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -78,8 +79,6 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be 
  * Draft receptions
  */
 
-$clause = " WHERE ";
-
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
 $sql .= " s.nom as name, s.rowid as socid,";
 $sql .= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
@@ -87,12 +86,10 @@ $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql .= $clause." sc.fk_user = ".((int) $user->id);
-	$clause = " AND ";
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = e.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
-$sql .= $clause." e.fk_statut = 0";
+$sql .= " WHERE e.fk_statut = 0";
 $sql .= " AND e.entity IN (".getEntity('reception').")";
 if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
@@ -151,11 +148,11 @@ $sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('order_supplier') AND el.targettype = 'reception'";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
 }
 $sql .= " WHERE e.entity IN (".getEntity('reception').")";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND sc.fk_user = ".((int) $user->id);
 }
 $sql .= " AND e.fk_statut = 1";
@@ -212,17 +209,14 @@ if ($resql) {
 $sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
 $sql .= " WHERE c.fk_soc = s.rowid";
 $sql .= " AND c.entity IN (".getEntity('supplier_order').")";
 $sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
 if ($socid > 0) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 }
 $sql .= " ORDER BY c.rowid ASC";
 $resql = $db->query($sql);
@@ -235,7 +229,8 @@ if ($resql) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").' <span class="badge">'.$num.'</span></th></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess");
+		print ' <a href="'.DOL_URL_ROOT.'/reception/list.php?search_status=1" alt="'.$langs->trans("GoOnList").'"><span class="badge">'.$num.'</span></a>';
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 

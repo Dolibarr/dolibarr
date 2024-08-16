@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dodávka
 DeliveryRef=Ref Doručení
-DeliveryCard=Příjmová karta
+DeliveryCard=Potvrzení o doručení
 DeliveryOrder=Potvrzení o doručení
 DeliveryDate=Termín dodání
 CreateDeliveryOrder=Generovat doklad o doručení

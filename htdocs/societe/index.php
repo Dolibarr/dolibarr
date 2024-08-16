@@ -27,38 +27,45 @@
  *  \brief      Home page for third parties area
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('thirdpartiesindex'));
-
+// Load translation files required by the page
 $langs->load("companies");
 
-$socid = GETPOST('socid', 'int');
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('thirdpartiesindex'));
+
+
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
 // Security check
-$result = restrictedArea($user, 'societe', 0, '', '', '', '');
+$result = restrictedArea($user, 'societe|contact', 0, '', '', '', '');
 
 $thirdparty_static = new Societe($db);
+$contact_static = new Contact($db);
 
 if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
+
 // Load $resultboxes
 $resultboxes = FormOther::getBoxesArea($user, "3");
 
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -66,6 +73,8 @@ if (GETPOST('addbox')) {
 		setEventMessages($langs->trans("BoxAdded"), null);
 	}
 }
+
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -80,9 +89,7 @@ llxHeader("", $langs->trans("ThirdParties"), $helpurl);
 print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'companies');
 
 
-/*
- * Statistics area
- */
+// Statistics area
 
 $third = array(
 		'customer' => 0,
@@ -94,14 +101,14 @@ $total = 0;
 
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if (empty($user->rights->fournisseur->lire)) {
+if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible
 }
 // Add where from hooks
@@ -118,17 +125,21 @@ $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
 		$found = 0;
-		if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS) && ($objp->client == 2 || $objp->client == 3)) {
-			$found = 1; $third['prospect']++;
+		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS') && ($objp->client == 2 || $objp->client == 3)) {
+			$found = 1;
+			$third['prospect']++;
 		}
-		if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS) && ($objp->client == 1 || $objp->client == 3)) {
-			$found = 1; $third['customer']++;
+		if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS') && ($objp->client == 1 || $objp->client == 3)) {
+			$found = 1;
+			$third['customer']++;
 		}
-		if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $objp->fournisseur) {
-			$found = 1; $third['supplier']++;
+		if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS') && $objp->fournisseur) {
+			$found = 1;
+			$third['supplier']++;
 		}
 		if (isModEnabled('societe') && $objp->client == 0 && $objp->fournisseur == 0) {
-			$found = 1; $third['other']++;
+			$found = 1;
+			$third['other']++;
 		}
 		if ($found) {
 			$total++;
@@ -144,17 +155,17 @@ $thirdpartygraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("St
 if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) + (round($third['customer']) ? 1 : 0) + (round($third['supplier']) ? 1 : 0) + (round($third['other']) ? 1 : 0) >= 2)) {
 	$thirdpartygraph .= '<tr><td class="center" colspan="2">';
 	$dataseries = array();
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
-		$dataseries[] = array($langs->trans("Prospects"), round($third['prospect']));
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS')) {
+		$dataseries[] = array($langs->transnoentitiesnoconv("Prospects"), round($third['prospect']));
 	}
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
-		$dataseries[] = array($langs->trans("Customers"), round($third['customer']));
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS')) {
+		$dataseries[] = array($langs->transnoentitiesnoconv("Customers"), round($third['customer']));
 	}
-	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
-		$dataseries[] = array($langs->trans("Suppliers"), round($third['supplier']));
+	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS')) {
+		$dataseries[] = array($langs->transnoentitiesnoconv("Suppliers"), round($third['supplier']));
 	}
 	if (isModEnabled('societe')) {
-		$dataseries[] = array($langs->trans("Others"), round($third['other']));
+		$dataseries[] = array($langs->transnoentitiesnoconv("Others"), round($third['other']));
 	}
 	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
@@ -167,19 +178,20 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$thirdpartygraph .= $dolgraph->show();
 	$thirdpartygraph .= '</td></tr>'."\n";
 } else {
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS)) {
-		$statstring = "<tr>";
+	$statstring = '';
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && !getDolGlobalString('SOCIETE_DISABLE_PROSPECTS_STATS')) {
+		$statstring .= "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td class="right">'.round($third['prospect']).'</td>';
 		$statstring .= "</tr>";
 	}
-	if (isModEnabled('societe') && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS)) {
+	if (isModEnabled('societe') && $user->hasRight('societe', 'lire') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS') && !getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS_STATS')) {
 		$statstring .= "<tr>";
 		$statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
 		$statstring .= "</tr>";
 	}
 	$statstring2 = '';
-	if (((isModEnabled('fournisseur') && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (isModEnabled('supplier_order') && $user->rights->supplier_order->lire) || (isModEnabled('supplier_invoice') && $user->rights->supplier_invoice->lire)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) {
-		$statstring2 = "<tr>";
+	if (((isModEnabled('fournisseur') && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order') && $user->hasRight('supplier_order', 'lire')) || (isModEnabled('supplier_invoice') && $user->hasRight('supplier_invoice', 'lire'))) && !getDolGlobalString('SOCIETE_DISABLE_SUPPLIERS_STATS')) {
+		$statstring2 .= "<tr>";
 		$statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
 		$statstring2 .= "</tr>";
 	}
@@ -193,7 +205,7 @@ $thirdpartygraph .= '</table>';
 $thirdpartygraph .= '</div>';
 
 $thirdpartycateggraph = '';
-if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$elementtype = 'societe';
 
@@ -205,7 +217,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql .= " WHERE c.type = 2";
-	if (!is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) {
+	if (!is_numeric(getDolGlobalString('CATEGORY_GRAPHSTATS_ON_THIRDPARTIES'))) {
 		$sql .= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
 	}
 	$sql .= " AND c.entity IN (".getEntity('category').")";
@@ -266,11 +278,10 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 /*
  * Latest modified third parties
  */
-$max = 15;
 $sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
 $sql .= ", s.code_client";
 $sql .= ", s.code_fournisseur";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 	$sql .= ", spe.accountancy_code_customer as code_compta";
 } else {
@@ -281,17 +292,18 @@ $sql .= ", s.logo";
 $sql .= ", s.entity";
 $sql .= ", s.canvas, s.tms as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
+// TODO Replace this
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ' WHERE s.entity IN ('.getEntity('societe').')';
-if (empty($user->rights->societe->client->voir) && !$socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
-if (empty($user->rights->fournisseur->lire)) {
+if (!$user->hasRight('fournisseur', 'lire')) {
 	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
 }
 // Add where from hooks
@@ -321,9 +333,16 @@ if ($result) {
 		$lastmodified .= '<div class="div-table-responsive-no-min">';
 		$lastmodified .= '<table class="noborder centpercent">';
 
-		$lastmodified .= '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
+		$lastmodified .= '<tr class="liste_titre"><th colspan="2">';
+		//$lastmodified .= img_picto('', 'company', 'class="pictofixedwidth"');
+		$lastmodified .= '<span class="valignmiddle">'.$transRecordedType.'</span>';
+		$lastmodified .= '<a class="marginleftonlyshort" href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		$lastmodified .= '<span class="badge marginleftonlyshort">...</span>';
+		$lastmodified .= '</a>';
+		$lastmodified .= '</th>';
 		$lastmodified .= '<th>&nbsp;</th>';
-		$lastmodified .= '<th class="right"><a href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
+		$lastmodified .= '<th class="right">';
+		$lastmodified .= '</th>';
 		$lastmodified .= '</tr>'."\n";
 
 		while ($i < $num) {
@@ -342,7 +361,7 @@ if ($result) {
 			$thirdparty_static->email = $objp->email;
 			$thirdparty_static->entity = $objp->entity;
 			$thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
-			$thirdparty_static->code_compta = $objp->code_compta;
+			$thirdparty_static->code_compta_client = $objp->code_compta;
 
 			$lastmodified .= '<tr class="oddeven">';
 			// Name
@@ -374,7 +393,139 @@ if ($result) {
 	dol_print_error($db);
 }
 
-//print '</div></div></div>';
+
+
+/*
+ * Latest modified contacts
+ */
+$sql = "SELECT s.rowid, s.nom as name, s.email, s.client, s.fournisseur";
+$sql .= ", s.code_client";
+$sql .= ", s.code_fournisseur";
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+	$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
+	$sql .= ", spe.accountancy_code_customer as code_compta";
+} else {
+	$sql .= ", s.code_compta_fournisseur";
+	$sql .= ", s.code_compta";
+}
+$sql .= ", s.logo";
+$sql .= ", s.entity";
+$sql .= ", s.canvas";
+$sql .= ", s.tms as date_modification, s.status as status";
+$sql .= ", sp.rowid as cid, sp.canvas as ccanvas, sp.email as cemail, sp.firstname, sp.lastname";
+$sql .= ", sp.address as caddress, sp.phone as cphone";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as sp";
+if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
+}
+// TODO Replace this
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
+$sql .= ' WHERE s.entity IN ('.getEntity('societe').') AND sp.fk_soc = s.rowid';
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
+}
+if (!$user->hasRight('fournisseur', 'lire')) {
+	$sql .= " AND (s.fournisseur != 1 OR s.client != 0)";
+}
+// Add where from hooks
+$parameters = array('socid' => $socid);
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	if ($socid > 0) {
+		$sql .= " AND s.rowid = ".((int) $socid);
+	}
+}
+$sql .= $hookmanager->resPrint;
+$sql .= $db->order("s.tms", "DESC");
+$sql .= $db->plimit($max, 0);
+
+//print $sql;
+$lastmodifiedcontact = '';
+$result = $db->query($sql);
+if ($result) {
+	$num = $db->num_rows($result);
+
+	$i = 0;
+
+	if ($num > 0) {
+		$transRecordedType = $langs->trans("LastModifiedContacts", $max);
+
+		$lastmodifiedcontact = "\n<!-- last contacts modified -->\n";
+		$lastmodifiedcontact .= '<div class="div-table-responsive-no-min">';
+		$lastmodifiedcontact .= '<table class="noborder centpercent">';
+
+		$lastmodifiedcontact .= '<tr class="liste_titre"><th colspan="2">';
+		//$lastmodifiedcontact .= img_picto('', 'contact', 'class="pictofixedwidth"');
+		$lastmodifiedcontact .= '<span class="valignmiddle">'.$transRecordedType.'</div>';
+		$lastmodifiedcontact .= '<a class="marginleftonlyshort" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC" title="'.$langs->trans("FullList").'">';
+		//$lastmodifiedcontact .= img_picto($langs->trans("FullList"), 'contact');
+		$lastmodifiedcontact .= '<span class="badge marginleftonlyshort">...</span>';
+		$lastmodifiedcontact .= '</th>';
+		$lastmodifiedcontact .= '<th>&nbsp;</th>';
+		$lastmodifiedcontact .= '<th class="right">';
+		//$lastmodifiedcontact .= '<a href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=s.tms&sortorder=DESC">'.img_picto($langs->trans("FullList"), 'contact');
+		$lastmodifiedcontact .= '</th>';
+		$lastmodifiedcontact .= '</tr>'."\n";
+
+		while ($i < $num) {
+			$objp = $db->fetch_object($result);
+
+			$thirdparty_static->id = $objp->rowid;
+			$thirdparty_static->name = $objp->name;
+			$thirdparty_static->client = $objp->client;
+			$thirdparty_static->fournisseur = $objp->fournisseur;
+			$thirdparty_static->logo = $objp->logo;
+			$thirdparty_static->date_modification = $db->jdate($objp->date_modification);
+			$thirdparty_static->status = $objp->status;
+			$thirdparty_static->code_client = $objp->code_client;
+			$thirdparty_static->code_fournisseur = $objp->code_fournisseur;
+			$thirdparty_static->canvas = $objp->canvas;
+			$thirdparty_static->email = $objp->email;
+			$thirdparty_static->entity = $objp->entity;
+			$thirdparty_static->code_compta_fournisseur = $objp->code_compta_fournisseur;
+			$thirdparty_static->code_compta_client = $objp->code_compta;
+
+			$contact_static->id = $objp->cid;
+			$contact_static->firstname = $objp->firstname;
+			$contact_static->lastname = $objp->lastname;
+			$contact_static->email = $objp->cemail;
+			$contact_static->socid = $objp->rowid;
+			$contact_static->canvas = $objp->ccanvas;
+			$contact_static->phone_pro = $objp->cphone;
+			$contact_static->address = $objp->caddress;
+
+			$lastmodifiedcontact .= '<tr class="oddeven">';
+			// Contact
+			$lastmodifiedcontact .= '<td>';
+			$lastmodifiedcontact .= $contact_static->getNomUrl(1);
+			$lastmodifiedcontact .= '</td>';
+			// Third party
+			$lastmodifiedcontact .= '<td class="nowrap tdoverflowmax200">';
+			$lastmodifiedcontact .= $thirdparty_static->getNomUrl(1);
+			$lastmodifiedcontact .= "</td>\n";
+			// Last modified date
+			$lastmodifiedcontact .= '<td class="right tddate" title="'.dol_escape_htmltag($langs->trans("DateModification").' '.dol_print_date($thirdparty_static->date_modification, 'dayhour', 'tzuserrel')).'">';
+			$lastmodifiedcontact .= dol_print_date($thirdparty_static->date_modification, 'day', 'tzuserrel');
+			$lastmodifiedcontact .= "</td>";
+			$lastmodifiedcontact .= '<td class="right nowrap">';
+			$lastmodifiedcontact .= $thirdparty_static->getLibStatut(3);
+			$lastmodifiedcontact .= "</td>";
+			$lastmodifiedcontact .= "</tr>\n";
+			$i++;
+		}
+
+		$db->free($result);
+
+		$lastmodifiedcontact .= "</table>\n";
+		$lastmodifiedcontact .= '</div>';
+		$lastmodifiedcontact .= "<!-- End last contacts modified -->\n";
+	}
+} else {
+	dol_print_error($db);
+}
+
 
 // boxes
 print '<div class="clearboth"></div>';
@@ -392,6 +543,8 @@ $boxlist .= '</div>'."\n";
 
 $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 $boxlist .= $lastmodified;
+$boxlist .= '<br>';
+$boxlist .= $lastmodifiedcontact;
 $boxlist .= '<br>';
 $boxlist .= $resultboxes['boxlistb'];
 $boxlist .= '</div>'."\n";

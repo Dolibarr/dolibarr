@@ -21,6 +21,7 @@
  *	\brief      Setup page to configure accounting module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -29,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action = GETPOST('action', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'adminaccoutant'; // To manage different context of search
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'companies', 'accountancy'));
@@ -54,14 +55,18 @@ $error = 0;
 
 $title = $langs->trans("ConfigAccountingExpert");
 $help_url = '';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-accounting');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($title, $linkback, 'title_setup');
 
 print "<br>\n";
-print '<span class="opacitymedium">'.$langs->trans("AccountancySetupDoneFromAccountancyMenu", $langs->transnoentitiesnoconv("Accounting").' - '.$langs->transnoentitiesnoconv("Setup"))."</span><br>\n";
+$texttoshow = $langs->trans("AccountancySetupDoneFromAccountancyMenu", '{s1}'.$langs->transnoentitiesnoconv("Accounting").' - '.$langs->transnoentitiesnoconv("Setup").'{s2}');
+$texttoshow = str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/accountancy/index.php?mainmenu=accountancy&leftmenu=accountancy_admin">', $texttoshow);
+$texttoshow = str_replace('{s2}', '</a>'.img_picto("", "url", 'class="paddingleft"'), $texttoshow);
+print '<span class="opacitymedium">'.$texttoshow."</span><br>\n";
 print "<br>\n";
 
 llxFooter();

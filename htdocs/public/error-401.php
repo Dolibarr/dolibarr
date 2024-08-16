@@ -18,10 +18,15 @@
 	<h1>Error</h1>
 
 	<br>
-	Sorry. You are not allowed to access this resource.
+	Sorry. You are not allowed access to this resource.
 
 	<br>
-	<?php print isset($_SERVER["HTTP_REFERER"]) ? 'You come from '.htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8').'.' : ''; ?>
+	<br>
+
+	No esta autorizado para acceder a este recurso.
+
+	<br>
+	<?php print isset($_SERVER["HTTP_REFERER"]) ? 'You arrived from '.htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8').'.' : ''; ?>
 
 	<hr>
 

@@ -1,6 +1,7 @@
 <?php
 /*
  * Copyright (C) 2017		 Oscss-Shop       <support@oscss-shop.fr>.
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modifyion 2.0 (the "License");
  * it under the terms of the GNU General Public License as published bypliance with the License.
@@ -39,16 +40,49 @@ class Dolistore
 	 */
 	public $end;
 
-	public $per_page; // pagination: display per page
-	public $categorie; // the current categorie
-	public $search; // the search keywords
+	/**
+	 * @var int Pagination: display per page
+	 */
+	public $per_page;
+	/**
+	 * @var int The current categorie
+	 */
+	public $categorie;
+	/**
+	 * @var ?SimpleXMLElement
+	 */
+	public $categories; // an array of categories
+
+	/**
+	 * @var string The search keywords
+	 */
+	public $search;
 
 	// setups
+	/**
+	 * @var string
+	 */
 	public $url; // the url of this page
+	/**
+	 * @var string
+	 */
 	public $shop_url; // the url of the shop
+	/**
+	 * @var int
+	 */
 	public $lang; // the integer representing the lang in the store
-	public $debug_api; // usefull if no dialog
-
+	/**
+	 * @var bool
+	 */
+	public $debug_api; // useful if no dialog
+	/**
+	 * @var PrestaShopWebservice
+	 */
+	public $api;
+	/**
+	 * @var ?SimpleXMLElement
+	 */
+	public $products;
 
 	/**
 	 * Constructor
@@ -57,7 +91,7 @@ class Dolistore
 	 */
 	public function __construct($debug = false)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';
@@ -65,7 +99,7 @@ class Dolistore
 
 		$langtmp    = explode('_', $langs->defaultlang);
 		$lang       = $langtmp[0];
-		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5); // Into table ps_lang of Prestashop - 1
+		$lang_array = array('en' => 1, 'fr' => 2, 'es' => 3, 'it' => 4, 'de' => 5); // Into table ps_lang of Prestashop - 1
 		if (!in_array($lang, array_keys($lang_array))) {
 			$lang = 'en';
 		}
@@ -83,9 +117,9 @@ class Dolistore
 		global $conf;
 
 		try {
-			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
+			$this->api = new PrestaShopWebservice(getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'), getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY'), $this->debug_api);
 			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
-			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
+			// conf MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want categories resources
 			$opt              = array();
@@ -105,7 +139,7 @@ class Dolistore
 			} elseif ($trace[0]['args'][0] == 401) {
 				die('Bad auth key');
 			} else {
-				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print 'Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV').'<br>';
 				print $e->getMessage();
 			}
 		}
@@ -115,7 +149,7 @@ class Dolistore
 	 * Load data from remote Dolistore market place.
 	 * This fills ->products
 	 *
-	 * @param 	array 	$options	Options. If 'categorie' is defined, we filter products on this category id
+	 * @param 	array{start:int,end:int,per_page:int,categorie:int,search:string}	$options	Options. If 'categorie' is defined, we filter products on this category id
 	 * @return	void
 	 */
 	public function getRemoteProducts($options = array('start' => 0, 'end' => 10, 'per_page' => 50, 'categorie' => 0, 'search' => ''))
@@ -133,9 +167,9 @@ class Dolistore
 		}
 
 		try {
-			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
+			$this->api = new PrestaShopWebservice(getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'), getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY'), $this->debug_api);
 			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV'));
-			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
+			// conf MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want products resources
 			$opt             = array();
@@ -144,7 +178,7 @@ class Dolistore
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
+				$opt2['url'] = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV') . '/api/search?query='.$this->search.'&language='.$this->lang; // It seems for search, key start with
 
 				// Call
 				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
@@ -174,7 +208,7 @@ class Dolistore
 			$opt['sort']           = 'id_desc';
 			$opt['filter[active]'] = '[1]';
 			$opt['limit']          = "$this->start,$this->end";
-			// $opt['filter[id]'] contais list of product id that are result of search
+			// $opt['filter[id]'] contains list of product id that are result of search
 
 			// Call API to get the detail
 			dol_syslog("Call API with opt = ".var_export($opt, true));
@@ -188,7 +222,7 @@ class Dolistore
 			} elseif ($trace[0]['args'][0] == 401) {
 				die('Bad auth key');
 			} else {
-				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print 'Can not access to ' . getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV').'<br>';
 				print $e->getMessage();
 			}
 		}
@@ -219,14 +253,14 @@ class Dolistore
 			if ($cat->is_root_category == 1 && $parent == 0) {
 				$html .= '<li class="root"><h3 class="nomargesupinf"><a class="nomargesupinf link2cat" href="?mode=marketplace&categorie='.((int) $cat->id).'" ';
 				$html .= 'title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'">'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a></h3>';
-				$html .= self::get_categories($cat->id);
+				$html .= self::get_categories((int) $cat->id);
 				$html .= "</li>\n";
 			} elseif (trim($cat->id_parent) == $parent && $cat->active == 1 && trim($cat->id_parent) != 0) { // si cat est de ce niveau
 				$select = ($cat->id == $this->categorie) ? ' selected' : '';
 				$html .= '<li><a class="link2cat'.$select.'" href="?mode=marketplace&categorie='.((int) $cat->id).'"';
 				$html .= ' title="'.dol_escape_htmltag(strip_tags($cat->description->language[$this->lang - 1])).'" ';
 				$html .= '>'.dol_escape_htmltag($cat->name->language[$this->lang - 1]).' <sup>'.dol_escape_htmltag($cat->nb_products_recursive).'</sup></a>';
-				$html .= self::get_categories($cat->id);
+				$html .= self::get_categories((int) $cat->id);
 				$html .= "</li>\n";
 			}
 		}
@@ -243,7 +277,7 @@ class Dolistore
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of product formated for output
+	 * Return list of product formatted for output
 	 *
 	 * @return string			HTML output
 	 */
@@ -267,7 +301,7 @@ class Dolistore
 
 			// add image or default ?
 			if ($product->id_default_image != '') {
-				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.urlencode(((int) $product->id)).'&id_image='.urlencode(((int) $product->id_default_image));
+				$image_url = DOL_URL_ROOT.'/admin/dolistore/ajax/image.php?id_product='.urlencode((string) (((int) $product->id))).'&id_image='.urlencode((string) (((int) $product->id_default_image)));
 				$images = '<a href="'.$image_url.'" class="documentpreview" target="_blank" rel="noopener noreferrer" mime="image/png" title="'.dol_escape_htmltag($product->name->language[$this->lang - 1].', '.$langs->trans('Version').' '.$product->module_version).'">';
 				$images .= '<img src="'.$image_url.'&quality=home_default" style="max-height:250px;max-width: 210px;" alt="" /></a>';
 			} else {
@@ -329,7 +363,6 @@ class Dolistore
 			$html .= '</small></h2>';
 			$html .= '<small> '.dol_print_date(dol_stringtotime($product->date_upd), 'dayhour').' - '.$langs->trans('Ref').': '.dol_escape_htmltag($product->reference).' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product->id).'</small><br><br>'.dol_escape_htmltag($product->description_short->language[$this->lang - 1]).'</td>';
 			// do not load if display none
-			//$html .= '<td style="display:none;" class="long_description">'.$product->description->language[$this->lang - 1].'</td>';
 			$html .= '<td class="margeCote center">';
 			$html .= $price;
 			$html .= '</td>';
@@ -399,7 +432,7 @@ class Dolistore
 	{
 		// phpcs:enable
 		$param_array = array();
-		if (count($this->products) < $this->per_page) {
+		if ($this->products !== null && count($this->products) < $this->per_page) {
 			$add = 0;
 		} else {
 			$add = $this->per_page;

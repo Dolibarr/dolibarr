@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Aggiungi la seguente pagina ai segnalibri
-Bookmark=Segnalibro
-Bookmarks=Segnalibri
-ListOfBookmarks=Elenco segnalibri
-EditBookmarks=Visualizza lista/crea segnalibri
-NewBookmark=Nuovo segnalibro
-ShowBookmark=Visualizza segnalibro
-OpenANewWindow=Apri una nuova finestra
-ReplaceWindow=Sostituisci finestra attuale
-BookmarkTargetNewWindowShort=Nuova finestra
-BookmarkTargetReplaceWindowShort=Finestra corrente
-BookmarkTitle=Titolo segnalibro
-UrlOrLink=URL
-BehaviourOnClick=Funzione per l'URL del segnalibro
-CreateBookmark=Crea segnalibro
-SetHereATitleForLink=Dai un titolo al segnalibro
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Utilizza un link esterno/assoluto (https://externalurl.com) o un link interno/relativo (/mypage.php). Puoi anche usare il telefono come tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Scegli se la pagina collegata deve essera aperta in una nuova finestra oppure no
-BookmarksManagement=Gestione segnalibri
-BookmarksMenuShortCut=Ctrl + Maiusc + m
-NoBookmarks=Nessun segnalibro definito
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Aggiungi la seguente pagina ai segnalibri
+BehaviourOnClick = Comportamento quando viene selezionato un URL segnalibro
+Bookmark = Segnalibro
+Bookmarks = Segnalibri
+BookmarkTargetNewWindowShort = Nuova finestra
+BookmarkTargetReplaceWindowShort = Finestra corrente
+BookmarkTitle = Titolo segnalibro
+BookmarksManagement = Gestione segnalibri
+BookmarksMenuShortCut = Ctrl + Maiusc + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Scegli se la pagina collegata deve essera aperta in una nuova finestra oppure no
+CreateBookmark = Crea segnalibro
+EditBookmarks = Visualizza lista/crea segnalibri
+ListOfBookmarks = Elenco segnalibri
+NewBookmark = Nuovo segnalibro
+NoBookmarkFound = Nessun segnalibro trovato
+NoBookmarks = Nessun segnalibro definito
+OpenANewWindow = Apri una nuova finestra
+ReplaceWindow = Sostituisci finestra attuale
+SetHereATitleForLink = Dai un titolo al segnalibro
+ShowBookmark = Visualizza segnalibro
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Utilizza un link esterno/assoluto (https://externalurl.com) o un link interno/relativo (/mypage.php). Puoi anche usare il telefono come tel:0123456.

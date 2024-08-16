@@ -1,11 +1,14 @@
 <?php
+/* Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/syslog/logHandler.php';
 
 /**
  * Class to manage logging to syslog
  */
-class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
+class mod_syslog_syslog extends LogHandler
 {
 	public $code = 'syslog';
 
@@ -16,7 +19,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	 */
 	public function getName()
 	{
-		return 'Syslogd';
+		return 'Syslog';
 	}
 
 	/**
@@ -42,20 +45,18 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	}
 
 	/**
-	 * Is the module active ?
+	 * Is the logger active ?
 	 *
-	 * @return int
+	 * @return int		1 if logger enabled
 	 */
 	public function isActive()
 	{
-		global $conf;
-
 		// This function does not exists on some ISP (Ex: Free in France)
 		if (!function_exists('openlog')) {
 			return 0;
 		}
 
-		return empty($conf->global->SYSLOG_DISABLE_LOGHANDLER_SYSLOG) ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_SYSLOG to 1 to disable this loghandler
+		return !getDolGlobalString('SYSLOG_DISABLE_LOGHANDLER_SYSLOG') ? 1 : 0; // Set SYSLOG_DISABLE_LOGHANDLER_SYSLOG to 1 to disable this loghandler
 	}
 
 	/**
@@ -79,15 +80,14 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Return if configuration is valid
 	 *
-	 * 	@return	array		Array of errors. Empty array if ok.
+	 * 	@return	bool		True if ok.
 	 */
 	public function checkConfiguration()
 	{
-		global $conf, $langs;
+		global $langs;
 
-		$errors = array();
+		$facility = constant(getDolGlobalString('SYSLOG_FACILITY'));
 
-		$facility = constant($conf->global->SYSLOG_FACILITY);
 		if ($facility) {
 			// Only LOG_USER supported on Windows
 			if (!empty($_SERVER["WINDIR"])) {
@@ -95,28 +95,29 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 			}
 
 			dol_syslog("admin/syslog: facility ".$facility);
+			return true;
 		} else {
-			$errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			return false;
 		}
-
-		return $errors;
 	}
 
 	/**
 	 * Export the message
 	 *
-	 * @param  	array 	$content 	Array containing the info about the message
-	 * @return	void
+	 * @param   array   $content            Array containing the info about the message
+	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
+	 * @return  void
 	 */
-	public function export($content)
+	public function export($content, $suffixinfilename = '')
 	{
 		global $conf;
 
-		if (!empty($conf->global->MAIN_SYSLOG_DISABLE_SYSLOG)) {
+		if (getDolGlobalString('MAIN_SYSLOG_DISABLE_SYSLOG')) {
 			return; // Global option to disable output of this handler
 		}
 
-		if (!empty($conf->global->SYSLOG_FACILITY)) {  // Example LOG_USER
+		if (getDolGlobalString('SYSLOG_FACILITY')) {  // Example LOG_USER
 			$facility = constant($conf->global->SYSLOG_FACILITY);
 		} else {
 			$facility = constant('LOG_USER');
@@ -124,7 +125,11 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 
 		// (int) is required to avoid error parameter 3 expected to be long
 		openlog('dolibarr', LOG_PID | LOG_PERROR, (int) $facility);
-		syslog($content['level'], $content['message']);
+
+		$message = sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
+		$message .= " ".$content['message'];
+
+		syslog($content['level'], $message);
 		closelog();
 	}
 }

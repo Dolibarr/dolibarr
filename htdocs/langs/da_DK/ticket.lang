@@ -5,93 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Sager
 Module56000Desc=Sagssystem til udstedelse eller forespørgsels styring
-
 Permission56001=Se sager
 Permission56002=Ændre sager
 Permission56003=Slet sager
 Permission56004=Administrer sager
 Permission56005=Se sager fra alle tredjepart (ikke effektiv for eksterne brugere, vær altid begrænset til den tredjepart, de er afhængige af)
-
+Permission56006=Eksportér billetter
+Tickets=Sager
 TicketDictType=Sag - Typer
-TicketDictCategory=Sag - Grupper
+TicketDictCategory=Billet - Grupper
 TicketDictSeverity=Sag - Alvorlighed
 TicketDictResolution=Sag - Afsluttet
-
 TicketTypeShortCOM=Kommercielt spørgsmål
-TicketTypeShortHELP=Anmodning om hjælp
+TicketTypeShortHELP=Anmodning om funktionel hjælp
 TicketTypeShortISSUE=Problem eller fejl
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Ændring eller anmodning om forbedring
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Andre
-
 TicketSeverityShortLOW=Lav
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Høj
 TicketSeverityShortBLOCKING=Kritisk, blokering
-
 TicketCategoryShortOTHER=Andre
-
 ErrorBadEmailAddress=Felt '%s' forkert
 MenuTicketMyAssign=Mine sager
 MenuTicketMyAssignNonClosed=Mine åbne sager
-MenuListNonClosed=Åbene sager
-
+MenuListNonClosed=Åbne sager
 TypeContact_ticket_internal_CONTRIBUTOR=Bidragyder
 TypeContact_ticket_internal_SUPPORTTEC=Tildelt bruger
 TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hændelsesporing
 TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
-
 OriginEmail=Sagsopretter e-mail
+EmailReplyto=Svar på i e-mail
+EmailReferences=Referencer i e-mails
 Notify_TICKET_SENTBYMAIL=Send sagsbesked via e-mail
-
+ExportDataset_ticket_1=Sager
 # Status
 Read=Læs
 Assigned=Tildelt
-InProgress=I gang
 NeedMoreInformation=Afventer tilbagemelding fra sagsopretter
 NeedMoreInformationShort=Afventer tilbagemelding
-Answered=Besvaret
 Waiting=Afventer
 SolvedClosed=Løst
 Deleted=Slettet
-
 # Dict
-Type=Type
 Severity=Alvorlighed
 TicketGroupIsPublic=Gruppen er offentlig
 TicketGroupIsPublicDesc=Hvis en sagsgruppe er offentlig, vil den være synlig, når du opretter en sag fra den offentlige grænseflade
-
 # Email templates
 MailToSendTicketMessage=At sende e-mail fra sagsbesked
-
-#
 # Admin page
-#
 TicketSetup=Opsætning af sagsmodul
 TicketSettings=Indstillinger
-TicketSetupPage=
 TicketPublicAccess=En offentlig grænseflade, der kræver ingen identifikation, er tilgængelig på følgende url
 TicketSetupDictionaries=Typen af sag, alvorlighed og analytiske koder kan konfigureres fra ordbøger
 TicketParamModule=Indstilling af modulvariabler
 TicketParamMail=E-mail opsætning
 TicketEmailNotificationFrom=Afsender e-mail for besked om svar
-TicketEmailNotificationFromHelp=Afsender-e-mail, der skal bruges til at sende meddelelses-e-mailen, når der gives et svar inde i backoffice. For eksempel noreply@example.com
+TicketEmailNotificationFromHelp=Afsender-e-mail, der skal bruges til at sende notifikations-e-mailen, når der gives et svar inde på bagkontoret. For eksempel noreply@example.com
 TicketEmailNotificationTo=Giv besked om oprettelse af billet til denne e-mailadresse
 TicketEmailNotificationToHelp=Hvis den er til stede, vil denne e-mailadresse blive underrettet om oprettelse af billet
 TicketNewEmailBodyLabel=Tekstbesked sendt efter oprettelse af en sag
@@ -99,11 +81,11 @@ TicketNewEmailBodyHelp=Teksten, der er angivet her, indsættes i e-mailen, der b
 TicketParamPublicInterface=Opsætning af offentlig grænseflade
 TicketsEmailMustExist=Kræv en eksisterende e-mail adresse for at oprette en sag
 TicketsEmailMustExistHelp=I den offentlige grænseflade skal e-mail adressen allerede udfyldes i databasen for at oprette en ny sag.
+TicketsShowProgression=Vis billetstatus i den offentlige grænseflade
+TicketsShowProgressionHelp=Aktiver denne mulighed for at skjule fremskridt for billetten på de offentlige grænsefladesider
 TicketCreateThirdPartyWithContactIfNotExist=Spørg navn og firmanavn for ukendte e-mails.
 TicketCreateThirdPartyWithContactIfNotExistHelp=Tjek, om der findes en tredjepart eller en kontaktperson for den indtastede e-mail. Hvis ikke, spørg om et navn og et firmanavn for at oprette en tredjepart med kontakt.
 PublicInterface=Offentlig grænseflade
-TicketUrlPublicInterfaceLabelAdmin=Alternativ URL til offentlig interface
-TicketUrlPublicInterfaceHelpAdmin=Det er muligt at definere et alias til webserveren og dermed stille den offentlige grænseflade til rådighed med en anden URL (serveren skal fungere som en proxy på denne nye URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Velkomsttekst til den offentlige grænseflade
 TicketPublicInterfaceTextHome=Du kan oprette en sag eller se eksisterende sager fra identifikationsnummeret for sagen.
 TicketPublicInterfaceTextHomeHelpAdmin=Teksten, der er defineret her, vises på hjemmesiden for den offentlige grænseflade.
@@ -121,7 +103,9 @@ TicketParams=Parametre
 TicketsShowModuleLogo=Vis modulets logo i den offentlige grænseflade
 TicketsShowModuleLogoHelp=Aktivér denne mulighed for at skjule logo-modulet på siderne i den offentlige grænseflade
 TicketsShowCompanyLogo=Vis firmaets logo i den offentlige grænseflade
-TicketsShowCompanyLogoHelp=Aktivér denne mulighed for at skjule logoet for hovedvirksomheden på siderne i den offentlige grænseflade
+TicketsShowCompanyLogoHelp=Aktiver denne mulighed for at vise hovedvirksomhedens logo på siderne i den offentlige grænseflade
+TicketsShowCompanyFooter=Vis sidefoden af virksomheden i den offentlige grænseflade
+TicketsShowCompanyFooterHelp=Aktiver denne mulighed for at vise hovedvirksomhedens sidefod på siderne i den offentlige grænseflade
 TicketsEmailAlsoSendToMainAddress=Send også en underretning til den primære e-mail-adresse
 TicketsEmailAlsoSendToMainAddressHelp=Aktivér denne mulighed for også at sende en e-mail til den adresse, der er defineret i opsætningen "%s" (se fanen "%s")
 TicketsLimitViewAssignedOnly=Begræns skærmen til opgaver, der er tildelt den aktuelle bruger (ikke effektiv for eksterne brugere, skal du altid begrænse til den tredjepart, de er afhængige af)
@@ -138,21 +122,22 @@ TicketsPublicNotificationNewMessage=Send e-mail (r), når en ny besked/kommentar
 TicketsPublicNotificationNewMessageHelp=Send e-mail(s), når en ny meddelelse tilføjes fra den offentlige grænseflade (til den tildelte bruger eller meddelelses-e-mailen til (opdatering) og/eller meddelelses-e-mailen til)
 TicketPublicNotificationNewMessageDefaultEmail=Underretnings-e-mail til (opdatering)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send en e-mail til denne adresse for hver meddelelse om nye meddelelser, hvis billetten ikke har en bruger tildelt den, eller hvis brugeren ikke har nogen kendt e-mail.
-TicketsAutoReadTicket=Markér automatisk opgaven som læst (når den er oprettet fra backoffice)
+TicketsAutoReadTicket=Markér automatisk billetten som læst (når den er oprettet fra backoffice)
 TicketsAutoReadTicketHelp=Markér automatisk billetten som læst, når den er oprettet fra backoffice. Når billet er oprettet fra den offentlige grænseflade, forbliver billet med status "Ikke læst".
 TicketsDelayBeforeFirstAnswer=En ny billet skal modtage et første svar inden (timer):
 TicketsDelayBeforeFirstAnswerHelp=Hvis en ny billet ikke har modtaget svar efter dette tidsrum (i timer), vil et vigtigt advarselsikon blive vist i listevisningen.
 TicketsDelayBetweenAnswers=En uafklaret billet bør ikke være inaktiv i (timer):
 TicketsDelayBetweenAnswersHelp=Hvis en uafklaret billet, der allerede har modtaget et svar, ikke har haft yderligere interaktion efter dette tidsrum (i timer), vil et advarselsikon blive vist i listevisningen.
 TicketsAutoNotifyClose=Giv automatisk tredjepart besked, når du lukker en billet
-TicketsAutoNotifyCloseHelp=Når du lukker en billet, vil du blive foreslået at sende en besked til en af tredjeparts kontakter. Ved masselukning vil der blive sendt en besked til en kontakt fra den tredjepart, der er knyttet til billetten.
+TicketsAutoNotifyCloseHelp=Når du lukker en billet, vil du blive foreslået at sende en besked til en af tredjepartskontakter. Ved masselukning vil der blive sendt en besked til en kontakt fra den tredjepart, der er knyttet til billetten.
 TicketWrongContact=Forudsat kontakt ikke er en del af aktuelle billetkontakter. E-mail ikke sendt.
 TicketChooseProductCategory=Produktkategori til billetsupport
 TicketChooseProductCategoryHelp=Vælg produktkategori for billetsupport. Dette vil blive brugt til automatisk at knytte en kontrakt til en billet.
-
-#
+TicketUseCaptchaCode=Brug grafisk kode (CAPTCHA), når du opretter en billet
+TicketUseCaptchaCodeHelp=Tilføjer CAPTCHA-bekræftelse, når du opretter en ny billet.
+TicketsAllowClassificationModificationIfClosed=Tillad at ændre klassificering af lukkede billetter
+TicketsAllowClassificationModificationIfClosedHelp=Tillad at ændre klassificering (type, billetgruppe, sværhedsgrad), selvom billetter er lukket.
 # Index & list page
-#
 TicketsIndex=Sagsområde
 TicketList=Liste over sager
 TicketAssignedToMeInfos=Denne side viser en liste over sager oprettet af eller tildelt den aktuelle bruger
@@ -167,10 +152,7 @@ ShowAsConversation=Vis som samtaleliste
 MessageListViewType=Vis som tabelliste
 ConfirmMassTicketClosingSendEmail=Send automatisk e-mails, når du lukker billetter
 ConfirmMassTicketClosingSendEmailQuestion=Vil du underrette tredjeparter, når du lukker disse billetter?
-
-#
 # Ticket card
-#
 Ticket=Sag
 TicketCard=Sagskort
 CreateTicket=Opret sag
@@ -180,7 +162,7 @@ CreatedBy=Lavet af
 NewTicket=Ny sag
 SubjectAnswerToTicket=Sags svar
 TicketTypeRequest=Anmodningstype
-TicketCategory=Sagskategorisering
+TicketCategory=Billetgruppe
 SeeTicket=Se sag
 TicketMarkedAsRead=Sagen er blevet markeret som læst
 TicketReadOn=Læs videre
@@ -192,8 +174,8 @@ TicketAssigned=Sagen er nu tildelt
 TicketChangeType=Skift type
 TicketChangeCategory=Skift analytisk kode
 TicketChangeSeverity=Ændre alvorligheden
-TicketAddMessage=Tilføj en besked
-AddMessage=Tilføj en besked
+TicketAddMessage=Tilføj eller send en besked
+TicketAddPrivateMessage=Tilføj en privat besked
 MessageSuccessfullyAdded=Sag tilføjet
 TicketMessageSuccessfullyAdded=Meddelelse med tilføjet
 TicketMessagesList=Meddelelsesliste
@@ -204,33 +186,32 @@ TicketSeverity=Alvorlighed
 ShowTicket=Se sag
 RelatedTickets=Relaterede sager
 TicketAddIntervention=Opret indgreb
-CloseTicket=Luk | Løs sag
-AbandonTicket=Efterlad sag
+CloseTicket=Luk|Løst
+AbandonTicket=Opgive
 CloseATicket=Luk | Løs en sag
 ConfirmCloseAticket=Bekræft afslutningen af sagen
 ConfirmAbandonTicket=Bekræfter du lukningen af sagen med status 'Efterladt'
 ConfirmDeleteTicket=Venligst bekræft sletning af sagen
 TicketDeletedSuccess=Sagen slettet med succes
 TicketMarkedAsClosed=Sagen mærket som lukket
-TicketDurationAuto=Beregnet varighed
-TicketDurationAutoInfos=Varighed beregnes automatisk fra handlings modulet
+TicketDurationAuto=Varighed af interventioner
+TicketDurationAutoInfos=Varighed beregnes automatisk ud fra relaterede indgreb
 TicketUpdated=Sagen opdateret
 SendMessageByEmail=Send besked via e-mail
 TicketNewMessage=Ny besked
 ErrorMailRecipientIsEmptyForSendTicketMessage=Modtageren er tom. Ingen e-mail sendt
 TicketGoIntoContactTab=Gå til fanen "Kontakter" for at vælge dem
-TicketMessageMailIntro=Introduktion
+TicketMessageMailIntro=Meddelelsesoverskrift
 TicketMessageMailIntroHelp=Denne tekst tilføjes kun i begyndelsen af ​​e-mailen og bliver ikke gemt.
-TicketMessageMailIntroLabelAdmin=Introduktionstekst til alle billetbesvarelser
 TicketMessageMailIntroText=Hej <br> Der er tilføjet et nyt svar til en billet, som du følger. Her er beskeden: <br>
 TicketMessageMailIntroHelpAdmin=Denne tekst vil blive indsat før svaret, når du svarer på en billet fra Dolibarr
-TicketMessageMailSignature=Underskrift
-TicketMessageMailSignatureHelp=Denne tekst tilføjes kun i slutningen af ​​e-mailen og bliver ikke gemt.
-TicketMessageMailSignatureText=Besked sendt af <b> %s </b> via Dolibarr
-TicketMessageMailSignatureLabelAdmin=Signatur af svar Email
-TicketMessageMailSignatureHelpAdmin=Denne tekst indsættes efter svarmeddelelsen.
+TicketMessageMailFooter=Meddelelsesfod
+TicketMessageMailFooterHelp=Denne tekst tilføjes kun i slutningen af meddelelsen sendt via e-mail og vil ikke blive gemt.
+TicketMessageMailFooterText=Besked sendt af <b> %s </b> via Dolibarr
+TicketMessageMailFooterHelpAdmin=Denne tekst vil blive indsat efter svarmeddelelsen.
 TicketMessageHelp=Kun denne tekst gemmes i meddelelseslisten på sagskortet.
 TicketMessageSubstitutionReplacedByGenericValues=Substitutionsvariabler erstattes af generiske værdier.
+ForEmailMessageWillBeCompletedWith=For e-mail-beskeder sendt til eksterne brugere vil meddelelsen blive udfyldt med
 TimeElapsedSince=Tid forløbet siden
 TicketTimeToRead=Tid forløbet før læst
 TicketTimeElapsedBeforeSince=Forløbet tid før / siden
@@ -240,8 +221,14 @@ ConfirmReOpenTicket=Bekræft genåbning af denne sag?
 TicketMessageMailIntroAutoNewPublicMessage=En ny besked blev sendt på sagen med emnet %s:
 TicketAssignedToYou=Sag tildelt
 TicketAssignedEmailBody=Du er blevet tildelt sag# %s ved %s
+TicketAssignedCustomerEmail=Din billet er blevet tildelt til behandling.
+TicketAssignedCustomerBody=Dette er en automatisk e-mail for at bekræfte, at din billet er blevet tildelt til behandling.
 MarkMessageAsPrivate=Markér besked som privat
-TicketMessagePrivateHelp=Denne meddelelse vises ikke til eksterne brugere
+TicketMessageSendEmailHelp=En e-mail vil blive sendt til alle tildelte kontaktpersoner
+TicketMessageSendEmailHelp2a=(interne kontakter, men også eksterne kontakter, undtagen hvis indstillingen "%s" er markeret)
+TicketMessageSendEmailHelp2b=(interne kontakter, men også eksterne kontakter)
+TicketMessagePrivateHelp=Denne besked vil ikke være synlig for eksterne brugere
+TicketMessageRecipientsHelp=Modtagerfelt udfyldt med aktive kontakter knyttet til billetten
 TicketEmailOriginIssuer=Udsteder ved oprindelsen af opgaven
 InitialMessage=Indledende besked
 LinkToAContract=Link til en kontrakt
@@ -264,20 +251,15 @@ TicketsDelayForFirstResponseTooLong=Der er gået for lang tid siden billetåbnin
 TicketsDelayFromLastResponseTooLong=Der er gået for lang tid siden sidste svar på denne billet.
 TicketNoContractFoundToLink=Der blev ikke fundet nogen kontrakt, der automatisk er knyttet til denne billet. Link venligst en kontrakt manuelt.
 TicketManyContractsLinked=Mange kontrakter er automatisk blevet knyttet til denne billet. Sørg for at bekræfte, hvilken der skal vælges.
-
-#
+TicketRefAlreadyUsed=Referencen [%s] er allerede brugt, din nye reference er [%s]
 # Logs
-#
 TicketLogMesgReadBy=Sag %s læst af %s
 NoLogForThisTicket=Ingen log på denne sag endnu
 TicketLogAssignedTo=Sag %s tildelt %s
 TicketLogPropertyChanged=Sag %s ændret: klassificering fra %s til %s
 TicketLogClosedBy=Sag %s lukket af %s
 TicketLogReopen=Sag %s genåbnet
-
-#
 # Public pages
-#
 TicketSystem=Sagssystem
 ShowListTicketWithTrackId=Vis sag liste fra spor ID
 ShowTicketWithTrackId=Vis sag fra spor ID
@@ -292,13 +274,13 @@ TicketNewEmailBodyCustomer=Dette er en automatisk e-mail for at bekræfte en ny 
 TicketNewEmailBodyInfosTicket=Information til overvågning af sagen
 TicketNewEmailBodyInfosTrackId=Sagssporingsnummer: %s
 TicketNewEmailBodyInfosTrackUrl=Du kan se status for billetten ved at klikke på følgende link
-TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremskridt på sagen i den specifikke grænseflade ved at klikke på nedenstående link
+TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se status for billetten i den offentlige billetportal ved at klikke på følgende link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Du kan se historikken for denne billet ved at klikke på følgende link
 TicketEmailPleaseDoNotReplyToThisEmail=Venligst svar ikke direkte på denne email! Brug linket til at svare på grænsefladen.
 TicketPublicInfoCreateTicket=Denne formular giver dig mulighed for at oprette en support sag i vores sagssystem.
-TicketPublicPleaseBeAccuratelyDescribe=Beskriv venligst problemet korrekt. Giv den mest mulige information, så vi kan identificere din anmodning korrekt.
+TicketPublicPleaseBeAccuratelyDescribe=Beskriv venligst din anmodning nøjagtigt. Angiv så mange oplysninger som muligt for at give os mulighed for korrekt at identificere din anmodning.
 TicketPublicMsgViewLogIn=Indtast venligst sag ID
-TicketTrackId=Offentlig sporings ID
+TicketTrackId=Sporings-id
 OneOfTicketTrackId=Et af dine sporings ID'er
 ErrorTicketNotFound=Sag med sporings ID %s ikke fundet!
 Subject=Emne
@@ -314,6 +296,8 @@ OldUser=Gammel bruger
 NewUser=Ny bruger
 NumberOfTicketsByMonth=Antal sager pr. måned
 NbOfTickets=Antal sager
+ExternalContributors=Eksterne bidragydere
+AddContributor=Tilføj ekstern bidragyder
 # notifications
 TicketCloseEmailSubjectCustomer=Billet lukket
 TicketCloseEmailBodyCustomer=Dette er en automatisk besked for at informere dig om, at billet %s netop er blevet lukket.
@@ -325,12 +309,8 @@ TicketNotificationRecipient=Meddelelsesmodtager
 TicketNotificationLogMessage=Logbesked
 TicketNotificationEmailBodyInfosTrackUrlinternal=Se sag i grænseflade
 TicketNotificationNumberEmailSent=Meddelelses e-mail sendt: %s
-
 ActionsOnTicket=Begivenheder for sagen
-
-#
 # Boxes
-#
 BoxLastTicket=Senest oprettede sager
 BoxLastTicketDescription=Seneste %s oprettet sag
 BoxLastTicketContent=
@@ -350,3 +330,4 @@ BoxNewTicketVSClose=Antal sager kontra lukkede sager (i dag)
 TicketCreatedToday=Sag oprettet i dag
 TicketClosedToday=Sag lukket i dag
 KMFoundForTicketGroup=Vi fandt emner og ofte stillede spørgsmål, der kan besvare dit spørgsmål, venligst gennemgå, inden du opretter sagen
+SetTitle=Indstil titel

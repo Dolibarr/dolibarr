@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Πολιτική Προστασίας Δεδομένων
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Ενότητα διαχείρισης προστασίας δεδομένων (Συμμόρφωση με τον GDPR)
+# Administration page
+datapolicySetup = Ρύθμιση Ενότητας Πολιτικής Προστασίας Δεδομένων
+Deletion = Διαγραφή δεδομένων
+datapolicySetupPage = Σύμφωνα και με τη νομοθεσία της χώρας μας (Παράδειγμα <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Άρθρο 5 </a> του GDPR), τα προσωπικά δεδομένα πρέπει να διατηρούνται για περίοδο που δεν υπερβαίνει την απαραίτητη για τους σκοπούς για τους οποίους συλλέχθηκαν, εκτός από αρχειακούς σκοπούς. <br> Η διαγραφή θα γίνει αυτόματα μετά από μια ορισμένη περίοδο χωρίς συμβάν (το χρονικό διάστημα που θα έχετε υποδείξει παρακάτω).
+NB_MONTHS = %s μήνες
+ONE_YEAR = 1 χρόνος
+NB_YEARS = %s χρόνια
+DATAPOLICY_TIERS_CLIENT = Πελάτης
+DATAPOLICY_TIERS_PROSPECT = Προοπτική
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Προοπτική/Πελάτης
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ούτε προοπτική/Ούτε πελάτης
+DATAPOLICY_TIERS_FOURNISSEUR = Προμηθευτής
+DATAPOLICY_CONTACT_CLIENT = Πελάτης
+DATAPOLICY_CONTACT_PROSPECT = Προοπτική
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Προοπτική/Πελάτης
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ούτε προοπτική/Ούτε πελάτης
+DATAPOLICY_CONTACT_FOURNISSEUR = Προμηθευτής
+DATAPOLICY_ADHERENT = Μέλος
+DATAPOLICY_Tooltip_SETUP = Τύπος επαφής - Υποδείξτε τις επιλογές σας για κάθε τύπο.
+SendAgreementText = Μπορείτε να στείλετε ένα μήνυμα ηλεκτρονικού ταχυδρομείου GDPR σε όλες τις σχετικές επαφές σας (που δεν έχουν λάβει ακόμη email και για τις οποίες δεν έχετε καταχωρίσει τίποτα σχετικά με τη συμφωνία GDPR τους). Για να το κάνετε αυτό, χρησιμοποιήστε το παρακάτω κουμπί.
+SendAgreement = Αποστολή email
+AllAgreementSend = Όλα τα email έχουν σταλεί
+TXTLINKDATAPOLICYACCEPT = Κείμενο για τον σύνδεσμο "συγκατάθεση"
+TXTLINKDATAPOLICYREFUSE = Κείμενο για τον σύνδεσμο "άρνηση συγκατάθεσης"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR : Επεξεργασία προσωπικών δεδομένων
+DATAPOLICY_consentement = Ελήφθη συγκατάθεση για την επεξεργασία προσωπικών δεδομένων
+DATAPOLICY_opposition_traitement = Δεν δίνει συγκατάθεση για την επεξεργασία των προσωπικών δεδομένων
+DATAPOLICY_opposition_prospection = Δεν δίνει συγκατάθεση για την επεξεργασία των προσωπικών δεδομένων για χρήση ως προοπτική
+# Notes added during an anonymization
+DATAPOLICY_date = Ημερομηνία συγκατάθεσης/μη συγκατάθεσης GDPR
+DATAPOLICY_send = Ημερομηνία αποστολής email συγκατάθεσης
+MailSent = Το E-mail έχει σταλεί
+NUMBER_MONTH_BEFORE_DELETION = Αριθμός μηνών πριν από τη διαγραφή

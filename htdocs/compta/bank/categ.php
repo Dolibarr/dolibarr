@@ -21,28 +21,37 @@
  */
 
 /**
- *      \file       htdocs/compta/bank/categ.php
- *      \ingroup    compta
- *      \brief      Page ajout de categories bancaires
+ *    \file       htdocs/compta/bank/categ.php
+ *    \ingroup    compta/bank
+ *    \brief      Page to manage Bank Categories
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
+
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
-
-if (!$user->rights->banque->configurer) {
-	accessforbidden();
-}
-
-$bankcateg = new BankCateg($db);
 $categid = GETPOST('categid');
 $label = GETPOST("label");
+
+
+// Initialize a technical objects
+$bankcateg = new BankCateg($db);
+
+
+// Security Check  Access Control
+if (!$user->hasRight('banque', 'configurer')) {
+	accessforbidden();
+}
 
 
 
@@ -100,7 +109,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Label").'</td>';
@@ -119,7 +128,7 @@ if ($action != 'edit') {
 
 
 $sql = "SELECT rowid, label";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql .= " FROM ".MAIN_DB_PREFIX."category_bank";
 $sql .= " WHERE entity = ".$conf->entity;
 $sql .= " ORDER BY rowid";
 

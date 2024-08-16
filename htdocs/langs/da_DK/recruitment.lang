@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekruttering
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Administrer og følg rekrutteringskampagner til nye stillinger
-
-#
 # Admin page
-#
 RecruitmentSetup = Rekrutteringsopsætning
-Settings = Indstillinger
 RecruitmentSetupPage = Indtast her opsætningen af de vigtigste muligheder for rekrutteringsmodulet
 RecruitmentArea=Rekrutteringsområde
 PublicInterfaceRecruitmentDesc=Offentlige sider med job er offentlige webadresser, der skal vises og besvares ved åbne job. Der er et andet link til hvert åbent job, der findes på hver jobjournal.
 EnablePublicRecruitmentPages=Aktivér offentlige sider med åbne job
 
-#
-# About page
-#
-About = Om
-RecruitmentAbout = Om rekruttering
-RecruitmentAboutPage = Rekruttering om side
 NbOfEmployeesExpected=Forventet nb af medarbejdere
 JobLabel=Mærkning af jobposition
 WorkPlace=Arbejdsplads
@@ -49,7 +34,6 @@ PositionToBeFilled=Stilling
 PositionsToBeFilled=Jobstillinger
 ListOfPositionsToBeFilled=Liste over jobstillinger
 NewPositionToBeFilled=Nye jobstillinger
-
 JobOfferToBeFilled=Jobposition, der skal besættes
 ThisIsInformationOnJobPosition=Oplysninger om den stilling, der skal besættes
 ContactForRecruitment=Kontakt for rekruttering
@@ -57,15 +41,16 @@ EmailRecruiter=E-mail-rekrutterer
 ToUseAGenericEmail=At bruge en generisk e-mail. Hvis det ikke er defineret, vil e-mailen til den ansvarlige for rekrutteringen blive brugt
 NewCandidature=Ny applikation
 ListOfCandidatures=Liste over applikationer
-RequestedRemuneration=Anmodet vederlag
-ProposedRemuneration=Foreslået vederlag
+Remuneration=Løn
+RequestedRemuneration=Ønsket løn
+ProposedRemuneration=Foreslået løn
 ContractProposed=Foreslået kontrakt
 ContractSigned=Kontrakt underskrevet
 ContractRefused=Kontrakten blev afvist
 RecruitmentCandidature=Ansøgning
 JobPositions=Jobstillinger
 RecruitmentCandidatures=Ansøgninger
-InterviewToDo=Interview at gøre
+InterviewToDo=Kontakter at følge
 AnswerCandidature=Ansøgning svar
 YourCandidature=Din ansøgning
 YourCandidatureAnswerMessage=Tak for din ansøgning. <br> ...
@@ -76,3 +61,6 @@ ExtrafieldsApplication=Supplerende attributter (jobansøgninger)
 MakeOffer=Giv et tilbud
 WeAreRecruiting=Vi rekrutterer. Dette er en liste over ledige stillinger, der skal besættes...
 NoPositionOpen=Ingen ledige stillinger i øjeblikket
+ConfirmClose=Bekræft annullering
+ConfirmCloseAsk=Er du sikker på, at du vil annullere denne rekrutteringskandidatur
+Recruitment=Rekruttering

@@ -20,44 +20,48 @@
  */
 
 /**
- *  \file       evaluation_note.php
- *  \ingroup    hrm
- *  \brief      Tab for notes on Evaluation
+ *    \file       htdocs/hrm/evaluation_note.php
+ *    \ingroup    hrm
+ *    \brief      Tab for notes on Evaluation
  */
 
 // Load Dolibarr environment
 require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/evaluation.class.php';
-require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_evaluation.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
+require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_evaluation.lib.php';
+
 
 // Load translation files required by the page
-$langs->loadLangs(array("hrm", "companies"));
+$langs->loadLangs(array('hrm', 'companies'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$id   = GETPOSTINT('id');
+$ref  = GETPOST('ref', 'alpha');
+
+$action     = GETPOST('action', 'aZ09');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Evaluation($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->hrm->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('evaluationnote', 'globalcard')); // Note that conf->hooks_modules contains array
+
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->hrm->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->hrm->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->hrm->evaluation->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoread = $user->rights->hrm->evaluation->read; // Used by the include of actions_addupdatedelete.inc.php
+// Permissions
+$permissionnote   = $user->hasRight('hrm', 'evaluation', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoread = $user->hasRight('hrm', 'evaluation', 'read');  // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -77,7 +81,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -106,10 +110,10 @@ if ($id > 0 || !empty($ref)) {
 	$morehtmlref .= $langs->trans('Label').' : '.$object->label;
 	$u_position = new User(($db));
 	$u_position->fetch($object->fk_user);
-	$morehtmlref .= '<br>'.$langs->trans('Employee').' : '.$u_position->getNomUrl(1);
+	$morehtmlref .= '<br>'.$u_position->getNomUrl(1);
 	$job = new Job($db);
 	$job->fetch($object->fk_job);
-	$morehtmlref .= '<br>'.$langs->trans('Job').' : '.$job->getNomUrl(1);
+	$morehtmlref .= '<br>'.$langs->trans('JobProfile').' : '.$job->getNomUrl(1);
 	$morehtmlref .= '</div>';
 
 

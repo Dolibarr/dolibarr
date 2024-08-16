@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  *		\brief      Onglet vcard d'un contact
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -32,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
 $contact = new Contact($db);
 
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
@@ -40,7 +42,7 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
 $result = $contact->fetch($id);
 if ($result <= 0) {
-	dol_print_error($contact->error);
+	dol_print_error($db, $contact->error);
 	exit;
 }
 
@@ -66,6 +68,7 @@ $v->setPhoneNumber($contact->fax, "TYPE=WORK;FAX");
 $country = $contact->country_code ? $contact->country : '';
 
 $v->setAddress("", "", $contact->address, $contact->town, $contact->state, $contact->zip, $country, "TYPE=WORK;POSTAL");
+// @phan-suppress-next-line PhanDeprecatedFunction setLabel applies the old method, setAddress is the new method.
 $v->setLabel("", "", $contact->address, $contact->town, $contact->state, $contact->zip, $country, "TYPE=WORK");
 
 $v->setEmail($contact->email);
@@ -91,18 +94,23 @@ if ($company->id) {
 	} elseif (empty(trim($contact->email))) {
 		// when contact e-mail is empty, use only company e-mail
 		$v->setEmail($company->email);
-	} elseif (strtolower(end(explode("@", $contact->email))) == strtolower(end(explode("@", $company->email)))) {
-		// when e-mail domain of contact and company are the same, use contact e-mail at first (and company e-mail at second)
-		$v->setEmail($contact->email);
-
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($company->email, 'INTERNET');
 	} else {
-		// when e-mail of contact and company complete different use company e-mail at first (and contact e-mail at second)
-		$v->setEmail($company->email);
+		$tmpcontact = explode("@", trim($contact->email));
+		$tmpcompany = explode("@", trim($company->email));
 
-		// support by Microsoft Outlook (2019 and possible earlier)
-		$v->setEmail($contact->email, 'INTERNET');
+		if (strtolower(end($tmpcontact)) == strtolower(end($tmpcompany))) {
+			// when e-mail domain of contact and company are the same, use contact e-mail at first (and company e-mail at second)
+			$v->setEmail($contact->email);
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($company->email, 'INTERNET');
+		} else {
+			// when e-mail of contact and company complete different use company e-mail at first (and contact e-mail at second)
+			$v->setEmail($company->email);
+
+			// support by Microsoft Outlook (2019 and possible earlier)
+			$v->setEmail($contact->email, 'INTERNET');
+		}
 	}
 
 	// Si contact lie a un tiers non de type "particulier"
@@ -111,7 +119,7 @@ if ($company->id) {
 	}
 }
 
-// Personal informations
+// Personal information
 $v->setPhoneNumber($contact->phone_perso, "TYPE=HOME;VOICE");
 if ($contact->birthday) {
 	$v->setBirthday($contact->birthday);

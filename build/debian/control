@@ -19,7 +19,6 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
     php-pear, php-mail-mime,
 #    php-tcpdf,
 #    libfpdf-tpl-php, php-fpdf,
-#    libphp-adodb,
 #    libnusoap-php,
 #    libphp-pclzip,
 # Required javascript libraries

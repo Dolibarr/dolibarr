@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - members
-ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded. Please find your invoice here enclosed.<br><br>
-CanEditAmount=Visitor can choose/edit amount of its contribution regardless of the member type
+MemberNature=Nature member

@@ -7,20 +7,33 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Bir teklifin imzalanmasının ardından oto
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Bir teklifin imzalanmasına istinaden otomatik olarak bir müşteri faturası oluştur (yeni fatura teklifle aynı tutara sahip olacaktır)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Bir sözleşme doğrulandıktan sonra kendiliğinden bir müşteri faturası oluştur
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Bir müşteri siparişinin kapatılmasının ardından otomatik olarak müşteri faturası oluştur (yeni fatura sipariş ile aynı tutara sahip olacaktır)
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Bilet oluştururken otomatik olarak müdahale oluşturun.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Müşteri siparişi "faturalandı" olarak ayarlandığında (ve siparişin tutarı imzalanmış olan bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak teklifi de "faturalandı" olarak sınıflandır
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Müşteri faturası doğrulandığında (ve faturanın tutarı imzalanmış olan bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak teklifi "faturalandı" olarak sınıflandır
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Müşteri faturası doğrulandığında (ve faturanın tutarı bağlantılı siparişin toplam tutarı ile aynı ise) bağlantılı kaynak müşteri siparişini "faturalandı" olarak sınıflandır
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source sales order as billed when customer invoice is set to paid (and if the amount of the invoice is the same as the total amount of the linked order)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bir sevkiyat doğrulandığında (ve tüm sevkiyatlardan sonra sevk edilen miktar siparişteki miktar ile aynı ise) bağlantılı kaynak müşteri siparişini "sevk edildi" olarak sınıflandır
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Classify linked source sales order as shipped when a shipment is closed (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Bir satış siparişi faturalandırılacak şekilde ayarlandığında, bağlı kaynak tekliflerini faturalanmış olarak sınıflandırın (ve siparişin tutarı, imzalanmış bağlı tekliflerin toplam tutarıyla aynıysa)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Bir müşteri faturası doğrulandığında bağlantılı kaynak tekliflerini faturalanmış olarak sınıflandırın (ve faturanın tutarı imzalanmış bağlantılı tekliflerin toplam tutarıyla aynıysa)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Bir müşteri faturası ödenmiş olarak ayarlandığında bağlantılı kaynak satış siparişlerini faturalanmış olarak sınıflandırın (ve fatura tutarı bağlantılı satış siparişlerinin toplam tutarıyla aynıysa). N sipariş için 1 fatura oluşturursanız bu, tüm siparişlerin de faturalandırılmasına neden olabilir.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Bir müşteri faturası doğrulandığında, tüm bağlantılı kaynak satış siparişlerini faturalanmış olarak sınıflandırın (ve faturanın tutarı bağlantılı kaynak satış siparişlerinin toplam tutarıyla aynıysa). N sipariş için 1 ortak fatura oluşturursanız bu, tüm kaynak siparişlerin faturalandırılmasına neden olabilir.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Bir müşteri faturası doğrulandığında, bağlantılı satış siparişinin toplam tutarı ondan düzenlenen tüm faturaların toplam tutarına eşitse bağlantılı satış siparişini (yalnızca bir tane varsa) faturalanmış olarak sınıflandırın. 1 sipariş için n fatura oluşturursanız bu, tüm faturalar doğrulanır doğrulanmaz siparişin faturalandırılacak şekilde ayarlanmasına olanak tanır.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Bir gönderi doğrulandığında, bağlantılı kaynak satış siparişlerini gönderildi olarak sınıflandırın (ve tüm gönderilerin gönderdiği miktar, güncelleme siparişindekiyle aynıysa)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Bir sevkiyat kapatıldığında bağlantılı kaynak satış siparişini sevk edildi olarak sınıflandırın (ve tüm sevkiyatların sevk ettiği miktar, güncelleme siparişindeki miktarla aynıysa)
+# Autoclassify purchase proposal
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Bir satıcı faturası doğrulandığında bağlantılı kaynak satıcı teklifini faturalanmış olarak sınıflandırın (ve faturanın tutarı bağlantılı tekliflerin toplam tutarıyla aynıysa)
 # Autoclassify purchase order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı teklifin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi teklifini "faturalandı" olarak sınıflandır
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Tedarikçi faturası doğrulandığında (ve faturanın tutarı bağlantılı siparişin toplam tutarı ile aynı ise) bağlantılı kaynak tedarikçi siparişini "faturalandı" olarak sınıflandır
-descWORKFLOW_BILL_ON_RECEPTION=Bağlantılı bir tedarikçi siparişi doğrulandığında alımları "faturalandırıldı" olarak sınıflandırın
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Bir satıcı faturası doğrulandığında bağlantılı kaynak satınalma siparişini faturalanmış olarak sınıflandırın (ve faturanın tutarı bağlantılı siparişlerin toplam tutarıyla aynıysa)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Bir alım doğrulandığında, bağlantılı kaynak satınalma siparişini alınmış olarak sınıflandırın (ve tüm alımlar tarafından alınan miktar, güncellenecek satınalma siparişindeki ile aynıysa)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Bir alım kapatıldığında, bağlantılı kaynak satın alma siparişlerini alınmış olarak sınıflandırın (ve satınalma siparişinden düzenlenen tüm alımların aldığı miktar, güncellenecek satınalma siparişindeki ile aynıysa)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Bir müşteri faturası doğrulandığında bağlantılı kaynak gönderisini kapalı olarak sınıflandırın (ve faturanın tutarı bağlantılı gönderilerin toplam tutarıyla aynıysa)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Bir müşteri faturası doğrulandığında bağlantılı kaynak gönderisini faturalanmış olarak sınıflandırın (ve faturanın tutarı bağlantılı gönderilerin toplam tutarıyla aynıysa)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Bir satın alma faturası doğrulandığında bağlantılı kaynak alımlarını kapalı olarak sınıflandırın (ve fatura tutarı bağlantılı alımların toplam tutarıyla aynıysa)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Bir satın alma faturası doğrulandığında bağlantılı kaynak alımlarını faturalanmış olarak sınıflandırın (ve fatura tutarı bağlantılı alımların toplam tutarıyla aynıysa)
+# Automatically link ticket to contract
+descWORKFLOW_TICKET_LINK_CONTRACT=Bir bilet oluşturulduğunda onu, biletle aynı üçüncü tarafla eşleşen mevcut sözleşmelere bağlayın
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Bir bileti sözleşmelere otomatik olarak bağlarken, ana şirketlerin sözleşmeleri arasında arama yapın
 # Autoclose intervention
-descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Bilet kapatıldığında bilete bağlı tüm müdahaleleri kapatın
 AutomaticCreation=Otomatik oluşturma
 AutomaticClassification=Otomatik sınıflandırma
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated
+AutomaticClosing=Otomatik kapanma
+AutomaticLinking=Otomatik bağlantı

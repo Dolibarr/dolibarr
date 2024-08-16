@@ -37,17 +37,6 @@ class box_ficheinter extends ModeleBoxes
 	public $depends = array("ficheinter"); // conf->contrat->enabled
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -59,7 +48,7 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = empty($user->rights->ficheinter->lire);
+		$this->hidden = !($user->hasRight('ficheinter', 'lire'));
 	}
 
 	/**
@@ -78,9 +67,11 @@ class box_ficheinter extends ModeleBoxes
 		$ficheinterstatic = new Fichinter($this->db);
 		$thirdpartystatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastFicheInter", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fichinter/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
-		if (!empty($user->rights->ficheinter->lire)) {
+		if ($user->hasRight('ficheinter', 'lire')) {
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
 			$sql .= ", f.datec";
 			$sql .= ", f.date_valid as datev";
@@ -89,13 +80,13 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir)) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -127,6 +118,7 @@ class box_ficheinter extends ModeleBoxes
 					//$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
 					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta_client = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
@@ -160,8 +152,8 @@ class box_ficheinter extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedInterventions")
+					'td' => 'class="center"',
+						'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedInterventions").'</span>'
 					);
 				}
 
@@ -175,8 +167,8 @@ class box_ficheinter extends ModeleBoxes
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}

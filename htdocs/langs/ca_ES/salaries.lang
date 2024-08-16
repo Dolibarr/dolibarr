@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte comptable utilitzat per usuaris tercers
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=El compte comptable dedicat definit a la fitxa d'usuari només s’utilitzarà per a la comptabilitat auxiliar. Aquest s'utilitzarà per al llibre major i com a valor per defecte de la comptabilitat auxiliar si no es defineix un compte comptable d'usuari dedicat.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte (del pla comptable) utilitzat per defecte per als «usuaris» dels sous
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=El compte dedicat definit a la fitxa d'usuari només s'utilitzarà per a la comptabilitat de Subllibre. Aquest s'utilitzarà per al Llibre Major, però també com a valor predeterminat de la comptabilitat del Subllibre si no hi ha cap compte comptable d'usuari dedicat a l'usuari.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per als pagaments salarials
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=De manera predeterminada, deixeu buida l'opció "Crear automàticament un pagament total" quan creeu un sou
 Salary=Sou
@@ -18,10 +18,16 @@ TJM=Tarifa mitjana diària
 CurrentSalary=Salari actual
 THMDescription=Aquest valor es pot utilitzar per a calcular el cost del temps consumit en un projecte introduït pels usuaris si s'utilitza el mòdul de projecte
 TJMDescription=Aquest valor només és informatiu i no s'utilitza en cap càlcul
-LastSalaries=Últims sous %s
+LastSalaries=Últims %s sous
 AllSalaries=Tots els salaris
 SalariesStatistics=Estadístiques de salaris
 SalariesAndPayments=Salaris i pagaments
 ConfirmDeleteSalaryPayment=Voleu eliminar aquest pagament del salari?
 FillFieldFirst=Empleneu primer el camp dels empleats
-UpdateAmountWithLastSalary=Establiu l'import amb l'últim sou
+UpdateAmountWithLastSalary=Establiu l'import de l'últim sou
+MakeTransferRequest=Fes una sol·licitud de transferència
+VirementOrder=Sol·licitud de transferència de crèdit
+BankTransferAmount=Import de la transferència de crèdit
+WithdrawalReceipt=Ordre de transferència bancària
+OrderWaiting=Comanda pendent
+FillEndOfMonth=Ompliu amb final de mes

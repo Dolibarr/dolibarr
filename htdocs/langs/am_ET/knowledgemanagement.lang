@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = የእውቀት አስተዳደር ስርዓት
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=የእውቀት አስተዳደር (KM) ወይም የእገዛ ዴስክ መሰረትን አስተዳድር
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = የእውቀት አስተዳደር ስርዓት ማዋቀር
+KnowledgeManagementSetupPage = የእውቀት አስተዳደር ስርዓት ማዋቀር ገጽ
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeManagementAbout = ስለ እውቀት አስተዳደር
+KnowledgeManagementAboutPage = ስለ ገጽ እውቀት አስተዳደር
+KnowledgeManagementArea = የእውቀት አስተዳደር
+MenuKnowledgeRecord = እውቀት መሰረት
+MenuKnowledgeRecordShort = እውቀት መሰረት
+ListKnowledgeRecord = የጽሁፎች ዝርዝር
+NewKnowledgeRecord = አዲስ መጣጥፍ
+ValidateReply = መፍትሄውን ያረጋግጡ
+KnowledgeRecords = መጣጥፎች
+KnowledgeRecord = አንቀጽ
+KnowledgeRecordExtraFields = ለአንቀጽ ተጨማሪ ቦታዎች
+GroupOfTicket=የቲኬቶች ቡድን
+YouCanLinkArticleToATicketCategory=ጽሑፉን ከቲኬት ቡድን ጋር ማገናኘት ይችላሉ (ስለዚህ ጽሑፉ በዚህ ቡድን ውስጥ ባሉ ማናቸውም ቲኬቶች ላይ ይደምቃል)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=ጊዜ ያለፈበት አድርገው ያዘጋጁ
+ConfirmCloseKM=የዚህ ጽሑፍ መዝጊያ ጊዜ ያለፈበት መሆኑን አረጋግጠዋል?
+ConfirmReopenKM=ይህን ጽሑፍ ወደ "የተረጋገጠ" ሁኔታ መመለስ ይፈልጋሉ?
+BoxLastKnowledgerecordDescription=የመጨረሻ %s ጽሑፎች
+BoxLastKnowledgerecord=የመጨረሻ ጽሑፎች
+BoxLastKnowledgerecordContent=የመጨረሻ ጽሑፎች
+BoxLastKnowledgerecordModifiedContent=ለመጨረሻ ጊዜ የተሻሻሉ መጣጥፎች
+BoxLastModifiedKnowledgerecordDescription=የመጨረሻው %s የተሻሻሉ ጽሑፎች
+BoxLastModifiedKnowledgerecord=ለመጨረሻ ጊዜ የተሻሻሉ መጣጥፎች

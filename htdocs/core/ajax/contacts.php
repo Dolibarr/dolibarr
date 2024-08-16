@@ -31,12 +31,13 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
-$id = GETPOST('id', 'int'); // id of thirdparty
+$id = GETPOSTINT('id'); // id of thirdparty
 $action = GETPOST('action', 'aZ09');
 $htmlname = GETPOST('htmlname', 'alpha');
-$showempty = GETPOST('showempty', 'int');
+$showempty = GETPOSTINT('showempty');
 
 // Security check
 $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid', 0);

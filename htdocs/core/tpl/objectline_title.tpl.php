@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -37,8 +37,11 @@
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $object';
 
 print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
 
@@ -48,30 +51,48 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	print '<td class="linecolnum center">&nbsp;</td>';
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+	print '<th class="linecolnum center">&nbsp;</th>';
 }
 
 // Description
-print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+print '<th class="linecoldescription">'.$langs->trans('Description');
+$constant = get_class($object)."::STATUS_DRAFT";
+if (in_array($object->element, array('propal', 'commande', 'facture', 'order_supplier', 'invoice_supplier')) && defined($constant) && $object->status == constant($constant)) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'servicedateforalllines') {
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=servicedateforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+	}
+	if (GETPOST('mode', 'aZ09') == 'servicedateforalllines') {
+		print '&nbsp;&nbsp;<div class="classvatforalllines inline-block nowraponall">';
+		$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		print $form->selectDate('', 'alldate_start', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
+		print ' '.$langs->trans('to').' ';
+		print $form->selectDate('', 'alldate_end', $hourmin, $hourmin, 1, "updatealllines", 1, 0);
+		print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+		print '</div>';
+	}
+}
+print '</th>';
 
 // Supplier ref
 if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' || $this->element == 'invoice_supplier' || $this->element == 'invoice_supplier_rec') {
-	print '<td class="linerefsupplier maxwidth125"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
+	print '<th class="linerefsupplier maxwidth125"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></th>';
 }
 
 // VAT
-print '<td class="linecolvat right nowraponall">';
-if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) || !empty($conf->global->FACTURE_LOCAL_TAX2_OPTION)) {
+print '<th class="linecolvat right nowraponall">';
+if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION')) {
 	print $langs->trans('Taxes');
 } else {
 	print $langs->trans('VAT');
 }
 
-if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
-	if (empty($disableedit)) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'vatforalllines') {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=vatforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 	}
 	//print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
@@ -82,36 +103,37 @@ if (in_array($object->element, array('propal', 'commande', 'facture')) && $objec
 		print '</div>';
 	}
 }
-print '</td>';
+print '</th>';
 
 // Price HT
-print '<td class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</td>';
+print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
 // Multicurrency
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-	print '<td class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</td>';
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
 }
 
-if ($inputalsopricewithtax) {
-	print '<td class="right nowraponall">'.$langs->trans('PriceUTTC').'</td>';
+if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 
 // Qty
-print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
+print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 
 // Unit
-if (!empty($conf->global->PRODUCT_USE_UNITS)) {
-	print '<td class="linecoluseunit left">'.$langs->trans('Unit').'</td>';
+if (getDolGlobalString('PRODUCT_USE_UNITS')) {
+	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
 }
 
 // Reduction short
-print '<td class="linecoldiscount right nowraponall">';
+print '<th class="linecoldiscount right nowraponall">';
 print $langs->trans('ReductionShort');
 
+// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT) {
 	global $mysoc;
 
-	if (empty($disableedit)) {
+	if (empty($disableedit) && GETPOST('mode', 'aZ09') != 'remiseforalllines') {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=remiseforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 	}
 	//print '<script>$(document).ready(function() { $(".clickremiseforalllines").click(function() { jQuery(".classremiseforalllines").toggle(); }); });</script>';
@@ -122,59 +144,73 @@ if (in_array($object->element, array('propal', 'commande', 'facture')) && $objec
 		print '</div>';
 	}
 }
-print '</td>';
+print '</th>';
 
 // Fields for situation invoice
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-	print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
-	print '<td class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</td>';
+	print '<th class="linecolcycleref right">'.$langs->trans('Progress').'</th>';
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
+	}
+	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';
 }
 
 // Purchase price
-if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid)) {
-	if (!empty($user->rights->margins->creer)) {
-		if ($conf->global->MARGIN_TYPE == "1") {
-			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('BuyingPrice').'</td>';
+if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
+	if ($user->hasRight('margins', 'creer')) {
+		if (getDolGlobalString('MARGIN_TYPE') == "1") {
+			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('BuyingPrice').'</th>';
 		} else {
-			print '<td class="linecolmargin1 margininfos right" style="width: 80px">'.$langs->trans('CostPrice').'</td>';
+			print '<th class="linecolmargin1 margininfos right width75">'.$langs->trans('CostPrice').'</th>';
 		}
 	}
 
-	if (!empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {
-		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarginRate').'</td>';
+	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
+				print '<div class="classmarginforalllines inline-block nowraponall">';
+				print '<input type="number" name="marginforalllines" min="0" max="999.9" value="20.0" step="0.1" class="width50"><label>%</label>';
+				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmargins" value="'.$langs->trans("Update").'">';
+				print '</div>';
+			}
+		}
+		print '</th>';
 	}
-	if (!empty($conf->global->DISPLAY_MARK_RATES) && $user->rights->margins->liretous) {
-		print '<td class="linecolmargin2 margininfos right" style="width: 50px">'.$langs->trans('MarkRate').'</td>';
+	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
 	}
 }
 
 // Total HT
-print '<td class="linecolht right">'.$langs->trans('TotalHTShort').'</td>';
+print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
-	print '<td class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</td>';
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</th>';
 }
 
 if ($outputalsopricetotalwithtax) {
-	print '<td class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</td>';
+	print '<th class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
 }
 
-if (!empty($conf->asset->enabled) && $object->element == 'invoice_supplier') {
-	print '<td class="linecolasset"></td>';
+if (isModEnabled('asset') && $object->element == 'invoice_supplier') {
+	print '<th class="linecolasset"></th>';
 }
 
-print '<td class="linecoledit"></td>'; // No width to allow autodim
+print '<th class="linecoledit"></th>'; // No width to allow autodim
 
-print '<td class="linecoldelete" style="width: 10px"></td>';
+print '<th class="linecoldelete" style="width: 10px"></th>';
 
-print '<td class="linecolmove" style="width: 10px"></td>';
+print '<th class="linecolmove" style="width: 10px"></th>';
 
 if ($action == 'selectlines') {
-	print '<td class="linecolcheckall center">';
+	print '<th class="linecolcheckall center">';
 	print '<input type="checkbox" class="linecheckboxtoggle" />';
 	print '<script>$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';
-	print '</td>';
+	print '</th>';
 }
 
 print "</tr>\n";

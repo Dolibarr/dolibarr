@@ -9,31 +9,30 @@ ActionsOnResource=Esdeveniments sobre aquest recurs
 ResourcePageIndex=Llistat de recursos
 ResourceSingular=Recurs
 ResourceCard=Fitxa de recurs
+NewResource=Recurs nou
 AddResource=Crear un recurs
 ResourceFormLabel_ref=Nom de recurs
-ResourceType=Tipus de recurs
 ResourceFormLabel_description=Descripció de recurs
-
+ResourceType=Tipus de recurs
+ResourceTypeID=ID del tipus de recurs
+ResourceTypeLabel=Etiqueta de tipus de recurs
 ResourcesLinkedToElement=Recurs enllaçat a element
 
 ShowResource=Mostra recursos
-
 ResourceElementPage=Elements de recursos
 ResourceCreatedWithSuccess=Recurs creat correctament
 RessourceLineSuccessfullyDeleted=Línia de recurs eliminada correctament
 RessourceLineSuccessfullyUpdated=Línia de recurs actualitzada correctament
-ResourceLinkedWithSuccess=Recurs enllaçat correntament
-
+ResourceLinkedWithSuccess=Recurs vinculat correctament
 ConfirmDeleteResource=Estàs segur de voler eliminar aquest element?
 RessourceSuccessfullyDeleted=Recurs eliminat correctament
 DictionaryResourceType=Tipus de recurs
-
 SelectResource=Seleccionar recurs
-
 IdResource=Id de recurs
 AssetNumber=Número de sèrie
 ResourceTypeCode=Codi de tipus de recurs
 ImportDataset_resource_1=Recursos
-
-ErrorResourcesAlreadyInUse=Alguns recursos estan en us
+ErrorResourcesAlreadyInUse=Alguns recursos estan en ús
 ErrorResourceUseInEvent=%s usat en %s esdeveniment
+MaxUsers=Màxim d'usuaris (places, seients, etc.)
+MaxUsersLabel=Màxim d'usuaris

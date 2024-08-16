@@ -1,11 +1,14 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
 ManageLotSerial=Utiliser les numéros de lots/série
-ProductStatusOnBatch=Oui (Lot/Série requis)
+ProductStatusOnBatch=Oui (lot/série requis)
 ProductStatusOnSerial=Oui (numéro de série unique requis)
-ProductStatusNotOnBatch=Non (Lot/Série non utilisé)
+ProductStatusNotOnBatch=Non (lot/série non utilisé)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Numéro Série
 ProductStatusNotOnBatchShort=Non
+BatchSellOrEatByMandatoryList=%s ou %s est obligatoire
+BatchSellOrEatByMandatoryNone=Aucune
+BatchSellOrEatByMandatoryAll=%s et %s
 Batch=Lot/Série
 atleast1batchfield=Date limite utilisation optimale, de consommation ou numéro de lot/série
 batch_number=Numéro de Lot/Série
@@ -17,8 +20,9 @@ printBatch=Lot/Série: %s
 printEatby=DMD/DLUO: %s
 printSellby=DLC: %s
 printQty=Qté: %d
+printPlannedWarehouse=Entrepôt : %s
 AddDispatchBatchLine=Ajouter une ligne pour la répartition par durée de conservation
-WhenProductBatchModuleOnOptionAreForced=Quand le module Lot/Série est activé, le mode de décrémentation automatique des stocks est forcé sur 'Décrémenter les stocks réel sur validation d'expédition' et le mode d'incrémentation automatique de stocks est forcé sur 'Incrémenter les stocks réels sur ventilation manuels dans les entrepôts' et ne peut pas être édité. Les autres options peuvent être définies comme vous le voulez.
+WhenProductBatchModuleOnOptionAreForced=Quand le module Lot/Série est activé, le mode de décrémentation automatique des stocks est forcé sur '%s' et le mode d'incrémentation automatique de stocks est forcé sur '%s'. Certains choix peuvent ne pas être disponibles. Les autres options peuvent être définies comme vous le voulez.
 ProductDoesNotUseBatchSerial=Ce produit n'utilise pas les numéros de lot/série
 ProductLotSetup=Configuration du module lot/série
 ShowCurrentStockOfLot=Afficher le stock actuel pour le couple produit / lot
@@ -43,4 +47,6 @@ HideLots=Masquer les lots
 OutOfOrder=Hors d'usage
 InWorkingOrder=En état de marche
 ToReplace=Remplacer
-CantMoveNonExistantSerial=Erreur : Vous avez demandé un mouvement sur un numéro de série qui n’existe plus. Peut-être avez-vous requis le même numéro de série plusieurs fois dans une même expédition, ou il a déjà servi dans une autre expédition. Supprimez cette expédition et préparez-en une autre.
+CantMoveNonExistantSerial=Erreur : un numéro de série sur lequel vous avez demandé un mouvement n'existe plus. Peut-être avez-vous utilisé plusieurs fois le même numéro de série depuis le même entrepôt sur la même expédition, ou peut-être était-il utilisé sur une autre expédition. Supprimez cette expédition et préparez-en une autre.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table des lots, lancez le script repair avec le paramètre '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers= Correction de stock requise, car Numéro de série unique.

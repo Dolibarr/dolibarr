@@ -5,33 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
-Module56000Name=Bilety
-Module56000Desc=System biletów do zarządzania kwestiami lub żądaniami
-
+Module56000Name=Sprawy
+Module56000Desc=System spraw do zarządzania sprawami: problemami, zapytaniami, wnioskami, etc.
 Permission56001=Zobacz bilety
 Permission56002=Modyfikuj bilety
 Permission56003=Usuwaj bilety
 Permission56004=Zarządzaj biletami
 Permission56005=Zobacz bilety wszystkich stron trzecich (nie dotyczy użytkowników zewnętrznych, zawsze ograniczaj się do strony trzeciej, od której są zależni)
-
+Permission56006=Bilety eksportowe
+Tickets=Zgłoszenia
 TicketDictType=Bilet - Typ
-TicketDictCategory=Bilet - grupy
+TicketDictCategory=Bilet - Grupy
 TicketDictSeverity=Bilet - dotkliwości
 TicketDictResolution=Bilet - rozwiązanie
-
 TicketTypeShortCOM=Pytanie handlowe
 TicketTypeShortHELP=Prośba o pomoc funkcjonalną
 TicketTypeShortISSUE=Problem lub błąd
@@ -39,69 +33,59 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Prośba o zmianę lub ulepszenie
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Inne
-
 TicketSeverityShortLOW=Niski
 TicketSeverityShortNORMAL=Normalny
 TicketSeverityShortHIGH=Wysoki
 TicketSeverityShortBLOCKING=Krytyczny, blokujący
-
 TicketCategoryShortOTHER=Inne
-
 ErrorBadEmailAddress=Pole „%s” jest nieprawidłowe
-MenuTicketMyAssign=Moje bilety
-MenuTicketMyAssignNonClosed=Moje otwarte bilety
-MenuListNonClosed=Otwórz bilety
-
+MenuTicketMyAssign=Moje zgłoszenia
+MenuTicketMyAssignNonClosed=Moje otwarte zgłoszenia
+MenuListNonClosed=Otwarte sprawy
 TypeContact_ticket_internal_CONTRIBUTOR=Współpracownik
 TypeContact_ticket_internal_SUPPORTTEC=Przypisany użytkownik
 TypeContact_ticket_external_SUPPORTCLI=Kontakt z klientem / śledzenie incydentów
 TypeContact_ticket_external_CONTRIBUTOR=Współpracownik zewnętrzny
-
-OriginEmail=E-mail reportera
+OriginEmail=E-mail zgłaszającego
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Wyślij wiadomość e-mail z biletem
-
+ExportDataset_ticket_1=Zgłoszenia
 # Status
 Read=Czytać
 Assigned=Przydzielony
-InProgress=W trakcie
 NeedMoreInformation=Czekam na opinię reportera
 NeedMoreInformationShort=Czekam na informację zwrotną
-Answered=Odpowiedział
 Waiting=Czekanie
-SolvedClosed=Solved
+SolvedClosed=Rozwiązana
 Deleted=Usunięto
-
 # Dict
-Type=Typ
 Severity=Priorytet
 TicketGroupIsPublic=Grupa jest publiczna
 TicketGroupIsPublicDesc=Jeśli grupa biletów jest publiczna, będzie widoczna w formularzu podczas tworzenia biletu z poziomu interfejsu publicznego
-
 # Email templates
 MailToSendTicketMessage=Aby wysłać wiadomość e-mail z wiadomości biletu
-
-#
 # Admin page
-#
-TicketSetup=Konfiguracja modułu biletów
+TicketSetup=Konfiguracja modułu zgłoszeń
 TicketSettings=Ustawienia
-TicketSetupPage=
 TicketPublicAccess=Publiczny interfejs, który nie wymaga identyfikacji, jest dostępny pod następującym adresem URL
 TicketSetupDictionaries=Typ zgłoszenia, ważność i kody analityczne można konfigurować ze słowników
 TicketParamModule=Konfiguracja zmiennej modułu
 TicketParamMail=Konfiguracja poczty e-mail
-TicketEmailNotificationFrom=Sender e-mail for ticket answers
-TicketEmailNotificationFromHelp=Sender e-mail for ticket answers sent from Dolibarr
-TicketEmailNotificationTo=Notify ticket creation to this e-mail address
-TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation
+TicketEmailNotificationFrom=Adres e-mail nadawcy w celu powiadomienia o odpowiedziach
+TicketEmailNotificationFromHelp=Adres e-mail nadawcy używany do wysyłania wiadomości e-mail z powiadomieniem, gdy odpowiedź zostanie udzielona w panelu administracyjnym. Na przykład noreply@example.com
+TicketEmailNotificationTo=Powiadom o utworzeniu zgłoszenia na ten adres e-mail
+TicketEmailNotificationToHelp=Jeśli jest obecny, ten adres e-mail zostanie powiadomiony o utworzeniu biletu
 TicketNewEmailBodyLabel=Wiadomość tekstowa wysyłana po utworzeniu biletu
 TicketNewEmailBodyHelp=Podany tutaj tekst zostanie wstawiony do wiadomości e-mail potwierdzającej utworzenie nowego zgłoszenia z interfejsu publicznego. Informacje o sprawdzeniu biletu są dodawane automatycznie.
 TicketParamPublicInterface=Konfiguracja interfejsu publicznego
 TicketsEmailMustExist=Wymagaj istniejącego adresu e-mail, aby utworzyć bilet
 TicketsEmailMustExistHelp=W interfejsie publicznym adres e-mail powinien być już wypełniony w bazie danych, aby utworzyć nowy bilet.
+TicketsShowProgression=Wyświetlaj postęp zgłoszenia w interfejsie publicznym
+TicketsShowProgressionHelp=Włącz tę opcję, aby ukryć postęp zgłoszenia na stronach interfejsu publicznego
+TicketCreateThirdPartyWithContactIfNotExist=Zapytaj o imię i nazwisko oraz nazwę firmy w przypadku nieznanych e-maili.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Sprawdź, czy istnieje osoba trzecia lub kontakt dla wprowadzonego adresu e-mail. Jeśli nie, poproś o imię i nazwisko oraz nazwę firmy, aby utworzyć osobę trzecią do kontaktu.
 PublicInterface=Interfejs publiczny
-TicketUrlPublicInterfaceLabelAdmin=Alternatywny adres URL interfejsu publicznego
-TicketUrlPublicInterfaceHelpAdmin=Możliwe jest zdefiniowanie aliasu do serwera WWW, a tym samym udostępnienie interfejsu publicznego z innym adresem URL (serwer musi działać jako proxy na tym nowym adresie URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Tekst powitalny interfejsu publicznego
 TicketPublicInterfaceTextHome=Możesz utworzyć zgłoszenie do pomocy technicznej lub wyświetlić istniejące z jego biletu śledzenia identyfikatora.
 TicketPublicInterfaceTextHomeHelpAdmin=Zdefiniowany tutaj tekst pojawi się na stronie głównej interfejsu publicznego.
@@ -119,7 +103,9 @@ TicketParams=Params
 TicketsShowModuleLogo=Wyświetl logo modułu w interfejsie publicznym
 TicketsShowModuleLogoHelp=Włącz tę opcję, aby ukryć moduł logo na stronach interfejsu publicznego
 TicketsShowCompanyLogo=Wyświetl logo firmy w interfejsie publicznym
-TicketsShowCompanyLogoHelp=Włącz tę opcję, aby ukryć logo głównej firmy na stronach interfejsu publicznego
+TicketsShowCompanyLogoHelp=Włącz tę opcję, aby wyświetlać logo głównej firmy na stronach interfejsu publicznego
+TicketsShowCompanyFooter=Wyświetl stopkę firmy w interfejsie publicznym
+TicketsShowCompanyFooterHelp=Włącz tę opcję, aby wyświetlić stopkę głównej firmy na stronach interfejsu publicznego
 TicketsEmailAlsoSendToMainAddress=Wyślij również powiadomienie na główny adres e-mail
 TicketsEmailAlsoSendToMainAddressHelp=Włącz tę opcję, aby również wysłać wiadomość e-mail na adres zdefiniowany w ustawieniach „%s” (patrz zakładka „%s”)
 TicketsLimitViewAssignedOnly=Ogranicz wyświetlanie do biletów przypisanych do bieżącego użytkownika (nie dotyczy użytkowników zewnętrznych, zawsze ograniczaj się do strony trzeciej, od której zależą)
@@ -136,23 +122,24 @@ TicketsPublicNotificationNewMessage=Wysyłaj e-maile, gdy do zgłoszenia zostani
 TicketsPublicNotificationNewMessageHelp=Wysyłaj e-maile, gdy nowa wiadomość zostanie dodana z interfejsu publicznego (do przypisanego użytkownika lub powiadomienie e-mail do (aktualizacja) i / lub powiadomienie e-mailem do)
 TicketPublicNotificationNewMessageDefaultEmail=Powiadomienia e-mail do (aktualizacja)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Wyślij wiadomość e-mail na ten adres w przypadku każdej nowej wiadomości, jeśli do biletu nie jest przypisany użytkownik lub użytkownik nie ma żadnego znanego adresu e-mail.
-TicketsAutoReadTicket=Automatically mark the ticket as read (when created from backoffice)
-TicketsAutoReadTicketHelp=Automatically mark the ticket as read when created from backoffice. When ticket is create from the public interface, ticket remains with the status "Not Read".
-TicketsDelayBeforeFirstAnswer=A new ticket should receive a first answer before (hours):
-TicketsDelayBeforeFirstAnswerHelp=If a new ticket has not received an answer after this time period (in hours), an important warning icon will be displayed in the list view.
-TicketsDelayBetweenAnswers=An unresolved ticket should not be unactive during (hours):
-TicketsDelayBetweenAnswersHelp=If an unresolved ticket that has already received an answer has not had further interaction after this time period (in hours), a warning icon will be displayed in the list view.
-TicketsAutoNotifyClose=Automatically notify thirdparty when closing a ticket
-TicketsAutoNotifyCloseHelp=When closing a ticket, you will be proposed to send a message to one of thirdparty's contacts. On mass closing, a message will be sent to one contact of the thirdparty linked to the ticket.
-TicketWrongContact=Provided contact is not part of current ticket contacts. Email not sent.
-TicketChooseProductCategory=Product category for ticket support
-TicketChooseProductCategoryHelp=Select the product category of ticket support. This will be used to automatically link a contract to a ticket.
-
-#
+TicketsAutoReadTicket=Automatycznie oznacz zgłoszenie jako przeczytane (w przypadku utworzenia z zaplecza)
+TicketsAutoReadTicketHelp=Automatycznie oznacz zgłoszenie jako przeczytane po utworzeniu z poziomu zaplecza. Kiedy bilet jest tworzony z interfejsu publicznego, bilet pozostaje ze statusem „Nieprzeczytany”.
+TicketsDelayBeforeFirstAnswer=Nowy bilet powinien otrzymać pierwszą odpowiedź przed (godzinami):
+TicketsDelayBeforeFirstAnswerHelp=Jeżeli po upływie tego czasu (w godzinach) na nowe zgłoszenie nie zostanie udzielona odpowiedź, w widoku listy wyświetli się ważna ikona ostrzegawcza.
+TicketsDelayBetweenAnswers=Nierozwiązany bilet nie powinien być nieaktywny w ciągu (godzin):
+TicketsDelayBetweenAnswersHelp=Jeżeli w przypadku nierozwiązanego zgłoszenia, na które otrzymano już odpowiedź, po upływie tego czasu (w godzinach) nie nawiązano dalszej interakcji, w widoku listy wyświetli się ikona ostrzeżenia.
+TicketsAutoNotifyClose=Automatycznie powiadamiaj osobę trzecią o zamknięciu zgłoszenia
+TicketsAutoNotifyCloseHelp=Podczas zamykania zgłoszenia zostaniesz poproszony o wysłanie wiadomości do jednego z zewnętrznych kontaktów. W przypadku masowego zamknięcia wiadomość zostanie wysłana do jednego z kontaktów strony trzeciej powiązanej z biletem.
+TicketWrongContact=Pod warunkiem, że kontakt nie jest częścią aktualnych kontaktów dotyczących zgłoszeń. E-mail nie został wysłany.
+TicketChooseProductCategory=Kategoria produktu do obsługi zgłoszeń
+TicketChooseProductCategoryHelp=Wybierz kategorię produktu dotyczącą obsługi zgłoszeń. Posłuży to do automatycznego powiązania umowy z biletem.
+TicketUseCaptchaCode=Podczas tworzenia zgłoszenia użyj kodu graficznego (CAPTCHA).
+TicketUseCaptchaCodeHelp=Dodaje weryfikację CAPTCHA podczas tworzenia nowego zgłoszenia.
+TicketsAllowClassificationModificationIfClosed=Zezwalaj na modyfikację klasyfikacji biletów zamkniętych
+TicketsAllowClassificationModificationIfClosedHelp=Zezwalaj na modyfikację klasyfikacji (typ, grupa zgłoszeń, ważność) nawet jeśli zgłoszenia są zamknięte.
 # Index & list page
-#
-TicketsIndex=Strefa biletów
-TicketList=Lista biletów
+TicketsIndex=Strefa zgłoszeń
+TicketList=Lista zgłoszeń
 TicketAssignedToMeInfos=Ta strona wyświetla listę zgłoszeń utworzoną przez lub przypisaną do bieżącego użytkownika
 NoTicketsFound=Nie znaleziono biletu
 NoUnreadTicketsFound=Nie znaleziono nieprzeczytanego biletu
@@ -163,50 +150,47 @@ OrderByDateAsc=Sortuj według rosnącej daty
 OrderByDateDesc=Sortuj według malejącej daty
 ShowAsConversation=Pokaż jako listę rozmów
 MessageListViewType=Pokaż jako listę tabel
-ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
-ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
+ConfirmMassTicketClosingSendEmail=Automatycznie wysyłaj e-maile przy zamykaniu biletów
+ConfirmMassTicketClosingSendEmailQuestion=Czy chcesz powiadomić osoby trzecie o zamknięciu tych zgłoszeń?
 # Ticket card
-#
-Ticket=Bilet
-TicketCard=Karta biletowa
-CreateTicket=Utwórz bilet
+Ticket=Sprawa
+TicketCard=Karta zgłoszenia
+CreateTicket=Utwórz zgłoszenie
 EditTicket=Edytuj bilet
 TicketsManagement=Zarządzanie zgłoszeniami
-CreatedBy=Stworzone przez
-NewTicket=Nowy bilet
+CreatedBy=Utworzone przez
+NewTicket=Nowe zgłoszenie
 SubjectAnswerToTicket=Odpowiedź na bilet
 TicketTypeRequest=Rodzaj żądania
-TicketCategory=Kategoryzacja biletów
+TicketCategory=Grupa zgłoszeń
 SeeTicket=Zobacz bilet
 TicketMarkedAsRead=Bilet został oznaczony jako przeczytany
 TicketReadOn=Czytaj
 TicketCloseOn=Ostateczny termin
 MarkAsRead=Oznacz bilet jako przeczytany
-TicketHistory=Historia biletów
+TicketHistory=Historia zgłoszeń
 AssignUser=Przypisz do użytkownika
 TicketAssigned=Bilet jest teraz przypisany
 TicketChangeType=Zmień typ
 TicketChangeCategory=Zmień kod analityczny
 TicketChangeSeverity=Zmień istotność
-TicketAddMessage=Dodaj wiadomość
-AddMessage=Dodaj wiadomość
+TicketAddMessage=Dodaj lub wyślij wiadomość
+TicketAddPrivateMessage=Dodaj prywatną wiadomość
 MessageSuccessfullyAdded=Dodano bilet
 TicketMessageSuccessfullyAdded=Wiadomość została pomyślnie dodana
 TicketMessagesList=Lista wiadomości
 NoMsgForThisTicket=Brak wiadomości dla tego biletu
-TicketProperties=Classification
+TicketProperties=Klasyfikacja
 LatestNewTickets=Najnowsze %s Najnowsze bilety (nieprzeczytane)
 TicketSeverity=Priorytet
 ShowTicket=Zobacz bilet
 RelatedTickets=Powiązane bilety
 TicketAddIntervention=Tworzenie interwencji
-CloseTicket=Close|Solve ticket
-AbandonTicket=Abandon ticket
-CloseATicket=Close|Solve a ticket
-ConfirmCloseAticket=Potwierdź zamknięcie biletu
-ConfirmAbandonTicket=Do you confirm the closing of the ticket to status 'Abandonned'
+CloseTicket=Zamknij | Rozwiąż
+AbandonTicket=Porzuć
+CloseATicket=Zamknij | Rozwiąż zgłoszenie
+ConfirmCloseAticket=Potwierdź zamknięcie zgłoszenia
+ConfirmAbandonTicket=Czy potwierdzasz zamknięcie zgłoszenia do statusu „Opuszczony”
 ConfirmDeleteTicket=Potwierdź usunięcie biletu
 TicketDeletedSuccess=Bilet został usunięty z powodzeniem
 TicketMarkedAsClosed=Bilet oznaczony jako zamknięty
@@ -217,19 +201,18 @@ SendMessageByEmail=Wyślij wiadomość e-mailem
 TicketNewMessage=Nowa wiadomość
 ErrorMailRecipientIsEmptyForSendTicketMessage=Adresat jest pusty. Nie wysłano e-maila
 TicketGoIntoContactTab=Przejdź do zakładki „Kontakty”, aby je wybrać
-TicketMessageMailIntro=Wprowadzenie
+TicketMessageMailIntro=Nagłówek wiadomości
 TicketMessageMailIntroHelp=Ten tekst jest dodawany tylko na początku e-maila i nie zostanie zapisany.
-TicketMessageMailIntroLabelAdmin=Introduction text to all ticket answers
-TicketMessageMailIntroText=Hello,<br>A new answer has been added to a ticket that you follow. Here is the message:<br>
-TicketMessageMailIntroHelpAdmin=This text will be inserted before the answer when replying to a ticket from Dolibarr
-TicketMessageMailSignature=Podpis
-TicketMessageMailSignatureHelp=Ten tekst jest dodawany tylko na końcu wiadomości e-mail i nie zostanie zapisany.
-TicketMessageMailSignatureText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailSignatureLabelAdmin=Podpis e-maila zwrotnego
-TicketMessageMailSignatureHelpAdmin=Ten tekst zostanie wstawiony po wiadomości z odpowiedzią.
+TicketMessageMailIntroText=Witaj,<br>Dodano nową odpowiedź do obserwowanego zgłoszenia. Oto wiadomość:<br>
+TicketMessageMailIntroHelpAdmin=Ten tekst zostanie wstawiony przed odpowiedzią podczas odpowiadania na zgłoszenie od Dolibarr
+TicketMessageMailFooter=Stopka wiadomości
+TicketMessageMailFooterHelp=Tekst ten dodawany jest dopiero na końcu wiadomości wysyłanej e-mailem i nie zostanie zapisany.
+TicketMessageMailFooterText=Wiadomość wysłana przez <b>%s</b> przez Dolibarr
+TicketMessageMailFooterHelpAdmin=Tekst ten zostanie wstawiony po komunikacie odpowiedzi.
 TicketMessageHelp=Tylko ten tekst zostanie zapisany na liście wiadomości na karcie biletu.
 TicketMessageSubstitutionReplacedByGenericValues=Zmienne podstawienia są zastępowane wartościami ogólnymi.
-TimeElapsedSince=Czas, który upłynął od
+ForEmailMessageWillBeCompletedWith=W przypadku wiadomości e-mail wysyłanych do użytkowników zewnętrznych, wiadomość zostanie uzupełniona
+TimeElapsedSince=Czas od założenia zgłoszenia
 TicketTimeToRead=Upłynął czas przed przeczytaniem
 TicketTimeElapsedBeforeSince=Czas, jaki upłynął przed / od
 TicketContacts=Bilet kontaktów
@@ -237,9 +220,15 @@ TicketDocumentsLinked=Dokumenty powiązane z biletem
 ConfirmReOpenTicket=Potwierdzić ponowne otwarcie tego biletu?
 TicketMessageMailIntroAutoNewPublicMessage=Na bilecie została umieszczona nowa wiadomość o temacie %s:
 TicketAssignedToYou=Przydzielony bilet
-TicketAssignedEmailBody=Przydzielono Ci bilet # %s przez %s
+TicketAssignedEmailBody=Zgłoszenie #%s zostało Ci przydzielone przez %s
+TicketAssignedCustomerEmail=Twój bilet został przydzielony do przetwarzania.
+TicketAssignedCustomerBody=Jest to automatyczna wiadomość e-mail potwierdzająca, że Twoje zgłoszenie zostało przydzielone do przetwarzania.
 MarkMessageAsPrivate=Oznacz wiadomość jako prywatną
-TicketMessagePrivateHelp=Ta wiadomość nie będzie wyświetlana użytkownikom zewnętrznym
+TicketMessageSendEmailHelp=Do wszystkich przypisanych kontaktów zostanie wysłana wiadomość e-mail
+TicketMessageSendEmailHelp2a=(kontakty wewnętrzne, ale także kontakty zewnętrzne, chyba że zaznaczona jest opcja „%s”)
+TicketMessageSendEmailHelp2b=(kontakty wewnętrzne, ale także kontakty zewnętrzne)
+TicketMessagePrivateHelp=Ta wiadomość nie będzie widoczna dla użytkowników zewnętrznych
+TicketMessageRecipientsHelp=Pole odbiorcy uzupełnione aktywnymi kontaktami powiązanymi ze zgłoszeniem
 TicketEmailOriginIssuer=Wystawca w miejscu pochodzenia biletów
 InitialMessage=Wiadomość wstępna
 LinkToAContract=Link do umowy
@@ -252,30 +241,25 @@ TicketChangeStatus=Zmień status
 TicketConfirmChangeStatus=Potwierdź zmianę statusu: %s?
 TicketLogStatusChanged=Status zmieniony: %s na %s
 TicketNotNotifyTiersAtCreate=Nie powiadamiaj firmy o utworzeniu
-NotifyThirdpartyOnTicketClosing=Contacts to notify while closing the ticket
-TicketNotifyAllTiersAtClose=All related contacts
-TicketNotNotifyTiersAtClose=No related contact
-Unread=nieprzeczytane
-TicketNotCreatedFromPublicInterface=Niedostępne. Bilet nie został utworzony z interfejsu publicznego.
+NotifyThirdpartyOnTicketClosing=Poinformuj kontakty o zamknięciu zgłoszenia
+TicketNotifyAllTiersAtClose=Wszystkie powiązane kontakty
+TicketNotNotifyTiersAtClose=Żaden z powiązanych kontaktów
+Unread=Nieodczytane
+TicketNotCreatedFromPublicInterface=Niedostępne. Bilet nie został utworzony z publicznego interfejsu.
 ErrorTicketRefRequired=Nazwa biletu jest wymagana
-TicketsDelayForFirstResponseTooLong=Too much time elapsed since ticket opening without any answer.
-TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on this ticket.
-TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
-TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
-
-#
+TicketsDelayForFirstResponseTooLong=Upłynęło zbyt dużo czasu od otwarcia zgłoszenia bez żadnej odpowiedzi.
+TicketsDelayFromLastResponseTooLong=Od ostatniej odpowiedzi na tym zgłoszeniu upłynęło zbyt dużo czasu.
+TicketNoContractFoundToLink=Nie znaleziono żadnej umowy, która byłaby automatycznie powiązana z tym biletem. Proszę ręcznie połączyć umowę.
+TicketManyContractsLinked=Wiele umów zostało automatycznie powiązanych z tym biletem. Koniecznie sprawdź, które warto wybrać.
+TicketRefAlreadyUsed=Odniesienie [%s] jest już używane, Twoje nowe odniesienie to [%s]
 # Logs
-#
 TicketLogMesgReadBy=Bilet %s odczytany przez %s
 NoLogForThisTicket=Nie ma jeszcze dziennika dla tego biletu
 TicketLogAssignedTo=Bilet %s przypisany do %s
 TicketLogPropertyChanged=Bilet %s zmodyfikowano: klasyfikacja od %s do %s
 TicketLogClosedBy=Bilet %s zamknięty przez %s
 TicketLogReopen=Bilet %s ponownie otwarty
-
-#
 # Public pages
-#
 TicketSystem=System biletowy
 ShowListTicketWithTrackId=Wyświetl listę biletów z identyfikatora utworu
 ShowTicketWithTrackId=Wyświetl bilet z identyfikatora utworu
@@ -289,14 +273,14 @@ TicketNewEmailBody=To jest automatyczna wiadomość e-mail potwierdzająca zarej
 TicketNewEmailBodyCustomer=To jest automatyczny e-mail potwierdzający, że nowy bilet został właśnie utworzony na Twoim koncie.
 TicketNewEmailBodyInfosTicket=Informacje do monitorowania zgłoszenia
 TicketNewEmailBodyInfosTrackId=Numer śledzenia biletu: %s
-TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=Możesz zobaczyć postęp zgłoszenia w określonym interfejsie, klikając poniższy link
-TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
+TicketNewEmailBodyInfosTrackUrl=Możesz zobaczyć postęp zgłoszenia, klikając poniższy link
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
+TicketCloseEmailBodyInfosTrackUrlCustomer=Historię tego biletu możesz sprawdzić, klikając poniższy link
 TicketEmailPleaseDoNotReplyToThisEmail=Prosimy nie odpowiadać na tę wiadomość! Użyj linku, aby odpowiedzieć w interfejsie.
 TicketPublicInfoCreateTicket=Ten formularz umożliwia zarejestrowanie zgłoszenia do pomocy technicznej w naszym systemie zarządzania.
-TicketPublicPleaseBeAccuratelyDescribe=Proszę dokładnie opisać problem. Podaj jak najwięcej informacji, abyśmy mogli poprawnie zidentyfikować Twoją prośbę.
+TicketPublicPleaseBeAccuratelyDescribe=Proszę dokładnie opisać swoją prośbę. Podaj jak najwięcej informacji, abyśmy mogli poprawnie zidentyfikować Twoje żądanie.
 TicketPublicMsgViewLogIn=Wprowadź identyfikator śledzenia biletu
-TicketTrackId=Publiczny identyfikator śledzenia
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Jeden z Twoich identyfikatorów śledzenia
 ErrorTicketNotFound=Nie znaleziono biletu z identyfikatorem śledzenia %s!
 Subject=Temat
@@ -312,28 +296,26 @@ OldUser=Stary użytkownik
 NewUser=Nowy użytkownik
 NumberOfTicketsByMonth=Liczba biletów miesięcznie
 NbOfTickets=Liczba biletów
+ExternalContributors=Współautorzy zewnętrzni
+AddContributor=Dodaj współpracownika zewnętrznego
 # notifications
-TicketCloseEmailSubjectCustomer=Ticket closed
-TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
-TicketCloseEmailSubjectAdmin=Ticket closed - Réf %s (public ticket ID %s)
-TicketCloseEmailBodyAdmin=A ticket with ID #%s has just been closed, see information:
+TicketCloseEmailSubjectCustomer=Bilet zamknięty
+TicketCloseEmailBodyCustomer=To jest automatyczna wiadomość powiadamiająca Cię, że zgłoszenie %s właśnie zostało zamknięte.
+TicketCloseEmailSubjectAdmin=Zgłoszenie zamknięte - Réf %s (publiczny identyfikator zgłoszenia %s)
+TicketCloseEmailBodyAdmin=Zgłoszenie o identyfikatorze #%s zostało właśnie zamknięte, zobacz informacje:
 TicketNotificationEmailSubject=Bilet %s został zaktualizowany
 TicketNotificationEmailBody=To jest automatyczna wiadomość informująca, że bilet %s został właśnie zaktualizowany
 TicketNotificationRecipient=Odbiorca powiadomienia
 TicketNotificationLogMessage=Komunikat dziennika
 TicketNotificationEmailBodyInfosTrackUrlinternal=Wyświetl bilet w interfejsie
 TicketNotificationNumberEmailSent=Wysłano powiadomienie e-mail: %s
-
 ActionsOnTicket=Wydarzenia na bilecie
-
-#
 # Boxes
-#
 BoxLastTicket=Ostatnio utworzone bilety
-BoxLastTicketDescription=Ostatnie utworzone bilety %s
+BoxLastTicketDescription=%s ostatnio utworzonych spraw
 BoxLastTicketContent=
 BoxLastTicketNoRecordedTickets=Brak ostatnich nieprzeczytanych biletów
-BoxLastModifiedTicket=Najnowsze zmodyfikowane bilety
+BoxLastModifiedTicket=Ostatnio aktualizowane sprawy
 BoxLastModifiedTicketDescription=Najnowsze zmodyfikowane bilety %s
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Brak ostatnio zmodyfikowanych biletów
@@ -344,7 +326,7 @@ BoxTicketLastXDays=Liczba nowych biletów według dni w ostatnich dniach %s
 BoxTicketLastXDayswidget = Liczba nowych biletów według dni ostatnich X dni
 BoxNoTicketLastXDays=Brak nowych biletów w ciągu ostatnich %s dni
 BoxNumberOfTicketByDay=Liczba nowych biletów w ciągu dnia
-BoxNewTicketVSClose=Number of tickets versus closed tickets (today)
+BoxNewTicketVSClose=Liczba biletów w porównaniu z biletami zamkniętymi (dziś)
 TicketCreatedToday=Bilet utworzony dzisiaj
 TicketClosedToday=Bilet dzisiaj zamknięty
-KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
+KMFoundForTicketGroup=Znaleźliśmy tematy i często zadawane pytania, które mogą odpowiedzieć na Twoje pytanie, dzięki sprawdzeniu ich przed przesłaniem zgłoszenia

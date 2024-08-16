@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +26,12 @@
 
 define("NOLOGIN", 1); // This means this output page does not require to be logged.
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
 
@@ -37,7 +39,7 @@ if (!empty($conf->ldap->enabled)) {
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
-if (!empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)) {
+if (getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 	header("Location: ".DOL_URL_ROOT.'/');
 	exit;
 }
@@ -50,7 +52,9 @@ if (!$mode) {
 
 $username = GETPOST('username', 'alphanohtml');
 $passworduidhash = GETPOST('passworduidhash', 'alpha');
-$conf->entity = (GETPOST('entity', 'int') ? GETPOST('entity', 'int') : 1);
+$setnewpassword = GETPOST('setnewpassword', 'aZ09');
+
+$conf->entity = (GETPOSTINT('entity') ? GETPOSTINT('entity') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
 $hookmanager->initHooks(array('passwordforgottenpage'));
@@ -81,6 +85,8 @@ $parameters = array('username' => $username);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	$message = $hookmanager->error;
+} else {
+	$message = '';
 }
 
 if (empty($reshook)) {
@@ -89,20 +95,20 @@ if (empty($reshook)) {
 		$edituser = new User($db);
 		$result = $edituser->fetch('', $username, '', 0, $conf->entity);
 		if ($result < 0) {
-			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorLoginDoesNotExists", $username)).'</div>';
+			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
-			global $dolibarr_main_instance_unique_id;
+			global $conf;
 
-			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id.' '.$passworduidhash;
-			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$dolibarr_main_instance_unique_id, $passworduidhash)) {
+			//print $edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id.' '.$passworduidhash;
+			if ($edituser->pass_temp && dol_verifyHash($edituser->pass_temp.'-'.$edituser->id.'-'.$conf->file->instance_unique_id, $passworduidhash)) {
 				// Clear session
 				unset($_SESSION['dol_login']);
-				$_SESSION['dol_loginmesg'] = $langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
+				$_SESSION['dol_loginmesg'] = '<!-- warning -->'.$langs->transnoentitiesnoconv('NewPasswordValidated'); // Save message for the session page
 
 				$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
 				dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 
-				header("Location: ".DOL_URL_ROOT.'/');
+				header("Location: ".DOL_URL_ROOT.'/?username='.urlencode($edituser->login));
 				exit;
 			} else {
 				$langs->load("errors");
@@ -110,10 +116,11 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	// Action modif mot de passe
+
+	// Action to set a temporary password and send email for reset
 	if ($action == 'buildnewpassword' && $username) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 
 		// Verify code
 		if (!$ok) {
@@ -127,36 +134,36 @@ if (empty($reshook)) {
 				$result = $edituser->fetch('', '', '', 1, $conf->entity, $username);
 			}
 
+			// Set the message to show (must be the same if login/email exists or not
+			// to avoid to guess them.
+			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
+			if (!$isanemail) {
+				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
+			} else {
+				$messagewarning .= $langs->trans("IfEmailExistPasswordRequestSent");
+			}
+			$messagewarning .= '</div>';
+
 			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
-				$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
-				if (!$isanemail) {
-					$message .= $langs->trans("IfLoginExistPasswordRequestSent");
-				} else {
-					$message .= $langs->trans("IfEmailExistPasswordRequestSent");
-				}
-				$message .= '</div>';
+				usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
+				$message .= $messagewarning;
 				$username = '';
 			} else {
-				if (!$edituser->email) {
-					$message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+				if (empty($edituser->email)) {
+					usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
+					$message .= $messagewarning;
 				} else {
 					$newpassword = $edituser->setPassword($user, '', 1);
-					if ($newpassword < 0) {
-						// Failed
+					if (is_int($newpassword) && $newpassword < 0) {
+						// Technical failure
 						$message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
 					} else {
-						// Success
+						// Success to set temporary password, send email
 						if ($edituser->send_password($user, $newpassword, 1) > 0) {
-							$message = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
-							if (!$isanemail) {
-								$message .= $langs->trans("IfLoginExistPasswordRequestSent");
-							} else {
-								$message .= $langs->trans("IfEmailExistPasswordRequestSent");
-							}
-							//$message .= $langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email));
-							$message .= '</div>';
+							$message .= $messagewarning;
 							$username = '';
 						} else {
+							// Technical failure
 							$message .= '<div class="error">'.$edituser->error.'</div>';
 						}
 					}
@@ -175,8 +182,8 @@ $dol_url_root = DOL_URL_ROOT;
 
 // Title
 $title = 'Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$title = $conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 // Select templates
@@ -197,7 +204,7 @@ $disabled = 'disabled';
 if (preg_match('/dolibarr/i', $mode)) {
 	$disabled = '';
 }
-if (!empty($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD)) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
 	$disabled = ''; // To force button enabled
 }
 
@@ -223,7 +230,7 @@ if (function_exists("imagecreatefrompng") && !$disabled) {
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)
-$parameters = array('entity' => GETPOST('entity', 'int'));
+$parameters = array('entity' => GETPOSTINT('entity'));
 $hookmanager->executeHooks('getPasswordForgottenPageOptions', $parameters); // Note that $action and $object may have been modified by some hooks
 if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 	$morelogincontent = $hookmanager->resArray; // (deprecated) For compatibility
@@ -232,8 +239,12 @@ if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 }
 
 // Execute hook getPasswordForgottenPageExtraOptions (eg for js)
-$parameters = array('entity' => GETPOST('entity', 'int'));
+$parameters = array('entity' => GETPOSTINT('entity'));
 $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions', $parameters); // Note that $action and $object may have been modified by some hooks.
 $moreloginextracontent = $hookmanager->resPrint;
 
-include $template_dir.'passwordforgotten.tpl.php'; // To use native PHP
+if (empty($setnewpassword)) {
+	include $template_dir.'passwordforgotten.tpl.php'; // To use native PHP
+} else {
+	include $template_dir.'passwordreset.tpl.php'; // To use native PHP
+}

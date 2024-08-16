@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe模块设置
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=通过 <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external"> Stripe </a> 为您的客户提供信用卡/借记卡付款的在线支付页面。这可用于允许您的客户进行临时付款或与特定 Dolibarr 对象（发票、订单等）相关的付款
 StripeOrCBDoPayment=使用信用卡或Stripe付款
 FollowingUrlAreAvailableToMakePayments=以下网址可提供给客户的网页上，能够作出Dolibarr支付对象
 PaymentForm=付款方式
-WelcomeOnPaymentPage=Welcome to our online payment service
+WelcomeOnPaymentPage=欢迎使用我们的在线付款服务
 ThisScreenAllowsYouToPay=这个屏幕允许你进行网上支付%s。
 ThisIsInformationOnPayment=这是在做付款信息
 ToComplete=要完成
@@ -16,13 +16,14 @@ StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=您将被重定向到受保护的Stripe页面以输入您的信用卡信息
 Continue=下一个
 ToOfferALinkForOnlinePayment=网址为%s支付
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnOrder=提供%s销售订单线上支付页面的网址
 ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
 ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnMemberSubscription=为会员订阅提供 %s 在线支付页面的网址
 ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=使用网址<b> %s </b>设置Stripe，以便在Stripe验证时自动创建付款。
 AccountParameter=帐户参数
 UsageParameter=使用参数
@@ -41,15 +42,17 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live键
 ONLINE_PAYMENT_WAREHOUSE=在线支付完成时用于库存减少的库存<br>（TODO当对发票上的操作减少库存的选项并且在线支付自己生成发票？）
 StripeLiveEnabled=Stripe live enabled（否则为test / sandbox模式）
 StripeImportPayment=导入Stripe付款
-ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Stripe网关
 OAUTH_STRIPE_TEST_ID=Stripe连接客户端ID（ca _...）
 OAUTH_STRIPE_LIVE_ID=Stripe连接客户端ID（ca _...）
 BankAccountForBankTransfer=基金支付的银行账户
 StripeAccount=Stripe帐户
 StripeChargeList=Stripe费用清单
-StripeTransactionList=Stripe事务列表
+StripeTransactionList=Stripe 交易清单
 StripeCustomerId=Stripe客户ID
+StripePaymentId=Stripe 付款 ID
 StripePaymentModes=Stripe支付模式
 LocalID=本地ID
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=删除卡
 ConfirmDeleteCard=您确定要删除此信用卡或借记卡吗？
 CreateCustomerOnStripe=在Stripe上创建客户
 CreateCardOnStripe=在Stripe上创建卡片
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=在Stripe中显示
 StripeUserAccountForActions=User account to use for email notification of some Stripe events (Stripe payouts)
 StripePayoutList=List of Stripe payouts
@@ -68,4 +72,19 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect mode
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

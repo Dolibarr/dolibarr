@@ -22,6 +22,7 @@
  * 		\brief      Page d'accueil de l'espace outils admin
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 
 // Load translation files required by the page
@@ -41,7 +42,7 @@ $form = new Form($db);
 $title = $langs->trans("AdminTools");
 //if (GETPOST('leftmenu',"aZ09") == 'admintools') $title=$langs->trans("ModulesSystemTools");
 
-llxHeader('', $title);
+llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-admin page-tools_index');
 
 print load_fiche_titre($title, '', 'title_setup');
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2019 Pierre Ardoin <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *		\brief      Page de fiche recap supplier
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -31,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 $langs->loadLangs(array('bills', 'companies'));
 
 // Security check
-$socid = GETPOST("socid", 'int');
+$socid = GETPOSTINT("socid");
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 
 /*
@@ -48,7 +50,7 @@ $hookmanager->initHooks(array('supplierbalencelist', 'globalcard'));
 $form = new Form($db);
 $userstatic = new User($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-fourn page-recap-fourn');
 
 if ($socid > 0) {
 	$societe = new Societe($db);
@@ -63,7 +65,7 @@ if ($socid > 0) {
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	print dol_get_fiche_end();
 
-	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || (!empty($conf->supplier_invoice->enabled) && $user->rights->supplier_invoice->lire)) {
+	if ((isModEnabled("fournisseur") && $user->hasRight("fournisseur", "facture", "lire") && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_invoice") && $user->hasRight("supplier_invoice", "lire"))) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
@@ -117,7 +119,7 @@ if ($socid > 0) {
 
 				print '<td class="left">'.$fac->getLibStatut(2, $totalpaid).'</td>';
 				print '<td class="right">'.price($fac->total_ttc)."</td>\n";
-				$solde = $solde + $fac->total_ttc;
+				$solde += $fac->total_ttc;
 
 				print '<td class="right">&nbsp;</td>';
 				print '<td class="right">'.price($solde)."</td>\n";
@@ -152,7 +154,7 @@ if ($socid > 0) {
 						print "<td>&nbsp;</td>\n";
 						print "<td>&nbsp;</td>\n";
 						print '<td class="right">'.price($objp->amount).'</td>';
-						$solde = $solde - $objp->amount;
+						$solde -= $objp->amount;
 						print '<td class="right">'.price($solde)."</td>\n";
 
 						// Auteur

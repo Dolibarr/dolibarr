@@ -41,7 +41,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live klíč
 ONLINE_PAYMENT_WAREHOUSE=Sklad, který se má použít k poklesu akcií, když je hotovo on-line platba <br> (TODO Pokud se volba k poklesu zásob uskuteční na akci na faktuře a on-line platba vygeneruje fakturu?)
 StripeLiveEnabled=Stripe live povoleno (jinak testovací režim / režim sandbox)
 StripeImportPayment=Platby importu Stripe
-ExampleOfTestCreditCard=Příklad kreditní karty pro test: %s (platný), %s (chyba CVC), %s (uplynula), %s (poplatek selže)
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Brána Stripe
 OAUTH_STRIPE_TEST_ID=Připojení klienta Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Připojení klienta Stripe Connect (ca _...)
@@ -61,6 +62,7 @@ DeleteACard=Smazat kartu
 ConfirmDeleteCard=Opravdu chcete tuto kreditní nebo debetní kartu smazat?
 CreateCustomerOnStripe=Vytvořte zákazníka na Stripe
 CreateCardOnStripe=Vytvořte kartu na Stripe
+CreateBANOnStripe=Create bank on Stripe
 ShowInStripe=Zobrazit ve Stripe
 StripeUserAccountForActions=Uživatelský účet, který se má používat pro e-mailové upozornění na některé události Stripe (Stripe výplaty)
 StripePayoutList=Seznam páskových výplat
@@ -69,3 +71,8 @@ ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (
 PaymentWillBeRecordedForNextPeriod=Platba bude zaznamenána pro další období.
 ClickHereToTryAgain= <a href="%s"> Klikněte zde a zkuste to znovu ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Vzhledem k přísným pravidlům pro ověřování zákazníků musí být karta vytvořena z backoffice Stripe. Klepnutím sem zapnete záznam zákazníka Stripe: %s
+STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
+TERMINAL_LOCATION=Location (address) for Stripe Terminals
+RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+

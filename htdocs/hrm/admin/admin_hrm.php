@@ -16,10 +16,12 @@
  */
 
 /**
- * \file 	htdocs/hrm/admin/admin_hrm.php
- * \ingroup HRM
- * \brief 	HRM module setup page
+ *    \file       htdocs/hrm/admin/admin_hrm.php
+ *    \ingroup    HRM
+ *    \brief      HRM module setup page
  */
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -27,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 
 // Other parameters HRM_*
@@ -34,16 +37,21 @@ $list = array(
 //		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
+// Permissions
 $permissiontoread = $user->admin;
-$permissiontoadd = $user->admin;
+$permissiontoadd  = $user->admin;
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 
 /*

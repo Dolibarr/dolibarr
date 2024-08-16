@@ -41,9 +41,9 @@ $result = restrictedArea($user, 'export');
 $form = new Form($db);
 
 
-$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones';
+$help_url = 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones|DE:Modul_DatenExporte';
 
-llxHeader('', $langs->trans("ExportsArea"), $help_url);
+llxHeader('', $langs->trans("ExportsArea"), $help_url, '', 0, 0, '', '', '', 'mod-exports page-index');
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
@@ -53,7 +53,7 @@ print '<br>';
 
 print '<div class="center">';
 if (count($export->array_export_code)) {
-	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'creer'));
 }
 print '</div>';
 print '<br>';
@@ -62,7 +62,7 @@ print '<br>';
 
 // List of available export formats
 
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -72,7 +72,7 @@ print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model = new ModeleExports($db);
-$liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
+$liste = $model->listOfAvailableExportFormat($db); // This is not a static method for exports because method load non static properties
 
 foreach ($liste as $key => $val) {
 	if (preg_match('/__\(Disabled\)__/', $liste[$key])) {
@@ -83,6 +83,7 @@ foreach ($liste as $key => $val) {
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text = $model->getDriverDescForKey($key);
 	$label = $liste[$key];
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 	print '<td>'.$form->textwithpicto($label, $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';

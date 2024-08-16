@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Consultar Tarea programada
 Permission23102 = Crear/actualizar Tarea programada
 Permission23103 = Borrar Tarea Programada
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Comando para ejecutar tareas Cron
 CronExplainHowToRunUnix=En entornos Unix se debe utilizar la siguiente entrada crontab para ejecutar el comando cada 5 minutos
 CronExplainHowToRunWin=En entornos Microsoft (tm) Windows, puede utilizar las herramienta  tareas programadas para ejecutar el comando cada 5 minutos
 CronMethodDoesNotExists=La clase %s no contiene ningún método %s
-CronMethodNotAllowed=El método %s de la clase %s está en la lista negra de métodos prohibidos
+CronMethodNotAllowed=El método %s de la clase %s está en la lista de bloqueo de métodos prohibidos
 CronJobDefDesc=Los perfiles de trabajo de Cron se definen en el archivo descriptor del módulo. Cuando el módulo está activado, se cargan y están disponibles para que pueda administrar los trabajos desde el menú de herramientas de administración %s.
 CronJobProfiles=Lista de perfiles de trabajos cron predefinidos
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Comando
 CronList=Tareas programadas
 CronDelete=Borrar tareas programadas
 CronConfirmDelete=¿Está seguro de querer eliminar esta tarea programada?
-CronExecute=Ejecutar tarea programada
+CronExecute=Lanzar ahora
 CronConfirmExecute=¿Está seguro de querer ejecutar esta tarea programada ahora?
 CronInfo=Tareas programadas le permite ejecutar tareas que han sido programadas. Las tareas también pueden iniciarse manualmente.
 CronTask=Tarea
-CronNone=Ninguna
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=No antes de
 CronDtEnd=No después de
 CronDtNextLaunch=Sig. ejec.
@@ -49,8 +49,8 @@ CronEach=Toda(s)
 JobFinished=Tareas lanzadas y finalizadas
 Scheduled=Programada
 #Page card
-CronAdd= Tarea Nueva
-CronEvery=Ejecutar la tarea cada
+CronAdd=Tarea Nueva
+CronEvery=Run job every
 CronObject=Instancia/Objeto a crear
 CronArgs=Parametros
 CronSaveSucess=Guardado correctamente
@@ -58,7 +58,7 @@ CronNote=Comentario
 CronFieldMandatory=campos %s son obligatorios
 CronErrEndDateStartDt=La fecha de finalizacion no puede ser anterior a la fecha de inicio
 StatusAtInstall=Estado en la instalación del módulo
-CronStatusActiveBtn=Calendario
+CronStatusActiveBtn=Habilitar programación
 CronStatusInactiveBtn=Inactivo
 CronTaskInactive=Este trabajo está desactivado (no programado)
 CronId=Id
@@ -67,7 +67,7 @@ CronModuleHelp=Nombre del directorio del módulo Dolibarr (también funciona con
 CronClassFileHelp=La ruta relativa y el nombre del archivo a cargar (la ruta es relativa al directorio raíz del servidor web). <BR> Por ejemplo, para llamar al método de recuperación del objeto Product Dolidarr htdocs/product/class/ <u>product.class.php</u>, el valor para el nombre del archivo de clase es <br> <i> product/class /product.class.php </i>
 CronObjectHelp=El nombre del objeto a cargar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del nombre de la clase es <i>Product</i>
 CronMethodHelp=El método del objeto a lanzar. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, el valor del método es <i>fecth</i>
-CronArgsHelp=Los argumentos del método. <BR> Por ejemplo para realizar un fetch del objeto Product /htdocs/product/class/product.class.php, los valores pueden ser <i>0, ProductRef</i>
+CronArgsHelp=Los argumentos del método. <BR> Por ejemplo, para llamar al método de recuperación del objeto Producto Dolibarr /htdocs/product/class/product.class.php, el valor de los parámetros puede ser<br><i>0, ProductRef</i>
 CronCommandHelp=El comando en línea del sistema a ejecutar.
 CronCreateJob=Crear nueva tarea programada
 CronFrom=De
@@ -82,10 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Vaya al menú "<a href="%s">Inicio - Herramienta
 JobDisabled=Tarea desactivada
 MakeLocalDatabaseDumpShort=Copia local de la base de datos
 MakeLocalDatabaseDump=Crear una copia local de la base de datos. Los parámetros son: compresión ('gz' o 'bz' o 'ninguno'), tipo de copia de seguridad ('mysql' o 'pgsql'), 1, 'auto' o nombre de archivo para construir, nº de archivos de copia de seguridad a mantener
+MakeSendLocalDatabaseDumpShort=Enviar copia de seguridad de la base de datos local
+MakeSendLocalDatabaseDump=Enviar copia de seguridad de la base de datos local por e-mail. Los parámetros son: para, de, asunto, mensaje, nombre de archivo (Nombre del archivo enviado), filtro ('sql' solo para copia de seguridad de la base de datos)
+BackupIsTooLargeSend=Lo sentimos, el último archivo de copia de seguridad es demasiado grande para enviarlo por correo electrónico
+CleanUnfinishedCronjobShort=Limpiar cronjob sin terminar
+CleanUnfinishedCronjob=Limpie el cronjob atascado en el procesamiento cuando el proceso ya no se está ejecutando
 WarningCronDelayed=Atención: para mejorar el rendimiento, cualquiera que sea la próxima fecha de ejecución de las tareas activas, sus tareas pueden retrasarse un máximo de %s horas antes de ejecutarse
 DATAPOLICYJob=Limpiador de datos y anonimizador
 JobXMustBeEnabled=La tarea %s debe estar habilitada
+EmailIfError=Correo electrónico para advertencia de error
+JobNotFound=El trabajo %s no se encuentra en la lista de trabajos (intente deshabilitar/habilitar el módulo)
+ErrorInBatch=Error al ejecutar el trabajo %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Última tarea programada ejecutada
 NextScheduledJobExecute=Siguiente tarea programada para ejecutar
 NumberScheduledJobError=Número de tareas programadas con error
+NumberScheduledJobNeverFinished=Número de trabajos programados que nunca terminaron

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cyfrif cyfrifo a ddefnyddir ar gyfer trydydd parti defnyddwyr
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Bydd y cyfrif cyfrifyddu pwrpasol a ddiffinnir ar gerdyn defnyddiwr yn cael ei ddefnyddio ar gyfer cyfrifyddu Subledger yn unig. Bydd yr un hwn yn cael ei ddefnyddio ar gyfer y Cyfriflyfr Cyffredinol ac fel gwerth rhagosodedig cyfrifyddu Subledger os nad yw cyfrif cyfrif defnyddiwr pwrpasol ar ddefnyddiwr wedi'i ddiffinio.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cyfrif cyfrifo yn ddiofyn ar gyfer taliadau cyflog
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Yn ddiofyn, gadewch yn wag yr opsiwn "Creu cyfanswm taliad yn awtomatig" wrth greu Cyflog
 Salary=Cyflog
@@ -24,4 +24,10 @@ SalariesStatistics=Ystadegau cyflog
 SalariesAndPayments=Cyflogau a thaliadau
 ConfirmDeleteSalaryPayment=Ydych chi am ddileu'r taliad cyflog hwn ?
 FillFieldFirst=Llenwch y maes gweithiwr yn gyntaf
-UpdateAmountWithLastSalary=Swm gosod gyda chyflog diwethaf
+UpdateAmountWithLastSalary=Swm penodol o gyflog diwethaf
+MakeTransferRequest=Gwneud cais trosglwyddo
+VirementOrder=Cais am drosglwyddo credyd
+BankTransferAmount=Swm y trosglwyddiad credyd
+WithdrawalReceipt=Gorchymyn trosglwyddo credyd
+OrderWaiting=Archeb yn yr arfaeth
+FillEndOfMonth=Llenwch â diwedd y mis

@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = Tietosuojakäytäntö
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = Tietosuojan hallintamoduuli (GDPR:n mukainen)
+# Administration page
+datapolicySetup = Moduulin tietojen tietosuojakäytännön asetukset
+Deletion = Tietojen poistaminen
+datapolicySetupPage = Kohde maan laeista riippuen ( GDPR:n artikla 5) henkilötietoja tulee säilyttää enintään niin kauan kuin tietoja tarvitaan siihen tarkoitukseen, jota varten ne on kerätty, paitsi arkistointitarkoituksiin. Poisto suoritetaan automaattisesti tietyn ajan kuluttua viimeisimmästä tapahtumasta (kesto, jonka olet ilmoittanut alla).
+NB_MONTHS = %s kuukautta
+ONE_YEAR = 1 vuosi
+NB_YEARS = %s vuotta
+DATAPOLICY_TIERS_CLIENT = Asiakas
+DATAPOLICY_TIERS_PROSPECT = Prospekti
+DATAPOLICY_TIERS_PROSPECT_CLIENT = Mahdollisuus/asiakas
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Ei mahdollinen / ei asiakas
+DATAPOLICY_TIERS_FOURNISSEUR = Toimittaja
+DATAPOLICY_CONTACT_CLIENT = Asiakas
+DATAPOLICY_CONTACT_PROSPECT = Prospekti
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = Mahdollisuus/asiakas
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ei mahdollinen / ei asiakas
+DATAPOLICY_CONTACT_FOURNISSEUR = Toimittaja
+DATAPOLICY_ADHERENT = Jäsen
+DATAPOLICY_Tooltip_SETUP = Yhteydenottotyyppi - Ilmoita valintasi kullekin tyypille.
+SendAgreementText = Voit lähettää GDPR-sähköpostin kaikille asiaankuuluville yhteyshenkilöillesi (jotka eivät ole vielä saaneet sähköpostia ja, johon et ole rekisteröinyt mitään heidän GDPR-sopimuksestaan). Voit tehdä tämän käyttämällä seuraavaa painiketta.
+SendAgreement = Lähetä sähköposteja
+AllAgreementSend = Kaikki sähköpostit on lähetetty
+TXTLINKDATAPOLICYACCEPT = Teksti linkkiin "sopimus"
+TXTLINKDATAPOLICYREFUSE = Teksti linkkiin "eri mieltä"
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR: Henkilötietojen käsittely
+DATAPOLICY_consentement = Henkilötietojen käsittelyyn saatu suostumus
+DATAPOLICY_opposition_traitement = Vastustaa henkilötietojensa käsittelyä
+DATAPOLICY_opposition_prospection = Vastustaa henkilötietojensa käsittelyä ja käyttöä prospektina
+# Notes added during an anonymization
+DATAPOLICY_date = GDPR sopimuksen kuittauspäivä
+DATAPOLICY_send = Sopimuksen lähetyspäivä
+MailSent = Sähköposti on lähetetty
+NUMBER_MONTH_BEFORE_DELETION = Poistoa edeltävän kuukauden määrä

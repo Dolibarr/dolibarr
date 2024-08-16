@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020 Floiran Henry <florian.henry@scopen.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  *       \brief      Page of MO referring product
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
@@ -32,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'products', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
@@ -42,17 +44,16 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatsbom'));
 
-$mesg = '';
 $option = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -65,6 +66,8 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "b.date_valid";
 }
+
+$socid = 0;
 
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
@@ -81,13 +84,13 @@ if ($id > 0 || !empty($ref)) {
 
 	$object = $product;
 
-	$parameters = array('id'=>$id);
+	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type));
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', 'mod-product page-stats_bom');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -104,7 +107,7 @@ if ($id > 0 || !empty($ref)) {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$shownav = 1;
-		if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+		if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 			$shownav = 0;
 		}
 
@@ -113,14 +116,14 @@ if ($id > 0 || !empty($ref)) {
 		print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield centpercent">';
 
 		$nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
 		print '</div>';
-		print '<div style="clear:both"></div>';
+		print '<div class="clearboth"></div>';
 
 		print dol_get_fiche_end();
 
@@ -129,7 +132,7 @@ if ($id > 0 || !empty($ref)) {
 		//Calcul total qty and amount for global if full scan list
 		$total_qty_toconsume = 0;
 		$total_qty_toproduce = 0;
-		$product_cache=array();
+		$product_cache = array();
 		$bom_data_result = array();
 
 		//Qauntity  to produce
@@ -143,7 +146,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Count total nb of records
 		$totalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $db->query($sql);
 			if ($result) {
 				$totalofrecords = $db->num_rows($result);
@@ -179,7 +182,10 @@ if ($id > 0 || !empty($ref)) {
 					}
 					$bomtmp->fk_product = $objp->fk_product;
 					$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
-					$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache)? $product_cache[$objp->fk_product]->getNomUrl(1): '');
+					$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache) ? $product_cache[$objp->fk_product]->getNomUrl(1) : '');
+					if (empty($bom_data_result[$objp->rowid]['qty_toproduce'])) {
+						$bom_data_result[$objp->rowid]['qty_toproduce'] = 0;
+					}
 					$bom_data_result[$objp->rowid]['qty_toproduce'] += ($objp->qty_toproduce > 0 ? $objp->qty_toproduce : 0);
 					$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
 					$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
@@ -204,7 +210,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Count total nb of records
 		$totalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+		if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$result = $db->query($sql);
 			if ($result) {
 				$totalofrecords = $db->num_rows($result);
@@ -242,8 +248,11 @@ if ($id > 0 || !empty($ref)) {
 
 					if (!array_key_exists($objp->rowid, $bom_data_result)) {
 						$bom_data_result[$objp->rowid]['link'] = $bomtmp->getNomUrl(1, 'production');
-						$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache)? $product_cache[$objp->fk_product]->getNomUrl(1): '');
+						$bom_data_result[$objp->rowid]['product'] = (array_key_exists($objp->fk_product, $product_cache) ? $product_cache[$objp->fk_product]->getNomUrl(1) : '');
 						$bom_data_result[$objp->rowid]['qty_toproduce'] = 0;
+						if (empty($bom_data_result[$objp->rowid]['qty_toconsume'])) {
+							$bom_data_result[$objp->rowid]['qty_toconsume'] = 0;
+						}
 						$bom_data_result[$objp->rowid]['qty_toconsume'] += ($objp->qty_toconsume > 0 ? $objp->qty_toconsume : 0);
 						$bom_data_result[$objp->rowid]['date_valid'] = dol_print_date($db->jdate($objp->date_valid), 'dayhour');
 						$bom_data_result[$objp->rowid]['status'] = $bomtmp->LibStatut($objp->status, 5);
@@ -261,13 +270,13 @@ if ($id > 0 || !empty($ref)) {
 		$option .= '&id='.$product->id;
 
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$option .= '&limit='.urlencode($limit);
+			$option .= '&limit='.((int) $limit);
 		}
 		if (!empty($search_month)) {
-			$option .= '&search_month='.urlencode($search_month);
+			$option .= '&search_month='.urlencode((string) $search_month);
 		}
 		if (!empty($search_year)) {
-			$option .= '&search_year='.urlencode($search_year);
+			$option .= '&search_year='.urlencode((string) $search_year);
 		}
 
 		print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
@@ -282,7 +291,7 @@ if ($id > 0 || !empty($ref)) {
 		print_barre_liste($langs->trans("BOMs"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', count($bom_data_result), count($bom_data_result), '', 0, '', '', $limit, 0, 0, 1);
 
 		if (!empty($page)) {
-			$option .= '&page='.urlencode($page);
+			$option .= '&page='.urlencode((string) ($page));
 		}
 
 		print '<div class="div-table-responsive">';

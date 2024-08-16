@@ -293,6 +293,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    }
 		    print "Clean $BUILDROOT\n";
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.cache`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.git`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.project`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.settings`;
 		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/index.php`;

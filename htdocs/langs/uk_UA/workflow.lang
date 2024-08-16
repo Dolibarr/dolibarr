@@ -9,28 +9,31 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Автоматично створюва
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Автоматично створювати рахунок-фактуру клієнта після закриття замовлення на продаж (новий рахунок-фактура матиме ту ж суму, що й замовлення)
 descWORKFLOW_TICKET_CREATE_INTERVENTION=Під час створення квитка автоматично створіть інтервенцію.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Класифікувати пов’язану вихідну пропозицію як оплачену, якщо для замовлення на продаж встановлено рахунок (і якщо сума замовлення така ж, як загальна сума підписаної пов’язаної пропозиції)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Класифікувати пов’язану вихідну пропозицію як оплачену, коли рахунок-фактура клієнта підтверджено (і якщо сума рахунка-фактури збігається з загальною сумою підписаної пов’язаної пропозиції)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Класифікувати пов’язане джерело замовлення на продаж як оплачене, коли рахунок-фактура клієнта підтверджено (і якщо сума рахунка-фактури така ж, як загальна сума зв’язаного замовлення)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Класифікувати пов’язане джерело замовлення на продаж як оплачене, коли рахунок-фактура клієнта налаштовано на оплату (і якщо сума рахунка-фактури така ж, як загальна сума зв’язаного замовлення)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Класифікувати замовлення на продаж із зв’язаним джерелом як відвантажене, коли відправлення підтверджено (і якщо кількість відвантажених усіх відправлень така сама, як у замовленні на оновлення)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Класифікувати замовлення на продаж із зв'язаним джерелом як відвантажене, коли відправлення закрито (і якщо кількість відвантажених усіх відправлень така сама, як у замовленні на оновлення)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=When a sales order is set to billed, classify linked source proposals as billed (and if the amount of the order is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=When a customer invoice is validated, classify linked source proposals as billed (and if the amount of the invoice is the same as the total amount of the signed linked proposals)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=When a customer invoice is set to paid, classify linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked sales orders). If you generate 1 invoice for n orders, this may set all orders to billed too.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify all the linked source sales orders as billed (and if the amount of the invoice is the same as the total amount of the linked source sales orders). If you generate 1 common invoice for n orders, this may set all source orders to billed.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=When a customer invoice is validated, classify the linked sales order (if there is only one) as billed, if the total amount of the linked sale order is equal to the total amount of all invoices issued from it. If you generate n invoices for 1 order, this allow to set the order to billed as soon as all invoices are validated.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=When a shipment is validated, classify linked source sales orders as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=When a shipment is closed, classify linked source sales order as shipped (and if the quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Класифікувати пропозицію пов’язаного джерела постачальника як оплачену, коли рахунок-фактуру постачальника підтверджено (і якщо сума рахунка-фактури така ж, як загальна сума пов’язаної пропозиції)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=When a vendor invoice is validated, classify linked source vendor proposal as billed (and if the amount of the invoice is the same as the total amount of the linked proposals)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Класифікувати пов’язане джерело замовлення на закупівлю як оплачене, коли рахунок-фактура постачальника підтверджено (і якщо сума рахунка-фактури така ж, як загальна сума зв’язаного замовлення)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Класифікувати пов’язане джерело замовлення на закупівлю як отримане, коли прийом підтверджено (і якщо кількість, отримана всіма прийомами, така ж, як у замовленні на покупку для оновлення)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Класифікувати замовлення на закупівлю з пов’язаним джерелом як отримане, коли прийом закритий (і якщо кількість, отримана всіма прийомами, така ж, як у замовленні на покупку для оновлення)
-# Autoclassify purchase invoice
-descWORKFLOW_BILL_ON_RECEPTION=Класифікуйте прийоми як «оплачувані», коли пов’язане замовлення постачальника підтверджено
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=При створенні квитка зв’яжіть доступні контракти відповідної третьої сторони
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Зв’язуючи договори, шукайте серед тих материнських компаній
+descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Закрийте всі заходи, пов’язані з квитком, коли квиток закрито
 AutomaticCreation=Автоматичне створення
 AutomaticClassification=Автоматична класифікація
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Класифікувати відправлення зв’язаного джерела як закрите, коли рахунок-фактура клієнта підтверджено
 AutomaticClosing=Автоматичне закриття
 AutomaticLinking=Автоматичне підключення

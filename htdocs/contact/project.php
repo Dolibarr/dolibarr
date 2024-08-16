@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright (C) 2021		VIAL--GOUTEYRON Quentin		<quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2021		VIAL-GOUTEYRON Quentin		<quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,17 @@
  *  \brief      Page of third party projects
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->loadLangs(array("contacts", "companies", "projects"));
 
 // Security check
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcontact'));
 
 /*
@@ -60,14 +61,16 @@ if ($id) {
 	if (empty($object->thirdparty)) {
 		$object->fetch_thirdparty();
 	}
-	$socid = $object->thirdparty->id;
+	$socid = !empty($object->thirdparty->id) ? $object->thirdparty->id : null;
 	$title = $langs->trans("Projects");
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) {
+	if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/thirdpartynameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
 		$title = $object->name." - ".$title;
 	}
-	llxHeader('', $title);
+	$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 
-	if (! empty($conf->notification->enabled)) {
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_project');
+
+	if (isModEnabled('notification')) {
 		$langs->load("mails");
 	}
 	$head = contact_prepare_head($object);
@@ -81,14 +84,14 @@ if ($id) {
 	$morehtmlref .= '</a>';
 
 	$morehtmlref .= '<div class="refidno">';
-	if (empty($conf->global->SOCIETE_DISABLE_CONTACTS) && !empty($socid)) {
-		$object->thirdparty->fetch($socid);
+	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
+		$objsoc = new Societe($db);
+		$objsoc->fetch($object->socid);
 		// Thirdparty
-		$morehtmlref .= $langs->trans('ThirdParty').' : ';
-		if ($object->thirdparty->id > 0) {
-			$morehtmlref .= $object->thirdparty->getNomUrl(1, 'contact');
+		if ($objsoc->id > 0) {
+			$morehtmlref .= $objsoc->getNomUrl(1, 'contact');
 		} else {
-			$morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
+			$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("ContactNotLinkedToCompany").'</span>';
 		}
 	}
 	$morehtmlref .= '</div>';

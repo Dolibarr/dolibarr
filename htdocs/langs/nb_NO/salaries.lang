@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Regnskapskonto brukt til tredjepartsbrukere
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Regnskapskontoen som er definert på brukerkort, vil kun bli brukt til bruk av Subledger regnskap. Denne vil bli brukt til hovedboken og som standardverdi for Subledger-regnskap hvis dedikert bruker-regnskapskonto ikke er definert.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra Kontoplanen) brukes som standard for "brukere" på lønn
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerte kontoen som er definert på brukerkortet vil kun brukes til underreskontro. Denne vil bli brukt for hovedbok, men også som standardverdi for underreskontro dersom ingen dedikert brukerkonto er definert på brukeren.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetalinger
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=La som standard alternativet "Opprett automatisk en total betaling" være tomt når du oppretter lønn
 Salary=Lønn
@@ -24,4 +24,10 @@ SalariesStatistics=Lønnsstatistikk
 SalariesAndPayments=Lønn og utbetalinger
 ConfirmDeleteSalaryPayment=Vil du slette denne lønnsutbetalingen?
 FillFieldFirst=Fyll ansatt-feltet først
-UpdateAmountWithLastSalary=Sett beløp med siste lønn
+UpdateAmountWithLastSalary=Angi beløp for siste lønn
+MakeTransferRequest=Lag overføringsforespørsel
+VirementOrder=Kredittoverføringsforespørsel
+BankTransferAmount=Kredittoverføringsbeløp
+WithdrawalReceipt=Kredittoverføring ordre
+OrderWaiting=Ventende ordre
+FillEndOfMonth=Fyll med slutten av måneden

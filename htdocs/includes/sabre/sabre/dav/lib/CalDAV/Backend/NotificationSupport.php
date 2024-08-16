@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Backend;
 
 use Sabre\CalDAV\Xml\Notification\NotificationInterface;
@@ -22,15 +24,16 @@ use Sabre\CalDAV\Xml\Notification\NotificationInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface NotificationSupport extends BackendInterface {
-
+interface NotificationSupport extends BackendInterface
+{
     /**
      * Returns a list of notifications for a given principal url.
      *
      * @param string $principalUri
+     *
      * @return NotificationInterface[]
      */
-    function getNotificationsForPrincipal($principalUri);
+    public function getNotificationsForPrincipal($principalUri);
 
     /**
      * This deletes a specific notifcation.
@@ -38,10 +41,8 @@ interface NotificationSupport extends BackendInterface {
      * This may be called by a client once it deems a notification handled.
      *
      * @param string $principalUri
-     * @param NotificationInterface $notification
-     * @return void
      */
-    function deleteNotification($principalUri, NotificationInterface $notification);
+    public function deleteNotification($principalUri, NotificationInterface $notification);
 
     /**
      * This method is called when a user replied to a request to share.
@@ -49,13 +50,13 @@ interface NotificationSupport extends BackendInterface {
      * If the user chose to accept the share, this method should return the
      * newly created calendar url.
      *
-     * @param string $href The sharee who is replying (often a mailto: address)
-     * @param int $status One of the SharingPlugin::STATUS_* constants
+     * @param string $href        The sharee who is replying (often a mailto: address)
+     * @param int    $status      One of the SharingPlugin::STATUS_* constants
      * @param string $calendarUri The url to the calendar thats being shared
-     * @param string $inReplyTo The unique id this message is a response to
-     * @param string $summary A description of the reply
-     * @return null|string
+     * @param string $inReplyTo   The unique id this message is a response to
+     * @param string $summary     A description of the reply
+     *
+     * @return string|null
      */
-    function shareReply($href, $status, $calendarUri, $inReplyTo, $summary = null);
-
+    public function shareReply($href, $status, $calendarUri, $inReplyTo, $summary = null);
 }

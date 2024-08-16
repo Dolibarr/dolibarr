@@ -4,6 +4,8 @@ MemberCard=ممبر کارڈ
 SubscriptionCard=سبسکرپشن کارڈ
 Member=رکن
 Members=ممبران
+NoRecordedMembers=کوئی ریکارڈ شدہ ممبران نہیں۔
+NoRecordedMembersByType=کوئی ریکارڈ شدہ ممبران نہیں۔
 ShowMember=ممبر کارڈ دکھائیں۔
 UserNotLinkedToMember=صارف کسی رکن سے منسلک نہیں ہے۔
 ThirdpartyNotLinkedToMember=تھرڈ پارٹی کسی ممبر سے منسلک نہیں ہے۔
@@ -15,7 +17,8 @@ ErrorMemberIsAlreadyLinkedToThisThirdParty=ایک اور رکن (نام: <b> %s 
 ErrorUserPermissionAllowsToLinksToItselfOnly=حفاظتی وجوہات کی بناء پر، آپ کو تمام صارفین میں ترمیم کرنے کی اجازت دی جانی چاہیے تاکہ کسی رکن کو کسی ایسے صارف سے جوڑ سکیں جو آپ کا نہیں ہے۔
 SetLinkToUser=Dolibarr صارف سے لنک کریں۔
 SetLinkToThirdParty=ڈولیبر تھرڈ پارٹی سے لنک کریں۔
-MembersCards=Generation of cards for members
+MemberCountersArePublic=درست اراکین کے شمار عوامی ہیں۔
+MembersCards=اراکین کے لیے کارڈز تیار کرنا
 MembersList=ممبران کی فہرست
 MembersListToValid=مسودہ کے ارکان کی فہرست (توثیق کی جائے گی)
 MembersListValid=درست اراکین کی فہرست
@@ -24,6 +27,8 @@ MembersListNotUpToDate=پرانی شراکت کے ساتھ درست اراکین
 MembersListExcluded=خارج کیے گئے اراکین کی فہرست
 MembersListResiliated=برطرف اراکین کی فہرست
 MembersListQualified=اہل اراکین کی فہرست
+MembersShowMembershipTypesTable=تمام دستیاب رکنیت کی اقسام کا ٹیبل دکھائیں (اگر نہیں تو براہ راست رجسٹریشن فارم دکھائیں)
+MembersShowVotesAllowed=ممبرشپ کی اقسام کے جدول میں دکھائیں کہ آیا ووٹوں کی اجازت ہے۔
 MenuMembersToValidate=ڈرافٹ ممبران
 MenuMembersValidated=تصدیق شدہ ممبران
 MenuMembersExcluded=خارج کیے گئے اراکین
@@ -34,9 +39,11 @@ DateSubscription=رکنیت کی تاریخ
 DateEndSubscription=رکنیت کی آخری تاریخ
 EndSubscription=رکنیت کا خاتمہ
 SubscriptionId=تعاون کی شناخت
-WithoutSubscription=شراکت کے بغیر
-MemberId=Member Id
-MemberRef=Member Ref
+WithoutSubscription=رکنیت کے بغیر
+WaitingSubscription=رکنیت زیر التواء ہے۔
+WaitingSubscriptionShort=زیر التواء
+MemberId=رکن کی شناخت
+MemberRef=ممبر ریفری
 NewMember=نیا رکن
 MemberType=ممبر کی قسم
 MemberTypeId=ممبر کی قسم کی شناخت
@@ -72,12 +79,12 @@ MemberTypeCanNotBeDeleted=ممبر کی قسم کو حذف نہیں کیا جا 
 NewSubscription=نئی شراکت
 NewSubscriptionDesc=یہ فارم آپ کو فاؤنڈیشن کے نئے رکن کے طور پر اپنی رکنیت کو ریکارڈ کرنے کی اجازت دیتا ہے۔ اگر آپ اپنی سبسکرپشن کی تجدید کرنا چاہتے ہیں (اگر پہلے ہی ممبر ہیں)، تو براہ کرم اس کے بجائے فاؤنڈیشن بورڈ سے ای میل %s سے رابطہ کریں۔
 Subscription=شراکت
-AnyAmountWithAdvisedAmount=Any amount with a recommended amount of %s %s
-AnyAmountWithoutAdvisedAmount=Any amount
-CanEditAmountShort=Any amount
-CanEditAmountShortForValues=recommended, any amount
-MembershipDuration=Duration
-GetMembershipButtonLabel=Get membership
+AnyAmountWithAdvisedAmount=آپ کی پسند کی کوئی بھی رقم، تجویز کردہ %s
+AnyAmountWithoutAdvisedAmount=آپ کی پسند کی کوئی بھی رقم
+CanEditAmountShort=کوئی بھی رقم
+CanEditAmountShortForValues=تجویز کردہ، کسی بھی رقم
+MembershipDuration=دورانیہ
+GetMembershipButtonLabel=شمولیت
 Subscriptions=شراکتیں
 SubscriptionLate=دیر
 SubscriptionNotReceived=شراکت کبھی نہیں ملی
@@ -88,6 +95,7 @@ NoTypeDefinedGoToSetup=کسی رکن کی قسم کی وضاحت نہیں کی �
 NewMemberType=نئے ممبر کی قسم
 WelcomeEMail=خوش آمدید ای میل
 SubscriptionRequired=شراکت درکار ہے۔
+SubscriptionRequiredDesc=اگر سبسکرپشن کی ضرورت ہو تو، رکن کو تازہ ترین رکھنے کے لیے شروع یا اختتامی تاریخ والی سبسکرپشن ریکارڈ کی جانی چاہیے (جو بھی سبسکرپشن کی رقم ہے، چاہے سبسکرپشن مفت ہو)۔
 DeleteType=حذف کریں۔
 VoteAllowed=ووٹ دینے کی اجازت ہے۔
 Physical=انفرادی
@@ -116,11 +124,7 @@ ExportDataset_member_1=ممبران اور تعاون
 ImportDataset_member_1=ممبران
 LastMembersModified=تازہ ترین %s ترمیم شدہ ممبران
 LastSubscriptionsModified=تازہ ترین %s ترمیم شدہ شراکتیں۔
-String=تار
-Text=متن
-Int=انٹر
-DateAndTime=تاریخ اور وقت
-PublicMemberCard=ممبر پبلک کارڈ
+PublicMemberCard=پبلک ممبر کارڈ
 SubscriptionNotRecorded=شراکت ریکارڈ نہیں کی گئی۔
 AddSubscription=شراکت بنائیں
 ShowSubscription=شراکت دکھائیں۔
@@ -142,7 +146,7 @@ CardContent=آپ کے ممبر کارڈ کا مواد
 # Text of email templates
 ThisIsContentOfYourMembershipRequestWasReceived=ہم آپ کو بتانا چاہتے ہیں کہ آپ کی رکنیت کی درخواست موصول ہو گئی ہے۔ <br> <br>
 ThisIsContentOfYourMembershipWasValidated=ہم آپ کو بتانا چاہتے ہیں کہ آپ کی رکنیت کی توثیق درج ذیل معلومات کے ساتھ کی گئی تھی: <br> <br>
-ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded. Please find your invoice here enclosed.<br><br>
+ThisIsContentOfYourSubscriptionWasRecorded=ہم آپ کو بتانا چاہتے ہیں کہ آپ کی نئی رکنیت ریکارڈ کی گئی تھی۔ براہ کرم اپنی رسید یہاں منسلک تلاش کریں۔<br><br>
 ThisIsContentOfSubscriptionReminderEmail=ہم آپ کو بتانا چاہتے ہیں کہ آپ کی رکنیت ختم ہونے والی ہے یا پہلے ہی ختم ہو چکی ہے (__MEMBER_LAST_SUBSCRIPTION_DATE_END__)۔ ہمیں امید ہے کہ آپ اس کی تجدید کریں گے۔ <br> <br>
 ThisIsContentOfYourCard=یہ آپ کے بارے میں ہمارے پاس موجود معلومات کا خلاصہ ہے۔ اگر کچھ غلط ہے تو براہ کرم ہم سے رابطہ کریں۔ <br> <br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=کسی مہمان کے خودکار تحریر کی صورت میں موصول ہونے والی اطلاعی ای میل کا موضوع
@@ -154,6 +158,7 @@ DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=ای میل ٹیمپلیٹ ای م
 DescADHERENT_EMAIL_TEMPLATE_CANCELATION=رکن کی منسوخی پر ممبر کو ای میل بھیجنے کے لیے استعمال کرنے کے لیے ای میل ٹیمپلیٹ
 DescADHERENT_EMAIL_TEMPLATE_EXCLUSION=ای میل ٹیمپلیٹ جو ممبر کو خارج کرنے پر ممبر کو ای میل بھیجنے کے لیے استعمال کیا جائے۔
 DescADHERENT_MAIL_FROM=خودکار ای میلز کے لیے بھیجنے والا ای میل
+DescADHERENT_CC_MAIL_FROM=کو خودکار ای میل کاپی بھیجیں۔
 DescADHERENT_ETIQUETTE_TYPE=لیبل صفحہ کی شکل
 DescADHERENT_ETIQUETTE_TEXT=ممبر ایڈریس شیٹس پر چھپی ہوئی عبارت
 DescADHERENT_CARD_TYPE=کارڈز کے صفحے کی شکل
@@ -166,11 +171,11 @@ HTPasswordExport=htpassword فائل جنریشن
 NoThirdPartyAssociatedToMember=اس رکن کے ساتھ کوئی تیسرا فریق وابستہ نہیں ہے۔
 MembersAndSubscriptions=اراکین اور تعاون
 MoreActions=ریکارڈنگ پر تکمیلی کارروائی
-MoreActionsOnSubscription=Complementary action suggested by default when recording a contribution, also done automatially on online payment of a contribution
+MoreActionsOnSubscription=شراکت کو ریکارڈ کرتے وقت بطور ڈیفالٹ تجویز کردہ تکمیلی کارروائی، شراکت کی آن لائن ادائیگی پر خود بخود بھی کی جاتی ہے۔
 MoreActionBankDirect=بینک اکاؤنٹ پر براہ راست اندراج بنائیں
 MoreActionBankViaInvoice=ایک انوائس بنائیں، اور بینک اکاؤنٹ پر ادائیگی کریں۔
 MoreActionInvoiceOnly=بغیر ادائیگی کے ایک رسید بنائیں
-LinkToGeneratedPages=Generation of business cards or address sheets
+LinkToGeneratedPages=بزنس کارڈ یا ایڈریس شیٹس کی تخلیق
 LinkToGeneratedPagesDesc=یہ اسکرین آپ کو اپنے تمام ممبران یا کسی خاص ممبر کے لیے بزنس کارڈ کے ساتھ پی ڈی ایف فائلیں بنانے کی اجازت دیتی ہے۔
 DocForAllMembersCards=تمام اراکین کے لیے بزنس کارڈ بنائیں
 DocForOneMemberCards=کسی خاص ممبر کے لیے بزنس کارڈ بنائیں
@@ -195,19 +200,22 @@ MembersStatisticsDesc=وہ اعدادوشمار منتخب کریں جنہیں �
 MenuMembersStats=شماریات
 LastMemberDate=تازہ ترین رکنیت کی تاریخ
 LatestSubscriptionDate=تعاون کی تازہ ترین تاریخ
-MemberNature=ممبر کی نوعیت
-MembersNature=ارکان کی نوعیت
-Public=معلومات عام ہیں۔
+MemberNature=Nature of member
+MembersNature=Nature of members
+Public=%s میری رکنیت کو <a target="_blank" href="%s">عوامی رجسٹر</a> میں شائع کر سکتا ہے۔
+MembershipPublic=عوامی رکنیت
 NewMemberbyWeb=نیا ممبر شامل کیا گیا۔ منظوری کا انتظار ہے۔
 NewMemberForm=نیا ممبر فارم
 SubscriptionsStatistics=شراکت کے اعدادوشمار
 NbOfSubscriptions=تعاون کی تعداد
 AmountOfSubscriptions=عطیات سے جمع کی گئی رقم
 TurnoverOrBudget=ٹرن اوور (کمپنی کے لیے) یا بجٹ (فاؤنڈیشن کے لیے)
-DefaultAmount=شراکت کی طے شدہ رقم
-CanEditAmount=Visitor can choose/edit amount of its contribution regardless of the member type
-AmountIsLowerToMinimumNotice=sur un dû total de %s
-MEMBER_NEWFORM_PAYONLINE=مربوط آن لائن ادائیگی کے صفحے پر جائیں۔
+DefaultAmount=شراکت کی طے شدہ رقم (صرف اس صورت میں استعمال کیا جاتا ہے جب رکن کی قسم کی سطح پر کوئی رقم کی وضاحت نہ کی گئی ہو)
+MinimumAmount=کم از کم رقم (صرف اس وقت استعمال کیا جاتا ہے جب شراکت کی رقم مفت ہو)
+CanEditAmount=رکنیت کی رقم ممبر کے ذریعہ بیان کی جاسکتی ہے۔
+CanEditAmountDetail=وزیٹر ممبر کی قسم سے قطع نظر اپنی شراکت کی رقم کا انتخاب/ترمیم کر سکتا ہے۔
+AmountIsLowerToMinimumNotice=رقم کم از کم %s سے کم ہے
+MEMBER_NEWFORM_PAYONLINE=آن لائن رجسٹریشن کے بعد، خود بخود آن لائن ادائیگی کے صفحے پر جائیں۔
 ByProperties=فطرت سے
 MembersStatisticsByProperties=اراکین کے اعداد و شمار فطرت کے لحاظ سے
 VATToUseForSubscriptions=شراکت کے لیے استعمال کرنے کے لیے VAT کی شرح
@@ -218,7 +226,7 @@ SubscriptionRecorded=شراکت ریکارڈ کی گئی۔
 NoEmailSentToMember=ممبر کو کوئی ای میل نہیں بھیجی گئی۔
 EmailSentToMember=رکن کو ای میل %s پر بھیجی گئی۔
 SendReminderForExpiredSubscriptionTitle=میعاد ختم ہونے والے تعاون کے لیے ای میل کے ذریعے یاد دہانی بھیجیں۔
-SendReminderForExpiredSubscription=جب شراکت کی میعاد ختم ہونے والی ہو تو اراکین کو ای میل کے ذریعے یاد دہانی بھیجیں (پیرامیٹر یاد دہانی بھیجنے کے لیے رکنیت ختم ہونے سے پہلے دنوں کی تعداد ہے۔ یہ سیمی کالون سے الگ کیے گئے دنوں کی فہرست ہو سکتی ہے، مثال کے طور پر '10;5;0;-5 ')
+SendReminderForExpiredSubscription=ممبران کو ای میل کے ذریعے یاد دہانی بھیجیں جب شراکت کی میعاد ختم ہونے والی ہو (پیرامیٹر یاد دہانی بھیجنے کے لیے رکنیت ختم ہونے سے پہلے دنوں کی تعداد ہے۔ یہ سیمی کالون سے الگ کیے گئے دنوں کی فہرست ہو سکتی ہے، مثال کے طور پر '10;5;0;-5 ')
 MembershipPaid=موجودہ مدت کے لیے ادا کی گئی رکنیت (%s تک)
 YouMayFindYourInvoiceInThisEmail=آپ کو اس ای میل کے ساتھ اپنی رسید منسلک مل سکتی ہے۔
 XMembersClosed=%s ممبران بند
@@ -226,5 +234,16 @@ XExternalUserCreated=%s بیرونی صارف (صارفین) بنائے گئے۔
 ForceMemberNature=فورس ممبر کی نوعیت (انفرادی یا کارپوریشن)
 CreateDolibarrLoginDesc=اراکین کے لیے صارف لاگ ان کی تخلیق انہیں ایپلی کیشن سے منسلک ہونے کی اجازت دیتی ہے۔ دی گئی اجازتوں پر انحصار کرتے ہوئے، وہ، مثال کے طور پر، خود اپنی فائل سے مشورہ کرنے یا اس میں ترمیم کرنے کے قابل ہوں گے۔
 CreateDolibarrThirdPartyDesc=فریق ثالث قانونی ادارہ ہے جو انوائس پر استعمال کیا جائے گا اگر آپ ہر شراکت کے لیے انوائس بنانے کا فیصلہ کرتے ہیں۔ آپ شراکت کو ریکارڈ کرنے کے عمل کے دوران بعد میں اسے تخلیق کر سکیں گے۔
-MemberFirstname=Member firstname
-MemberLastname=Member lastname
+MemberFirstname=رکن کا پہلا نام
+MemberLastname=رکن کا آخری نام
+MemberCodeDesc=ممبر کوڈ، تمام اراکین کے لیے منفرد
+MemberSubscriptionStartFirstDayOf=رکنیت کی شروعات کی تاریخ ایک کے پہلے دن سے مساوی ہے۔
+MemberSubscriptionStartAfter=تجدید کے علاوہ سبسکرپشن کے آغاز کی تاریخ کے لاگو ہونے سے پہلے کی کم از کم مدت (مثال +3m = +3 ماہ، -5d = -5 دن، +1Y = +1 سال)
+SubscriptionLinkedToConciliatedTransaction=Membership is linked to a conciliated transaction so this modification is not allowed.
+ConfirmMassSubsriptionCreation=Confirm subscription creation
+ConfirmMassSubsriptionCreationQuestion=Are you sure you want to create the %s selected subscription(s)?
+XSubsriptionCreated=%s subscription(s) created
+XSubsriptionErrors=%s subscription(s) where in error
+CreateSubscription=Create subscription
+WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

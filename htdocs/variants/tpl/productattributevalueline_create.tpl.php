@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -30,6 +30,9 @@ if (empty($object) || !is_object($object)) {
 	exit;
 }
 
+'@phan-var-force CommonObject $this
+ @phan-var-force CommonObject $this';
+
 global $forcetoshowtitlelines;
 
 // Define colspan for the button 'Add'
@@ -40,34 +43,22 @@ $objectline = null;
 
 print "<!-- BEGIN PHP TEMPLATE productattributevalueline_create.tpl.php -->\n";
 $nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
-if ($nolinesbefore) {
-	?>
-	<tr class="liste_titre<?php echo ($nolinesbefore ? '' : ' liste_titre_add_') ?> nodrag nodrop">
-		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-			<td class="linecolnum center"></td>
-		<?php } ?>
-		<td class="linecolref">
-			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
-		</td>
-		<td class="linecolvalue"><span id="title_vat"><?php echo $langs->trans('Value'); ?></span></td>
-		<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
-	</tr>
-	<?php
-}
 ?>
 <tr class="pair nodrag nodrop nohoverpair<?php echo $nolinesbefore ? '' : ' liste_titre_create'; ?>">
 	<?php
 	$coldisplay = 0;
 	// Adds a line numbering column
-	if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+	if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 		$coldisplay++;
 		echo '<td class="nobottom linecolnum center"></td>';
 	}
 	$coldisplay++;
 	?>
 	<td class="nobottom linecolref">
-		<?php $coldisplay++; if ($nolinesbefore) { echo $langs->trans('Ref') . ': '; } ?>
-		<input type="text" name="line_ref" id="line_ref" class="flat" value="<?php echo (GETPOSTISSET("line_ref") ? GETPOST("line_ref", 'alpha', 2) : ''); ?>" autofocus>
+		<?php $coldisplay++; if ($nolinesbefore) {
+			echo $langs->trans('Ref') . ': ';
+		} ?>
+		<input type="text" name="line_ref" id="line_ref" class="flat" value="<?php echo(GETPOSTISSET("line_ref") ? GETPOST("line_ref", 'alpha', 2) : ''); ?>" autofocus>
 		<?php
 		if (is_object($hookmanager)) {
 			$parameters = array();
@@ -80,11 +71,11 @@ if ($nolinesbefore) {
 	</td>
 
 	<td class="nobottom linecolvalue"><?php $coldisplay++; ?>
-		<input type="text" name="line_value" id="line_value" class="flat" value="<?php echo (GETPOSTISSET("line_value") ? GETPOST("line_value", 'alpha', 2) : ''); ?>">
+		<input type="text" name="line_value" id="line_value" class="flat" value="<?php echo(GETPOSTISSET("line_value") ? GETPOST("line_value", 'alpha', 2) : ''); ?>">
 	</td>
 
 	<td class="nobottom linecoledit center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button reposition" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
+		<input type="submit" class="button reposition small" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 </tr>
 

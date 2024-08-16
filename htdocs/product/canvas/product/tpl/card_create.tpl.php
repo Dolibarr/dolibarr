@@ -18,7 +18,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -43,7 +43,7 @@ print dol_get_fiche_head('');
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="0">
 <input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
-<?php if (empty($conf->stock->enabled)) { ?>
+<?php if (!isModEnabled('stock')) { ?>
 <input name="seuil_stock_alerte" type="hidden" value="0">
 <?php } ?>
 
@@ -72,7 +72,7 @@ print dol_get_fiche_head('');
 <td><?php echo $form->selectarray('statut_buy', $statutarray, $object->status_buy); ?></td>
 </tr>
 
-<?php if (!empty($conf->stock->enabled)) { ?>
+<?php if (isModEnabled('stock')) { ?>
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
 <input name="seuil_stock_alerte" size="4" value="<?php echo $object->seuil_stock_alerte; ?>">
 </td></tr>

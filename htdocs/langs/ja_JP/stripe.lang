@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=既存のオブジェクトのない任
 ToOfferALinkForOnlinePaymentOnMemberSubscription=構成員サブスクリプションの%sオンライン支払ページを提供するURL
 ToOfferALinkForOnlinePaymentOnDonation=寄付の支払のために%sオンライン支払ページを提供するURL
 YouCanAddTagOnUrl=また、URLパラメーター<b>&tag=<i>value</i></b>をこれらのURLのいずれかに追加して(オブジェクトにリンクされていない支払にのみ必須)、独自の支払コメントタグを追加することもできる。 <br>既存のオブジェクトがない支払のURLの場合、パラメーター<strong>&noidempotency=1</strong>を追加して、同じタグを持つ同じリンクを複数回使用できるようにすることもできる(一部の支払モードでは、このパラメータがないと、異なるリンクごとに支払が1に制限される場合がある)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripeによって検証済なら支払が自動的に作成されるように、URL <b> %s</b>を使用してStripeを設定する。
 AccountParameter=アカウントのパラメータ
 UsageParameter=使用パラメータ
@@ -41,7 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhookライブキー
 ONLINE_PAYMENT_WAREHOUSE=オンライン支払が行われるときに在庫減少に使用する在庫<br>(TODO請求書のアクションで在庫を減らすオプションが実行され、オンライン支払がそれ自体で請求書を生成する場合？)
 StripeLiveEnabled=Stripe ライブが有効(それ以外の場合はテスト/サンドボックスモード)
 StripeImportPayment=Stripe 支払のインポート
-ExampleOfTestCreditCard=テスト用のクレジットカードの例：%s =>有効、%s =>エラーCVC、%s =>期限切れ、%s =>充電に失敗
+ExampleOfTestCreditCard=テスト支払いのクレジット カードの例: %s => 有効、%s => エラー CVC、%s => 期限切れ、%s => 請求失敗
+ExampleOfTestBankAcountForSEPA=口座振替テストの銀行口座 BAN の例: %s
 StripeGateways=Stripe ゲートウェイ
 OAUTH_STRIPE_TEST_ID=Stripe ConnectクライアントID(ca _...)
 OAUTH_STRIPE_LIVE_ID=Stripe ConnectクライアントID(ca _...)
@@ -50,6 +52,7 @@ StripeAccount=Stripe アカウント
 StripeChargeList=Stripe 料金のリスト
 StripeTransactionList=Stripeトランザクションのリスト
 StripeCustomerId=Stripe の顧客ID
+StripePaymentId=Stripe 支払い ID
 StripePaymentModes=Stripe 支払モード
 LocalID=ローカルID
 StripeID=Stripe ID
@@ -61,6 +64,7 @@ DeleteACard=カードを削除
 ConfirmDeleteCard=このクレジットカードまたはデビットカードを削除してもよいか？
 CreateCustomerOnStripe=Stripeで顧客を作成する
 CreateCardOnStripe=Stripeでカードを作成する
+CreateBANOnStripe=Stripe で銀行を作成する
 ShowInStripe=Stripe で表示
 StripeUserAccountForActions=一部のStripeイベントの電子メール通知に使用するユーザアカウント(Stripeペイアウト)
 StripePayoutList=Stripe ペイアウトのリスト
@@ -68,5 +72,19 @@ ToOfferALinkForTestWebhook=IPNを呼び出すためのStripeWebHookの設定へ�
 ToOfferALinkForLiveWebhook=IPNを呼び出すためのStripeWebHookの設定へのリンク(ライブモード)
 PaymentWillBeRecordedForNextPeriod=支払は次の期間に記録される。
 ClickHereToTryAgain= <a href="%s">ここをクリックして再試行すること... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客認証ルールにより、カードの作成はStripeバックオフィスから行う必要がある。 Stripeの顧客レコードをオンにするには、ここをクリックすること：%s
-TERMINAL_LOCATION=端末の場所（住所）
+CreationOfPaymentModeMustBeDoneFromStripeInterface=強力な顧客 認証する ルールにより、カードの作成は Stripe バックオフィスから行う必要がある。ここをクリックして Stripe 顧客レコードをオンにできる: %s
+STRIPE_CARD_PRESENT=ストライプ端末のカードプレゼント
+TERMINAL_LOCATION=Stripe 端末の場所 (アドレス)
+RequestDirectDebitWithStripe=Stripe で口座振替をリクエストする
+RequesCreditTransferWithStripe=Stripe でクレジット転送をリクエストする
+STRIPE_SEPA_DIRECT_DEBIT=Stripe による口座振替の支払いを有効にする
+STRIPE_KLARNA=Klarnaを使った支払いを有効化
+STRIPE_BANCONTACT=BANCONTACTを使用した支払いを有効化
+STRIPE_IDEAL=IDEALを使用した支払いを有効化
+STRIPE_GIROPAY=GIROPAYを使用した支払いを有効化
+STRIPE_SOFORT=SOFORTを使用した支払いを有効化
+StripeConnect_Mode=ストライプ接続モード
+ExampleOnlyForBECustomers=ベルギーのお客様のみ
+ExampleOnlyForDECustomers=ドイツのお客様のみ
+ExampleOnlyForNLCustomers=オランダのお客様のみ
+ExampleOnlyForATBEDEITNLESCustomers=オーストリア、ベルギー、ドイツ、イタリア、オランダ、スペインのお客様のみ

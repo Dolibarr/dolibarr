@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = 知识管理系统
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=管理一个知识管理（KM）或服务台基础
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = 设置
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = 知识管理系统设置
+KnowledgeManagementSetupPage = 知识管理系统设置页面
 # About page
-#
-About = 关于
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = 项目
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeManagementAbout = 关于知识管理
+KnowledgeManagementAboutPage = 知识管理简介页面
+KnowledgeManagementArea = 知识管理
+MenuKnowledgeRecord = 知识库
+MenuKnowledgeRecordShort = 知识库
+ListKnowledgeRecord = 文章清单
+NewKnowledgeRecord = 新文章
+ValidateReply = 验证方案
+KnowledgeRecords = 文章
+KnowledgeRecord = 文章
+KnowledgeRecordExtraFields = 文章的自定义属性
+GroupOfTicket=服务工单分组
+YouCanLinkArticleToATicketCategory=您可以将文章链接到服务工单组（该文章将在该组的任何服务工单上突出显示）
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=设置为过时的
+ConfirmCloseKM=你是否确认要将这篇文章关闭并设定为已经过时吗？
+ConfirmReopenKM=您想将这篇文章恢复到 "已验证 "状态吗？
+BoxLastKnowledgerecordDescription=Last %s articles
+BoxLastKnowledgerecord=Last articles
+BoxLastKnowledgerecordContent=Last articles
+BoxLastKnowledgerecordModifiedContent=Last modified articles
+BoxLastModifiedKnowledgerecordDescription=Last %s modified articles
+BoxLastModifiedKnowledgerecord=Last modified articles

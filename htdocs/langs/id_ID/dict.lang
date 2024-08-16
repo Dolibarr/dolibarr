@@ -158,7 +158,7 @@ CountryMX=Meksiko
 CountryFM=Mikronesia
 CountryMD=Moldova
 CountryMN=Mongolia
-CountryMS=Monserrat
+CountryMS=Montserrat
 CountryMZ=Mozambik
 CountryMM=Myanmar (Burma)
 CountryNA=Namibia
@@ -247,10 +247,13 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Nyonya.
+CivilityMMEShort=Nyonya.
 CivilityMR=Bapak.
+CivilityMRShort=Tn.
 CivilityMLE=MS.
 CivilityMTRE=Menguasai
 CivilityDR=Dokter

@@ -125,7 +125,7 @@ function checkLinkedElements($sourcetype, $targettype)
 /**
  * Clean data into ecm_directories table
  *
- * @return	void
+ * @return	int			Return integer <0 if KO, >0 if OK
  */
 function clean_data_ecm_directories()
 {
@@ -145,12 +145,14 @@ function clean_data_ecm_directories()
 				$resqlupdate = $db->query($sqlupdate);
 				if (!$resqlupdate) {
 					dol_print_error($db, 'Failed to update');
+					return -1;
 				}
 			}
 		}
 	} else {
 		dol_print_error($db, 'Failed to run request');
+		return -1;
 	}
 
-	return;
+	return 1;
 }

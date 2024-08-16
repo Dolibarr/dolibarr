@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020		Tobias Sekan	<tobias.sekan@startmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,30 +33,67 @@ class FormCategory extends Form
 	/**
 	 * Return a HTML filter box for a list filter view
 	 *
-	 * @param string	$type			The categorie type (e.g Categorie::TYPE_WAREHOUSE)
-	 * @param Array		$preSelected	A list with the elements that should pre-selected
-	 * @return string					A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
+	 * @param 	string		$type								The categorie type (e.g Categorie::TYPE_WAREHOUSE)
+	 * @param 	array		$preSelected						A list with the elements that should pre-selected
+	 * @param	string		$morecss							More CSS
+	 * @param	int			$searchCategoryProductOperator		Used only if $multiselect is 1. Set to 0 or 1 to enable the checkbox to search with a or (0=not preseleted, 1=preselected), -1=Checkbox never shown.
+	 * @param	int			$multiselect						0 or 1
+	 * @param	int			$nocateg							1=Add an entry '- No Category -'
+	 * @param	string		$showempty							1 or 'string' to add an empty entry
+	 * @return 	string											A HTML filter box (Note: selected results can get with GETPOST("search_category_".$type."_list"))
 	 */
-	public function getFilterBox($type, array $preSelected)
+	public function getFilterBox($type, array $preSelected, $morecss = "minwidth300imp widthcentpercentminusx", $searchCategoryProductOperator = -1, $multiselect = 1, $nocateg = 1, $showempty = '')
 	{
-		global $langs;
+		global $langs, $db;
 
 		if (empty($preSelected) || !is_array($preSelected)) {
 			$preSelected = array();
 		}
 
-		$htmlName = "search_category_".$type."_list";
-
-		$categoryArray = $this->select_all_categories($type, "", "", 64, 0, 1);
-		$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
-
-		$tmptitle = $langs->transnoentitiesnoconv("Category");
+		if ($showempty && !is_numeric($showempty)) {
+			$tmptitle = $showempty;
+		} else {
+			$tmptitle = $langs->transnoentitiesnoconv("Category");
+		}
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
 		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-		//$filter .= $langs->trans('Categories').": ";
-		$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, "minwidth300 widthcentpercentminusx", 0, 0, '', '', $tmptitle);
+		if ($multiselect) {
+			$categoryArray = $this->select_all_categories($type, '', '', 64, 0, 2);
+			if ($nocateg) {
+				$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
+			}
+			$htmlName = "search_category_".$type."_list";
+			$htmlName2 = "search_category_".$type."_operator";
+
+			$filter .= Form::multiselectarray($htmlName, $categoryArray, $preSelected, 0, 0, $morecss, 0, 0, '', '', $tmptitle);
+		} else {
+			$htmlName = "search_".$type."_category";
+			$htmlName2 = "";
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+			$formother = new FormOther($db);
+
+			$filter .= $formother->select_categories($type, $preSelected[0], $htmlName, $nocateg, $tmptitle, $morecss);
+		}
+		if ($multiselect && $searchCategoryProductOperator >= 0) {
+			$filter .= ' <input type="checkbox" class="valignmiddle '.$htmlName2.'" id="'.$htmlName2.'" name="'.$htmlName2.'" value="1"'.($searchCategoryProductOperator == 1 ? ' checked="checked"' : '').' title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'" />';
+			$filter .= '<label class="none valignmiddle '.$htmlName2.'" for="'.$htmlName2.'" title="'.dol_escape_htmltag($langs->trans('UseOrOperatorForCategories')).'">';
+			$filter .= $langs->trans('UseOrOperatorShort');
+			$filter .= '</label>';
+
+			$filter .= '<script>'."\n";
+			$filter .= "var nbSelected = jQuery('#".$htmlName."').val().length;";
+			$filter .= "console.log('Nb of element now = '+nbSelected);\n";
+			$filter .= "if (nbSelected > 1) { jQuery('.".$htmlName2."').show(); } else { jQuery('.".$htmlName2."').hide(); }\n";
+			$filter .= "jQuery('#".$htmlName."').change(function() {\n";
+			$filter .= "console.log('Content of select box has been modified.');";
+			$filter .= 'var nbSelected = $(this).val().length;';
+			$filter .= "console.log('Nb of element now = '+nbSelected);\n";
+			$filter .= "if (nbSelected > 1) { jQuery('.".$htmlName2."').show(); } else { jQuery('.".$htmlName2."').hide(); }\n";
+			$filter .= '});'."\n";
+			$filter .= '</script>'."\n";
+		}
 		$filter .= "</div>";
 
 		return $filter;
@@ -63,15 +101,13 @@ class FormCategory extends Form
 
 	/**
 	 *    Prints a select form for products categories
-	 *    @param    string	$selected          	Id category pre-selection
+	 *    @param    int 	$selected          	Id category pre-selection
 	 *    @param    string	$htmlname          	Name of HTML field
 	 *    @param    int		$showempty         	Add an empty field
-	 *    @return	integer|null
+	 *    @return	int|null
 	 */
 	public function selectProductCategory($selected = 0, $htmlname = 'product_category_id', $showempty = 0)
 	{
-		global $conf;
-
 		$sql = "SELECT cp.fk_categorie as cat_index, cat.label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cp";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid = cp.fk_categorie";
@@ -96,11 +132,12 @@ class FormCategory extends Form
 				}
 				$i++;
 			}
-			print ('</select>');
+			print('</select>');
 
 			return $num_rows;
 		} else {
 			dol_print_error($this->db);
+			return null;
 		}
 	}
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -26,7 +26,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 if (!is_object($form)) {
 	$form = new Form($db);
@@ -47,10 +47,10 @@ foreach ($object->fields as $key => $val) {
 	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4 && abs($val['visible']) != 5) {
 		continue;
 	}
-
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) {
 		continue; // We don't want this field
 	}
+
 	if (in_array($key, array('ref', 'status'))) {
 		continue; // Ref and status are already in dol_banner
 	}
@@ -64,15 +64,23 @@ foreach ($object->fields as $key => $val) {
 		print ' tdtop';
 	}
 	print '">';
+
+	$labeltoshow = '';
 	if (!empty($val['help'])) {
-		print $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
 		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
-			print showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
+			$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
 		} else {
-			print $langs->trans($val['label']);
+			$labeltoshow .= $langs->trans($val['label']);
 		}
 	}
+	if (empty($val['alwayseditable'])) {
+		print $labeltoshow;
+	} else {
+		print $form->editfieldkey($labeltoshow, $key, $value, $object, 1, $val['type']);
+	}
+
 	print '</td>';
 	print '<td class="valuefield fieldname_'.$key;
 	if ($val['type'] == 'text') {
@@ -82,25 +90,29 @@ foreach ($object->fields as $key => $val) {
 		print ' '.$val['cssview'];
 	}
 	print '">';
-	if (in_array($val['type'], array('text', 'html'))) {
-		print '<div class="longmessagecut">';
-	}
-	if ($key == 'lang') {
-		$langs->load("languages");
-		$labellang = ($value ? $langs->trans('Language_'.$value) : '');
-		print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
-		print $labellang;
-	} else {
-		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
-			$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
-			print showValueWithClipboardCPButton($out, 0, $out);
-		} else {
-			print $object->showOutputField($val, $key, $value, '', '', '', 0);
+	if (empty($val['alwayseditable'])) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			print '<div class="longmessagecut">';
 		}
-	}
-	//print dol_escape_htmltag($object->$key, 1, 1);
-	if (in_array($val['type'], array('text', 'html'))) {
-		print '</div>';
+		if ($key == 'lang') {
+			$langs->load("languages");
+			$labellang = ($value ? $langs->trans('Language_'.$value) : '');
+			print picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
+			print $labellang;
+		} else {
+			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
+				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
+				print showValueWithClipboardCPButton($out, 0, $out);
+			} else {
+				print $object->showOutputField($val, $key, $value, '', '', '', 0);
+			}
+		}
+		//print dol_escape_htmltag($object->$key, 1, 1);
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			print '</div>';
+		}
+	} else {
+		print $form->editfieldval($labeltoshow, $key, $value, $object, 1, $val['type']);
 	}
 	print '</td>';
 	print '</tr>';
@@ -139,15 +151,25 @@ foreach ($object->fields as $key => $val) {
 
 	$rightpart .= '<tr><td';
 	$rightpart .= ' class="'.(empty($val['tdcss']) ? 'titlefield' : $val['tdcss']).'  fieldname_'.$key;
-	//if ($val['notnull'] > 0) $rightpart .= ' fieldrequired';		// No fieldrequired inthe view output
+	//if ($val['notnull'] > 0) $rightpart .= ' fieldrequired';		// No fieldrequired in the view output
 	if ($val['type'] == 'text' || $val['type'] == 'html') {
 		$rightpart .= ' tdtop';
 	}
 	$rightpart.= '">';
+	$labeltoshow = '';
 	if (!empty($val['help'])) {
-		$rightpart .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
+		$labeltoshow .= $form->textwithpicto($langs->trans($val['label']), $langs->trans($val['help']));
 	} else {
-		$rightpart .= $langs->trans($val['label']);
+		if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 1) {
+			$labeltoshow .= showValueWithClipboardCPButton($value, 0, $langs->transnoentitiesnoconv($val['label']));
+		} else {
+			$labeltoshow .= $langs->trans($val['label']);
+		}
+	}
+	if (empty($val['alwayseditable'])) {
+		$rightpart .= $labeltoshow;
+	} else {
+		$rightpart .= $form->editfieldkey($labeltoshow, $key, $value, $object, 1, $val['type']);
 	}
 	$rightpart .= '</td>';
 	$rightpart .= '<td class="valuefield fieldname_'.$key;
@@ -158,14 +180,31 @@ foreach ($object->fields as $key => $val) {
 		$rightpart .= ' '.$val['cssview'];
 	}
 	$rightpart .= '">';
-	if (in_array($val['type'], array('text', 'html'))) {
-		$rightpart .= '<div class="longmessagecut">';
+
+	if (empty($val['alwayseditable'])) {
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			$rightpart .= '<div class="longmessagecut">';
+		}
+		if ($key == 'lang') {
+			$langs->load("languages");
+			$labellang = ($value ? $langs->trans('Language_'.$value) : '');
+			$rightpart .= picto_from_langcode($value, 'class="paddingrightonly saturatemedium opacitylow"');
+			$rightpart .= $labellang;
+		} else {
+			if (isset($val['copytoclipboard']) && $val['copytoclipboard'] == 2) {
+				$out = $object->showOutputField($val, $key, $value, '', '', '', 0);
+				$rightpart .= showValueWithClipboardCPButton($out, 0, $out);
+			} else {
+				$rightpart.= $object->showOutputField($val, $key, $value, '', '', '', 0);
+			}
+		}
+		if (preg_match('/^(text|html)/', $val['type'])) {
+			$rightpart .= '</div>';
+		}
+	} else {
+		$rightpart .= $form->editfieldval($labeltoshow, $key, $value, $object, 1, $val['type']);
 	}
-	$rightpart .= $object->showOutputField($val, $key, $value, '', '', '', 0);
-	//$rightpart .= dol_escape_htmltag($object->$key, 1, 1);
-	if (in_array($val['type'], array('text', 'html'))) {
-		$rightpart .= '</div>';
-	}
+
 	$rightpart .= '</td>';
 	$rightpart .= '</tr>';
 }

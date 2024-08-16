@@ -21,9 +21,9 @@
  */
 
 /**
- *      \file       admin/job_extrafields.php
- *		\ingroup    hrm
- *		\brief      Page to setup extra fields of hrm
+ *    \file       htdocs/hrm/admin/job_extrafields.php
+ *    \ingroup    hrm
+ *    \brief      Page to setup extra fields of hrm jobs
  */
 
 // Load Dolibarr environment
@@ -38,16 +38,14 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label = ExtraFields::$type2label;
-$type2label = array('');
-foreach ($tmptype2label as $key => $val) {
-	$type2label[$key] = $langs->transnoentitiesnoconv($val);
-}
+$type2label = ExtraFields::getListOfTypesLabels();
 
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $attrname = GETPOST('attrname', 'alpha');
 $elementtype = 'hrm_job'; //Must be the $table_element of the class that manage extrafield
 
+// Security Check
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -65,7 +63,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject = $langs->transnoentitiesnoconv("Job");
+$textobject = $langs->transnoentitiesnoconv("JobProfile");
 
 $help_url = '';
 $page_name = "HrmSetup";
@@ -84,14 +82,6 @@ print dol_get_fiche_head($head, 'jobsAttributes', $langs->trans($page_name), -1,
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 print dol_get_fiche_end();
-
-
-// Buttons
-if ($action != 'create' && $action != 'edit') {
-	print '<div class="tabsAction">';
-	print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a>';
-	print "</div>";
-}
 
 
 /*

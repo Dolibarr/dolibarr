@@ -3,6 +3,7 @@
  * Copyright (C) 2015	Charlie BENKE       <charlie@patas-monkey.com>
  * Copyright (C) 2019	Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +39,36 @@ function salaries_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	if (isModEnabled('paymentbybanktransfer')) {
+		$nbStandingOrders = 0;
+		$sql = "SELECT COUNT(pfd.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		$sql .= " WHERE pfd.fk_salary = ".((int) $object->id);
+		$sql .= " AND type = 'ban'";
+		$resql = $db->query($sql);
+		if ($resql) {
+			$obj = $db->fetch_object($resql);
+			if ($obj) {
+				$nbStandingOrders = $obj->nb;
+			}
+		} else {
+			dol_print_error($db);
+		}
+		$langs->load("banks");
+		$head[$h][0] = DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id.'&type=bank-transfer';
+		$head[$h][1] = $langs->trans('BankTransfer');
+		if ($nbStandingOrders > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		}
+		$head[$h][2] = 'request_virement';
+		$h++;
+	}
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'add', 'core');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
@@ -62,19 +88,24 @@ function salaries_prepare_head($object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'add', 'external');
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'salaries', 'remove');
 
 	return $head;
 }
 
 /**
- *  Return array head with list of tabs to view object informations
+ *  Return array head with list of tabs to view object information
  *
  *  @return	array		head
  */
 function salaries_admin_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $conf, $db, $langs, $user;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('salary');
 
 	$h = 0;
 	$head = array();
@@ -92,6 +123,10 @@ function salaries_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSalaries");
+	$nbExtrafields = $extrafields->attributes['salary']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
 	$head[$h][2] = 'attributes';
 	$h++;
 

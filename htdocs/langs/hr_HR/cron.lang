@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Pročitaj planirani posao
 Permission23102 = Izradi/promjeni planirani posao
 Permission23103 = Obriši planirani posao
@@ -13,8 +12,8 @@ KeyForCronAccess=Sigurnosni ključ za URL za pokretanje cron zadataka
 FileToLaunchCronJobs=Naredbeni redak za provjeru i pokretanje kvalificiranih cron poslova
 CronExplainHowToRunUnix=U Unix okolini potrebno je korisititi sljedeći crontab unos za pokretanje komande svakih 5 minuta
 CronExplainHowToRunWin=U Microsoft(tm) Windows okruženju možete koristiti alate za planirani zadatak za pokretanje naredbenog retka svakih 5 minuta
-CronMethodDoesNotExists=Klasa %s ne sadrži niti jednu %s metodu
-CronMethodNotAllowed=Metoda %s klase %s nalazi se na crnoj listi zabranjenih metoda
+CronMethodDoesNotExists=Klasa %s ne sadrži nijednu metodu %s
+CronMethodNotAllowed=Metoda %s klase %s nalazi se na popisu zabranjenih metoda
 CronJobDefDesc=Profili Cron poslova definirani su u datoteci deskriptora modula. Kada je modul aktiviran, oni su učitani i dostupni tako da možete administrirati poslove iz izbornika alata administratora %s.
 CronJobProfiles=Popis unaprijed definiranih cron profila poslova
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Komanda
 CronList=Planirani poslovi
 CronDelete=Obriši planirane zadatke
 CronConfirmDelete=Jeste li sigurni da želite izbrisati ove zakazane poslove?
-CronExecute=Pokreni planirani posao
+CronExecute=Pokreni sada
 CronConfirmExecute=Jeste li sigurni da sada želite izvršiti ove zakazane poslove?
 CronInfo=Modul zakazanih poslova omogućuje zakazivanje poslova za njihovo automatsko izvršavanje. Poslovi se također mogu pokrenuti ručno.
 CronTask=Posao
-CronNone=Nijedan
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Ne prije
 CronDtEnd=Ne nakon
 CronDtNextLaunch=Slijedeće pokretanje
@@ -49,8 +49,8 @@ CronEach=Svakih
 JobFinished=Posao pokrenut i završen
 Scheduled=Zakazano
 #Page card
-CronAdd= Dodaj poslove
-CronEvery=Izvrši posao svaki
+CronAdd=Dodaj poslove
+CronEvery=Run job every
 CronObject=Instanca/Objekt za kreiranje
 CronArgs=Parametri
 CronSaveSucess=Uspješno spremljeno
@@ -58,36 +58,44 @@ CronNote=Napomena
 CronFieldMandatory=Polja %s su obavezna
 CronErrEndDateStartDt=Datum kraja ne može biti prije datuma početka
 StatusAtInstall=Status pri instalaciji modula
-CronStatusActiveBtn=Raspored
+CronStatusActiveBtn=Omogući zakazivanje
 CronStatusInactiveBtn=Onemogući
 CronTaskInactive=Ovaj posao je onemogućen (nije zakazan)
 CronId=ID
 CronClassFile=Naziv datoteke s klasom
-CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronModuleHelp=Naziv direktorija Dolibarr modula (radi i s vanjskim Dolibarr modulom). <BR> Na primjer za pozivanje metode dohvaćanja objekta Dolibarr Product /htdocs/<u>product</u> /class/product.class.php, vrijednost za modul je<br><i>product</i>
 CronClassFileHelp=Relativni put i naziv datoteke za učitavanje (put je relativan na korijenski direktorij web poslužitelja). <BR> Na primjer, za pozivanje metode dohvaćanja objekta Dolibarr Product htdocs/product/class/ <u> product.class.php </u> , vrijednost za naziv datoteke klase je s<br><i>product/class/product.class.php 
-CronObjectHelp=The object name to load. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for class file name is<br><i>Product</i>
-CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
-CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
+CronObjectHelp=Naziv objekta za učitavanje. <BR> Na primjer za pozivanje metode dohvaćanja objekta Dolibarr Product /htdocs/product/class/product.class.php, vrijednost za naziv datoteke klase je<br><i>Proizvod</i>
+CronMethodHelp=Metoda objekta za pokretanje. <BR> Na primjer za pozivanje metode dohvaćanja objekta Dolibarr Product /htdocs/product/class/product.class.php, vrijednost za metodu je <br><i>dohvati</i>
+CronArgsHelp=Argumenti metode. <BR> Na primjer za pozivanje metode dohvaćanja objekta Dolibarr Product /htdocs/product/class/product.class.php, vrijednost za parametre može biti<br><i>0, ProductRef</i>
 CronCommandHelp=Sistemska komanda za pokretanje
 CronCreateJob=Izradi novi planirani posao
 CronFrom=Od
 # Info
 # Common
 CronType=Vrsta posla
-CronType_method=Call method of a PHP Class
+CronType_method=Metoda poziva PHP klase
 CronType_command=Shell command
 CronCannotLoadClass=Nije moguće učitati datoteku klase %s (za korištenje klase %s)
-CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
-UseMenuModuleToolsToAddCronJobs=Go into menu "<a href="%s">Home - Admin tools - Scheduled jobs</a>" to see and edit scheduled jobs.
+CronCannotLoadObject=Datoteka klase %s je učitana, ali objekt %s nije pronađen u njoj
+UseMenuModuleToolsToAddCronJobs=Idite na izbornik "<a href="%s">Početna - Administratorski alati - Planirani poslovi</a>" da vidite i uredite zakazane poslove.
 JobDisabled=Posao onemogućen
 MakeLocalDatabaseDumpShort=Lokalni backup baze
 MakeLocalDatabaseDump=Izradite lokalni dump baze podataka. Parametri su: kompresija ('gz' ili 'bz' ili 'none'), vrsta sigurnosne kopije ('mysql', 'pgsql', 'auto'), 1, 'auto' ili naziv datoteke za izradu, broj datoteka sigurnosne kopije koje treba zadržati
 MakeSendLocalDatabaseDumpShort=Pošaljite sigurnosnu kopiju lokalne baze podataka
 MakeSendLocalDatabaseDump=Pošaljite sigurnosnu kopiju lokalne baze podataka putem e-pošte. Parametri su: do, od, predmet, poruka, naziv datoteke (naziv poslane datoteke), filter ('sql' samo za sigurnosnu kopiju baze podataka)
+BackupIsTooLargeSend=Žao nam je, posljednja sigurnosna kopija je prevelika da bi je mogao poslati e-pošta
+CleanUnfinishedCronjobShort=Očistite nedovršeni cronjob
+CleanUnfinishedCronjob=Očistite cronjob koji je zapeo u obradi kada se proces više ne izvodi
 WarningCronDelayed=Pažnja, u svrhu izvedbe, bez obzira na sljedeći datum izvršenja omogućenih poslova, vaši poslovi mogu biti odgođeni na maksimalno %s sati prije pokretanja.
 DATAPOLICYJob=Čistač podataka i anonimizator
 JobXMustBeEnabled=Posao %s mora biti omogućen
+EmailIfError=e-pošta za upozorenje na pogrešku
+JobNotFound=Posao %s nije pronađen na popisu poslova (pokušajte onemogućiti/omogućiti modul)
+ErrorInBatch=Pogreška prilikom pokretanja zadatka %s
+
 # Cron Boxes
 LastExecutedScheduledJob=Posljednji izvršeni zakazani posao
 NextScheduledJobExecute=Sljedeći zakazani posao za izvršenje
 NumberScheduledJobError=Broj zakazanih poslova u pogreški
+NumberScheduledJobNeverFinished=Broj planiranih poslova koji nikada nisu završeni

@@ -16,22 +16,28 @@
  */
 
 /**
- *     \file       htdocs/compta/bank/info.php
- *     \ingroup    banque
- *     \brief      Onglet info d'une ecriture bancaire
+ *    \file       htdocs/compta/bank/info.php
+ *    \ingroup    compta/bank
+ *    \brief      Info tab of bank statement
  */
 
+
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'companies'));
 
-$id = GETPOST("rowid", 'int');
-$accountid = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('account', 'int'));
+
+// Get Parameters
+$id = GETPOSTINT("rowid");
+$accountid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('account'));
 $ref = GETPOST('ref', 'alpha');
+
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
@@ -42,7 +48,7 @@ if ($user->socid) {
 }
 
 $result = restrictedArea($user, 'banque', $accountid, 'bank_account');
-if (empty($user->rights->banque->lire) && empty($user->rights->banque->consolidate)) {
+if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidate')) {
 	accessforbidden();
 }
 
@@ -60,6 +66,7 @@ $object->info($id);
 
 $h = 0;
 
+$head = array();
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
 $head[$h][1] = $langs->trans("BankTransaction");
 $h++;

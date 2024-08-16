@@ -4,52 +4,36 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Προσλήψεις
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Διαχειριστείτε και παρακολουθήστε εκστρατείες προσλήψεων για νέες θέσεις εργασίας
-
-#
 # Admin page
-#
 RecruitmentSetup = Ρύθμιση προσλήψεων
-Settings = Ρυθμίσεις
-RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για τη μονάδα προσλήψεων
+RecruitmentSetupPage = Εισαγάγετε εδώ τη ρύθμιση των κύριων επιλογών για την ενότητα προσλήψεων
 RecruitmentArea=Περιοχή προσλήψεων
 PublicInterfaceRecruitmentDesc=Οι δημόσιες σελίδες θέσεων εργασίας είναι δημόσιες διευθύνσεις URL για εμφάνιση και απάντηση σε ανοιχτές θέσεις εργασίας. Υπάρχει ένας διαφορετικός σύνδεσμος για κάθε ανοιχτή θέση εργασίας, που βρίσκεται σε κάθε εγγραφή εργασίας.
 EnablePublicRecruitmentPages=Ενεργοποίηση δημόσιων σελίδων ανοιχτών θέσεων εργασίας
 
-#
-# About page
-#
-About = Πληροφορίες
-RecruitmentAbout = Σχετικά με τις προσλήψεις
-RecruitmentAboutPage = Σελίδα σχετικά με τις Προσλήψεις 
 NbOfEmployeesExpected=Προσδοκώμενο νούμερο εργαζομένων
 JobLabel=Ετικέτα θέσης εργασίας
 WorkPlace=Χώρος Εργασίας
 DateExpected=Αναμενόμενη ημερομηνία
 FutureManager=Μελλοντικός μάνατζερ
 ResponsibleOfRecruitement=Υπεύθυνος προσλήψεων
-IfJobIsLocatedAtAPartner=Εάν η εργασία βρίσκεται σε μερος συνεργάτη
+IfJobIsLocatedAtAPartner=Εάν η εργασία βρίσκεται σε χώρο συνεργάτη
 PositionToBeFilled=Θέση εργασίας
 PositionsToBeFilled=Θέσεις εργασίας
 ListOfPositionsToBeFilled=Κατάλογος θέσεων εργασίας
 NewPositionToBeFilled=Νέες θέσεις εργασίας
-
 JobOfferToBeFilled=Θέση εργασίας προς κάλυψη
 ThisIsInformationOnJobPosition=Πληροφορίες για τη θέση εργασίας προς κάλυψη
 ContactForRecruitment=Επικοινωνία για πρόσληψη
@@ -57,15 +41,16 @@ EmailRecruiter=Εmail υπεύθυνου προσλήψεων
 ToUseAGenericEmail=Για να χρησιμοποιήσετε ένα γενικό email. Εάν δεν έχει οριστεί, θα χρησιμοποιηθεί το email του υπεύθυνου πρόσληψης
 NewCandidature=Νέα αίτηση
 ListOfCandidatures=Λίστα αιτήσεων
-RequestedRemuneration=Ζητούμενη αμοιβή
-ProposedRemuneration=Προτεινόμενη αμοιβή
+Remuneration=Μισθός
+RequestedRemuneration=Ζητούμενος μισθός
+ProposedRemuneration=Προτεινόμενος μισθός
 ContractProposed=Προτεινόμενη σύμβαση
 ContractSigned=Υπογεγραμμένη σύμβαση
 ContractRefused=Η σύμβαση απορρίφθηκε
 RecruitmentCandidature=Αίτηση
 JobPositions=Θέσεις εργασίας
 RecruitmentCandidatures=Αιτήσεις
-InterviewToDo=Συνέντευξη για να γίνει
+InterviewToDo=Επαφές για παρακολούθηση
 AnswerCandidature=Απάντηση αίτησης
 YourCandidature=Η αίτηση σου
 YourCandidatureAnswerMessage=Σας ευχαριστούμε για την αίτηση σας. <br> ...
@@ -76,3 +61,6 @@ ExtrafieldsApplication=Συμπληρωματικά χαρακτηριστικά
 MakeOffer=Κάντε μια προσφορά
 WeAreRecruiting=Προσλαμβάνουμε. Αυτή είναι η λίστα με τις ανοιχτές θέσεις προς κάλυψη...
 NoPositionOpen=Δεν υπάρχουν ανοιχτές θέσεις αυτή τη στιγμή
+ConfirmClose=Επιβεβαιώστε την ακύρωση
+ConfirmCloseAsk=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτήν την υποψηφιότητα πρόσληψης
+Recruitment=Προσλήψεις

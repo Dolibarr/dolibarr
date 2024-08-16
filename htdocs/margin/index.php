@@ -22,11 +22,12 @@
  *	\brief      Page d'index du module margin
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 
-if ($user->rights->produit->lire) {
+if ($user->hasRight('produit', 'lire')) {
 	$page = 'productMargins';
-} elseif ($user->rights->societe->lire) {
+} elseif ($user->hasRight('societe', 'lire')) {
 	$page = 'customerMargins';
 } else {
 	$page = 'agentMargins';

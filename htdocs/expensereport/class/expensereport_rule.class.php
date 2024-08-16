@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2017		ATM Consulting			<support@atm-consulting.fr>
- * Copyright (C) 2017		Pierre-Henry Favre		<phf@atm-consulting.fr>
+/* Copyright (C) 2017		ATM Consulting				<support@atm-consulting.fr>
+ * Copyright (C) 2017		Pierre-Henry Favre			<phf@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +94,6 @@ class ExpenseReportRule extends CommonObject
 	 */
 	public $code_expense_rules_type;
 
-
 	/**
 	 * rule for all
 	 * @var int
@@ -109,20 +110,20 @@ class ExpenseReportRule extends CommonObject
 
 	/**
 	 * Attribute object linked with database
-	 * @var array
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'index'=>true)
-		,'dates'=>array('type'=>'date')
-		,'datee'=>array('type'=>'date')
-		,'amount'=>array('type'=>'double')
-		,'restrictive'=>array('type'=>'integer')
-		,'fk_user'=>array('type'=>'integer')
-		,'fk_usergroup'=>array('type'=>'integer')
-		,'fk_c_type_fees'=>array('type'=>'integer')
-		,'code_expense_rules_type'=>array('type'=>'string')
-		,'is_for_all'=>array('type'=>'integer')
-		,'entity'=>array('type'=>'integer')
+		'rowid' => array('type' => 'integer', 'index' => 1, 'label' => 'ID', 'enabled' => 1, 'visible' => -1, 'position' => 10),
+		'dates' => array('type' => 'date', 'label' => 'Dates', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'amount' => array('type' => 'double', 'label' => 'Amount', 'enabled' => 1, 'visible' => -1, 'position' => 40),
+		'restrictive' => array('type' => 'integer', 'label' => 'Restrictive', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'fk_user' => array('type' => 'integer', 'label' => 'User', 'enabled' => 1, 'visible' => -1, 'position' => 60),
+		'fk_usergroup' => array('type' => 'integer', 'label' => 'Usergroup', 'enabled' => 1, 'visible' => -1, 'position' => 70),
+		'fk_c_type_fees' => array('type' => 'integer', 'label' => 'Type fees', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'code_expense_rules_type' => array('type' => 'string', 'label' => 'Expense rule code', 'enabled' => 1, 'visible' => -1, 'position' => 90),
+		'is_for_all' => array('type' => 'integer', 'label' => 'IsForAll', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => -2, 'position' => 110),
 	);
 
 
@@ -141,10 +142,10 @@ class ExpenseReportRule extends CommonObject
 	 * Create object into database
 	 *
 	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
 		$resultcreate = $this->createCommon($user, $notrigger);
 
@@ -159,26 +160,21 @@ class ExpenseReportRule extends CommonObject
 	 *
 	 * @param int    $id   Id object
 	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
-		return $result;
+		return $this->fetchCommon($id, $ref);
 	}
-
 
 	/**
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
 		return $this->updateCommon($user, $notrigger);
 	}
@@ -186,11 +182,11 @@ class ExpenseReportRule extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int 	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -201,11 +197,11 @@ class ExpenseReportRule extends CommonObject
 	 * Return all rules or filtered by something
 	 *
 	 * @param int	     $fk_c_type_fees	type of expense
-	 * @param integer	 $date			    date of expense
+	 * @param int|string $date			    date of expense
 	 * @param int        $fk_user		    user of expense
 	 * @return array                        Array with ExpenseReportRule
 	 */
-	public function getAllRule($fk_c_type_fees = '', $date = '', $fk_user = '')
+	public function getAllRule($fk_c_type_fees = 0, $date = '', $fk_user = 0)
 	{
 		$rules = array();
 

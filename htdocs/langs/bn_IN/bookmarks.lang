@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Bookmark
-Bookmarks=Bookmarks
-ListOfBookmarks=List of bookmarks
-EditBookmarks=List/edit bookmarks
-NewBookmark=New bookmark
-ShowBookmark=Show bookmark
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Create bookmark
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Bookmarks management
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = বুকমার্কে বর্তমান পৃষ্ঠা যোগ করুন
+BehaviourOnClick = একটি বুকমার্ক URL নির্বাচন করা হলে আচরণ
+Bookmark = বুকমার্ক
+Bookmarks = বুকমার্ক
+BookmarkTargetNewWindowShort = নতুন ট্যাব
+BookmarkTargetReplaceWindowShort = বর্তমান ট্যাব
+BookmarkTitle = বুকমার্ক নাম
+BookmarksManagement = বুকমার্ক ব্যবস্থাপনা
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = বর্তমান ট্যাবে বা একটি নতুন ট্যাবে লিঙ্ক করা পৃষ্ঠা খোলা উচিত কিনা তা বেছে নিন
+CreateBookmark = বুকমার্ক তৈরি করুন
+EditBookmarks = বুকমার্ক তালিকা/সম্পাদনা করুন
+ListOfBookmarks = বুকমার্কের তালিকা
+NewBookmark = নতুন বুকমার্ক
+NoBookmarkFound = কোন বুকমার্ক পাওয়া যায়নি
+NoBookmarks = কোন বুকমার্ক সংজ্ঞায়িত
+OpenANewWindow = একটি নতুন ট্যাব খুলুন
+ReplaceWindow = বর্তমান ট্যাব প্রতিস্থাপন করুন
+SetHereATitleForLink = বুকমার্কের জন্য একটি নাম সেট করুন
+ShowBookmark = বুকমার্ক দেখান
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = একটি বাহ্যিক/পরম লিঙ্ক (https://externalurl.com) বা একটি অভ্যন্তরীণ/আপেক্ষিক লিঙ্ক (/mypage.php) ব্যবহার করুন। এছাড়াও আপনি tel:0123456 এর মত ফোন ব্যবহার করতে পারেন।

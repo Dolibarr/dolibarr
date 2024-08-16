@@ -41,17 +41,6 @@ class box_contacts extends ModeleBoxes
 	public $depends = array("societe");
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -63,7 +52,7 @@ class box_contacts extends ModeleBoxes
 
 		$this->db = $db;
 
-		$this->hidden = !($user->rights->societe->lire && $user->rights->societe->contact->lire);
+		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
 	}
 
 	/**
@@ -83,20 +72,22 @@ class box_contacts extends ModeleBoxes
 		$contactstatic = new Contact($this->db);
 		$societestatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedContacts", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastModifiedContacts", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/contact/list.php?sortfield=p.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
-		if ($user->rights->societe->lire && $user->rights->societe->contact->lire) {
+		if ($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire')) {
 			$sql = "SELECT sp.rowid as id, sp.lastname, sp.firstname, sp.civility as civility_id, sp.datec, sp.tms, sp.fk_soc, sp.statut as status";
 
 			$sql .= ", sp.address, sp.zip, sp.town, sp.phone, sp.phone_perso, sp.phone_mobile, sp.email as spemail";
 			$sql .= ", s.rowid as socid, s.nom as name, s.name_alias";
 			$sql .= ", s.code_client, s.client";
 			$sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.fournisseur";
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
-				$sql .= ", spe.accountancy_code_customer as code_compta";
+			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
+				$sql .= ", spe.accountancy_code_customer as code_compta_client";
 				$sql .= ", spe.accountancy_code_supplier as code_compta_fournisseur";
 			} else {
-				$sql .= ", s.code_compta";
+				$sql .= ", s.code_compta as code_compta_client";
 				$sql .= ", s.code_compta_fournisseur";
 			}
 			$sql .= ", s.logo, s.email, s.entity";
@@ -104,14 +95,14 @@ class box_contacts extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON sp.fk_pays = co.rowid";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON sp.fk_soc = s.rowid";
-			if (!empty($conf->global->MAIN_COMPANY_PERENTITY_SHARED)) {
+			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 			}
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= " WHERE sp.entity IN (".getEntity('contact').")";
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			// Add where from hooks
@@ -155,7 +146,8 @@ class box_contacts extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->code_fournisseur = $objp->code_fournisseur;
 					$societestatic->code_compta_fournisseur = $objp->code_compta_fournisseur;

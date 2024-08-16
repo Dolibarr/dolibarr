@@ -25,6 +25,7 @@
  *  \brief		Home page of stock area
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -32,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('stockindex'));
 
 // Load translation files required by the page
@@ -50,7 +51,7 @@ $producttmp = new Product($db);
 $warehouse = new Entrepot($db);
 
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-llxHeader("", $langs->trans("Stocks"), $help_url);
+llxHeader("", $langs->trans("Stocks"), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock');
 
 print load_fiche_titre($langs->trans("StocksArea"), '', 'stock');
 
@@ -60,7 +61,7 @@ print load_fiche_titre($langs->trans("StocksArea"), '', 'stock');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS)) {     // This may be useless due to the global search combo
+if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
 	print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<div class="div-table-responsive-no-min">';
@@ -148,7 +149,7 @@ $sql .= ", ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE m.fk_product = p.rowid";
 $sql .= " AND m.fk_entrepot = e.rowid";
 $sql .= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 	$sql .= " AND p.fk_product_type = ".Product::TYPE_PRODUCT;
 }
 $sql .= $db->order("datem", "DESC");
@@ -161,10 +162,10 @@ if ($resql) {
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print "<tr class=\"liste_titre\">";
+	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
-	if (!empty($conf->productbatch->enabled)) {
+	if (isModEnabled('productbatch')) {
 		print '<th>'.$langs->trans("Batch").'</th>';
 		/*if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 			print '<th>'.$langs->trans("SellByDate").'</th>';
@@ -200,11 +201,11 @@ if ($resql) {
 		$tmplotstatic->eatby = $objp->eatby;
 
 		print '<tr class="oddeven">';
-		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement',  'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
-		print '<td class="tdoverflowmax200">';
+		print '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+		print '<td class="tdoverflowmax150">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
-		if (!empty($conf->productbatch->enabled)) {
+		if (isModEnabled('productbatch')) {
 			print '<td>';
 			print $tmplotstatic->getNomUrl(0, 'nolink');
 			print '</td>';
@@ -215,7 +216,7 @@ if ($resql) {
 				print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 			}*/
 		}
-		print '<td class="tdoverflowmax200">';
+		print '<td class="tdoverflowmax150">';
 		print $warehouse->getNomUrl(1);
 		print "</td>\n";
 		print '<td class="right">';

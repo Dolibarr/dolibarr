@@ -156,7 +156,7 @@ class ExportTsv extends ModeleExports
 	 *
 	 *  @param      string		$file			Path of filename to generate
 	 *  @param      Translate	$outputlangs	Output language object
-	 *  @return     int							<0 if KO, >=0 if OK
+	 *  @return     int							Return integer <0 if KO, >=0 if OK
 	 */
 	public function open_file($file, $outputlangs)
 	{
@@ -183,7 +183,7 @@ class ExportTsv extends ModeleExports
 	 * 	Output header into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_header($outputlangs)
 	{
@@ -200,16 +200,25 @@ class ExportTsv extends ModeleExports
 	 *  @param      array		$array_selected_sorted       	Array with list of field to export
 	 *  @param      Translate	$outputlangs    				Object lang to translate values
 	 *  @param		array		$array_types					Array with types of fields
-	 * 	@return		int											<0 if KO, >0 if OK
+	 * 	@return		int											Return integer <0 if KO, >0 if OK
 	 */
 	public function write_title($array_export_fields_label, $array_selected_sorted, $outputlangs, $array_types)
 	{
 		// phpcs:enable
+		$selectlabel = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			$newvalue = $outputlangs->transnoentities($array_export_fields_label[$code]); // newvalue is now $outputlangs->charset_output encoded
 			$newvalue = $this->tsv_clean($newvalue, $outputlangs->charset_output);
 
 			fwrite($this->handle, $newvalue.$this->separator);
+			$typefield = isset($array_types[$code]) ? $array_types[$code] : '';
+
+			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
+				$selectlabel[$code."_label"] = $newvalue."_label";
+			}
+		}
+		foreach ($selectlabel as $key => $value) {
+			fwrite($this->handle, $value.$this->separator);
 		}
 		fwrite($this->handle, "\n");
 		return 0;
@@ -221,10 +230,10 @@ class ExportTsv extends ModeleExports
 	 * 	Output record line into file
 	 *
 	 *  @param      array		$array_selected_sorted      Array with list of field to export
-	 *  @param      resource	$objp                       A record from a fetch with all fields from select
+	 *  @param      Resource	$objp                       A record from a fetch with all fields from select
 	 *  @param      Translate	$outputlangs                Object lang to translate values
 	 *  @param		array		$array_types				Array with types of fields
-	 * 	@return		int										<0 if KO, >0 if OK
+	 * 	@return		int										Return integer <0 if KO, >0 if OK
 	 */
 	public function write_record($array_selected_sorted, $objp, $outputlangs, $array_types)
 	{
@@ -232,6 +241,7 @@ class ExportTsv extends ModeleExports
 		global $conf;
 
 		$this->col = 0;
+		$selectlabelvalues = array();
 		foreach ($array_selected_sorted as $code => $value) {
 			if (strpos($code, ' as ') == 0) {
 				$alias = str_replace(array('.', '-', '(', ')'), '_', $code);
@@ -239,7 +249,7 @@ class ExportTsv extends ModeleExports
 				$alias = substr($code, strpos($code, ' as ') + 4);
 			}
 			if (empty($alias)) {
-				dol_print_error('', 'Bad value for field with code='.$code.'. Try to redefine export.');
+				dol_print_error(null, 'Bad value for field with code='.$code.'. Try to redefine export.');
 			}
 
 			$newvalue = $outputlangs->convToOutputCharset($objp->$alias); // objp->$alias must be utf8 encoded as any var in memory // newvalue is now $outputlangs->charset_output encoded
@@ -253,12 +263,20 @@ class ExportTsv extends ModeleExports
 			$newvalue = $this->tsv_clean($newvalue, $outputlangs->charset_output);
 
 			if (preg_match('/^Select:/i', $typefield) && $typefield = substr($typefield, 7)) {
-				$array = json_decode($typefield, true);
-				$array = $array['options'];
-				$newvalue = $array[$newvalue];
+				$array = jsonOrUnserialize($typefield);
+				if (is_array($array) && !empty($newvalue)) {
+					$array = $array['options'];
+					$selectlabelvalues[$code."_label"] = $array[$newvalue];
+				} else {
+					$selectlabelvalues[$code."_label"] = "";
+				}
 			}
 
 			fwrite($this->handle, $newvalue.$this->separator);
+			$this->col++;
+		}
+		foreach ($selectlabelvalues as $key => $value) {
+			fwrite($this->handle, $value.$this->separator);
 			$this->col++;
 		}
 		fwrite($this->handle, "\n");
@@ -270,7 +288,7 @@ class ExportTsv extends ModeleExports
 	 * 	Output footer into file
 	 *
 	 * 	@param		Translate	$outputlangs		Output language object
-	 * 	@return		int								<0 if KO, >0 if OK
+	 * 	@return		int								Return integer <0 if KO, >0 if OK
 	 */
 	public function write_footer($outputlangs)
 	{
@@ -282,7 +300,7 @@ class ExportTsv extends ModeleExports
 	/**
 	 * 	Close file handle
 	 *
-	 * 	@return		int							<0 if KO, >0 if OK
+	 * 	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function close_file()
 	{

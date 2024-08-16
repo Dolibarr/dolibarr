@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Subscriptions;
 
 use Sabre\DAV\ICollection;
 use Sabre\DAV\IProperties;
 
 /**
- * ISubscription
+ * ISubscription.
  *
  * Nodes implementing this interface represent calendar subscriptions.
  *
@@ -34,7 +36,6 @@ use Sabre\DAV\IProperties;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ISubscription extends ICollection, IProperties {
-
-
+interface ISubscription extends ICollection, IProperties
+{
 }

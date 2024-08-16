@@ -20,7 +20,7 @@ STRIPE_LIVE_SECRET_KEY=Clave secreta en vivo
 STRIPE_LIVE_PUBLISHABLE_KEY=Clave en vivo publicable
 StripeLiveEnabled=Stripe live enabled (de lo contrario, prueba / modo de espacio aislado)
 StripeImportPayment=Importar pagos en franja
-ExampleOfTestCreditCard=Ejemplo de tarjeta de crédito para la prueba: %s =&gt; válido, %s =&gt; error CVC, %s =&gt; caducado, %s =&gt; cargo falla
+ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Pasarelas de banda
 BankAccountForBankTransfer=Cuenta bancaria para pagos de fondos
 StripeAccount=Cuenta de banda

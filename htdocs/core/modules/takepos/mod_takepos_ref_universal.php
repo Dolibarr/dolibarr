@@ -5,6 +5,8 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2020      Open-DSI	                    <support@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +19,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,6 +28,7 @@
  *	\ingroup    takepos
  *	\brief      File with Universal ref numbering module for takepos
  */
+
 dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
@@ -51,11 +54,12 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	public $nom = 'Universal';
 
 	/**
-	 *  Renvoi la description du modele de numerotation
+	 *  return description of the numbering model
 	 *
-	 * @return     string      Texte descripif
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $db, $langs;
 
@@ -75,13 +79,14 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$tooltip .= $langs->trans('GenericMaskCodes3');
 		$tooltip .= $langs->trans('GenericMaskCodes4a', $langs->transnoentities('CashDesk'), $langs->transnoentities('CashDesk'));
 		$tooltip .= $langs->trans('GenericMaskCodes5');
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 		$tooltip .= $langs->trans('CashDeskGenericMaskCodes6');
 
-		// Parametrage du prefix
+		// Setting up the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -92,7 +97,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	}
 
 	/**
-	 * Renvoi un exemple de numerotation
+	 * Return an example of numbering
 	 *
 	 * @return     string      Example
 	 */
@@ -114,10 +119,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	/**
 	 * Return next free value
 	 *
-	 * @param   Societe     $objsoc     Object thirdparty
-	 * @param   Facture		$invoice	Object invoice
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      Value if KO, <0 if KO
+	 * @param   Societe     	$objsoc     Object thirdparty
+	 * @param   Facture			$invoice	Object invoice
+	 * @param   string			$mode       'next' for next value or 'last' for last value
+	 * @return  string|int                Next value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc = null, $invoice = null, $mode = 'next')
 	{
@@ -125,7 +130,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		// On defini critere recherche compteur
+		// We define search criteria counter
 		$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
 
 		if (!$mask) {
@@ -138,7 +143,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 
 		$date = (empty($invoice->date) ? dol_now() : $invoice->date);
 		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
-		$mask = str_replace('{TN}', $pos_source, $mask);
+		$mask = str_replace('{TN}', (string) $pos_source, $mask);
 		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $date, $mode, false, null, $entity);
 
 		return $numFinal;
@@ -149,8 +154,9 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 	 * Return next free value
 	 *
 	 * @param   Societe     $objsoc         Object third party
-	 * @param   Object      $objforref      Object for number to search
+	 * @param   Facture     $objforref      Object for number to search
 	 * @return  string      Next free value
+	 * @deprecated see getNextValue
 	 */
 	public function getNumRef($objsoc, $objforref)
 	{

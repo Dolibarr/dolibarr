@@ -2,7 +2,7 @@
 AddThisPageToBookmarks=新增目前頁面到書籤
 Bookmark=書籤
 Bookmarks=書籤
-ListOfBookmarks=書簽清單
+ListOfBookmarks=書籤清單
 EditBookmarks=列出/編輯書籤
 NewBookmark=新書籤
 ShowBookmark=顯示書籤
@@ -20,3 +20,4 @@ ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=選擇已連結頁面開啟在�
 BookmarksManagement=書籤管理
 BookmarksMenuShortCut=Ctrl + shift + m
 NoBookmarks=未定義書籤
+NoBookmarkFound=找不到書籤

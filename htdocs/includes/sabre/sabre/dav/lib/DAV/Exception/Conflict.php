@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Exception;
 
 use Sabre\DAV;
 
 /**
- * Conflict
+ * Conflict.
  *
  * A 409 Conflict is thrown when a user tried to make a directory over an existing
  * file or in a parent directory that doesn't exist.
@@ -14,17 +16,15 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Conflict extends DAV\Exception {
-
+class Conflict extends DAV\Exception
+{
     /**
-     * Returns the HTTP statuscode for this exception
+     * Returns the HTTP statuscode for this exception.
      *
      * @return int
      */
-    function getHTTPCode() {
-
+    public function getHTTPCode()
+    {
         return 409;
-
     }
-
 }

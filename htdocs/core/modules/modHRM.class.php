@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2021  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +18,12 @@
  */
 
 /**
- * \defgroup   HRM 	Module hrm
- * \file       htdocs/core/modules/modHRM.class.php
- * \ingroup    HRM
- * \brief      Description and activation file for the module HRM
+ *  \defgroup   HRM 	Module hrm
+ *  \brief      Module for Human Resource Management (HRM)
+ *
+ *  \file       htdocs/core/modules/modHRM.class.php
+ *  \ingroup    HRM
+ *  \brief      Description and activation file for the module HRM
  */
 include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
@@ -56,7 +59,7 @@ class modHRM extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "HRM";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -105,14 +108,13 @@ class modHRM extends DolibarrModules
 		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(11, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("hrm");
 
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
-		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
 		$r = 0;
 
@@ -124,7 +126,7 @@ class modHRM extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array();
-		$this->tabs[] = array('data'=>'user:+skill_tab:Skills:hrm:1:/hrm/skill_tab.php?id=__ID__&objecttype=user');  					// To add a new tab identified by code tabname1
+		$this->tabs[] = array('data' => 'user:+skill_tab:Skills:hrm:1:/hrm/skill_tab.php?id=__ID__&objecttype=user');  					// To add a new tab identified by code tabname1
 		//$this->tabs[] = array('data'=>'job:+tabname1:Poste:mylangfile@hrm:1:/hrm/poste_list.php?fk_job=__ID__');  					// To add a new tab identified by code tabname1
 		// Example:
 		// $this->tabs[] = array('data'=>'objecttype:+tabname1:Title1:mylangfile@hrm:$user->rights->hrm->read:/hrm/mynewtab1.php?id=__ID__');  					// To add a new tab identified by code tabname1
@@ -139,9 +141,9 @@ class modHRM extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -250,9 +252,17 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->compare_advance->read)
 		$r++;
 
+		// Evaluation
+		$this->rights[$r][0] = 4029; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read all evaluations'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'evaluation';
+		$this->rights[$r][5] = 'readall'; // In php code, permission will be checked by test if ($user->rights->hrm->evaluation->read)
+		$r++;
+
 		// Read employee
 		$this->rights[$r][0] = 4031; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read personal information'; // Permission label
+		$this->rights[$r][1] = 'Read personal/HR information'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'read_personal_information';
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->hrm->read_personal_information->read)
@@ -260,7 +270,7 @@ class modHRM extends DolibarrModules
 
 		// Write employee
 		$this->rights[$r][0] = 4032; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Write personal information'; // Permission label
+		$this->rights[$r][1] = 'Write personal/HR information'; // Permission label
 		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write_personal_information';
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->hrm->write_personal_information->write)
@@ -277,6 +287,7 @@ class modHRM extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf;
 		// Permissions
 		$this->remove($options);
 
@@ -285,7 +296,10 @@ class modHRM extends DolibarrModules
 			return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 		}
 
-		$sql = array();
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='evaluation' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','evaluation',".((int) $conf->entity).")"
+		);
 
 		return $this->_init($sql, $options);
 	}

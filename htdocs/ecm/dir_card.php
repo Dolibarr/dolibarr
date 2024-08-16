@@ -22,6 +22,7 @@
  *	\brief     	Card of a directory for ECM module
  */
 
+// Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -40,16 +41,16 @@ $confirm    = GETPOST('confirm', 'alpha');
 
 $module  = GETPOST('module', 'alpha');
 $website = GETPOST('website', 'alpha');
-$pageid  = GETPOST('pageid', 'int');
+$pageid  = GETPOSTINT('pageid');
 if (empty($module)) {
 	$module = 'ecm';
 }
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -65,7 +66,7 @@ if (!$sortfield) {
 
 $section = GETPOST("section", 'alpha') ? GETPOST("section", 'alpha') : GETPOST("relativedir", 'alpha');
 if (!$section) {
-	dol_print_error('', "ErrorSectionParamNotDefined");
+	dol_print_error(null, "ErrorSectionParamNotDefined");
 	exit;
 }
 
@@ -82,28 +83,27 @@ if ($module == 'ecm') {
 		$relativepath = $section;
 		$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 	}
-} else // For example $module == 'medias'
-{
+} else { // For example $module == 'medias'
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 }
 
 // Permissions
-$permtoread = 0;
-$permtoadd = 0;
-$permtoupload = 0;
+$permissiontoread = 0;
+$permissiontoadd = 0;
+$permissiontoupload = 0;
 if ($module == 'ecm') {
-	$permtoread = $user->rights->ecm->read;
-	$permtoadd = $user->rights->ecm->setup;
-	$permtoupload = $user->rights->ecm->upload;
+	$permissiontoread = $user->hasRight("ecm", "read");
+	$permissiontoadd = $user->hasRight("ecm", "setup");
+	$permissiontoupload = $user->hasRight("ecm", "upload");
 }
 if ($module == 'medias') {
-	$permtoread = ($user->rights->mailing->lire || $user->rights->website->read);
-	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
-	$permtoupload = ($user->rights->mailing->creer || $user->rights->website->write);
+	$permissiontoread = ($user->hasRight("mailing", "lire") || $user->hasRight("website", "read"));
+	$permissiontoadd = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
+	$permissiontoupload = ($user->hasRight("mailing", "creer") || $user->hasRight("website", "write"));
 }
 
-if (!$permtoread) {
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
@@ -113,7 +113,7 @@ if (!$permtoread) {
  */
 
 // Upload file
-if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permtoupload) {
+if (GETPOST("sendit") && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontoupload) {
 	if (dol_mkdir($upload_dir) >= 0) {
 		$resupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir."/".dol_unescapefile($_FILES['userfile']['name']), 0, 0, $_FILES['userfile']['error']);
 		if (is_numeric($resupload) && $resupload > 0) {
@@ -125,8 +125,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permtoupload
 			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
 				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			} else // Known error
-			{
+			} else { // Known error
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
@@ -138,9 +137,9 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC) && $permtoupload
 }
 
 // Remove file
-if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permtoupload) {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontoupload) {
 	$langs->load("other");
-	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
+	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here
 	$ret = dol_delete_file($file);
 	if ($ret) {
 		setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -152,7 +151,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permtoupload) {
 }
 
 // Remove dir
-if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permtoupload) {
+if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoupload) {
 	$backtourl = DOL_URL_ROOT."/ecm/index.php";
 	if ($module == 'medias') {
 		$backtourl = DOL_URL_ROOT."/website/index.php?file_manager=1";
@@ -188,7 +187,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permtoupload) {
 }
 
 // Update dirname or description
-if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permtoadd) {
+if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 	$error = 0;
 
 	if ($module == 'ecm') {
@@ -205,9 +204,9 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permtoadd) {
 
 		// Fetch was already done
 		$ecmdir->label = dol_sanitizeFileName(GETPOST("label"));
-		$fk_parent = GETPOST("catParent", 'int');
-		if ($fk_parent == "-1") {
-			$ecmdir->fk_parent = "0";
+		$fk_parent = GETPOSTINT("catParent");
+		if ($fk_parent == -1) {
+			$ecmdir->fk_parent = 0;
 		} else {
 			$ecmdir->fk_parent = $fk_parent;
 		}
@@ -290,11 +289,11 @@ if ($module == 'ecm' && $ecmdir->id > 0) {
 	$object->fetch($ecmdir->id);
 }
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-dir_card');
 
 // Built the file List
-$filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
-$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+$filearrayall = dol_dir_list($upload_dir, "all", 0, '', '', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 $totalsize = 0;
 foreach ($filearray as $key => $file) {
 	$totalsize += $file['size'];
@@ -337,7 +336,7 @@ if ($module == 'ecm') {
 			$i++;
 		}
 	} else {
-		$s .= join(' -> ', explode('/', $section));
+		$s .= implode(' -> ', explode('/', $section));
 	}
 	$morehtmlref = '<a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s;
 }
@@ -453,41 +452,29 @@ print dol_get_fiche_end();
 if ($action != 'edit' && $action != 'delete' && $action != 'deletefile') {
 	print '<div class="tabsAction">';
 
-	if ($permtoadd) {
+	if ($permissiontoadd) {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.'">'.$langs->trans('Edit').'</a>';
 	}
 
-	if ($permtoadd) {
+	if ($permissiontoadd) {
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&token='.newToken().($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
 	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
-	//if (count($filearrayall) == 0)
-	//{
-	if ($permtoadd) {
-		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir&token='.newToken().($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
-	} else {
-		print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-	}
-	/*}
-	else
-	{
-		if (count($filearray) > 0)
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFiles").'">'.$langs->trans('Delete').'</a>';
-		else
-			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("CannotRemoveDirectoryContainsFilesOrDirs").'">'.$langs->trans('Delete').'</a>';
-	}*/
+	print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().($module ? '&module='.urlencode($module) : '').'&section='.urlencode($section).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), '', $permissiontoadd);
+
 	print '</div>';
 }
+
 
 // Confirm remove file
 if ($action == 'deletefile') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode(GETPOST("section", 'alpha')).'&urlfile='.urlencode(GETPOST("urlfile")).($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 }
 
-// Confirm remove file
-if ($action == 'delete_dir') {
+// Confirm remove dir
+if ($action == 'delete' || $action == 'delete_dir') {
 	$relativepathwithoutslash = preg_replace('/[\/]$/', '', $relativepath);
 
 	//Form to close proposal (signed or not)

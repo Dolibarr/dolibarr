@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = イベント組織
 EventOrganizationDescription = モジュールプロジェクトによるイベント編成
 EventOrganizationDescriptionLong= イベントの構成を管理する（提案、投票、または登録用の公開ページを使用して、ショー、会議、参加者、または講演者）
-#
-# Menu
-#
 EventOrganizationMenuLeft = 開催済イベント
 EventOrganizationConferenceOrBoothMenuLeft = 会議またはブース
-
 PaymentEvent=イベントの支払
-
-#
+EventFee=イベント料金
 # Admin page
-#
 NewRegistration=登録
 EventOrganizationSetup=イベント組織の設定
 EventOrganization=イベント主催
-Settings=設定
 EventOrganizationSetupPage = イベント組織設定ページ
 EVENTORGANIZATION_TASK_LABEL = プロジェクトは検証済なら自動的に作成するタスクのラベル
 EVENTORGANIZATION_TASK_LABELTooltip = 整理するイベントを検証と、プロジェクトにいくつかのタスクが自動的に作成される<br><br>例: <br>カンファレンス募集を送信<br>ブース募集を送信<br>カンファレンス提案を検証<br>ブース申請を検証<br>出席者向けのイベント参加登録を開始<br>話者にイベント催告を送信<br>ブース主催者にイベント催告を送信<br>出席者にイベント催告を送信
@@ -49,11 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Massaction「Sendemails」から
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 参加者リストの大衆活動「メール送信」からメールを送信するときに使用するメールのテンプレート
 EVENTORGANIZATION_FILTERATTENDEES_CAT = 出席者を作成/追加するフォームで、サードパーティのリストをカテゴリ内のサードパーティに制限する
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = 出席者を作成/追加するフォームで、サードパーティのリストを性質のあるサードパーティに制限する
-
-#
 # Object
-#
+OrganizedEvent=主催イベント
 EventOrganizationConfOrBooth= 会議またはブース
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = イベントの構成を管理する
 ConferenceOrBooth = 会議またはブース
 ConferenceOrBoothTab = 会議またはブース
@@ -62,10 +50,7 @@ DateOfRegistration = 登録日
 ConferenceOrBoothAttendee = 会議またはブースの参加者
 ApplicantOrVisitor=申請者または訪問者
 Speaker=スピーカー
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = 会議要求は受信済
 YourOrganizationEventBoothRequestWasReceived = ブースの要望は受信済み
 EventOrganizationEmailAskConf = 会議の要求
@@ -75,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = イベントへの登録
 EventOrganizationMassEmailAttendees = 参加者へのコミュニケーション
 EventOrganizationMassEmailSpeakers = 話者とのコミュニケーション
 ToSpeakers=スピーカーへ
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=会議を提案できるようにする
 AllowUnknownPeopleSuggestConfHelp=見知らぬ人がやりたい会議を提案できるようにする
 AllowUnknownPeopleSuggestBooth=ブースへの申請を許可する
@@ -87,42 +69,44 @@ PriceOfRegistration=登録価格
 PriceOfRegistrationHelp=イベントの登録または参加に支払う価格
 PriceOfBooth=ブース立ちのサブスクリプション価格
 PriceOfBoothHelp=ブース出展用サブスクリプション価格
+EventOrganizationICSLinkProject=イベントの ICS をリンクする
 EventOrganizationICSLink=会議用のリンクICS
-ConferenceOrBoothInformation=会議またはブース情報
+ConferenceOrBoothInformation=カンファレンスまたはブース情報
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=参加者
-ListOfAttendeesOfEvent=イベントプロジェクトの参加者リスト
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ICS リンクをダウンロード
 EVENTORGANIZATION_SECUREKEY = 会議を提案するための公開登録ページのキーを確保するためのシード
 SERVICE_BOOTH_LOCATION = ブースの場所に関する請求書の行に使用されるサービス
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = イベントへの参加者のサブスクリプションに関する請求書の行に使用されるサービス
 NbVotes=投票数
-#
 # Status
-#
 EvntOrgDraft = 下書き
 EvntOrgSuggested = 提案済
 EvntOrgConfirmed = 確定済み
 EvntOrgNotQualified = 資格なし
 EvntOrgDone = 済
 EvntOrgCancelled = キャンセル
-#
-# Public page
-#
+# Other
 SuggestForm = 提案ページ
 SuggestOrVoteForConfOrBooth = 提案または投票のためのページ
 EvntOrgRegistrationHelpMessage = ここでは、会議に投票したり、イベントの新規会議を提案したりできる。イベント期間中にブースを申請することもできる。
 EvntOrgRegistrationConfHelpMessage = ここでは、イベント中にアニメーション化する新規会議を提案できる。
 EvntOrgRegistrationBoothHelpMessage = ここでは、イベント中にブースを申請することができる。
 ListOfSuggestedConferences = 提案された会議のリスト
-ListOfSuggestedBooths = 提案ブース一覧
-ListOfConferencesOrBooths=イベントプロジェクトの会議やブースのリスト
+ListOfSuggestedBooths=おすすめブース
+ListOfConferencesOrBooths=イベントプロジェクトのカンファレンスやブース
 SuggestConference = 新規会議を提案する
 SuggestBooth = ブースを提案する
 ViewAndVote = 提案されたイベントを表示して投票する
 PublicAttendeeSubscriptionGlobalPage = イベントへの登録のための公開リンク
 PublicAttendeeSubscriptionPage = このイベントのみに登録するための公開リンク
 MissingOrBadSecureKey = セキュリティキーが無効であるか欠落している
-EvntOrgWelcomeMessage = このフォームを使用すると、イベントの新しい参加者として登録できる：<b> %s </b>
+EvntOrgWelcomeMessage = このフォームでは、イベントへの新規参加者として登録できる
 EvntOrgDuration = この会議は%sで始まり、%sで終わる。
 ConferenceAttendeeFee = イベント:「 '%s' 開催は%sから%sまで」への会議参加料金。
 BoothLocationFee = イベントのブース位置: '%s' で %s から %s まで
@@ -130,9 +114,10 @@ EventType = イベント種別
 LabelOfBooth=ブースラベル
 LabelOfconference=会議ラベル
 ConferenceIsNotConfirmed=登録できない。会議はまだ確定されていない
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%sは必ず%sの前
 DateMustBeAfterThan=%sは必ず%sの後
-
+MaxNbOfAttendeesReached=参加者の最大数に達した
 NewSubscription=登録
 OrganizationEventConfRequestWasReceived=会議への提案を受け取った
 OrganizationEventBoothRequestWasReceived=ブースのご要望をいただいた
@@ -142,13 +127,8 @@ OrganizationEventBulkMailToAttendees=これは、参加者としてのイベン�
 OrganizationEventBulkMailToSpeakers=これは、スピーカーとしてのイベントへの参加を思い出させるものだ。
 OrganizationEventLinkToThirdParty=サードパーティ（顧客、サプライヤー、またはパートナー）へのリンク
 OrganizationEvenLabelName=会議またはブースの公開名
-
 NewSuggestionOfBooth=ブース申請
-NewSuggestionOfConference=会議申請
-
-#
-# Vote page
-#
+NewSuggestionOfConference=カンファレンスの開催申し込み
 EvntOrgRegistrationWelcomeMessage = 会議またはブースの提案ページへようこそ。
 EvntOrgRegistrationConfWelcomeMessage = カンファレンスの提案ページへようこそ。
 EvntOrgRegistrationBoothWelcomeMessage = ブース提案ページへようこそ。
@@ -156,8 +136,8 @@ EvntOrgVoteHelpMessage = ここで、プロジェクトの提案されたイベ�
 VoteOk = あなたの投票が承認された。
 AlreadyVoted = あなたは既にこのイベントに投票している。
 VoteError = 投票中にエラーが発生した。もう一度やり直し願う。
-
-SubscriptionOk = 登録は検証済
+SubscriptionOk=登録が記録された
+AmountOfRegistrationPaid=支払った登録料の金額
 ConfAttendeeSubscriptionConfirmation = イベントへのサブスクリプションの確定
 Attendee = 参加者
 PaymentConferenceAttendee = 会議参加者の支払
@@ -165,8 +145,18 @@ PaymentBoothLocation = ブースの場所の支払
 DeleteConferenceOrBoothAttendee=出席者を削除する
 RegistrationAndPaymentWereAlreadyRecorder=電子メール<b>%s</b>の登録と支払は既に記録されている
 EmailAttendee=参加者の電子メール
+EmailCompany=法人のメール
 EmailCompanyForInvoice=法人の電子メール（請求書に対して、参加者の電子メールと異なる場合）
-ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
-ErrorSeveralCompaniesWithNameContactUs=この名前の会社がいくつか見つかったため、登録を自動的に検証ことはできない。手動検証については、%sまで問い合わせること。
+ErrorSeveralCompaniesWithEmailContactUs=このメールを使用している企業が数社見つかったため、お客様の登録を自動的に 検証することができない。手動検証については、%s まで問合せすることを願う。
+ErrorSeveralCompaniesWithNameContactUs=この名前の会社が複数見つかったため、あなたの登録を自動的に 確認することができない。手動検証については、%s まで問合せすることを願う。
 NoPublicActionsAllowedForThisEvent=このイベントの公開アクションは公開されていない
 MaxNbOfAttendees=参加者の最大数
+DateStartEvent=イベント開始日
+DateEndEvent=イベント終了日
+ModifyStatus=ステータスの変更
+ConfirmModifyStatus=ステータス変更の確定
+ConfirmModifyStatusQuestion=%s 選択されたレコード(s) を変更してよいか?
+RecordsUpdated=%s 記録が更新済
+RecordUpdated=記録更新済
+NoRecordUpdated=更新済レコードなし
+ProfitPerValidatedAttendee=参加者1人あたり利益

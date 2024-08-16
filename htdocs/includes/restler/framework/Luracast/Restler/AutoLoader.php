@@ -268,8 +268,8 @@ namespace Luracast\Restler {
 				return $this->loadThisLoader($className, $loader);
 			}
 			foreach ($loaders as $loader)
-			if (false !== $file = $this->loadThisLoader($className, $loader))
-				return $file;
+				if (false !== $file = $this->loadThisLoader($className, $loader))
+					return $file;
 
 			return false;
 		}
@@ -286,22 +286,51 @@ namespace Luracast\Restler {
 		private function loadThisLoader($className, $loader)
 		{
 			if (is_array($loader)
+				&& is_callable($loader)) {
+					$b = new $loader[0];
+					//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
+					//in case of multiple autoloader systems
+					if (property_exists($b, $loader[1])) {
+						if (false !== $file = $b::$loader[1]($className)
+							&& $this->exists($className, $b::$loader[1])) {
+								return $file;
+							}
+					}
+				} elseif (is_callable($loader)
+					&& false !== $file = $loader($className)
+					&& $this->exists($className, $loader)) {
+						return $file;
+				}
+				return false;
+
+			/* other code tested to reduce autoload conflict
+			$s = '';
+			if (is_array($loader)
 			&& is_callable($loader)) {
+				// @CHANGE DOL avoid autoload conflict
+				if (!preg_match('/LuraCast/', get_class($loader[0]))) {
+					return false;
+				}
 				$b = new $loader[0];
-				//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
+				// @CHANGE DOL avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
 				//in case of multiple autoloader systems
 				if (property_exists($b, $loader[1])) {
 					if (false !== $file = $b::$loader[1]($className)
-					&& $this->exists($className, $b::$loader[1])) {
-						return $file;
-					}
+						&& $this->exists($className, $b::$loader[1])) {
+							return $file;
+						}
 				}
-			} elseif (is_callable($loader)
-			&& false !== $file = $loader($className)
-				&& $this->exists($className, $loader)) {
-				return $file;
+			} elseif (is_callable($loader, false, $s)) {
+				// @CHANGE DOL avoid PHP infinite loop (detected when xdebug is on)
+				if ($s == 'Luracast\Restler\AutoLoader::__invoke') {
+					return false;
+				}
+				if (false !== ($file = $loader($className)) && $this->exists($className, $loader)) {
+					return $file;
+				}
 			}
 			return false;
+			*/
 		}
 
 		/**
@@ -417,7 +446,8 @@ namespace Luracast\Restler {
 			if (false !== $includeReference = $this->discover($className))
 			return $includeReference;
 
-			static::thereCanBeOnlyOne();
+			// @CHANGE LDR Reduce cases of conflicts with the messy autoload
+			//static::thereCanBeOnlyOne();
 
 			if (false !== $includeReference = $this->loadAliases($className))
 			return $includeReference;
@@ -426,7 +456,7 @@ namespace Luracast\Restler {
 			return $includeReference;
 
 			if (false !== $includeReference = $this->loadLastResort($className))
-			return $includeReference;
+				return $includeReference;
 
 			static::seen($className, true);
 			return null;

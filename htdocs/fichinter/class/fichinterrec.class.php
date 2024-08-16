@@ -7,6 +7,9 @@
  * Copyright (C) 2013       Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016-2018  Charlie Benke			<charlie@patas-monkey.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,13 +22,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *  \file       htdocs/fichinter/class/fichinterrec.class.php
- *  \ingroup    facture
- *  \brief      Fichier de la classe des factures recurentes
+ *  \ingroup    fichinter
+ *  \brief      File for class to manage recurring interventions
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
@@ -34,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 
 /**
- *	Classe de gestion des factures recurrentes/Modeles
+ * Class to manage recurring interventions
  */
 class FichinterRec extends Fichinter
 {
@@ -50,12 +53,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * {@inheritdoc}
 	 */
-	protected $table_ref_field = 'titre';
+	protected $table_ref_field = 'title';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'intervention';
+
 
 	/**
 	 * @var string title
@@ -64,9 +68,25 @@ class FichinterRec extends Fichinter
 	public $number;
 	public $date;
 	public $amount;
-	public $remise;
 	public $tva;
 	public $total;
+
+	/**
+	 * @var int
+	 */
+	public $auto_validate;
+
+	/**
+	 * @var int Frequency
+	 */
+	public $frequency;
+
+	public $id_origin;
+
+	/**
+	 * @var string Unit frequency
+	 */
+	public $unit_frequency;
 
 	/**
 	 * @var int Proposal Id
@@ -90,6 +110,10 @@ class FichinterRec extends Fichinter
 	 * int rank
 	 */
 	public $rang;
+
+	/**
+	 * @var int special code
+	 */
 	public $special_code;
 
 	public $usenewprice = 0;
@@ -104,14 +128,11 @@ class FichinterRec extends Fichinter
 		$this->db = $db;
 
 		//status dans l'ordre de l'intervention
-		$this->statuts[0] = 'Draft';
-		$this->statuts[1] = 'Closed';
+		$this->labelStatus[0] = 'Draft';
+		$this->labelStatus[1] = 'Closed';
 
-		$this->statuts_short[0] = 'Draft';
-		$this->statuts_short[1] = 'Closed';
-
-		$this->statuts_logo[0] = 'statut0';
-		$this->statuts_logo[1] = 'statut1';
+		$this->labelStatusShort[0] = 'Draft';
+		$this->labelStatusShort[1] = 'Closed';
 	}
 
 	/**
@@ -122,7 +143,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 
@@ -131,7 +152,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *  @param      User    $user       User object
 	 *  @param      int     $notrigger  no trigger
-	 *  @return     int                 <0 if KO, id of fichinter if OK
+	 *  @return     int                 Return integer <0 if KO, id of fichinter if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -151,15 +172,13 @@ class FichinterRec extends Fichinter
 		$fichintsrc = new Fichinter($this->db);
 
 		$result = $fichintsrc->fetch($this->id_origin);
-		$result = $fichintsrc->fetch_lines(1); // to get all lines
-
+		if ($result > 0) {
+			$result = $fichintsrc->fetch_lines(); // to get all lines
+		}
 
 		if ($result > 0) {
-			// On positionne en mode brouillon la facture
-			$this->brouillon = 1;
-
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter_rec (";
-			$sql .= "titre";
+			$sql .= "title";
 			$sql .= ", fk_soc";
 			$sql .= ", entity";
 			$sql .= ", datec";
@@ -171,7 +190,6 @@ class FichinterRec extends Fichinter
 			$sql .= ", fk_projet";
 			$sql .= ", fk_contrat";
 			$sql .= ", modelpdf";
-
 			$sql .= ", frequency";
 			$sql .= ", unit_frequency";
 			$sql .= ", date_when";
@@ -179,7 +197,6 @@ class FichinterRec extends Fichinter
 			$sql .= ", nb_gen_done";
 			$sql .= ", nb_gen_max";
 			// $sql.= ", auto_validate";
-
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($this->title)."'";
 			$sql .= ", ".($this->socid > 0 ? ((int) $this->socid) : 'null');
@@ -190,7 +207,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fichintsrc->note_private) ? ("'".$this->db->escape($fichintsrc->note_private)."'") : "null");
 			$sql .= ", ".(!empty($fichintsrc->note_public) ? ("'".$this->db->escape($fichintsrc->note_public)."'") : "null");
 			$sql .= ", ".((int) $user->id);
-			// si c'est la même société on conserve les liens vers le projet et le contrat
+			// If the company is the same, keep the links to the project and the contract
 			if ($this->socid == $fichintsrc->socid) {
 				$sql .= ", ".(!empty($fichintsrc->fk_project) ? ((int) $fichintsrc->fk_project) : "null");
 				$sql .= ", ".(!empty($fichintsrc->fk_contrat) ? ((int) $fichintsrc->fk_contrat) : "null");
@@ -200,12 +217,12 @@ class FichinterRec extends Fichinter
 
 			$sql .= ", ".(!empty($fichintsrc->model_pdf) ? "'".$this->db->escape($fichintsrc->model_pdf)."'" : "''");
 
-			// récurrence
+			// Frequency
 			$sql .= ", ".(!empty($this->frequency) ? ((int) $this->frequency) : "null");
 			$sql .= ", '".$this->db->escape($this->unit_frequency)."'";
 			$sql .= ", ".(!empty($this->date_when) ? "'".$this->db->idate($this->date_when)."'" : 'null');
 			$sql .= ", ".(!empty($this->date_last_gen) ? "'".$this->db->idate($this->date_last_gen)."'" : 'null');
-			$sql .= ", 0"; // we start à 0
+			$sql .= ", 0"; // we start at 0
 			$sql .= ", ".((int) $this->nb_gen_max);
 			// $sql.= ", ".$this->auto_validate;
 			$sql .= ")";
@@ -219,10 +236,10 @@ class FichinterRec extends Fichinter
 				$num = count($fichintsrc->lines);
 				for ($i = 0; $i < $num; $i++) {
 					//var_dump($fichintsrc->lines[$i]);
-					$result_insert = $this->addline(
+					$result_insert = $this->addLineRec(
 						$fichintsrc->lines[$i]->desc,
 						$fichintsrc->lines[$i]->duration,
-						$fichintsrc->lines[$i]->datei,
+						$fichintsrc->lines[$i]->date,
 						$fichintsrc->lines[$i]->rang,
 						$fichintsrc->lines[$i]->subprice,
 						$fichintsrc->lines[$i]->qty,
@@ -235,7 +252,7 @@ class FichinterRec extends Fichinter
 						0,
 						$fichintsrc->lines[$i]->product_type,
 						$fichintsrc->lines[$i]->special_code,
-						$fichintsrc->lines[$i]->label,
+						!empty($fichintsrc->lines[$i]->label) ? $fichintsrc->lines[$i]->label : "",
 						$fichintsrc->lines[$i]->fk_unit
 					);
 
@@ -246,6 +263,7 @@ class FichinterRec extends Fichinter
 
 				if ($error) {
 					$this->db->rollback();
+					return -1;
 				} else {
 					$this->db->commit();
 					return $this->id;
@@ -272,16 +290,17 @@ class FichinterRec extends Fichinter
 	 */
 	public function fetch($rowid = 0, $ref = '', $ref_ext = '')
 	{
-		$sql = 'SELECT f.titre as title, f.fk_soc';
+		$sql = 'SELECT f.title, f.fk_soc';
 		$sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql .= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.auto_validate';
 		$sql .= ', f.note_private, f.note_public, f.fk_user_author';
+		$sql .= ', f.status';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
 		if ($rowid > 0) {
 			$sql .= " WHERE f.rowid = ".((int) $rowid);
 		} elseif ($ref) {
-			$sql .= " WHERE f.titre = '".$this->db->escape($ref)."'";
+			$sql .= " WHERE f.title = '".$this->db->escape($ref)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
@@ -292,32 +311,29 @@ class FichinterRec extends Fichinter
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $rowid;
-				$this->titre				= $obj->title;
-				$this->title				= $obj->title;
+				$this->title = $obj->title;
 				$this->ref = $obj->title;
 				$this->description = $obj->description;
-				$this->datec				= $obj->datec;
+				$this->datec = $obj->datec;
 				$this->duration = $obj->duree;
-				$this->socid				= $obj->fk_soc;
-				$this->statut = 0;
-				$this->fk_project			= $obj->fk_projet;
-				$this->fk_contrat			= $obj->fk_contrat;
+				$this->socid = $obj->fk_soc;
+				$this->status = $obj->status;
+				$this->statut = $obj->status;	// deprecated
+				$this->fk_project = $obj->fk_projet;
+				$this->fk_contrat = $obj->fk_contrat;
 				$this->note_private = $obj->note_private;
-				$this->note_public			= $obj->note_public;
-				$this->user_author			= $obj->fk_user_author;
-				$this->model_pdf			= $obj->model_pdf;
-				$this->modelpdf				= $obj->model_pdf; // deprecated
-				$this->rang = $obj->rang;
-				$this->special_code = $obj->special_code;
-				$this->frequency			= $obj->frequency;
+				$this->note_public = $obj->note_public;
+				$this->user_author = $obj->fk_user_author;
+				$this->model_pdf = empty($obj->model_pdf) ? "" : $obj->model_pdf;
+				$this->rang = !empty($obj->rang) ? $obj->rang : "";
+				$this->special_code = !empty($obj->special_code) ? $obj->special_code : "";
+				$this->frequency = $obj->frequency;
 				$this->unit_frequency = $obj->unit_frequency;
-				$this->date_when			= $this->db->jdate($obj->date_when);
-				$this->date_last_gen		= $this->db->jdate($obj->date_last_gen);
+				$this->date_when = $this->db->jdate($obj->date_when);
+				$this->date_last_gen = $this->db->jdate($obj->date_last_gen);
 				$this->nb_gen_done = $obj->nb_gen_done;
 				$this->nb_gen_max = $obj->nb_gen_max;
-				$this->auto_validate		= $obj->auto_validate;
-
-				$this->brouillon = 1;
+				$this->auto_validate = $obj->auto_validate;
 
 				// Lines
 				$result = $this->fetch_lines();
@@ -350,8 +366,8 @@ class FichinterRec extends Fichinter
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description, ';
-		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type as product_type, l.label as custom_label, l.description,';
+		$sql .= ' l.price, l.qty, l.tva_tx, l.remise_percent, l.subprice, l.duree, l.date,';
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql .= ' l.rang, l.special_code,';
 		$sql .= ' l.fk_unit, p.ref as product_ref, p.fk_product_type as fk_product_type,';
@@ -381,19 +397,16 @@ class FichinterRec extends Fichinter
 				$line->qty = $objp->qty;
 				$line->duree = $objp->duree;
 				$line->duration = $objp->duree;
-				$line->datei = $objp->date;
+				$line->date = $objp->date;
 				$line->subprice = $objp->subprice;
 				$line->tva_tx = $objp->tva_tx;
 				$line->remise_percent = $objp->remise_percent;
-				$line->fk_remise_except = $objp->fk_remise_except;
+				$line->fk_remise_except = !empty($objp->fk_remise_except) ? $objp->fk_remise_except : "";
 				$line->fk_product = $objp->fk_product;
-				$line->date_start = $objp->date_start;
-				$line->date_end = $objp->date_end;
-				$line->info_bits = $objp->info_bits;
+				$line->info_bits = !empty($objp->info_bits) ? $objp->info_bits : "";
 				$line->total_ht = $objp->total_ht;
 				$line->total_tva = $objp->total_tva;
 				$line->total_ttc = $objp->total_ttc;
-				$line->code_ventilation = $objp->fk_code_ventilation;
 				$line->rang = $objp->rang;
 				$line->special_code = $objp->special_code;
 				$line->fk_unit = $objp->fk_unit;
@@ -415,16 +428,13 @@ class FichinterRec extends Fichinter
 	/**
 	 * 	Delete template fichinter rec
 	 *
-	 *	@param	 	int		$rowid	  	    Id of fichinter rec to delete. If empty, we delete current instance of fichinter rec
-	 *	@param		int		$notrigger	    1=Does not execute triggers, 0= execute triggers
-	 *	@param		int		$idwarehouse    Id warehouse to use for stock change.
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@param      User	$user			Object user who delete
+	 *	@param		int		$notrigger		Disable trigger
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($rowid = 0, $notrigger = 0, $idwarehouse = -1)
+	public function delete(User $user, $notrigger = 0)
 	{
-		if (empty($rowid)) {
-			$rowid = $this->id;
-		}
+		$rowid = $this->id;
 
 		dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
 
@@ -456,28 +466,28 @@ class FichinterRec extends Fichinter
 
 
 	/**
-	 *  Add a line to fichinter rec
+	 *  Add line to a recurring intervention
 	 *
-	 *  @param		string		$desc               Description de la ligne
-	 *  @param		integer		$duration           Durée
-	 *  @param		string	    $datei				Date
-	 *  @param	    int			$rang			    Position of line
-	 *  @param		double		$pu_ht			    Unit price without tax (> 0 even for credit note)
-	 *  @param		double		$qty			 	Quantity
-	 *  @param		double		$txtva		   	    Forced VAT rate, otherwise -1
-	 *  @param		int			$fk_product	  	    Id of predefined product/service
-	 *  @param		double		$remise_percent  	Percentage of discount on line
+	 *  @param		string		$desc				Line description
+	 *  @param		integer		$duration			Duration
+	 *  @param		string		$date				Date
+	 *  @param		int			$rang				Position of line
+	 *  @param		double		$pu_ht				Unit price without tax (> 0 even for credit note)
+	 *  @param		double		$qty				Quantity
+	 *  @param		double		$txtva				Forced VAT rate, otherwise -1
+	 *  @param		int			$fk_product			Id of predefined product/service
+	 *  @param		double		$remise_percent		Percentage of discount for line
 	 *  @param		string		$price_base_type	HT or TTC
 	 *  @param		int			$info_bits			Bits for type of lines
-	 *  @param		int			$fk_remise_except   Id discount
-	 *  @param		double		$pu_ttc			    Unit price with tax (> 0 even for credit note)
+	 *  @param		int			$fk_remise_except	Id discount (not used)
+	 *  @param		double		$pu_ttc				Unit price with tax (> 0 even for credit note)
 	 *  @param		int			$type				Type of line (0=product, 1=service)
 	 *  @param		int			$special_code		Special code
 	 *  @param		string		$label				Label of the line
 	 *  @param		string		$fk_unit			Unit
-	 *  @return		int			 				    <0 if KO, Id of line if OK
+	 *  @return		int			 					if KO: <0 || if OK: Id of line
 	 */
-	public function addline($desc, $duration, $datei, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = '', $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
+	public function addLineRec($desc, $duration, $date, $rang = -1, $pu_ht = 0, $qty = 0, $txtva = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $info_bits = 0, $fk_remise_except = 0, $pu_ttc = 0, $type = 0, $special_code = 0, $label = '', $fk_unit = null)
 	{
 		global $mysoc;
 
@@ -485,10 +495,11 @@ class FichinterRec extends Fichinter
 
 		// Check parameters
 		if ($type < 0) {
+			$this->error = 'Bad value for parameter type';
 			return -1;
 		}
 
-		if ($this->brouillon) {
+		if ($this->status == self::STATUS_DRAFT) {
 			// Clean parameters
 			$remise_percent = price2num($remise_percent);
 			$qty = price2num($qty);
@@ -500,7 +511,7 @@ class FichinterRec extends Fichinter
 			}
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
-			if (!preg_match('/\((.*)\)/', $txtva)) {
+			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
 			}
 
@@ -519,6 +530,8 @@ class FichinterRec extends Fichinter
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
+
+			$pu_ht = $tabprice[3];
 
 			$product_type = $type;
 			if ($fk_product) {
@@ -539,8 +552,7 @@ class FichinterRec extends Fichinter
 			$sql .= ", fk_product";
 			$sql .= ", product_type";
 			$sql .= ", remise_percent";
-			//$sql.= ", subprice";
-			$sql .= ", remise";
+			$sql .= ", subprice";
 			$sql .= ", total_ht";
 			$sql .= ", total_tva";
 			$sql .= ", total_ttc";
@@ -551,16 +563,14 @@ class FichinterRec extends Fichinter
 			$sql .= (int) $this->id;
 			$sql .= ", ".(!empty($label) ? "'".$this->db->escape($label)."'" : "null");
 			$sql .= ", ".(!empty($desc) ? "'".$this->db->escape($desc)."'" : "null");
-			$sql .= ", ".(!empty($datei) ? "'".$this->db->idate($datei)."'" : "null");
+			$sql .= ", ".(!empty($date) ? "'".$this->db->idate($date)."'" : "null");
 			$sql .= ", ".$duration;
-			//$sql.= ", ".price2num($pu_ht);
 			//$sql.= ", ".(!empty($qty)? $qty :(!empty($duration)? $duration :"null"));
 			//$sql.= ", ".price2num($txtva);
 			$sql .= ", ".(!empty($fk_product) ? $fk_product : "null");
 			$sql .= ", ".$product_type;
 			$sql .= ", ".(!empty($remise_percent) ? $remise_percent : "null");
-			//$sql.= ", '".price2num($pu_ht)."'";
-			$sql .= ", null";
+			$sql .= ", '".price2num($pu_ht)."'";
 			$sql .= ", '".price2num($total_ht)."'";
 			$sql .= ", '".price2num($total_tva)."'";
 			$sql .= ", '".price2num($total_ttc)."'";
@@ -569,13 +579,16 @@ class FichinterRec extends Fichinter
 			$sql .= ", ".(!empty($fk_unit) ? $fk_unit : "null");
 			$sql .= ")";
 
-			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
+			dol_syslog(get_class($this)."::addLineRec", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				return 1;
 			} else {
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
+		} else {
+			$this->error = 'Bad status of recurring intervention. Must be draft status to allow addition of lines';
+			return -1;
 		}
 	}
 
@@ -592,7 +605,7 @@ class FichinterRec extends Fichinter
 	public function set_auto($user, $freq, $courant)
 	{
 		// phpcs:enable
-		if ($user->rights->fichinter->creer) {
+		if ($user->hasRight('fichinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter_rec ";
 			$sql .= " SET frequency='".$this->db->escape($freq)."'";
 			$sql .= ", date_last_gen='".$this->db->escape($courant)."'";
@@ -614,7 +627,7 @@ class FichinterRec extends Fichinter
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *  @param	int		$withpicto      Add picto into link
 	 *  @param  string	$option		    Where point the link
@@ -652,7 +665,7 @@ class FichinterRec extends Fichinter
 		}
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -668,35 +681,34 @@ class FichinterRec extends Fichinter
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *	@param	string		$option		''=Create a specimen fichinter with lines, 'nolines'=No lines
-	 *  @return	void
+	 *  @return int
 	 */
-	public function initAsSpecimen($option = '')
+	public function initAsSpecimen()
 	{
-		global $user, $langs, $conf;
+		//$now = dol_now();
+		//$arraynow = dol_getdate($now);
+		//$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		$now = dol_now();
-		$arraynow = dol_getdate($now);
-		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
-
-		parent::initAsSpecimen($option);
+		parent::initAsSpecimen();
 
 		$this->usenewprice = 1;
+
+		return 1;
 	}
 
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param DoliDB $db Database handler
-	 * @param int $origin_id Old thirdparty id
-	 * @param int $dest_id New thirdparty id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array('fichinter_rec');
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 
 	/**
@@ -721,7 +733,7 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	int		$frequency		value of frequency
 	 *	@param	 	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -760,12 +772,12 @@ class FichinterRec extends Fichinter
 	 *
 	 *	@param	 	datetime	$date					date of execution
 	 *	@param	 	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
-	 *	@return		int									<0 if KO, >0 if OK
+	 *	@return		int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setNextDate($date, $increment_nb_gen_done = 0)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setNextDate was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
@@ -792,12 +804,12 @@ class FichinterRec extends Fichinter
 	 *	Update the maximum period
 	 *
 	 *	@param	 	int		$nb		number of maximum period
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@return		int				Return integer <0 if KO, >0 if OK
 	 */
 	public function setMaxPeriod($nb)
 	{
 		if (!$this->table_element) {
-			dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined", LOG_ERR);
+			dol_syslog(get_class($this)."::setMaxPeriod was called on object with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 
@@ -823,7 +835,7 @@ class FichinterRec extends Fichinter
 	 *	Update the auto validate fichinter
 	 *
 	 *	@param	 	int		$validate		0 to create in draft, 1 to create and validate fichinter
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -849,7 +861,7 @@ class FichinterRec extends Fichinter
 	/**
 	 *	Update the Number of Generation Done
 	 *
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
 	public function updateNbGenDone()
 	{
@@ -862,16 +874,17 @@ class FichinterRec extends Fichinter
 		$sql .= ' SET nb_gen_done = nb_gen_done + 1';
 		$sql .= ' , date_last_gen = now()';
 		// si on et arrivé à la fin des génération
-		if ($this->nb_gen_max == $this->nb_gen_done + 1) {
-			$sql .= ' , statut = 1';
+		if ($this->nb_gen_max <= $this->nb_gen_done + 1) {
+			$sql .= ' , status = 1';
 		}
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			$this->nb_gen_done = $this->nb_gen_done + 1;
-			$this->nb_gen_done = dol_now();
+			$this->nb_gen_done++;
+			$this->date_last_gen = dol_now();
+			//$this->date_when = ...
 			return 1;
 		} else {
 			dol_print_error($this->db);

@@ -1,0 +1,51 @@
+# Copyright (C) 2018 Nicolas ZABOURI    <info@inovea-conseil.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+# Module label 'ModuledatapolicyName'
+Module4100Name = 資料隱私政策
+# Module description 'ModuledatapolicyDesc'
+Module4100Desc = 數據隱私管理的模塊（符合GDPR）
+# Administration page
+datapolicySetup = 模組數據隱私政策設置
+Deletion = 刪除資料
+datapolicySetupPage = 據您所在國家/地區的法律（例如 GDPR <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5  </a> )， 個人資料的保存期限不得超過資料收集目的所需的期限（存檔目的除外）。<br> 在一定時間內無事件發生後，將自動刪除數據（您在下方指示的期限）。
+NB_MONTHS = 1 %s 月份
+ONE_YEAR = 1 年
+NB_YEARS = 1%s 年
+DATAPOLICY_TIERS_CLIENT = 顧客
+DATAPOLICY_TIERS_PROSPECT = 可能性
+DATAPOLICY_TIERS_PROSPECT_CLIENT = 潛在客戶/顧客
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = 非潛在客戶/非顧客
+DATAPOLICY_TIERS_FOURNISSEUR = 供應商
+DATAPOLICY_CONTACT_CLIENT = 顧客
+DATAPOLICY_CONTACT_PROSPECT = 可能性
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = 潛在客戶/客戶
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 非潛在客戶/非顧客
+DATAPOLICY_CONTACT_FOURNISSEUR = 供應商
+DATAPOLICY_ADHERENT = 會員
+DATAPOLICY_Tooltip_SETUP = 聯絡類型 - 展示你選擇的每種類型。
+SendAgreementText = 您可以向所有相關聯絡人（尚未收到電子郵件且您尚未為其註冊任何有關 GDPR 協議的聯絡人）發送 GDPR 電子郵件。為此，請使用以下按鈕。
+SendAgreement = 發電郵
+AllAgreementSend = 所有電郵已經發送
+TXTLINKDATAPOLICYACCEPT = 連結「同意」的文本
+TXTLINKDATAPOLICYREFUSE = 連結「不同意」的文本
+# Extrafields
+DATAPOLICY_BLOCKCHECKBOX = GDPR：個人資料處理
+DATAPOLICY_consentement = 已獲得同意處理其個人資料
+DATAPOLICY_opposition_traitement = 反對處理他的其個人資料
+DATAPOLICY_opposition_prospection = 反對為了市場開發目的處理其個人資料
+# Notes added during an anonymization
+DATAPOLICY_date = 同意/不同意 GDPR 的日期
+DATAPOLICY_send = 既定日期郵件已經發送
+MailSent = 電郵已經發送
+NUMBER_MONTH_BEFORE_DELETION = 刪除前的月數

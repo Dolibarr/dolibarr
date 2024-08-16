@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
- *
+ * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class Fiscalyear extends CommonObject
 	/**
 	 * @var string picto
 	 */
-	public $picto = 'technic';
+	public $picto = 'calendar';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -54,12 +55,6 @@ class Fiscalyear extends CommonObject
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
-
-	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var int ID
@@ -92,15 +87,26 @@ class Fiscalyear extends CommonObject
 	 */
 	public $datec;
 
-	public $statut; // 0=open, 1=closed
+	/**
+	 * @var int status 0=open, 1=closed
+	 * @deprecated
+	 * @see $status
+	 */
+	public $statut;
+
+	/**
+	 * @var int status 0=open, 1=closed
+	 */
+	public $status;
 
 	/**
 	 * @var int Entity
 	 */
 	public $entity;
 
-	public $statuts = array();
-	public $statuts_short = array();
+
+	const STATUS_OPEN = 0;
+	const STATUS_CLOSED = 1;
 
 
 	/**
@@ -110,19 +116,18 @@ class Fiscalyear extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $langs;
-
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
-		$this->statuts = array(0 => 'Opened', 1 => 'Closed');
+		$this->ismultientitymanaged = 1;
+		$this->labelStatusShort = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
+		$this->labelStatus = array(self::STATUS_OPEN => 'Opened', self::STATUS_CLOSED => 'Closed');
 	}
 
 	/**
 	 *	Create object in database
 	 *
 	 *	@param		User	$user   User making creation
-	 *	@return 	int				<0 if KO, >0 if OK
+	 *	@return 	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user)
 	{
@@ -177,12 +182,10 @@ class Fiscalyear extends CommonObject
 	 *	Update record
 	 *
 	 *	@param	User	$user		User making update
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user)
 	{
-		global $langs;
-
 		// Check parameters
 		if (empty($this->date_start) && empty($this->date_end)) {
 			$this->error = 'ErrorBadParameter';
@@ -195,7 +198,7 @@ class Fiscalyear extends CommonObject
 		$sql .= " SET label = '".$this->db->escape($this->label)."'";
 		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
 		$sql .= ", date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", statut = '".$this->db->escape($this->statut ? $this->statut : 0)."'";
+		$sql .= ", statut = '".$this->db->escape($this->status ? $this->status : 0)."'";
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -216,11 +219,11 @@ class Fiscalyear extends CommonObject
 	 * Load an object from database
 	 *
 	 * @param	int		$id		Id of record to load
-	 * @return	int				<0 if KO, >0 if OK
+	 * @return	int				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id)
 	{
-		$sql = "SELECT rowid, label, date_start, date_end, statut";
+		$sql = "SELECT rowid, label, date_start, date_end, statut as status";
 		$sql .= " FROM ".$this->db->prefix()."accounting_fiscalyear";
 		$sql .= " WHERE rowid = ".((int) $id);
 
@@ -234,7 +237,8 @@ class Fiscalyear extends CommonObject
 			$this->date_start	= $this->db->jdate($obj->date_start);
 			$this->date_end = $this->db->jdate($obj->date_end);
 			$this->label = $obj->label;
-			$this->statut	    = $obj->statut;
+			$this->statut = $obj->status;
+			$this->status = $obj->status;
 
 			return 1;
 		} else {
@@ -246,16 +250,16 @@ class Fiscalyear extends CommonObject
 	/**
 	 *	Delete record
 	 *
-	 *	@param	int		$id		Id of record to delete
-	 *	@return	int				<0 if KO, >0 if OK
+	 *	@param	User	$user	User that delete
+	 *	@return	int				Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($id)
+	public function delete($user)
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".$this->db->prefix()."accounting_fiscalyear WHERE rowid = ".((int) $id);
+		$sql = "DELETE FROM ".$this->db->prefix()."accounting_fiscalyear";
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$this->db->commit();
@@ -268,7 +272,36 @@ class Fiscalyear extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 * getTooltipContentArray
+	 *
+	 * @param array $params ex option, infologin
+	 * @since v18
+	 * @return array
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $langs;
+
+		$langs->load('compta');
+
+		$datas = [];
+		$datas['picto'] = img_picto('', $this->picto).' <b><u>'.$langs->trans("FiscalPeriod").'</u></b>';
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->date_start)) {
+			$datas['date_start'] = '<br><b>'.$langs->trans('DateStart').':</b> '.dol_print_date($this->date_start, 'day');
+		}
+		if (isset($this->date_start)) {
+			$datas['date_end'] = '<br><b>'.$langs->trans('DateEnd').':</b> '.dol_print_date($this->date_end, 'day');
+		}
+
+		return $datas;
+	}
+
+	/**
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *  @param	    int   	    $notooltip		          1=Disable tooltip
@@ -280,25 +313,38 @@ class Fiscalyear extends CommonObject
 		global $conf, $langs, $user;
 
 		if (empty($this->ref)) {
-			$this->ref = $this->id;
+			$this->ref = (string) $this->id;
 		}
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
 		}
-
-		$result = '';
-
-		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
-
-		if (empty($user->rights->accounting->fiscalyear->write)) {
+		$option = '';
+		if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$option = 'nolink';
 		}
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+			'nofetch' => 1,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = 'ToComplete';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
+		$url = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$this->id;
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -306,28 +352,14 @@ class Fiscalyear extends CommonObject
 			}
 		}
 
-		if ($short) {
-			return $url;
-		}
-
-		$label = '';
-
-		if ($user->rights->accounting->fiscalyear->write) {
-			$label = '<u>'.$langs->trans("FiscalPeriod").'</u>';
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
-			if (isset($this->statut)) {
-				$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
-			}
-		}
-
 		$linkclose = '';
-		if (empty($notooltip) && $user->rights->accounting->fiscalyear->write) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-				$label = $langs->trans("FiscalYear");
+		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+				$label = $langs->trans("FiscalPeriod");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
+			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -341,7 +373,7 @@ class Fiscalyear extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -359,7 +391,7 @@ class Fiscalyear extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -373,37 +405,22 @@ class Fiscalyear extends CommonObject
 	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-
-		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
-		} elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
-		} elseif ($mode == 2) {
-			if ($status == 0) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			} elseif ($status == 1) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		} elseif ($mode == 3) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8');
-			}
-		} elseif ($mode == 4) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
-			}
-		} elseif ($mode == 5) {
-			if ($status == 0 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-			} elseif ($status == 1 && !empty($this->statuts_short[$status])) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
-			}
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
+			global $langs;
+			//$langs->load("mymodule@mymodule");
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Disabled');
 		}
+
+		$statusType = 'status4';
+		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_CLOSED) {
+			$statusType = 'status6';
+		}
+
+		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
@@ -425,7 +442,9 @@ class Fiscalyear extends CommonObject
 		if ($result) {
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
+
 				$this->id = $obj->rowid;
+
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
@@ -440,9 +459,9 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of entries by fiscal year
 	 *
-	 *	@param	int		$datestart	Date start to scan
-	 *	@param	int		$dateend	Date end to scan
-	 *	@return	string				Number of entries
+	 *	@param	int|string		$datestart	Date start to scan
+	 *	@param	int|string		$dateend	Date end to scan
+	 *	@return	string			Number of entries
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -474,8 +493,8 @@ class Fiscalyear extends CommonObject
 	/**
 	 *  Return the number of movements by fiscal year
 	 *
-	 *  @param	int		$datestart	Date start to scan
-	 *  @param	int		$dateend	Date end to scan
+	 *  @param	int|string		$datestart	Date start to scan
+	 *  @param	int|string		$dateend	Date end to scan
 	 *  @return	string				Number of movements
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')

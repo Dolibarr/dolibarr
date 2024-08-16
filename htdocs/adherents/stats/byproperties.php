@@ -1,5 +1,7 @@
 <?php
-/* Copyright (c) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2012		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +23,7 @@
  *		\brief      Page with statistics on members
  */
 
+// Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -39,8 +42,8 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = strftime("%Y", time());
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -53,9 +56,10 @@ $langs->loadLangs(array("companies", "members"));
 
 $memberstatic = new Adherent($db);
 
-llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, array('https://www.google.com/jsapi'));
-
 $title = $langs->trans("MembersStatisticsByProperties");
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, array('https://www.google.com/jsapi'), '', '', 'mod-member page-stats_byproperties');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
@@ -89,7 +93,7 @@ if ($resql) {
 			$foundmor++;
 		}
 
-		$data[$obj->code] = array('label'=>$obj->code, 'nb'=>$obj->nb, 'nbsubscriptions'=>$obj->nbsubscriptions, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
+		$data[$obj->code] = array('label' => $obj->code, 'nb' => $obj->nb, 'nbsubscriptions' => $obj->nbsubscriptions, 'lastdate' => $db->jdate($obj->lastdate), 'lastsubscriptiondate' => $db->jdate($obj->lastsubscriptiondate));
 
 		$i++;
 	}
@@ -149,7 +153,7 @@ if (!count($data)) {
 }
 
 // Print array
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("MemberNature").'</td>';
@@ -161,10 +165,10 @@ print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
 if (!$foundphy) {
-	$data[] = array('label'=>'phy', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+	$data[] = array('label' => 'phy', 'nb' => '0', 'nbactive' => '0', 'lastdate' => '', 'lastsubscriptiondate' => '');
 }
 if (!$foundmor) {
-	$data[] = array('label'=>'mor', 'nb'=>'0', 'nbactive'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+	$data[] = array('label' => 'mor', 'nb' => '0', 'nbactive' => '0', 'lastdate' => '', 'lastsubscriptiondate' => '');
 }
 
 foreach ($data as $val) {

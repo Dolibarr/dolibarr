@@ -20,7 +20,8 @@
 
 /**
  * 	\defgroup   api     Module Api
- *  \brief      Descriptor file for Api modulee
+ *  \brief      Module for API (REST) management
+ *
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for the module Api
@@ -83,7 +84,7 @@ class modApi extends DolibarrModules
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array('modZapier'); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->phpmin = array(7, 0); // Minimum version of PHP required by module
 		$this->langfiles = array("other");
 
 		// Constants
@@ -94,8 +95,8 @@ class modApi extends DolibarrModules
 		$this->const = array();
 
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@api:$user->rights->api->read:/api/mynewtab1.php?id=__ID__',  					// To add a new tab identified by code tabname1
-		//                              'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@api:$user->rights->othermodule->read:/api/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@api:$user->hasRight('api','read'):/api/mynewtab1.php?id=__ID__',  					// To add a new tab identified by code tabname1
+		//                              'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@api:$user->hasRight('othermodule','read'):/api/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		//                              'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
@@ -105,9 +106,9 @@ class modApi extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
-		// 'order'            to add a tab in customer order view
+		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
 		// 'payment'		  to add a tab in payment view
 		// 'payment_supplier' to add a tab in supplier payment view
@@ -141,10 +142,10 @@ class modApi extends DolibarrModules
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Générer / modifier la clé API des utilisateurs';	// Permission label
+		$this->rights[$r][1] = 'Generate/modify users API key';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->hasRight('permkey','level1','level2'))
+		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->hasRight('permkey','level1','level2'))
 		$r++;
 
 
@@ -152,37 +153,19 @@ class modApi extends DolibarrModules
 		$this->menu = array(); // List of menus to add
 		$r = 0;
 
-		// Add here entries to declare new menus
-		//
-		// Example to declare a new Top Menu entry and its Left menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>0,			                // Put 0 if this is a top menu
-		//							'type'=>'top',			                // This is a Top menu entry
-		//							'titre'=>'Api top menu',
-		//							'mainmenu'=>'api',
-		//							'leftmenu'=>'api',
-		//							'url'=>'/api/pagetop.php',
-		//							'langs'=>'mylangfile@api',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->api->enabled',	// Define condition to show or hide menu entry. Use '$conf->api->enabled' if entry must be visible if module is enabled.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->api->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
-		//
-		// Example to declare a Left Menu entry into an existing Top menu entry:
-		// $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=xxx',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-		//							'type'=>'left',			                // This is a Left menu entry
-		//							'titre'=>'Api left menu',
-		//							'mainmenu'=>'xxx',
-		//							'leftmenu'=>'api',
-		//							'url'=>'/api/pagelevel2.php',
-		//							'langs'=>'mylangfile@api',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-		//							'position'=>100,
-		//							'enabled'=>'$conf->api->enabled',  // Define condition to show or hide menu entry. Use '$conf->api->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-		//							'perms'=>'1',			                // Use 'perms'=>'$user->rights->api->level1->level2' if you want your menu with a permission rules
-		//							'target'=>'',
-		//							'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-		// $r++;
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools',
+			'type'=>'left',
+			'titre'=>'ApiExplorer',
+			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'devtools_api',
+			'url'=>'/api/index.php/explorer',
+			'langs'=>'modulebuilder',
+			'position'=>100,
+			'perms'=>'1',
+			'enabled'=>'isModEnabled("api")',
+			'target'=>'_apiexplorer',
+			'user'=>0);
 
 
 		// Exports
