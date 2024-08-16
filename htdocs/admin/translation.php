@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2017       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2017-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,9 +104,9 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 if ($action == 'setMAIN_ENABLE_OVERWRITE_TRANSLATION') {
 	if (GETPOST('value')) {
-		dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', '1', 'chaine', 0, '', $conf->entity);
 	} else {
-		dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', 0, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MAIN_ENABLE_OVERWRITE_TRANSLATION', '0', 'chaine', 0, '', $conf->entity);
 	}
 }
 

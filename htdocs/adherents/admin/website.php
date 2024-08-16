@@ -51,9 +51,9 @@ $error = 0;
 
 if ($action == 'setMEMBER_ENABLE_PUBLIC') {
 	if (GETPOST('value')) {
-		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', '1', 'chaine', 0, '', $conf->entity);
 	} else {
-		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', 0, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, 'MEMBER_ENABLE_PUBLIC', '0', 'chaine', 0, '', $conf->entity);
 	}
 }
 

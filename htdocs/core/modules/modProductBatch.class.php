@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +140,7 @@ class modProductBatch extends DolibarrModules
 		if (!empty($conf->cashdesk->enabled)) {
 			if (!getDolGlobalString('CASHDESK_NO_DECREASE_STOCK')) {
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-				$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", 1, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK", '1', 'chaine', 0, '', $conf->entity);
 			}
 		}
 

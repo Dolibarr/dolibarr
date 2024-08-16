@@ -126,7 +126,7 @@ if ($action == 'update' && !$cancel) {
 }
 
 if ($action == 'disablephpmailwarning' && !$cancel) {
-	dolibarr_set_const($db, 'MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP', 1, 'chaine', 1, 0, $conf->entity);
+	dolibarr_set_const($db, 'MAIN_HIDE_WARNING_TO_ENCOURAGE_SMTP_SETUP', '1', 'chaine', 1, 0, $conf->entity);
 
 	setEventMessages($langs->trans("WarningDisabled"), null, 'mesgs');
 }

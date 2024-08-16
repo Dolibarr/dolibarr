@@ -2,6 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ if ($reshook < 0) {
 $regs = array();
 if (preg_match('/^(set|del)_([A-Z_]+)$/', $action, $regs)) {
 	if ($regs[1] == 'set') {
-		dolibarr_set_const($db, $regs[2], 1, 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, $regs[2], '1', 'chaine', 0, '', $conf->entity);
 	} else {
 		dolibarr_del_const($db, $regs[2], $conf->entity);
 	}

@@ -10,6 +10,7 @@
  * Copyright (C) 2016      Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,19 +111,19 @@ if ($action == 'other') {
 	foreach ($select_pricing_rules as $tmprule => $tmplabel) { // Loop on each possible mode
 		if ($tmprule == $princingrules) { // We are on selected rule, we enable it
 			if ($princingrules == 'PRODUCT_PRICE_UNIQ') { // For this case, we disable entries manually
-				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
-				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
-				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0, 'chaine', 0, '', $conf->entity);
-				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', 1, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', '0', 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', '0', 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', '0', 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', '1', 'chaine', 0, '', $conf->entity);
 			} else {
 				$multirule = explode('&', $princingrules);
 				foreach ($multirule as $rulesselected) {
-					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
+					$res = dolibarr_set_const($db, $rulesselected, '1', 'chaine', 0, '', $conf->entity);
 				}
 			}
 		} else { // We clear this mode
 			if (strpos($tmprule, '&') === false) {
-				$res = dolibarr_set_const($db, $tmprule, 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, $tmprule, '0', 'chaine', 0, '', $conf->entity);
 			}
 		}
 	}

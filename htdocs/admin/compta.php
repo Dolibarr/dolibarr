@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ if ($action == 'update') {
 	$report_include_varpay = GETPOST('ACCOUNTING_REPORTS_INCLUDE_VARPAY', 'alpha');
 	if (!empty($report_include_varpay)) {
 		if ($report_include_varpay == 'yes') {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', 1, 'chaine', 0, '', $conf->entity)) {
+			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', '1', 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		}
@@ -102,7 +103,7 @@ if ($action == 'update') {
 	$report_include_loan = GETPOST('ACCOUNTING_REPORTS_INCLUDE_LOAN', 'alpha');
 	if (!empty($report_include_loan)) {
 		if ($report_include_loan == 'yes') {
-			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', 1, 'chaine', 0, '', $conf->entity)) {
+			if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', '1', 'chaine', 0, '', $conf->entity)) {
 				$error++;
 			}
 		}

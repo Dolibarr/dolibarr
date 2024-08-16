@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,9 +53,9 @@ $errors = array();
 
 if ($action == 'setTICKET_ENABLE_PUBLIC_INTERFACE') {
 	if (GETPOST('value')) {
-		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 1, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', '1', 'chaine', 0, '', $conf->entity);
 	} else {
-		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', 0, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_ENABLE_PUBLIC_INTERFACE', '0', 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
