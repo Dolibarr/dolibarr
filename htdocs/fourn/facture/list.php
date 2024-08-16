@@ -314,7 +314,7 @@ if (empty($reshook)) {
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
 
-  $uploaddir = $conf->fournisseur->facture->dir_output;
+	$uploaddir = $conf->fournisseur->facture->dir_output;
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
