@@ -442,8 +442,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *  List is sorted by widget filename so by priority to run.
 	 *
 	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
-	*	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
-	*
+	 *	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
+	 *
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
