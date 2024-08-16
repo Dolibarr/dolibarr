@@ -1269,7 +1269,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 *  @param	int		        $dateSelector       1=Show also date range input fields
 	 *  @param	Societe			$seller				Object thirdparty who sell
-	 *  @param	Societe			$buyer				Object thirdparty who buy
+	 *  @param	?Societe		$buyer				Object thirdparty who buy
 	 *  @param	string			$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
