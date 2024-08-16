@@ -5,7 +5,7 @@
  * Copyright (C) 2014       Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2017-2018  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ if ($action == 'update') {
 	$modelcsv = GETPOSTINT('ACCOUNTING_EXPORT_MODELCSV');
 
 	if (!empty($modelcsv)) {
-		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+		if (!dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', (string) $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error++;
 		}
 		//if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
