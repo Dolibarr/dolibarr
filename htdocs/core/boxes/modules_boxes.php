@@ -540,7 +540,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 				if (preg_match('/NORUN$/i', $files[$key])) {
 					$disabledbyname = 1;
 				}
-				// We set info of modules
+
+				// We set info of modules  @phan-suppress-next-line PhanUndeclaredProperty
 				$widget[$j]['picto'] = ((!property_exists($objMod, 'picto') || empty($objMod->picto)) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];
