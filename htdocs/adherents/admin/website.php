@@ -82,7 +82,7 @@ if ($action == 'update') {
 	if ($forcetype < 0) {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE", $conf->entity);
 	} else {
-		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", $forcetype, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE", (string) $forcetype, 'chaine', 0, '', $conf->entity);
 	}
 	if ($forcemorphy == '-1') {
 		$res = dolibarr_del_const($db, "MEMBER_NEWFORM_FORCEMORPHY", $conf->entity);
