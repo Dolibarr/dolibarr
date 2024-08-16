@@ -1110,7 +1110,7 @@ class AccountancyExport
 
 			$tab['folio'] = '     1';
 
-			$tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
+			$tab['num_ecriture'] = str_pad(dol_trunc((string) $index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
 
 			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 

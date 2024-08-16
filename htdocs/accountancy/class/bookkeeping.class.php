@@ -681,8 +681,8 @@ class BookKeeping extends CommonObject
 		$sql .= 'piece_num,';
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
-		$sql .= ' '.(!isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'".$this->db->idate($this->doc_date)."'").',';
-		$sql .= ' '.(!isset($this->date_lim_reglement) || dol_strlen($this->date_lim_reglement) == 0 ? 'NULL' : "'".$this->db->idate($this->date_lim_reglement)."'").',';
+		$sql .= ' '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'NULL').',';
+		$sql .= ' '.(isDolTms($this->date_lim_reglement) ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'NULL').',';
 		$sql .= ' '.(!isset($this->doc_type) ? 'NULL' : "'".$this->db->escape($this->doc_type)."'").',';
 		$sql .= ' '.(!isset($this->doc_ref) ? 'NULL' : "'".$this->db->escape($this->doc_ref)."'").',';
 		$sql .= ' '.(empty($this->fk_doc) ? '0' : (int) $this->fk_doc).',';
