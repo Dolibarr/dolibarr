@@ -1362,15 +1362,15 @@ if ($action == 'create' || $action == 'presend') {
 
 					print '<div class="tagtd">';
 
-					print dol_print_phone($tab[$i]['phone'], '', '', '', 'AC_TEL').'<br>';
+					print dol_print_phone($tab[$i]['phone'], '', 0, 0, 'AC_TEL').'<br>';
 
 					if (!empty($tab[$i]['phone_perso'])) {
 						//print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', 'AC_TEL').'<br>';
+						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					if (!empty($tab[$i]['phone_mobile'])) {
 						//print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-						print dol_print_phone($tab[$i]['phone_mobile'], '', '', '', 'AC_TEL').'<br>';
+						print dol_print_phone($tab[$i]['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					print '</div>';
 
