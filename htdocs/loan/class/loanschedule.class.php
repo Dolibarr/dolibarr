@@ -171,7 +171,7 @@ class LoanSchedule extends CommonObject
 
 		// Check parameters
 		if ($totalamount == 0) {
-			$this->errors[] = 'step1';
+			$this->errors[] = 'Amount must not be "0".';
 			return -1; // Negative amounts are accepted for reject prelevement but not null
 		}
 
