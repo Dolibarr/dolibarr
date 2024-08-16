@@ -414,7 +414,7 @@ class AccountancyExport
 
 				// directory already created when module is enabled
 				$outputDir .= '/export';
-				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
+				$outputDir .= '/'.dol_sanitizePathName((string) $formatexportset);
 			}
 
 			if (!dol_is_dir($outputDir)) {

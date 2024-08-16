@@ -169,7 +169,7 @@ if ($action == 'setenablesubsidiarylist') {
 
 if ($action == 'setdisablebindingonsales') {
 	$setdisablebindingonsales = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", (string) $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -183,7 +183,7 @@ if ($action == 'setdisablebindingonsales') {
 
 if ($action == 'setdisablebindingonpurchases') {
 	$setdisablebindingonpurchases = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", (string) $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -197,7 +197,7 @@ if ($action == 'setdisablebindingonpurchases') {
 
 if ($action == 'setdisablebindingonexpensereports') {
 	$setdisablebindingonexpensereports = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", (string) $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -211,7 +211,7 @@ if ($action == 'setdisablebindingonexpensereports') {
 
 if ($action == 'setenablelettering') {
 	$setenablelettering = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_LETTERING", $setenablelettering, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_LETTERING", (string) $setenablelettering, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -225,7 +225,7 @@ if ($action == 'setenablelettering') {
 
 if ($action == 'setenableautolettering') {
 	$setenableautolettering = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_AUTOLETTERING", $setenableautolettering, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_AUTOLETTERING", (string) $setenableautolettering, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -239,7 +239,7 @@ if ($action == 'setenableautolettering') {
 
 if ($action == 'setenablevatreversecharge') {
 	$setenablevatreversecharge = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE", $setenablevatreversecharge, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE", (string) $setenablevatreversecharge, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
