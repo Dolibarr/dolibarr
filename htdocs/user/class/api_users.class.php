@@ -444,7 +444,7 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET {id}/setPassword
 	 */
-	public function setPassword($id, $send_password = FALSE, $entity = 1)
+	public function setPassword($id, $send_password = false, $entity = 1)
 	{
 		global $conf;
 
