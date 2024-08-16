@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Pihak ketiga atau Anggota kemitraan adalah 
 ErrorFailedToWriteInTempDirectory=Gagal menulis di direktori temp
 ErrorQuantityIsLimitedTo=Kuantitas dibatasi hingga %s
 ErrorFailedToLoadThirdParty=Gagal menemukan/memuat pihak ketiga dari id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Mode pembayaran ini bukan rekening bank
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Pelanggan Stripe tidak disetel untuk pihak ketiga ini (atau disetel ke nilai yang dihapus di sisi Stripe). Buat (atau pasang kembali) terlebih dahulu.
 ErrorCharPlusNotSupportedByImapForSearch=Pencarian IMAP tidak dapat mencari pengirim atau penerima untuk string yang berisi karakter +
 ErrorTableNotFound=Tabel <b>%s</b> tidak ditemukan
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Kamus <b>%s</b> tidak ditemukan
 ErrorFailedToCreateSymLinkToMedias=Gagal membuat tautan simbolis %s untuk mengarah ke %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Periksa perintah yang digunakan untuk ekspor ke dalam Opsi lanjutan ekspor
 ErrorEndTimeMustBeGreaterThanStartTime=Waktu berakhir harus lebih besar dari waktu mulai
-ErrorIncoherentDates=Tanggal mulai harus kurang dari tanggal akhir
-ErrorEndHourIsNull=Tanggal akhir tidak boleh nol
-ErrorStartHourIsNull=Tanggal mulai tidak boleh nol
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Terlalu banyak baris untuk diproses. Silakan gunakan filter yang lebih selektif.
 ErrorEmptyValueForQty=Kuantitas tidak boleh nol.
 # Warnings

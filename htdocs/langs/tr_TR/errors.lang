@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Üçüncü taraf veya ortaklık üyesi zoru
 ErrorFailedToWriteInTempDirectory=Temp dizinine yazılamadı
 ErrorQuantityIsLimitedTo=Miktar %s ile sınırlıdır
 ErrorFailedToLoadThirdParty=id=%s, email=%s, name= adresinden üçüncü taraf bulunamadı/yüklenemedi %s
-ErrorThisPaymentModeIsNotSepa=Bu ödeme modu bir banka hesabı değil
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe müşterisi bu üçüncü taraf için ayarlanmamış (veya Stripe tarafında silinmiş bir değere ayarlanmamış). Önce onu oluşturun (veya yeniden ekleyin).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP araması, + karakterini içeren bir dize için göndereni veya alıcıyı arayamaz
 ErrorTableNotFound=Tablo <b>%s</b> bulunamadı
@@ -334,11 +335,11 @@ ErrorDictionaryNotFound=Sözlük <b>%s</b> bulunamadı
 ErrorFailedToCreateSymLinkToMedias=%s'a işaret edecek sembolik bağlantı %s oluşturulamadı
 ErrorCheckTheCommandInsideTheAdvancedOptions=Dışa aktarma için kullanılan komutu dışa aktarmanın Gelişmiş seçeneklerine kontrol edin
 ErrorEndTimeMustBeGreaterThanStartTime=Bitiş zamanı başlangıç zamanından büyük olmalıdır
-ErrorIncoherentDates=Başlangıç tarihi bitiş tarihinden küçük olmalıdır
-ErrorEndHourIsNull=Bitiş tarihi sıfır olamaz
-ErrorStartHourIsNull=Başlangıç tarihi sıfır olamaz
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=İşlenecek çok fazla satır var. Lütfen daha seçici bir filtre kullanın.
-ErrorEmptyValueForQty=Quantity cannot be zero.
+ErrorEmptyValueForQty=Miktar sıfır olamaz.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=PHP'nizdeki upload_max_filesize (%s) parametresi, post_max_size (%s) PHP parametresinden daha yüksek. Bu tutarlı bir kurulum değil.
 WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak e-posta adresi de kullanılabilir.

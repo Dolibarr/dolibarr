@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +41,7 @@ class SocialNetworkManager
 	private $platform;
 
 	/**
-	 * @var Object  Name of class handler
+	 * @var MastodonHandler	Instance of class handler
 	 */
 	private $handler;
 
@@ -51,7 +53,7 @@ class SocialNetworkManager
 	/**
 	 * @var int
 	 */
-	private $lastFetchDate;
+	private $lastFetchDate; // @phpstan-ignore-line
 
 	/**
 	 *	Constructor
@@ -101,14 +103,14 @@ class SocialNetworkManager
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>	List of posts.
 	 */
 	public function getPosts()
 	{
 		return $this->handler ? $this->handler->getPosts() : [];
 	}
 
-	 /**
+	/**
 	 * Get the last fetch date.
 	 *
 	 * @return int Timestamp of the last successful fetch.

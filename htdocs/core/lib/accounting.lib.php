@@ -304,8 +304,8 @@ function getDefaultDatesForTransfer()
 			$date_end = $db->jdate($obj->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
-			if ($month_start > dol_print_date(dol_now(), '%m')) {
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
+			if ($month_start > (int) dol_print_date(dol_now(), '%m')) {
 				$year_start -= 1;
 			}
 			$year_end = $year_start + 1;

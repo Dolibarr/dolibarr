@@ -382,7 +382,7 @@ class ICal
 		// TIME LIMITED EVENT
 		$date = array();
 		if (preg_match('/([0-9]{4})([0-9]{2})([0-9]{2})([0-9]{0,2})([0-9]{0,2})([0-9]{0,2})/', $ical_date, $date)) {
-			$ntime = dol_mktime($date[4], $date[5], $date[6], $date[2], $date[3], $date[1], true);
+			$ntime = dol_mktime((int) $date[4], (int) $date[5], (int) $date[6], (int) $date[2], (int) $date[3], (int) $date[1], true);
 		}
 
 		//if (empty($date[4])) print 'Error bad date: '.$ical_date.' - date1='.$date[1];

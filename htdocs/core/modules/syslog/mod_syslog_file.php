@@ -159,6 +159,7 @@ class mod_syslog_file extends LogHandler
 				print 'Failed to open log file '.($dolibarr_main_prod ? basename($logfile) : $logfile);
 			}
 		} else {
+			// @phan-suppress-next-line PhanPluginDuplicateArrayKey
 			$logLevels = array(
 				LOG_EMERG => 'EMERG',
 				LOG_ALERT => 'ALERT',
