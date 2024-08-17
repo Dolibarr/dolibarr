@@ -84,7 +84,7 @@ class RedditHandler
 		$this->clientSecret = $authParams['client_secret'] ?? '';
 		$this->username = $authParams['username'] ?? '';
 		$this->password = $authParams['password'] ?? '';
-		$this->userAgent = $authParams['name_app'].'/0.1 by '.$authParams['username'] ?? '';
+		$this->userAgent = $authParams['name_app'].'/0.1 by '.($authParams['username'] ?? '');
 	}
 
 	/**
