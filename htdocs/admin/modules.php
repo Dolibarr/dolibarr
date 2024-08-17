@@ -327,13 +327,13 @@ if ($action == 'set' && $user->admin) {
 	exit;
 } elseif (getDolGlobalInt("MAIN_FEATURES_LEVEL") > 1 && $action == 'reload' && $user->admin && GETPOST('confirm') == 'yes') {
 	$result = unActivateModule($value, 0);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (string) (getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1), 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		setEventMessages($result, null, 'errors');
 		header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y ? '&page_y='.$page_y : ''));
 	}
 	$resarray = activateModule($value, 0, 1);
-	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (int) $conf->global->MAIN_IHM_PARAMS_REV + 1, 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_IHM_PARAMS_REV", (string) (getDolGlobalInt('MAIN_IHM_PARAMS_REV') + 1), 'chaine', 0, '', $conf->entity);
 	if (!empty($resarray['errors'])) {
 		setEventMessages('', $resarray['errors'], 'errors');
 	} else {
