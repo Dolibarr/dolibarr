@@ -6,6 +6,7 @@
  * Copyright (C) 2019	   Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021-2022 Anthony Berton		<bertonanthony@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +139,7 @@ if ($action == 'update') {
 	}
 
 	if (GETPOSTISSET('MAIN_DOCUMENTS_LOGO_HEIGHT')) {
-		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", GETPOSTINT("MAIN_DOCUMENTS_LOGO_HEIGHT"), 'chaine', 0, '', $conf->entity);
+		dolibarr_set_const($db, "MAIN_DOCUMENTS_LOGO_HEIGHT", (string) GETPOSTINT("MAIN_DOCUMENTS_LOGO_HEIGHT"), 'chaine', 0, '', $conf->entity);
 	}
 	if (GETPOSTISSET('MAIN_INVERT_SENDER_RECIPIENT')) {
 		dolibarr_set_const($db, "MAIN_INVERT_SENDER_RECIPIENT", GETPOST("MAIN_INVERT_SENDER_RECIPIENT"), 'chaine', 0, '', $conf->entity);
