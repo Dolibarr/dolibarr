@@ -843,7 +843,7 @@ while ($i < $imaxinloop) {
 		}*/
 
 		// Action column
-		if (!$conf->main_checkbox_left_column) {
+		if (empty($conf->main_checkbox_left_column)) {
 			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;

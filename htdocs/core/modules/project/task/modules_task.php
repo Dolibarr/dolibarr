@@ -2,6 +2,7 @@
 /* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2010 Florian Henry  <florian.henry<àopen-concept.pro>
  * Copyright (C) 2014 Marcos García  <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,5 +76,12 @@ abstract class ModelePDFTask extends CommonDocGenerator
  */
 abstract class ModeleNumRefTask extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe|string	$objsoc	Object third party
+	 *  @param	Project|string	$object	Object Project
+	 *  @return	string|int<-1,0>		Value if OK, <=0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object);
 }

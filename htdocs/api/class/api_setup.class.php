@@ -65,6 +65,7 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
+	 * @phan-return Object[]		List of extra fields
 	 *
 	 * @url     GET actiontriggers
 	 *

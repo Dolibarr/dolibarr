@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +207,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	$url .= '&scope='.str_replace(',', '+', $statewithscopeonly);
 
 	// Add more param
-	$url .= '&nonce='.bin2hex(random_bytes(64/8));
+	$url .= '&nonce='.bin2hex(random_bytes(64 / 8));
 
 	if ($forlogin) {
 		// TODO Add param hd. What is it for ?
@@ -262,6 +263,8 @@ if (!GETPOST('code') && !GETPOST('error')) {
 			// This requests the token from the received OAuth code (call of the endpoint)
 			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+
+			'@phan-var-force OAuth\Common\Token\AbstractToken $token';
 
 			// The refresh token is inside the object token if the prompt was forced only.
 			//$refreshtoken = $token->getRefreshToken();

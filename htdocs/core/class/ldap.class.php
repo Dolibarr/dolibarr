@@ -1063,9 +1063,11 @@ class Ldap
 	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
+	 *  array{count:int,0..max:string,string:array}
+	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array			if KO: <=0 || if OK: array
+	 *	@return	int|array<'count'|int|string,int|string|array>	if KO: <=0 || if OK: array
 	 */
 	public function getAttribute($dn, $filter)
 	{

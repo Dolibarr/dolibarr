@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2019	Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -316,19 +317,19 @@ class modMyModule extends DolibarrModules
 		// Add here entries to declare new menus
 		/* BEGIN MODULEBUILDER TOPMENU */
 		$this->menu[$r++] = array(
-			'fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'top', // This is a Top menu entry
-			'titre'=>'ModuleMyModuleName',
+			'fk_menu' => '', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'top', // This is a Top menu entry
+			'titre' => 'ModuleMyModuleName',
 			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth valignmiddle"'),
-			'mainmenu'=>'mymodule',
-			'leftmenu'=>'',
-			'url'=>'/mymodule/mymoduleindex.php',
-			'langs'=>'mymodule@mymodule', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
-			'perms'=>'1', // Use 'perms'=>'$user->hasRight("mymodule", "myobject", "read")' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'mainmenu' => 'mymodule',
+			'leftmenu' => '',
+			'url' => '/mymodule/mymoduleindex.php',
+			'langs' => 'mymodule@mymodule', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => 'isModEnabled("mymodule")', // Define condition to show or hide menu entry. Use 'isModEnabled("mymodule")' if entry must be visible if module is enabled.
+			'perms' => '1', // Use 'perms'=>'$user->hasRight("mymodule", "myobject", "read")' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
 
@@ -458,7 +459,7 @@ class modMyModule extends DolibarrModules
 	 *  It also creates data directories
 	 *
 	 *  @param      string  $options    Options when enabling module ('', 'noboxes')
-	 *  @return     int             	1 if OK, 0 if KO
+	 *  @return     int<-1,1>          	1 if OK, <=0 if KO
 	 */
 	public function init($options = '')
 	{
@@ -489,7 +490,7 @@ class modMyModule extends DolibarrModules
 		// Document templates
 		$moduledir = dol_sanitizeFileName('mymodule');
 		$myTmpObjects = array();
-		$myTmpObjects['MyObject'] = array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		$myTmpObjects['MyObject'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			if ($myTmpObjectArray['includerefgeneration']) {
@@ -521,12 +522,12 @@ class modMyModule extends DolibarrModules
 	}
 
 	/**
-	 *  Function called when module is disabled.
-	 *  Remove from database constants, boxes and permissions from Dolibarr database.
-	 *  Data directories are not deleted
+	 *	Function called when module is disabled.
+	 *	Remove from database constants, boxes and permissions from Dolibarr database.
+	 *	Data directories are not deleted
 	 *
-	 *  @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *  @return     int                 1 if OK, 0 if KO
+	 *	@param	string		$options	Options when enabling module ('', 'noboxes')
+	 *	@return	int<-1,1>				1 if OK, <=0 if KO
 	 */
 	public function remove($options = '')
 	{

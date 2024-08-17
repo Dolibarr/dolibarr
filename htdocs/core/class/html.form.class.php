@@ -5036,7 +5036,7 @@ class Form
 	/**
 	 * Creates HTML units selector (code => label)
 	 *
-	 * @param	string		$selected	Preselected Unit ID
+	 * @param	int|''		$selected	Preselected Unit ID
 	 * @param	string		$htmlname	Select name
 	 * @param	int<0,1>	$showempty	Add an empty line
 	 * @param	string		$unit_type	Restrict to one given unit type
@@ -5085,7 +5085,7 @@ class Form
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
-	 * @param int|string 	$selected 		Id account preselected
+	 * @param int|''	 	$selected 		Id account preselected
 	 * @param string 		$htmlname 		Name of select zone
 	 * @param int 			$status 		Status of searched accounts (0=open, 1=closed, 2=both)
 	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users
@@ -9067,7 +9067,7 @@ class Form
 						$tmpvalue = empty($value['label']) ? '' : $value['label'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
-						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']): $value['labelhtml'];
+						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);

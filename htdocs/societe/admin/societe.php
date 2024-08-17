@@ -409,6 +409,7 @@ foreach ($dirsociete as $dirroot) {
 
 				/** @var ModeleThirdPartyCode $modCodeTiers */
 				$modCodeTiers = new $file($db);
+				'@phan-var-force ModeleThirdPartyCode $modCodeTiers';
 
 				// Show modules according to features level
 				if ($modCodeTiers->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -495,6 +496,7 @@ foreach ($dirsociete as $dirroot) {
 				}
 
 				$modCodeCompta = new $file();
+				'@phan-var-force ModeleAccountancyCode $modCodeTiers';
 
 				$arrayofmodules[$file] = $modCodeCompta;
 			}

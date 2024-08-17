@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,5 +69,12 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
  */
 abstract class ModeleNumRefSupplierPayments extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	Societe			$objsoc		Object thirdparty
+	 *  @param  PaiementFourn	$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object);
 }

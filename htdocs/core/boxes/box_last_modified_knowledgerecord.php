@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public $boxlabel;
 
 	/**
-	 * @var array box dependencies
+	 * @var string[] box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
 
@@ -98,7 +99,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 				$sql .= " AND k.fk_soc= ".((int) $user->socid);
 			}
 
-			$sql.= " AND k.status > 0";
+			$sql .= " AND k.status > 0";
 
 			$sql .= " ORDER BY k.tms DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);

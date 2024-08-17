@@ -1637,6 +1637,9 @@ class Asset extends CommonObject
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+
+				'@phan-var-force ModeleNumRefAsset $obj';
+
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
