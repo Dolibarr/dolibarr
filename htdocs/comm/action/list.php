@@ -664,7 +664,7 @@ if ($showbirthday) {
 print $nav;
 
 //print dol_get_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-//print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+//print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 //print dol_get_fiche_end();
 
 
