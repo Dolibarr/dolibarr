@@ -297,7 +297,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + order_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -320,7 +320,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -343,7 +343,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + contractline_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -369,7 +369,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $newtype.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $newtype.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -392,7 +392,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + donation_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -415,7 +415,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, '2');
 				}
 				$out .= ($mode ? '</span>' : '');
 			}

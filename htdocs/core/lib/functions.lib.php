@@ -8507,7 +8507,7 @@ function dol_htmlcleanlastbr($stringtodecode)
  * Replace html_entity_decode functions to manage errors
  *
  * @param   string	$a					Operand a
- * @param   string	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
+ * @param   int 	$b					Operand b (ENT_QUOTES|ENT_HTML5=convert simple, double quotes, colon, e accent, ...)
  * @param   string	$c					Operand c
  * @param	int 	$keepsomeentities	Entities but &, <, >, " are not converted.
  * @return  string						String decoded

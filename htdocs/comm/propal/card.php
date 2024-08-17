@@ -1301,7 +1301,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $outputlangs, 0);
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
 						}
 					} else {
 						if (!empty($prod->customcode)) {
@@ -1311,7 +1311,7 @@ if (empty($reshook)) {
 							$tmptxt .= ' - ';
 						}
 						if (!empty($prod->country_code)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, 0, $db, $langs, 0);
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
 						}
 					}
 					$tmptxt .= ')';
