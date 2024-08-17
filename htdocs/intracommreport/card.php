@@ -43,6 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/intracommreport/class/intracommreport.class.php
 // Load translation files required by the page
 $langs->loadLangs(array("intracommreport"));
 
+$cancel = GETPOST('cancel');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 // Get Parameters
 $id = GETPOSTINT('id');
 $action = GETPOST('action');
@@ -50,19 +53,20 @@ $year = GETPOSTINT('year');
 $month = GETPOSTINT('month');
 $label = (string) GETPOST('label', 'alphanohtml');
 
-$exporttype = GETPOSTISSET('exporttype') ? GETPOST('exporttype', 'alphanohtml') : 'deb'; // DEB or DES
 $type_declaration = (string) GETPOST('type_declaration', 'alphanohtml');	// 'introduction' or 'expedition'
-
-$backtopage = GETPOST('backtopage', 'alpha');
+if (empty($type_declaration)) {
+	$type_declaration = 'des';
+}
+$type_export = GETPOSTISSET('type_export') ? GETPOST('type_export', 'alphanohtml') : '';
 
 $declaration = array(
 	"deb" => $langs->trans("DEB"),
 	"des" => $langs->trans("DES"),
 );
 
-$typeOfDeclaration = array(
-	"introduction" => $langs->trans("Introduction"),
-	"expedition" => $langs->trans("Expedition"),
+$typeOfExport = array(
+	"in" => $langs->trans("Introduction"),
+	"out" => $langs->trans("Expedition"),
 );
 
 // Initialize a technical objects
@@ -88,8 +92,8 @@ $permissiontodelete = $user->hasRight('intracommreport', 'delete');
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->intracommreport->enabled)) {
-	accessforbidden();
+if (!isModEnabled('intracommreport')) {
+	accessforbidden('Module intracommreport not enabled');
 }
 if (!$permissiontoread) {
 	accessforbidden();
@@ -123,10 +127,11 @@ if ($permissiontodelete && $action == 'confirm_delete' && $confirm == 'yes') {
 	}
 }
 
-if ($action == 'add' && $permissiontoadd) {
+if ($action == 'add' && $permissiontoadd && !$cancel) {
+	$object->ref = trim($label);
 	$object->label = trim($label);
-	$object->exporttype = trim($exporttype);		// 'des' or 'deb'
 	$object->type_declaration =  $type_declaration;	// 'introduction' or 'expedition'
+	$object->type_export = trim($type_export);		// 'des' or 'deb'
 	//$object->subscription = (int) $subscription;
 
 	// Fill array 'array_options' with data from add form
@@ -139,7 +144,7 @@ if ($action == 'add' && $permissiontoadd) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	} else {
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."intracommreport WHERE ref='".$db->escape($object->label)."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."intracommreport WHERE ref = '".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -183,14 +188,14 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head();
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	// Label
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	// Declaration
 	print '<tr><td class="fieldrequired">'.$langs->trans("Declaration")."</td><td>\n";
-	print $form->selectarray("declaration", $declaration, GETPOST('declaration', 'alpha') ? GETPOST('declaration', 'alpha') : $object->declaration, 0);
+	print $form->selectarray("type_declaration", $declaration, GETPOST('type_declaration', 'alpha') ? GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
 	print "</td>\n";
 
 	// Analysis period
@@ -205,8 +210,8 @@ if ($action == 'create') {
 	print '</tr>';
 
 	// Type of declaration
-	print '<tr><td class="fieldrequired">'.$langs->trans("TypeOfDeclaration")."</td><td>\n";
-	print $form->selectarray("type_declaration", $typeOfDeclaration, GETPOST('type_declaration', 'alpha') ? GETPOST('type_declaration', 'alpha') : $object->type_declaration, 0);
+	print '<tr><td class="fieldrequired">'.$langs->trans("TypeEport")."</td><td>\n";
+	print $form->selectarray("type_export", $typeOfExport, GETPOST('type_export', 'alpha') ? GETPOST('type_export', 'alpha') : $object->type_export, 0);
 	print "</td>\n";
 
 	print '</table>';
@@ -269,14 +274,14 @@ if ($id > 0 && $action != 'edit') {
 	print '<table class="border tableforfield centpercent">';
 
 	// Type
-	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$object->declaration."</td></tr>\n";
+	print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type_declaration."</td></tr>\n";
 
 	// Analysis period
 	print '<tr><td>'.$langs->trans("AnalysisPeriod").'</td><td class="valeur">'.$object->period.'</td>';
 	print '</tr>';
 
 	// Type of Declaration
-	print '<tr><td>'.$langs->trans("TypeOfDeclaration").'</td><td class="valeur">'.$object->exporttype.'</td>';
+	print '<tr><td>'.$langs->trans("TypeOfExport").'</td><td class="valeur">'.$object->type_eport.'</td>';
 	print '</tr>';
 
 	print "</table>\n";

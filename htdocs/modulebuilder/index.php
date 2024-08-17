@@ -1075,6 +1075,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 	}
 
 	// If we must reuse an existing table for properties, define $stringforproperties
+	// Generate class file from the table
 	$stringforproperties = '';
 	$tablename = GETPOST('initfromtablename', 'alpha');
 	if ($tablename) {
@@ -1209,6 +1210,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname) {
 				}
 				// visible
 				$visible = -1;
+				if (in_array($fieldname, array('ref', 'label'))) {
+					$visible = 1;
+				}
+				if ($fieldname == 'entity') {
+					$visible = -2;
+				}
 				if ($fieldname == 'entity') {
 					$visible = -2;
 				}
