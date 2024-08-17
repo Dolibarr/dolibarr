@@ -430,6 +430,52 @@ class Users extends DolibarrApi
 		}
 	}
 
+	/**
+	 * Update a user password
+	 *
+	 * @param   int     $id        User ID
+	 * @param	bool	$send_password		Only if set to true, the new password will send to the user
+	 * @return  int                1 if password changed, 2 if password changed and sent
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 User not found
+	 * @throws RestException 500 System error
+	 *
+	 * @url	GET {id}/setPassword
+	 */
+	public function setPassword($id, $send_password = false)
+	{
+		global $conf;
+
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "setPassword on user not allowed for login ".DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found, no password changed');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
+		if (is_int($newpassword) && $newpassword < 0) {
+			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+		} else {
+			// Success
+			if ($send_password) {
+				if ($this->useraccount->send_password($this->useraccount, $newpassword) > 0) {
+					return 2;
+				} else {
+					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
+				}
+			} else {
+				return 1;
+			}
+		}
+	}
 
 	/**
 	 * List the groups of a user
