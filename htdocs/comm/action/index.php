@@ -1525,7 +1525,7 @@ if (empty($mode) || $mode == 'show_month') {      // View by month
 	$newparam .= '&viewcal=1';
 
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
-	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
+	print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, '', $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 	print '</div>';
 
 	print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
