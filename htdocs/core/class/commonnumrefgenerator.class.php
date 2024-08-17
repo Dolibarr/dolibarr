@@ -85,6 +85,7 @@ abstract class CommonNumRefGenerator
 	 */
 	public $prefixIsRequired;
 
+
 	/** Return model name
 	 *
 	 *  @param	Translate	$langs		Object langs
