@@ -4728,45 +4728,45 @@ class Societe extends CommonObject
 
 		if ($mode == 2) {
 			if ($status == '-1' || $status == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect-1");
 			} elseif ($status == '0' || $status == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), '0', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect0");
 			} elseif ($status == '1' || $status == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), '1', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect1");
 			} elseif ($status == '2' || $status == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), '2', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect2");
 			} elseif ($status == '3' || $status == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), '3', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto, 'class="inline-block valignmiddle"').' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, '0', $picto, 'class="inline-block valignmiddle"').' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		} elseif ($mode == 3) {
 			if ($status == '-1' || $status == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"');
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto, 'class="inline-block valignmiddle"');
 			} elseif ($status == '0' || $status == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"');
+				return img_action($langs->trans("StatusProspect0"), '0', $picto, 'class="inline-block valignmiddle"');
 			} elseif ($status == '1' || $status == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"');
+				return img_action($langs->trans("StatusProspect1"), '1', $picto, 'class="inline-block valignmiddle"');
 			} elseif ($status == '2' || $status == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"');
+				return img_action($langs->trans("StatusProspect2"), '2', $picto, 'class="inline-block valignmiddle"');
 			} elseif ($status == '3' || $status == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"');
+				return img_action($langs->trans("StatusProspect3"), '3', $picto, 'class="inline-block valignmiddle"');
 			} else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto, 'class="inline-block valignmiddle"');
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, '0', $picto, 'class="inline-block valignmiddle"');
 			}
 		} elseif ($mode == 4) {
 			if ($status == '-1' || $status == 'ST_NO') {
-				return img_action($langs->trans("StatusProspect-1"), -1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect-1");
+				return img_action($langs->trans("StatusProspect-1"), '-1', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect-1");
 			} elseif ($status == '0' || $status == 'ST_NEVER') {
-				return img_action($langs->trans("StatusProspect0"), 0, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect0");
+				return img_action($langs->trans("StatusProspect0"), '0', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect0");
 			} elseif ($status == '1' || $status == 'ST_TODO') {
-				return img_action($langs->trans("StatusProspect1"), 1, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect1");
+				return img_action($langs->trans("StatusProspect1"), '1', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect1");
 			} elseif ($status == '2' || $status == 'ST_PEND') {
-				return img_action($langs->trans("StatusProspect2"), 2, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect2");
+				return img_action($langs->trans("StatusProspect2"), '2', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect2");
 			} elseif ($status == '3' || $status == 'ST_DONE') {
-				return img_action($langs->trans("StatusProspect3"), 3, $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect3");
+				return img_action($langs->trans("StatusProspect3"), '3', $picto, 'class="inline-block valignmiddle"').' '.$langs->trans("StatusProspect3");
 			} else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto, 'class="inline-block valignmiddle"').' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, '0', $picto, 'class="inline-block valignmiddle"').' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		}
 
