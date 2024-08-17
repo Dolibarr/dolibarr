@@ -1446,7 +1446,7 @@ class BookKeeping extends CommonObject
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.$mode.' SET';
-		$sql .= ' doc_date = '.(!isset($this->doc_date) || dol_strlen($this->doc_date) != 0 ? "'".$this->db->idate($this->doc_date)."'" : 'null').',';
+		$sql .= ' doc_date = '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'null').',';
 		$sql .= ' doc_type = '.(isset($this->doc_type) ? "'".$this->db->escape($this->doc_type)."'" : "null").',';
 		$sql .= ' doc_ref = '.(isset($this->doc_ref) ? "'".$this->db->escape($this->doc_ref)."'" : "null").',';
 		$sql .= ' fk_doc = '.(isset($this->fk_doc) ? $this->fk_doc : "null").',';
