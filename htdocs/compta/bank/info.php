@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ $hselected = $h;
 $h++;
 
 
-print dol_get_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'accountline');
+print dol_get_fiche_head($head, (string) $hselected, $langs->trans("LineRecord"), -1, 'accountline');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

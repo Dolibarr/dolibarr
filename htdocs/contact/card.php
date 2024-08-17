@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2023	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2023-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -662,11 +662,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
 								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								console.log("Set state_id to '.dol_escape_js($objsoc->state_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js($objsoc->state_id).'").trigger("change");
+								console.log("Set state_id to '.dol_escape_js((string) $objsoc->state_id).'");
+								$(\'select[name="state_id"]\').val("'.dol_escape_js((string) $objsoc->state_id).'").trigger("change");
 								/* set country at end because it will trigger page refresh */
-								console.log("Set country id to '.dol_escape_js($objsoc->country_id).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
+								console.log("Set country id to '.dol_escape_js((string) $objsoc->country_id).'");
+								$(\'select[name="country_id"]\').val("'.dol_escape_js((string) $objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
                             });
 						})'."\n";
 				print '</script>'."\n";
