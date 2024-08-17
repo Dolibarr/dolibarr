@@ -1285,6 +1285,7 @@ AmountSalary=Salary amount
 InvoiceSubtype=Invoice subtype
 ConfirmMassReverse=Bulk Reverse confirmation
 ConfirmMassReverseQuestion=Are you sure you want to reverse the %s selected record(s)?
+ConfirmActionXxx=Confirm action %s
 ElementType=Element type
 ElementId=Element Id
 Encrypted=Encrypted
