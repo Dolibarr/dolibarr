@@ -140,7 +140,7 @@ class mod_knowledgerecord_advanced extends ModeleNumRefKnowledgeRecord
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'knowledgemanagement_knowledgerecord', 'ref', '', '', $date);
 
