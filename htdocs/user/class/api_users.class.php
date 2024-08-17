@@ -433,9 +433,9 @@ class Users extends DolibarrApi
 	/**
 	 * Update a user password
 	 *
-	 * @param   int     $id        User ID
+	 * @param   int     $id        			User ID
 	 * @param	bool	$send_password		Only if set to true, the new password will send to the user
-	 * @return  int                1 if password changed, 2 if password changed and sent
+	 * @return  int                			1 if password changed, 2 if password changed and sent
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 User not found
@@ -445,7 +445,15 @@ class Users extends DolibarrApi
 	 */
 	public function setPassword($id, $send_password = false)
 	{
-		global $conf;
+		//$conf->global->API_DISABLE_LOGIN_API = 1;
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
+			throw new RestException(403, "Error: login and password reset APIs are disabled. You can get access token from the backoffice to get access permission but permission and password manipulation from APIs are forbidden.");
+		}
+
+		//$conf->global->API_ALLOW_PASSWORD_RESET = 1;
+		if (!getDolGlobalString('API_ALLOW_PASSWORD_RESET')) {
+			throw new RestException(403, "Error: password reset APIs are disabled by default. To allow this, the option API_ALLOW_PASSWORD_RESET must be set.");
+		}
 
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "setPassword on user not allowed for login ".DolibarrApiAccess::$user->login);
