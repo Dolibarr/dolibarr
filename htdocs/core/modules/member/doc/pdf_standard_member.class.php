@@ -48,7 +48,7 @@ class pdf_standard_member extends CommonStickerGenerator
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs;
 
 		// Translations
 		$langs->loadLangs(array("main", "admin"));

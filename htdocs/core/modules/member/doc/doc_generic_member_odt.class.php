@@ -51,7 +51,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
