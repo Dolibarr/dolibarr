@@ -86,7 +86,7 @@ if (!empty($backtopagejsfields)) {
 }
 
 // Initialize a technical objects
-$object = new IntraCommReport($db);
+$object = new IntracommReport($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->intracommreport->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($object->element.'card', 'globalcard')); // Note that conf->hooks_modules contains array

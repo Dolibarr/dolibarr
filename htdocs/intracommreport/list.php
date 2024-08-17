@@ -101,7 +101,7 @@ $pagenext = $page + 1;
 
 
 // Initialize a technical objects
-$object = new IntraCommReport($db);
+$object = new IntracommReport($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mymodule->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
@@ -526,7 +526,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendIntraCommReportRef";
 $modelmail = "intracommreport";
-$objecttmp = new IntraCommReport($db);
+$objecttmp = new IntracommReport($db);
 $trackid = 'xxxx'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
