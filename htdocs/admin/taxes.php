@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ if ($action == 'update') {
 
 	$db->begin();
 
-	$res = dolibarr_set_const($db, 'TAX_MODE', $tax_mode, 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE', (string) $tax_mode, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -122,7 +123,7 @@ if ($action == 'update') {
 
 	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN", 'alpha'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVA_DAY_DEADLINE_SUBMISSION", (string) GETPOSTINT("deadline_day_vat"), 'chaine', 0, '', $conf->entity);
 
 	if (!$error) {
 		$db->commit();
@@ -167,7 +168,7 @@ if (empty($mysoc->tva_assuj)) {
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.(getDolGlobalString('MAIN_INFO_TVAINTRA') ? $conf->global->MAIN_INFO_TVAINTRA : '').'">';
+	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.getDolGlobalString('MAIN_INFO_TVAINTRA').'">';
 	print '</td></tr>';
 
 	print '<tr class="oddeven"><td><label for="activate_MAIN_INFO_VAT_RETURN">'.$langs->trans("VATPaymentFrequency").'</label></td>';
@@ -225,7 +226,7 @@ if (empty($mysoc->tva_assuj)) {
 
 
 	print '<br>';
-	print load_fiche_titre('', '', '', 0, 0, '', '-> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault"));
+	print load_fiche_titre('', '', '', 0, '', '', '-> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault"));
 	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
 

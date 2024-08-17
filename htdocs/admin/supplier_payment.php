@@ -132,7 +132,7 @@ if ($action == 'updateMask') {
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 } elseif ($action == 'setparams') {
-	$res = dolibarr_set_const($db, "PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", GETPOSTINT('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "PAYMENTS_FOURN_REPORT_GROUP_BY_MOD", (string) GETPOSTINT('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'), 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
