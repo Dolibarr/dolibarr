@@ -178,7 +178,7 @@ class IntracommReport extends CommonObject
 		}
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('mymodule', 'myobject', 'read')) {
+		/*if ($user->hasRight('intracommreport', 'myobject', 'read')) {
 		 $this->fields['myfield']['visible'] = 1;
 		 $this->fields['myfield']['noteditable'] = 0;
 		 }*/
@@ -655,7 +655,7 @@ class IntracommReport extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/mymodule/myobject_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/intracommreport/card.php', 1).'?id='.$this->id;
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
