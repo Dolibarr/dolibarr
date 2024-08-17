@@ -431,11 +431,10 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Update a users password
+	 * Update a user password
 	 *
 	 * @param   int     $id        User ID
 	 * @param	bool	$send_password		Only if set to true, the new password will send to the user
-	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
 	 * @return  int                1 if password changed, 2 if password changed and sent
 	 *
 	 * @throws RestException 403 Not allowed
@@ -444,12 +443,12 @@ class Users extends DolibarrApi
 	 *
 	 * @url	GET {id}/setPassword
 	 */
-	public function setPassword($id, $send_password = false, $entity = 1)
+	public function setPassword($id, $send_password = false)
 	{
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(403, "setPassword on user not allowed");
+			throw new RestException(403, "setPassword on user not allowed for login ".DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->useraccount->fetch($id);
@@ -458,15 +457,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'User not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity)) {
-			$entity = (!empty($entity) ? $entity : $conf->entity);
-		} else {
-			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
-			// hack the security by giving himself permissions on another entity.
-			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
@@ -478,7 +469,7 @@ class Users extends DolibarrApi
 				if ($this->useraccount->send_password($this->useraccount, $newpassword) > 0) {
 					return 2;
 				} else {
-					throw new RestException(500, 'ErrorFailedSendingNewPassword'.$this->useraccount->error);
+					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
 				}
 			} else {
 				return 1;
