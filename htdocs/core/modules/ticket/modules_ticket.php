@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2014  Regis Houssin    <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García    <marcosgdf@gmail.com>
  * Copyright (C) 2020       Charlene Benke   <charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,5 +79,12 @@ abstract class ModelePDFTicket extends CommonDocGenerator
  */
 abstract class ModeleNumRefTicket extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *  Return next value
+	 *
+	 *  @param	Societe	$objsoc		Object third party
+	 *  @param	Ticket	$ticket 	Object ticket
+	 *  @return	string|int<-1,0>	Next value if OK, <=-1 if KO
+	 */
+	abstract public function getNextValue($objsoc, $ticket);
 }

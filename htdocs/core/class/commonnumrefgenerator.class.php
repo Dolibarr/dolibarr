@@ -36,7 +36,7 @@ abstract class CommonNumRefGenerator
 	public $name = '';
 
 	/**
-	 * @var string              Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'experimental'|'dolibarr'	Version
 	 */
 	public $version = '';
 
@@ -164,4 +164,12 @@ abstract class CommonNumRefGenerator
 		}
 		return $langs->trans("NotAvailable");
 	}
+
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

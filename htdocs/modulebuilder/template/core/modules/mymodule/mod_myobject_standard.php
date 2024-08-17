@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2005-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Put your own copyright and developer email here---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +34,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -76,8 +78,8 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return boolean     			false if conflict, true if ok
+	 *  @param  MyObject	$object		Object we need next value for
+	 *  @return bool					false if conflict, true if ok
 	 */
 	public function canBeActivated($object)
 	{
@@ -116,8 +118,8 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1               Next free value if OK, -1 if KO
+	 *  @param  MyObject	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Next free value if OK, -1 if KO
 	 */
 	public function getNextValue($object)
 	{

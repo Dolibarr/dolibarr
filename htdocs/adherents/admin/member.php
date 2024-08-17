@@ -63,6 +63,8 @@ $modulepart = GETPOST('modulepart', 'aZ09');
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
+global $conf;
+
 if ($action == 'set_default') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
@@ -181,7 +183,7 @@ if ($action == 'set_default') {
 		}
 	}
 
-	$consttype = GETPOST('consttype', 'alpha');
+	$consttype = GETPOSTINT('consttype');
 	$constnote = GETPOST('constnote');
 	$res = dolibarr_set_const($db, $constname, $constvalue, $choices[$consttype], 0, $constnote, $conf->entity);
 
@@ -295,7 +297,7 @@ foreach ($arrayofmodules as $file => $modCodeMember) {
 	print '<tr class="oddeven">'."\n";
 	print '<td width="140">'.$modCodeMember->name.'</td>'."\n";
 	print '<td>'.$modCodeMember->info($langs).'</td>'."\n";
-	print '<td class="nowrap">'.$modCodeMember->getExample($langs).'</td>'."\n";
+	print '<td class="nowrap">'.$modCodeMember->getExample().'</td>'."\n";
 
 	if (getDolGlobalString('MEMBER_CODEMEMBER_ADDON') == "$file") {
 		print '<td class="center">'."\n";
@@ -389,6 +391,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
+							'@phan-var-force doc_generic_member_odt|pdf_standard_member $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

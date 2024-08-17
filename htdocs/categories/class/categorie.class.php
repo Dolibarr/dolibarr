@@ -1456,7 +1456,7 @@ class Categorie extends CommonObject
 	/**
 	 *	Returns an array containing the list of parent categories
 	 *
-	 *	@return	int|array Return integer <0 KO, array OK
+	 *	@return	int|Categorie[] Return integer <0 KO, array OK
 	 */
 	public function get_meres()
 	{
@@ -1488,7 +1488,7 @@ class Categorie extends CommonObject
 	 * 	Returns in a table all possible paths to get to the category
 	 * 	starting with the major categories represented by Tables of categories
 	 *
-	 *	@return	array
+	 *	@return	Categorie[][]
 	 */
 	public function get_all_ways()
 	{

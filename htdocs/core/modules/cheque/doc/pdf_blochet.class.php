@@ -56,22 +56,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 */
 	public $line_per_page;
 
-	/**
-	 * @var Account bank account
-	 */
-	public $account;
-
-	public $amount;
-	public $date;
-	public $nbcheque;
-	public $ref;
 	public $ref_ext;
 
-
-	/**
-	 * @var array lines
-	 */
-	public $lines;
 
 	/**
 	 *	Constructor

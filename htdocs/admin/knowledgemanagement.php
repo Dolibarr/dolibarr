@@ -213,6 +213,7 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled'] == 1) {
 			$setupnotempty++;
@@ -280,6 +281,7 @@ if ($action == 'edit') {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+		// @phan-suppress-next-line PhanEmptyForeach
 		foreach ($arrayofparameters as $constname => $val) {
 			if ($val['enabled'] == 1) {
 				$setupnotempty++;
@@ -378,6 +380,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
+
+							'@phan-var-force ModeleNumRefKnowledgeRecord $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -520,6 +524,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 									require_once $dir.'/'.$file;
 									$module = new $className($db);
 
+									'@phan-var-force ModelePDFKnowledgeRecord $module';
+
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 										$modulequalified = 0;
@@ -533,7 +539,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}

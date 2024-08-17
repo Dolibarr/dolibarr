@@ -346,6 +346,8 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModeleBankAccountDoc $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -359,7 +361,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -374,7 +376,7 @@ foreach ($dirmodels as $reldir) {
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&can_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
@@ -468,7 +470,7 @@ if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 		print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
 		// Color
 		print '<td class="nowrap right">';
-		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : getDolGlobalString($color)), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
+		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : getDolGlobalString($color)), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, array(), 'right hideifnotset');
 		print '</td>';
 		print "</tr>";
 		$i++;

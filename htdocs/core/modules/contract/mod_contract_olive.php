@@ -77,9 +77,9 @@ class mod_contract_olive extends ModelNumRefContracts
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Societe		$objsoc		Object thirdparty
-	 * @param	Contrat		$contract	Object contract
-	 * @return	string					Return next value
+	 *	@param	Societe		$objsoc		Object thirdparty
+	 *	@param	Contrat		$contract	Object contract
+	 *	@return string|int<-1,0>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $contract)
 	{

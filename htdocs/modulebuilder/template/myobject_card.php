@@ -156,8 +156,8 @@ $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object-
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled("mymodule")) {
-	accessforbidden();
+if (!isModEnabled($object->module)) {
+	accessforbidden("Module ".$object->module." not enabled");
 }
 if (!$permissiontoread) {
 	accessforbidden();
@@ -622,10 +622,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
+		$includeeventlist = 0;
+
 		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+		if ($includeeventlist) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+		}
 
 		print '</div></div>';
 	}

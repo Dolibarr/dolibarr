@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2023	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Put your own copyright and developer email here---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,8 +91,8 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * Load data into info_box_contents array to show array later. Called by Dolibarr before displaying the box.
 	 *
-	 * @param int $max Maximum number of records to load
-	 * @return void
+	 * @param	int<0,max>	$max	Maximum number of records to load
+	 * @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -108,7 +109,7 @@ class mymodulewidget1 extends ModeleBoxes
 			// Title text
 			'text' => $text,
 			// Add a link
-			'sublink' => 'http://example.com',
+			'sublink' => 'https://example.com',
 			// Sublink icon placed after the text
 			'subpicto' => 'object_mymodule@mymodule',
 			// Sublink icon HTML alt text
@@ -135,7 +136,7 @@ class mymodulewidget1 extends ModeleBoxes
 					// Main text for content of cell
 					'text' => 'First cell of first line',
 					// Link on 'text' and 'logo' elements
-					'url' => 'http://example.com',
+					'url' => 'https://example.com',
 					// Link's target HTML property
 					'target' => '_blank',
 					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
@@ -183,12 +184,12 @@ class mymodulewidget1 extends ModeleBoxes
 	}
 
 	/**
-	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+	 * Method to show box. Called by Dolibarr each time it needs to display the box.
 	 *
-	 * @param array $head       Array with properties of box title
-	 * @param array $contents   Array with properties of box lines
-	 * @param int   $nooutput   No print, only return string
-	 * @return string
+	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
+	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param	int<0,1>	$nooutput	When 1, do not print, return string
+	 * @return	?string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
