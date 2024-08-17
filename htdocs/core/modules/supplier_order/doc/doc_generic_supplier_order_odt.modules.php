@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2019  Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2019       Tim Otte		    <otte@meuser.it>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ class doc_generic_supplier_order_odt extends ModelePDFSuppliersOrders
 	public $issuer;
 
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
 

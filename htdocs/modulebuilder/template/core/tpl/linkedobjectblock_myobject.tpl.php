@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2019		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Put your own copyright and developer email here---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +31,15 @@ global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force MyObject[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("mymodule");
 
-$total = 0; $ilink = 0;
+$total = 0;
+$ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 

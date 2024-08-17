@@ -1776,14 +1776,14 @@ class FormMail extends Form
 	}
 
 	/**
-	 *      Find if template exists and are available for current user, then set them into $this->lines_model.
-	 *      Search into table c_email_templates
+	 *	Find if template exists and are available for current user, then set them into $this->lines_model.
+	 *	Search in table c_email_templates
 	 *
-	 * 		@param	string		$type_template		Get message for key module
-	 *      @param	User		$user				Use template public or limited to this user
-	 *      @param	Translate	$outputlangs		Output lang object
-	 *      @param  int         $active         	1=Only active template, 0=Only disabled, -1=All
-	 *      @return	int		                    	Return integer <0 if KO, nb of records found if OK
+	 *	@param	string		$type_template	Get message for key module
+	 *	@param	User		$user			Use template public or limited to this user
+	 *	@param	?Translate	$outputlangs	Output lang object
+	 *	@param  int<-1,1>	$active			1=Only active template, 0=Only disabled, -1=All
+	 *	@return	int<-1,max>					Return integer <0 if KO, nb of records found if OK
 	 */
 	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active = 1)
 	{
@@ -2036,28 +2036,28 @@ class ModelMail extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"-1",),
-		"module" => array("type"=>"varchar(32)", "label"=>"Module", "enabled"=>"1", 'position'=>20, 'notnull'=>0, "visible"=>"-1",),
-		"type_template" => array("type"=>"varchar(32)", "label"=>"Typetemplate", "enabled"=>"1", 'position'=>25, 'notnull'=>0, "visible"=>"-1",),
-		"lang" => array("type"=>"varchar(6)", "label"=>"Lang", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"-1",),
-		"private" => array("type"=>"smallint(6)", "label"=>"Private", "enabled"=>"1", 'position'=>35, 'notnull'=>1, "visible"=>"-1",),
-		"fk_user" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"Fkuser", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
-		"datec" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1",),
-		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>50, 'notnull'=>1, "visible"=>"-1",),
-		"label" => array("type"=>"varchar(255)", "label"=>"Label", "enabled"=>"1", 'position'=>55, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "csslist"=>"tdoverflowmax150",),
-		"position" => array("type"=>"smallint(6)", "label"=>"Position", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"active" => array("type"=>"integer", "label"=>"Active", "enabled"=>"1", 'position'=>65, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
-		"topic" => array("type"=>"text", "label"=>"Topic", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"content" => array("type"=>"mediumtext", "label"=>"Content", "enabled"=>"1", 'position'=>75, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"content_lines" => array("type"=>"text", "label"=>"Contentlines", "enabled"=>"1", 'position'=>80, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"enabled" => array("type"=>"varchar(255)", "label"=>"Enabled", "enabled"=>"1", 'position'=>85, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"joinfiles" => array("type"=>"varchar(255)", "label"=>"Joinfiles", "enabled"=>"1", 'position'=>90, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_from" => array("type"=>"varchar(255)", "label"=>"Emailfrom", "enabled"=>"1", 'position'=>95, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_to" => array("type"=>"varchar(255)", "label"=>"Emailto", "enabled"=>"1", 'position'=>100, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_tocc" => array("type"=>"varchar(255)", "label"=>"Emailtocc", "enabled"=>"1", 'position'=>105, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"email_tobcc" => array("type"=>"varchar(255)", "label"=>"Emailtobcc", "enabled"=>"1", 'position'=>110, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
-		"defaultfortype" => array("type"=>"smallint(6)", "label"=>"Defaultfortype", "enabled"=>"1", 'position'=>115, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
+		"module" => array("type" => "varchar(32)", "label" => "Module", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "-1",),
+		"type_template" => array("type" => "varchar(32)", "label" => "Typetemplate", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "-1",),
+		"lang" => array("type" => "varchar(6)", "label" => "Lang", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "-1",),
+		"private" => array("type" => "smallint(6)", "label" => "Private", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1",),
+		"fk_user" => array("type" => "integer:User:user/class/user.class.php", "label" => "Fkuser", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
+		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"position" => array("type" => "smallint(6)", "label" => "Position", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"active" => array("type" => "integer", "label" => "Active", "enabled" => "1", 'position' => 65, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
+		"topic" => array("type" => "text", "label" => "Topic", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"content" => array("type" => "mediumtext", "label" => "Content", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"enabled" => array("type" => "varchar(255)", "label" => "Enabled", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"joinfiles" => array("type" => "varchar(255)", "label" => "Joinfiles", "enabled" => "1", 'position' => 90, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_from" => array("type" => "varchar(255)", "label" => "Emailfrom", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_to" => array("type" => "varchar(255)", "label" => "Emailto", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_tocc" => array("type" => "varchar(255)", "label" => "Emailtocc", "enabled" => "1", 'position' => 105, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"email_tobcc" => array("type" => "varchar(255)", "label" => "Emailtobcc", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"defaultfortype" => array("type" => "smallint(6)", "label" => "Defaultfortype", "enabled" => "1", 'position' => 115, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
 	);
 	public $rowid;
 	public $type_template;
