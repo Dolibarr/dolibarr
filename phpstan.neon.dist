@@ -80,6 +80,7 @@ parameters:
 		- '#on array{url: mixed} in empty\(\) does not exist.#'
 		- '#getCountry expects string, int given#'
 		- '#dolCopyDir expects string, int given#'
+		- '#dol_copy expects string, int given#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'
