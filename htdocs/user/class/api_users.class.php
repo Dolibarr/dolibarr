@@ -483,7 +483,7 @@ class Users extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(403);
+			throw new RestException(403, 'setGroup on users not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->useraccount->fetch($id);
@@ -533,8 +533,6 @@ class Users extends DolibarrApi
 	 */
 	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = '0', $sqlfilters = '', $properties = '')
 	{
-		global $conf;
-
 		$obj_ret = array();
 
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
@@ -607,8 +605,6 @@ class Users extends DolibarrApi
 	 */
 	public function infoGroups($group, $load_members = 0)
 	{
-		global $db, $conf;
-
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
 			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'read') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "You are not allowed to read groups");
@@ -670,8 +666,6 @@ class Users extends DolibarrApi
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->default_values);
