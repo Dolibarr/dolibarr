@@ -120,7 +120,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
-		'@phan-var-force CommonDocGenerator $module';
+		'@phan-var-force ModelePDFAsset $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -372,7 +372,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
-									'@phan-var-force CommonDocGenerator $module';
+									'@phan-var-force ModelePDFAsset $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
