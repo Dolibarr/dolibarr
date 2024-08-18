@@ -122,7 +122,7 @@ class printing_printgcp extends PrintingDriver
 			$access = ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? 'HasAccessToken' : 'NoAccessToken');
 			$serviceFactory = new \OAuth\ServiceFactory();
 			$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
-			'@phan-var-force  OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
+			'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 			$token_ok = true;
 			try {
 				$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
@@ -261,7 +261,7 @@ class printing_printgcp extends PrintingDriver
 		);
 		$serviceFactory = new \OAuth\ServiceFactory();
 		$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
-		'@phan-var-force  OAuth\OAuth2\Service\Google'; // createService is only ServiceInterface
+		'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 		// Check if we have auth token
 		$token_ok = true;
 		try {
@@ -404,7 +404,7 @@ class printing_printgcp extends PrintingDriver
 		);
 		$serviceFactory = new \OAuth\ServiceFactory();
 		$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
-		'@phan-var-force  OAuth\OAuth2\Service\Google'; // createService is only ServiceInterface
+		'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 
 		// Check if we have auth token and refresh it
 		$token_ok = true;
@@ -457,7 +457,7 @@ class printing_printgcp extends PrintingDriver
 		);
 		$serviceFactory = new \OAuth\ServiceFactory();
 		$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
-		'@phan-var-force  OAuth\OAuth2\Service\Google'; // createService is only ServiceInterface
+		'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
 		// Check if we have auth token
 		$token_ok = true;
 		try {
