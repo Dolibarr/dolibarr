@@ -1575,6 +1575,7 @@ if (empty($reshook)) {
 						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
 
+						$i = -1;  // Ensure initialised for static analysis, but with invalid idx.
 						// If deposit invoice - down payment with 1 line (fixed amount or percent)
 						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
 							// Define the array $amountdeposit
@@ -1670,13 +1671,13 @@ if (empty($reshook)) {
 									0, // date_start
 									0, // date_end
 									0,
-									$lines[$i]->info_bits, // info_bits
+									$i >= 0 ? $lines[$i]->info_bits : 0, // info_bits
 									0,
 									'HT',
 									0,
 									0, // product_type
 									1,
-									$lines[$i]->special_code,
+									$i >= 0 ? $lines[$i]->special_code : 0,
 									$object->origin,
 									0,
 									0,
@@ -1819,6 +1820,7 @@ if (empty($reshook)) {
 											$fk_parent_line = 0;
 										}
 
+										$array_options = array();
 										// Extrafields
 										if (method_exists($lines[$i], 'fetch_optionals')) {
 											$lines[$i]->fetch_optionals();
@@ -3223,6 +3225,7 @@ if ($action == 'create') {
 	// Load objectsrc
 	$objectsrc = null;  // Initialise
 	//$remise_absolue = 0;
+	$objectsrc = null;
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -3297,7 +3300,7 @@ if ($action == 'create') {
 				$classname = ucfirst($subelem);
 
 				$expesrc = new $classname($db);
-				'@phan-var-force CommonObject $expesrc';
+				'@phan-var-force Facture|Commande $expesrc';
 				$expesrc->fetch($expeoriginid);
 
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
