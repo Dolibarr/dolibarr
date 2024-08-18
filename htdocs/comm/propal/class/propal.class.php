@@ -2539,11 +2539,12 @@ class Propal extends CommonObject
 	 *
 	 *	@param      User	$user		Object user that close
 	 *	@param      int		$status		Status (self::STATUS_BILLED or self::STATUS_REFUSED)
-	 *	@param      string	$note		Complete private note with this note
+	 *	@param      string	$note_private		Complete private note with this note
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@param      string	$note_public		Complete public note with this note
 	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
-	public function closeProposal($user, $status, $note = '', $notrigger = 0)
+	public function closeProposal($user, $status, $note_private = '', $notrigger = 0, $note_public = '')
 	{
 		global $langs,$conf;
 
@@ -2552,7 +2553,8 @@ class Propal extends CommonObject
 
 		$this->db->begin();
 
-		$newprivatenote = dol_concatdesc($this->note_private, $note);
+		$newprivatenote = dol_concatdesc($this->note_private, $note_private);
+		$newpublicnote = dol_concatdesc($this->note_public, $note_public);
 
 		if (!getDolGlobalString('PROPALE_KEEP_OLD_SIGNATURE_INFO')) {
 			$date_signature = $now;
@@ -2569,7 +2571,7 @@ class Propal extends CommonObject
 		}
 
 		$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."'";
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($newprivatenote)."', note_public = '".$this->db->escape($newpublicnote)."'";
 		if ($status == self::STATUS_SIGNED) {
 			$sql .= ", date_signature='".$this->db->idate($now)."', fk_user_signature = ".($fk_user_signature);
 		}
