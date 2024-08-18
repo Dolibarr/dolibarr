@@ -179,11 +179,11 @@ if (empty($reshook)) {
 
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
-      // $module can be modTcpdfbarcode or modPhpbarcode that both extends ModeleBarCode
+			// $module can be modTcpdfbarcode or modPhpbarcode that both extends ModeleBarCode
 			$module = new $classname($db);
 
-		  '@phan-var-force ModeleBarCode $module';
-      
+			'@phan-var-force ModeleBarCode $module';
+
 			// Build the file on disk for generator not able to return the document on the fly.
 			if ($generator != 'tcpdfbarcode') {		// $generator can be 'phpbarcode' (with this generator, barcode is generated on disk first) or 'tcpdfbarcode' (no need to enter this section with this generator).
 				// May be 'phpbarcode'
