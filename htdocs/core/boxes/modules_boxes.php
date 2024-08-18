@@ -243,6 +243,10 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 		$out = '';
 
+		if ($contents === null) {
+			$contents = array();
+		}
+
 		if ($refresh) {
 			dol_syslog(get_class($this).'::showBox');
 
