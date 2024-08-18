@@ -5,7 +5,7 @@
  * Copyright (C) 2008i		Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put your own copyright and developer email here---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,8 +124,8 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  MyObject			$object	Object we need next value for
-	 *	@return	string|int<-1,0>			Next free value if OK, <=0 if KO
+	 *  @param  MyObject		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
 	{
@@ -141,7 +141,7 @@ class mod_myobject_advanced extends ModeleNumRefMyObject
 			return 0;
 		}
 
-		$date = $object->date;
+		$date = $object->date_creation;
 
 		$numFinal = get_next_value($db, $mask, 'mymodule_myobject', 'ref', '', '', $date);
 

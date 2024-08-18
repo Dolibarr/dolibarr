@@ -323,12 +323,12 @@ return [
 		// mymodule seen in cti, but not in git.
 		.'|htdocs/custom/mymodule/.*'  // @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
-		.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
+		//.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
 		.'|htdocs/includes/nusoap/.*'  // @phpstan-ignore-line
 		// Included as stub (old version + incompatible typing hints)
 		.'|htdocs/includes/restler/.*'  // @phpstan-ignore-line
-		// Included as stub (did not seem properly analysed by phan without it)
+		// Included as stub (did not seem properly analyzed by phan without it)
 		.'|htdocs/includes/stripe/.*'  // @phpstan-ignore-line
 		.'|htdocs/conf/conf.php'  // @phpstan-ignore-line
 		// .'|htdocs/[^h].*/.*'  // For testing @phpstan-ignore-line
