@@ -7,7 +7,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put your own copyright and developer email here---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,22 +59,19 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
 		return $list;
 	}
 
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build and write pdf to disk
+	 *	Function to build a document on disk
 	 *
-	 *  @param	MyObject	$object				Source object to generate document from
-	 *  @param	Translate	$outputlangs		Lang output object
-	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param	int<0,1>	$hidedetails		Do not show line details
-	 *  @param	int<0,1>	$hidedesc			Do not show desc
-	 *  @param	int<0,1>	$hideref			Do not show ref
-	 *  @return	int<-1,1>						1 if OK, <=0 if KO
+	 *	@param	MyObject			$object				Object source to build document
+	 *	@param	Translate			$outputlangs		Lang output object
+	 *	@param	string				$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>			$hidedetails		Do not show line details
+	 *	@param	int<0,1>			$hidedesc			Do not show desc
+	 *	@param	int<0,1>			$hideref			Do not show ref
+	 *	@return	int<-1,1>								1 if OK, <=0 if KO
 	 */
 	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
-	// phpcs:enable
 }
 
 
@@ -84,10 +81,17 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
 abstract class ModeleNumRefMyObject extends CommonNumRefGenerator
 {
 	/**
-	 *  Return next free value
+	 *  Return an example of numbering
 	 *
-	 *  @param  MyObject    $object     Object we need next value for
-	 *  @return string|int<-1,0>       Next free value if OK, -1 if KO
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
+
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param  MyObject		$object		Object we need next value for
+	 *  @return string|int<-1,0>			Next value if OK, <=0 if KO
 	 */
 	abstract public function getNextValue($object);
 }

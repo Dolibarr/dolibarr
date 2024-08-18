@@ -5,7 +5,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/Dolibarr/dolibarr)](https://github.com/Dolibarr/dolibarr)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/5521/badge)](https://bestpractices.coreinfrastructure.org/projects/5521)
 
-Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, suppliers, invoices, orders, stocks, agenda…).
+Dolibarr ERP & CRM is a modern software package that helps manage your organization's activities (contacts, quotes, invoices, orders, stocks, agenda, human resources, ecm, manufacturing…).
 
 It's an Open-Source Software suite (written in PHP with JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
@@ -29,7 +29,9 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ## INSTALLING
 
-### Simple setup
+There is a lot of different solutions to install Dolibarr.
+
+### Using packages 
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM with just a few clicks, you can use one of the packaged versions:
 
@@ -39,7 +41,7 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
-### Recommended and generic setup
+### Using the generic step by step setup (recommended)
 
 You can use any web server supporting PHP (Apache, Nginx, ...) and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version:
 
@@ -69,7 +71,7 @@ You can use any web server supporting PHP (Apache, Nginx, ...) and a supported d
 
 - Follow the installer instructions;;;
 
-### SaaS/Cloud Setup
+### Using ready to use SaaS/Cloud offers
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
 
