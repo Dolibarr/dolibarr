@@ -2174,7 +2174,7 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 		$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
 	}
 
-	if (is_bool($checkTable) || $db->num_rows($checkTable) <= 0) {
+	if (is_bool($checkTable) || $db->num_rows($checkTable) <= 0) {	 // @phpstan-ignore-line
 		$error++;
 	}
 
