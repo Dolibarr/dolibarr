@@ -62,7 +62,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -1116,6 +1116,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
+			'@phan-var-force CommonObject $linkedobject';
 			$result = $linkedobject->fetch($origin_id);
 			if ($result >= 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects

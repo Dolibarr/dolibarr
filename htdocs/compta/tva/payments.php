@@ -201,11 +201,9 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 		$sql .= ")";
 	}
-	if (preg_match('/^cs\./', $sortfield)
-		|| preg_match('/^tva\./', $sortfield)
-		|| preg_match('/^ptva\./', $sortfield)
-		|| preg_match('/^pct\./', $sortfield)
-		|| preg_match('/^bank\./', $sortfield)) {
+	if ($sortfield !== null
+		&& preg_match('/^(cs|tva|ptva|pct|bank)\./', $sortfield)
+	) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 

@@ -1479,8 +1479,8 @@ class FormSetupItem
 	 * Set type of input as a category selector
 	 * TODO add default value
 	 *
-	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @return self
+	 * @param	string	$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @return	self
 	 */
 	public function setAsCategory($catType)
 	{

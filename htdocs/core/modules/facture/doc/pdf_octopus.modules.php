@@ -75,7 +75,7 @@ class pdf_octopus extends ModelePDFFactures
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'disabled';	// Disabled by default. Enabled in constructor if option INVOICE_USE_SITUATION is 2.
 
@@ -1162,7 +1162,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	TCPDF		$pdf            Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *  @param  Facture		$object         Object invoice
 	 *  @param  int			$posy           Position y in PDF
 	 *  @param  Translate	$outputlangs    Object langs for output
@@ -1306,7 +1306,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
+	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		Facture		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -1537,7 +1537,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	TCPDF		$pdf            Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy			Position depart
@@ -1938,7 +1938,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
+	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		int 		$tab_top		Top position of table
 	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -2035,7 +2035,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show top header of page. This include the logo, ref and address blocks
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *  @param  Facture		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes (usually set to 1 for first page, and 0 for next pages)
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -2425,7 +2425,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	TCPDF		$pdf     			PDF
+	 *      @param	TCPDI|TCPDF	$pdf				Object PDF
 	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
@@ -2728,7 +2728,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF		$pdf	 		Object PDF
+	 *   @param		TCPDI|TCPDF	$pdf			Object PDF
 	 *   @param		int  		$tab_top		Top position of table
 	 *   @param		int 		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -3202,7 +3202,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 * Rect pdf
 	 *
-	 * @param	TCPDF	$pdf			Object PDF
+	 * @param	TCPDI|TCPDF	$pdf		Object PDF
 	 * @param	float	$x				Abscissa of first point
 	 * @param	float	$y				Ordinate of first point
 	 * @param	float	$l				??
@@ -3306,7 +3306,7 @@ class pdf_octopus extends ModelePDFFactures
 	/**
 	 *  Show last page with a resume of all invoices
 	 *
-	 *  @param	TCPDF		$pdf			Object PDF
+	 *  @param	TCPDI|TCPDF	$pdf			Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy           Position depart
@@ -3384,7 +3384,7 @@ class pdf_octopus extends ModelePDFFactures
 		if (count($propals)) {
 			$propal = array_pop($propals);
 
-			$total_ht = ($conf->multicurrency->enabled && $propal->mylticurrency_tx != 1) ? $propal->multicurrency_total_ht : $propal->total_ht;
+			$total_ht = ($conf->multicurrency->enabled && $propal->multicurrency_tx != 1) ? $propal->multicurrency_total_ht : $propal->total_ht;
 			$remain_to_pay = $total_ht;
 
 			$pdf->SetTextColor(0, 0, 60);
@@ -3406,7 +3406,7 @@ class pdf_octopus extends ModelePDFFactures
 		} elseif (count($orders)) {
 			$order = array_pop($orders);
 
-			$total_ht = ($conf->multicurrency->enabled && $order->mylticurrency_tx != 1 ? $order->multicurrency_total_ht : $order->total_ht);
+			$total_ht = ($conf->multicurrency->enabled && $order->multicurrency_tx != 1 ? $order->multicurrency_total_ht : $order->total_ht);
 			$remain_to_pay = $total_ht;
 		}
 
@@ -3474,7 +3474,8 @@ class pdf_octopus extends ModelePDFFactures
 			$pdf->SetXY($posx, $posy);
 			$pdf->MultiCell($width, $height, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
-			$total_ht = ($conf->multicurrency->enabled && $invoice->mylticurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
+			$total_ht = ($conf->multicurrency->enabled && $invoice->multicurrency_tx != 1 ? $invoice->multicurrency_total_ht : $invoice->total_ht);
+
 			$pdf->SetXY($posx + $width, $posy);
 			$pdf->MultiCell($width2, $height, price($sign * ($total_ht + (!empty($invoice->remise) ? $invoice->remise : 0)), 0, $outputlangs), 0, 'R', 1);
 

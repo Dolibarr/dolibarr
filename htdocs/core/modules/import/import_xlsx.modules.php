@@ -52,7 +52,7 @@ class ImportXlsx extends ModeleImports
 
 	/**
 	 * Dolibarr version of driver
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 

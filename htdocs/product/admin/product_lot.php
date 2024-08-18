@@ -213,6 +213,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -314,6 +315,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

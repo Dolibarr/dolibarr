@@ -275,9 +275,9 @@ class MyObject extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User			$user		User that creates
+	 * @param  int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,max>				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -291,9 +291,9 @@ class MyObject extends CommonObject
 	/**
 	 * Clone an object into another one
 	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @param	User	$user		User that creates
+	 * @param	int		$fromid		Id of object to clone
+	 * @return	mixed				New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -390,11 +390,11 @@ class MyObject extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param 	int    	$id   			Id object
-	 * @param 	string 	$ref  			Ref
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int		$nolines		0=Default to load extrafields, 1=No extrafields
-	 * @return 	int     				Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    		$id   			Id object
+	 * @param 	string 		$ref  			Ref
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @param	int<0,1>	$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
@@ -408,8 +408,8 @@ class MyObject extends CommonObject
 	/**
 	 * Load object lines in memory from the database
 	 *
-	 * @param	int		$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @return 	int         			Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
+	 * @return 	int<1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines($noextrafields = 0)
 	{
@@ -425,14 +425,14 @@ class MyObject extends CommonObject
 	 * Using a fetchAll() with limit = 0 is a very bad practice. Instead try to forge yourself an optimized SQL request with
 	 * your own loop with start and stop pagination.
 	 *
-	 * @param  string      	$sortorder    	Sort Order
-	 * @param  string      	$sortfield    	Sort field
-	 * @param  int         	$limit        	Limit the number of lines returned
-	 * @param  int         	$offset       	Offset
-	 * @param  string		$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
-	 * @param  string      	$filtermode   	No more used
-	 * @return array|int                 	int <0 if KO, array of pages if OK
+	 * @param	string		$sortorder	Sort Order
+	 * @param	string		$sortfield	Sort field
+	 * @param	int<0,max>	$limit		Limit the number of lines returned
+	 * @param	int<0,max>	$offset		Offset
+	 * @param	string		$filter		Filter as an Universal Search string.
+	 *                                  Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param	string		$filtermode	No longer used
+	 * @return	self[]|int<-1,-1>			int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 1000, $offset = 0, string $filter = '', $filtermode = 'AND')
 	{
@@ -500,9 +500,9 @@ class MyObject extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param	User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -512,9 +512,9 @@ class MyObject extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       	User that deletes
-	 * @param int 	$notrigger  0=launch triggers, 1=disable triggers
-	 * @return int             	Return integer <0 if KO, >0 if OK
+	 * @param	User		$user		User that deletes
+	 * @param	int<0,1> 	$notrigger	0=launch triggers, 1=disable triggers
+	 * @return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
@@ -525,10 +525,10 @@ class MyObject extends CommonObject
 	/**
 	 *  Delete a line of object in database
 	 *
-	 *	@param  User	$user       User that delete
-	 *  @param	int		$idline		Id of line to delete
-	 *  @param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *  @return int         		>0 if OK, <0 if KO
+	 *	@param	User		$user		User that delete
+	 *  @param	int			$idline		Id of line to delete
+	 *  @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return	int<-2,1>				>0 if OK, <0 if KO
 	 */
 	public function deleteLine(User $user, $idline, $notrigger = 0)
 	{
@@ -544,9 +544,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Validate object
 	 *
-	 *	@param		User	$user     		User making status change
-	 *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@return  	int						Return integer <=0 if OK, 0=Nothing done, >0 if KO
+	 *	@param	User		$user		User making status change
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int<-1,1>				Return integer <=0 if OK, 0=Nothing done, >0 if KO
 	 */
 	public function validate($user, $notrigger = 0)
 	{
@@ -680,9 +680,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Set draft status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<0,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function setDraft($user, $notrigger = 0)
 	{
@@ -704,9 +704,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Set cancel status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user		Object user that modify
+	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>				Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function cancel($user, $notrigger = 0)
 	{
@@ -728,9 +728,9 @@ class MyObject extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int<-1,1>					Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{

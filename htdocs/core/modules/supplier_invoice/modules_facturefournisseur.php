@@ -3,6 +3,7 @@
  * Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2016  Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,5 +78,13 @@ abstract class ModelePDFSuppliersInvoices extends CommonDocGenerator
  */
 abstract class ModeleNumRefSuppliersInvoices extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * Return next value
+	 *
+	 * @param	Societe				$objsoc		Object third party
+	 * @param  	FactureFournisseur	$object		Object invoice
+	 * @param   string				$mode		'next' for next value or 'last' for last value
+	 * @return 	string|int<-1,0>				Value if OK, <=0 if KO
+	 */
+	abstract public function getNextValue($objsoc, $object, $mode = 'next');
 }

@@ -38,7 +38,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -133,9 +133,9 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc	    Object thirdparty
-	 *  @param  Productlot		$object		Object we need next value for
-	 *  @return string|int      			Value if OK, 0 if KO
+	 *  @param	Societe		$objsoc		Object thirdparty
+	 *  @param  Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0
 	 */
 	public function getNextValue($objsoc, $object)
 	{

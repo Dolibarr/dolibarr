@@ -76,11 +76,18 @@ class box_fediverse extends ModeleBoxes
 
 		$socialNetworkTitle = '';
 		$socialNetworkUrl = '';
+		$authParams = [];
 		if ($num > 0) {
 			$obj = $this->db->fetch_row($resql);
 			$socialNetworkData = json_decode($obj[0], true);
 			$socialNetworkTitle = $socialNetworkData['title'];
 			$socialNetworkUrl = $socialNetworkData['url'];
+
+			foreach ($socialNetworkData as $key => $value) {
+				if ($key !== 'title' && $key !== 'url') {
+					$authParams[$key] = $value;
+				}
+			}
 		}
 
 		$fediverseParser = new SocialNetworkManager($socialNetworkTitle);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,5 +84,11 @@ function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $
  */
 abstract class ModeleNumRefExpenseReport extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 *  Return next free value
+	 *
+	 *  @param  ExpenseReport	$object     Object we need next value for
+	 *  @return string|int<-1,0>   			Next value if OK, -1 or 0 if KO
+	 */
+	abstract public function getNextValue($object);
 }
