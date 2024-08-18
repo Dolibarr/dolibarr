@@ -90,6 +90,7 @@ parameters:
 		- '#dolReplaceInFile expects string, int given#'
 		- '#dol_escape_htmltag expects string, int given#'
 		- '#get_next_value expects string, int given#'
+		- '#pdf_writeLinkedObjects expects string, int given#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'

@@ -2664,7 +2664,7 @@ class Form
 			}
 			// mode=1 means customers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=1&status=' . $status . '&status_purchase=' . $status_purchase . '&finished=' . $finished . '&hidepriceinlabel=' . $hidepriceinlabel . '&warehousestatus=' . $warehouseStatus;
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
+			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 1, $ajaxoptions);
 
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
@@ -5979,7 +5979,7 @@ class Form
 			print '<form method="post" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setavailability">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$this->selectAvailabilityDelay($selected, $htmlname, -1, $addempty);
+			$this->selectAvailabilityDelay($selected, $htmlname, '', $addempty);
 			print '<input type="submit" name="modify" class="button smallpaddingimp" value="' . $langs->trans("Modify") . '">';
 			print '<input type="submit" name="cancel" class="button smallpaddingimp" value="' . $langs->trans("Cancel") . '">';
 			print '</form>';
@@ -6010,7 +6010,7 @@ class Form
 			print '<form method="post" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setdemandreason">';
 			print '<input type="hidden" name="token" value="' . newToken() . '">';
-			$this->selectInputReason($selected, $htmlname, -1, $addempty);
+			$this->selectInputReason($selected, $htmlname, '-1', $addempty);
 			print '<input type="submit" class="button smallpaddingimp" value="' . $langs->trans("Modify") . '">';
 			print '</form>';
 		} else {
@@ -6332,7 +6332,7 @@ class Form
 					$newfilter .= ' AND (' . $filter . ')';
 				}
 				// output the combo of discounts
-				$nbqualifiedlines = $this->select_remises($selected, $htmlname, $newfilter, $socid, $maxvalue);
+				$nbqualifiedlines = $this->select_remises((string) $selected, $htmlname, $newfilter, $socid, $maxvalue);
 				if ($nbqualifiedlines > 0) {
 					print ' &nbsp; <input type="submit" class="button smallpaddingimp" value="' . dol_escape_htmltag($langs->trans("UseLine")) . '"';
 					if (!empty($discount_type) && $filter && $filter != "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')") {
