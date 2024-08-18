@@ -2169,9 +2169,12 @@ if (($dirins && $action == 'confirm_deletedictionary' && $dicname) || ($dirins &
 	}
 
 	// Lookup the table dicname
-	$checkTable = $newdicname !== null && $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
+	$checkTable = false;
+	if ($newdicname !== null) {
+		$checkTable = $db->DDLDescTable(MAIN_DB_PREFIX.strtolower($newdicname));
+	}
 
-	if ($checkTable && $db->num_rows($checkTable) <= 0) {
+	if (is_bool($checkTable) || $db->num_rows($checkTable) <= 0) {
 		$error++;
 	}
 
