@@ -37,6 +37,9 @@ class GoogleAPI
 	 */
 	public $error = '';
 
+	/**
+	 * @var string google key
+	 */
 	public $key;
 
 	/**

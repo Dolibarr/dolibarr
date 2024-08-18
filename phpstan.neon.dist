@@ -89,6 +89,7 @@ parameters:
 		- '#EvalMath::trigger\(\) expects string, int given#'
 		- '#dolReplaceInFile expects string, int given#'
 		- '#dol_escape_htmltag expects string, int given#'
+		- '#get_next_value expects string, int given#'
 		- '#expects int, float#'
 		- '#expects int, array\|string given.#'
 		- '#expects int<0, 1>, '''' given.#'

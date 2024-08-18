@@ -117,7 +117,7 @@ function realCharForNumericEntities($matches)
  * only be guaranteed by escaping data during output.
  *
  * @param		string		$val		Brute value found into $_GET, $_POST or PHP_SELF
- * @param		string		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
+ * @param		int 		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function testSqlAndScriptInject($val, $type)
