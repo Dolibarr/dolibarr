@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +64,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of myobject
 	 * @return  Object					Object with cleaned properties
+	 * @phan-return	MyObject			Object with cleaned properties
+	 * @phpstan-return	MyObject			Object with cleaned properties
 	 *
 	 * @phan-return  MyObject
 	 *
@@ -102,9 +103,9 @@ class MyModuleApi extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of ordered objects
-	 *
-	 * @phan-return  MyObject[]
+	 * @return  array                               Array of MyObject objects
+	 * @phan-return array<int,MyObject>
+	 * @phpstan-return array<int,MyObject>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
@@ -192,7 +193,8 @@ class MyModuleApi extends DolibarrApi
 	 * Create myobject object
 	 *
 	 * @param array $request_data   Request data
-	 * @phan-param array<string,null|int|float|string|mixed[]> $request_data
+	 * @phan-param array{string,mixed} $request_data
+	 * @phpstan-param array{string,mixed} $request_data
 	 * @return int  				ID of myobject
 	 *
 	 * @throws RestException 403 Not allowed
@@ -239,9 +241,12 @@ class MyModuleApi extends DolibarrApi
 	 * Update myobject
 	 *
 	 * @param 	int   		$id             Id of myobject to update
-	 * @param 	array 		$request_data   Datas
-	 * @phan-param array<string,null|int|float|string|mixed[]> $request_data
+	 * @param 	array 		$request_data   Data
+	 * @phan-param mixed[]	$request_data
+	 * @phpstan-param mixed[]	$request_data
 	 * @return 	Object						Object after update
+	 * @phan-return MyObject
+	 * @phpstan-return MyObject
 	 *
 	 * @phan-return  MyObject
 	 *
@@ -300,7 +305,8 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * @param   int     $id   MyObject ID
 	 * @return  array
-	 * @phan-return  array<string,{code:int,message:string}>
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -342,9 +348,11 @@ class MyModuleApi extends DolibarrApi
 	 * Validate fields before creating or updating object
 	 *
 	 * @param	array		$data   Array of data to validate
-	 * @phan-param array<string,null|int|float|string|mixed[]> $data
+	 * @phan-param array<string,null|int|float|string> $data
+	 * @phpstan-param	array<string,null|int|float|string> $data
 	 * @return	array
-	 * @phan-return array<string,null|int|float|string> $data
+	 * @phan-return array<string,null|int|float|string>|array{}
+	 * @phpstan-return array<string,null|int|float|string>|array{}
 	 *
 	 * @throws	RestException
 	 */
@@ -369,10 +377,14 @@ class MyModuleApi extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object data fields
+	 * Clean sensitive object data fields
+	 * @phpstan-template T of Object
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{
