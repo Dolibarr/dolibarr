@@ -122,7 +122,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
 	 *  @param  Object			$object		Object we need next value for
-	 *  @return string|int      			Value if OK, 0 if KO
+	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

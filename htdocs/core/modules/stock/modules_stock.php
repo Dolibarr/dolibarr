@@ -54,9 +54,9 @@ abstract class ModelePDFStock extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param  DoliDB      $db                 Database handler
-	 *  @param  integer     $maxfilenamelength  Max length of value to show
-	 *  @return array                           List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
