@@ -1705,6 +1705,8 @@ if (empty($reshook)) {
 
 						// standard invoice, credit note, or down payment from a percent of all lines
 						if (GETPOST('type') != Facture::TYPE_DEPOSIT || (GETPOST('type') == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines')) {
+							$lines = array();
+
 							if ($result > 0) {
 								$lines = $srcobject->lines;
 								if (empty($lines) && method_exists($srcobject, 'fetch_lines')) {
@@ -3008,6 +3010,7 @@ if (empty($reshook)) {
 
 		if (!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid)) {
 			$lineClassName = '';
+
 			if ($fromElement == 'commande') {
 				dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 				$lineClassName = 'OrderLine';
