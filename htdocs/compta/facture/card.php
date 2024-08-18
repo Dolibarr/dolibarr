@@ -4325,6 +4325,8 @@ if ($action == 'create') {
 			$type_fac = 'CreditNote';
 		} elseif ($object->type == Facture::TYPE_DEPOSIT) {
 			$type_fac = 'Deposit';
+		} else {
+			$type_fac = '';
 		}
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
 		$text .= '<br>'.$langs->trans('ConfirmConvertToReduc2');
@@ -4567,6 +4569,9 @@ if ($action == 'create') {
 	if ($action == 'canceled') {
 		// If there is a replacement invoice not yet validated (draft state),
 		// it is not allowed to classify the invoice as abandoned.
+
+		$statusreplacement = 0;
+
 		if ($objectidnext) {
 			$facturereplacement = new Facture($db);
 			$facturereplacement->fetch($objectidnext);
@@ -4925,6 +4930,8 @@ if ($action == 'create') {
 
 
 
+		$displayWarranty = false;
+
 		if (!empty($object->retained_warranty) || getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')) {
 			$displayWarranty = true;
 			if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
@@ -5180,6 +5187,9 @@ if ($action == 'create') {
 			$nbrows += 1;
 		}
 
+		$total_prev_ht = $total_prev_ttc = 0;
+		$total_global_ht = $total_global_ttc = 0;
+
 		// List of previous situation invoices
 		if (($object->situation_cycle_ref > 0) && getDolGlobalString('INVOICE_USE_SITUATION')) {
 			print '<!-- List of situation invoices -->';
@@ -5196,9 +5206,6 @@ if ($action == 'create') {
 			print '<td class="right">'.$langs->trans('AmountTTC').'</td>';
 			print '<td width="18">&nbsp;</td>';
 			print '</tr>';
-
-			$total_prev_ht = $total_prev_ttc = 0;
-			$total_global_ht = $total_global_ttc = 0;
 
 			if (count($object->tab_previous_situation_invoice) > 0) {
 				// List of previous invoices
