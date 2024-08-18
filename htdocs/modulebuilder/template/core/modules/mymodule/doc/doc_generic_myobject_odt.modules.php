@@ -6,7 +6,7 @@
  * Copyright (C) 2018-2021	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put your own copyright and developer email here---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *	@param	DoliDB	$db      Database handler
 	 */
 	public function __construct($db)
 	{

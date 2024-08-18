@@ -219,12 +219,12 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	/**
 	 * Standard method to show a box (usage by boxes not mandatory, a box can still use its own showBox function)
 	 *
-	 * @param   array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
-	 * @param   array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
+	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
+	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
 	 * @param	int<0,1>	$nooutput	No print, only return string
 	 * @return  string
 	 */
-	public function showBox($head, $contents, $nooutput = 0)
+	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{
 		global $langs, $user, $conf;
 
@@ -242,6 +242,10 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 		$filename = '/box-'.$fileid;
 		$refresh = dol_cache_refresh($cachedir, $filename, $cachetime);
 		$out = '';
+
+		if ($contents === null) {
+			$contents = array();
+		}
 
 		if ($refresh) {
 			dol_syslog(get_class($this).'::showBox');
@@ -442,8 +446,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 	 *  List is sorted by widget filename so by priority to run.
 	 *
 	 *  @param	?string[]	$forcedirwidget		null=All default directories. This parameter is used by modulebuilder module only.
-	*	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
-	*
+	 *	@return	array<array{picto:string,file:string,fullpath:string,relpath:string,iscoreorexternal:'external'|'internal',version:string,status:string,info:string}>	Array list of widgets
+	 *
 	 */
 	public static function getWidgetsList($forcedirwidget = null)
 	{
@@ -540,7 +544,8 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 				if (preg_match('/NORUN$/i', $files[$key])) {
 					$disabledbyname = 1;
 				}
-				// We set info of modules
+
+				// We set info of modules  @phan-suppress-next-line PhanUndeclaredProperty
 				$widget[$j]['picto'] = ((!property_exists($objMod, 'picto') || empty($objMod->picto)) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
 				$widget[$j]['file'] = $files[$key];
 				$widget[$j]['fullpath'] = $fullpath[$key];

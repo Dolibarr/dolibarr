@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2007-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,10 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 // Load Dolibarr environment
 $res = 0;
 // Try master.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;
+$j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
 	$i--;
 	$j--;
@@ -100,7 +103,7 @@ if (!$res) {
 $langs->load("main"); // To load language file for default language
 
 // Load user and its permissions
-$result = $user->fetch('', 'admin'); // Load user for login 'admin'. Comment line to run as anonymous user.
+$result = $user->fetch(0, 'admin'); // Load user for login 'admin'. Comment line to run as anonymous user.
 if (!($result > 0)) {
 	dol_print_error(null, $user->error);
 	exit;
