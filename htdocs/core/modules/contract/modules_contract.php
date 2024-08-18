@@ -87,7 +87,7 @@ abstract class ModelNumRefContracts extends CommonNumRefGenerator
 	 *
 	 *	@param	Societe			$objsoc     third party object
 	 *	@param	Contrat			$contract	contract object
-	 *	@return string|int<0,-1>  			Next value if OK, -1 or 0 if KO
+	 *	@return string|int<-1,0>  			Next value if OK, -1 or 0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $contract);
 }

@@ -326,7 +326,7 @@ class Contrat extends CommonObject
 			}
 
 			$obj = new $classname();
-			'@phan-var-force CommonNumRefGenerator $obj';
+			'@phan-var-force ModelNumRefContracts $obj';
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -1045,7 +1045,7 @@ class Contrat extends CommonObject
 			$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 			if ($result > 0) {
 				$modCodeContract = new $module();
-				'@phan-var-force CommonNumRefGenerator $modCodeContrat';
+				'@phan-var-force ModelNumRefContracts $modCodeContrat';
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -2635,7 +2635,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT."/core/modules/contract/" . getDolGlobalString('CONTRACT_ADDON').'.php';
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
-		'@phan-var-force CommonNumRefGenerator $modContrat';
+		'@phan-var-force ModelNumRefContracts $modContrat';
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone

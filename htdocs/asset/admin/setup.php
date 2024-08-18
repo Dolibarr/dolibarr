@@ -230,7 +230,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
-							'@phan-var-force CommonNumRefGenerator $module';
+							'@phan-var-force ModeleNumRefAsset $module';
 
 							// Show modules according to feature level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -387,7 +387,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}
