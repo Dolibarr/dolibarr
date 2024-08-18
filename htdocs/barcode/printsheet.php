@@ -180,8 +180,10 @@ if (empty($reshook)) {
 			// Load barcode class for generating barcode image
 			$classname = "mod".ucfirst($generator);
 			$module = new $classname($db);
+
+			// Build the file on disk for generator not able to return the document on the fly.
 			'@phan-var-force ModeleBarCode $module';
-			if ($generator != 'tcpdfbarcode') {
+			if ($generator != 'tcpdfbarcode') {		// $generator can be 'phpbarcode' (with this generator, barcode is generated on disk first) or 'tcpdfbarcode' (no need to enter this section with this generator).
 				// May be phpbarcode
 				$template = 'standardlabel';
 				$is2d = false;
