@@ -182,7 +182,7 @@ if (empty($reshook)) {
 			// $module can be modTcpdfbarcode or modPhpbarcode that both extends ModeleBarCode
 			$module = new $classname($db);
 
-			'@phan-var-force ModeleBarCode $module';
+			'@phan-var-force modTcpdfbarcode|modPhpbarcode $module';
 
 			// Build the file on disk for generator not able to return the document on the fly.
 			if ($generator != 'tcpdfbarcode') {		// $generator can be 'phpbarcode' (with this generator, barcode is generated on disk first) or 'tcpdfbarcode' (no need to enter this section with this generator).
