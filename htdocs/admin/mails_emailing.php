@@ -140,7 +140,7 @@ if (preg_match('/^mac/i', PHP_OS)) {
 if (!getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')) {
 	$conf->global->MAIN_MAIL_SENDMODE_EMAILING = 'default';
 }
-$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT_EMAILING', ini_get('smtp_port'));
+$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT_EMAILING', (int) ini_get('smtp_port'));
 if (!$port) {
 	$port = 25;
 }

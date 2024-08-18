@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -663,7 +664,7 @@ class PaymentDonation extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	int		$maxlen			Max length
@@ -696,7 +697,7 @@ class PaymentDonation extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

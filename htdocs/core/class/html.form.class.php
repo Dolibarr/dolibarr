@@ -1374,7 +1374,7 @@ class Form
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/societe/ajax/company.php', $urloption, getDolGlobalInt('COMPANY_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 		} else {
 			// Immediate load of all database
 			$out .= $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit, $morecss, $moreparam, $multiple, $excludeids, $showcode);
@@ -1453,7 +1453,7 @@ class Form
 
 			$out .= ajax_event($htmlname, $events);
 
-			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, $events);
+			$out .= ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/contact/ajax/contact.php', $urloption, getDolGlobalInt('CONTACT_USE_SEARCH_TO_SELECT'), 0, $events);
 		} else {
 			// Immediate load of all database
 			$multiple = false;
@@ -3650,7 +3650,7 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 
 			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
@@ -5047,7 +5047,7 @@ class Form
 	/**
 	 * Creates HTML units selector (code => label)
 	 *
-	 * @param	string		$selected	Preselected Unit ID
+	 * @param	int|''		$selected	Preselected Unit ID
 	 * @param	string		$htmlname	Select name
 	 * @param	int<0,1>	$showempty	Add an empty line
 	 * @param	string		$unit_type	Restrict to one given unit type
@@ -5096,7 +5096,7 @@ class Form
 	/**
 	 *  Return a HTML select list of bank accounts
 	 *
-	 * @param int|string 	$selected 		Id account preselected
+	 * @param int|''	 	$selected 		Id account preselected
 	 * @param string 		$htmlname 		Name of select zone
 	 * @param int 			$status 		Status of searched accounts (0=open, 1=closed, 2=both)
 	 * @param string 		$filtre 		To filter the list. This parameter must not come from input of users
@@ -8413,7 +8413,7 @@ class Form
 			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
-			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalString($confkeyforautocompletemode), 0);
+			$out .= ajax_autocompleter($preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
 			$out .= '<!-- force css to be higher than dialog popup --><style type="text/css">.ui-autocomplete { z-index: 1010; }</style>';
 			$out .= '<input type="text" class="' . $morecss . '"' . ($disabled ? ' disabled="disabled"' : '') . ' name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . dol_escape_htmltag($placeholder) . '"' : '') . ' />';
 		} else {
@@ -9078,7 +9078,7 @@ class Form
 						$tmpvalue = empty($value['label']) ? '' : $value['label'];
 						$tmpcolor = empty($value['color']) ? '' : $value['color'];
 						$tmppicto = empty($value['picto']) ? '' : $value['picto'];
-						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']): $value['labelhtml'];
+						$tmplabelhtml = empty($value['labelhtml']) ? (empty($value['data-html']) ? '' : $value['data-html']) : $value['labelhtml'];
 					}
 					$newval = ($translate ? $langs->trans($tmpvalue) : $tmpvalue);
 					$newval = ($key_in_label ? $tmpkey . ' - ' . $newval : $newval);
@@ -9501,8 +9501,8 @@ class Form
 	 *  Show block with links to link to other objects.
 	 *
 	 * @param 	CommonObject 	$object 			Object we want to show links to
-	 * @param 	string[] 			$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
-	 * @param 	string[] 			$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
+	 * @param 	string[] 		$restrictlinksto 	Restrict links to some elements, for example array('order') or array('supplier_order'). null or array() if no restriction.
+	 * @param 	string[] 		$excludelinksto 	Do not show links of this type, for example array('order') or array('supplier_order'). null or array() if no exclusion.
 	 * @return  string                              HTML block
 	 */
 	public function showLinkToObjectBlock($object, $restrictlinksto = array(), $excludelinksto = array())

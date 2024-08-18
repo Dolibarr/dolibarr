@@ -656,7 +656,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  */
 function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, $note = '', $entity = 1)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	// Clean parameters
 	$name = trim($name);
@@ -665,6 +665,24 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 	if (empty($name)) {
 		dol_print_error($db, "Error: Call to function dolibarr_set_const with wrong parameters");
 		exit;
+	}
+	if (! is_object($hookmanager)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+
+	$parameters = array(
+		'name' => $name,
+		'value' => $value,
+		'type' => $type,
+		'visible' => $visible,
+		'note' => $note,
+		'entity' => $entity,
+	);
+
+	$reshook = $hookmanager->executeHooks('dolibarrSetConst', $parameters); // Note that $action and $object may have been modified by some hooks
+	if ($reshook != 0) {
+		return $reshook;
 	}
 
 	//dol_syslog("dolibarr_set_const name=$name, value=$value type=$type, visible=$visible, note=$note entity=$entity");
@@ -891,8 +909,8 @@ function security_prepare_head()
 /**
  * Prepare array with list of tabs
  *
- * @param 	object 	$object 	Descriptor class
- * @return  array				Array of tabs to show
+ * @param 	DolibarrModules		$object 	Descriptor class
+ * @return  array<array<int,string>>		Array of tabs to show
  */
 function modulehelp_prepare_head($object)
 {
@@ -1154,6 +1172,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 	}
 
 	$objMod = new $modName($db);
+	'@phan-var-force DolibarrModules $objMod';
 
 	// Test if PHP version ok
 	$verphp = versionphparray();
@@ -1295,6 +1314,7 @@ function unActivateModule($value, $requiredby = 1)
 
 	if ($found) {
 		$objMod = new $modName($db);
+		'@phan-var-force DolibarrModules $objMod';
 		$result = $objMod->remove();
 		if ($result <= 0) {
 			$ret = $objMod->error;
@@ -1367,6 +1387,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 
 						if ($objMod->numero > 0) {
 							$j = $objMod->numero;
@@ -1399,7 +1420,9 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
 
 							// phpcs:disable
 							// Complete the arrays &$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
+							// @phan-suppress-next-line PhanUndeclaredProperty
 							if (empty($objMod->dictionaries) && !empty($objMod->{"dictionnaries"})) {
+								// @phan-suppress-next-line PhanUndeclaredProperty
 								$objMod->dictionaries = $objMod->{"dictionnaries"}; // For backward compatibility
 							}
 							// phpcs:enable
@@ -1531,6 +1554,7 @@ function activateModulesRequiredByCountry($country_code)
 					if ($modName) {
 						include_once $dir.$file;
 						$objMod = new $modName($db);
+						'@phan-var-force DolibarrModules $objMod';
 
 						$modulequalified = 1;
 
@@ -1549,7 +1573,7 @@ function activateModulesRequiredByCountry($country_code)
 
 						if ($modulequalified) {
 							// Load languages files of module
-							if (isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code])) {
+							if (property_exists($objMod, 'automatic_activation') && isset($objMod->automatic_activation) && is_array($objMod->automatic_activation) && isset($objMod->automatic_activation[$country_code])) {
 								activateModule($modName);
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');

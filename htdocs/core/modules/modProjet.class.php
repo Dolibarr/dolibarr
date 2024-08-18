@@ -315,7 +315,7 @@ class modProjet extends DolibarrModules
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('t.fk_user_creat'=>'user->id', 'extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'projet'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
 		$this->import_convertvalue_array[$r] = array(
-			't.ref'=>array('rule'=>'getrefifauto', 'class'=>(!getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON), 'path'=>"/core/modules/project/".(!getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON).'.php'),
+			't.ref' => array('rule' => 'getrefifauto', 'class' => getDolGlobalString('PROJECT_ADDON', 'mod_project_simple'), 'path' => "/core/modules/project/".getDolGlobalString('PROJECT_ADDON', 'mod_project_simple').'.php'),
 			't.fk_soc' => array(
 				'rule'    => 'fetchidfromref',
 				'file'    => '/societe/class/societe.class.php',

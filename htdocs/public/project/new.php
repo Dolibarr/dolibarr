@@ -258,7 +258,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
-		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 		// Search template files
 		$file = '';
@@ -274,7 +274,7 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 
-		if ($filefound) {
+		if ($filefound && !empty($classname)) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 			$modProject = new $classname();
 

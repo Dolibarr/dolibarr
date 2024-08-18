@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Treća strana ili član partnerstva je obav
 ErrorFailedToWriteInTempDirectory=Upisivanje u privremeni direktorij nije uspjelo
 ErrorQuantityIsLimitedTo=Količina je ograničena na %s
 ErrorFailedToLoadThirdParty=Neuspješno pronalaženje/učitavanje treće strane sa id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Ovaj način plaćanja nije bankovni račun
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe kupac nije postavljen za ovu treću stranu (ili je postavljen na vrijednost izbrisanu na strani Stripe). Prvo ga kreirajte (ili ponovo pričvrstite).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP pretraga ne može tražiti kod pošiljaoca ili primaoca niz koji sadrži znak +
 ErrorTableNotFound=Tabela <b>%s</b> nije pronađena
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Rječnik <b>%s</b> nije pronađen
 ErrorFailedToCreateSymLinkToMedias=Nije uspjelo kreiranje simboličke veze %s koja ukazuje na %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Provjerite naredbu koja se koristi za izvoz u Napredne opcije izvoza
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

@@ -81,7 +81,7 @@ class box_clients extends ModeleBoxes
 
 		if ($user->hasRight('societe', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", s.datec, s.tms, s.status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -120,7 +120,8 @@ class box_clients extends ModeleBoxes
 					$thirdpartystatic->name = $objp->name;
 					$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
-					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta = $objp->code_compta_client;
+					$thirdpartystatic->code_compta_client = $objp->code_compta_client;
 					$thirdpartystatic->client = $objp->client;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;

@@ -192,10 +192,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $errors;
 
 	/**
-	 * @var string Module version
+	 * @var string 	Module version ('x.y.z' or a reserved keyword)
 	 * @see http://semver.org
 	 *
-	 * The following keywords can also be used:
+	 * The following keywords that can also be used are:
 	 * 'development'
 	 * 'experimental'
 	 * 'dolibarr': only for core modules that share its version
@@ -898,7 +898,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public function getModulePosition()
 	{
-		if (in_array($this->version, array('dolibarr', 'experimental', 'development'))) {	// core module
+		if (in_array($this->version, array('dolibarr', 'dolibarr_deprecated', 'experimental', 'development'))) {	// core module
 			return $this->module_position;
 		} else {																			// external module
 			if ($this->module_position >= 100000) {
@@ -912,8 +912,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Tells if module is core or external.
-	 * 'dolibarr' and 'dolibarr_deprecated' is core
-	 * 'experimental' and 'development' is core
+	 * Version = 'dolibarr', 'dolibarr_deprecated', 'experimental' and 'development' means core modules
 	 *
 	 * @return string  'core', 'external' or 'unknown'
 	 */
@@ -2019,7 +2018,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if (!empty($reinitadminperms) && !empty($user->admin)) {  // Reload permission for current user if defined
 					// We reload permissions
 					$user->clearrights();
-					$user->getrights();
+					$user->loadRights();
 				}
 			}
 			$this->db->free($resql);

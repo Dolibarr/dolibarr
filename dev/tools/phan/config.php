@@ -257,10 +257,12 @@ return [
 		'filtert' => 'int',
 		'forceall' => 'int<0,1>',
 		'form' => '\Form',
+		'formcompany' => '\FormCompany',
 		'hookmanager' => '\HookManager',
 		'inputalsopricewithtax' => 'int<0,1>',
 		'langs' => '\Translate',
 		'leftmenu' => 'string',
+		'linkedObjectBlock' => '\CommonObject[]', // See htdocs/core/class/html.form.class.php
 		'mainmenu' => 'string',
 		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
@@ -268,6 +270,7 @@ return [
 		'obj' => '\CommonObject',     // Deprecated
 		'object_rights' => 'int|stdClass',
 		'objectoffield' => '\CommonObject',
+		'objsoc' => '\Societe',
 		'senderissupplier' => 'int<0,2>',
 		'user' => '\User',
 		'website' => 'string',  // See discussion https://github.com/Dolibarr/dolibarr/pull/28891#issuecomment-2002268334  // Disable because Phan infers Website type
@@ -317,6 +320,8 @@ return [
 	//'exclude_file_regex' => '@^vendor/.*/(tests?|Tests?)/@',
 	'exclude_file_regex' => '@^('  // @phpstan-ignore-line
 		.'dummy'  // @phpstan-ignore-line
+		// mymodule seen in cti, but not in git.
+		.'|htdocs/custom/mymodule/.*'  // @phpstan-ignore-line
 		.'|htdocs/.*/canvas/.*/tpl/.*.tpl.php'  // @phpstan-ignore-line
 		.'|htdocs/modulebuilder/template/.*'  // @phpstan-ignore-line
 		// Included as stub (better analysis)
@@ -346,9 +351,9 @@ return [
 		'/^sanitizeVal$/' => [1, $sanitizeRegex,"UnknownSanitizeType"],
 		'/^checkVal$/' => [1, $sanitizeRegex,"UnknownCheckValSanitizeType"],
 		'/^\\\\ExtraFields::addExtraField$/' => [2, $extraFieldTypeRegex,"UnknownExtrafieldTypeBack"],
-		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],  // '', 0, 1 match bool and int values
+		'/^dol_now$/' => [0, '{^(?:auto|gmt|tz(?:server|ref|user(?:rel)?))$}',"InvalidDolNowArgument"],
 		'/^dol_mktime$/' => [6, '{^(?:|0|1|auto|gmt|tz(?:server|ref|user(?:rel)?|,[+a-zA-Z-/]+))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
-		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],
+		'/^dol_print_date$/' => [2, '{^(?:|0|1|auto|gmt|tz(?:server|user(?:rel)?))$}',"InvalidDolMktimeArgument"],  // '', 0, 1 match bool and int values
 		'/^GETPOSTFLOAT$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidGetPostFloatRounding"],
 		'/^price2num$/' => [1, '{^(?:|M[UTS]|C[UT]|\d+)$}',"InvalidPrice2NumRounding"],
 	],
@@ -384,7 +389,7 @@ return [
 		'UnknownElementTypePlugin',
 		'WhitespacePlugin',
 		//'RemoveDebugStatementPlugin', // Reports echo, print, ...
-		//'SimplifyExpressionPlugin',
+		'SimplifyExpressionPlugin',
 		//'StrictComparisonPlugin', // Expects ===
 		'SuspiciousParamOrderPlugin',
 		'UnsafeCodePlugin',
@@ -442,10 +447,10 @@ return [
 		'PhanPluginRedundantAssignment',				// Not essential, useless
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
-		'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled into config_extended only.
-		'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled into config_extended only.
+		'PhanPluginUnknownArrayMethodParamType',	// Too many troubles to manage. Is enabled in config_extended only.
+		'PhanPluginUnknownArrayMethodReturnType',	// Too many troubles to manage. Is enabled in config_extended only.
 		'PhanUndeclaredGlobalVariable',			// Too many false positives on .tpl.php files. Is enabled into config_extended only.
-		'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled into config_extended only.
+		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 	],
 	// You can put relative paths to internal stubs in this config option.
 	// Phan will continue using its detailed type annotations,

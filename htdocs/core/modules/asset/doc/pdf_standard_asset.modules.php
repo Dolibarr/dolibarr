@@ -71,7 +71,7 @@ class pdf_standard_asset extends ModelePDFAsset
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -81,7 +81,7 @@ class pdf_standard_asset extends ModelePDFAsset
 	public $situationinvoice;
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -141,13 +141,13 @@ class pdf_standard_asset extends ModelePDFAsset
 	/**
 	 *  Function to build pdf onto disk
 	 *
-	 *  @param		Asset		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *	@param	Asset		$object				Object source to build document
+	 *	@param	Translate	$outputlangs		Lang output object
+	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	int<0,1>	$hidedetails		Do not show line details
+	 *	@param	int<0,1>	$hidedesc			Do not show desc
+	 *	@param	int<0,1>	$hideref			Do not show ref
+	 *	@return	int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -415,7 +415,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -1109,7 +1109,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			),
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['vat'] = array(
 			'rank' => $rank,
 			'status' => false,
@@ -1124,7 +1124,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$this->cols['vat']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1135,7 +1135,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['qty'] = array(
 			'rank' => $rank,
 			'width' => 16, // in mm
@@ -1146,7 +1146,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			'border-left' => true, // add left line separator
 		);
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['progress'] = array(
 			'rank' => $rank,
 			'width' => 19, // in mm
@@ -1161,7 +1161,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$this->cols['progress']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['unit'] = array(
 			'rank' => $rank,
 			'width' => 11, // in mm
@@ -1175,7 +1175,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$this->cols['unit']['status'] = true;
 		}
 
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['discount'] = array(
 			'rank' => $rank,
 			'width' => 13, // in mm
@@ -1189,7 +1189,7 @@ class pdf_standard_asset extends ModelePDFAsset
 			$this->cols['discount']['status'] = true;
 		}
 
-		$rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
+		$rank += 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm

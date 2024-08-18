@@ -105,7 +105,7 @@ if (!($result > 0)) {
 	dol_print_error(null, $user->error);
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 $hookmanager->initHooks(array('cli'));
 

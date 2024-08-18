@@ -156,8 +156,8 @@ $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object-
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, $object, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled("mymodule")) {
-	accessforbidden();
+if (!isModEnabled($object->module)) {
+	accessforbidden("Module ".$object->module." not enabled");
 }
 if (!$permissiontoread) {
 	accessforbidden();
@@ -207,10 +207,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -362,7 +362,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
 	if ($action == 'xxx') {
-		$text = $langs->trans('ConfirmActionMyObject', $object->ref);
+		$text = $langs->trans('ConfirmActionXxx', $object->ref);
 		/*if (isModEnabled('notification'))
 		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
@@ -612,7 +612,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('myobject'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -622,10 +622,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', dol_buildpath('/mymodule/myobject_agenda.php', 1).'?id='.$object->id);
 
+		$includeeventlist = 0;
+
 		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+		if ($includeeventlist) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+			$formactions = new FormActions($db);
+			$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
+		}
 
 		print '</div></div>';
 	}

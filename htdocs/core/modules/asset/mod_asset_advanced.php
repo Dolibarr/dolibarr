@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -116,7 +117,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 	 * 	Return next free value
 	 *
 	 *  @param  Asset			$object		Object we need next value for
-	 *  @return string|int      			Next value if OK, 0 if KO
+	 *  @return string|int<-1,1>			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($object)
 	{

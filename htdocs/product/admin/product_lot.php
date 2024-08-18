@@ -130,6 +130,8 @@ if ($action == 'updateMaskLot') {
 
 		$module = new $classname($db);
 
+		'@phan-var-force ModelePDFProductBatch $module';
+
 		if ($module->write_file($product_batch, $langs) > 0) {
 			header("Location: " . DOL_URL_ROOT . "/document.php?modulepart=product_batch&file=SPECIMEN.pdf");
 			return;
@@ -211,6 +213,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -312,6 +315,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file($db);
+						'@phan-var-force ModeleNumRefBatch $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

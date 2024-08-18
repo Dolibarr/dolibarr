@@ -168,7 +168,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -207,7 +207,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -246,7 +246,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
@@ -281,7 +281,7 @@ class Users extends DolibarrApi
 		}
 
 		if ($includepermissions) {
-			$this->useraccount->getRights();
+			$this->useraccount->loadRights();
 		}
 
 		$usergroup = new UserGroup($this->db);
@@ -430,6 +430,60 @@ class Users extends DolibarrApi
 		}
 	}
 
+	/**
+	 * Update a user password
+	 *
+	 * @param   int     $id        			User ID
+	 * @param	bool	$send_password		Only if set to true, the new password will send to the user
+	 * @return  int                			1 if password changed, 2 if password changed and sent
+	 *
+	 * @throws RestException 403 Not allowed
+	 * @throws RestException 404 User not found
+	 * @throws RestException 500 System error
+	 *
+	 * @url	GET {id}/setPassword
+	 */
+	public function setPassword($id, $send_password = false)
+	{
+		//$conf->global->API_DISABLE_LOGIN_API = 1;
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
+			throw new RestException(403, "Error: login and password reset APIs are disabled. You can get access token from the backoffice to get access permission but permission and password manipulation from APIs are forbidden.");
+		}
+
+		//$conf->global->API_ALLOW_PASSWORD_RESET = 1;
+		if (!getDolGlobalString('API_ALLOW_PASSWORD_RESET')) {
+			throw new RestException(403, "Error: password reset APIs are disabled by default. To allow this, the option API_ALLOW_PASSWORD_RESET must be set.");
+		}
+
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "setPassword on user not allowed for login ".DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->useraccount->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'User not found, no password changed');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
+			throw new RestException(403, 'Access on this object not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$newpassword = $this->useraccount->setPassword($this->useraccount, '');	// This will generate a new password
+		if (is_int($newpassword) && $newpassword < 0) {
+			throw new RestException(500, 'ErrorFailedToSetNewPassword'.$this->useraccount->error);
+		} else {
+			// Success
+			if ($send_password) {
+				if ($this->useraccount->send_password($this->useraccount, $newpassword) > 0) {
+					return 2;
+				} else {
+					throw new RestException(500, 'ErrorFailedSendingNewPassword - '.$this->useraccount->error);
+				}
+			} else {
+				return 1;
+			}
+		}
+	}
 
 	/**
 	 * List the groups of a user
@@ -483,7 +537,7 @@ class Users extends DolibarrApi
 		global $conf;
 
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
-			throw new RestException(403);
+			throw new RestException(403, 'setGroup on users not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$result = $this->useraccount->fetch($id);
@@ -533,8 +587,6 @@ class Users extends DolibarrApi
 	 */
 	public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = '0', $sqlfilters = '', $properties = '')
 	{
-		global $conf;
-
 		$obj_ret = array();
 
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
@@ -607,8 +659,6 @@ class Users extends DolibarrApi
 	 */
 	public function infoGroups($group, $load_members = 0)
 	{
-		global $db, $conf;
-
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) ||
 			getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !DolibarrApiAccess::$user->hasRight('user', 'group_advance', 'read') && empty(DolibarrApiAccess::$user->admin)) {
 			throw new RestException(403, "You are not allowed to read groups");
@@ -670,8 +720,6 @@ class Users extends DolibarrApi
 	protected function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->default_values);

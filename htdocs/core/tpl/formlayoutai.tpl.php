@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,14 @@ if (empty($htmlname)) {
 <!-- BEGIN PHP TEMPLATE formlayoutai.tpl.php -->
 <?php
 
+'
+@phan-var-force ?FormWebSite $formwebsite
+@phan-var-force ?FormMail $formmail
+';
+
+if (!isset($out)) {
+	$out = '';
+}
 // Add link to add layout
 if ($showlinktolayout) {
 	$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';

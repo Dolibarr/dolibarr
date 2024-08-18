@@ -17,7 +17,6 @@ ManufacturingPrice=Productie prijs
 MinPriceHT=Min. verkoopprijs (excl. BTW)
 MinPriceTTC=Min. verkoopprijs (incl. BTW)
 SupplierRef=Leverancier ref
-ListOfStockMovements=Lijst van voorraad bewegingen
 BarCode=Streepjescode
 BarcodeType=Type streepjescode
 SetDefaultBarcodeType=Stel type streepjescode in

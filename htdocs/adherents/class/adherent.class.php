@@ -106,6 +106,9 @@ class Adherent extends CommonObject
 	 */
 	public $civility_code;
 
+	/**
+	 * @var int
+	 */
 	public $civility;
 
 	/**
@@ -202,6 +205,9 @@ class Adherent extends CommonObject
 	 */
 	public $datem;
 
+	/**
+	 * @var string|int
+	 */
 	public $datevalid;
 
 	/**
@@ -239,6 +245,9 @@ class Adherent extends CommonObject
 	 */
 	public $user_login;
 
+	/**
+	 * @var string|int
+	 */
 	public $datefin;
 
 
@@ -305,7 +314,7 @@ class Adherent extends CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -795,7 +804,7 @@ class Adherent extends CommonObject
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
-		$sql .= ", public = '".$this->db->escape($this->public)."'";
+		$sql .= ", public = ".(int) $this->public;
 		$sql .= ", statut = ".(int) $this->statut;
 		$sql .= ", default_lang = ".(!empty($this->default_lang) ? "'".$this->db->escape($this->default_lang)."'" : "null");
 		$sql .= ", fk_adherent_type = ".(int) $this->typeid;
@@ -2291,7 +2300,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpictoimg				0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small, -4=???)
 	 *	@param	int		$maxlen						length max label
@@ -2679,6 +2688,7 @@ class Adherent extends CommonObject
 		$this->photo = '';
 		$this->public = 1;
 		$this->statut = self::STATUS_DRAFT;
+		$this->status = self::STATUS_DRAFT;
 
 		$this->datefin = $now;
 		$this->datevalid = $now;
@@ -3044,7 +3054,7 @@ class Adherent extends CommonObject
 			}
 
 			$tmp = dol_getdate($now);
-			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), $daysbeforeend, 'd');
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;
@@ -3251,7 +3261,7 @@ class Adherent extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

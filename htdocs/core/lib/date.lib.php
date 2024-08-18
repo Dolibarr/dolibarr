@@ -4,7 +4,7 @@
  * Copyright (C) 2011-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024 Charlene Benke       <charlene@patas-monkey.com>
- * Copyright (C) 2024	     MDW					        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -274,7 +274,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			if ($sDay) {
 				if ($sDay >= $lengthOfWeek) {
 					$sWeek = (int) (($sDay - $sDay % $lengthOfWeek) / $lengthOfWeek);
-					$sDay = $sDay % $lengthOfWeek;
+					$sDay %= $lengthOfWeek;
 					$weekTranslate = $langs->trans("DurationWeek");
 					if ($sWeek >= 2) {
 						$weekTranslate = $langs->trans("DurationWeeks");
@@ -306,7 +306,7 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 		$sTime = dol_print_date($iSecond, '%H', true);
 	} elseif ($format == 'fullhour') {
 		if (!empty($iSecond)) {
-			$iSecond = $iSecond / 3600;
+			$iSecond /= 3600;
 		} else {
 			$iSecond = 0;
 		}
@@ -466,7 +466,8 @@ function dol_stringtotime($string, $gm = 1)
 		$gm = 'tzserver';
 	}
 
-	$date = dol_mktime(substr($tmp, 8, 2), substr($tmp, 10, 2), substr($tmp, 12, 2), substr($tmp, 4, 2), substr($tmp, 6, 2), substr($tmp, 0, 4), $gm);
+	$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+
 	return $date;
 }
 
@@ -1060,7 +1061,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$numholidays = num_public_holiday($timestampStart, $timestampEnd, $country_code, $lastday);
 		$nbOpenDay = ($numdays - $numholidays);
 		if ($inhour == 1 && $nbOpenDay <= 3) {
-			$nbOpenDay = ($nbOpenDay * 24);
+			$nbOpenDay *= 24;
 		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} elseif ($timestampStart == $timestampEnd) {
@@ -1075,7 +1076,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$nbOpenDay = $lastday;
 
 		if ($inhour == 1) {
-			$nbOpenDay = ($nbOpenDay * 24);
+			$nbOpenDay *= 24;
 		}
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
 	} else {

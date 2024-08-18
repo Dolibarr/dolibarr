@@ -81,7 +81,7 @@ if ($user->id != $id && !$canreaduser) {
 
 $object = new User($db);
 $object->fetch($id, '', '', 1);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
@@ -111,12 +111,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms && $confirm == 'yes') {
@@ -130,12 +131,13 @@ if (empty($reshook)) {
 		// If we are changing our own permissions, we reload permissions and menu
 		if ($object->id == $user->id) {
 			$user->clearrights();
-			$user->getrights();
+			$user->loadRights();
+			// @phan-suppress-next-line PhanRedefinedClassReference
 			$menumanager->loadMenu();
 		}
 
 		$object->clearrights();
-		$object->getrights();
+		$object->loadRights();
 	}
 }
 

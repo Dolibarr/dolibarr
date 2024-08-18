@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2022      Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
@@ -2385,7 +2385,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				// Fields to show current time
 				$tableCell = '';
 				$modeinput = 'hours';
-				$TFirstDay = getFirstDayOfEachWeek($TWeek, date('Y', $firstdaytoshow));
+				$TFirstDay = getFirstDayOfEachWeek($TWeek, (int) date('Y', $firstdaytoshow));
 				$TFirstDay[reset($TWeek)] = 1;
 
 				$firstdaytoshowarray = dol_getdate($firstdaytoshow);
@@ -2591,8 +2591,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if (empty($project_year_filter) || !is_numeric($project_year_filter)) {
 				$project_year_filter = date("Y");
 			}
-			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter, 12, false)).")";
-			$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter, 1, false)).")";
+			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day((int) $project_year_filter, 12, false)).")";
+			$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day((int) $project_year_filter, 1, false)).")";
 		}
 	}
 
@@ -2716,6 +2716,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					//$thirdpartystatic->name_alias = $objp->name_alias;
 					//$thirdpartystatic->code_client = $objp->code_client;
 					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta_client = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
 					//$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;

@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class pdf_ban extends ModeleBankAccountDoc
 {
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'development';
 
@@ -208,7 +208,7 @@ class pdf_ban extends ModeleBankAccountDoc
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top - 3, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;

@@ -175,7 +175,7 @@ if ($action == 'refreshmanual') {
 	$diroutputslash .= '/';
 
 	// Scan directory tree on disk
-	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
+	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
 	$sqltree = $ecmdirstatic->get_full_arbo(0);
@@ -305,7 +305,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 0);
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 'mod-ecm page-index_auto');
 
 
 // Add sections to manage
