@@ -303,13 +303,6 @@ class Categorie extends CommonObject
 		"fk_user_modif" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserModif", "enabled"=>"1", 'position'=>85, 'notnull'=>-1, "visible"=>"-2", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
 	);
 
-	public $ref_ext;
-	public $import_key;
-	public $date_creation;
-	public $tms;
-	public $fk_user_creat;
-	public $fk_user_modif;
-
 	/**
 	 *	Constructor
 	 *
