@@ -141,7 +141,7 @@ if (!$apiService->getBaseApiUri()) {
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
 if (method_exists($apiService, 'setAccessType')) {
-	$apiService->setAccessType('offline');		// Most generic OAUTH provider does not provide AccessType online/offline. They are mostly offline.
+	$apiService->setAccessType('offline');		// Most generic OAUTH provider does not provide AccessType online/offline. They are mostly offline.  // @phan-suppress-current-line PhanUndeclaredMethod
 }
 
 if (!getDolGlobalString($keyforparamid)) {
@@ -186,11 +186,11 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	if ($forlogin) {
 		$approval_prompt = getDolGlobalString('OAUTH_'.$genericstring.'_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
 		if (method_exists($apiService, 'setApprouvalPrompt')) {
-			$apiService->setApprouvalPrompt($approval_prompt);
+			$apiService->setApprouvalPrompt($approval_prompt);  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 	} else {
 		if (method_exists($apiService, 'setApprouvalPrompt')) {
-			$apiService->setApprouvalPrompt('force');
+			$apiService->setApprouvalPrompt('force');  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 	}
 

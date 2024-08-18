@@ -125,7 +125,7 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // $requestedpermissionsarray contains list of scopes.
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
+'@phan-var-force  OAuth\OAuth2\Service\Google'; // createService is only ServiceInterface
 
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
