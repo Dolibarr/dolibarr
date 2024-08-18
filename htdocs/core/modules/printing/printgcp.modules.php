@@ -122,6 +122,7 @@ class printing_printgcp extends PrintingDriver
 			$access = ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? 'HasAccessToken' : 'NoAccessToken');
 			$serviceFactory = new \OAuth\ServiceFactory();
 			$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
+			'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 			$token_ok = true;
 			try {
 				$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
