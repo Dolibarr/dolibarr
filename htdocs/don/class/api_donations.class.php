@@ -81,8 +81,6 @@ class Donations extends DolibarrApi
 		return $this->_cleanObjectDatas($this->don);
 	}
 
-
-
 	/**
 	 * List donations
 	 *
