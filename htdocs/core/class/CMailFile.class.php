@@ -1534,7 +1534,7 @@ class CMailFile
 			}
 
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_move($srcfile, $destfile, 0, 1, 0, 0);
+			dol_move($srcfile, $destfile, '0', 1, 0, 0);
 		}
 	}
 
