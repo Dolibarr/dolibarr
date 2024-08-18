@@ -121,7 +121,6 @@ $storage = new DoliStorage($db, $conf, $keyforprovider);
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
 // ucfirst(strtolower($genericstring)) must be the name of a class into OAuth/OAuth2/Services/Xxxx
 $apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
-'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 
 /*
 var_dump($genericstring.($keyforprovider ? '-'.$keyforprovider : ''));
@@ -130,8 +129,8 @@ var_dump($storage);
 var_dump($requestedpermissionsarray);
 */
 
-if (empty($apiService)) {
-	print 'Error, failed to create serviceFactory';
+if (empty($apiService) || !$apiService instanceof OAuth\OAuth2\Service\Generic) {
+	print 'Error, failed to create Generic serviceFactory';
 	exit;
 }
 if (!$apiService->getBaseApiUri()) {
