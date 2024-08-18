@@ -161,6 +161,6 @@ class PrintingDriver
 		$msg = get_class($this)."::".__FUNCTION__." not implemented";
 		dol_syslog($msg, LOG_ERR);
 		$this->errors[] = $msg;
-		return [];
+		return 1;
 	}
 }
