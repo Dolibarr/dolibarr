@@ -35,6 +35,10 @@ class FileUpload
 {
 	public $options;
 	protected $fk_element;
+
+	/**
+	 * @var string object element
+	 */
 	protected $element;
 
 	/**
