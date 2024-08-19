@@ -3968,7 +3968,7 @@ if ($action == 'create') {
 
 			$retained_warranty = GETPOSTINT('retained_warranty');
 			if (empty($retained_warranty)) {
-				if (property_exists($objectsrc, 'retained_warranty') && !empty($objectsrc->retained_warranty)) { // use previous situation value
+				if ($objectsrc !== null && property_exists($objectsrc, 'retained_warranty') && !empty($objectsrc->retained_warranty)) { // use previous situation value
 					// Facture->retained_warranty  (does not exist on Expedition)
 					$retained_warranty = $objectsrc->retained_warranty;
 				}
