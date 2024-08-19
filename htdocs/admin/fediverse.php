@@ -139,7 +139,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	}
 }
 
-if ($action == 'updatesocialnetwork' && GETPOSTISSET('key', 'alpha')) {
+if ($action == 'updatesocialnetwork' && GETPOSTISSET('key')) {
 	$error = 0;
 	$id = GETPOST('key', 'alpha');
 	$name = GETPOST('socialnetwork_name');
