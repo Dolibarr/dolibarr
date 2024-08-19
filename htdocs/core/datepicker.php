@@ -126,7 +126,7 @@ if (isset($_GET["m"]) && isset($_GET["y"])) {
 
 // If parameters provided, we show calendar
 if ($qualified) {
-	displayBox(GETPOSTINT("sd", 'alpha'), GETPOSTINT("m"), GETPOSTINT("y"));
+	displayBox(GETPOST("sd", 'alpha'), GETPOSTINT("m"), GETPOSTINT("y"));
 } else {
 	dol_print_error(null, 'ErrorBadParameters');
 }
