@@ -371,7 +371,7 @@ class Diff
 	 * @param	array<array{0:string,1:int<0,2>}>	$diff        	the diff array
 	 * @param	string	$indentation 	indentation to add to every line of the generated HTML
 	 * @param	string	$separator   	the separator between lines
-	 * @param	string	$index       	the current index, passes by reference
+	 * @param	int 	$index       	the current index, passed by reference
 	 * @param	string	$type        	the type of line
 	 * @return	string					HTML string
 	 */
