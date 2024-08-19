@@ -87,7 +87,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 					}
 
 					$modBarCodeThirdparty = new $file();
-					'@phan-var-force ModeleNumRefBarCode $module';
+					'@phan-var-force ModeleNumRefBarCode $modBarCodeThirdparty';
 					break;
 				}
 			}
@@ -192,7 +192,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						}
 
 						$modBarCodeProduct = new $file();
-						'@phan-var-force ModeleNumRefBarCode $module';
+						'@phan-var-force ModeleNumRefBarCode $modBarCodeProduct';
 						break;
 					}
 				}

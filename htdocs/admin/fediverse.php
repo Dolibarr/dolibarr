@@ -68,6 +68,19 @@ if ($action == 'add') {
 
 	$socialNetworkName = GETPOST('socialnetwork_name', 'alpha');
 	$socialNetworkUrl = GETPOST('socialnetwork_url', 'alpha');
+
+	// other params if exist
+	$paramNames = GETPOST('param_name', 'array');
+	$paramValues = GETPOST('param_value', 'array');
+
+	$additionalParams = [];
+	if (!empty($paramNames) && is_array($paramNames)) {
+		foreach ($paramNames as $index => $paramName) {
+			if (!empty($paramName) && isset($paramValues[$index])) {
+				$additionalParams[$paramName] = $paramValues[$index];
+			}
+		}
+	}
 	if (!$error) {
 		$db->begin();
 
@@ -75,6 +88,8 @@ if ($action == 'add') {
 			'title' => $socialNetworkName,
 			'url' => $socialNetworkUrl
 		);
+
+		$socialNetworkData = array_merge($socialNetworkData, $additionalParams);
 
 		$boxlabel = '(SocialNetwoksInformations)';
 
@@ -236,13 +251,37 @@ print '<td>'.$langs->trans('SocialNetworkUrl').'</td>';
 print '<td><input type="text" class="flat minwidth300" name="socialnetwork_url"></td>';
 print '<td>https://mastodon.social/api/v1/accounts/id_user</td>';
 print '</tr>';
+
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("Others"), $langs->trans("AddMoreParams"));
+print '</td><td><button type="button" id="addParamButton">'.img_picto($langs->trans("AddMoreParams"), 'add', 'pictofixedwidth').'</button></td>';
+print '<td>Token : ****<br>Cookie : ****</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td colspan="2">';
+print '<div id="additionalParams"></div>';
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+
 print '</table>';
 
 print '</div>';
 
 print $form->buttonsSaveCancel("Add", '');
 print '<input type="hidden" name="action" value="add">';
-
+print '<script type="text/javascript">
+	document.getElementById("addParamButton").addEventListener("click", function() {
+		var container = document.getElementById("additionalParams");
+		var index = container.children.length;
+		var div = document.createElement("div");
+		div.className = "pair-group";
+		div.innerHTML = "<input type=\'text\' class=\'flat minwidth300\' name=\'param_name[]\' placeholder=\''.$langs->trans("ParamName").'\' class=\'flat\' /> <input type=\'text\' class=\'flat minwidth300\' name=\'param_value[]\' placeholder=\''.$langs->trans("ParamValue").'\' class=\'flat\' />";
+		container.appendChild(div);
+	});
+</script>';
 print '</form>';
 
 print '<br><br>';
@@ -283,12 +322,20 @@ if ($resql) {
 
 		$socialNetworkTitle = $socialNetworkData['title'];
 		$socialNetworkUrl = $socialNetworkData['url'];
-		$key = $obj->rowid;
+		$socialNetworkId = $obj->rowid;
 
 		$fediverseparser = new SocialNetworkManager($socialNetworkTitle);
 		$path_fediverse = DOL_DATA_ROOT.'/fediverse/temp/'.$socialNetworkTitle;
 
-		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse);
+		//check if other params exist
+		$authParams = [];
+		foreach ($socialNetworkData as $key => $value) {
+			if ($key !== 'title' && $key !== 'url') {
+				$authParams[$key] = $value;
+			}
+		}
+
+		$result = $fediverseparser->fetchPosts($socialNetworkUrl, 5, 300, $path_fediverse, $authParams);
 
 		print "<br>";
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
@@ -299,9 +346,9 @@ if ($resql) {
 		print '<tr class="liste_titre">';
 		print "<td>".$langs->trans("SocialNetworks")." ".($i+1)."</td>";
 		print '<td class="right">';
-		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($key).'">'.img_edit().'</a>';
-		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
-		print '<input type="hidden" name="key" value="'.$key.'">';
+		print '<a class="viewfielda reposition marginleftonly marginrighttonly showInputBtn" href="'.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_edit().'</a>';
+		print '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deletesocialnetwork&token='.newToken().'&key='.urlencode($socialNetworkId).'">'.img_delete().'</a>';
+		print '<input type="hidden" name="id" value="'.$socialNetworkId.'">';
 		print '</td>';
 		print '</tr>'."\n";
 
@@ -332,7 +379,7 @@ if ($resql) {
 		print '</tr>'."\n";
 
 		// Active
-		$active = _isInBoxListFediverse((int) $key, $boxlist) ? 'yes' : 'no';
+		$active = _isInBoxListFediverse((int) $socialNetworkId, $boxlist) ? 'yes' : 'no';
 
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';

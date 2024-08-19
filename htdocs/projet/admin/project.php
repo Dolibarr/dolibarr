@@ -326,6 +326,7 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.$file.'.php';
 
 					$module = new $file();
+					'@phan-var-force ModeleNumRefProjects $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -424,6 +425,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file();
+						'@phan-var-force ModeleNumRefTask $module';
 
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

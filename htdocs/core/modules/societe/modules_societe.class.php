@@ -86,6 +86,17 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 
 
 	/**
+	 * Return an example of result returned by getNextValue
+	 *
+	 * @param	?Translate		$langs		Object langs
+	 * @param	Societe|string	$objsoc		Object thirdparty
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string						Return string example
+	 */
+	//abstract public function getExample($langs = null, $objsoc = '', $type = -1);
+
+
+	/**
 	 *  Return next value available
 	 *
 	 *	@param	Societe|string	$objsoc		Object thirdparty
@@ -139,8 +150,6 @@ abstract class ModeleThirdPartyCode extends CommonNumRefGenerator
 	 */
 	public function getToolTip($langs, $soc, $type)
 	{
-		global $conf;
-
 		$langs->loadLangs(array("admin", "companies"));
 
 		$strikestart = '';

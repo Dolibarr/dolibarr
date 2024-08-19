@@ -12,7 +12,7 @@
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2016		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -206,9 +206,9 @@ if (empty($reshook)) {
 							12,
 							0,
 							0,
-							dol_print_date($date_delivery_old, '%m'),
-							dol_print_date($date_delivery_old, '%d'),
-							dol_print_date($date_delivery_old, '%Y')
+							(int) dol_print_date($date_delivery_old, '%m'),
+							(int) dol_print_date($date_delivery_old, '%d'),
+							(int) dol_print_date($date_delivery_old, '%Y')
 						);
 						//Calculate the difference and apply if necessary
 						$difference = $date_delivery - $old_date_delivery;

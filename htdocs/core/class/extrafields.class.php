@@ -2093,6 +2093,7 @@ class ExtraFields
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						$object->fetch($value);
 						$value = $object->getNomUrl(3);
 					}
