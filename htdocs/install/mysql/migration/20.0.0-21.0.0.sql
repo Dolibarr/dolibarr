@@ -91,5 +91,3 @@ ALTER TABLE llx_societe_account ADD COLUMN date_last_reset_password datetime aft
 -- Rename of bank table
 ALTER TABLE llx_bank_categ RENAME TO llx_category_bank;
 ALTER TABLE llx_bank_class RENAME TO llx_category_bankline;
-
-INSERT INTO llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_SIGN','Intervention is signed','Executed when a intervention is set as signed','ficheinter',31);
