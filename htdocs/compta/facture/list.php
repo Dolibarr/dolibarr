@@ -15,6 +15,7 @@
  * Copyright (C) 2018      Charlene Benke        <charlie@patas-monkey.com>
  * Copyright (C) 2019-2021 Alexandre Spangaro    <aspangaro@open-dsi.fr>
  * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,8 +147,8 @@ $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
-$search_late = GETPOST('search_late');
-if ($search_late == 'late') {
+$search_option = GETPOST('search_option');
+if ($search_option == 'late') {
 	$search_status = '1';
 }
 $filtre = GETPOST('filtre', 'alpha');
@@ -392,7 +393,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$toselect = array();
 	$search_array_options = array();
 	$search_categ_cus = 0;
-	$search_late = '';
+	$search_option = '';
 	$socid = 0;
 }
 
@@ -832,7 +833,7 @@ if ($search_datelimit_start) {
 if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '".$db->idate($search_datelimit_end)."'";
 }
-if ($search_late == 'late') {
+if ($search_option == 'late') {
 	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 }
 /*if ($search_sale > 0) {
@@ -1148,8 +1149,8 @@ if ($search_pos_source) {
 if ($show_files) {
 	$param .= '&show_files='.urlencode($show_files);
 }
-if ($search_late) {
-	$param .= "&search_late=".urlencode($search_late);
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -1289,7 +1290,7 @@ if (isModEnabled('categorie') && $user->hasRight("categorie", "lire")) {
 }
 // alert on due date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_late" value="late"'.($search_late == 'late' ? ' checked' : '').'>';
+$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
