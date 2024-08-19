@@ -3970,7 +3970,7 @@ if ($action == 'create') {
 			if (empty($retained_warranty)) {
 				if ($objectsrc !== null && property_exists($objectsrc, 'retained_warranty') && !empty($objectsrc->retained_warranty)) { // use previous situation value
 					// Facture->retained_warranty  (does not exist on Expedition)
-					$retained_warranty = $objectsrc->retained_warranty;
+					$retained_warranty = $objectsrc->retained_warranty;  // @phan-suppress-current-line PhanUndeclaredProperty
 				}
 			}
 			$retained_warranty_js_default = !empty($retained_warranty) ? $retained_warranty : getDolGlobalString('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
