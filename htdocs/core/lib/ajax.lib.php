@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -663,7 +664,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var code = \''.dol_escape_js($code).'\';
 				var entity = \''.dol_escape_js($entity).'\';
 				var strict = \''.dol_escape_js($strict).'\';
-				var userid = \''.dol_escape_js($user->id).'\';
+				var userid = \''.dol_escape_js((string) $user->id).'\';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';
 				var token = \''.currentToken().'\';

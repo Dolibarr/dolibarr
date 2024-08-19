@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inoveasya.solutions>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseiea-conseil.com>
  * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
@@ -177,7 +177,7 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}

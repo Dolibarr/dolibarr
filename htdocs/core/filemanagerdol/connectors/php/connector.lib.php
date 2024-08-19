@@ -3,6 +3,7 @@
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * == BEGIN LICENSE ==
  *
@@ -811,7 +812,7 @@ function SanitizeFileName($sNewFileName)
 /**
  * This is the function that sends the results of the uploading process.
  *
- * @param	string		$errorNumber	errorNumber
+ * @param	int 		$errorNumber	errorNumber
  * @param	string		$fileUrl		fileUrl
  * @param	string		$fileName		fileName
  * @param	string		$customMsg		customMsg
