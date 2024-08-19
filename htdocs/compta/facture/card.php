@@ -1580,6 +1580,7 @@ if (empty($reshook)) {
 						if (GETPOST('type') == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable'))) {
 							// Define the array $amountdeposit
 							$amountdeposit = array();
+							$lines = array();
 							if (getDolGlobalString('MAIN_DEPOSIT_MULTI_TVA')) {	// We want to split the discount line into several lines, one per vat rate.
 								if ($typeamount == 'amount') {
 									$amount = (float) $valuedeposit;
@@ -2262,7 +2263,8 @@ if (empty($reshook)) {
 			}
 		}
 
-		$price_base_type = null;
+		$price_base_type = '';  // Initialise (for static analysis)
+
 		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
@@ -3966,7 +3968,8 @@ if ($action == 'create') {
 
 			$retained_warranty = GETPOSTINT('retained_warranty');
 			if (empty($retained_warranty)) {
-				if (!empty($objectsrc->retained_warranty)) { // use previous situation value
+				if (property_exists($objectsrc, 'retained_warranty') && !empty($objectsrc->retained_warranty)) { // use previous situation value
+					// Facture->retained_warranty  (does not exist on Expedition)
 					$retained_warranty = $objectsrc->retained_warranty;
 				}
 			}
