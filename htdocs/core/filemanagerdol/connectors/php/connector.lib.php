@@ -92,7 +92,7 @@ function CreateXmlFooter()
 function SendError($number, $text)
 {
 	if ($_GET['Command'] == 'FileUpload') {
-		SendUploadResults($number, "", "", $text);
+		SendUploadResults((string) $number, "", "", $text);
 	}
 
 	if (isset($GLOBALS['HeaderSent']) && $GLOBALS['HeaderSent']) {
@@ -812,7 +812,7 @@ function SanitizeFileName($sNewFileName)
 /**
  * This is the function that sends the results of the uploading process.
  *
- * @param	int 		$errorNumber	errorNumber
+ * @param	string 		$errorNumber	errorNumber
  * @param	string		$fileUrl		fileUrl
  * @param	string		$fileName		fileName
  * @param	string		$customMsg		customMsg
@@ -827,7 +827,7 @@ function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customM
 (function(){var d=document.domain;while (true){try{var A=window.parent.document.domain;break;}catch(e) {};d=d.replace(/.*?(?:\.|$)/,'');if (d.length==0) break;try{document.domain=d;}catch (e){break;}}})();
 EOF;
 
-	if ($errorNumber && $errorNumber != 201) {
+	if ($errorNumber && $errorNumber != '201') {
 		$fileUrl = "";
 		$fileName = "";
 	}
