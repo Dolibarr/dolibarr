@@ -125,9 +125,9 @@ class mod_supplier_proposal_saphir extends ModeleNumRefSupplierProposal
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe				$objsoc     			Object third party
+	 *  @param	Societe				$objsoc					Object third party
 	 * 	@param	SupplierProposal	$supplier_proposal		Object commercial proposal
-	 *  @return string|int  								Value if OK, 0 if KO
+	 *  @return string|int<-1,0>							Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $supplier_proposal)
 	{

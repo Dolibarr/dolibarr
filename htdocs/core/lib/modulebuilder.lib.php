@@ -1217,7 +1217,7 @@ function reWriteAllMenus($file, $menus, $menuWantTo, $key, $action)
  *
  * @param	string	$module		The name of the module.
  * @param	string	$file		The path to the module descriptor file.
- * @param	array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:string[],tabhelp:array<array{code:string,field2:string}>}	$dicts The dictionary data to be updated.
+ * @param	array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<string|bool|int>,tabhelp:array<array{code:string,field2:string}>}	$dicts The dictionary data to be updated.
  * @return	int					Returns the number of replacements made in the file.
  */
 function updateDictionaryInFile($module, $file, $dicts)
@@ -1290,7 +1290,7 @@ function updateDictionaryInFile($module, $file, $dicts)
  * @param	string	$modulename 	The lowercase name of the module for which the dictionary table is being created.
  * @param	string	$file 			The file path to the Dolibarr module builder file where the dictionaries are defined.
  * @param	string	$namedic 		The name of the dictionary, which will also be used as the base for the table name.
- * @param	?array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:string[],tabhelp:array<array{code:string,field2:string}>}	$dictionnaires	An optional array containing pre-existing dictionary data, including tabname, tablib, tabsql, etc.
+ * @param	?array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<string|bool|int>,tabhelp:array<array{code:string,field2:string}>}	$dictionnaires	An optional array containing pre-existing dictionary data, including tabname, tablib, tabsql, etc.
  * @return	int<-1,-1> 					Return int < 0 if error, return nothing on success
  */
 function createNewDictionnary($modulename, $file, $namedic, $dictionnaires = null)

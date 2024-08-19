@@ -117,9 +117,9 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string|int  				Next value if OK, 0 if KO
+	 *  @param	Societe			$objsoc		Object third party
+	 *  @param	RemiseCheque	$object		Object we need next value for
+	 *  @return	string|int<-1,0>			Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

@@ -428,4 +428,21 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		return $widget;
 	}
+
+
+	/**
+	 *  On the main mailing area, there is a box with statistics.
+	 *  If you want to add a line in this report you must provide an
+	 *  array of SQL request that returns two field:
+	 *  One called "label", One called "nb".
+	 *
+	 *	@return		string[]		Array with SQL requests
+	 */
+	public function getSqlArrayForStats()
+	{
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return array();
+	}
 }
