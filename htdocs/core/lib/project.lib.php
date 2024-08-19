@@ -2591,8 +2591,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			if (empty($project_year_filter) || !is_numeric($project_year_filter)) {
 				$project_year_filter = date("Y");
 			}
-			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day($project_year_filter, 12, false)).")";
-			$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day($project_year_filter, 1, false)).")";
+			$sql .= " AND (p.dateo IS NULL OR p.dateo <= ".$db->idate(dol_get_last_day((int) $project_year_filter, 12, false)).")";
+			$sql .= " AND (p.datee IS NULL OR p.datee >= ".$db->idate(dol_get_first_day((int) $project_year_filter, 1, false)).")";
 		}
 	}
 

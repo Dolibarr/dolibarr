@@ -59,22 +59,24 @@ class SocialNetworkManager
 	 *	Constructor
 	 *
 	 *  @param		string		$platform      name of social network
+	 *  @param      array       $authParams    other parameters
 	 */
-	public function __construct($platform)
+	public function __construct($platform, $authParams = [])
 	{
 		$this->platform = $platform;
-		$this->initializeHandler();
+		$this->initializeHandler($authParams);
 	}
 
 	/**
 	 * Initialize the social network needed
+	 *  @param      array       $authParams    other parameters
 	 * @return void   new instance if founded
 	 */
-	private function initializeHandler()
+	private function initializeHandler($authParams)
 	{
 		$handlerClass = dol_ucfirst($this->platform).'Handler';
 		if (class_exists($handlerClass)) {
-			$this->handler = new $handlerClass();
+			$this->handler = new $handlerClass($authParams);
 		} else {
 			$this->error = "Handler for $this->platform not found.";
 		}
@@ -87,14 +89,15 @@ class SocialNetworkManager
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
+	 * @param array $authParams Authentication parameters
 	 * @return bool      Status code: false if error,  array if success.
 	 */
-	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '')
+	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
 	{
 		if (!$this->handler) {
 			return false;
 		}
-		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir);
+		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
 	}
 
 	/**

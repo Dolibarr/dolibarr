@@ -96,7 +96,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $civility_code
 	 * @see $civility_code
 	 */
 	public $civility_id;
@@ -113,7 +113,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var string company name
-	 * @deprecated
+	 * @deprecated Use $company
 	 * @see $company
 	 */
 	public $societe;
@@ -125,7 +125,7 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var int Thirdparty ID
-	 * @deprecated
+	 * @deprecated Use $socid
 	 * @see $socid
 	 */
 	public $fk_soc;
@@ -136,7 +136,7 @@ class Adherent extends CommonObject
 	public $socid;
 
 	/**
-	 * @var array array of socialnetworks
+	 * @var array<string,string> array of socialnetworks
 	 */
 	public $socialnetworks;
 
@@ -308,7 +308,7 @@ class Adherent extends CommonObject
 	public $partnerships = array();
 
 	/**
-	 * @var Facture|null		To store the created invoice into subscriptionComplementaryActions()
+	 * @var ?Facture	To store the created invoice into subscriptionComplementaryActions()
 	 */
 	public $invoice;
 
@@ -3054,7 +3054,7 @@ class Adherent extends CommonObject
 			}
 
 			$tmp = dol_getdate($now);
-			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), $daysbeforeend, 'd');
+			$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year'], 'tzserver'), (int) $daysbeforeend, 'd');
 
 			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
 			$sql .= " WHERE entity = ".((int) $conf->entity); // Do not use getEntity('adherent').")" here, we want the batch to be on its entity only;

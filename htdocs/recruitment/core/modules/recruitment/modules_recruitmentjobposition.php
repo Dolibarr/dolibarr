@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,5 +82,11 @@ abstract class ModelePDFRecruitmentJobPosition extends CommonDocGenerator
  */
 abstract class ModeleNumRefRecruitmentJobPosition extends CommonNumRefGenerator
 {
-	// No overload code
+	/**
+	 * 	Return next free value
+	 *
+	 *  @param	RecruitmentJobPosition	$object		Object we need next value for
+	 *  @return string|int<-1,0>					Next value if OK, 0 if KO
+	 */
+	abstract public function getNextValue($object);
 }

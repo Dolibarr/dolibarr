@@ -1551,6 +1551,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		$desc = str_replace('(DEPOSIT)', $outputlangs->trans('Deposit'), $desc);
 	}
 
+	$libelleproduitservice = '';  // Default value
 	if (!getDolGlobalString('PDF_HIDE_PRODUCT_LABEL_IN_SUPPLIER_LINES')) {
 		// Description short of product line
 		$libelleproduitservice = $label;
