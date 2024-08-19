@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2011-2022	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2011-2023	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -525,7 +526,7 @@ class FileUpload
 				isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : (isset($upload['size']) ? $upload['size'] : null),
 				isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? $upload['type'] : null),
 				isset($upload['error']) ? $upload['error'] : null,
-				0
+				'0'
 			);
 			if (!empty($tmpres->error)) {
 				$error++;
