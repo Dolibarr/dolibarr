@@ -123,7 +123,6 @@ class Recruitments extends DolibarrApi
 		return $this->_cleanObjectDatas($this->candidature);
 	}
 
-
 	/**
 	 * List jobpositions
 	 *
@@ -135,13 +134,14 @@ class Recruitments extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /jobposition/
 	 */
-	public function indexJobPosition($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function indexJobPosition($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 		$tmpobject = new RecruitmentJobPosition($this->db);
@@ -186,6 +186,9 @@ class Recruitments extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -210,6 +213,23 @@ class Recruitments extends DolibarrApi
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving jobposition list: '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
