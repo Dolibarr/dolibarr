@@ -568,7 +568,7 @@ if ($action == "importSignature") {
 					// We should just create an image file with the signature.
 				}
 				$user = new User($db);
-				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER'], 0, 'FICHINTER_SIGN');
+				$object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER'], 0, 'FICHINTER_MODIFY');
 			}
 		} elseif ($mode == "societe_rib") {
 			$langs->load('withdrawals');
