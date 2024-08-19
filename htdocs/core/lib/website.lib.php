@@ -1480,7 +1480,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 /**
  * Retrieves the details of a news post by its ID.
  *
- * @param int $postId  The ID of the news post to retrieve.
+ * @param string $postId  The ID of the news post to retrieve.
  * @return array|int   Return array if OK, -1 if KO
  */
 function getNewsDetailsById($postId)
