@@ -372,7 +372,7 @@ class Diff
 	 * @param	string	$indentation 	indentation to add to every line of the generated HTML
 	 * @param	string	$separator   	the separator between lines
 	 * @param	int 	$index       	the current index, passed by reference
-	 * @param	string	$type        	the type of line
+	 * @param	int<0,2> 	$type       the type of line
 	 * @return	string					HTML string
 	 */
 	private static function getCellContent($diff, $indentation, $separator, &$index, $type)
