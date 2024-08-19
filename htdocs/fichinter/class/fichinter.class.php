@@ -58,7 +58,7 @@ class Fichinter extends CommonObject
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'duree' => array('type' => 'double', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
-		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'showoncombobox' => 2),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 115),
@@ -202,27 +202,6 @@ class Fichinter extends CommonObject
 	 * Closed
 	 */
 	const STATUS_CLOSED = 3;
-
-
-	/**
-	 * No signature
-	 */
-	const STATUS_NO_SIGNATURE    = 0;
-
-	/**
-	 * Signed by sender
-	 */
-	const STATUS_SIGNED_SENDER   = 1;
-
-	/**
-	 * Signed by receiver
-	 */
-	const STATUS_SIGNED_RECEIVER = 2;
-
-	/**
-	 * Signed by all
-	 */
-	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 	/**
 	 * Signed statuses dictionary. Label used as key for string localizations.
@@ -926,10 +905,11 @@ class Fichinter extends CommonObject
 		$langs->load("commercial");
 
 		$l10n_signed_status_labels = [
-			self::SIGNED_STATUSES['STATUS_NO_SIGNATURE']	=> 'NoSignature',
-			self::SIGNED_STATUSES['STATUS_SIGNED_SENDER']	=> 'SignedSender',
-			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']	=> 'SignedReceiver',
-			self::SIGNED_STATUSES['STATUS_SIGNED_ALL']		=> 'SignedAll'
+			self::SIGNED_STATUSES['STATUS_NO_SIGNATURE']			=> 'NoSignature',
+			self::SIGNED_STATUSES['STATUS_SIGNED_SENDER']			=> 'SignedSender',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER']			=> 'SignedReceiver',
+			self::SIGNED_STATUSES['STATUS_SIGNED_RECEIVER_ONLINE']	=> 'SignedReceiverOnline',
+			self::SIGNED_STATUSES['STATUS_SIGNED_ALL']				=> 'SignedAll'
 		];
 
 		$l10n_signed_status = [];
