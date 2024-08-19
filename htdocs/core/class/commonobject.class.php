@@ -10699,15 +10699,16 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Set to a signed status
+	 * Set signed status & call trigger with context message
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$status			New status to set (often a constant like self::STATUS_XXX)
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *  @param  string  $triggercode    Trigger code to use
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 * @param	User	$user			Object user that modify
+	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
+	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
+	 * @param	string	$triggercode	Trigger code to use
+	 * @param	array	$context		Trigger context message key
+	 * @return	int						0 < if KO, > 0 if OK
 	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
+	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '', $context = [])
 	{
 		$error = 0;
 
@@ -10726,6 +10727,7 @@ abstract class CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
+				$this->context = $context;
 				$result = $this->call_trigger($triggercode, $user);
 				if ($result < 0) {
 					$error++;
