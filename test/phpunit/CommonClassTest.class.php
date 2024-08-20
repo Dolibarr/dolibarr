@@ -302,14 +302,14 @@ abstract class CommonClassTest extends TestCase
 	 * Map deprecated module names to new module names
 	 */
 	const DEPRECATED_MODULE_MAPPING = array(
-		'actioncomm' => 'agenda',
+		// 'actioncomm' => 'agenda', // Not supported
 		'adherent' => 'member',
-		'adherent_type' => 'member_type',
+		// 'adherent_type' => 'member_type',  // Not supported  (Undefined property: Conf::$adherent_type)
 		'banque' => 'bank',
 		'categorie' => 'category',
 		'commande' => 'order',
 		'contrat' => 'contract',
-		'entrepot' => 'stock',
+		// 'entrepot' => 'stock',  // Not supported
 		'expedition' => 'shipping',
 		'facture' => 'invoice',
 		'fichinter' => 'intervention',
@@ -322,7 +322,7 @@ abstract class CommonClassTest extends TestCase
 
 	const EFFECTIVE_DEPRECATED_MODULE_MAPPING = array(
 		'adherent' => 'member',
-		'adherent_type' => 'member_type',
+		// 'adherent_type' => 'member_type',  // Not supported (Undefined property: Conf::$adherent_type)
 		'banque' => 'bank',
 		'contrat' => 'contract',
 		'entrepot' => 'stock',
