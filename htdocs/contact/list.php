@@ -1401,7 +1401,7 @@ while ($i < $imaxinloop) {
 
 	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname = $obj->lastname;
-	$contactstatic->firstname = '';
+	$contactstatic->firstname = $obj->firstname;
 	$contactstatic->id = $obj->rowid;
 	$contactstatic->statut = $obj->statut;
 	$contactstatic->poste = $obj->poste;

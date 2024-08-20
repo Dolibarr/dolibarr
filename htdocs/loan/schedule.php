@@ -90,9 +90,9 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$new_echeance->fk_user_modif = $user->id;
 		$result = $new_echeance->create($user);
 		if ($result < 0) {
-			setEventMessages($new_echeance->error, $echeance->errors, 'errors');
+			setEventMessages($new_echeance->error, $new_echeance->errors, 'errors');
 			$db->rollback();
-			unset($echeances->lines);
+			$echeances->lines = [];
 			break;
 		}
 		$echeances->lines[] = $new_echeance;

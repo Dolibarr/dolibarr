@@ -856,7 +856,7 @@ if ($mysoc->useLocalTax(1)) {
 	print "</td></tr>\n";
 } else {
 	if (empty($mysoc->country_code)) {
-		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$countrynotdefined.'</td></tr>';
 	} else {
 		print '<tr class="oddeven nohover"><td class="" colspan="3"><span class="opacitymedium">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax1Management")).'</span></td></tr>';
 	}
@@ -899,7 +899,7 @@ if ($mysoc->useLocalTax(2)) {
 	print "</td></tr>\n";
 } else {
 	if (empty($mysoc->country_code)) {
-		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$countrynotdefined.'</td></tr>';
 	} else {
 		print '<tr class="oddeven nohover"><td class="" colspan="3"><span class="opacitymedium">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryVAT"), $langs->transnoentitiesnoconv("LocalTax2Management")).'</span></td></tr>';
 	}
@@ -925,7 +925,7 @@ if ($mysoc->useRevenueStamp()) {
 	print "</td></tr>\n";
 } else {
 	if (empty($mysoc->country_code)) {
-		print '<tr class="oddeven nohover"><td class="">'.$countrynotdefined.'</td><td></td><td></td></tr>';
+		print '<tr class="oddeven nohover"><td class="" colspan="3">'.$countrynotdefined.'</td></tr>';
 	} else {
 		print '<tr class="oddeven nohover"><td class="" colspan="3"><span class="opacitymedium">'.$langs->trans("NoLocalTaxXForThisCountry", $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("Dictionaries"), $langs->transnoentitiesnoconv("DictionaryRevenueStamp"), $langs->transnoentitiesnoconv("RevenueStamp")).'</span></td></tr>';
 	}
