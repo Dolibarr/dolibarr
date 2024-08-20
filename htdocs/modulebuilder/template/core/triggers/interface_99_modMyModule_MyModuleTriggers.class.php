@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2023		Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +87,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		}
 
 		// Or you can execute some code here
-		switch ($action) {
+		switch ($action) {  // @phan-suppress-current-line PhanNoopSwitchCases
 			// Users
 			//case 'USER_CREATE':
 			//case 'USER_MODIFY':

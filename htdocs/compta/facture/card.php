@@ -1035,7 +1035,7 @@ if (empty($reshook)) {
 			$object->socid = GETPOSTINT('socid');
 		}
 
-		if (GETPOSTINT('type') === '') {
+		if (GETPOST('type') === '') {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
 		}
 
@@ -3209,6 +3209,9 @@ if ($action == 'create') {
 			$subelement = $regs[2];
 		}
 
+		$dateinvoice = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+		$date_pointoftax = dol_mktime(0, 0, 0, GETPOSTINT('date_pointoftaxmonth'), GETPOSTINT('date_pointoftaxday'), GETPOSTINT('date_pointoftaxyear'), 'tzserver');
+
 		if ($element == 'project') {
 			$projectid = $originid;
 
@@ -3221,12 +3224,9 @@ if ($action == 'create') {
 			if (empty($fk_account)) {
 				$fk_account = $soc->fk_account;
 			}
-			if (!$remise_percent) {
-				$remise_percent = $soc->remise_percent;
-			}
-			if (!$dateinvoice) {
+			if (empty($dateinvoice)) {
 				// Do not set 0 here (0 for a date is 1970)
-				$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice);
+				$dateinvoice = getDolGlobalString('MAIN_AUTOFILL_DATE') ? '' : -1;
 			}
 		} else {
 			// For compatibility
@@ -3278,8 +3278,6 @@ if ($action == 'create') {
 				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
 				$mode_reglement_id 	= (!empty($expesrc->mode_reglement_id) ? $expesrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($expesrc->fk_account) ? $expesrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-				//$remise_percent 	= (!empty($expesrc->remise_percent) ? $expesrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-				//$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
 					$currency_code 	= (!empty($expesrc->multicurrency_code) ? $expesrc->multicurrency_code : (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : $objectsrc->multicurrency_code));
@@ -3293,8 +3291,6 @@ if ($action == 'create') {
 				$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
 				$mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 				$fk_account         = (!empty($objectsrc->fk_account) ? $objectsrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
-				//$remise_percent 	= (!empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (!empty($soc->remise_percent) ? $soc->remise_percent : 0));
-				//$remise_absolue 	= (!empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				if (isModEnabled('multicurrency')) {
 					if (!empty($objectsrc->multicurrency_code)) {
@@ -3314,8 +3310,7 @@ if ($action == 'create') {
 		$cond_reglement_id 	= empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
-		//$remise_percent 	= $soc->remise_percent;
-		//$remise_absolue 	= 0;
+
 		$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
 		if (isModEnabled('multicurrency') && !empty($soc->multicurrency_code)) {
@@ -4121,8 +4116,6 @@ if ($action == 'create') {
 			// TODO for compatibility
 			if ($origin == 'contrat') {
 				// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
-				//$objectsrc->remise_absolue = $remise_absolue;
-				//$objectsrc->remise_percent = $remise_percent;
 				$objectsrc->update_price(1, 'auto', 1);
 			}
 

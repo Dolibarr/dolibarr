@@ -1269,7 +1269,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 *  @param	int		        $dateSelector       1=Show also date range input fields
 	 *  @param	Societe			$seller				Object thirdparty who sell
-	 *  @param	Societe			$buyer				Object thirdparty who buy
+	 *  @param	?Societe		$buyer				Object thirdparty who buy
 	 *  @param	string			$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
@@ -1310,7 +1310,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 *	@param	string		$action				Action code
 	 *	@param  Societe		$seller            	Object of seller third party
-	 *	@param  Societe  	$buyer             	Object of buyer third party
+	 *	@param  ?Societe  	$buyer             	Object of buyer third party
 	 *	@param	int			$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *  @param	string		$defaulttpldir		Directory where to find the template
@@ -1392,7 +1392,7 @@ class ProductAttribute extends CommonObject
 	 *
 	 *	@param	string      		$action				GET/POST action
 	 *	@param  CommonObjectLine 	$line			    Selected object line to output
-	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  ''		    		$var               	Is it a an odd line (not used)
 	 *	@param  int		    		$num               	Number of line (0)
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields

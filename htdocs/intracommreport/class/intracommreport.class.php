@@ -103,16 +103,16 @@ class IntracommReport extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"0",),
-		"ref" => array("type"=>"varchar(30)", "label"=>"Ref", "enabled"=>"1", 'position'=>15, 'notnull'=>1, "visible"=>"1", "csslist"=>"tdoverflowmax150", "showoncombobox"=>"1",),
-		"type_declaration" => array("type"=>"varchar(32)", "label"=>"TypeOfDeclaration", "enabled"=>"1", 'position'=>25, 'notnull'=>0, "visible"=>"1", 'arrayofkeyval' => array("deb" => "DEB", "des" => "DES")),
-		"periods" => array("type"=>"varchar(32)", "label"=>"Periods", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"-1",),
-		"mode" => array("type"=>"varchar(32)", "label"=>"Mode", "enabled"=>"1", 'position'=>35, 'notnull'=>0, "visible"=>"-1",),
-		"content_xml" => array("type"=>"text", "label"=>"Contentxml", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1",),
-		"type_export" => array("type"=>"varchar(10)", "label"=>"TypeOfExport", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1", 'arrayofkeyval' => array("in" => "Input", "out" => "Output")),
-		"datec" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>50, 'notnull'=>0, "visible"=>"-1",),
-		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>55, 'notnull'=>1, "visible"=>"-1",),
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "0",),
+		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => "1", 'position' => 15, 'notnull' => 1, "visible" => "1", "csslist" => "tdoverflowmax150", "showoncombobox" => "1",),
+		"type_declaration" => array("type" => "varchar(32)", "label" => "TypeOfDeclaration", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "1", 'arrayofkeyval' => array("deb" => "DEB", "des" => "DES")),
+		"periods" => array("type" => "varchar(32)", "label" => "Periods", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "-1",),
+		"mode" => array("type" => "varchar(32)", "label" => "Mode", "enabled" => "1", 'position' => 35, 'notnull' => 0, "visible" => "-1",),
+		"content_xml" => array("type" => "text", "label" => "Contentxml", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1",),
+		"type_export" => array("type" => "varchar(10)", "label" => "TypeOfExport", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1", 'arrayofkeyval' => array("in" => "Input", "out" => "Output")),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "-1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 55, 'notnull' => 1, "visible" => "-1",),
 	);
 	public $rowid;
 	public $ref;

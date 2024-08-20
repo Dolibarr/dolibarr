@@ -1,8 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2023	Frédéric France				<frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) ---Put your own copyright and developer email here---
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,7 +188,7 @@ class mymodulewidget1 extends ModeleBoxes
 	 * @param   ?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}   $head       Array with properties of box title
 	 * @param   ?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>   $contents   Array with properties of box lines
 	 * @param	int<0,1>	$nooutput	When 1, do not print, return string
-	 * @return	?string
+	 * @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

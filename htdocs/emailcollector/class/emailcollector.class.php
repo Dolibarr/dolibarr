@@ -1183,6 +1183,7 @@ class EmailCollector extends CommonObject
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 						// We have to save the token because Google give it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
 						$tokenobj = $apiService->refreshAccessToken($tokenobj);

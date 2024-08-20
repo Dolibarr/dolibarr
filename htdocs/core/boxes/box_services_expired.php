@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +143,7 @@ class box_services_expired extends ModeleBoxes
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateEndPlanned").': '.dol_print_date($dateline, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($dateline, 'day', 'tzuserrel'),
-						'text2'=> $late,
+						'text2' => $late,
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -166,7 +167,7 @@ class box_services_expired extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -181,9 +182,9 @@ class box_services_expired extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

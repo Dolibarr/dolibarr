@@ -259,11 +259,12 @@ print '</form>';
 print '<br><br>';
 
 
+// Emails templates for notification
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="settemplates">';
 
-// Notification per contacts
 $title = $langs->trans("TemplatesForNotifications");
 
 print load_fiche_titre($title, '', 'email');
@@ -310,7 +311,8 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 		$model = 'expensereport_send';
 	} elseif ($notifiedevent['elementtype'] == 'order_supplier') {
 		$model = 'order_supplier_send';
-		// } elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
+	} elseif ($notifiedevent['elementtype'] == 'invoice_supplier') {
+		$model = 'invoice_supplier_send';
 	} elseif ($notifiedevent['elementtype'] == 'member') {
 		$model = 'member';
 	}
@@ -318,7 +320,7 @@ foreach ($listofnotifiedevents as $notifiedevent) {
 	$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
 }
 
-$helptext = '';
+$helptext = $langs->trans("EmailTemplateHelp", $langs->transnoentitiesnoconv("Tools"), $langs->transnoentitiesnoconv("EMailTemplates"));
 form_constantes($constantes, 3, $helptext, 'EmailTemplate');
 
 print $form->buttonsSaveCancel("Save", '');

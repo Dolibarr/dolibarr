@@ -194,7 +194,7 @@ class pdf_standard_actions
 			$nbpage = $this->_pages($pdf, $outputlangs); // Write content
 
 			if (method_exists($pdf, 'AliasNbPages')) {
-				$pdf->AliasNbPages();
+				$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 			}
 			$pdf->Close();
 

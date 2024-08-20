@@ -490,7 +490,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$this->_pagefoot($pdf, $object, $outputlangs);
 
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				// Check product remaining to be delivered
@@ -551,7 +551,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 					$this->_pagefoot($pdf,$object,$outputlangs);
 
-					if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();
+					if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}*/
 
 				$pdf->Close();
