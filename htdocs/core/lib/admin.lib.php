@@ -1728,7 +1728,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 	$form = new Form($db);
 
 	if (empty($strictw3c)) {
-		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_DEBUG);
+		dol_syslog("Warning: Function 'form_constantes' was called with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_WARNING);
 	}
 	if (!empty($strictw3c) && $strictw3c == 1) {
 		print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1779,6 +1779,7 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 		$result = $db->query($sql);
 
 		dol_syslog("List params", LOG_DEBUG);
+
 		if ($result) {
 			$obj = $db->fetch_object($result); // Take first result of select
 
@@ -1786,23 +1787,29 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				$obj = (object) array('rowid' => '', 'name' => $const, 'value' => '', 'type' => $type, 'note' => '');
 			}
 
-			if (empty($strictw3c)) {
+			if (empty($strictw3c)) {	// deprecated. must be always true.
 				print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="page_y" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="update">';
 			}
 
 			print '<tr class="oddeven">';
 
 			// Show label of parameter
 			print '<td>';
-			if (empty($strictw3c)) {
-				print '<input type="hidden" name="action" value="update">';
-			}
 			print '<input type="hidden" name="rowid'.(empty($strictw3c) ? '' : '[]').'" value="'.$obj->rowid.'">';
 			print '<input type="hidden" name="constname'.(empty($strictw3c) ? '' : '[]').'" value="'.$const.'">';
 			print '<input type="hidden" name="constnote_'.$obj->name.'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
 			print '<input type="hidden" name="consttype_'.$obj->name.'" value="'.($obj->type ? $obj->type : 'string').'">';
+
+			$picto = 'generic';
+			$tmparray = explode(':', $obj->type);
+			if (!empty($tmparray[1])) {
+				$picto = preg_replace('/_send$/', '', $tmparray[1]);
+			}
+			print img_picto('', $picto, 'class="pictofixedwidth"');
+
 			if (!empty($tableau[$key]['tooltip'])) {
 				print $form->textwithpicto($label ? $label : $langs->trans('Desc'.$const), $tableau[$key]['tooltip']);
 			} else {
@@ -1896,8 +1903,8 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 				print '</td>';
 			}
 
-			// Submit
-			if (empty($strictw3c)) {
+			// Submit button
+			if (empty($strictw3c)) {	// deprecated. must be always true.
 				print '<td class="center">';
 				print '<input type="submit" class="button small reposition" value="'.$langs->trans("Update").'" name="update">';
 				print "</td>";
