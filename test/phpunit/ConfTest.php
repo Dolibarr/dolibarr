@@ -66,7 +66,21 @@ class ConfTest extends CommonClassTest
 	}
 
 	/**
-	 * testModulePaths
+	 * Provider for all modules (name -> className)
+	 *
+	 * @return array<string,array{0:string,1:string}>
+	 */
+	public function moduleProvider()
+	{
+		$tests = [];
+		foreach (self::VALID_MODULE_MAPPING as $modName => $className) {
+			$tests[$modName] = [$modName, $className];
+		}
+		return $tests;
+	}
+
+	/**
+	 * testOldNewModulePaths
 	 *
 	 * @dataProvider moduleMapProvider
 	 *
@@ -74,17 +88,30 @@ class ConfTest extends CommonClassTest
 	 * @param string $new New Module
 	 * @return void
 	 */
-	public function testModulePaths($old, $new)
+	public function testOldNewModulePaths($old, $new)
 	{
 		global $conf,$user,$langs,$db;
 
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
 		// print "DIR_OUTPUT for $old is {$conf->$old->dir_output}".PHP_EOL;
 		// print "DIR_OUTPUT for $new is {$conf->$new->dir_output}".PHP_EOL;
-		$this->assertEquals($conf->$new->dir_output, $conf->$old->dir_output, "Old ($old/expected) and new dir_output ($new/result) must be equal");
+		$this->assertEquals($conf->$new->dir_output, $conf->$old->dir_output, "Old ($old/expected) and new dir_output ($new/result) dir_output must be equal");
+		$this->assertEquals($conf->$new->multidir_output[1], $conf->$old->multidir_output[1], "Old ($old/expected) and new  ($new/result) multidir_output must be equal");
+		$this->assertEquals($conf->$new->multidir_output[1], $conf->$old->dir_output, "Old ($old/expected) and new  ($new/result) dir_output and multidir_output must be equal");
+	}
+
+	/**
+	 * testModulePaths
+	 *
+	 * @dataProvider moduleProvider
+	 *
+	 * @param string $modName Module name
+	 * @param string $className Module class name
+	 * @return void
+	 */
+	public function testModulePaths($modName, $className)
+	{
+		global $conf,$user,$langs,$db;
+
+		$this->assertEquals($conf->$modName->multidir_output[1], $conf->$modName->dir_output, "dir_output and multidir_output must be equal");
 	}
 }
