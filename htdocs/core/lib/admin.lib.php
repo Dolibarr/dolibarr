@@ -580,11 +580,25 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  */
 function dolibarr_del_const($db, $name, $entity = 1)
 {
-	global $conf;
+	global $conf, $hookmanager;
 
 	if (empty($name)) {
 		dol_print_error(null, 'Error call dolibar_del_const with parameter name empty');
 		return -1;
+	}
+	if (! is_object($hookmanager)) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager = new HookManager($db);
+	}
+
+	$parameters = array(
+		'name' => $name,
+		'entity' => $entity,
+	);
+
+	$reshook = $hookmanager->executeHooks('dolibarrDelConst', $parameters); // Note that $action and $object may have been modified by some hooks
+	if ($reshook != 0) {
+		return $reshook;
 	}
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
