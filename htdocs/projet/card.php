@@ -635,9 +635,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 	if ($filefound && !empty($classname)) {
 		$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-		$modProject = new $classname();
+		if (class_exists($classname)) {
+			$modProject = new $classname();
 
-		$defaultref = $modProject->getNextValue($thirdparty, $object);
+			$defaultref = $modProject->getNextValue($thirdparty, $object);
+		}
 	}
 
 	if (is_numeric($defaultref) && $defaultref <= 0) {
