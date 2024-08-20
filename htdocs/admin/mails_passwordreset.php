@@ -138,7 +138,7 @@ if (preg_match('/^mac/i', PHP_OS)) {
 if (!getDolGlobalString('MAIN_MAIL_SENDMODE_PASSWORDRESET')) {
 	$conf->global->MAIN_MAIL_SENDMODE_PASSWORDRESET = 'default';
 }
-$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT_PASSWORDRESET', ini_get('smtp_port'));
+$port = getDolGlobalInt('MAIN_MAIL_SMTP_PORT_PASSWORDRESET', (int) ini_get('smtp_port'));
 if (!$port) {
 	$port = 25;
 }

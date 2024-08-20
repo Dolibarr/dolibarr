@@ -450,7 +450,8 @@ class RemiseCheque extends CommonObject
 			}
 
 			$obj = new $classname();
-			'@phan-var-force CommonNumRefGenerator $obj';
+			'@phan-var-force ModeleNumRefChequeReceipts $obj';
+
 			$numref = "";
 			$numref = $obj->getNextValue($mysoc, $this);
 
@@ -459,7 +460,7 @@ class RemiseCheque extends CommonObject
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db, "ChequeReceipts::getNextNumRef ".$obj->error);
+				dol_print_error($db, "ChequeReceipts::getNextValue ".$obj->error);
 				return "";
 			}
 
@@ -591,7 +592,7 @@ class RemiseCheque extends CommonObject
 
 			$classname = 'BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);
-			'@phan-var-force CommonDocGenerator $module';
+			'@phan-var-force ModeleChequeReceipts $docmodel';
 
 			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -776,7 +777,7 @@ class RemiseCheque extends CommonObject
 				$invoice->fetch($obj->fk_facture);
 				$invoice->setUnpaid($user);
 
-				$rejectedPayment->amounts[$obj->fk_facture] = price2num($obj->amount) * -1;
+				$rejectedPayment->amounts[$obj->fk_facture] = (float) price2num($obj->amount) * -1;
 			}
 
 			$result = $rejectedPayment->create($user);
@@ -896,10 +897,10 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option						Sur quoi pointe le lien
+	 *	@param	string	$option						Indicate where the link points to
 	 *  @param	int  	$notooltip					1=Disable tooltip
 	 *  @param  string  $morecss            		Add more css on link
 	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -996,7 +997,7 @@ class RemiseCheque extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

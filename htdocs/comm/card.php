@@ -11,6 +11,7 @@
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
  * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -618,7 +619,7 @@ if ($object->id > 0) {
 	}
 
 	// Other attributes
-	$parameters = array('socid'=>$object->id);
+	$parameters = array('socid' => $object->id);
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	// Sales representative
@@ -694,10 +695,10 @@ if ($object->id > 0) {
 
 	$boxstat = '';
 
-	// Nbre max d'elements des petites listes
+	// Max nb of elements in lists
 	$MAXLIST = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 
-	// Lien recap
+	// Link summary/status board
 	$boxstat .= '<div class="box divboxtable box-halfright">';
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop boxtablenomarginbottom centpercent">';
 	$boxstat .= '<tr class="impair nohover"><td colspan="2" class="tdboxstats nohover">';
@@ -724,7 +725,7 @@ if ($object->id > 0) {
 	}
 
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		// Box commandes
+		// Box orders
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -745,7 +746,7 @@ if ($object->id > 0) {
 	}
 
 	if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
-		// Box factures
+		// Box invoices
 		$tmp = $object->getOutstandingBills('customer', 0);
 		$outstandingOpened = $tmp['opened'];
 		$outstandingTotal = $tmp['total_ht'];
@@ -926,7 +927,7 @@ if ($object->id > 0) {
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$param ="";
+		$param = "";
 
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
@@ -1053,7 +1054,7 @@ if ($object->id > 0) {
 		$sql .= " WHERE e.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND e.entity IN (".getEntity('expedition').")";
 		$sql .= ' GROUP BY e.rowid';
-		$sql .= ', e.ref, e.entity';
+		$sql .= ', e.ref, e.entity, e.fk_projet';
 		$sql .= ', e.date_creation';
 		$sql .= ', e.fk_statut';
 		$sql .= ', s.nom';
@@ -1237,7 +1238,7 @@ if ($object->id > 0) {
 				print $late;
 				print "</td>\n";
 				print '<td class="nowrap">';
-				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ?  $objp->refcus : $objp->refsup, 12);
+				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ? $objp->refcus : $objp->refsup, 12);
 				print "</td>\n";
 				//print '<td class="right" width="80px"><span title="'.$langs->trans("DateCreation").'">'.dol_print_date($db->jdate($objp->dc), 'day')."</span></td>\n";
 				print '<td class="right" width="80px"><span title="'.$langs->trans("DateContract").'">'.dol_print_date($db->jdate($objp->dcon), 'day')."</span></td>\n";
@@ -1368,7 +1369,7 @@ if ($object->id > 0) {
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.titre, f.total_ht, f.total_tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.titre, f.fk_projet, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
 		$sql .= ' f.suspended, f.date_when,';
 		$sql .= ' s.nom, s.rowid';
@@ -1474,7 +1475,7 @@ if ($object->id > 0) {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
 		$sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".((int) $object->id);
 		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.ref_client, f.total_ht, f.total_tva, f.total_ttc,';
+		$sql .= ' GROUP BY f.rowid, f.ref, f.type, f.ref_client, f.fk_projet, f.total_ht, f.total_tva, f.total_ttc,';
 		$sql .= ' f.entity, f.datef, f.date_lim_reglement, f.datec, f.paye, f.fk_statut,';
 		$sql .= ' s.nom, s.rowid';
 		$sql .= " ORDER BY f.datef DESC, f.datec DESC";
@@ -1646,7 +1647,7 @@ if ($object->id > 0) {
 		}
 
 		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
-			$langs->load("fichinter");
+			$langs->load("interventions");
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
 

@@ -143,6 +143,8 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 
 		$obj = new $classname($db);
 
+		'@phan-var-force ModelePDFMember $obj';
+
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;

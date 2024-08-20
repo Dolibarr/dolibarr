@@ -4,7 +4,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
- * Copyright (C) 2023	    Benjamin Falière	    <benjamin.faliere@altairis.fr>
+ * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -307,7 +307,7 @@ class Ticket extends CommonObject
 		'origin_email' => array('type' => 'mail', 'label' => 'OriginEmail', 'visible' => -2, 'enabled' => 1, 'position' => 16, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", 'csslist' => 'tdoverflowmax150'),
 		'origin_replyto' => array('type' => 'mail', 'label' => 'EmailReplyto', 'visible' => -2, 'enabled' => 1, 'position' => 17, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "Email to reply to", 'csslist' => 'tdoverflowmax150'),
 		'origin_references' => array('type' => 'text', 'label' => 'EmailReferences', 'visible' => -2, 'enabled' => 1, 'position' => 18, 'notnull' => 1, 'index' => 1, 'searchall' => 1, 'comment' => "References from origin email", 'csslist' => 'tdoverflowmax150'),
-		'subject' => array('type' => 'varchar(255)', 'label' => 'Subject', 'visible' => 1, 'enabled' => 1, 'position' => 19, 'notnull' => -1, 'searchall' => 1, 'help' => "", 'css' => 'maxwidth200 tdoverflowmax200', 'csslist'=>'tdoverflowmax250', 'autofocusoncreate' => 1),
+		'subject' => array('type' => 'varchar(255)', 'label' => 'Subject', 'visible' => 1, 'enabled' => 1, 'position' => 19, 'notnull' => -1, 'searchall' => 1, 'help' => "", 'css' => 'maxwidth200 tdoverflowmax200', 'csslist' => 'tdoverflowmax250', 'autofocusoncreate' => 1),
 		'type_code' => array('type' => 'varchar(32)', 'label' => 'Type', 'visible' => 1, 'enabled' => 1, 'position' => 20, 'notnull' => -1, 'help' => "", 'csslist' => 'tdoverflowmax100'),
 		'category_code' => array('type' => 'varchar(32)', 'label' => 'TicketCategory', 'visible' => -1, 'enabled' => 1, 'position' => 21, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100 tdoverflowmax200'),
 		'severity_code' => array('type' => 'varchar(32)', 'label' => 'Severity', 'visible' => 1, 'enabled' => 1, 'position' => 22, 'notnull' => -1, 'help' => "", 'css' => 'maxwidth100'),
@@ -474,7 +474,7 @@ class Ticket extends CommonObject
 	 * @param string $getRef    Reference of object
 	 * @return bool
 	 */
-	public function checkExistingRef(string $action, string $getRef): bool
+	public function checkExistingRef(string $action, string $getRef)
 	{
 		$test = new self($this->db);
 
@@ -1900,7 +1900,7 @@ class Ticket extends CommonObject
 					if (dol_mkdir($destdir) >= 0) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 						dol_move($filespath, $destfile);
-						if ($actioncomm->code == "TICKET_MSG") {
+						if (in_array($actioncomm->code, array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
 							$ecmfile = new EcmFiles($this->db);
 							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
 							$destdir = preg_replace('/[\\/]$/', '', $destdir);
@@ -2477,6 +2477,7 @@ class Ticket extends CommonObject
 		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
+			'@phan-var-force ModeleNumRefTicket $modTicket';
 
 			$defaultref = $modTicket->getNextValue($thirdparty, $this);
 		}
@@ -2852,7 +2853,7 @@ class Ticket extends CommonObject
 									}
 
 									// Contact type
-									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
+									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower($info_sendto['libelle']).')';
 									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 								}
 							}
@@ -2933,7 +2934,7 @@ class Ticket extends CommonObject
 											$sendto[$info_sendto['email']] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 										}
 
-										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
+										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower($info_sendto['libelle']).')';
 										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 									}
 								}
@@ -2988,11 +2989,15 @@ class Ticket extends CommonObject
 				// Set status back to "In progress" if not set yet, but only if internal user and not a private message
 				// Or set status to "In progress" if the client has answered and if the ticket has started
 				// So we are sure to leave the STATUS_DRAFT, STATUS_NEED_INFO.
-				if (($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private) ||
-					($object->status > self::STATUS_IN_PROGRESS && $public_area)
-				) {
+				// Except if TICKET_SET_STATUS_ON_ANSWER has been defined
+				if ((getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) < 0
+				&& ($object->status < self::STATUS_IN_PROGRESS && !$user->socid && !$private))
+				|| ($object->status > self::STATUS_IN_PROGRESS && $public_area)) {
 					$object->setStatut($object::STATUS_IN_PROGRESS);
+				} elseif (getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER', -1) >= 0 && empty($user->socid) && empty($private)) {
+					$object->setStatut(getDolGlobalInt('TICKET_SET_STATUS_ON_ANSWER'));
 				}
+
 				return 1;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -3239,7 +3244,7 @@ class Ticket extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
 	 *  @param		array		$arraydata				Array of data

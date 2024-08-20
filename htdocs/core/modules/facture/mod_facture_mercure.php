@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -135,12 +136,12 @@ class mod_facture_mercure extends ModeleNumRefFactures
 	}
 
 	/**
-	 * Return next value
+	 * Return next value not used or last value used
 	 *
-	 * @param	Societe			$objsoc     Object third party
-	 * @param   Facture			$invoice	Object invoice
-	 * @param   string			$mode       'next' for next value or 'last' for last value
-	 * @return  string|int      			Value if OK, 0 if KO
+	 * @param	Societe		$objsoc		Object third party
+	 * @param   Facture		$invoice	Object invoice
+	 * @param   string		$mode		'next' for next value or 'last' for last value
+	 * @return  string|int<-1,1>		Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{

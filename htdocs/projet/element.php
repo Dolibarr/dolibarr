@@ -931,8 +931,8 @@ foreach ($listofreferent as $key => $value) {
 
 				// Add total if we have to
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 				}
 			}
 
@@ -1569,8 +1569,8 @@ foreach ($listofreferent as $key => $value) {
 				print '</tr>';
 
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;

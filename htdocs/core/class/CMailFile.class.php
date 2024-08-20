@@ -848,6 +848,7 @@ class CMailFile
 				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
+				dol_syslog("A hook has replaced code to send email", LOG_DEBUG);
 				return true;
 			}
 
@@ -1133,7 +1134,7 @@ class CMailFile
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1144,7 +1145,7 @@ class CMailFile
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
-								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
 								$tokenobj->setRefreshToken($refreshtoken);	// Restore the refresh token
 								$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
@@ -1297,7 +1298,7 @@ class CMailFile
 							$credentials = new Credentials(
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_ID'),
 								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_SECRET'),
-								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLAUTHORIZE')
+								getDolGlobalString('OAUTH_'.getDolGlobalString($keyforsmtpoauthservice).'_URLCALLBACK')
 							);
 							$serviceFactory = new \OAuth\ServiceFactory();
 							$oauthname = explode('-', $OAUTH_SERVICENAME);
@@ -1306,7 +1307,7 @@ class CMailFile
 							$refreshtoken = $tokenobj->getRefreshToken();
 
 							if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
-								// ServiceInterface does not provide refreshAccessToekn, AbstractService does
+								// ServiceInterface does not provide refreshAccessToken, AbstractService does
 								// We must save the token because Google provides it only once
 								$tokenobj = $apiService->refreshAccessToken($tokenobj);
 								$tokenobj->setRefreshToken($refreshtoken);
@@ -1436,7 +1437,7 @@ class CMailFile
 	 * Read a file on disk and return encoded content for emails (mode = 'mail')
 	 *
 	 * @param	string	$sourcefile		Path to file to encode
-	 * @return 	int|string			    Return integer <0 if KO, encoded string if OK
+	 * @return 	int<-1,-1>|string		Return integer <0 if KO, encoded string if OK
 	 */
 	private function _encode_file($sourcefile)
 	{
@@ -1800,8 +1801,8 @@ class CMailFile
 	 * @param	string[]	$filename_list		Tableau
 	 * @param	string[]	$mimetype_list		Tableau
 	 * @param 	string[]	$mimefilename_list	Tableau
-	 * @param	string[]	$cidlist			Array of CID if file must be completed with CID code
-	 * @return	string|int						String with files encoded
+	 * @param	?string[]	$cidlist			Array of CID if file must be completed with CID code
+	 * @return	string|int<-1,-1>	 			String with files encoded or -1 when error
 	 */
 	private function write_files($filename_list, $mimetype_list, $mimefilename_list, $cidlist)
 	{

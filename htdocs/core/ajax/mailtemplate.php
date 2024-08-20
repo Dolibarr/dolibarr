@@ -21,6 +21,7 @@
  *       \brief     File to return Ajax response on location_incoterms request
  */
 
+
 // Just for display errors in editor
 ini_set('display_errors', 1);
 

@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ class box_project_opportunities extends ModeleBoxes
 		$this->max = $max;
 
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
 		$i = 0;
 		// list the summary of the orders
@@ -146,7 +147,7 @@ class box_project_opportunities extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array('td' => 'class="amount right nowraponall"', 'text' => ($projectstatic->opp_amount ? price($projectstatic->opp_amount) : ''));
 
-					$this->info_box_contents[$i][] = array('td' => 'class="nowraponall"', 'asis'=>1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
+					$this->info_box_contents[$i][] = array('td' => 'class="nowraponall"', 'asis' => 1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
 
 					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => $projectstatic->getLibStatut(3));
 
@@ -191,9 +192,9 @@ class box_project_opportunities extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

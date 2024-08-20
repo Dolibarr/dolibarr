@@ -10,7 +10,6 @@ TokenDeleted=Ficha eliminada
 SeePreviousTab=Ver pestaña anterior
 OAuthProvider=proveedor de OAuth
 OAuthIDSecret=ID y secreto de OAuth
-TOKEN_REFRESH=Actualización de token presente
 TOKEN_EXPIRED=Ficha caducada
 TOKEN_EXPIRE_AT=El token expira en
 OAUTH_GOOGLE_NAME=Servicio OAuth de Google

@@ -1,11 +1,12 @@
 <?php
-/* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+/* Copyright (C) 2010-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Charlie Benke				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2021	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +55,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	public $phpmin = array(7, 0);
 
 	/**
-	 * @var string Dolibarr version of the loaded document
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
 
@@ -62,7 +63,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *	@param	DoliDB	$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -215,15 +216,15 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		MyObject	$object				Object source to build document
-	 *	@param		Translate	$outputlangs		Lang output object
-	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *	@return		int         					1 if OK, <=0 if KO
+	 *  @param	MyObject	$object				Source object to generate document from
+	 *  @param	Translate	$outputlangs		Lang output object
+	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param	int<0,1>	$hidedetails		Do not show line details
+	 *  @param	int<0,1>	$hidedesc			Do not show desc
+	 *  @param	int<0,1>	$hideref			Do not show ref
+	 *  @return	int<-1,1>						1 if OK, <=0 if KO
 	 */
-	public function write_file($object, $outputlangs, $srctemplatepath, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
+	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;

@@ -8,6 +8,7 @@
  * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ $diroutputmassaction = $conf->expensereport->dir_output.'/temp/massgeneration/'.
 $limit 		= GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield	= GETPOST('sortfield', 'aZ09comma');
 $sortorder	= GETPOST('sortorder', 'aZ09comma');
-$page 		= GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOSTINT("page");
+$page 		= GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -167,7 +168,7 @@ $arrayfields = array(
 	'd.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1),
 	'd.date_approve' => array('label' => $langs->trans("DateApprove"), 'checked' => 1),
 	'd.total_ht' => array('label' => $langs->trans("AmountHT"), 'checked' => 1),
-	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => 1),
+	'd.total_vat' => array('label' => $langs->trans("AmountVAT"), 'checked' => -1),
 	'd.total_ttc' => array('label' => $langs->trans("AmountTTC"), 'checked' => 1),
 	'd.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
 	'd.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
@@ -1008,9 +1009,9 @@ if ($num > 0) {
 			print '</tr>'."\n";
 		}
 
-		$total_total_ht = $total_total_ht + $obj->total_ht;
-		$total_total_tva = $total_total_tva + $obj->total_tva;
-		$total_total_ttc = $total_total_ttc + $obj->total_ttc;
+		$total_total_ht += $obj->total_ht;
+		$total_total_tva += $obj->total_tva;
+		$total_total_ttc += $obj->total_ttc;
 
 		$i++;
 	}

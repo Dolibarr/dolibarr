@@ -68,7 +68,7 @@ ErrorNoRequestInError=Нема барање по грешка
 ErrorServiceUnavailableTryLater=Услугата не е достапна во моментот. Обидете се повторно подоцна.
 ErrorDuplicateField=Дупликат вредност во уникатно поле
 ErrorSomeErrorWereFoundRollbackIsDone=Пронајдени се некои грешки. Промените се вратија назад.
-ErrorConfigParameterNotDefined=Параметарот <b>%s</b> не е дефиниран во конфигурацијата на лентата Dolipanr class='notranslate'><b></span>conf.php</b>.
+ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined in the Dolibarr config file <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=Не успеа да се најде корисникот <b>%s</b> база на податоци.
 ErrorNoVATRateDefinedForSellerCountry=Грешка, нема дефинирани стапки на ДДВ за земјата „%s“.
 ErrorNoSocialContributionForSellerCountry=Грешка, нема дефиниран тип на социјални/фискални даноци за земјата „%s“.
@@ -103,7 +103,7 @@ RecordDeleted=Записот е избришан
 RecordGenerated=Создаден запис
 LevelOfFeature=Ниво на карактеристики
 NotDefined=Недефинирано
-DolibarrInHttpAuthenticationSoPasswordUseless=Режимот за автентикација на Dolibarr е поставен на <b>%sb09a4b739f17f8z class='notranslate'><b>conf.php</b>.<br>Ова значи дека лозинката е надворешна за Dolibarr, па менувањето на ова поле може да нема ефект.
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is set to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that the password database is external to Dolibarr, so changing this field may have no effect.
 Administrator=Системски администратор
 AdministratorDesc=Системски администратор (може да администрира корисник, дозволи, но и системско поставување и конфигурација на модули)
 Undefined=Недефинирано
@@ -131,7 +131,7 @@ TechnicalID=Техничка лична карта
 LineID=Линија ID
 NotePublic=Забелешка (јавна)
 NotePrivate=Белешка (приватна)
-PrecisionUnitIsLimitedToXDecimals=Dolibarr беше поставен за да ја ограничи прецизноста на единечните цени на <b>%s<span class='notranslate'>b09a4b78z0f1>b09a4b78z0f1> .
+PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
 DoTest=Тест
 ToFilter=Филтер
 NoFilter=Без филтер
@@ -172,7 +172,7 @@ Close=Затвори
 CloseAs=Поставете го статусот на
 CloseBox=Отстранете го графичкиот елемент од контролната табла
 Confirm=Потврди
-ConfirmSendCardByMail=Дали навистина сакате да ја испратите содржината на оваа картичка по пошта на <b>%s<span class='notranslate'>b09a4b739f17 /span>?
+ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?
 Delete=Delete
 Remove=Отстрани
 Resiliate=Прекини
@@ -189,7 +189,7 @@ SaveAndStay=Заштедете и останете
 SaveAndNew=Зачувај и ново
 TestConnection=Тест за поврзување
 ToClone=Клон
-ConfirmCloneAsk=Дали сте сигурни дека сакате да го клонирате објектот <b>%s<span class='notranslate'>b09a4b739f17panf8z</s0?
+ConfirmCloneAsk=Are you sure you want to clone the object <b>%s</b>?
 ConfirmClone=Изберете ги податоците што сакате да ги клонирате:
 NoCloneOptionsSpecified=Не се дефинирани податоци за клонирање.
 Of=на
@@ -267,7 +267,7 @@ Numero=Број
 Limit=Граница
 Limits=Граници
 Logout=Одјавување
-NoLogoutProcessWithAuthMode=Нема апликативна функција за исклучување со режим на автентикација <b>%s<span class='notranslate'>b09a4b739f17f
+NoLogoutProcessWithAuthMode=No applicative disconnect feature with authentication mode <b>%s</b>
 Connection=Login
 Setup=Поставување
 Alert=Предупредување
@@ -513,7 +513,7 @@ Completed=Завршено
 Running=Во тек
 RequestAlreadyDone=Барањето е веќе снимено
 Filter=Филтер
-FilterOnInto=Критериуми за пребарување "<strong>%s</strong>" во полиња notranslate'>%s</span>
+FilterOnInto=Search criteria '<strong>%s</strong>' into fields %s
 RemoveFilter=Отстранете го филтерот
 ChartGenerated=Графикон генериран
 ChartNotGenerated=Графиконот не е генериран
@@ -770,7 +770,7 @@ MenuMembers=Корисници
 MenuAgendaGoogle=Агенда на Google
 MenuTaxesAndSpecialExpenses=Даноци | Посебни трошоци
 ThisLimitIsDefinedInSetup=Ограничување Dolibarr (Menu home-setup-security): %s Kb, PHP ограничување: %s Kb
-ThisLimitIsDefinedInSetupAt=Ограничување на Dolibarr (Мени %s): %s Kb, ограничување на PHP (Парам b0ecb9fpanz80f >): <span class='notranslate'>%s Kb
+ThisLimitIsDefinedInSetupAt=Dolibarr limit (Menu %s): %s Kb, PHP limit (Param %s): %s Kb
 NoFileFound=Не се поставени документи
 CurrentUserLanguage=Тековен јазик
 CurrentTheme=Тековна тема
@@ -800,7 +800,7 @@ Merge=Спојување
 DocumentModelStandardPDF=Стандарден PDF шаблон
 PrintContentArea=Прикажи страница за печатење на главната област на содржина
 MenuManager=Менаџер со мени
-WarningYouAreInMaintenanceMode=Предупредување, вие сте во режим на одржување: само најавете се <b>%s<span class='notranslate'>b09a4b739f17f8z е дозволено е да се користи апликацијата во овој режим.
+WarningYouAreInMaintenanceMode=Warning, you are in maintenance mode: only login <b>%s</b> is allowed to use the application in this mode.
 CoreErrorTitle=Системска грешка
 CoreErrorMessage=Извинете, се појави грешка. Контактирајте со вашиот системски администратор за да ги проверите дневниците или оневозможете $dolibarr_main_prod=1 за да добиете повеќе информации.
 CreditCard=Кредитна картичка
@@ -879,7 +879,7 @@ Access=Пристап
 SelectAction=Изберете дејство
 SelectTargetUser=Изберете цел корисник/вработен
 HelpCopyToClipboard=Користете Ctrl+C за копирање во таблата со исечоци
-SaveUploadedFileWithMask=Зачувај датотека на серверот со име "<strong>%s</strong> (otherwi>" <span class='notranslate'>%s")
+SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 OriginFileName=Оригинално име на датотека
 SetDemandReason=Поставете извор
 SetBankAccount=Дефинирајте банкарска сметка
@@ -1063,7 +1063,7 @@ Select2NotFound=Не е пронајден резултат
 Select2Enter=Внесете
 Select2MoreCharacter=или повеќе карактер
 Select2MoreCharacters=или повеќе ликови
-Select2MoreCharactersMore=<strong>Синтакса за пребарување:</strong>b0342fccfda19bzpan'>spannotranslate <kbd><strong> |</strong>b04span'sf><5/08660 notranslate'><kbd> ИЛИ</kbd> (a|b)<br></kbd> (a|b)<br><span class='061a /span><strong>*</strong></kbd></spanno><span' class='notranslate' ><kbd> Било кој знак</kbd> (a*b)<br><span class='notranslate'03120z span><strong>^</strong></kbd></spanno><span' class=> <kbd> Започнете со</kbd> (^ab)<br><span class='notranslate'006>b0340 <strong>$</strong></kbd><span><span10z7006<span><span10z7006<span><span10z7000<span /span> Заврши со</kbd> (ab$)<br>
+Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=Се вчитуваат повеќе резултати...
 Select2SearchInProgress=Пребарувањето е во тек...
 SearchIntoThirdparties=Трети лица
@@ -1299,3 +1299,4 @@ AllEntities=Сите субјекти
 TranslationOfKey=Превод на клучот AnyTranslationKey
 SignedStatus=Потпишан статус
 NbRecordQualified=Број на квалификувани записи
+auto=auto
