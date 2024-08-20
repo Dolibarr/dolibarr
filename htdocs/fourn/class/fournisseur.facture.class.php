@@ -1948,7 +1948,7 @@ class FactureFournisseur extends CommonInvoice
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $this->newref;
 				$this->statut = self::STATUS_VALIDATED;
@@ -3885,7 +3885,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 	/**
 	 * Percent of discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 

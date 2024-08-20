@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +191,7 @@ if ($result < 0) {
 		$datamin = array();
 
 		$subtotal = 0;
-		$day = dol_mktime(12, 0, 0, $month, 1, $year);
+		$day = dol_mktime(12, 0, 0, (int) $month, 1, (int) $year);
 		//$textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
@@ -200,7 +201,7 @@ if ($result < 0) {
 		$i = 0;
 		$dataall = array();
 		while ($xmonth == $month) {
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > time()) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -337,7 +338,7 @@ if ($result < 0) {
 
 		$subtotal = 0;
 		$now = time();
-		$day = dol_mktime(12, 0, 0, 1, 1, $year);
+		$day = dol_mktime(12, 0, 0, 1, 1, (int) $year);
 		//$textdate = strftime("%Y%m%d", $day);
 		$textdate = dol_print_date($day, "%Y%m%d");
 		$xyear = substr($textdate, 0, 4);
@@ -345,7 +346,7 @@ if ($result < 0) {
 
 		$i = 0;
 		while ($xyear == $year && $day <= $datetime) {
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			if ($day > $now) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			} else {
@@ -462,7 +463,7 @@ if ($result < 0) {
 		//print "x".$textdate;
 		$i = 0;
 		while ($day <= ($max + 86400)) {	// On va au dela du dernier jour
-			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			$subtotal += (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 			if ($day > ($max + 86400)) {
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph

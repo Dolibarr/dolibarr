@@ -900,7 +900,6 @@ TemplatePDFContracts=Modelos de documentos de contratos
 WatermarkOnDraftContractCards=Marca de agua en los proyectos de contratos (ninguno si está vacío)
 MembersSetup=Configuración del módulo de miembros
 AdherentMailRequired=Correo electrónico requerido para crear un nuevo miembro
-MemberSendInformationByMailByDefault=La casilla de verificación para enviar la confirmación de correo a los miembros (validación o nueva suscripción) está activada por defecto
 MEMBER_REMINDER_EMAIL=Habilitar recordatorio automático <b>por correo electrónico</b> de suscripciones caducadas. Nota: El módulo <strong>%s</strong> debe estar habilitado y configurado correctamente para enviar recordatorios.
 LDAPSetup=Configuración de LDAP
 LDAPSynchronizeUsers=Organización de usuarios en LDAP

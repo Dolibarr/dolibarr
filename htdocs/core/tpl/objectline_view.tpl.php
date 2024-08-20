@@ -49,6 +49,7 @@ if (empty($object) || !is_object($object)) {
 '@phan-var-force CommonObject $this
  @phan-var-force CommonObject $object
  @phan-var-force 0|1 $forceall
+ @phan-var-force int $num
 ';
 
 global $mysoc;
@@ -536,7 +537,7 @@ if ($this->status == 0 && !empty($object_rights->creer) && $action != 'selectlin
 		$colspan++;
 	}
 	print '<td colspan="'.$colspan.'"></td>';
-	$coldisplay = $coldisplay + $colspan;
+	$coldisplay += $colspan;
 }
 
 if ($action == 'selectlines') { ?>

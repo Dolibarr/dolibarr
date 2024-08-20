@@ -35,7 +35,7 @@ PropalStatusValidated=已驗證（提案已開放）
 PropalStatusSigned=簽字（需要開具賬單）
 PropalStatusNotSigned=未簽署（已關閉）
 PropalStatusBilled=計費
-PropalStatusCanceledShort=Canceled
+PropalStatusCanceledShort=已取消
 PropalStatusDraftShort=草稿
 PropalStatusValidatedShort=Open
 PropalStatusClosedShort=關閉
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1週
 AvailabilityTypeAV_2W=2週
 AvailabilityTypeAV_3W=3週
 AvailabilityTypeAV_1M=1個月
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=代表後續提案
 TypeContact_propal_external_BILLING=客戶發票聯繫方式
 TypeContact_propal_external_CUSTOMER=客戶聯繫後續提案
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
-
 # Document models
 CantBeNoSign=cannot be set not signed
 CaseFollowedBy=Case followed by
@@ -122,3 +120,5 @@ SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

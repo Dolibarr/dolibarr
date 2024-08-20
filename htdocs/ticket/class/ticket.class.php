@@ -474,7 +474,7 @@ class Ticket extends CommonObject
 	 * @param string $getRef    Reference of object
 	 * @return bool
 	 */
-	public function checkExistingRef(string $action, string $getRef): bool
+	public function checkExistingRef(string $action, string $getRef)
 	{
 		$test = new self($this->db);
 
@@ -1900,7 +1900,7 @@ class Ticket extends CommonObject
 					if (dol_mkdir($destdir) >= 0) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 						dol_move($filespath, $destfile);
-						if ($actioncomm->code == "TICKET_MSG") {
+						if (in_array($actioncomm->code, array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
 							$ecmfile = new EcmFiles($this->db);
 							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
 							$destdir = preg_replace('/[\\/]$/', '', $destdir);
@@ -2477,6 +2477,7 @@ class Ticket extends CommonObject
 		if ($classname !== '') {
 			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 			$modTicket = new $classname();
+			'@phan-var-force ModeleNumRefTicket $modTicket';
 
 			$defaultref = $modTicket->getNextValue($thirdparty, $this);
 		}
@@ -2852,7 +2853,7 @@ class Ticket extends CommonObject
 									}
 
 									// Contact type
-									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
+									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower($info_sendto['libelle']).')';
 									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 								}
 							}
@@ -2933,7 +2934,7 @@ class Ticket extends CommonObject
 											$sendto[$info_sendto['email']] = trim($info_sendto['firstname']." ".$info_sendto['lastname'])." <".$info_sendto['email'].">";
 										}
 
-										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1').' ('.strtolower($info_sendto['libelle']).')';
+										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower($info_sendto['libelle']).')';
 										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 									}
 								}

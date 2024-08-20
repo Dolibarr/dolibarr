@@ -71,6 +71,6 @@ YourPartnershipCanceledContent=Би сакале да ве информирам�
 CountLastUrlCheckError=Број на грешки за последната проверка на URL-то
 LastCheckBacklink=Датум на последната проверка на URL-то
 NewPartnershipRequest=Ново барање за партнерство
-NewPartnershipRequestDesc=Овој формулар ви овозможува да побарате да бидете дел од една од нашите партнерски програми. Ако ви треба помош за да го пополните овој формулар, ве молиме контактирајте со е-пошта <b>%s<span class='notranslate'>b09a4b739f17f8z распон>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Оваа страница мора да содржи најмалку една врска до еден од следниве домени: %s
 IPOfApplicant=IP на апликантот

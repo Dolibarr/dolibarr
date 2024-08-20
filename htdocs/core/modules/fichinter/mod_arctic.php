@@ -5,6 +5,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -46,7 +47,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 	/**
 	 * @var string Nom du modele
-	 * @deprecated
+	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */
 	public $nom = 'arctic';
@@ -124,7 +125,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe|string		$objsoc     Object thirdparty
 	 *  @param  Fichinter|string	$object		Object we need next value for
-	 *  @return string|int  					Value if OK, 0 if KO
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc = '', $object = '')
 	{

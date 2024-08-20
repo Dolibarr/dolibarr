@@ -450,7 +450,8 @@ class RemiseCheque extends CommonObject
 			}
 
 			$obj = new $classname();
-			'@phan-var-force CommonNumRefGenerator $obj';
+			'@phan-var-force ModeleNumRefChequeReceipts $obj';
+
 			$numref = "";
 			$numref = $obj->getNextValue($mysoc, $this);
 
@@ -459,7 +460,7 @@ class RemiseCheque extends CommonObject
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db, "ChequeReceipts::getNextNumRef ".$obj->error);
+				dol_print_error($db, "ChequeReceipts::getNextValue ".$obj->error);
 				return "";
 			}
 
@@ -591,7 +592,7 @@ class RemiseCheque extends CommonObject
 
 			$classname = 'BordereauCheque'.ucfirst($model);
 			$docmodel = new $classname($this->db);
-			'@phan-var-force CommonDocGenerator $module';
+			'@phan-var-force ModeleChequeReceipts $docmodel';
 
 			$sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -776,7 +777,7 @@ class RemiseCheque extends CommonObject
 				$invoice->fetch($obj->fk_facture);
 				$invoice->setUnpaid($user);
 
-				$rejectedPayment->amounts[$obj->fk_facture] = price2num($obj->amount) * -1;
+				$rejectedPayment->amounts[$obj->fk_facture] = (float) price2num($obj->amount) * -1;
 			}
 
 			$result = $rejectedPayment->create($user);
