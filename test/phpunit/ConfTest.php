@@ -83,9 +83,8 @@ class ConfTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		print "DIR_OUTPUT for $old is {$conf->$old->dir_output}".PHP_EOL;
-		print "DIR_OUTPUT for $new is {$conf->$new->dir_output}".PHP_EOL;
-		$this->assertEquals($conf->$old->dir_output, $conf->$new->dir_output, "Old and new dir_output must be equal");
-		$this->assertEquals($conf->$old->dir_output, $conf->$new->dir_output, "Old and new dir_output must be equal");
+		// print "DIR_OUTPUT for $old is {$conf->$old->dir_output}".PHP_EOL;
+		// print "DIR_OUTPUT for $new is {$conf->$new->dir_output}".PHP_EOL;
+		$this->assertEquals($conf->$new->dir_output, $conf->$old->dir_output, "Old ($old/expected) and new dir_output ($new/result) must be equal");
 	}
 }
