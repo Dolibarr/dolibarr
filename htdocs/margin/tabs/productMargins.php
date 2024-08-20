@@ -61,13 +61,13 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+$hookmanager->initHooks(array('tabproductmarginlist'));
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
-
-$hookmanager->initHooks(array('tabproductmarginlist'));
 
 $search_invoice_date_start = '';
 $search_invoice_date_end = '';

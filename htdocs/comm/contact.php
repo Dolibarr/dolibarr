@@ -59,6 +59,8 @@ if ($user->socid) {
 	$action = '';
 	$socid = $user->socid;
 }
+
+$hookmanager->initHooks(array('contactlist'));
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
