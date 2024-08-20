@@ -43,7 +43,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
 					$objectoffield = $object; //For compatibility with the computed formula
-					$value = dol_eval((int) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
+					$value = (int) dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
 					}
