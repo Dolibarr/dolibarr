@@ -438,6 +438,29 @@ if (empty($reshook)) {
 				if ($ret <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
+				} else {
+					// Define output language
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
+						}
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+						$model = $object->model_pdf;
+						$ret = $object->fetch($id); // Reload to get new records
+
+						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						if ($result < 0) {
+							dol_print_error($db, $result);
+						}
+					}
 				}
 			}
 		} else {
