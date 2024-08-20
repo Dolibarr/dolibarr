@@ -1694,7 +1694,7 @@ class Fichinter extends CommonObject
 	{
 		global $langs;
 		$langs->loadLangs(array('interventions', 'commercial'));
-		$context_info = [];
+		$context_info = ['signature' => 1];
 		switch ($status) {
 			case 0:
 				$context_info['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');

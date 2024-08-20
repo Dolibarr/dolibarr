@@ -814,9 +814,10 @@ class Notify
 								break;
 							case 'FICHINTER_MODIFY':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+								$context_info = $object->context['signature'] == 1 ? $object->getLibSignedStatus() : '';
 								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
-								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link);
+								$mesg = $outputlangs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 								break;
 							case 'FICHINTER_CLOSE':
 								$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
@@ -1114,9 +1115,10 @@ class Notify
 						break;
 					case 'FICHINTER_MODIFY':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';
+						$context_info = $object->context['signature'] == 1 ? $object->getLibSignedStatus() : '';
 						$dir_output = $conf->ficheinter->dir_output;
 						$object_type = 'ficheinter';
-						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link);
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionModified", $link, $context_info);
 						break;
 					case 'FICHINTER_CLOSE':
 						$link = '<a href="'.$urlwithroot.'/fichinter/card.php?id='.$object->id.'&entity='.$object->entity.'">'.$newref.'</a>';

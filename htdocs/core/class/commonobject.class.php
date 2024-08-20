@@ -10706,10 +10706,10 @@ abstract class CommonObject
 	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
 	 * @param	int		$notrigger		1 = Does not execute triggers, 0 = Execute triggers
 	 * @param	string	$triggercode	Trigger code to use
-	 * @param	array	$context		Trigger context message key
+	 * @param	array	$context		Trigger context message array. Use 'signature' key to indicate that XXX_MODIFY action trigger is for a signature context.
 	 * @return	int						0 < if KO, > 0 if OK
 	 */
-	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '', $context = [])
+	public function setSignedStatusCommon($user, $status, $notrigger = 0, $triggercode = '', $context = ['signature' => 1])
 	{
 		$error = 0;
 
