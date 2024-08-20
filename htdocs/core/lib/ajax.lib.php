@@ -663,7 +663,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 				var code = \''.dol_escape_js($code).'\';
 				var entity = \''.dol_escape_js($entity).'\';
-				var strict = \''.dol_escape_js($strict).'\';
+				var strict = \''.dol_escape_js((string) $strict).'\';
 				var userid = \''.dol_escape_js((string) $user->id).'\';
 				var yesButton = \''.dol_escape_js($langs->transnoentities("Yes")).'\';
 				var noButton = \''.dol_escape_js($langs->transnoentities("No")).'\';

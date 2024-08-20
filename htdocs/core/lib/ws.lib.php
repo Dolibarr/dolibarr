@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ function check_authentication($authentication, &$error, &$errorcode, &$errorlabe
 			$authmode = explode(',', $dolibarr_main_authentication);
 
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$login = checkLoginPassEntity($authentication['login'], $authentication['password'], $authentication['entity'], $authmode, 'ws');
+			$login = checkLoginPassEntity($authentication['login'], $authentication['password'], (string) $authentication['entity'], $authmode, 'ws');
 			if ($login === '--bad-login-validity--') {
 				$login = '';
 			}

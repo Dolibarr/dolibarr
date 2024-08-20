@@ -1233,7 +1233,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, 0, $overwriteifexists, 0, $indexdatabase);
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
 							}
 							if (!$res) {
 								return $result;
