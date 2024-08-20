@@ -456,7 +456,7 @@ if (empty($reshook)) {
 							$outputlangs->setDefaultLang($newlang);
 						}
 						$model = $object->model_pdf;
-						$ret = $object->fetch($id); // Reload to get new records
+						$ret = $object->fetch($object->id); // Reload to get new records
 
 						$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 						if ($result < 0) {
