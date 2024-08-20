@@ -13985,7 +13985,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		if ($limit) {
 			$sql .= $db->plimit($limit + 1, $offset);
 		}
-		print_r($sql);
+
 		dol_syslog("function.lib::show_actions_messaging", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql) {
