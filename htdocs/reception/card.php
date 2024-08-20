@@ -308,6 +308,7 @@ if (empty($reshook)) {
 		// avec info diverses + qte a livrer
 
 		if ($object->origin == "supplierorder") {
+			$object->origin = 'order_supplier';
 			$classname = 'CommandeFournisseur';
 		} else {
 			$classname = ucfirst($object->origin);
@@ -447,6 +448,7 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+							$object->fetch_thirdparty();
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
