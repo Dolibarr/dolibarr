@@ -42,6 +42,9 @@ if ($user->socid > 0) {
 	$id = $user->socid;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 $object = new Societe($db);
@@ -49,8 +52,6 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('recapcomptacard', 'globalcard'));
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;

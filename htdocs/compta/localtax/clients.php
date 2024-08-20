@@ -105,13 +105,16 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['customerlocaltaxlist']);
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
 	exit;
 }
-$hookmanager->initHooks(['customerlocaltaxlist']);
 
 $calc = 0;
 /*
