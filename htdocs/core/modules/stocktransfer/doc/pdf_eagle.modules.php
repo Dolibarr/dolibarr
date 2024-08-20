@@ -376,13 +376,14 @@ class pdf_eagle extends ModelePDFStockTransfer
 				}
 
 				// Public note and Tracking code
-				if (!empty($object->note_public) || !empty($object->tracking_number)) {
+				if (!empty($object->note_public) || !empty($object->tracking_number)) {  // @phan-suppress-current-line PhanUndeclaredProperty
 					$tab_top_alt = $tab_top;
 
 					//$tab_top_alt += 1;
 
 					// Tracking number
-					if (!empty($object->tracking_number)) {
+					if (!empty($object->tracking_number)) {  // @phan-suppress-current-line PhanUndeclaredProperty
+						'@phan-var-force Expedition|Reception $object';
 						$height_trackingnumber = 4;
 
 						$pdf->SetFont('', 'B', $default_font_size - 2);
