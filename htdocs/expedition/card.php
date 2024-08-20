@@ -163,6 +163,9 @@ if (empty($reshook)) {
 		$result = $object->setDraft($user, 0);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		}
 	}
 	// Reopen
@@ -171,6 +174,9 @@ if (empty($reshook)) {
 		$result = $object->reOpen();
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		}
 	}
 
