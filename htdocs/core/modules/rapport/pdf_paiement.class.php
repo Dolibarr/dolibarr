@@ -355,7 +355,7 @@ class pdf_paiement extends CommonDocGenerator
 		$this->Body($pdf, 1, $lines, $outputlangs);
 
 		if (method_exists($pdf, 'AliasNbPages')) {
-			$pdf->AliasNbPages();
+			$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 
 		$pdf->Close();

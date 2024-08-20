@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,8 +129,8 @@ var_dump($storage);
 var_dump($requestedpermissionsarray);
 */
 
-if (empty($apiService)) {
-	print 'Error, failed to create serviceFactory';
+if (empty($apiService) || !$apiService instanceof OAuth\OAuth2\Service\Generic) {
+	print 'Error, failed to create Generic serviceFactory';
 	exit;
 }
 if (!$apiService->getBaseApiUri()) {
@@ -140,7 +141,7 @@ if (!$apiService->getBaseApiUri()) {
 // access type needed to have oauth provider refreshing token
 // also note that a refresh token is sent only after a prompt
 if (method_exists($apiService, 'setAccessType')) {
-	$apiService->setAccessType('offline');		// Most generic OAUTH provider does not provide AccessType online/offline. They are mostly offline.
+	$apiService->setAccessType('offline');		// Most generic OAUTH provider does not provide AccessType online/offline. They are mostly offline.  // @phan-suppress-current-line PhanUndeclaredMethod
 }
 
 if (!getDolGlobalString($keyforparamid)) {
@@ -185,11 +186,11 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	if ($forlogin) {
 		$approval_prompt = getDolGlobalString('OAUTH_'.$genericstring.'_FORCE_PROMPT_ON_LOGIN', 'auto');	// Can be 'force'
 		if (method_exists($apiService, 'setApprouvalPrompt')) {
-			$apiService->setApprouvalPrompt($approval_prompt);
+			$apiService->setApprouvalPrompt($approval_prompt);  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 	} else {
 		if (method_exists($apiService, 'setApprouvalPrompt')) {
-			$apiService->setApprouvalPrompt('force');
+			$apiService->setApprouvalPrompt('force');  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 	}
 
@@ -206,7 +207,7 @@ if (!GETPOST('code') && !GETPOST('error')) {
 	$url .= '&scope='.str_replace(',', '+', $statewithscopeonly);
 
 	// Add more param
-	$url .= '&nonce='.bin2hex(random_bytes(64/8));
+	$url .= '&nonce='.bin2hex(random_bytes(64 / 8));
 
 	if ($forlogin) {
 		// TODO Add param hd. What is it for ?
@@ -262,6 +263,8 @@ if (!GETPOST('code') && !GETPOST('error')) {
 			// This requests the token from the received OAuth code (call of the endpoint)
 			// Result is stored into object managed by class DoliStorage into includes/OAuth/Common/Storage/DoliStorage.php and into database table llx_oauth_token
 			$token = $apiService->requestAccessToken(GETPOST('code'), $state);
+
+			'@phan-var-force OAuth\Common\Token\AbstractToken $token';
 
 			// The refresh token is inside the object token if the prompt was forced only.
 			//$refreshtoken = $token->getRefreshToken();

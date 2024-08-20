@@ -446,8 +446,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 
-						// We have to save the token because Google give it only once
+						// We need to save the token because Google provides it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
 
 						//var_dump($tokenobj);
@@ -457,6 +458,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							throw new Exception("Failed to refresh access token: ".$e->getMessage());
 						}
 
+						// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}

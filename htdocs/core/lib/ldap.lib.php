@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2021	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,12 +122,12 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 /**
  * Show a LDAP array into an HTML output array.
  *
- * @param	array	$result	    Array to show. This array is already encoded into charset_output
- * @param   int		$level		Level
- * @param   int		$count		Count
- * @param   string	$var		Var
- * @param   int		$hide		Hide
- * @param   int		$subcount	Subcount
+ * @param	array<'count'|int|string,int|string|array>	$result	Array to show. This array is already encoded into charset_output
+ * @param   int			$level		Level
+ * @param   int			$count		Count
+ * @param   string		$var		Var
+ * @param   int<0,1>	$hide		Hide
+ * @param   int			$subcount	Subcount
  * @return  int
  */
 function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)

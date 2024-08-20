@@ -71,7 +71,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -135,20 +135,22 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build pdf onto disk
+	 *	Function to build pdf onto disk
 	 *
-	 *  @param		Object		$object				Object to generate
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int             			    1=OK, 0=KO
+	 *	@param		StockTransfer	$object				Object StockTransfer to generate (or id if old method)
+	 *	@param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return     int<-1,1>      	    				1=OK, 0=KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+
+		'@phan-var-force StockTransfer $object';
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -157,6 +159,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
+
 
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch", "stocks", "stocktransfer@stocktransfer"));
@@ -791,7 +794,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -835,6 +838,8 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf, $mysoc;
+		'@phan-var-force Commande|Propal|Facture $object';  // availability_code,... does not exist on Facture.
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -906,7 +911,15 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
 			$posy = $pdf->GetY() + 1;
-		} elseif ($object->availability_code || $object->availability) {    // Show availability conditions
+		} elseif (property_exists($object, 'availability_code')
+				  && property_exists($object, 'availability')
+				  && (
+					$object->availability_code
+					 || $object->availability
+				  )
+		) {
+			// Show availability conditions
+
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
@@ -1158,17 +1171,19 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
-	 *  @param  int	    	$showaddress    0=no, 1=yes
-	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param	string		$titlekey		Translation key to show as title of document
+	 *  @param	TCPDF			$pdf     		Object PDF
+	 *  @param  Object			$object     	Object to show
+	 *  @param  int<0,1>		$showaddress    0=no, 1=yes
+	 *  @param  Translate		$outputlangs	Object lang for output
+	 *  @param	string			$titlekey		Translation key to show as title of document
 	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey = "StockTransferSheetProforma")
 	{
 		// phpcs:enable
 		global $conf, $langs;
+
+		'@phan-var-force StockTransfer $object';
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
@@ -1465,6 +1480,8 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
 	{
 		// phpcs:enable
+		'@phan-var-force StockTransfer $object';
+
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
 		return pdf_pagefoot($pdf, $outputlangs, 'STOCKTRANSFER_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
 	}
@@ -1474,7 +1491,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	object			$object    		common object
+	 *   	@param	CommonObject	$object    		common object
 	 *   	@param	Translate		$outputlangs    langs
 	 *      @param	int				$hidedetails	Do not show line details
 	 *      @param	int				$hidedesc		Do not show desc

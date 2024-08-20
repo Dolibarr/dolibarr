@@ -199,7 +199,7 @@ class ExpenseReportRule extends CommonObject
 	 * @param int	     $fk_c_type_fees	type of expense
 	 * @param int|string $date			    date of expense
 	 * @param int        $fk_user		    user of expense
-	 * @return array                        Array with ExpenseReportRule
+	 * @return ExpenseReportRule[]          Array with ExpenseReportRule
 	 */
 	public function getAllRule($fk_c_type_fees = 0, $date = '', $fk_user = 0)
 	{
