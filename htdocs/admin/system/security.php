@@ -583,11 +583,12 @@ if (!$test) {
 }
 print '<br>';
 
-print '<br>';
 
 // Modules for Payments
 $test = isModEnabled('stripe');
 if ($test) {
+	print '<br>';
+
 	print '<strong>'.$langs->trans("Stripe").'</strong>: ';
 	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
@@ -598,6 +599,8 @@ if ($test) {
 } else {
 	$test = isModEnabled('paypal');
 	if ($test) {
+		print '<br>';
+
 		print '<strong>'.$langs->trans("Paypal").'</strong>: ';
 		if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 			print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
