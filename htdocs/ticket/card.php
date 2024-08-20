@@ -738,7 +738,7 @@ llxHeader('', $title, $help_url);
 
 if ($action == 'create' || $action == 'presend') {
 	$formticket = new FormTicket($db);
-	if (!GETPOSTISSET('token')){
+	if (!GETPOSTISSET('token')) {
 		// we are on create mode for the first time
 		//  we need to remove any attached files in session
 		if (!empty($_SESSION["listofpaths"])) {
