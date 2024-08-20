@@ -156,7 +156,7 @@ class TimeSpent extends CommonObject
 		$this->ismultientitymanaged = 0;
 		$this->isextrafieldmanaged = 0;
 
-		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid']) && !empty($this->fields['ref'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
