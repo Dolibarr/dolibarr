@@ -243,7 +243,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		print '<div class="underbanner clearboth"></div>';
 
-		$object->info($id);
+		$object->info($socid);
 		dol_print_object_info($object, 1);
 
 		print '</div>';
@@ -253,57 +253,67 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// Actions buttons
 
-		$objcon = $object;
-		$object->fetch_thirdparty();
-		$objthirdparty = $object->thirdparty;
+		$objthirdparty = $object;
+		$objcon = new stdClass();
 
 		$out = '';
-		$newcardbutton = '';
+		$permok = $user->hasRight('agenda', 'myactions', 'create');
+		if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
+			if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
+				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
+			}
+			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
+			$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+		}
+
+		$morehtmlright = '';
+
 		$messagingUrl = DOL_URL_ROOT.'/contact/messaging.php?id='.$object->id;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 		$messagingUrl = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
-		$newcardbutton .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+		$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
+
 
 		if (isModEnabled('agenda')) {
-			$permok = $user->hasRight('agenda', 'myactions', 'create');
-			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
-				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
-				}
-				$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
-			}
-
 			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-				$newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
+				$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out);
 			}
 		}
 
 		if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 			print '<br>';
 
-			$param = '&id='.$id;
+			$param = '&socid='.urlencode((string) ($socid));
 			if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-				$param .= '&contextpage='.$contextpage;
+				$param .= '&contextpage='.urlencode($contextpage);
 			}
 			if ($limit > 0 && $limit != $conf->liste_limit) {
-				$param .= '&limit='.$limit;
+				$param .= '&limit='.((int) $limit);
 			}
 
-			print load_fiche_titre($langs->trans("ActionsOnContact"), $newcardbutton, '');
-			//print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $morehtmlcenter, 0, -1, '', '', '', '', 0, 1, 1);
+			// Try to know count of actioncomm from cache
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+			$cachekey = 'count_events_thirdparty_'.$object->id;
+			$nbEvent = dol_getcache($cachekey);
+
+			$titlelist = $langs->trans("ActionsOnCompany").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+			if (!empty($conf->dol_optimize_smallscreen)) {
+				$titlelist = $langs->trans("Actions").(is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">('.$nbEvent.')</span>' : '');
+			}
+
+			print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
 			// List of all actions
 			$filters = array();
 			$filters['search_agenda_label'] = $search_agenda_label;
 			$filters['search_rowid'] = $search_rowid;
 
-			show_actions_done($conf, $langs, $db, $objthirdparty, $object, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+			// TODO Replace this with same code than into list.php
+			show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 		}
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();
