@@ -738,7 +738,21 @@ llxHeader('', $title, $help_url);
 
 if ($action == 'create' || $action == 'presend') {
 	$formticket = new FormTicket($db);
+	if (!GETPOSTISSET('token')){
+		// we are on create mode for the first time
+		//  we need to remove any attached files in session
+		if (!empty($_SESSION["listofpaths"])) {
+			unset($_SESSION["listofpaths"]);
+		}
 
+		if (!empty($_SESSION["listofnames"])) {
+			unset($_SESSION["listofnames"]);
+		}
+
+		if (!empty($_SESSION["listofmimes"])) {
+			unset($_SESSION["listofmimes"]);
+		}
+	}
 	print load_fiche_titre($langs->trans('NewTicket'), '', 'ticket');
 
 	$formticket->trackid = '';		// TODO Use a unique key 'tic' to avoid conflict in upload file feature
