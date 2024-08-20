@@ -285,6 +285,24 @@ class Categorie extends CommonObject
 	 */
 	public $imgHeight;
 
+	public $fields=array(
+		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"-1",),
+		"fk_parent" => array("type"=>"integer", "label"=>"Fkparent", "enabled"=>"1", 'position'=>20, 'notnull'=>1, "visible"=>"-1", "css"=>"maxwidth500 widthcentpercentminusxx",),
+		"label" => array("type"=>"varchar(180)", "label"=>"Label", "enabled"=>"1", 'position'=>25, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "csslist"=>"tdoverflowmax150",),
+		"ref_ext" => array("type"=>"varchar(255)", "label"=>"Refext", "enabled"=>"1", 'position'=>30, 'notnull'=>0, "visible"=>"0", "alwayseditable"=>"1",),
+		"type" => array("type"=>"integer", "label"=>"Type", "enabled"=>"1", 'position'=>35, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
+		"description" => array("type"=>"text", "label"=>"Description", "enabled"=>"1", 'position'=>40, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"color" => array("type"=>"varchar(8)", "label"=>"Color", "enabled"=>"1", 'position'=>45, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"position" => array("type"=>"integer", "label"=>"Position", "enabled"=>"1", 'position'=>50, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"fk_soc" => array("type"=>"integer:Societe:societe/class/societe.class.php", "label"=>"ThirdParty", "picto"=>"company", "enabled"=>"1", 'position'=>55, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
+		"visible" => array("type"=>"integer", "label"=>"Visible", "enabled"=>"1", 'position'=>60, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
+		"import_key" => array("type"=>"varchar(14)", "label"=>"ImportId", "enabled"=>"1", 'position'=>900, 'notnull'=>0, "visible"=>"-2", "alwayseditable"=>"1",),
+		"date_creation" => array("type"=>"datetime", "label"=>"Datecreation", "enabled"=>"1", 'position'=>70, 'notnull'=>0, "visible"=>"-1", "alwayseditable"=>"1",),
+		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>75, 'notnull'=>1, "visible"=>"-1", "alwayseditable"=>"1",),
+		"fk_user_creat" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserAuthor", "enabled"=>"1", 'position'=>80, 'notnull'=>0, "visible"=>"-2", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
+		"fk_user_modif" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserModif", "enabled"=>"1", 'position'=>85, 'notnull'=>-1, "visible"=>"-2", "alwayseditable"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150",),
+	);
+
 	/**
 	 *	Constructor
 	 *
