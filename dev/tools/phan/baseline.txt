@@ -809,7 +809,6 @@ return [
         'htdocs/fourn/class/fournisseur.class.php' => ['PhanPluginUnknownArrayMethodReturnType'],
         'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownArrayMethodReturnType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredProperty'],
         'htdocs/fourn/class/fournisseur.facture-rec.class.php' => ['PhanPluginUnknownPropertyType', 'PhanUndeclaredProperty'],
-        'htdocs/fourn/class/fournisseur.facture.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownPropertyType', 'PhanPossiblyUndeclaredVariable', 'PhanUndeclaredProperty'],
         'htdocs/fourn/class/fournisseur.product.class.php' => ['PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanTypeMismatchProperty'],
         'htdocs/fourn/class/paiementfourn.class.php' => ['PhanEmptyForeach', 'PhanPluginUnknownArrayMethodParamType', 'PhanPluginUnknownObjectMethodCall', 'PhanPluginUnknownPropertyType', 'PhanPossiblyNullTypeMismatchProperty', 'PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/fourn/commande/card.php' => ['PhanPluginBothLiteralsBinaryOp', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentProbablyReal', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
