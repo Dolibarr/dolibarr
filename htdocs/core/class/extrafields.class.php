@@ -90,9 +90,9 @@ class ExtraFields
 		'ip' => 'ExtrafieldIP',
 		'icon' => 'Icon',
 		'password' => 'ExtrafieldPassword',
+		'radio' => 'ExtrafieldRadio',
 		'select' => 'ExtrafieldSelect',
 		'sellist' => 'ExtrafieldSelectList',
-		'radio' => 'ExtrafieldRadio',
 		'checkbox' => 'ExtrafieldCheckBox',
 		'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 		'link' => 'ExtrafieldLink',
@@ -2585,23 +2585,24 @@ class ExtraFields
 	{
 		global $langs;
 
+		$arraytype2label = array('');
+
 		$tmptype2label = ExtraFields::$type2label;
-		$type2label = array('');
 		foreach ($tmptype2label as $key => $val) {
-			$type2label[$key] = $langs->transnoentitiesnoconv($val);
+			$arraytype2label[$key] = $langs->transnoentitiesnoconv($val);
 		}
 
 		if (!getDolGlobalString('MAIN_USE_EXTRAFIELDS_ICON')) {
-			unset($type2label['icon']);
+			unset($arraytype2label['icon']);
 		}
 		if (!getDolGlobalString('MAIN_USE_GEOPHP')) {
-			unset($type2label['point']);
-			unset($type2label['multipts']);
-			unset($type2label['linestrg']);
-			unset($type2label['polygon']);
+			unset($arraytype2label['point']);
+			unset($arraytype2label['multipts']);
+			unset($arraytype2label['linestrg']);
+			unset($arraytype2label['polygon']);
 		}
 
-		return $type2label;
+		return $arraytype2label;
 	}
 
 	/**
