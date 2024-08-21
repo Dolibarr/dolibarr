@@ -1594,7 +1594,7 @@ if ($action == 'updatecss' && $usercanedit) {
 			}
 
 
-			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'restricthtmlallowunvalid'));
+			$dataposted = trim(GETPOST('WEBSITE_HTML_HEADER', 'none'));		// Must accept tags like '<script>' and '<link>'
 			$dataposted = preg_replace(array('/<html>\n*/ims', '/<\/html>\n*/ims'), array('', ''), $dataposted);
 			$dataposted = str_replace('<?=', '<?php', $dataposted);
 

@@ -55,12 +55,6 @@ $mode        = GETPOST('mode', 'alpha');
 
 $childids = $user->getAllChildIds(1);
 
-// Security check
-$socid = GETPOSTINT('socid');
-if ($user->socid) {
-	$socid = $user->socid;
-}
-$result = restrictedArea($user, 'expensereport', '', '');
 $id = GETPOSTINT('id');
 // If we are on the view of a specific user
 if ($id > 0) {
@@ -137,9 +131,16 @@ if ($search_user == '') {
 	$search_user = -1;
 }
 
+// Security check
+$socid = GETPOSTINT('socid');
+if ($user->socid) {
+	$socid = $user->socid;
+}
+$hookmanager->initHooks(array('expensereportlist'));
+$result = restrictedArea($user, 'expensereport', '', '');
+
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ExpenseReport($db);
-$hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
