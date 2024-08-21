@@ -359,15 +359,11 @@ class pdf_ban extends ModeleBankAccountDoc
 		/* Removed: A project can have more than thousands linked objects (orders, invoices, proposals, etc....
 		$object->fetchObjectLinked();
 
-		foreach($object->linkedObjects as $objecttype => $objects)
-		{
-			//var_dump($objects);exit;
-			if ($objecttype == 'commande')
-			{
+		foreach($object->linkedObjects as $objecttype => $objects) {
+			if ($objecttype == 'commande') {
 				$outputlangs->load('orders');
 				$num=count($objects);
-				for ($i=0;$i<$num;$i++)
-				{
+				for ($i=0;$i<$num;$i++) {
 					$posy+=4;
 					$pdf->SetXY($posx,$posy);
 					$pdf->SetFont('','', $default_font_size - 1);
