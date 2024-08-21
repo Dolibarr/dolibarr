@@ -163,7 +163,7 @@ class Tva extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) $this->amount;
 		$this->label = trim($this->label);
 		$this->type_payment = (int) $this->type_payment;
 		$this->note = trim($this->note);
@@ -243,7 +243,7 @@ class Tva extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = trim($this->amount);
+		$this->amount = (float) $this->amount;
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_user_creat = (int) $this->fk_user_creat;
@@ -438,9 +438,9 @@ class Tva extends CommonObject
 		$this->id = 0;
 
 		$this->tms = dol_now();
-		$this->datep = '';
-		$this->datev = '';
-		$this->amount = '';
+		$this->datep = dol_now();
+		$this->datev = dol_now();
+		$this->amount = 100.0;
 		$this->label = '';
 		$this->note = '';
 		$this->fk_bank = 0;
