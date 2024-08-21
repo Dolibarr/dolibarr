@@ -202,7 +202,6 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
-		$object->context['signature'] = 1;
 		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'FICHINTER_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -228,7 +227,6 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('ficheinter', 'creer')) {
-		$object->context['signature'] = 1;
 		$result = $object->setSignedStatus($user, $object::SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'FICHINTER_MODIFY');
 		if ($result >= 0) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
@@ -1204,7 +1202,6 @@ if ($action == 'create') {
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
-			$object->context['signature'] = 1;
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('FICHINTER_MODIFY', $object->socid, $object);
 		}
@@ -1224,7 +1221,6 @@ if ($action == 'create') {
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
-			$object->context['signature'] = 1;
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('FICHINTER_MODIFY', $object->socid, $object);
 		}

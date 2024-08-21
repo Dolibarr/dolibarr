@@ -1682,7 +1682,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 * Set signed status & call trigger with localized context message
+	 * Set signed status & object context. Call sign action trigger.
 	 *
 	 * @param	User	$user			Object user that modify
 	 * @param	int		$status			New signed status to set (often a constant like self::STATUS_XXX)
@@ -1694,25 +1694,26 @@ class Fichinter extends CommonObject
 	{
 		global $langs;
 		$langs->loadLangs(array('interventions', 'commercial'));
-		$context_info = ['signature' => 1];
+		$this->signed_status = $status;
+		$this->context['signature'] = $status;
 		switch ($status) {
 			case 0:
-				$context_info['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('InterventionUnsignedInDolibarr');
 				break;
 			case 1:
-				$context_info['actionmsg2'] = $langs->transnoentitiesnoconv('SignedSender');
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedSender');
 				break;
 			case 2:
-				$context_info['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiver');
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiver');
 				break;
 			case 3:
-				$context_info['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiverOnline');
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedReceiverOnline');
 				break;
 			case 9:
-				$context_info['actionmsg2'] = $langs->transnoentitiesnoconv('SignedAll');
+				$this->context['actionmsg2'] = $langs->transnoentitiesnoconv('SignedAll');
 				break;
 		}
-		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode, $context_info);
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
 	}
 }
 
