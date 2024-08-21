@@ -8377,7 +8377,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 			// Keep only some html tags and remove also some 'javascript:' strings
 			if ($check == 'restricthtmlallowlinkscript') {
-				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1);
+				$out = dol_string_onlythesehtmltags($out, 0, 1, 0, 0, array(), 1, 1);
 			} elseif ($check == 'restricthtmlallowclass') {
 				$out = dol_string_onlythesehtmltags($out, 0, 0, 1);
 			} else {
