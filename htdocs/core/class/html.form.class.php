@@ -8067,10 +8067,15 @@ class Form
 					}
 				} else {
 					// For a property in ->fields
-					if (array_key_exists($tmparray[1], $objectforfieldstmp->fields)) {
+					if (array_key_exists($tmparray[1], $objectforfieldstmp->fields) && preg_match('/^integer[^:]*:/', $objectforfieldstmp->fields[$tmparray[1]]['type'])) {
 						$objectdesc = $objectforfieldstmp->fields[$tmparray[1]]['type'];
 						$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
 					}
+				}
+
+				// Reset $objectdesc to default value
+				if (empty($objectdesc)) {
+					$objectdesc = $objectdescorig;
 				}
 			}
 		}
