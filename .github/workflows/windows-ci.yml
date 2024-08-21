@@ -61,19 +61,22 @@ jobs:
       - name: Restore cache
         id: cache
         uses: actions/cache/restore@v4
+        env:
+          HASH: ${{ hashFiles('htdocs/install/**') }}
+          KEY_ROOT: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
           enableCrossOsArchive: true 
           path: |
             ./db_init.sql
             ./db_init.sql.md5
-          key: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ env.CACHE_KEY_PART
-            }}-${{ github.run_id }}
+          key: ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-${{ github.run_id }}
           restore-keys: |
-            ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ env.CACHE_KEY_PART }}-
-            ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ github.head_ref }}-
-            ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ github.base_ref }}-
-            ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ env.CACHE_KEY_PART }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.head_ref }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
+            ${{ env.KEY_ROOT }}-${{ env.HASH }}-
+            ${{ env.KEY_ROOT }}-
 
       - name: Create local php.ini with open_basedir restrictions
         shell: cmd
