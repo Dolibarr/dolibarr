@@ -65,8 +65,8 @@ jobs:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
           enableCrossOsArchive: true 
           path: |
-            db_init.sql
-            db_init.sql.md5
+            ./db_init.sql
+            ./db_init.sql.md5
           key: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}-${{ env.CACHE_KEY_PART
             }}-${{ github.run_id }}
           restore-keys: |
@@ -183,4 +183,6 @@ jobs:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
           enableCrossOsArchive: true 
           key: ${{ steps.cache.outputs.cache-primary-key }}
-          path: db_init.*
+          path: |
+            ./db_init.sql
+            ./db_init.sql.md5
