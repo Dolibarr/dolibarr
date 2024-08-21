@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modBanque extends DolibarrModules
 {
-
 	/**
 	 *	Constructor.
 	 *
@@ -67,7 +66,7 @@ class modBanque extends DolibarrModules
 		//-------------
 		$this->config_page_url = array("bank.php");
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array("modComptabilite", "modAccounting", "modPrelevement");
 		$this->conflictwith = array();
@@ -162,7 +161,7 @@ class modBanque extends DolibarrModules
 			"s.nom"=>"company", "s.code_compta"=>"company", "s.code_compta_fournisseur"=>"company"
 		);
 		$this->export_special_array[$r] = array('-b.amount'=>'NULLIFNEG', 'b.amount'=>'NULLIFNEG');
-		if ((!isModEnabled('fournisseur') && !empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !isModEnabled('supplier_order') || !isModEnabled('supplier_invoice')) {
+		if (!isModEnabled('supplier_order') && !isModEnabled('supplier_invoice')) {
 			unset($this->export_fields_array[$r]['s.code_compta_fournisseur']);
 			unset($this->export_entities_array[$r]['s.code_compta_fournisseur']);
 		}

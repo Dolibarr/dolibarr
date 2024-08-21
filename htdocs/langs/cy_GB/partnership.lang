@@ -4,35 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Rheoli partneriaeth
 PartnershipDescription=Rheoli Partneriaeth Modiwl
 PartnershipDescriptionLong= Rheoli Partneriaeth Modiwl
 Partnership=Partneriaeth
+Partnerships=Partneriaethau
 AddPartnership=Ychwanegu partneriaeth
 CancelPartnershipForExpiredMembers=Partneriaeth: Canslo partneriaeth o aelodau sydd â thanysgrifiadau sydd wedi dod i ben
 PartnershipCheckBacklink=Partneriaeth: Gwiriwch gyfeirio backlink
-
-#
 # Menu
-#
 NewPartnership=Partneriaeth Newydd
+NewPartnershipbyWeb=Mae eich cais partneriaeth wedi'i ychwanegu'n llwyddiannus. Efallai y byddwn yn cysylltu â chi yn fuan...
 ListOfPartnerships=Rhestr o bartneriaeth
-
-#
 # Admin page
-#
 PartnershipSetup=Sefydlu partneriaeth
 PartnershipAbout=Am Bartneriaeth
 PartnershipAboutPage=Partneriaeth am dudalen
@@ -42,53 +34,43 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks i wirio
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb o ddyddiau cyn canslo statws partneriaeth pan fydd tanysgrifiad wedi dod i ben
 ReferingWebsiteCheck=Gwirio cyfeiriadau gwefan
 ReferingWebsiteCheckDesc=Gallwch chi alluogi nodwedd i wirio bod eich partneriaid wedi ychwanegu backlink i'ch parthau gwefan ar eu gwefan eu hunain.
-
-#
+PublicFormRegistrationPartnerDesc=Gall Dolibarr ddarparu URL/gwefan gyhoeddus i ganiatáu i ymwelwyr allanol wneud cais i fod yn rhan o raglen y bartneriaeth.
 # Object
-#
 DeletePartnership=Dileu partneriaeth
 PartnershipDedicatedToThisThirdParty=Partneriaeth ymroddedig i'r trydydd parti hwn
 PartnershipDedicatedToThisMember=Partneriaeth ymroddedig i'r aelod hwn
 DatePartnershipStart=Dyddiad cychwyn
 DatePartnershipEnd=Dyddiad Gorffen
 ReasonDecline=Rheswm gwrthod
-ReasonDeclineOrCancel=Rheswm gwrthod
+ReasonDeclineOrCancel=Rheswm dros wrthod neu ganslo
 PartnershipAlreadyExist=Mae partneriaeth eisoes yn bodoli
 ManagePartnership=Rheoli partneriaeth
 BacklinkNotFoundOnPartnerWebsite=Ni chanfuwyd backlink ar wefan partner
 ConfirmClosePartnershipAsk=Ydych chi'n siŵr eich bod am ganslo'r bartneriaeth hon?
 PartnershipType=Math o bartneriaeth
 PartnershipRefApproved=Partneriaeth %s wedi'i chymeradwyo
-KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Bydd y bartneriaeth yn cael ei chanslo cyn bo hir
-SendingEmailOnPartnershipRefused=Gwrthodwyd y bartneriaeth
-SendingEmailOnPartnershipAccepted=Partneriaeth wedi'i derbyn
-SendingEmailOnPartnershipCanceled=Partneriaeth wedi'i chanslo
-
-YourPartnershipWillSoonBeCanceledTopic=Bydd y bartneriaeth yn cael ei chanslo cyn bo hir
-YourPartnershipRefusedTopic=Gwrthodwyd y bartneriaeth
-YourPartnershipAcceptedTopic=Partneriaeth wedi'i derbyn
-YourPartnershipCanceledTopic=Partneriaeth wedi'i chanslo
-
-YourPartnershipWillSoonBeCanceledContent=Rydym yn eich hysbysu y bydd eich partneriaeth yn cael ei chanslo cyn bo hir (ni chanfuwyd Backlink)
-YourPartnershipRefusedContent=Rydym yn eich hysbysu bod eich cais partneriaeth wedi'i wrthod.
-YourPartnershipAcceptedContent=Rydym yn eich hysbysu bod eich cais partneriaeth wedi'i dderbyn.
-YourPartnershipCanceledContent=Rydym yn eich hysbysu bod eich partneriaeth wedi'i chanslo.
-
-CountLastUrlCheckError=Nifer y gwallau ar gyfer gwiriad URL diwethaf
-LastCheckBacklink=Dyddiad y gwiriad URL diwethaf
-ReasonDeclineOrCancel=Rheswm gwrthod
-
-#
-# Status
-#
+KeywordToCheckInWebsite=Os ydych chi am wirio bod allweddair penodol yn bresennol ar wefan pob partner, diffiniwch yr allweddair hwn yma
 PartnershipDraft=Drafft
 PartnershipAccepted=Derbyniwyd
 PartnershipRefused=Gwrthodwyd
 PartnershipCanceled=Wedi'i ganslo
 PartnershipManagedFor=Mae partneriaid yn
-
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Bydd y bartneriaeth yn cael ei chanslo cyn bo hir
+SendingEmailOnPartnershipRefused=Gwrthodwyd y bartneriaeth
+SendingEmailOnPartnershipAccepted=Partneriaeth wedi'i derbyn
+SendingEmailOnPartnershipCanceled=Partneriaeth wedi'i chanslo
+YourPartnershipWillSoonBeCanceledTopic=Bydd y bartneriaeth yn cael ei chanslo cyn bo hir
+YourPartnershipRefusedTopic=Gwrthodwyd y bartneriaeth
+YourPartnershipAcceptedTopic=Partneriaeth wedi'i derbyn
+YourPartnershipCanceledTopic=Partneriaeth wedi'i chanslo
+YourPartnershipWillSoonBeCanceledContent=Hoffem eich hysbysu y bydd ein partneriaeth yn cael ei chanslo cyn bo hir (ni chawsom adnewyddiad neu nid yw rhagofyniad ar gyfer ein partneriaeth wedi'i fodloni). Cysylltwch â ni os cawsoch hwn oherwydd gwall.
+YourPartnershipRefusedContent=Hoffem eich hysbysu bod eich cais partneriaeth wedi'i wrthod. Nid yw'r rhagofynion wedi'u bodloni. Cysylltwch â ni os oes angen mwy o wybodaeth arnoch.
+YourPartnershipAcceptedContent=Hoffem eich hysbysu bod eich cais partneriaeth wedi'i dderbyn.
+YourPartnershipCanceledContent=Hoffem eich hysbysu bod ein partneriaeth wedi'i chanslo. Cysylltwch â ni os oes angen mwy o wybodaeth arnoch.
+CountLastUrlCheckError=Nifer y gwallau ar gyfer gwiriad URL diwethaf
+LastCheckBacklink=Dyddiad y gwiriad URL diwethaf
+NewPartnershipRequest=Cais partneriaeth newydd
+NewPartnershipRequestDesc=Mae’r ffurflen hon yn caniatáu ichi wneud cais i fod yn rhan o un o’n rhaglen bartneriaeth. Os oes angen help arnoch i lenwi'r ffurflen hon, cysylltwch drwy e-bost <b>%s</b> rhychwant>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Rhaid i'r dudalen hon gynnwys o leiaf un dolen i un o'r parth canlynol: %s
+IPOfApplicant=IP yr ymgeisydd

@@ -137,7 +137,7 @@ CountryLV=لٹویا
 CountryLB=لبنان
 CountryLS=لیسوتھو
 CountryLR=لائبیریا
-CountryLY=لیبیا
+CountryLY=Libya
 CountryLI=لیختنسٹین
 CountryLT=لتھوانیا
 CountryLU=لکسمبرگ
@@ -247,10 +247,13 @@ CountryJE=جرسی
 CountryME=مونٹی نیگرو
 CountryBL=سینٹ بارتھیلمی۔
 CountryMF=سینٹ مارٹن
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=مسز.
+CivilityMMEShort=Mrs.
 CivilityMR=مسٹر.
+CivilityMRShort=Mr.
 CivilityMLE=MS.
 CivilityMTRE=ماسٹر
 CivilityDR=ڈاکٹر

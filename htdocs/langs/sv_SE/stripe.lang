@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL för att erbjuda en %s onlinebetaln
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL för att erbjuda en %s onlinebetalningssida för ett medlemsabonnemang
 ToOfferALinkForOnlinePaymentOnDonation=URL för att erbjuda en %s onlinebetalningssida för betalning av en donation
 YouCanAddTagOnUrl=Du kan också lägga till url-parametern <b> & tag = <i> värde </i> </b> till någon av dessa URL (obligatorisk endast för betalning som inte är länkad till ett objekt) för att lägga till din egen betalningskommentar-tagg. <br> För webbadressen till betalningar utan befintligt objekt kan du också lägga till parametern <strong> & noidempotency = 1 </strong> så att samma länk med samma tagg kan användas flera gånger (vissa betalningslägen kan begränsa betalningen till 1 för varje olika länk utan denna parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Ställ in din Stripe med url <b> %s </b> för att få betalning skapad automatiskt när bekräftat av Stripe.
 AccountParameter=Tagen parametrar
 UsageParameter=Användning parametrar
@@ -41,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook levande nyckel
 ONLINE_PAYMENT_WAREHOUSE=Lager som ska användas för lagerminskning när online betalning görs <br> (TODO När alternativet att minska lagret görs på en fakturahandling och online betalning genererar fakturaen?)
 StripeLiveEnabled=Stripe live enabled (annars test / sandbox-läge)
 StripeImportPayment=Importera Stripe betalningar
-ExampleOfTestCreditCard=Exempel på kreditkort för SEPA-test: %s => giltigt, %s => fel CVC, %s => löpt ut, %s => laddning misslyckas
+ExampleOfTestCreditCard=Exempel på kreditkort för en testbetalning: %s => giltigt, %s => CVC-fel, %s => har löpt ut, %s => laddning misslyckas
 ExampleOfTestBankAcountForSEPA=Exempel på bankkonto BAN för autogirotest: %s
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe konto
 StripeChargeList=Lista över Stripe avgifter
 StripeTransactionList=Lista över Stripe-transaktioner
 StripeCustomerId=Stripe kund id
+StripePaymentId=Stripe betalnings-id
 StripePaymentModes=Stripe betalningssätt
 LocalID=Lokalt ID
 StripeID=Stripe ID
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Länk till installation Stripe WebHook för att ringa
 ToOfferALinkForLiveWebhook=Länk till installation Stripe WebHook för att ringa IPN (live-läge)
 PaymentWillBeRecordedForNextPeriod=Betalning kommer att registreras för nästa period.
 ClickHereToTryAgain= <a href="%s"> Klicka här för att försöka igen ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund av starka regler för kundautentisering måste ett kort skapas från Stripe backoffice. Du kan klicka här för att slå på Stripes kundregister: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund av Strong Customer Authentication-regler måste skapandet av ett kort göras från Stripe back office. Du kan klicka här för att aktivera Stripe-kundregister: %s
 STRIPE_CARD_PRESENT=Presentkort för Stripe-terminaler
 TERMINAL_LOCATION=Plats (adress) för Stripe Terminals
 RequestDirectDebitWithStripe=Begär autogiro med Stripe
+RequesCreditTransferWithStripe=Begär kreditöverföring med Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Aktivera autogirobetalningar genom Stripe
-
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect-läge
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

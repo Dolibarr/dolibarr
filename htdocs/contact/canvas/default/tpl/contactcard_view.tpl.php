@@ -18,7 +18,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -138,15 +138,15 @@ if (!empty($this->control->tpl['action_delete'])) {
 
 if (empty($user->socid)) {
 	print '<div class="tabsAction">';
-	if ($user->rights->societe->contact->creer) {
+	if ($user->hasRight('societe', 'contact', 'creer')) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=edit&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Modify').'</a>';
 	}
 
-	if (!$this->control->tpl['user_id'] && $user->rights->user->user->creer) {
+	if (!$this->control->tpl['user_id'] && $user->hasRight('user', 'user', 'creer')) {
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=create_user&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans("CreateDolibarrLogin").'</a>';
 	}
 
-	if ($user->rights->societe->contact->supprimer) {
+	if ($user->hasRight('societe', 'contact', 'supprimer')) {
 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$this->control->tpl['id'].'&action=delete&token='.newToken().'&canvas='.$canvas.'">'.$langs->trans('Delete').'</a>';
 	}
 

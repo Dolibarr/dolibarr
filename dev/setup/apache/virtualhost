@@ -1,16 +1,18 @@
 <VirtualHost *:80>
 	#php_admin_value sendmail_path "/usr/sbin/sendmail -t -i"
 	#php_admin_value mail.force_extra_parameters "-f postmaster@mydomain.com"
-	php_admin_value sendmail_path "/usr/sbin/sendmail -t -i -f postmaster@mydomain.com"
+	#php_admin_value sendmail_path "/usr/sbin/sendmail -t -i -f postmaster@mydomain.com"
+	
 	php_admin_value open_basedir /tmp/:/home/.../htdocs:/home/.../dolibarr_documents:
 
 	
 	# Add this to use a custom apparmor profile when using apache php handler
-    <IfModule mod_apparmor.c>
-    AADefaultHatName sellyoursaas-instances
-    </IfModule>
+	<IfModule mod_apparmor.c>
+	AADefaultHatName sellyoursaas-instances
+	</IfModule>
 
     
+    # The URLs of the web site
 	ServerName myvirtualalias
 	ServerAlias myvirtualalias
 	
@@ -22,8 +24,13 @@
 	
 	AddDefaultCharset UTF-8
 	
-	DocumentRoot "/home/.../htdocs"
 	
+	# Detect if we are using DoliDroid
+	#SetEnvIf User-Agent DoliDroid dolidroid
+	
+	
+	# The directory and permissions for the web site
+	DocumentRoot "/home/.../htdocs"
 	<Directory /home/.../htdocs/>
 	   	AllowOverride None
 	   	Options       -Indexes -MultiViews +FollowSymLinks -ExecCGI
@@ -35,43 +42,47 @@
        	#AuthUserFile /etc/apache2/.htpasswd
        	#require valid-user
 	</Directory>
-	
-	# Leaving /public and /api, /dav, .well_known but also wrappers for document and viewimage accessible to everyone
+
+	# Leaving /public and /api, /dav, .well_known but also wrappers for document, viewimage and public json/img accessible to everyone
     <Directory /home/admin/wwwroot/dolibarr/htdocs/public/>
         AuthType None
-        Require all granted
         Satisfy any
+        Require all granted
     </Directory>
     <Directory /home/admin/wwwroot/dolibarr/htdocs/api/>
         AuthType None
-        Require all granted
         Satisfy any
+        Require all granted
     </Directory>
     <Directory /home/admin/wwwroot/dolibarr/htdocs/dav/>
         AuthType None
-        Require all granted
         Satisfy any
+        Require all granted
     </Directory>
     <Directory /home/admin/wwwroot/dolibarr/htdocs/.well-known/>
         AuthType None
-        Require all granted
         Satisfy any
+        Require all granted
     </Directory>
     <Files ~ "(document\.php|viewimage\.php|\.js\.php|\.json\.php|\.js|\.css\.php|\.css|\.gif|\.png|\.svg|\.woff2|favicon\.ico)$">
         AuthType None
-        Require all granted
         Satisfy any
+        Require all granted
     </Files>
 
-        
+
+	# Log directives        
 	ErrorLog /var/log/apache2/myvirtualalias_error_log
 	TransferLog /var/log/apache2/myvirtualalias_access_log
 	
-	# Compress returned resources of type php pages, text file export, css and javascript
+		
+	# Compress is done on resources of type php pages, text file export, css and javascript
 	AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript
-	
 	AddType text/javascript .jgz
 	AddEncoding gzip .jgz
+
+
+	# Add cache performance directives
 	ExpiresActive On
 	ExpiresByType image/x-icon A2592000
 	ExpiresByType image/gif A2592000
@@ -82,19 +93,20 @@
 	ExpiresByType application/x-javascript A2592000
 	ExpiresByType application/javascript A2592000
 	
-	SSLEngine On
 	
-	#   A self-signed (snakeoil) certificate can be created by installing
-	#   the ssl-cert package. See
-	#   /usr/share/doc/apache2.2-common/README.Debian.gz for more info.
-	#   If both key and certificate are stored in the same file, only the
-	#   SSLCertificateFile directive is needed.
-	#SSLCertificateFile    /etc/letsencrypt/live/www.mydomain.com/cert.pem
-	#SSLCertificateKeyFile /etc/letsencrypt/live/www.mydomain.com/privkey.pem
-	#SSLCertificateChainFile /etc/letsencrypt/live/www.mydomain.com/chain.pem
+	# To enable the SSL if the certificate file exists
+	<IfFile "/etc/letsencrypt/live/www.mydomain.com/cert.pem">
+		SSLEngine On
+		
+		# If both key and certificate are stored in the same file, only the
+		# SSLCertificateFile directive is needed.
+		SSLCertificateFile    /etc/letsencrypt/live/www.mydomain.com/cert.pem
+		SSLCertificateKeyFile /etc/letsencrypt/live/www.mydomain.com/privkey.pem
+		SSLCertificateChainFile /etc/letsencrypt/live/www.mydomain.com/chain.pem
+		
+		#RewriteEngine   on
+		#RewriteCond     %{SERVER_PORT} ^80$
+		#RewriteRule     ^(.*)$ https://%{SERVER_NAME}$1 [L,R]
+	</IfFile>
 	
-	#RewriteEngine   on
-	#RewriteCond     %{SERVER_PORT} ^80$
-	#RewriteRule     ^(.*)$ https://%{SERVER_NAME}$1 [L,R]
-
 </VirtualHost>

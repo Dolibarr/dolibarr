@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,8 @@
 
 /**
  *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object
- *       			 This Ajax service is called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
+ *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -36,46 +37,53 @@ if (!defined('NOREQUIREAJAX')) {
 if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
-if (!defined('NOREQUIRETRAN')) {
-	define('NOREQUIRETRAN', '1');
-}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$value = GETPOST('value', 'int');
+$backtopage = GETPOST('backtopage');
+
+$id = GETPOSTINT('id');
+$element = GETPOST('element', 'alpha');	// 'myobject' (myobject=mymodule) or 'myobject@mymodule' or 'myobject_mysubobject' (myobject=mymodule)
 $field = GETPOST('field', 'alpha');
-$element = GETPOST('element', 'alpha');
+$value = GETPOSTINT('value');
 $format = 'int';
 
-$object = new GenericObject($db);
-
-$tablename = $element;
-if ($tablename == 'websitepage') {
-	$tablename = 'website_page';
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+if (!is_object($object)) {
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
 
-$object->table_element = $tablename;
-$object->id = $id;
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
 
 // Security check
 if (!empty($user->socid)) {
 	$socid = $user->socid;
+	if (!empty($object->socid) && $socid != $object->socid) {
+		httponly_accessforbidden("Access on object not allowed for this external user.");	// This includes the exit.
+	}
 }
 
-//$user->hasRight('societe', 'lire') = 0;$user->rights->fournisseur->lire = 0;
-//restrictedArea($user, 'societe', $id);
-
-if (in_array($field, array('status'))) {
-	restrictedArea($user, $element, $id);
+// We check permission.
+// Check is done on $user->rights->element->create or $user->rights->element->subelement->create (because $action = 'set')
+if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $object->table_element == 'mailing')) {
+	restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission);
 } elseif ($element == 'product' && in_array($field, array('tosell', 'tobuy', 'tobatch'))) {	// Special case for products
-	restrictedArea($user, 'produit|service', $id, 'product&product', '', '', 'rowid');
+	restrictedArea($user, 'produit|service', $object, 'product&product', '', '', 'rowid');
 } else {
-	httponly_accessforbidden("Bad value for combination of parameters element/field.");
+	httponly_accessforbidden("Bad value for combination of parameters element/field: Field not supported.");	// This includes the exit.
 }
 
 
@@ -89,7 +97,7 @@ print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"])
 
 // Registering new values
 if (($action == 'set') && !empty($id)) {
-	$triggerkey = strtoupper($element).'_UPDATE';
+	$triggerkey = strtoupper(($module != $element ? $module.'_' : '').$element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {
 		$triggerkey = 'COMPANY_MODIFY';
@@ -98,5 +106,16 @@ if (($action == 'set') && !empty($id)) {
 		$triggerkey = 'PRODUCT_MODIFY';
 	}
 
-	$object->setValueFrom($field, $value, $tablename, $id, $format, '', $user, $triggerkey);
+	$result = $object->setValueFrom($field, $value, $object->table_element, $id, $format, '', $user, $triggerkey);
+
+	if ($result < 0) {
+		print $object->error;
+		http_response_code(500);
+		exit;
+	}
+
+	if ($backtopage) {
+		header('Location: '.$backtopage);
+		exit;
+	}
 }

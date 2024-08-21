@@ -88,7 +88,7 @@ LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back if you want to create another one.
 FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
-WarningRemoveInstallDir=Warning, for security reasons, once the install or upgrade is complete, you should add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
+WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
 FunctionNotAvailableInThisPHP=Not available in this PHP
 ChoosedMigrateScript=Choose migration script
 DataMigration=Database migration (data)
@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Migrate shipping for sales orders storage
 MigrationShippingDelivery=Upgrade storage of shipping
 MigrationShippingDelivery2=Upgrade storage of shipping 2
 MigrationFinished=Migration finished
-LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the master account to administer all other/additional user accounts.</b>
+LastStepDesc=<strong>Last step</strong>: Define here the login and password you wish to use to connect to Dolibarr. <b>Do not lose this as it is the main account to administer all other/additional user accounts.</b>
 ActivateModule=Activate module %s
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 WarningUpgrade=Warning:\nDid you run a database backup first?\nThis is highly recommended. Loss of data (due to for example bugs in mysql version 5.5.40/41/42/43) may be possible during this process, so it is essential to take a complete dump of your database before starting any migration.\n\nClick OK to start migration process...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=You used the Dolibarr setup wizard from a Linux package (Ub
 KeepDefaultValuesMamp=You used the Dolibarr setup wizard from DoliMamp, so the values proposed here are already optimized. Change them only if you know what you are doing.
 KeepDefaultValuesProxmox=You used the Dolibarr setup wizard from a Proxmox virtual appliance, so the values proposed here are already optimized. Change them only if you know what you are doing.
 UpgradeExternalModule=Run dedicated upgrade process of external module
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nothing to clean/delete
 NothingToDo=Nothing to do
 #########
@@ -208,8 +208,10 @@ HideNotAvailableOptions=Hide unavailable options
 ErrorFoundDuringMigration=Error(s) were reported during the migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but the application or some features may not work correctly until the errors are resolved.
 YouTryInstallDisabledByDirLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (directory renamed with .lock suffix).<br>
 YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the install/upgrade pages have been disabled for security (by the existence of a lock file <strong>install.lock</strong> in the dolibarr documents directory).<br>
+YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
 ClickHereToGoToApp=Click here to go to your application
 ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Loaded
 FunctionTest=Function test
 NodoUpgradeAfterDB=No action requested by external modules after upgrade of database

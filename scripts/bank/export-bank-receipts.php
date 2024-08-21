@@ -2,6 +2,7 @@
 <?php
 /*
  * Copyright (C) 2013 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
@@ -56,6 +57,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
@@ -66,7 +70,7 @@ dol_syslog($script_file." launched with arg ".join(',', $argv));
 
 if (!isset($argv[3]) || !$argv[3]) {
 	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
-	exit(-1);
+	exit(1);
 }
 $bankref = $argv[1];
 $num = $argv[2];
@@ -112,18 +116,18 @@ $acct = new Account($db);
 $result = $acct->fetch('', $bankref);
 if ($result <= 0) {
 	print "Failed to find bank account with ref ".$bankref.".\n";
-	exit(-1);
+	exit(1);
 } else {
 	print "Export for bank account ".$acct->ref." (".$acct->label.").\n";
 }
 
-// Creation de la classe d'export du model ExportXXX
+// Create the export class for the model ExportXXX
 $dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
 $file = "export_".$model.".modules.php";
 $classname = "Export".$model;
 if (!dol_is_file($dir.$file)) {
 	print "No driver to export with format ".$model."\n";
-	exit(-1);
+	exit(1);
 }
 require_once $dir.$file;
 $objmodel = new $classname($db);
@@ -177,7 +181,7 @@ if (!isset($num)) {
 }
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
-															 // print $sql;
+// print $sql;
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -204,6 +208,9 @@ if ($resql) {
 	}
 
 	$i = 0;
+	$total = 0;
+	$totald = 0;
+	$totalc = 0;
 	while ($i < $numrows) {
 		$thirdparty = '';
 		$accountelem = '';
@@ -226,7 +233,7 @@ if ($resql) {
 				$db->free($resql2);
 			} else {
 				dol_print_error($db);
-				exit(-1);
+				exit(1);
 			}
 
 			$total = $balancebefore[$objp->num_releve];
@@ -246,7 +253,7 @@ if ($resql) {
 
 		// Libelle
 		$reg = array();
-		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
+		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parentheses on tente recherche de traduction
 		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1]) {
 			$description = $langs->transnoentitiesnoconv($reg[1]);
 		} else {
@@ -254,7 +261,7 @@ if ($resql) {
 		}
 
 		/*
-		 * Ajout les liens (societe, company...)
+		 * Add links (societe, company...)
 		 */
 		$links = $acct->get_url($objp->rowid);
 		foreach ($links as $key => $val) {
@@ -362,7 +369,7 @@ if ($resql) {
 		$debit = $credit = '';
 		if ($objp->amount < 0) {
 			$totald = $totald + abs($objp->amount);
-			$debit = price2num($objp->amount * - 1);
+			$debit = price2num($objp->amount * -1);
 		} else {
 			$totalc = $totalc + abs($objp->amount);
 			$credit = price2num($objp->amount);
@@ -408,7 +415,7 @@ if ($resql) {
 	}
 } else {
 	dol_print_error($db);
-	$ret = - 1;
+	$ret = 1;
 }
 
 $db->close();

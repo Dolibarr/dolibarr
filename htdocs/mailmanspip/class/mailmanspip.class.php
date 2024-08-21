@@ -6,7 +6,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2009       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 /**
  *	Class to manage mailman and spip
@@ -54,9 +54,24 @@ class MailmanSpip
 	 */
 	public $errors = array();
 
+	/**
+	 * @var array
+	 */
 	public $mladded_ok;
+
+	/**
+	 * @var array
+	 */
 	public $mladded_ko;
+
+	/**
+	 * @var array
+	 */
 	public $mlremoved_ok;
+
+	/**
+	 * @var array
+	 */
 	public $mlremoved_ko;
 
 
@@ -105,13 +120,13 @@ class MailmanSpip
 	 */
 	public function connectSpip()
 	{
-		$resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
+		$resource = getDoliDBInstance('mysql', getDolGlobalString('ADHERENT_SPIP_SERVEUR'), getDolGlobalString('ADHERENT_SPIP_USER'), getDolGlobalString('ADHERENT_SPIP_PASS'), getDolGlobalString('ADHERENT_SPIP_DB'), getDolGlobalInt('ADHERENT_SPIP_PORT'));
 
 		if ($resource->ok) {
 			return $resource;
 		}
 
-		dol_syslog('Error when connecting to SPIP '.ADHERENT_SPIP_SERVEUR.' '.ADHERENT_SPIP_USER.' '.ADHERENT_SPIP_PASS.' '.ADHERENT_SPIP_DB, LOG_ERR);
+		dol_syslog('Error when connecting to SPIP '.getDolGlobalString('ADHERENT_SPIP_SERVEUR').' '.getDolGlobalString('ADHERENT_SPIP_USER').' '.getDolGlobalString('ADHERENT_SPIP_PASS').' '.getDolGlobalString('ADHERENT_SPIP_DB'), LOG_ERR);
 
 		return false;
 	}
@@ -128,6 +143,7 @@ class MailmanSpip
 	{
 		global $conf;
 
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		//Patterns that are going to be replaced with their original value
 		$patterns = array(
 			'%LISTE%',
@@ -139,7 +155,7 @@ class MailmanSpip
 			$list,
 			$object->email,
 			$object->pass,
-			$conf->global->ADHERENT_MAILMAN_ADMIN_PASSWORD
+			getDolGlobalString('ADHERENT_MAILMAN_ADMIN_PASSWORD')
 		);
 
 		$curl_url = str_replace($patterns, $replace, $url);
@@ -155,7 +171,7 @@ class MailmanSpip
 	 *  Fonction qui donne les droits redacteurs dans spip
 	 *
 	 *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
-	 *  @return	int					=0 if KO, >0 if OK
+	 *  @return	int						=0 if KO, >0 if OK
 	 */
 	public function add_to_spip($object)
 	{
@@ -170,7 +186,10 @@ class MailmanSpip
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 					$mdpass = dol_hash($object->pass);
 					$htpass = crypt($object->pass, makesalt());
-					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname, $object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+
+					$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut)";
+					$query .= " VALUES('".$mydb->escape(dolGetFirstLastname($object->firstname, $object->lastname))."', '".$mydb->escape($object->email)."',";
+					$query .= " '".$mydb->escape($object->login)."', '".$mydb->escape($mdpass)."', '".$mydb->escape($htpass)."', FLOOR(32000*RAND()), '1comite')";
 
 					$result = $mydb->query($query);
 
@@ -237,7 +256,7 @@ class MailmanSpip
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
+	 *  Indicate if the user is an existing editor in spip
 	 *
 	 *	@param	object	$object		Object with data (->login)
 	 *  @return int     			1=exists, 0=does not exists, -1=error
@@ -256,11 +275,11 @@ class MailmanSpip
 
 					if ($result) {
 						if ($mydb->num_rows($result)) {
-							// nous avons au moins une reponse
+							// At least one result for the login query
 							$mydb->close();
 							return 1;
 						} else {
-							// nous n'avons pas de reponse => n'existe pas
+							// No result for the login query
 							$mydb->close();
 							return 0;
 						}
@@ -286,8 +305,8 @@ class MailmanSpip
 	 *  Subscribe an email to all mailing-lists
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array	$listes    	To force mailing-list (string separated with ,)
-	 *  @return	int		  			<0 if KO, >=0 if OK
+	 *  @param	string		$listes    	To force mailing-list (string separated with ,)
+	 *  @return	int		  				Return integer <0 if KO, >=0 if OK
 	 */
 	public function add_to_mailman($object, $listes = '')
 	{
@@ -305,10 +324,10 @@ class MailmanSpip
 			return -1;
 		}
 
-		if ($conf->adherent->enabled) {	// Synchro for members
-			if (!empty($conf->global->ADHERENT_MAILMAN_URL)) {
-				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+		if (isModEnabled('member')) {	// Synchro for members
+			if (getDolGlobalString('ADHERENT_MAILMAN_URL')) {
+				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}
@@ -346,6 +365,8 @@ class MailmanSpip
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -354,8 +375,8 @@ class MailmanSpip
 	 *  Used when a user is resiliated
 	 *
 	 *	@param	Adherent	$object		Object with data (->email, ->pass, ->element, ->type)
-	 *  @param	array	$listes     To force mailing-list (string separated with ,)
-	 *  @return int         		<0 if KO, >=0 if OK
+	 *  @param	string	    $listes     To force mailing-list (string separated with ,)
+	 *  @return int         		    Return integer <0 if KO, >=0 if OK
 	 */
 	public function del_to_mailman($object, $listes = '')
 	{
@@ -373,10 +394,10 @@ class MailmanSpip
 			return -1;
 		}
 
-		if ($conf->adherent->enabled) {	// Synchro for members
-			if (!empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL)) {
-				if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) {
-					$lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+		if (isModEnabled('member')) {	// Synchro for members
+			if (getDolGlobalString('ADHERENT_MAILMAN_UNSUB_URL')) {
+				if ($listes == '' && getDolGlobalString('ADHERENT_MAILMAN_LISTS')) {
+					$lists = explode(',', getDolGlobalString('ADHERENT_MAILMAN_LISTS'));
 				} else {
 					$lists = explode(',', $listes);
 				}
@@ -414,5 +435,7 @@ class MailmanSpip
 				return -1;
 			}
 		}
+
+		return 0;
 	}
 }

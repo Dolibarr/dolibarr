@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cuenta (del plan de cuentas) utilizada de forma predeterminada para los "usuarios" en materia de salarios
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=La cuenta dedicada definida en la tarjeta de usuario se utilizará únicamente para la contabilidad del Libro mayor auxiliar. Éste se utilizará para el Libro mayor, pero también como valor predeterminado de la contabilidad del Libro mayor auxiliar si no se define ninguna cuenta de contabilidad de usuario dedicada en el usuario.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cuenta contable por defecto para pagos de salarios
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=De forma predeterminada, deje vacía la opción "Crear automáticamente un pago total" al crear un Salario.
 Salary=Salario
@@ -24,4 +24,10 @@ SalariesStatistics=Estadísticas salariales
 SalariesAndPayments=Salarios y pagos
 ConfirmDeleteSalaryPayment=¿Está seguro de querer eliminar este pago de salario?
 FillFieldFirst=Primero rellene el campo de empleado
-UpdateAmountWithLastSalary=Fijar monto con último salario
+UpdateAmountWithLastSalary=Fijar el monto del último salario
+MakeTransferRequest=Realizar solicitud de transferencia
+VirementOrder=Solicitud de transferencia de crédito
+BankTransferAmount=Monto de la transferencia de crédito
+WithdrawalReceipt=Orden de transferencia bancaria
+OrderWaiting=Orden pendiente
+FillEndOfMonth=Llenar con fin de mes

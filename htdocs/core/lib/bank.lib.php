@@ -3,8 +3,10 @@
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
- * Copyright (C) 2019	   Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2019	    Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +26,7 @@
 /**
  * \file       htdocs/core/lib/bank.lib.php
  * \ingroup    bank
- * \brief      Ensemble de fonctions de base pour le module banque
+ * \brief      Ensemble de functions de base pour le module banque
  */
 
 
@@ -36,7 +38,7 @@
  */
 function bank_prepare_head(Account $object)
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -68,7 +70,7 @@ function bank_prepare_head(Account $object)
 	$head[$h][2] = 'graph';
 	$h++;
 
-	if ($object->courant != Account::TYPE_CASH || !empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) {
+	if ($object->type != Account::TYPE_CASH || getDolGlobalString('BANK_CAN_RECONCILIATE_CASHACCOUNT')) {
 		$nbReceipts = 0;
 
 		// List of all standing receipts
@@ -131,7 +133,9 @@ function bank_prepare_head(Account $object)
  */
 function bank_admin_prepare_head($object)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
+
+	$langs->loadLangs(array("compta"));
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
@@ -186,12 +190,12 @@ function bank_admin_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @param   Object	$num		val to account statement
+ * @param   string	$num		val to account statement
  * @return  array				Array of tabs to shoc
  */
 function account_statement_prepare_head($object, $num)
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 	$h = 0;
 	$head = array();
 
@@ -226,8 +230,8 @@ function account_statement_prepare_head($object, $num)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @param   CommonObject	$object		Object related to tabs
+ * @return  array						Array of tabs to shoc
  */
 function various_payment_prepare_head($object)
 {
@@ -271,14 +275,19 @@ function various_payment_prepare_head($object)
 }
 
 /**
- *      Check SWIFT informations for a bank account
+ *      Check SWIFT information for a bank account
  *
- *      @param  Account     $account    A bank account
- *      @return boolean                 True if informations are valid, false otherwise
+ *      @param  ?Account	$account    A bank account (used to get BIC/SWIFT)
+ *      @param	?string		$swift		Swift value (used to get BIC/SWIFT, param $account non used if provided)
+ *      @return boolean                 True if information are valid, false otherwise
  */
-function checkSwiftForAccount($account)
+function checkSwiftForAccount(Account $account = null, $swift = null)
 {
-	$swift = $account->bic;
+	if ($account == null && $swift == null) {
+		return false;
+	} elseif ($swift == null) {
+		$swift = $account->bic;
+	}
 	if (preg_match("/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/", $swift)) {
 		return true;
 	} else {
@@ -287,16 +296,20 @@ function checkSwiftForAccount($account)
 }
 
 /**
- *      Check IBAN number informations for a bank account.
+ *      Check IBAN number information for a bank account.
  *
- *      @param  Account     $account    A bank account
- *      @return boolean                 True if informations are valid, false otherwise
+ *      @param  ?Account	$account    	A bank account
+ *      @param	?string		$ibantocheck	Bank account number (used to get BAN, $account not used if provided)
+ *      @return boolean                 	True if information are valid, false otherwise
  */
-function checkIbanForAccount(Account $account)
+function checkIbanForAccount(Account $account = null, $ibantocheck = null)
 {
+	if ($account == null && $ibantocheck == null) {
+		return false;
+	} elseif ($ibantocheck == null) {
+		$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
+	}
 	require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-
-	$ibantocheck = ($account->iban ? $account->iban : $account->iban_prefix);		// iban or iban_prefix for backward compatibility
 
 	$iban = new PHP_IBAN\IBAN($ibantocheck);
 	$check = $iban->Verify();
@@ -318,7 +331,7 @@ function getIbanHumanReadable(Account $account)
 {
 	if ($account->getCountryCode() == 'FR') {
 		require_once DOL_DOCUMENT_ROOT.'/includes/php-iban/oophp-iban.php';
-		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban)?'':$account->iban);
+		$ibantoprint = preg_replace('/[^a-zA-Z0-9]/', '', empty($account->iban) ? '' : $account->iban);
 		$iban = new PHP_IBAN\IBAN($ibantoprint);
 		return $iban->HumanFormat();
 	}
@@ -327,10 +340,10 @@ function getIbanHumanReadable(Account $account)
 }
 
 /**
- * 		Check account number informations for a bank account
+ * 		Check account number information for a bank account
  *
  * 		@param	Account		$account    A bank account
- * 		@return boolean           		True if informations are valid, false otherwise
+ * 		@return boolean           		True if information are valid, false otherwise
  */
 function checkBanForAccount($account)
 {
@@ -350,17 +363,17 @@ function checkBanForAccount($account)
 
 	if ($country_code == 'FR') { // France rules
 		$coef = array(62, 34, 3);
-		// Concatenation des differents codes.
+		// Concatenate the code parts
 		$rib = strtolower(trim($account->code_banque).trim($account->code_guichet).trim($account->number).trim($account->cle));
-		// On remplace les eventuelles lettres par des chiffres.
+		// On replace les eventuelles lettres par des chiffres.
 		//$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");	//Ne marche pas
 		$rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
-		// Separation du rib en 3 groupes de 7 + 1 groupe de 2.
-		// Multiplication de chaque groupe par les coef du tableau
+		// Separation du rib en 3 groups de 7 + 1 group de 2.
+		// Multiplication de chaque group par les coef du tableau
 
 		for ($i = 0, $s = 0; $i < 3; $i++) {
 			$code = substr($rib, 7 * $i, 7);
-			$s += (0 + (int) $code) * $coef[$i];
+			$s += ((int) $code) * $coef[$i];
 		}
 		// Soustraction du modulo 97 de $s a 97 pour obtenir la cle
 		$cle_rib = 97 - ($s % 97);
@@ -384,9 +397,9 @@ function checkBanForAccount($account)
 	}
 	if ($country_code == 'AU') {  // Australian
 		if (strlen($account->code_banque) > 7) {
-			return false; // Sould be 6 but can be 123-456
+			return false; // Should be 6 but can be 123-456
 		} elseif (strlen($account->code_banque) < 6) {
-			return false; // Sould be 6
+			return false; // Should be 6
 		} else {
 			return true;
 		}
@@ -435,7 +448,7 @@ function checkES($IentOfi, $InumCta)
 	$sum = 0;
 
 	for ($i = 2; $i < 10; $i++) {
-		$sum += $values[$i] * substr($IentOfi, $i - 2, 1);
+		$sum += $values[$i] * (int) substr($IentOfi, $i - 2, 1);
 	}
 
 	$key = 11 - $sum % 11;

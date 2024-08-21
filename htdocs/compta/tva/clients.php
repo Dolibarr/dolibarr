@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = (empty($conf->global->TAX_MODE) ? 0 : $conf->global->TAX_MODE);
+$modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOSTINT("modetax");
 }
@@ -122,6 +123,7 @@ $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToMod
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $date_start_year;
+$q = 0;
 $prevquarter = $q;
 if ($prevquarter > 1) {
 	$prevquarter--;
@@ -139,31 +141,31 @@ if ($nextquarter < 4) {
 }
 $builddate = dol_now();
 
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') {
-	$description .= $langs->trans("RulesVATDueProducts");
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
+	$description = $langs->trans("RulesVATDueProducts");
 }
-if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') {
 	$description .= $langs->trans("RulesVATInProducts");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') {
 	$description .= '<br>'.$langs->trans("RulesVATDueServices");
 }
-if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>'.$langs->trans("RulesVATInServices");
 }
-if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= '<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-if (!empty($conf->global->FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS)) {
+if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 }
-if (!empty($conf->global->MAIN_MODULE_ACCOUNTING)) {
+if (isModEnabled('accounting')) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
 }
 
 //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
 $description .= ($description ? '<br>' : '').$fsearch;
-if (!empty($conf->global->TAX_REPORT_EXTRA_REPORT)) {
+if (getDolGlobalString('TAX_REPORT_EXTRA_REPORT')) {
 	$description .= '<br>';
 	$description .= '<input type="radio" name="extra_report" value="0" '.($special_report ? '' : 'checked="checked"').'> ';
 	$description .= $langs->trans('SimpleReport');
@@ -180,14 +182,17 @@ $productcust = $langs->trans("Description");
 $namerate = $langs->trans("VATRate");
 $amountcust = $langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
-	$vatcust .= ' ('.$langs->trans("StatusToPay").')';
+	$vatcust = ' ('.$langs->trans("StatusToPay").')';
 }
 $elementsup = $langs->trans("SuppliersInvoices");
 $productsup = $langs->trans("Description");
 $amountsup = $langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
-	$vatsup .= ' ('.$langs->trans("ToGetBack").')';
+	$vatsup = ' ('.$langs->trans("ToGetBack").')';
 }
+$periodlink = '';
+$exportlink = '';
+
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 $vatcust = $langs->trans("VATReceived");
@@ -240,7 +245,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->name = $x_coll[$my_coll_thirdpartyid]['company_name'][$id];
 			$company_static->name_alias = $x_coll[$my_coll_thirdpartyid]['company_alias'][$id];
 			$company_static->email = $x_coll[$my_coll_thirdpartyid]['company_email'][$id];
-			$company_static->tva_intra = $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id];
+			$company_static->tva_intra = isset($x_coll[$my_coll_thirdpartyid]['tva_intra'][$id]) ? $x_coll[$my_coll_thirdpartyid]['tva_intra'][$id] : 0;
 			$company_static->client = $x_coll[$my_coll_thirdpartyid]['company_client'][$id];
 			$company_static->fournisseur = $x_coll[$my_coll_thirdpartyid]['company_fournisseur'][$id];
 			$company_static->status = $x_coll[$my_coll_thirdpartyid]['company_status'][$id];
@@ -250,32 +255,32 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			$company_static->code_compta_fournisseur = $x_coll[$my_coll_thirdpartyid]['company_supplier_accounting_code'][$id];
 
 			$x_both[$my_coll_thirdpartyid]['coll']['detail'][] = array(
-				'id'        =>$x_coll[$my_coll_thirdpartyid]['facid'][$id],
-				'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
+				'id'        => $x_coll[$my_coll_thirdpartyid]['facid'][$id],
+				'descr'     => $x_coll[$my_coll_thirdpartyid]['descr'][$id],
 
-				'pid'       =>$x_coll[$my_coll_thirdpartyid]['pid'][$id],
-				'pref'      =>$x_coll[$my_coll_thirdpartyid]['pref'][$id],
-				'ptype'     =>$x_coll[$my_coll_thirdpartyid]['ptype'][$id],
-				'pstatus'   =>$x_paye[$my_coll_thirdpartyid]['pstatus'][$id],
-				'pstatusbuy'=>$x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id],
+				'pid'       => $x_coll[$my_coll_thirdpartyid]['pid'][$id],
+				'pref'      => isset($x_coll[$my_coll_thirdpartyid]['pref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['pref'][$id] : '',
+				'ptype'     => $x_coll[$my_coll_thirdpartyid]['ptype'][$id],
+				'pstatus'   => isset($x_paye[$my_coll_thirdpartyid]['pstatus'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatus'][$id] : '',
+				'pstatusbuy' => isset($x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id]) ? $x_paye[$my_coll_thirdpartyid]['pstatusbuy'][$id] : '',
 
-				'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
-				'payment_ref'=>$x_coll[$my_coll_thirdpartyid]['payment_ref'][$id],
-				'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
-				'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
-				'dtotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
-				'dtype'     =>$x_coll[$my_coll_thirdpartyid]['dtype'][$id],
-				'drate'     =>$x_coll[$my_coll_thirdpartyid]['drate'][$id],
-				'datef'     =>$x_coll[$my_coll_thirdpartyid]['datef'][$id],
-				'datep'     =>$x_coll[$my_coll_thirdpartyid]['datep'][$id],
+				'payment_id' => $x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
+				'payment_ref' => isset($x_coll[$my_coll_thirdpartyid]['payment_ref'][$id]) ? $x_coll[$my_coll_thirdpartyid]['payment_ref'][$id] : '',
+				'payment_amount' => $x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
+				'ftotal_ttc' => $x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
+				'dtotal_ttc' => $x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
+				'dtype'     => $x_coll[$my_coll_thirdpartyid]['dtype'][$id],
+				'drate'     => $x_coll[$my_coll_thirdpartyid]['drate'][$id],
+				'datef'     => $x_coll[$my_coll_thirdpartyid]['datef'][$id],
+				'datep'     => $x_coll[$my_coll_thirdpartyid]['datep'][$id],
 
-				'company_link'=>$company_static->getNomUrl(1, '', 20),
+				'company_link' => $company_static->getNomUrl(1, '', 20),
 
-				'ddate_start'=>$x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
-				'ddate_end'  =>$x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
-				'totalht'   =>$x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
-				'vat'       =>$x_coll[$my_coll_thirdpartyid]['vat_list'][$id],
-				'link'      =>$invoice_customer->getNomUrl(1, '', 12)
+				'ddate_start' => $x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
+				'ddate_end'  => $x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
+				'totalht'   => $x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
+				'vat'       => $x_coll[$my_coll_thirdpartyid]['vat_list'][$id],
+				'link'      => $invoice_customer->getNomUrl(1, '', 12)
 			);
 		}
 	}
@@ -298,27 +303,27 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$expensereport->type = $x_paye[$my_paye_thirdpartyid]['type'][$id];
 
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
-					'id'				=>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
-					'descr'				=>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+					'id'				=> $x_paye[$my_paye_thirdpartyid]['facid'][$id],
+					'descr'				=> $x_paye[$my_paye_thirdpartyid]['descr'][$id],
 
-					'pid'				=>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
-					'pref'				=>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
-					'ptype'				=>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-					'pstatus'           =>$x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
-					'pstatusbuy'        =>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+					'pid'				=> $x_paye[$my_paye_thirdpartyid]['pid'][$id],
+					'pref'				=> $x_paye[$my_paye_thirdpartyid]['pref'][$id],
+					'ptype'				=> $x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+					'pstatus'           => $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy'        => $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
-					'payment_id'		=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
-					'payment_ref'		=>$x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
-					'payment_amount'	=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
-					'ftotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
-					'dtotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
-					'dtype'				=>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
-					'drate'             =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
-					'ddate_start'		=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
-					'ddate_end'			=>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
-					'totalht'			=>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
-					'vat'				=>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
-					'link'				=>$expensereport->getNomUrl(1)
+					'payment_id'		=> $x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+					'payment_ref'		=> $x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
+					'payment_amount'	=> $x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+					'ftotal_ttc'		=> price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+					'dtotal_ttc'		=> price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+					'dtype'				=> $x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+					'drate'             => $x_paye[$my_coll_thirdpartyid]['drate'][$id],
+					'ddate_start'		=> $x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+					'ddate_end'			=> $x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+					'totalht'			=> price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+					'vat'				=> $x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+					'link'				=> $expensereport->getNomUrl(1)
 				);
 			} else {
 				$invoice_supplier->id = $x_paye[$my_paye_thirdpartyid]['facid'][$id];
@@ -340,32 +345,32 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				$company_static->code_compta_fournisseur = $x_paye[$my_paye_thirdpartyid]['company_supplier_accounting_code'][$id];
 
 				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
-					'id'        =>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
-					'descr'     =>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+					'id'        => $x_paye[$my_paye_thirdpartyid]['facid'][$id],
+					'descr'     => $x_paye[$my_paye_thirdpartyid]['descr'][$id],
 
-					'pid'       =>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
-					'pref'      =>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
-					'ptype'     =>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
-					'pstatus'   =>$x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
-					'pstatusbuy'=>$x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
+					'pid'       => $x_paye[$my_paye_thirdpartyid]['pid'][$id],
+					'pref'      => $x_paye[$my_paye_thirdpartyid]['pref'][$id],
+					'ptype'     => $x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+					'pstatus'   => $x_paye[$my_paye_thirdpartyid]['pstatus'][$id],
+					'pstatusbuy' => $x_paye[$my_paye_thirdpartyid]['pstatusbuy'][$id],
 
-					'payment_id'=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
-					'payment_ref'=>$x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
-					'payment_amount'=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
-					'ftotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
-					'dtotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
-					'dtype'     =>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
-					'drate'     =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
-					'datef'     =>$x_paye[$my_paye_thirdpartyid]['datef'][$id],
-					'datep'     =>$x_paye[$my_paye_thirdpartyid]['datep'][$id],
+					'payment_id' => $x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+					'payment_ref' => $x_paye[$my_paye_thirdpartyid]['payment_ref'][$id],
+					'payment_amount' => $x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+					'ftotal_ttc' => price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+					'dtotal_ttc' => price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+					'dtype'     => $x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+					'drate'     => $x_paye[$my_coll_thirdpartyid]['drate'][$id],
+					'datef'     => $x_paye[$my_paye_thirdpartyid]['datef'][$id],
+					'datep'     => $x_paye[$my_paye_thirdpartyid]['datep'][$id],
 
-					'company_link'=>$company_static->getNomUrl(1, '', 20),
+					'company_link' => $company_static->getNomUrl(1, '', 20),
 
-					'ddate_start'=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
-					'ddate_end'  =>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
-					'totalht'   =>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
-					'vat'       =>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
-					'link'      =>$invoice_supplier->getNomUrl(1, '', 12)
+					'ddate_start' => $x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+					'ddate_end'  => $x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+					'totalht'   => price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+					'vat'       => $x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+					'link'      => $invoice_supplier->getNomUrl(1, '', 12)
 				);
 			}
 		}
@@ -386,12 +391,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<tr class="liste_titre">';
 	print '<td class="left">'.$elementcust.'</td>';
 	print '<td class="left">'.$langs->trans("DateInvoice").'</td>';
-	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 		print '<td class="left">'.$langs->trans("DatePayment").'</td>';
 	} else {
 		print '<td></td>';
 	}
-	print '<td class="right">'.$namerate.'</td>';
+	print '<td class="right"></td>';
 	print '<td class="left">'.$productcust.'</td>';
 	if ($modetax != 1) {
 		print '<td class="right">'.$amountcust.'</td>';
@@ -408,7 +413,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["type"] = 'vat';
 
 	$object = array(&$x_coll, &$x_paye, &$x_both);
-	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -454,7 +459,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="left">'.dol_print_date($fields['datef'], 'day').'</td>';
 
 					// Payment date
-					if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') {
+					if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 						print '<td class="left">'.dol_print_date($fields['datep'], 'day').'</td>';
 					} else {
 						print '<td></td>';
@@ -520,9 +525,9 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							$payment_static->ref = $fields['payment_ref'];
 							print $payment_static->getNomUrl(2, '', '', 0).' ';
 						}
-						if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
-							|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice')) {
-								print $langs->trans("NA");
+						if (($type == 0 && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice')
+							|| ($type == 1 && getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice')) {
+							print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
 								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
@@ -589,12 +594,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td class="left">'.$elementsup.'</td>';
 	print '<td class="left">'.$langs->trans("DateInvoice").'</td>';
-	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+	if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 		print '<td class="left">'.$langs->trans("DatePayment").'</td>';
 	} else {
 		print '<td></td>';
 	}
-	print '<td class="left">'.$namesup.'</td>';
+	print '<td class="left"></td>';
 	print '<td class="left">'.$productsup.'</td>';
 	if ($modetax != 1) {
 		print '<td class="right">'.$amountsup.'</td>';
@@ -646,7 +651,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					print '<td class="left">'.dol_print_date($fields['datef'], 'day').'</td>';
 
 					// Payment date
-					if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') {
+					if (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'payment' || getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'payment') {
 						print '<td class="left">'.dol_print_date($fields['datep'], 'day').'</td>';
 					} else {
 						print '<td></td>';
@@ -695,7 +700,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc'])) {
 							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
-							$ratiolineinvoice = ($fields['dtotal_ttc'] / $fields['ftotal_ttc']);
+							$ratiolineinvoice = ((float) $fields['dtotal_ttc'] / (float) $fields['ftotal_ttc']);
 							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
 						print '</span></td>';
@@ -711,12 +716,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 							print $paymentfourn_static->getNomUrl(2, '', '', 0);
 						}
 
-						if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
-							|| ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice')) {
+						if (($type == 0 && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice')
+							|| ($type == 1 && getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice')) {
 							print $langs->trans("NA");
 						} else {
 							if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
-								$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+								$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 							}
 							print '<span class="amount">'.price(price2num($fields['payment_amount'], 'MT')).'</span>';
 							if (isset($fields['payment_amount'])) {
@@ -728,7 +733,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 					// VAT paid
 					print '<td class="nowrap right"><span class="amount">';
-					$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+					$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 					print price(price2num($temp_ht, 'MT'), 1);
 					print '</span></td>';
 

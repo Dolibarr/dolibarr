@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlgic.fr>
- * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
+ * Copyright (C) 2021-2023	Frédéric France				<frederic.france@netlgic.fr>
+ * Copyright (C) 2021-2023	Waël Almoman				<info@almoman.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +29,6 @@
  *       \brief      Home page of membership module
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -42,7 +43,7 @@ $langs->loadLangs(array("companies", "members"));
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('membersindex'));
 
 
@@ -54,11 +55,11 @@ $result = restrictedArea($user, 'adherent');
  * Actions
  */
 
+$userid = GETPOSTINT('userid');
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -77,7 +78,10 @@ $form = new Form($db);
 // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 $resultboxes = FormOther::getBoxesArea($user, "2");
 
-llxHeader('', $langs->trans("Members"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$title = $langs->trans("Members");
+$help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-index');
 
 $staticmember = new Adherent($db);
 $statictype = new AdherentType($db);
@@ -85,173 +89,43 @@ $subscriptionstatic = new Subscription($db);
 
 print load_fiche_titre($langs->trans("MembersArea"), $resultboxes['selectboxlist'], 'members');
 
-$MembersValidated = array();
-$MembersToValidate = array();
-$MembersWaitingSubscription = array();
-$MembersUpToDate = array();
-$MembersExpired = array();
-$MembersExcluded = array();
-$MembersResiliated = array();
-
-$AdherentType = array();
-
-// Type of membership
-$sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
-$sql .= " d.statut, count(d.rowid) as somme";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
-$sql .= " ON t.rowid = d.fk_adherent_type";
-$sql .= " AND d.entity IN (".getEntity('adherent').")";
-$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
-$sql .= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
-
-dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-
-		$adhtype = new AdherentType($db);
-		$adhtype->id = $objp->rowid;
-		$adhtype->subscription = $objp->subscription;
-		$adhtype->label = $objp->label;
-		$AdherentType[$objp->rowid] = $adhtype;
-
-		if ($objp->statut == -1) {
-			$MembersToValidate[$objp->rowid] = $objp->somme;
-		}
-		if ($objp->statut == 1) {
-			$MembersValidated[$objp->rowid] = $objp->somme;
-		}
-		if ($objp->statut == -2) {
-			$MembersExcluded[$objp->rowid] = $objp->somme;
-		}
-		if ($objp->statut == 0) {
-			$MembersResiliated[$objp->rowid] = $objp->somme;
-		}
-
-		$i++;
-	}
-	$db->free($resql);
-}
-
-$now = dol_now();
-
-// Members waiting subscription
-$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";	// validated
-$sql .= " AND (d.datefin IS NULL AND t.subscription = '1')";
-$sql .= " AND t.rowid = d.fk_adherent_type";
-$sql .= " GROUP BY d.fk_adherent_type";
-
-dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$MembersWaitingSubscription[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free($resql);
-}
-
-// Members up to date list
-// current rule: uptodate = the end date is in future or no subcription required
-// old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
-$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";	// validated
-$sql .= " AND (d.datefin >= '".$db->idate($now)."' OR t.subscription = '0')";		// end date in future
-$sql .= " AND t.rowid = d.fk_adherent_type";
-$sql .= " GROUP BY d.fk_adherent_type";
-
-dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$MembersUpToDate[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free($resql);
-}
-
-// Members expired list
-$sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";	// validated
-$sql .= " AND (d.datefin < '".$db->idate($now)."' AND t.subscription = '1')";
-$sql .= " AND t.rowid = d.fk_adherent_type";
-$sql .= " GROUP BY d.fk_adherent_type";
-
-dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num) {
-		$objp = $db->fetch_object($resql);
-		$MembersExpired[$objp->fk_adherent_type] = $objp->somme;
-		$i++;
-	}
-	$db->free($resql);
-}
-
 /*
  * Statistics
  */
 
 $boxgraph = '';
 if ($conf->use_javascript_ajax) {
-	$boxgraph .='<div class="div-table-responsive-no-min">';
-	$boxgraph .='<table class="noborder nohover centpercent">';
-	$boxgraph .='<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-	$boxgraph .='<tr><td class="center" colspan="2">';
+	$year = idate('Y');
+	$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH");
 
-	$SumToValidate = 0;
-	$SumWaitingSubscription = 0;
-	$SumUpToDate = 0;
-	$SumExpired = 0;
-	$SumResiliated = 0;
-	$SumExcluded = 0;
+	$boxgraph .= '<div class="div-table-responsive-no-min">';
+	$boxgraph .= '<table class="noborder nohover centpercent">';
+	$boxgraph .= '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : '').'</th></tr>';
+	$boxgraph .= '<tr><td class="center" colspan="2">';
 
-	$total = 0;
-	$dataval = array();
-	$i = 0;
-	foreach ($AdherentType as $key => $adhtype) {
-		$dataval['draft'][] = array($i, isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0);
-		$dataval['waitingsubscription'][] = array($i, isset($MembersWaitingSubscription[$key]) ? $MembersWaitingSubscription[$key] : 0);
-		$dataval['uptodate'][] = array($i, isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0);
-		$dataval['expired'][] = array($i, isset($MembersExpired[$key]) ? $MembersExpired[$key] : 0);
-		$dataval['excluded'][] = array($i, isset($MembersExcluded[$key]) ? $MembersExcluded[$key] : 0);
-		$dataval['resiliated'][] = array($i, isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0);
+	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
+	$stats = new AdherentStats($db, 0, $userid);
 
-		$SumToValidate += isset($MembersToValidate[$key]) ? $MembersToValidate[$key] : 0;
-		$SumWaitingSubscription += isset($MembersWaitingSubscription[$key]) ? $MembersWaitingSubscription[$key] : 0;
-		$SumUpToDate += isset($MembersUpToDate[$key]) ? $MembersUpToDate[$key] : 0;
-		$SumExpired += isset($MembersExpired[$key]) ? $MembersExpired[$key] : 0;
-		$SumExcluded += isset($MembersExcluded[$key]) ? $MembersExcluded [$key] : 0;
-		$SumResiliated += isset($MembersResiliated[$key]) ? $MembersResiliated[$key] : 0;
-		$i++;
+	// Show array
+	$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);
+	if (is_array($sumMembers) && !empty($sumMembers)) {
+		$total = $sumMembers['total']['members_draft'] + $sumMembers['total']['members_pending'] + $sumMembers['total']['members_uptodate'] + $sumMembers['total']['members_expired'] + $sumMembers['total']['members_excluded'] + $sumMembers['total']['members_resiliated'];
+	} else {
+		$total = 0;
 	}
-	$total = $SumToValidate + $SumWaitingSubscription + $SumUpToDate + $SumExpired + $SumExcluded + $SumResiliated;
+	foreach (array('members_draft', 'members_pending', 'members_uptodate', 'members_expired', 'members_excluded', 'members_resiliated') as $val) {
+		if (empty($sumMembers['total'][$val])) {
+			$sumMembers['total'][$val] = 0;
+		}
+	}
+
 	$dataseries = array();
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SumToValidate));			// Draft, not yet validated
-	$dataseries[] = array($langs->transnoentitiesnoconv("WaitingSubscription"), round($SumWaitingSubscription));
-	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), round($SumUpToDate));
-	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), round($SumExpired));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), round($SumExcluded));
-	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SumResiliated));
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), $sumMembers['total']['members_draft']);			// Draft, not yet validated
+	$dataseries[] = array($langs->transnoentitiesnoconv("WaitingSubscription"), $sumMembers['total']['members_pending']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("UpToDate"), $sumMembers['total']['members_uptodate']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("OutOfDate"), $sumMembers['total']['members_expired']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusExcluded"), $sumMembers['total']['members_excluded']);
+	$dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), $sumMembers['total']['members_resiliated']);
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
@@ -264,11 +138,11 @@ if ($conf->use_javascript_ajax) {
 	$dolgraph->SetType(array('pie'));
 	$dolgraph->setHeight('200');
 	$dolgraph->draw('idgraphstatus');
-	$boxgraph .=$dolgraph->show($total ? 0 : 1);
+	$boxgraph .= $dolgraph->show($total ? 0 : 1);
 
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">';
-	$boxgraph .= $SumToValidate + $SumWaitingSubscription + $SumUpToDate + $SumExpired + $SumExcluded + $SumResiliated;
+	$boxgraph .= $total;
 	$boxgraph .= '</td></tr>';
 	$boxgraph .= '</table>';
 	$boxgraph .= '</div>';

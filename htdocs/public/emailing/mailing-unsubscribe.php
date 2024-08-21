@@ -23,7 +23,7 @@
 /**
  *      \file       public/emailing/mailing-unsubscribe.php
  *      \ingroup    mailing
- *      \brief      Script use to update unsubcribe status of an email
+ *      \brief      Script use to update unsubscribe status of an email
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
@@ -61,7 +61,9 @@ global $user, $conf, $langs;
 
 $langs->loadLangs(array("main", "mails"));
 
-$tag = GETPOST('tag');	// To retreive the emailing, and recipient
+$mtid = GETPOST('mtid');
+$email = GETPOST('email');
+$tag = GETPOST('tag');	// To retrieve the emailing, and recipient
 $unsuscrib = GETPOST('unsuscrib');
 $securitykey = GETPOST('securitykey');
 
@@ -70,9 +72,9 @@ $securitykey = GETPOST('securitykey');
  * Actions
  */
 
-dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
+dol_syslog("public/emailing/mailing-unsubscribe.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')) {
+if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
 	print 'Bad security key value.';
 	exit;
 }
@@ -89,6 +91,7 @@ if (empty($tag) || ($unsuscrib != '1')) {
 
 $head = '';
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+
 llxHeader($head, $langs->trans("MailUnsubcribe"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
@@ -105,12 +108,12 @@ if (!$resql) {
 $obj = $db->fetch_object($resql);
 
 if (empty($obj)) {
-	print 'Email tag not found. Operation canceled.';
+	print 'Emailing tag '.$tag.' not found in database. Operation canceled.';
 	llxFooter('', 'private');
 	exit;
 }
 if (empty($obj->email)) {
-	print 'Email for this tag not valid. Operation canceled.';
+	print 'Email for this tag is not valid. Operation canceled.';
 	llxFooter('', 'private');
 	exit;
 }

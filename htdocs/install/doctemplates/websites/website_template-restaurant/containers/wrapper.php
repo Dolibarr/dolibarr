@@ -1,8 +1,9 @@
 <?php
-// BEGIN PHP File wrapper.php - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
+
+// BEGIN PHP File wrapper.php used to download rss, logo, shared files - DO NOT MODIFY - It is just a copy of file website/samples/wrapper.php
 $websitekey = basename(__DIR__);
 if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
-	die("Sample file for website module. Can be called directly.");
+	die("Sample file for website module. Can't be called directly.");
 }
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	require_once './master.inc.php';
@@ -14,10 +15,10 @@ $encoding = '';
 // Parameters to download files
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
-$entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
+$entity = GETPOSTINT('entity') ? GETPOSTINT('entity') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
 $l = GETPOST('l', 'aZ09');
-$limit = GETPOST('limit', 'int');
+$limit = GETPOSTINT('limit');
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
@@ -61,10 +62,10 @@ $attachment = true;
 if (preg_match('/\.(html|htm)$/i', $original_file)) {
 	$attachment = false;
 }
-if (isset($_GET["attachment"])) {
+if (GETPOSTISSET("attachment")) {
 	$attachment = (GETPOST("attachment", 'alphanohtml') ? true : false);
 }
-if (!empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS_WEBSITE)) {
+if (getDolGlobalString('MAIN_DISABLE_FORCE_SAVEAS_WEBSITE')) {
 	$attachment = false;
 }
 
@@ -115,6 +116,8 @@ if ($rss) {
 	if (is_array($arrayofblogs)) {
 		foreach ($arrayofblogs as $blog) {
 			$blog->fullpageurl = $website->virtualhost.'/'.$blog->pageurl.'.php';
+			$blog->image = preg_replace('/__WEBSITE_KEY__/', $websitekey, $blog->image);
+
 			$eventarray[] = $blog;
 		}
 	}
@@ -152,11 +155,12 @@ if ($rss) {
 		$outputlangs = new Translate('', $conf);
 		$outputlangs->setDefaultLang($l);
 		$outputlangs->loadLangs(array("main", "other"));
-		$title = $desc = $outputlangs->transnoentities('LatestBlogPosts');
+		$title = $outputlangs->transnoentities('LatestBlogPosts').' - '.$website->virtualhost;
+		$desc = $title.($l ? ' ('.$l.')' : '');
 
 		// Create temp file
 		$outputfiletmp = tempnam($dir_temp, 'tmp'); // Temporary file (allow call of function by different threads
-		@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
+		dolChmod($outputfiletmp);
 
 		// Write file
 		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1'.($l ? '&l='.$l : ''), $l);
@@ -182,13 +186,13 @@ if ($rss) {
 
 	if ($result >= 0) {
 		$attachment = false;
-		if (isset($_GET["attachment"])) {
-			$attachment = $_GET["attachment"];
+		if (GETPOSTISSET("attachment")) {
+			$attachment = GETPOST("attachment");
 		}
 		//$attachment = false;
 		$contenttype = 'application/rss+xml';
-		if (isset($_GET["contenttype"])) {
-			$contenttype = $_GET["contenttype"];
+		if (GETPOSTISSET("contenttype")) {
+			$contenttype = GETPOST("contenttype");
 		}
 		//$contenttype='text/plain';
 		$outputencoding = 'UTF-8';
@@ -225,7 +229,7 @@ if ($rss) {
 } else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);
+	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, null, $refname);
 	$accessallowed              = empty($check_access['accessallowed']) ? '' : $check_access['accessallowed'];
 	$sqlprotectagainstexternals = empty($check_access['sqlprotectagainstexternals']) ? '' : $check_access['sqlprotectagainstexternals'];
 	$fullpath_original_file     = empty($check_access['original_file']) ? '' : $check_access['original_file']; // $fullpath_original_file is now a full path name
@@ -251,7 +255,7 @@ if ($rss) {
 
 	// This test if file exists should be useless. We keep it to find bug more easily
 	if (!file_exists($fullpath_original_file_osencoded)) {
-		print "ErrorFileDoesNotExists: ".$original_file;
+		print "ErrorFileDoesNotExists: ".dol_escape_htmltag($original_file);
 		exit;
 	}
 

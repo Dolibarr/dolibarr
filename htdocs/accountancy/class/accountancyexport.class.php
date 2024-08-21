@@ -5,13 +5,16 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2023  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2024  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
+ * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,14 +39,16 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 /**
  * Manage the different format accountancy export
  */
 class AccountancyExport
 {
-	// Type of export. Used into $conf->global->ACCOUNTING_EXPORT_MODELCSV
+	// Types of export.
 	public static $EXPORT_TYPE_CONFIGURABLE = 1; // CSV
 	public static $EXPORT_TYPE_AGIRIS = 10;
 	public static $EXPORT_TYPE_EBP = 15;
@@ -77,29 +82,33 @@ class AccountancyExport
 	public $errors = array();
 
 	/**
-	 *
-	 * @var string Separator
+	 * @var string 	Separator
 	 */
 	public $separator = '';
 
 	/**
-	 *
-	 * @var string End of line
+	 * @var string 	End of line
 	 */
 	public $end_line = '';
 
 	/**
+	 * @var array 	Generated file
+	 */
+	public $generatedfiledata = array();
+
+
+	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
 		global $conf, $hookmanager;
 
 		$this->db = $db;
-		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-		$this->end_line = empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? "\n" : ($conf->global->ACCOUNTING_EXPORT_ENDLINE == 1 ? "\n" : "\r\n");
+		$this->separator = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
+		$this->end_line = getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE') ? (getDolGlobalInt('ACCOUNTING_EXPORT_ENDLINE') == 1 ? "\n" : "\r\n") : "\n";
 
 		$hookmanager->initHooks(array('accountancyexport'));
 	}
@@ -107,14 +116,14 @@ class AccountancyExport
 	/**
 	 * Array with all export type available (key + label)
 	 *
-	 * @return array of type
+	 * @param	int		$mode		Mode of list: 0=flat list, 1=rich list
+	 * @return 						array of type
 	 */
-	public function getType()
+	public function getType($mode = 0)
 	{
 		global $langs, $hookmanager;
 
-		$listofexporttypes = array(
-			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+		$listofspecialformatexport = array(
 			self::$EXPORT_TYPE_CEGID => $langs->trans('Modelcsv_CEGID'),
 			self::$EXPORT_TYPE_COALA => $langs->trans('Modelcsv_COALA'),
 			self::$EXPORT_TYPE_BOB50 => $langs->trans('Modelcsv_bob50'),
@@ -131,16 +140,36 @@ class AccountancyExport
 			self::$EXPORT_TYPE_LDCOMPTA10 => $langs->trans('Modelcsv_LDCompta10'),
 			self::$EXPORT_TYPE_GESTIMUMV3 => $langs->trans('Modelcsv_Gestinumv3'),
 			self::$EXPORT_TYPE_GESTIMUMV5 => $langs->trans('Modelcsv_Gestinumv5'),
-			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
-			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
 			self::$EXPORT_TYPE_ISUITEEXPERT => 'Export iSuite Expert',
 		);
+
+		$listofgenericformatexport = array(
+			self::$EXPORT_TYPE_CONFIGURABLE => $langs->trans('Modelcsv_configurable'),
+			self::$EXPORT_TYPE_FEC => $langs->trans('Modelcsv_FEC'),
+			self::$EXPORT_TYPE_FEC2 => $langs->trans('Modelcsv_FEC2'),
+		);
+
+		if (empty($mode)) {
+			$listofexporttypes = $listofgenericformatexport + $listofspecialformatexport;
+			ksort($listofexporttypes, SORT_NUMERIC);
+		} else {
+			ksort($listofspecialformatexport, SORT_NUMERIC);
+			$listofexporttypes = array();
+			$i = 0;
+			foreach ($listofgenericformatexport as $key => $val) {
+				$i++;
+				$listofexporttypes[$key] = array('id' => $key, 'label' => $val, 'position' => $i);
+			}
+			$listofexporttypes['separator_'.$i] = array('id' => 0, 'label' => '----------------', 'position' => $i, 'disabled' => 'disabled');
+			foreach ($listofspecialformatexport as $key => $val) {
+				$i++;
+				$listofexporttypes[$key] = array('id' => $key, 'label' => $val, 'position' => $i);
+			}
+		}
 
 		// allow modules to define export formats
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('getType', $parameters, $listofexporttypes);
-
-		ksort($listofexporttypes, SORT_NUMERIC);
 
 		return $listofexporttypes;
 	}
@@ -191,16 +220,16 @@ class AccountancyExport
 	 */
 	public function getTypeConfig()
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$exporttypes = array(
 			'param' => array(
 				self::$EXPORT_TYPE_CONFIGURABLE => array(
 					'label' => $langs->trans('Modelcsv_configurable'),
-					'ACCOUNTING_EXPORT_FORMAT' => empty($conf->global->ACCOUNTING_EXPORT_FORMAT) ? 'txt' : $conf->global->ACCOUNTING_EXPORT_FORMAT,
-					'ACCOUNTING_EXPORT_SEPARATORCSV' => empty($conf->global->ACCOUNTING_EXPORT_SEPARATORCSV) ? ',' : $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV,
-					'ACCOUNTING_EXPORT_ENDLINE' => empty($conf->global->ACCOUNTING_EXPORT_ENDLINE) ? 1 : $conf->global->ACCOUNTING_EXPORT_ENDLINE,
-					'ACCOUNTING_EXPORT_DATE' => empty($conf->global->ACCOUNTING_EXPORT_DATE) ? '%d%m%Y' : $conf->global->ACCOUNTING_EXPORT_DATE,
+					'ACCOUNTING_EXPORT_FORMAT' => getDolGlobalString('ACCOUNTING_EXPORT_FORMAT', 'txt'),
+					'ACCOUNTING_EXPORT_SEPARATORCSV' => getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV', ','),
+					'ACCOUNTING_EXPORT_ENDLINE' => getDolGlobalString('ACCOUNTING_EXPORT_ENDLINE', 1),
+					'ACCOUNTING_EXPORT_DATE' => getDolGlobalString('ACCOUNTING_EXPORT_DATE', '%Y-%m-%d'),
 				),
 				self::$EXPORT_TYPE_CEGID => array(
 					'label' => $langs->trans('Modelcsv_CEGID'),
@@ -269,7 +298,7 @@ class AccountancyExport
 					'ACCOUNTING_EXPORT_FORMAT' => 'csv',
 				),
 			),
-			'cr'=> array(
+			'cr' => array(
 				'1' => $langs->trans("Unix"),
 				'2' => $langs->trans("Windows")
 			),
@@ -294,8 +323,6 @@ class AccountancyExport
 	 */
 	public function getMimeType($formatexportset)
 	{
-		$mime = 'text/csv';
-
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_FEC:
 				$mime = 'text/tab-separated-values';
@@ -311,83 +338,186 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param 	array	$TData 				Array with data
-	 * @param	int		$formatexportset	Id of export format
-	 * @return 	void
+	 * @param 	array	$TData 						Array with data
+	 * @param	int		$formatexportset			Id of export format
+	 * @param	int		$withAttachment				[=0] Not add files
+	 * 												or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
+	 * @param	int		$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
+	 * 												or 1 to download after writing files - Forced by default when use withAttachment = 1
+	 * 												or -1 not to download files
+	 * @param	int		$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 * 												or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
+	 * 												or 2 to write in file a default export directory (accounting/export/)
+	 * @param	int		$noouput					0=old mode. Deprecated. Always use value 1.
+	 * 												or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
+	 * @return 	int									Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
 	 */
-	public function export(&$TData, $formatexportset)
+	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 0, $outputMode = 0, $noouput = 0)
 	{
-		global $conf, $langs;
-		global $search_date_end; // Used into /accountancy/tpl/export_journal.tpl.php
+		global $db, $conf, $langs;	// The tpl file use $db
+		global $search_date_end; 	// Used into /accountancy/tpl/export_journal.tpl.php
 
 		// Define name of file to save
 		$filename = 'general_ledger-'.$this->getFormatCode($formatexportset);
 		$type_export = 'general_ledger';
 
-		global $db; // The tpl file use $db
+		$completefilename = '';
+		$exportFile = null;
+		$exportFileName = '';
+		$exportFilePath = '';
+		$exportFileFullName = '';
+		$downloadFileMimeType = '';
+		$downloadFileFullName = '';
+		$downloadFilePath = '';
+		$archiveFullName = '';
+		$archivePath = '';
+		$archiveFileList = array();
+		if ($withAttachment == 1) {
+			if ($downloadMode == 0) {
+				$downloadMode = 1; // force to download after writing all files (can't use direct download)
+			}
+			if ($outputMode == 0) {
+				$outputMode = 1; // force to put files in a temp directory (can't use print on screen)
+			}
+
+			// PHP ZIP extension must be enabled
+			if (!extension_loaded('zip')) {
+				$langs->load('install');
+				$this->errors[] = $langs->trans('ErrorPHPDoesNotSupport', 'ZIP');
+				return -1;
+			}
+		}
+
+		$mimetype = $this->getMimeType($formatexportset);
+		if ($downloadMode == 0) {
+			// begin to print header for direct download
+			top_httphead($mimetype, 1);
+		}
+
 		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
+		if ($outputMode == 1 || $outputMode == 2) {
+			if ($outputMode == 1) {
+				// uses the temp directory by default to write files
+				if (!empty($conf->accounting->multidir_temp[$conf->entity])) {
+					$outputDir = $conf->accounting->multidir_temp[$conf->entity];
+				} else {
+					$outputDir = $conf->accounting->dir_temp;
+				}
+			} else {
+				// uses the default export directory "accounting/export"
+				if (!empty($conf->accounting->multidir_output[$conf->entity])) {
+					$outputDir = $conf->accounting->multidir_output[$conf->entity];
+				} else {
+					$outputDir = $conf->accounting->dir_output;
+				}
 
+				// directory already created when module is enabled
+				$outputDir .= '/export';
+				$outputDir .= '/'.dol_sanitizePathName($formatexportset);
+			}
+
+			if (!dol_is_dir($outputDir)) {
+				if (dol_mkdir($outputDir) < 0) {
+					$this->errors[] = $langs->trans('ErrorCanNotCreateDir', $outputDir);
+					return -1;
+				}
+			}
+
+			if ($outputDir != '') {
+				if (!dol_is_dir($outputDir)) {
+					$langs->load('errors');
+					$this->errors[] = $langs->trans('ErrorDirNotFound', $outputDir);
+					return -1;
+				}
+
+				if (!empty($completefilename)) {
+					// create export file
+					$exportFileFullName = $completefilename;
+					$exportFileBaseName = basename($exportFileFullName);
+					$exportFileName = pathinfo($exportFileBaseName, PATHINFO_FILENAME);
+					$exportFilePath = $outputDir . '/' . $exportFileFullName;
+					$exportFile = fopen($exportFilePath, 'w');
+					if (!$exportFile) {
+						$this->errors[] = $langs->trans('ErrorFileNotFound', $exportFilePath);
+						return -1;
+					}
+
+					if ($withAttachment == 1) {
+						$archiveFileList[0] = array(
+							'path' => $exportFilePath,
+							'name' => $exportFileFullName,
+						);
+
+						// archive name and path
+						$archiveFullName = $exportFileName . '.zip';
+						$archivePath = $outputDir . '/' . $archiveFullName;
+					}
+				}
+			}
+		}
+
+		// export file (print on screen or write in a file) and prepare archive list if with attachment is set to 1
 		switch ($formatexportset) {
 			case self::$EXPORT_TYPE_CONFIGURABLE:
-				$this->exportConfigurable($TData);
+				$this->exportConfigurable($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_CEGID:
-				$this->exportCegid($TData);
+				$this->exportCegid($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_COALA:
-				$this->exportCoala($TData);
+				$this->exportCoala($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_BOB50:
-				$this->exportBob50($TData);
+				$this->exportBob50($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_CIEL:
-				$this->exportCiel($TData);
+				$this->exportCiel($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_QUADRATUS:
-				$this->exportQuadratus($TData);
+				$archiveFileList = $this->exportQuadratus($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_WINFIC:
-				$this->exportWinfic($TData);
+				$this->exportWinfic($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_EBP:
-				$this->exportEbp($TData);
+				$this->exportEbp($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_COGILOG:
-				$this->exportCogilog($TData);
+				$this->exportCogilog($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_AGIRIS:
-				$this->exportAgiris($TData);
+				$this->exportAgiris($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_OPENCONCERTO:
-				$this->exportOpenConcerto($TData);
+				$this->exportOpenConcerto($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_SAGE50_SWISS:
-				$this->exportSAGE50SWISS($TData);
+				$this->exportSAGE50SWISS($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_CHARLEMAGNE:
-				$this->exportCharlemagne($TData);
+				$this->exportCharlemagne($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_LDCOMPTA:
-				$this->exportLDCompta($TData);
+				$this->exportLDCompta($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_LDCOMPTA10:
-				$this->exportLDCompta10($TData);
+				$this->exportLDCompta10($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_GESTIMUMV3:
-				$this->exportGestimumV3($TData);
+				$this->exportGestimumV3($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_GESTIMUMV5:
-				$this->exportGestimumV5($TData);
+				$this->exportGestimumV5($TData, $exportFile);
 				break;
 			case self::$EXPORT_TYPE_FEC:
-				$this->exportFEC($TData);
+				$archiveFileList = $this->exportFEC($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
 			case self::$EXPORT_TYPE_FEC2:
-				$this->exportFEC2($TData);
+				$archiveFileList = $this->exportFEC2($TData, $exportFile, $archiveFileList, $withAttachment);
 				break;
-			case self::$EXPORT_TYPE_ISUITEEXPERT :
-				$this->exportiSuiteExpert($TData);
+			case self::$EXPORT_TYPE_ISUITEEXPERT:
+				$this->exportiSuiteExpert($TData, $exportFile);
 				break;
 			default:
 				global $hookmanager;
@@ -399,130 +529,269 @@ class AccountancyExport
 				}
 				break;
 		}
+
+
+		// Create and download export file or archive
+		if ($outputMode == 1 || $outputMode == 2) {
+			$error = 0;
+
+			// close export file
+			if ($exportFile) {
+				fclose($exportFile);
+			}
+
+			if ($withAttachment == 1) {
+				// create archive file
+				if (!empty($archiveFullName) && !empty($archivePath) && !empty($archiveFileList)) {
+					// archive files
+					$downloadFileMimeType = 'application/zip';
+					$downloadFileFullName = $archiveFullName;
+					$downloadFilePath = $archivePath;
+
+					// create archive
+					$archive = new ZipArchive();
+					$res = $archive->open($archivePath, ZipArchive::OVERWRITE | ZipArchive::CREATE);
+					if ($res !== true) {
+						$error++;
+						$this->errors[] = $langs->trans('ErrorFileNotFound', $archivePath);
+					}
+					if (!$error) {
+						// add files
+						foreach ($archiveFileList as $archiveFileArr) {
+							$res = $archive->addFile($archiveFileArr['path'], $archiveFileArr['name']);
+							if (!$res) {
+								$error++;
+								$this->errors[] = $langs->trans('ErrorArchiveAddFile', $archiveFileArr['name']);
+								break;
+							}
+						}
+					}
+					if (!$error) {
+						// close archive
+						$archive->close();
+					}
+				}
+			}
+
+			if (!$error) {
+				// download after writing files
+				if ($downloadMode == 1) {
+					if ($withAttachment == 0) {
+						// only download exported file
+						if (!empty($exportFileFullName) && !empty($exportFilePath)) {
+							$downloadFileMimeType = $mimetype;
+							$downloadFileFullName = $exportFileFullName;
+							$downloadFilePath = $exportFilePath;
+						}
+					}
+
+					// download export file or archive
+					if (!empty($downloadFileMimeType) && !empty($downloadFileFullName) && !empty($downloadFilePath) && empty($noouput)) {
+						// deprecated. We must not use this anymore, but have $noouput = 1 because HTTP header must be sent
+						// into main page not into a method.
+						header('Content-Type: ' . $downloadFileMimeType);
+						header('Content-Disposition: attachment; filename=' . $downloadFileFullName);
+						header('Cache-Control: Public, must-revalidate');
+						header('Pragma: public');
+						header('Content-Length: ' . dol_filesize($downloadFilePath));
+
+						readfileLowMemory($downloadFilePath);
+					}
+
+					$this->generatedfiledata = array('downloadFilePath' => $downloadFilePath, 'downloadFileMimeType' => $downloadFileMimeType, 'downloadFileFullName' => $downloadFileFullName);
+				}
+			}
+
+			if ($error) {
+				return -1;
+			}
+		}
+
+		return 1;
 	}
 
 
 	/**
 	 * Export format : CEGID
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportCegid($objectLines)
+	public function exportCegid($objectLines, $exportFile = null)
 	{
-		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			$separator = ";";
-			$end_line = "\n";
+		$separator = ";";
+		$end_line = "\n";
 
-			print $date.$separator;
-			print $line->code_journal.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print length_accounta($line->subledger_account).$separator;
-			print $line->sens.$separator;
-			print price2fec(abs($line->debit - $line->credit)).$separator;
-			print dol_string_unaccent($line->label_operation).$separator;
-			print dol_string_unaccent($line->doc_ref);
-			print $end_line;
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
+
+			$tab = array();
+
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
+			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = length_accounta($line->subledger_account);
+			$tab[] = $line->sens;
+			$tab[] = price2fec(abs($line->debit - $line->credit));
+			$tab[] = dol_string_unaccent($line->label_operation);
+			$tab[] = dol_string_unaccent($line->doc_ref);
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : COGILOG
+	 * Last review for this format : 2022-07-12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportCogilog($objectLines)
+	public function exportCogilog($objectLines, $exportFile = null)
 	{
-		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			$separator = ";";
-			$end_line = "\n";
+		$separator = "\t";
+		$end_line = "\n";
 
-			print $line->code_journal.$separator;
-			print $date.$separator;
-			print $line->piece_num.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print ''.$separator;
-			print $line->label_operation.$separator;
-			print $date.$separator;
-			if ($line->sens == 'D') {
-				print price($line->debit).$separator;
-				print ''.$separator;
-			} elseif ($line->sens == 'C') {
-				print ''.$separator;
-				print price($line->credit).$separator;
+		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
+
+			$refInvoice = '';
+			if ($line->doc_type == 'customer_invoice') {
+				// Customer invoice
+				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+				$invoice = new Facture($this->db);
+				$invoice->fetch($line->fk_doc);
+
+				$refInvoice = $invoice->ref;
+			} elseif ($line->doc_type == 'supplier_invoice') {
+				// Supplier invoice
+				require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+				$invoice = new FactureFournisseur($this->db);
+				$invoice->fetch($line->fk_doc);
+
+				$refInvoice = $invoice->ref_supplier;
 			}
-			print $line->doc_ref.$separator;
-			print $line->label_operation.$separator;
-			print $end_line;
+
+			$tab = array();
+
+			$tab[] = $line->code_journal;
+			$tab[] = $date_document;
+			$tab[] = $refInvoice;
+			if (empty($line->subledger_account)) {
+				$tab[] = length_accountg($line->numero_compte);
+			} else {
+				$tab[] = length_accounta($line->subledger_account);
+			}
+			$tab[] = "";
+			$tab[] = $line->label_operation;
+			$tab[] = $date_document;
+			if ($line->sens == 'D') {
+				$tab[] = price($line->debit);
+				$tab[] = "";
+			} elseif ($line->sens == 'C') {
+				$tab[] = "";
+				$tab[] = price($line->credit);
+			}
+			$tab[] = $line->doc_ref;
+			$tab[] = $line->label_operation;
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : COALA
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportCoala($objectLines)
+	public function exportCoala($objectLines, $exportFile = null)
 	{
 		// Coala export
 		$separator = ";";
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-			print $date.$separator;
-			print $line->code_journal.$separator;
-			print length_accountg($line->numero_compte).$separator;
-			print $line->piece_num.$separator;
-			print $line->doc_ref.$separator;
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
-			print 'E'.$separator;
-			print length_accounta($line->subledger_account).$separator;
-			print $end_line;
+			$tab = array();
+
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
+			$tab[] = length_accountg($line->numero_compte);
+			$tab[] = $line->piece_num;
+			$tab[] = $line->doc_ref;
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = 'E';
+			$tab[] = length_accounta($line->subledger_account);
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : BOB50
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportBob50($objectLines)
+	public function exportBob50($objectLines, $exportFile = null)
 	{
-
 		// Bob50
 		$separator = ";";
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			print $line->piece_num.$separator;
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
-			print $date.$separator;
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+
+			$tab = array();
+
+			$tab[] = $line->piece_num;
+			$tab[] = $date_document;
 
 			if (empty($line->subledger_account)) {
-				print 'G'.$separator;
-				print length_accounta($line->numero_compte).$separator;
+				$tab[] = 'G';
+				$tab[] = length_accountg($line->numero_compte);
 			} else {
 				if (substr($line->numero_compte, 0, 3) == '411') {
-					print 'C'.$separator;
+					$tab[] = 'C';
 				}
 				if (substr($line->numero_compte, 0, 3) == '401') {
-					print 'F'.$separator;
+					$tab[] = 'F';
 				}
-				print length_accountg($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			}
 
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
-			print dol_trunc($line->label_operation, 32).$separator;
-			print $end_line;
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = dol_trunc($line->label_operation, 32);
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
@@ -537,41 +806,46 @@ class AccountancyExport
 	 * If you want to force filename to "XIMPORT.TXT" for automatically import file present in a directory :
 	 * use constant ACCOUNTING_EXPORT_XIMPORT_FORCE_FILENAME
 	 *
-	 * @param array $TData data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportCiel(&$TData)
+	public function exportCiel($objectLines, $exportFile = null)
 	{
 		$end_line = "\r\n";
 
 		$i = 1;
 
-		foreach ($TData as $data) {
-			$code_compta = length_accountg($data->numero_compte);
-			if (!empty($data->subledger_account)) {
-				$code_compta = length_accounta($data->subledger_account);
+		foreach ($objectLines as $line) {
+			$code_compta = length_accountg($line->numero_compte);
+			if (!empty($line->subledger_account)) {
+				$code_compta = length_accounta($line->subledger_account);
 			}
 
-			$date_document = dol_print_date($data->doc_date, '%Y%m%d');
-			$date_echeance = dol_print_date($data->date_lim_reglement, '%Y%m%d');
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
+			$date_echeance = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
-			$Tab = array();
-			$Tab['num_ecriture'] = str_pad($data->piece_num, 5);
-			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
-			$Tab['date_ecriture'] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
-			$Tab['date_echeance'] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
-			$Tab['num_piece'] = str_pad(self::trunc($data->doc_ref, 12), 12);
-			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
-			$Tab['libelle_ecriture'] = str_pad(self::trunc(dol_string_unaccent($data->doc_ref).dol_string_unaccent($data->label_operation), 25), 25);
-			$Tab['montant'] = str_pad(price2fec(abs($data->debit - $data->credit)), 13, ' ', STR_PAD_LEFT);
-			$Tab['type_montant'] = str_pad($data->sens, 1);
-			$Tab['vide'] = str_repeat(' ', 18); // Analytical accounting - Not managed in Dolibarr
-			$Tab['intitule_compte'] = str_pad(self::trunc(dol_string_unaccent($data->label_operation), 34), 34);
-			$Tab['end'] = 'O2003'; // 0 = EUR | 2003 = Format Ciel
+			$tab = array();
 
-			$Tab['end_line'] = $end_line;
+			$tab[] = str_pad($line->piece_num, 5);
+			$tab[] = str_pad(self::trunc($line->code_journal, 2), 2);
+			$tab[] = str_pad($date_document, 8, ' ', STR_PAD_LEFT);
+			$tab[] = str_pad($date_echeance, 8, ' ', STR_PAD_LEFT);
+			$tab[] = str_pad(self::trunc($line->doc_ref, 12), 12);
+			$tab[] = str_pad(self::trunc($code_compta, 11), 11);
+			$tab[] = str_pad(self::trunc(dol_string_unaccent($line->doc_ref).dol_string_unaccent($line->label_operation), 25), 25);
+			$tab[] = str_pad(price2fec(abs($line->debit - $line->credit)), 13, ' ', STR_PAD_LEFT);
+			$tab[] = str_pad($line->sens, 1);
+			$tab[] = str_repeat(' ', 18); // Analytical accounting - Not managed in Dolibarr
+			$tab[] = str_pad(self::trunc(dol_string_unaccent($line->label_operation), 34), 34);
+			$tab[] = 'O2003'; // 0 = EUR | 2003 = Format Ciel
 
-			print implode($Tab);
+			$output = implode($tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 			$i++;
 		}
 	}
@@ -579,156 +853,225 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus (Format ASCII)
 	 * Format since 2015 compatible QuadraCOMPTA
-	 * Last review for this format : 2023/09/16 Alexandre Spangaro (aspangaro@open-dsi.fr)
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * Help : https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * Information on format: https://docplayer.fr/20769649-Fichier-d-entree-ascii-dans-quadracompta.html
+	 * Help to import in Quadra: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Import_vers_CEGID_Quadra
 	 * In QuadraCompta | Use menu : "Outils" > "Suivi des dossiers" > "Import ASCII(Compta)"
 	 *
-	 * @param array $TData data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportQuadratus(&$TData)
+	public function exportQuadratus($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
 		global $conf, $db;
 
 		$end_line = "\r\n";
 
-		// We should use dol_now function not time however this is wrong date to transfert in accounting
-		// $date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		// $date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		foreach ($TData as $data) {
+		// We should use dol_now function not time however this is wrong date to transfer in accounting
+		foreach ($objectLines as $line) {
 			// Clean some data
-			$data->doc_ref = dol_string_unaccent($data->doc_ref);
+			$line->doc_ref = dol_string_unaccent($line->doc_ref);
 
-			$data->label_operation = str_replace(array("\t", "\n", "\r"), " ", $data->label_operation);
-			$data->label_operation = str_replace(array("- ", "…", "..."), "", $data->label_operation);
-			$data->label_operation = dol_string_unaccent($data->label_operation);
+			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
+			$line->label_operation = str_replace(array("- ", "…", "..."), "", $line->label_operation);
+			$line->label_operation = dol_string_unaccent($line->label_operation);
 
-			$data->numero_compte = dol_string_unaccent($data->numero_compte);
-			$data->label_compte = dol_string_unaccent($data->label_compte);
-			$data->subledger_account = dol_string_unaccent($data->subledger_account);
+			$line->numero_compte = dol_string_unaccent($line->numero_compte);
+			$line->label_compte = dol_string_unaccent($line->label_compte);
+			$line->subledger_account = dol_string_unaccent($line->subledger_account);
 
-			$data->subledger_label = dol_string_unaccent($data->subledger_label);
-			$data->subledger_label = str_replace(array("- ", "…", "..."), "", $data->subledger_label);
-			$data->subledger_label = dol_string_unaccent($data->subledger_label);
+			$line->subledger_label = str_replace(array("- ", "…", "..."), "", $line->subledger_label);
+			$line->subledger_label = dol_string_unaccent($line->subledger_label);
 
-			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account)) {
-				$code_compta = $data->subledger_account;
+			$code_compta = $line->numero_compte;
+			if (!empty($line->subledger_account)) {
+				$code_compta = $line->subledger_account;
 			}
 
-			$Tab = array();
+			$tab = array();
 
-			if (!empty($data->subledger_account)) {
-				$Tab['type_ligne'] = 'C';
-				$Tab['num_compte'] = str_pad(self::trunc($data->subledger_account, 8), 8);
-				$Tab['lib_compte'] = str_pad(self::trunc($data->subledger_label, 30), 30);
+			if (!empty($line->subledger_account)) {
+				$tab['type_ligne'] = 'C';
+				$tab['num_compte'] = str_pad(self::trunc($line->subledger_account, 8), 8);
+				$tab['lib_compte'] = str_pad(self::trunc($line->subledger_label, 30), 30);
 
-				if ($data->doc_type == 'customer_invoice') {
-					$Tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc($data->subledger_label, 6), 7));
-					$Tab['filler'] = str_repeat(' ', 52);
-					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER, 8), 8);
-				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc($data->subledger_label, 6), 7));
-					$Tab['filler'] = str_repeat(' ', 52);
-					$Tab['coll_compte'] = str_pad(self::trunc($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, 8), 8);
+				if ($line->doc_type == 'customer_invoice') {
+					$tab['lib_alpha'] = strtoupper(str_pad('C'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+					$tab['filler'] = str_repeat(' ', 52);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), 8), 8);
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					$tab['lib_alpha'] = strtoupper(str_pad('F'.self::trunc(dol_string_unaccent($line->subledger_label), 6), 7));
+					$tab['filler'] = str_repeat(' ', 52);
+					$tab['coll_compte'] = str_pad(self::trunc(getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER'), 8), 8);
 				} else {
-					$Tab['filler'] = str_repeat(' ', 59);
-					$Tab['coll_compte'] = str_pad(' ', 8);
+					$tab['filler'] = str_repeat(' ', 59);
+					$tab['coll_compte'] = str_pad(' ', 8);
 				}
 
-				$Tab['filler2'] = str_repeat(' ', 110);
-				$Tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
+				$tab['filler2'] = str_repeat(' ', 110);
+				$tab['Maj'] = 2; // Partial update (alpha key, label, address, collectif, RIB)
 
-				if ($data->doc_type == 'customer_invoice') {
-					$Tab['type_compte'] = 'C';
-				} elseif ($data->doc_type == 'supplier_invoice') {
-					$Tab['type_compte'] = 'F';
+				if ($line->doc_type == 'customer_invoice') {
+					$tab['type_compte'] = 'C';
+				} elseif ($line->doc_type == 'supplier_invoice') {
+					$tab['type_compte'] = 'F';
 				} else {
-					$Tab['type_compte'] = 'G';
+					$tab['type_compte'] = 'G';
 				}
 
-				$Tab['filler3'] = str_repeat(' ', 235);
+				$tab['filler3'] = str_repeat(' ', 235);
 
-				$Tab['end_line'] = $end_line;
+				$tab['end_line'] = $end_line;
 
-				print implode($Tab);
+				if ($exportFile) {
+					fwrite($exportFile, implode($tab));
+				} else {
+					print implode($tab);
+				}
 			}
 
-			$Tab = array();
-			$Tab['type_ligne'] = 'M';
-			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
-			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
-			$Tab['folio'] = '000';
+			$tab = array();
+			$tab['type_ligne'] = 'M';
+			$tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
+			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
+			$tab['folio'] = '000';
 
-			// We use invoice date $data->doc_date not $date_ecriture which is the transfert date
+			// We use invoice date $line->doc_date not $date_ecriture which is the transfer date
 			// maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
-			//$Tab['date_ecriture'] = $date_ecriture;
-			$Tab['date_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
-			$Tab['filler'] = ' ';
-			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref.' '.$data->label_operation, 20), 20);
+			//$tab['date_ecriture'] = $date_ecriture;
+			$tab['date_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
+			$tab['filler'] = ' ';
+			$tab['libelle_ecriture'] = str_pad(self::trunc($line->doc_ref.' '.$line->label_operation, 20), 20);
 
 			// Credit invoice - invert sens
 			/*
-			if ($data->montant < 0) {
-				if ($data->sens == 'C') {
-					$Tab['sens'] = 'D';
+			if ($line->montant < 0) {
+				if ($line->sens == 'C') {
+					$tab['sens'] = 'D';
 				} else {
-					$Tab['sens'] = 'C';
+					$tab['sens'] = 'C';
 				}
-				$Tab['signe_montant'] = '-';
+				$tab['signe_montant'] = '-';
 			} else {
-				$Tab['sens'] = $data->sens; // C or D
-				$Tab['signe_montant'] = '+';
+				$tab['sens'] = $line->sens; // C or D
+				$tab['signe_montant'] = '+';
 			}*/
-			$Tab['sens'] = $data->sens; // C or D
-			$Tab['signe_montant'] = '+';
+			$tab['sens'] = $line->sens; // C or D
+			$tab['signe_montant'] = '+';
 
 			// The amount must be in centimes without decimal points.
-			$Tab['montant'] = str_pad(abs(($data->debit - $data->credit) * 100), 12, '0', STR_PAD_LEFT);
-			$Tab['contrepartie'] = str_repeat(' ', 8);
+			$tab['montant'] = str_pad((string) abs(($line->debit - $line->credit) * 100), 12, '0', STR_PAD_LEFT);
+			$tab['contrepartie'] = str_repeat(' ', 8);
 
 			// Force date format : %d%m%y
-			if (!empty($data->date_lim_reglement)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
+			if (!empty($line->date_lim_reglement)) {
+				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%y'); // Format must be ddmmyy
 			} else {
-				$Tab['date_echeance'] = '000000';
+				$tab['date_echeance'] = '000000';
 			}
 
 			// Please keep quadra named field lettrage(2) + codestat(3) instead of fake lettrage(5)
-			// $Tab['lettrage'] = str_repeat(' ', 5);
-			$Tab['lettrage'] = str_repeat(' ', 2);
-			$Tab['codestat'] = str_repeat(' ', 3);
-			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 5), 5);
+			// $tab['lettrage'] = str_repeat(' ', 5);
+			$tab['lettrage'] = str_repeat(' ', 2);
+			$tab['codestat'] = str_repeat(' ', 3);
+			$tab['num_piece'] = str_pad(self::trunc($line->piece_num, 5), 5);
 
 			// Keep correct quadra named field instead of anon filler
-			// $Tab['filler2'] = str_repeat(' ', 20);
-			$Tab['affaire'] = str_repeat(' ', 10);
-			$Tab['quantity1'] = str_repeat(' ', 10);
-			$Tab['num_piece2'] = str_pad(self::trunc($data->piece_num, 8), 8);
-			$Tab['devis'] = str_pad($conf->currency, 3);
-			$Tab['code_journal2'] = str_pad(self::trunc($data->code_journal, 3), 3);
-			$Tab['filler3'] = str_repeat(' ', 3);
+			// $tab['filler2'] = str_repeat(' ', 20);
+			$tab['affaire'] = str_repeat(' ', 10);
+			$tab['quantity1'] = str_repeat(' ', 10);
+			$tab['num_piece2'] = str_pad(self::trunc($line->piece_num, 8), 8);
+			$tab['devis'] = str_pad($conf->currency, 3);
+			$tab['code_journal2'] = str_pad(self::trunc($line->code_journal, 3), 3);
+			$tab['filler3'] = str_repeat(' ', 3);
 
 			// Keep correct quadra named field instead of anon filler libelle_ecriture2 is 30 char not 32 !!!!
 			// as we use utf8, we must remove accent to have only one ascii char instead of utf8 2 chars for specials that report wrong line size that will exceed import format spec
 			// TODO: we should filter more than only accent to avoid wrong line size
-			// TODO: remove invoice number doc_ref in libelle,
-			// TODO: we should offer an option for customer to build the libelle using invoice number / name / date in accounting software
-			//$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->doc_ref . ' ' . $data->label_operation, 30), 30);
-			$Tab['libelle_ecriture2'] = str_pad(self::trunc($data->label_operation, 30), 30);
-			$Tab['codetva'] = str_repeat(' ', 2);
+			// TODO: remove invoice number doc_ref in label,
+			// TODO: we should offer an option for customer to build the label using invoice number / name / date in accounting software
+			//$tab['libelle_ecriture2'] = str_pad(self::trunc($line->doc_ref . ' ' . $line->label_operation, 30), 30);
+			$tab['libelle_ecriture2'] = str_pad(self::trunc($line->label_operation, 30), 30);
+			$tab['codetva'] = str_repeat(' ', 2);
 
-			// We need to keep the 10 lastest number of invoice doc_ref not the beginning part that is the unusefull almost same part
-			// $Tab['num_piece3'] = str_pad(self::trunc($data->piece_num, 10), 10);
-			$Tab['num_piece3'] = substr(self::trunc($data->doc_ref, 20), -10);
-			$Tab['filler4'] = str_repeat(' ', 73);
+			// We need to keep the 10 latest number of invoices doc_ref not the beginning part that is the useless almost same part
+			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
+			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
+			$tab['reserved'] = str_repeat(' ', 10); // position 159
+			$tab['currency_amount'] = str_repeat(' ', 13); // position 169
+			// get document file
+			$attachmentFileName = '';
+			if ($withAttachment == 1) {
+				$attachmentFileKey = trim($line->piece_num);
 
-			$Tab['end_line'] = $end_line;
+				if (!isset($archiveFileList[$attachmentFileKey])) {
+					$objectDirPath = '';
+					$objectFileName = dol_sanitizeFileName($line->doc_ref);
+					if ($line->doc_type == 'customer_invoice') {
+						$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+					} elseif ($line->doc_type == 'expense_report') {
+						$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+					} elseif ($line->doc_type == 'supplier_invoice') {
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+						$invoice = new FactureFournisseur($this->db);
+						$invoice->fetch($line->fk_doc);
+						$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+						$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+					}
+					$arrayofinclusion = array();
+					// If it is a supplier invoice, we want to use last uploaded file
+					$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+					$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
+					if (!empty($fileFoundList)) {
+						$attachmentFileNameTrunc = str_pad(self::trunc($line->piece_num, 8), 8, '0', STR_PAD_LEFT);
+						foreach ($fileFoundList as $fileFound) {
+							if (strstr($fileFound['name'], $objectFileName)) {
+								// skip native invoice pdfs (canelle)
+								// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+								if ($line->doc_type == 'supplier_invoice') {
+									if ($fileFound['name'] === $objectFileName.'.pdf') {
+										continue;
+									}
+								} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+									continue;
+								}
+								$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+								if (file_exists($fileFoundPath)) {
+									$archiveFileList[$attachmentFileKey] = array(
+										'path' => $fileFoundPath,
+										'name' => $attachmentFileNameTrunc.'.pdf',
+									);
+									break;
+								}
+							}
+						}
+					}
+				}
 
-			print implode($Tab);
+				if (isset($archiveFileList[$attachmentFileKey])) {
+					$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+				}
+			}
+			if (dol_strlen($attachmentFileName) == 12) {
+				$tab['attachment'] = $attachmentFileName; // position 182
+			} else {
+				$tab['attachment'] = str_repeat(' ', 12); // position 182
+			}
+			$tab['filler4'] = str_repeat(' ', 38);
+			$tab['end_line'] = $end_line;
+
+			if ($exportFile) {
+				fwrite($exportFile, implode($tab));
+			} else {
+				print implode($tab);
+			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
@@ -737,84 +1080,79 @@ class AccountancyExport
 	 *
 	 * Help : https://wiki.gestan.fr/lib/exe/fetch.php?media=wiki:v15:compta:accountancy-format_winfic-ewinfic-winsiscompta.pdf
 	 *
-	 * @param array $TData data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportWinfic(&$TData)
+	public function exportWinfic($objectLines, $exportFile = null)
 	{
 		global $conf;
 
 		$end_line = "\r\n";
 		$index = 1;
 
-		//We should use dol_now function not time however this is wrong date to transfert in accounting
-		//$date_ecriture = dol_print_date(dol_now(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-		//$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
-
 		// Warning ! When truncation is necessary, no dot because 3 dots = three characters. The columns are shifted
 
-		foreach ($TData as $data) {
-			$code_compta = $data->numero_compte;
-			if (!empty($data->subledger_account)) {
-				$code_compta = $data->subledger_account;
+		foreach ($objectLines as $line) {
+			$code_compta = $line->numero_compte;
+			if (!empty($line->subledger_account)) {
+				$code_compta = $line->subledger_account;
 			}
 
-			$Tab = array();
-			//$Tab['type_ligne'] = 'M';
-			$Tab['code_journal'] = str_pad(dol_trunc($data->code_journal, 2, 'right', 'UTF-8', 1), 2);
+			$tab = array();
+			//$tab['type_ligne'] = 'M';
+			$tab['code_journal'] = str_pad(dol_trunc($line->code_journal, 2, 'right', 'UTF-8', 1), 2);
 
-			//We use invoice date $data->doc_date not $date_ecriture which is the transfert date
+			//We use invoice date $line->doc_date not $date_ecriture which is the transfer date
 			//maybe we should set an option for customer who prefer to keep in accounting software the tranfert date instead of invoice date ?
-			//$Tab['date_ecriture'] = $date_ecriture;
-			$Tab['date_operation'] = dol_print_date($data->doc_date, '%d%m%Y');
+			//$tab['date_ecriture'] = $date_ecriture;
+			$tab['date_operation'] = dol_print_date($line->doc_date, '%d%m%Y');
 
-			$Tab['folio'] = '     1';
+			$tab['folio'] = '     1';
 
-			$Tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
+			$tab['num_ecriture'] = str_pad(dol_trunc($index, 6, 'right', 'UTF-8', 1), 6, ' ', STR_PAD_LEFT);
 
-			$Tab['jour_ecriture'] = dol_print_date($data->doc_date, '%d%m%y');
+			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 
-			$Tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
+			$tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
 
-			if ($data->sens == 'D') {
-				$Tab['montant_debit']  = str_pad(number_format($data->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+			if ($line->sens == 'D') {
+				$tab['montant_debit']  = str_pad(number_format($line->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
-				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			} else {
-				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
-				$Tab['montant_crebit'] = str_pad(number_format($data->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
+				$tab['montant_crebit'] = str_pad(number_format($line->credit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 			}
 
-			$Tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($data->doc_ref).' '.dol_string_unaccent($data->label_operation), 30, 'right', 'UTF-8', 1), 30);
+			$tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($line->doc_ref).' '.dol_string_unaccent($line->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$Tab['lettrage'] = str_repeat(dol_trunc($data->lettering_code, 2, 'left', 'UTF-8', 1), 2);
+			$tab['lettrage'] = str_repeat(dol_trunc($line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
-			$Tab['code_piece'] = str_pad(dol_trunc($data->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
+			$tab['code_piece'] = str_pad(dol_trunc($line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
-			$Tab['code_stat'] = str_repeat(' ', 4);
+			$tab['code_stat'] = str_repeat(' ', 4);
 
-			if (!empty($data->date_lim_reglement)) {
-				//$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, $conf->global->ACCOUNTING_EXPORT_DATE);
-				$Tab['date_echeance'] = dol_print_date($data->date_lim_reglement, '%d%m%Y');
+			if (!empty($line->date_lim_reglement)) {
+				$tab['date_echeance'] = dol_print_date($line->date_lim_reglement, '%d%m%Y');
 			} else {
-				$Tab['date_echeance'] = dol_print_date($data->doc_date, '%d%m%Y');
+				$tab['date_echeance'] = dol_print_date($line->doc_date, '%d%m%Y');
 			}
 
-			$Tab['monnaie'] = '1';
+			$tab['monnaie'] = '1';
 
-			$Tab['filler'] = ' ';
+			$tab['filler'] = ' ';
 
-			$Tab['ind_compteur'] = ' ';
+			$tab['ind_compteur'] = ' ';
 
-			$Tab['quantite'] = '0,000000000';
+			$tab['quantite'] = '0,000000000';
 
-			$Tab['code_pointage'] = str_repeat(' ', 2);
+			$tab['code_pointage'] = str_repeat(' ', 2);
 
-			$Tab['end_line'] = $end_line;
+			$tab['end_line'] = $end_line;
 
-			print implode('|', $Tab);
+			print implode('|', $tab);
 
 			$index++;
 		}
@@ -824,34 +1162,42 @@ class AccountancyExport
 	/**
 	 * Export format : EBP
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportEbp($objectLines)
+	public function exportEbp($objectLines, $exportFile = null)
 	{
-
 		$separator = ',';
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
-			print $line->id.$separator;
-			print $date.$separator;
-			print $line->code_journal.$separator;
+			$tab = array();
+
+			$tab[] = $line->id;
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
 			if (empty($line->subledger_account)) {
-				print $line->numero_compte.$separator;
+				$tab[] = $line->numero_compte;
 			} else {
-				print $line->subledger_account.$separator;
+				$tab[] = $line->subledger_account;
 			}
-			//print substr(length_accountg($line->numero_compte), 0, 2) . $separator;
-			print '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"'.$separator;
-			print '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"'.$separator;
-			print price2num(abs($line->debit - $line->credit)).$separator;
-			print $line->sens.$separator;
-			print $date.$separator;
+			//$tab[] = substr(length_accountg($line->numero_compte), 0, 2) . $separator;
+			$tab[] = '"'.dol_trunc($line->label_operation, 40, 'right', 'UTF-8', 1).'"';
+			$tab[] = '"'.dol_trunc($line->piece_num, 15, 'right', 'UTF-8', 1).'"';
+			$tab[] = price2num(abs($line->debit - $line->credit));
+			$tab[] = $line->sens;
+			$tab[] = $date_document;
 			//print 'EUR';
-			print $end_line;
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
@@ -859,91 +1205,108 @@ class AccountancyExport
 	/**
 	 * Export format : Agiris Isacompta
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportAgiris($objectLines)
+	public function exportAgiris($objectLines, $exportFile = null)
 	{
-
 		$separator = ';';
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
+			$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
-			print $line->piece_num.$separator;
-			print self::toAnsi($line->label_operation).$separator;
-			print $date.$separator;
-			print self::toAnsi($line->label_operation).$separator;
+			$tab = array();
+
+			$tab[] = $line->piece_num;
+			$tab[] = self::toAnsi($line->label_operation);
+			$tab[] = $date_document;
+			$tab[] = self::toAnsi($line->label_operation);
 
 			if (empty($line->subledger_account)) {
-				print length_accountg($line->numero_compte).$separator;
-				print self::toAnsi($line->label_compte).$separator;
+				$tab[] = length_accountg($line->numero_compte);
+				$tab[] = self::toAnsi($line->label_compte);
 			} else {
-				print length_accounta($line->subledger_account).$separator;
-				print self::toAnsi($line->subledger_label).$separator;
+				$tab[] = length_accounta($line->subledger_account);
+				$tab[] = self::toAnsi($line->subledger_label);
 			}
 
-			print self::toAnsi($line->doc_ref).$separator;
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
-			print price(abs($line->debit - $line->credit)).$separator;
-			print $line->sens.$separator;
-			print $line->lettering_code.$separator;
-			print $line->code_journal;
-			print $end_line;
+			$tab[] = self::toAnsi($line->doc_ref);
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
+			$tab[] = price(abs($line->debit - $line->credit));
+			$tab[] = $line->sens;
+			$tab[] = $line->lettering_code;
+			$tab[] = $line->code_journal;
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : OpenConcerto
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportOpenConcerto($objectLines)
+	public function exportOpenConcerto($objectLines, $exportFile = null)
 	{
-
 		$separator = ';';
 		$end_line = "\n";
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+			$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
 
-			print $date.$separator;
-			print $line->code_journal.$separator;
+			$tab = array();
+
+			$tab[] = $date_document;
+			$tab[] = $line->code_journal;
 			if (empty($line->subledger_account)) {
-				print length_accountg($line->numero_compte).$separator;
+				$tab[] = length_accountg($line->numero_compte);
 			} else {
-				print length_accounta($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			}
-			print $line->doc_ref.$separator;
-			print $line->label_operation.$separator;
-			print price($line->debit).$separator;
-			print price($line->credit).$separator;
+			$tab[] = $line->doc_ref;
+			$tab[] = $line->label_operation;
+			$tab[] = price($line->debit);
+			$tab[] = price($line->credit);
 
-			print $end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : Configurable CSV
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportConfigurable($objectLines)
+	public function exportConfigurable($objectLines, $exportFile = null)
 	{
 		global $conf;
 
 		$separator = $this->separator;
 
 		foreach ($objectLines as $line) {
+			$date_document = dol_print_date($line->doc_date, getDolGlobalString('ACCOUNTING_EXPORT_DATE'));
+
 			$tab = array();
 			// export configurable
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
 			$tab[] = $line->piece_num;
-			$tab[] = $date;
+			$tab[] = $date_document;
 			$tab[] = $line->doc_ref;
 			$tab[] = preg_match('/'.$separator.'/', $line->label_operation) ? "'".$line->label_operation."'" : $line->label_operation;
 			$tab[] = length_accountg($line->numero_compte);
@@ -953,47 +1316,67 @@ class AccountancyExport
 			$tab[] = price2num($line->debit - $line->credit);
 			$tab[] = $line->code_journal;
 
-			print implode($separator, $tab).$this->end_line;
+			$output = implode($separator, $tab).$this->end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : FEC
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * Help to import in your software: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Exports_avec_fichiers_sources
+	 *
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportFEC($objectLines)
+	public function exportFEC($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
 
-		print "JournalCode".$separator;
-		print "JournalLib".$separator;
-		print "EcritureNum".$separator;
-		print "EcritureDate".$separator;
-		print "CompteNum".$separator;
-		print "CompteLib".$separator;
-		print "CompAuxNum".$separator;
-		print "CompAuxLib".$separator;
-		print "PieceRef".$separator;
-		print "PieceDate".$separator;
-		print "EcritureLib".$separator;
-		print "Debit".$separator;
-		print "Credit".$separator;
-		print "EcritureLet".$separator;
-		print "DateLet".$separator;
-		print "ValidDate".$separator;
-		print "Montantdevise".$separator;
-		print "Idevise".$separator;
-		print "DateLimitReglmt".$separator;
-		print "NumFacture";
-		print $end_line;
+		$tab = array();
+		$tab[] = "JournalCode";
+		$tab[] = "JournalLib";
+		$tab[] = "EcritureNum";
+		$tab[] = "EcritureDate";
+		$tab[] = "CompteNum";
+		$tab[] = "CompteLib";
+		$tab[] = "CompAuxNum";
+		$tab[] = "CompAuxLib";
+		$tab[] = "PieceRef";
+		$tab[] = "PieceDate";
+		$tab[] = "EcritureLib";
+		$tab[] = "Debit";
+		$tab[] = "Credit";
+		$tab[] = "EcritureLet";
+		$tab[] = "DateLet";
+		$tab[] = "ValidDate";
+		$tab[] = "Montantdevise";
+		$tab[] = "Idevise";
+		$tab[] = "DateLimitReglmt";
+		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
+				//var_dump($line->id);
 				//unset($array[$line]);
 			} else {
 				$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
@@ -1019,111 +1402,190 @@ class AccountancyExport
 					$refInvoice = $invoice->ref_supplier;
 				}
 
+				$tab = array();
+
 				// FEC:JournalCode
-				print $line->code_journal . $separator;
+				$tab[] = $line->code_journal;
 
 				// FEC:JournalLib
 				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
 				$labeljournal = dol_string_nospecial($labeljournal, ' ');
-				print $labeljournal . $separator;
+				$tab[] = $labeljournal;
 
 				// FEC:EcritureNum
-				print $line->piece_num . $separator;
+				$tab[] = $line->piece_num;
 
 				// FEC:EcritureDate
-				print $date_document . $separator;
+				$tab[] = $date_document;
 
 				// FEC:CompteNum
-				print length_accountg($line->numero_compte) . $separator;
+				$tab[] = length_accountg($line->numero_compte);
 
 				// FEC:CompteLib
-				print dol_string_unaccent($line->label_compte) . $separator;
+				$tab[] = dol_string_unaccent($line->label_compte);
 
 				// FEC:CompAuxNum
-				print length_accounta($line->subledger_account) . $separator;
+				$tab[] = length_accounta($line->subledger_account);
 
 				// FEC:CompAuxLib
-				print dol_string_unaccent($line->subledger_label) . $separator;
+				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
-				print $line->doc_ref . $separator;
+				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate
-				print dol_string_unaccent($date_creation) . $separator;
+				$tab[] = dol_string_unaccent($date_creation);
 
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
-				print dol_string_unaccent($line->label_operation) . $separator;
+				$line->label_operation = str_replace(array("..."), "", $line->label_operation);
+				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
-				print price2fec($line->debit) . $separator;
+				$tab[] = price2fec($line->debit);
 
 				// FEC:Credit
-				print price2fec($line->credit) . $separator;
+				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
-				print $line->lettering_code . $separator;
+				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet
-				print $date_lettering . $separator;
+				$tab[] = $date_lettering;
 
 				// FEC:ValidDate
-				print $date_validation . $separator;
+				$tab[] = $date_validation;
 
 				// FEC:Montantdevise
-				print $line->multicurrency_amount . $separator;
+				$tab[] = $line->multicurrency_amount;
 
 				// FEC:Idevise
-				print $line->multicurrency_code . $separator;
+				$tab[] = $line->multicurrency_code;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment . $separator;
+				$tab[] = $date_limit_payment;
 
 				// FEC_suppl:NumFacture
 				// Clean ref invoice to prevent problem on export with tab separator & other character
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
-				print $end_line;
+				// FEC_suppl:FichierFacture
+				// get document file
+				$attachmentFileName = '';
+				if ($withAttachment == 1) {
+					$attachmentFileKey = trim($line->piece_num);
+
+					if (!isset($archiveFileList[$attachmentFileKey])) {
+						$objectDirPath = '';
+						$objectFileName = dol_sanitizeFileName($line->doc_ref);
+						if ($line->doc_type == 'customer_invoice') {
+							$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+						} elseif ($line->doc_type == 'expense_report') {
+							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+						} elseif ($line->doc_type == 'supplier_invoice') {
+							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						}
+						$arrayofinclusion = array();
+						// If it is a supplier invoice, we want to use last uploaded file
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = $line->doc_ref;
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									// skip native invoice pdfs (canelle)
+									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+									if ($line->doc_type == 'supplier_invoice') {
+										if ($fileFound['name'] === $objectFileName.'.pdf') {
+											continue;
+										}
+									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+										continue;
+									}
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (isset($archiveFileList[$attachmentFileKey])) {
+						$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+					}
+				}
+
+				$tab[] = $attachmentFileName;
+
+				$output = implode($separator, $tab).$end_line;
+
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
 	 * Export format : FEC2
+	 * Last review for this format : 2023/10/12 Alexandre Spangaro (aspangaro@open-dsi.fr)
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * Help to import in your software: https://wiki.dolibarr.org/index.php?title=Module_Comptabilit%C3%A9_en_Partie_Double#Exports_avec_fichiers_sources
+	 *
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @param 	array		$archiveFileList		[=array()] Archive file list : array of ['path', 'name']
+	 * @param 	int			$withAttachment			[=0] Not add files or 1 to have attached in an archive
+	 * @return	array		Archive file list : array of ['path', 'name']
 	 */
-	public function exportFEC2($objectLines)
+	public function exportFEC2($objectLines, $exportFile = null, $archiveFileList = array(), $withAttachment = 0)
 	{
-		global $langs;
+		global $conf, $langs;
 
 		$separator = "\t";
 		$end_line = "\r\n";
 
-		print "JournalCode".$separator;
-		print "JournalLib".$separator;
-		print "EcritureNum".$separator;
-		print "EcritureDate".$separator;
-		print "CompteNum".$separator;
-		print "CompteLib".$separator;
-		print "CompAuxNum".$separator;
-		print "CompAuxLib".$separator;
-		print "PieceRef".$separator;
-		print "PieceDate".$separator;
-		print "EcritureLib".$separator;
-		print "Debit".$separator;
-		print "Credit".$separator;
-		print "EcritureLet".$separator;
-		print "DateLet".$separator;
-		print "ValidDate".$separator;
-		print "Montantdevise".$separator;
-		print "Idevise".$separator;
-		print "DateLimitReglmt".$separator;
-		print "NumFacture";
-		print $end_line;
+		$tab = array();
+		$tab[] = "JournalCode";
+		$tab[] = "JournalLib";
+		$tab[] = "EcritureNum";
+		$tab[] = "EcritureDate";
+		$tab[] = "CompteNum";
+		$tab[] = "CompteLib";
+		$tab[] = "CompAuxNum";
+		$tab[] = "CompAuxLib";
+		$tab[] = "PieceRef";
+		$tab[] = "PieceDate";
+		$tab[] = "EcritureLib";
+		$tab[] = "Debit";
+		$tab[] = "Credit";
+		$tab[] = "EcritureLet";
+		$tab[] = "DateLet";
+		$tab[] = "ValidDate";
+		$tab[] = "Montantdevise";
+		$tab[] = "Idevise";
+		$tab[] = "DateLimitReglmt";
+		$tab[] = "NumFacture";
+		$tab[] = "FichierFacture";
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
@@ -1152,76 +1614,139 @@ class AccountancyExport
 					$refInvoice = $invoice->ref_supplier;
 				}
 
+				$tab = array();
+
 				// FEC:JournalCode
-				print $line->code_journal . $separator;
+				$tab[] = $line->code_journal;
 
 				// FEC:JournalLib
 				$labeljournal = dol_string_unaccent($langs->transnoentities($line->journal_label));
 				$labeljournal = dol_string_nospecial($labeljournal, ' ');
-				print $labeljournal . $separator;
+				$tab[] = $labeljournal;
 
 				// FEC:EcritureNum
-				print $line->piece_num . $separator;
+				$tab[] = $line->piece_num;
 
 				// FEC:EcritureDate
-				print $date_creation . $separator;
+				$tab[] = $date_creation;
 
 				// FEC:CompteNum
-				print length_accountg($line->numero_compte) . $separator;
+				$tab[] = length_accountg($line->numero_compte);
 
 				// FEC:CompteLib
-				print dol_string_unaccent($line->label_compte) . $separator;
+				$tab[] = dol_string_unaccent($line->label_compte);
 
 				// FEC:CompAuxNum
-				print length_accounta($line->subledger_account) . $separator;
+				$tab[] = length_accounta($line->subledger_account);
 
 				// FEC:CompAuxLib
-				print dol_string_unaccent($line->subledger_label) . $separator;
+				$tab[] = dol_string_unaccent($line->subledger_label);
 
 				// FEC:PieceRef
-				print $line->doc_ref . $separator;
+				$tab[] = $line->doc_ref;
 
 				// FEC:PieceDate
-				print $date_document . $separator;
+				$tab[] = $date_document;
 
 				// FEC:EcritureLib
 				// Clean label operation to prevent problem on export with tab separator & other character
 				$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
-				print dol_string_unaccent($line->label_operation) . $separator;
+				$line->label_operation = str_replace(array("..."), "", $line->label_operation);
+				$tab[] = dol_string_unaccent($line->label_operation);
 
 				// FEC:Debit
-				print price2fec($line->debit) . $separator;
+				$tab[] = price2fec($line->debit);
 
 				// FEC:Credit
-				print price2fec($line->credit) . $separator;
+				$tab[] = price2fec($line->credit);
 
 				// FEC:EcritureLet
-				print $line->lettering_code . $separator;
+				$tab[] = $line->lettering_code;
 
 				// FEC:DateLet
-				print $date_lettering . $separator;
+				$tab[] = $date_lettering;
 
 				// FEC:ValidDate
-				print $date_validation . $separator;
+				$tab[] = $date_validation;
 
 				// FEC:Montantdevise
-				print $line->multicurrency_amount . $separator;
+				$tab[] = $line->multicurrency_amount;
 
 				// FEC:Idevise
-				print $line->multicurrency_code . $separator;
+				$tab[] = $line->multicurrency_code;
 
 				// FEC_suppl:DateLimitReglmt
-				print $date_limit_payment . $separator;
+				$tab[] = $date_limit_payment;
 
 				// FEC_suppl:NumFacture
 				// Clean ref invoice to prevent problem on export with tab separator & other character
 				$refInvoice = str_replace(array("\t", "\n", "\r"), " ", $refInvoice);
-				print dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
+				$tab[] = dol_trunc(self::toAnsi($refInvoice), 17, 'right', 'UTF-8', 1);
 
+				// FEC_suppl:FichierFacture
+				// get document file
+				$attachmentFileName = '';
+				if ($withAttachment == 1) {
+					$attachmentFileKey = trim($line->piece_num);
 
-				print $end_line;
+					if (!isset($archiveFileList[$attachmentFileKey])) {
+						$objectDirPath = '';
+						$objectFileName = dol_sanitizeFileName($line->doc_ref);
+						if ($line->doc_type == 'customer_invoice') {
+							$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+						} elseif ($line->doc_type == 'expense_report') {
+							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+						} elseif ($line->doc_type == 'supplier_invoice') {
+							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+						}
+						$arrayofinclusion = array();
+						// If it is a supplier invoice, we want to use last uploaded file
+						$arrayofinclusion[] = '^'.preg_quote($objectFileName, '/').(($line->doc_type == 'supplier_invoice') ? '.+' : '').'\.pdf$';
+						$fileFoundList = dol_dir_list($objectDirPath.'/'.$objectFileName, 'files', 0, implode('|', $arrayofinclusion), '(\.meta|_preview.*\.png)$', 'date', SORT_DESC, 0, 1);
+						if (!empty($fileFoundList)) {
+							$attachmentFileNameTrunc = $line->doc_ref;
+							foreach ($fileFoundList as $fileFound) {
+								if (strstr($fileFound['name'], $objectFileName)) {
+									// skip native invoice pdfs (canelle)
+									// We want to retrieve an attachment representative of the supplier invoice, not a fake document generated by Dolibarr.
+									if ($line->doc_type == 'supplier_invoice') {
+										if ($fileFound['name'] === $objectFileName.'.pdf') {
+											continue;
+										}
+									} elseif ($fileFound['name'] !== $objectFileName.'.pdf') {
+										continue;
+									}
+									$fileFoundPath = $objectDirPath.'/'.$objectFileName.'/'.$fileFound['name'];
+									if (file_exists($fileFoundPath)) {
+										$archiveFileList[$attachmentFileKey] = array(
+											'path' => $fileFoundPath,
+											'name' => $attachmentFileNameTrunc.'.pdf',
+										);
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (isset($archiveFileList[$attachmentFileKey])) {
+						$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
+					}
+				}
+
+				$tab[] = $attachmentFileName;
+
+				$output = implode($separator, $tab).$end_line;
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
+
+		return $archiveFileList;
 	}
 
 	/**
@@ -1230,19 +1755,47 @@ class AccountancyExport
 	 * https://onlinehelp.sageschweiz.ch/default.aspx?tabid=19984
 	 * http://media.topal.ch/Public/Schnittstellen/TAF/Specification/Sage50-TAF-format.pdf
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportSAGE50SWISS($objectLines)
+	public function exportSAGE50SWISS($objectLines, $exportFile = null)
 	{
 		// SAGE50SWISS
-		$this->separator = ',';
-		$this->end_line = "\r\n";
+		$separator = ',';
+		$end_line = "\r\n";
 
 		// Print header line
-		print "Blg,Datum,Kto,S/H,Grp,GKto,SId,SIdx,KIdx,BTyp,MTyp,Code,Netto,Steuer,FW-Betrag,Tx1,Tx2,PkKey,OpId,Flag";
-		print $this->end_line;
+		$tab = array();
+
+		$tab[] = "Blg";
+		$tab[] = "Datum";
+		$tab[] = "Kto";
+		$tab[] = "S/H";
+		$tab[] = "Grp";
+		$tab[] = "GKto";
+		$tab[] = "SId";
+		$tab[] = "SIdx";
+		$tab[] = "KIdx";
+		$tab[] = "BTyp";
+		$tab[] = "MTyp";
+		$tab[] = "Code";
+		$tab[] = "Netto";
+		$tab[] = "Steuer";
+		$tab[] = "FW-Betrag";
+		$tab[] = "Tx1";
+		$tab[] = "Tx2";
+		$tab[] = "PkKey";
+		$tab[] = "OpId";
+		$tab[] = "Flag";
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
+
 		$thisPieceNum = "";
 		$thisPieceAccountNr = "";
 		$aSize = count($objectLines);
@@ -1256,60 +1809,62 @@ class AccountancyExport
 					&& $objectLines[$aIndex + 1]->piece_num == $line->piece_num
 					&& $aIndex - 1 < $aSize
 					&& $objectLines[$aIndex - 1]->piece_num == $line->piece_num
-					) {
+			) {
 				$sammelBuchung = true;
 			}
 
+			$tab = array();
+
 			//Blg
-			print $line->piece_num.$this->separator;
+			$tab[] = $line->piece_num;
 
 			// Datum
-			$date = dol_print_date($line->doc_date, '%d.%m.%Y');
-			print $date.$this->separator;
+			$date_document = dol_print_date($line->doc_date, '%d.%m.%Y');
+			$tab[] = $date_document;
 
 			// Kto
-			print length_accountg($line->numero_compte).$this->separator;
+			$tab[] = length_accountg($line->numero_compte);
 			// S/H
 			if ($line->sens == 'D') {
-				print 'S'.$this->separator;
+				$tab[] = 'S';
 			} else {
-				print 'H'.$this->separator;
+				$tab[] = 'H';
 			}
-			//Grp
-			print self::trunc($line->code_journal, 1).$this->separator;
+			// Grp
+			$tab[] = self::trunc($line->code_journal, 1);
 			// GKto
 			if (empty($line->code_tiers)) {
 				if ($line->piece_num == $thisPieceNum) {
-					print length_accounta($thisPieceAccountNr).$this->separator;
+					$tab[] = length_accounta($thisPieceAccountNr);
 				} else {
-					print "div".$this->separator;
+					$tab[] = "div";
 				}
 			} else {
-				print length_accounta($line->code_tiers).$this->separator;
+				$tab[] = length_accounta($line->code_tiers);
 			}
-			//SId
-			print $this->separator;
-			//SIdx
-			print "0".$this->separator;
-			//KIdx
-			print "0".$this->separator;
-			//BTyp
-			print "0".$this->separator;
+			// SId
+			$tab[] = $this->separator;
+			// SIdx
+			$tab[] = "0";
+			// KIdx
+			$tab[] = "0";
+			// BTyp
+			$tab[] = "0";
 
-			//MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
+			// MTyp 1=Fibu Einzelbuchung 2=Sammebuchung
 			if ($sammelBuchung) {
-				print "2".$this->separator;
+				$tab[] = "2";
 			} else {
-				print "1".$this->separator;
+				$tab[] = "1";
 			}
 			// Code
-			print '""'.$this->separator;
+			$tab[] = '""';
 			// Netto
-			print abs($line->debit - $line->credit).$this->separator;
+			$tab[] = abs($line->debit - $line->credit);
 			// Steuer
-			print "0.00".$this->separator;
+			$tab[] = "0.00";
 			// FW-Betrag
-			print "0.00".$this->separator;
+			$tab[] = "0.00";
 			// Tx1
 			$line1 = self::toAnsi($line->label_compte, 29);
 			if ($line1 == "LIQ" || $line1 == "LIQ Beleg ok" || strlen($line1) <= 3) {
@@ -1325,18 +1880,23 @@ class AccountancyExport
 				$line2 = "";
 			}
 
-			print '"'.self::toAnsi($line1).'"'.$this->separator;
+			$tab[] = '"'.self::toAnsi($line1).'"';
 			// Tx2
-			print '"'.self::toAnsi($line2).'"'.$this->separator;
+			$tab[] = '"'.self::toAnsi($line2).'"';
 			//PkKey
-			print "0".$this->separator;
+			$tab[] = "0";
 			//OpId
-			print $this->separator;
+			$tab[] = $this->separator;
 
 			// Flag
-			print "0";
+			$tab[] = "0";
 
-			print $this->end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			if ($line->piece_num !== $thisPieceNum) {
 				$thisPieceNum = $line->piece_num;
@@ -1349,13 +1909,12 @@ class AccountancyExport
 	 * Export format : LD Compta version 9
 	 * http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW9.pdf
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportLDCompta($objectLines)
+	public function exportLDCompta($objectLines, $exportFile = null)
 	{
-
 		$separator = ';';
 		$end_line = "\r\n";
 
@@ -1364,21 +1923,23 @@ class AccountancyExport
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
 			$date_lim_reglement = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
+			$tab = array();
+
 			// TYPE
 			$type_enregistrement = 'E'; // For write movement
-			print $type_enregistrement.$separator;
+			$tab[] = $type_enregistrement;
 			// JNAL
-			print substr($line->code_journal, 0, 2).$separator;
+			$tab[] = substr($line->code_journal, 0, 2);
 			// NECR
-			print $line->id.$separator;
+			$tab[] = $line->id;
 			// NPIE
-			print $line->piece_num.$separator;
+			$tab[] = $line->piece_num;
 			// DATP
-			print $date_document.$separator;
+			$tab[] = $date_document;
 			// LIBE
-			print $line->label_operation.$separator;
+			$tab[] = $line->label_operation;
 			// DATH
-			print $date_lim_reglement.$separator;
+			$tab[] = $date_lim_reglement;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
 				if (($line->debit - $line->credit) > 0) {
@@ -1395,7 +1956,7 @@ class AccountancyExport
 			} else {
 				$nature_piece = '';
 			}
-			print $nature_piece.$separator;
+			$tab[] = $nature_piece;
 			// RACI
 			//			if (!empty($line->subledger_account)) {
 			//              if ($line->doc_type == 'supplier_invoice') {
@@ -1409,71 +1970,76 @@ class AccountancyExport
 			$racine_subledger_account = ''; // for records of type E leave this field blank
 			//          }
 
-			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
+			$tab[] = $racine_subledger_account; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->debit - $line->credit), 0, '', 1, 2, 2).$separator;
+			$tab[] = price(abs($line->debit - $line->credit), 0, '', 1, 2, 2);
 			// CODC
-			print $line->sens.$separator;
+			$tab[] = $line->sens;
 			// CPTG
-			print length_accountg($line->numero_compte).$separator;
+			$tab[] = length_accountg($line->numero_compte);
 			// DATE
-			print $date_creation.$separator;
+			$tab[] = $date_creation;
 			// CLET
-			print $line->lettering_code.$separator;
+			$tab[] = $line->lettering_code;
 			// DATL
-			print $line->date_lettering.$separator;
+			$tab[] = $line->date_lettering;
 			// CPTA
 			if (!empty($line->subledger_account)) {
-				print length_accounta($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
-			// CNAT
+			// C.N.A.T
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
-				print 'F'.$separator;
+				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
-				print 'C'.$separator;
+				$tab[] = 'C';
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
 			// SECT
-			print $separator;
+			$tab[] = "";
 			// CTRE
-			print $separator;
+			$tab[] = "";
 			// NORL
-			print $separator;
+			$tab[] = "";
 			// DATV
-			print $separator;
+			$tab[] = "";
 			// REFD
-			print $line->doc_ref.$separator;
+			$tab[] = $line->doc_ref;
 			// CODH
-			print $separator;
+			$tab[] = "";
 			// NSEQ
-			print $separator;
+			$tab[] = "";
 			// MTDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// CODV
-			print $separator;
+			$tab[] = "";
 			// TXDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// MOPM
-			print $separator;
+			$tab[] = "";
 			// BONP
-			print $separator;
+			$tab[] =  "";
 			// BQAF
-			print $separator;
+			$tab[] = "";
 			// ECES
-			print $separator;
+			$tab[] = "";
 			// TXTL
-			print $separator;
+			$tab[] = "";
 			// ECRM
-			print $separator;
+			$tab[] = "";
 			// DATK
-			print $separator;
+			$tab[] = "";
 			// HEUK
-			print $separator;
+			$tab[] = "";
 
-			print $end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
@@ -1483,11 +2049,11 @@ class AccountancyExport
 	 *
 	 * Help : http://www.ldsysteme.fr/fileadmin/telechargement/np/ldcompta/Documentation/IntCptW10.pdf
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportLDCompta10($objectLines)
+	public function exportLDCompta10($objectLines, $exportFile = null)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -1521,107 +2087,116 @@ class AccountancyExport
 						$address[2] = substr(str_replace(array("\t", "\r"), " ", $soc->address), 82, 40);
 					}
 
+					$tab = array();
+
 					$type_enregistrement = 'C';
 					//TYPE
-					print $type_enregistrement.$separator;
+					$tab[] = $type_enregistrement;
 					//NOCL
-					print $soc->code_client.$separator;
+					$tab[] = $soc->code_client;
 					//NMCM
-					print $separator;
+					$tab[] = "";
 					//LIBI
-					print $separator;
+					$tab[] = "";
 					//TITR
-					print $separator;
+					$tab[] = "";
 					//RSSO
-					print $soc->nom.$separator;
+					$tab[] = $soc->nom;
 					//CAD1
-					print  $address[0].$separator;
+					$tab[] = $address[0];
 					//CAD2
-					print  $address[1].$separator;
+					$tab[] = $address[1];
 					//CAD3
-					print  $address[2].$separator;
+					$tab[] = $address[2];
 					//COPO
-					print  $soc->zip.$separator;
+					$tab[] = $soc->zip;
 					//BUDI
-					print  substr($soc->town, 0, 40).$separator;
+					$tab[] = substr($soc->town, 0, 40);
 					//CPAY
-					print  $separator;
+					$tab[] = "";
 					//PAYS
-					print  substr(getCountry($soc->fk_pays), 0, 40).$separator;
+					$tab[] = substr(getCountry($soc->fk_pays), 0, 40);
 					//NTEL
-					print $soc->phone.$separator;
+					$tab[] = $soc->phone;
 					//TLEX
-					print $separator;
+					$tab[] = "";
 					//TLPO
-					print $separator;
+					$tab[] = "";
 					//TLCY
-					print $separator;
+					$tab[] = "";
 					//NINT
-					print $separator;
+					$tab[] = "";
 					//COMM
-					print $separator;
+					$tab[] = "";
 					//SIRE
-					print str_replace(" ", "", $soc->siret).$separator;
+					$tab[] = str_replace(" ", "", $soc->siret);
 					//RIBP
-					print $separator;
+					$tab[] = "";
 					//DOBQ
-					print $separator;
+					$tab[] = "";
 					//IBBQ
-					print $separator;
+					$tab[] = "";
 					//COBQ
-					print $separator;
+					$tab[] = "";
 					//GUBQ
-					print $separator;
+					$tab[] = "";
 					//CPBQ
-					print $separator;
+					$tab[] = "";
 					//CLBQ
-					print $separator;
+					$tab[] = "";
 					//BIBQ
-					print $separator;
+					$tab[] = "";
 					//MOPM
-					print $separator;
+					$tab[] = "";
 					//DJPM
-					print $separator;
+					$tab[] = "";
 					//DMPM
-					print $separator;
+					$tab[] = "";
 					//REFM
-					print $separator;
+					$tab[] = "";
 					//SLVA
-					print $separator;
+					$tab[] = "";
 					//PLCR
-					print $separator;
+					$tab[] = "";
 					//ECFI
-					print $separator;
+					$tab[] = "";
 					//CREP
-					print $separator;
+					$tab[] = "";
 					//NREP
-					print $separator;
+					$tab[] = "";
 					//TREP
-					print $separator;
+					$tab[] = "";
 					//MREP
-					print $separator;
+					$tab[] = "";
 					//GRRE
-					print $separator;
+					$tab[] = "";
 					//LTTA
-					print $separator;
+					$tab[] = "";
 					//CACT
-					print $separator;
+					$tab[] = "";
 					//CODV
-					print $separator;
+					$tab[] = "";
 					//GRTR
-					print $separator;
+					$tab[] = "";
 					//NOFP
-					print $separator;
+					$tab[] = "";
 					//BQAF
-					print $separator;
+					$tab[] = "";
 					//BONP
-					print $separator;
+					$tab[] = "";
 					//CESC
-					print $separator;
+					$tab[] = "";
 
-					print $end_line;
+					$output = implode($separator, $tab).$end_line;
+					if ($exportFile) {
+						fwrite($exportFile, $output);
+					} else {
+						print $output;
+					}
 				}
 			}
+
+			$tab = array();
 
 			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 			$date_creation = dol_print_date($line->date_creation, '%Y%m%d');
@@ -1629,19 +2204,19 @@ class AccountancyExport
 
 			// TYPE E
 			$type_enregistrement = 'E'; // For write movement
-			print $type_enregistrement.$separator;
+			$tab[] = $type_enregistrement;
 			// JNAL
-			print substr($line->code_journal, 0, 2).$separator;
+			$tab[] = substr($line->code_journal, 0, 2);
 			// NECR
-			print $line->id.$separator;
+			$tab[] = $line->id;
 			// NPIE
-			print $line->piece_num.$separator;
+			$tab[] = $line->piece_num;
 			// DATP
-			print $date_document.$separator;
+			$tab[] = $date_document;
 			// LIBE
-			print dol_trunc($line->label_operation, 25, 'right', 'UTF-8', 1).$separator;
+			$tab[] = dol_trunc($line->label_operation, 25, 'right', 'UTF-8', 1);
 			// DATH
-			print $date_lim_reglement.$separator;
+			$tab[] = $date_lim_reglement;
 			// CNPI
 			if ($line->doc_type == 'supplier_invoice') {
 				if (($line->amount) < 0) {		// Currently, only the sign of amount allows to know the type of invoice (standard or credit note). Other solution is to analyse debit/credit/role of account. TODO Add column doc_type_long or make amount mandatory with rule on sign.
@@ -1658,7 +2233,7 @@ class AccountancyExport
 			} else {
 				$nature_piece = '';
 			}
-			print $nature_piece.$separator;
+			$tab[] = $nature_piece;
 			// RACI
 			//			if (!empty($line->subledger_account)) {
 			//				if ($line->doc_type == 'supplier_invoice') {
@@ -1672,75 +2247,80 @@ class AccountancyExport
 			$racine_subledger_account = ''; // for records of type E leave this field blank
 			//			}
 
-			print $racine_subledger_account.$separator; // deprecated CPTG & CPTA use instead
+			$tab[] = $racine_subledger_account; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->debit - $line->credit), 0, '', 1, 2).$separator;
+			$tab[] = price(abs($line->debit - $line->credit), 0, '', 1, 2);
 			// CODC
-			print $line->sens.$separator;
+			$tab[] = $line->sens;
 			// CPTG
-			print length_accountg($line->numero_compte).$separator;
+			$tab[] = length_accountg($line->numero_compte);
 			// DATE
-			print $date_document.$separator;
+			$tab[] = $date_document;
 			// CLET
-			print $line->lettering_code.$separator;
+			$tab[] = $line->lettering_code;
 			// DATL
-			print $line->date_lettering.$separator;
+			$tab[] = $line->date_lettering;
 			// CPTA
 			if (!empty($line->subledger_account)) {
-				print length_accounta($line->subledger_account).$separator;
+				$tab[] = length_accounta($line->subledger_account);
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
-			// CNAT
+			// C.N.A.T
 			if ($line->doc_type == 'supplier_invoice' && !empty($line->subledger_account)) {
-				print 'F'.$separator;
+				$tab[] = 'F';
 			} elseif ($line->doc_type == 'customer_invoice' && !empty($line->subledger_account)) {
-				print 'C'.$separator;
+				$tab[] = 'C';
 			} else {
-				print $separator;
+				$tab[] = "";
 			}
 			// CTRE
-			print $separator;
+			$tab[] = "";
 			// NORL
-			print $separator;
+			$tab[] = "";
 			// DATV
-			print $separator;
+			$tab[] = "";
 			// REFD
-			print $line->doc_ref.$separator;
+			$tab[] = $line->doc_ref;
 			// NECA
-			print '0'.$separator;
+			$tab[] = '0';
 			// CSEC
-			print $separator;
+			$tab[] = "";
 			// CAFF
-			print $separator;
+			$tab[] = "";
 			// CDES
-			print $separator;
+			$tab[] = "";
 			// QTUE
-			print $separator;
+			$tab[] = "";
 			// MTDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// CODV
-			print $separator;
+			$tab[] = "";
 			// TXDV
-			print '0'.$separator;
+			$tab[] = '0';
 			// MOPM
-			print $separator;
+			$tab[] = "";
 			// BONP
-			print $separator;
+			$tab[] = "";
 			// BQAF
-			print $separator;
+			$tab[] = "";
 			// ECES
-			print $separator;
+			$tab[] = "";
 			// TXTL
-			print $separator;
+			$tab[] = "";
 			// ECRM
-			print $separator;
+			$tab[] = "";
 			// DATK
-			print $separator;
+			$tab[] = "";
 			// HEUK
-			print $separator;
+			$tab[] = "";
 
-			print $end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 
 			$last_codeinvoice = $line->doc_ref;
 		}
@@ -1749,10 +2329,11 @@ class AccountancyExport
 	/**
 	 * Export format : Charlemagne
 	 *
-	 * @param array $objectLines data
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportCharlemagne($objectLines)
+	public function exportCharlemagne($objectLines, $exportFile = null)
 	{
 		global $langs;
 		$langs->load('compta');
@@ -1760,67 +2341,82 @@ class AccountancyExport
 		$separator = "\t";
 		$end_line = "\n";
 
-		/*
-		 * Charlemagne export need header
-		 */
-		print $langs->transnoentitiesnoconv('Date').$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Journal'), 6).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Account'), 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('LabelAccount'), 60).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Piece'), 20).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('LabelOperation'), 60).$separator;
-		print $langs->transnoentitiesnoconv('Amount').$separator;
-		print 'S'.$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Analytic').' 1', 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 1', 60).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Analytic').' 2', 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 2', 60).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('Analytic').' 3', 15).$separator;
-		print self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 3', 60).$separator;
-		print $end_line;
+		$tab = array();
+
+		$tab[] = $langs->transnoentitiesnoconv('Date');
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Journal'), 6);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Account'), 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('LabelAccount'), 60);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Piece'), 20);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('LabelOperation'), 60);
+		$tab[] = $langs->transnoentitiesnoconv('Amount');
+		$tab[] = 'S';
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Analytic').' 1', 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 1', 60);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Analytic').' 2', 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 2', 60);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('Analytic').' 3', 15);
+		$tab[] = self::trunc($langs->transnoentitiesnoconv('AnalyticLabel').' 3', 60);
+
+		$output = implode($separator, $tab).$end_line;
+		if ($exportFile) {
+			fwrite($exportFile, $output);
+		} else {
+			print $output;
+		}
 
 		foreach ($objectLines as $line) {
-			$date = dol_print_date($line->doc_date, '%Y%m%d');
-			print $date.$separator; //Date
+			$date_document = dol_print_date($line->doc_date, '%Y%m%d');
 
-			print self::trunc($line->code_journal, 6).$separator; //Journal code
+			$tab = array();
+
+			$tab[] = $date_document; //Date
+
+			$tab[] = self::trunc($line->code_journal, 6); //Journal code
 
 			if (!empty($line->subledger_account)) {
 				$account = $line->subledger_account;
 			} else {
 				$account = $line->numero_compte;
 			}
-			print self::trunc($account, 15).$separator; //Account number
+			$tab[] = self::trunc($account, 15); //Account number
 
-			print self::trunc($line->label_compte, 60).$separator; //Account label
-			print self::trunc($line->doc_ref, 20).$separator; //Piece
+			$tab[] = self::trunc($line->label_compte, 60); //Account label
+			$tab[] = self::trunc($line->doc_ref, 20); //Piece
 			// Clean label operation to prevent problem on export with tab separator & other character
 			$line->label_operation = str_replace(array("\t", "\n", "\r"), " ", $line->label_operation);
-			print self::trunc($line->label_operation, 60).$separator; //Operation label
-			print price(abs($line->debit - $line->credit)).$separator; //Amount
-			print $line->sens.$separator; //Direction
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $separator; //Analytic
-			print $end_line;
+			$tab[] = self::trunc($line->label_operation, 60); //Operation label
+			$tab[] = price(abs($line->debit - $line->credit)); //Amount
+			$tab[] = $line->sens; //Direction
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+			$tab[] = ""; //Analytic
+
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
 	/**
 	 * Export format : Gestimum V3
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return	void
 	 */
-	public function exportGestimumV3($objectLines)
+	public function exportGestimumV3($objectLines, $exportFile = null)
 	{
 		global $langs;
 
-		$this->separator = ',';
+		$separator = ',';
+		$end_line = "\r\n";
 
 		$invoices_infos = array();
 		$supplier_invoices_infos = array();
@@ -1828,7 +2424,8 @@ class AccountancyExport
 			if ($line->debit == 0 && $line->credit == 0) {
 				//unset($array[$line]);
 			} else {
-				$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+				$date_document = dol_print_date($line->doc_date, '%d/%m/%Y');
+				$date_echeance = dol_print_date($line->date_lim_reglement, '%Y%m%d');
 
 				$invoice_ref = $line->doc_ref;
 				$company_name = "";
@@ -1876,33 +2473,41 @@ class AccountancyExport
 					}
 				}
 
-				print $line->id . $this->separator;
-				print $date . $this->separator;
-				print substr($line->code_journal, 0, 4) . $this->separator;
+				$tab = array();
+
+				$tab[] = $line->id;
+				$tab[] = $date_document;
+				$tab[] = substr($line->code_journal, 0, 4);
 
 				if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {
-					print length_accountg($line->subledger_account) . $this->separator;
+					$tab[] = length_accountg($line->subledger_account);
 				} else {
-					print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
+					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
 				//Libellé Auto
-				print $this->separator;
-				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
-				//Libellé manuel
-				print dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1) . $this->separator;
+				$tab[] = "";
+				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"';
+				//Libellé manual
+				$tab[] = dol_trunc(str_replace('"', '', $invoice_ref . (!empty($company_name) ? ' - ' : '') . $company_name), 40, 'right', 'UTF-8', 1);
 				//Numéro de pièce
-				print dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . $this->separator;
+				$tab[] = dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1);
 				//Devise
-				print 'EUR' . $this->separator;
+				$tab[] = 'EUR';
 				//Amount
-				print price2num(abs($line->debit - $line->credit)) . $this->separator;
+				$tab[] = price2num(abs($line->debit - $line->credit));
 				//Sens
-				print $line->sens . $this->separator;
+				$tab[] = $line->sens;
 				//Code lettrage
-				print $this->separator;
+				$tab[] = "";
 				//Date Echéance
-				print $date;
-				print $this->end_line;
+				$tab[] = $date_echeance;
+
+				$output = implode($separator, $tab).$end_line;
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
 	}
@@ -1910,40 +2515,48 @@ class AccountancyExport
 	/**
 	 * Export format : Gestimum V5
 	 *
-	 * @param array $objectLines data
-	 *
-	 * @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	 */
-	public function exportGestimumV5($objectLines)
+	public function exportGestimumV5($objectLines, $exportFile = null)
 	{
-
-		$this->separator = ',';
+		$separator = ',';
+		$end_line = "\r\n";
 
 		foreach ($objectLines as $line) {
 			if ($line->debit == 0 && $line->credit == 0) {
 				//unset($array[$line]);
 			} else {
-				$date = dol_print_date($line->doc_date, '%d%m%Y');
+				$date_document = dol_print_date($line->doc_date, '%d%m%Y');
 
-				print $line->id . $this->separator;
-				print $date . $this->separator;
-				print substr($line->code_journal, 0, 4) . $this->separator;
+				$tab = array();
+
+				$tab[] = $line->id;
+				$tab[] = $date_document;
+				$tab[] = substr($line->code_journal, 0, 4);
 				if ((substr($line->numero_compte, 0, 3) == '411') || (substr($line->numero_compte, 0, 3) == '401')) {	// TODO No hard code value
-					print length_accountg($line->subledger_account) . $this->separator;
+					$tab[] = length_accountg($line->subledger_account);
 				} else {
-					print substr(length_accountg($line->numero_compte), 0, 15) . $this->separator;
+					$tab[] = substr(length_accountg($line->numero_compte), 0, 15);
 				}
-				print $this->separator;
-				//print '"'.dol_trunc(str_replace('"', '', $line->label_operation),40,'right','UTF-8',1).'"' . $this->separator;
-				print '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"' . $this->separator;
-				print '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"' . $this->separator;
-				print price2num(abs($line->debit - $line->credit)) . $this->separator;
-				print $line->sens . $this->separator;
-				print $date . $this->separator;
-				print $this->separator;
-				print $this->separator;
-				print 'EUR';
-				print $this->end_line;
+				$tab[] = "";
+				$tab[] = '"'.dol_trunc(str_replace('"', '', $line->label_operation), 40, 'right', 'UTF-8', 1).'"';
+				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->doc_ref), 40, 'right', 'UTF-8', 1) . '"';
+				$tab[] = '"' . dol_trunc(str_replace('"', '', $line->piece_num), 10, 'right', 'UTF-8', 1) . '"';
+				$tab[] = price2num(abs($line->debit - $line->credit));
+				$tab[] = $line->sens;
+				$tab[] = $date_document;
+				$tab[] = "";
+				$tab[] = "";
+				$tab[] = 'EUR';
+
+				$output = implode($separator, $tab).$end_line;
+				if ($exportFile) {
+					fwrite($exportFile, $output);
+				} else {
+					print $output;
+				}
 			}
 		}
 	}
@@ -1953,14 +2566,14 @@ class AccountancyExport
 	*
 	* by OpenSolus [https://opensolus.fr]
 	*
-	* @param array $objectLines data
-	*
-	* @return void
+	 * @param 	array 		$objectLines 			data
+	 * @param 	resource	$exportFile				[=null] File resource to export or print if null
+	 * @return 	void
 	*/
-	public function exportiSuiteExpert($objectLines)
+	public function exportiSuiteExpert($objectLines, $exportFile = null)
 	{
-		$this->separator = ';';
-		$this->end_line = "\r\n";
+		$separator = ';';
+		$end_line = "\r\n";
 
 
 		foreach ($objectLines as $line) {
@@ -1980,14 +2593,16 @@ class AccountancyExport
 			//Calcul de la longueur des numéros de comptes
 			$taille_numero = strlen(length_accountg($line->numero_compte));
 
-			//Création du numéro de client générique
+			//Création du numéro de client et fournisseur générique
 			$numero_cpt_client = '411';
+			$numero_cpt_fourn = '401';
 			for ($i = 1; $i <= ($taille_numero - 3); $i++) {
 				$numero_cpt_client .= '0';
+				$numero_cpt_fourn .= '0';
 			}
 
-			//Création des comptes auxiliaire des clients
-			if (length_accountg($line->numero_compte) == $numero_cpt_client) {
+			//Création des comptes auxiliaire des clients et fournisseur
+			if (length_accountg($line->numero_compte) == $numero_cpt_client || length_accountg($line->numero_compte) == $numero_cpt_fourn) {
 				$tab[] = rtrim(length_accounta($line->subledger_account), "0");
 			} else {
 				$tab[] = length_accountg($line->numero_compte);
@@ -1999,8 +2614,12 @@ class AccountancyExport
 			$tab[] = price($line->montant);
 			$tab[] = $line->code_journal;
 
-			$separator = $this->separator;
-			print implode($separator, $tab) . $this->end_line;
+			$output = implode($separator, $tab).$end_line;
+			if ($exportFile) {
+				fwrite($exportFile, $output);
+			} else {
+				print $output;
+			}
 		}
 	}
 
@@ -2019,7 +2638,7 @@ class AccountancyExport
 	/**
 	 * toAnsi
 	 *
-	 * @param string	$str 		Original string to encode and optionaly truncate
+	 * @param string	$str 		Original string to encode and optionally truncate
 	 * @param integer 	$size 		Truncate string after $size characters
 	 * @return string 				String encoded in Windows-1251 charset
 	 */
@@ -2027,7 +2646,7 @@ class AccountancyExport
 	{
 		$retVal = dol_string_nohtmltag($str, 1, 'Windows-1251');
 		if ($retVal >= 0 && $size >= 0) {
-			$retVal = mb_substr($retVal, 0, $size, 'Windows-1251');
+			$retVal = dol_substr($retVal, 0, $size, 'Windows-1251');
 		}
 		return $retVal;
 	}

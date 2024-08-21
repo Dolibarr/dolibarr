@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - bookmarks
-NewBookmark=neues Lesezeichen
-ShowBookmark=zeige Lesezeichen
-UrlOrLink=URL oder Link
-CreateBookmark=erzeuge Lesezeichen
-BookmarksManagement=Bookmarks-Verwaltung
+BookmarksManagement =Bookmarks-Verwaltung
+CreateBookmark =erzeuge Lesezeichen
+NewBookmark =neues Lesezeichen
+ShowBookmark =zeige Lesezeichen
+UrlOrLink =URL oder Link

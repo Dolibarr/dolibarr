@@ -56,10 +56,10 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
-	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public');
+if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
 	// HTTP/1.0
 	header('Pragma: token=public');
 } else {
@@ -102,24 +102,24 @@ if (empty($conf->bookmark->enabled)) {
 	if ($resql = $db->query($sql)) {
 		$bookmarkList = '<div id="dropdown-bookmarks-list" class="start">';
 		$i = 0;
-		while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
+		while ((!getDolGlobalString('BOOKMARKS_SHOW_IN_MENU') || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql)) {
 			$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank" rel="noopener noreferrer"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 			$bookmarkList .= dol_escape_htmltag($obj->title);
 			$bookmarkList .= '</a>';
 			$i++;
 		}
 		if ($i == 0) {
-			$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("NoBookmarks").'</span>';
+			$bookmarkList .= '<br><div class="opacitymedium center">'.$langs->trans("NoBookmarks").'</div>';
 			$bookmarkList .= '<br><br>';
 		}
 
 		$newcardbutton = '';
-		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', $user->hasRight('bookmark', 'creer'));
 
 		// Url to list bookmark
 		$bookmarkList .= '<br>';
-		$bookmarkList .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('Bookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
-		$bookmarkList .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('Bookmarks').'</a>';
+		$bookmarkList .= '<a class="top-menu-dropdown-link" title="'.$langs->trans('EditBookmarks').'" href="'.DOL_URL_ROOT.'/bookmarks/list.php" >';
+		$bookmarkList .= img_picto('', 'bookmark', 'class="paddingright"').$langs->trans('EditBookmarks').'</a>';
 		$bookmarkList .= '<br>';
 		$bookmarkList .= '<br>';
 
@@ -146,7 +146,7 @@ if (empty($reshook)) {
 
 print "\n";
 print "<!-- Begin Bookmarks list -->\n";
-print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $bookmarkList;

@@ -22,7 +22,7 @@
 
 /**
  *      \file       htdocs/fourn/facture/note.php
- *      \ingroup    facture
+ *      \ingroup    invoice
  *      \brief      Fiche de notes sur une facture fournisseur
  */
 
@@ -37,7 +37,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("bills", "companies"));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -45,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicesuppliernote'));
 
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
@@ -53,9 +53,9 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $object = new FactureFournisseur($db);
 $object->fetch($id, $ref);
 
-$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+$usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $permissiontoadd = $usercancreate;
-$permissionnote = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer); // Used by the include of actions_setnotes.inc.php
+$permissionnote = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -67,11 +67,11 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 // Set label
-if ($action == 'setlabel' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
+if ($action == 'setlabel' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
 	$object->label = GETPOST('label');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -88,7 +88,7 @@ $form = new Form($db);
 
 $title = $object->ref." - ".$langs->trans('Notes');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_note');
 
 if ($object->id > 0) {
 	$object->fetch_thirdparty();
@@ -105,12 +105,12 @@ if ($object->id > 0) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref supplier
-	$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
-	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-		$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 	}
 	// Project
 	if (isModEnabled('project')) {
@@ -121,7 +121,7 @@ if ($object->id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);

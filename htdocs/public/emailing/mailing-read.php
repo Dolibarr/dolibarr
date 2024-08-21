@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Florian Henry  <florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,24 +47,44 @@ if (!defined('NOREQUIREMENU')) {
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
-if (!defined("NOSESSION")) {
-	define("NOSESSION", '1');
+if (!defined('NOSESSION')) {
+	define('NOSESSION', '1');
 }
 
 /**
  * Header empty
  *
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	array|string  	$arrayofjs			Array of complementary js files
+ * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
 }
+
+
 /**
  * Footer empty
  *
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
 }
 
@@ -83,20 +104,22 @@ $securitykey = GETPOST('securitykey');
 
 dol_syslog("public/emailing/mailing-read.php : tag=".$tag." securitykey=".$securitykey, LOG_DEBUG);
 
-if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) {
+if ($securitykey != dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-".$tag."-".$email."-".$mtid, 'md5')) {
 	print 'Bad security key value.';
 	exit;
 }
 
-if (!empty($tag)) {
+if (!empty($tag) && $tag != 'undefined') {
 	dol_syslog("public/emailing/mailing-read.php : Update status of email target and thirdparty for tag ".$tag, LOG_DEBUG);
 
 	$sql = "SELECT mc.rowid, mc.email, mc.statut, mc.source_type, mc.source_id, m.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
-	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
+	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag = '".$db->escape($tag)."'";
 
 	$resql = $db->query($sql);
-	if (!$resql) dol_print_error($db);
+	if (!$resql) {
+		dol_print_error($db);
+	}
 
 	$obj = $db->fetch_object($resql);
 
@@ -121,19 +144,21 @@ if (!empty($tag)) {
 	 }
 	 */
 
-	//Update status of target
+	// Update status of target
 	$statut = '2';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".((int) $statut)." WHERE rowid = ".((int) $obj->rowid);
 	$resql = $db->query($sql);
-	if (!$resql) dol_print_error($db);
+	if (!$resql) {
+		dol_print_error($db);
+	}
 
-	//Update status communication of thirdparty prospect
+	// Update status communication of thirdparty prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'thirdparty' && $obj->entity) {
 		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.((int) $obj->entity).' AND rowid = '.((int) $obj->source_id);
 		$resql = $db->query($sql);
 	}
 
-	//Update status communication of contact prospect
+	// Update status communication of contact prospect
 	if ($obj->source_id > 0 && $obj->source_type == 'contact' && $obj->entity) {
 		$sql = "UPDATE ".MAIN_DB_PREFIX.'societe SET fk_stcomm = 3 WHERE fk_stcomm <> -1 AND entity = '.((int) $obj->entity).' AND rowid IN (SELECT sc.fk_soc FROM '.MAIN_DB_PREFIX.'socpeople AS sc WHERE sc.rowid = '.((int) $obj->source_id).')';
 		$resql = $db->query($sql);

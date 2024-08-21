@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 class MailingTargets // This can't be abstract as it is used for some method
 {
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB		Database handler (result of a new DoliDB)
 	 */
 	public $db;
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var array of errors
+	 */
+	public $errors;
 
 	/**
 	 * @var string	Condition to be enabled
@@ -42,11 +53,27 @@ class MailingTargets // This can't be abstract as it is used for some method
 	public $enabled;
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string Name of the module
 	 */
-	public $error = '';
+	public $name;
 
+	/**
+	 * @var string Description of the module
+	 */
+	public $desc;
+
+	/**
+	 * @var string Tooltip to show after description of the module
+	 */
 	public $tooltip = '';
+
+	/**
+	 * @var string To store the SQL string used to find the recipients
+	 */
+	public $sql;
+
+
+	public $evenunsubscribe = 0;		// Set this to 1 if you want to flag you also want to include email in target that has opt-out.
 
 
 	/**
@@ -106,8 +133,11 @@ class MailingTargets // This can't be abstract as it is used for some method
 	{
 		$result = $this->db->query($sql);
 		if ($result) {
-			$obj = $this->db->fetch_object($result);
-			return $obj->nb;
+			$total = 0;
+			while ($obj = $this->db->fetch_object($result)) {
+				$total += $obj->nb;
+			}
+			return $total;
 		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -130,7 +160,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 	 * Met a jour nombre de destinataires
 	 *
 	 * @param	int		$mailing_id          Id of emailing
-	 * @return  int			                 < 0 si erreur, nb destinataires si ok
+	 * @return  int			                 Return integer < 0 si erreur, nb destinataires si ok
 	 */
 	public function update_nb($mailing_id)
 	{
@@ -144,7 +174,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 			$nb = $obj->nb;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
-			$sql .= " SET nbemail = ".$nb." WHERE rowid = ".((int) $mailing_id);
+			$sql .= " SET nbemail = ".((int) $nb)." WHERE rowid = ".((int) $mailing_id);
 			if (!$this->db->query($sql)) {
 				dol_syslog($this->db->error());
 				$this->error = $this->db->error();
@@ -157,16 +187,15 @@ class MailingTargets // This can't be abstract as it is used for some method
 	}
 
 	/**
-	 * Add a list of targets int the database
+	 * Add a list of targets into the database
 	 *
 	 * @param	int		$mailing_id    Id of emailing
 	 * @param   array	$cibles        Array with targets
-	 * @return  int      			   < 0 si erreur, nb ajout si ok
+	 * @return  int      			   Return integer < 0 if error, nb added if OK
 	 */
 	public function addTargetsToDatabase($mailing_id, $cibles)
 	{
 		global $conf;
-		global $dolibarr_main_instance_unique_id;
 
 		$this->db->begin();
 
@@ -181,15 +210,15 @@ class MailingTargets // This can't be abstract as it is used for some method
 				$sql .= " lastname, firstname, email, other, source_url, source_id,";
 				$sql .= " tag,";
 				$sql .= " source_type)";
-				$sql .= " VALUES (".$mailing_id.",";
-				$sql .= (empty($targetarray['fk_contact']) ? '0' : "'".$this->db->escape($targetarray['fk_contact'])."'").",";
+				$sql .= " VALUES (".((int) $mailing_id).",";
+				$sql .= (empty($targetarray['fk_contact']) ? '0' : (int) $targetarray['fk_contact']).",";
 				$sql .= "'".$this->db->escape($targetarray['lastname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['firstname'])."',";
 				$sql .= "'".$this->db->escape($targetarray['email'])."',";
 				$sql .= "'".$this->db->escape($targetarray['other'])."',";
 				$sql .= "'".$this->db->escape($targetarray['source_url'])."',";
 				$sql .= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
-				$sql .= "'".$this->db->escape(dol_hash($dolibarr_main_instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".$mailing_id.";".$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY, 'md5'))."',";
+				$sql .= "'".$this->db->escape(dol_hash($conf->file->instance_unique_id.";".$targetarray['email'].";".$targetarray['lastname'].";".((int) $mailing_id).";".getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY'), 'md5'))."',";
 				$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
 				dol_syslog(__METHOD__, LOG_DEBUG);
 				$result = $this->db->query($sql);
@@ -227,16 +256,20 @@ class MailingTargets // This can't be abstract as it is used for some method
 		$result=$this->db->query($sql);
 		*/
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
-		$sql .= " SET statut=3";
-		$sql .= " WHERE fk_mailing = ".((int) $mailing_id)." AND email IN (SELECT mu.email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe AS mu WHERE mu.entity IN ('".getEntity('mailing')."'))";
+		if (empty($this->evenunsubscribe)) {
+			$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles as mc";
+			$sql .= " SET mc.statut = 3";
+			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
+			$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
-		dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if (!$result) {
-			dol_print_error($this->db);
+			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
+			$result = $this->db->query($sql);
+			if (!$result) {
+				dol_print_error($this->db);
+			}
 		}
 
+		// Update nb of recipient into emailing record
 		$this->update_nb($mailing_id);
 
 		$this->db->commit();
@@ -262,5 +295,154 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		$this->update_nb($mailing_id);
+	}
+
+
+	/**
+	 *  Return list of widget. Function used by admin page htdoc/admin/widget.
+	 *  List is sorted by widget filename so by priority to run.
+	 *
+	 *  @param	array	$forcedir			null=All default directories. This parameter is used by modulebuilder module only.
+	 * 	@return	array						Array list of widget
+	 */
+	public static function getEmailingSelectorsList($forcedir = null)
+	{
+		global $langs, $db;
+
+		$files = array();
+		$fullpath = array();
+		$relpath = array();
+		$iscoreorexternal = array();
+		$modules = array();
+		$orders = array();
+		$i = 0;
+
+		$diremailselector = array('/core/modules/mailings/'); // $conf->modules_parts['emailings'] is not required
+		if (is_array($forcedir)) {
+			$diremailselector = $forcedir;
+		}
+
+		foreach ($diremailselector as $reldir) {
+			$dir = dol_buildpath($reldir, 0);
+			$newdir = dol_osencode($dir);
+
+			// Check if directory exists (we do not use dol_is_dir to avoid loading files.lib.php at each call)
+			if (!is_dir($newdir)) {
+				continue;
+			}
+
+			$handle = opendir($newdir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					$reg = array();
+					if (is_readable($newdir.'/'.$file) && preg_match('/^(.+)\.modules.php/', $file, $reg)) {
+						if (preg_match('/\.back$/', $file) || preg_match('/^(.+)\.disabled\.php/', $file)) {
+							continue;
+						}
+
+						$part1 = $reg[1];
+
+						//$modName = ucfirst($reg[1]);
+						$modName = 'mailing_'.$reg[1];	// name of selector submodule
+						//print "file=$file modName=$modName"; exit;
+						if (in_array($modName, $modules)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateEmalingSelector", $modName, "").'</div>';
+						} else {
+							try {
+								//print $newdir.'/'.$file;
+								include_once $newdir.'/'.$file;
+							} catch (Exception $e) {
+								print $e->getMessage();
+							}
+						}
+
+						$files[$i] = $file;
+						$fullpath[$i] = $dir.'/'.$file;
+						$relpath[$i] = preg_replace('/^\//', '', $reldir).'/'.$file;
+						$iscoreorexternal[$i] = ($reldir == '/core/modules/mailings/' ? 'internal' : 'external');
+						$modules[$i] = $modName;
+						$orders[$i] = $part1; // Set sort criteria value
+
+						$i++;
+					}
+				}
+				closedir($handle);
+			}
+		}
+		//echo "<pre>";print_r($modules);echo "</pre>";
+
+		asort($orders);
+
+		$widget = array();
+		$j = 0;
+
+		// Loop on each emailing selector
+		foreach ($orders as $key => $value) {
+			$modName = $modules[$key];
+			if (empty($modName)) {
+				continue;
+			}
+
+			if (!class_exists($modName)) {
+				print 'Error: An emailing selector file was found but its class "'.$modName.'" was not found.'."<br>\n";
+				continue;
+			}
+
+			$objMod = new $modName($db);
+			if (is_object($objMod)) {
+				'@phan-var-force ModeleBoxes $objMod';
+				// Define disabledbyname and disabledbymodule
+				$disabledbyname = 0;
+				$disabledbymodule = 0; // TODO Set to 2 if module is not enabled
+				$module = '';
+
+				// Check if widget file is disabled by name
+				if (preg_match('/NORUN$/i', $files[$key])) {
+					$disabledbyname = 1;
+				}
+
+				// We set info of modules @phan-suppress-next-line PhanUndeclaredProperty
+				$widget[$j]['picto'] = (empty($objMod->picto) ? (empty($objMod->boximg) ? img_object('', 'generic') : $objMod->boximg) : img_object('', $objMod->picto));
+				$widget[$j]['file'] = $files[$key];
+				$widget[$j]['fullpath'] = $fullpath[$key];
+				$widget[$j]['relpath'] = $relpath[$key];
+				$widget[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
+				$widget[$j]['version'] = empty($objMod->version) ? '' : $objMod->version;
+				$widget[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+				if ($disabledbyname > 0 || $disabledbymodule > 1) {
+					$widget[$j]['status'] = '';
+				}
+
+				$text = '<b>'.$langs->trans("Description").':</b><br>';
+				$text .= $objMod->boxlabel.'<br>';
+				$text .= '<br><b>'.$langs->trans("Status").':</b><br>';
+				if ($disabledbymodule == 2) {
+					$text .= $langs->trans("WidgetDisabledAsModuleDisabled", $module).'<br>';
+				}
+
+				$widget[$j]['info'] = $text;
+			}
+			$j++;
+		}
+
+		return $widget;
+	}
+
+
+	/**
+	 *  On the main mailing area, there is a box with statistics.
+	 *  If you want to add a line in this report you must provide an
+	 *  array of SQL request that returns two field:
+	 *  One called "label", One called "nb".
+	 *
+	 *	@return		string[]		Array with SQL requests
+	 */
+	public function getSqlArrayForStats()
+	{
+		// Needs to be implemented in child class
+		$msg = get_class($this)."::".__FUNCTION__." not implemented";
+		dol_syslog($msg, LOG_ERR);
+		return array();
 	}
 }

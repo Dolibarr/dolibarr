@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array("knowledgemanagement", "ticket", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -44,9 +44,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'knowledgerecordcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new KnowledgeRecord($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->knowledgemanagement->dir_output.'/temp/massgeneration/'.$user->id;
@@ -57,7 +57,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -71,15 +71,15 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
-$permissiontoread = $user->rights->knowledgemanagement->knowledgerecord->read;
-$permissiontovalidate = $user->rights->knowledgemanagement->knowledgerecord->write;
-$permissiontoadd = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->knowledgemanagement->knowledgerecord->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-$permissionnote = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_setnotes.inc.php
-$permissiondellink = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read');
+$permissiontovalidate = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write');
+$permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissionnote = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->knowledgemanagement->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -116,7 +116,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'KNOWLEDGEMANAGEMENT_KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'KNOWLEDGERECORD_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Update / add for lang
 	if (($action == 'update' || $action == 'add') && !empty($permissiontoadd)) {
@@ -139,10 +139,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
@@ -166,7 +166,7 @@ $formadmin = new FormAdmin($db);
 
 $title = $langs->trans("KnowledgeRecord");
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card');
 
 // Part to create
 if ($action == 'create') {
@@ -191,8 +191,8 @@ if ($action == 'create') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 	$object->fields['answer']['enabled'] = 1;
 
-	if (isModEnabled('categorie')) {
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
+	if (isModEnabled('category')) {
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
 
 		if (count($cate_arbo)) {
 			// Categories
@@ -211,7 +211,7 @@ if ($action == 'create') {
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -248,8 +248,8 @@ if (($id || $ref) && $action == 'edit') {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_edit.tpl.php';
 	$object->fields['answer']['enabled'] = 1;
 
-	if (isModEnabled('categorie')) {
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 1);
+	if (isModEnabled('category')) {
+		$cate_arbo = $form->select_all_categories(Categorie::TYPE_KNOWLEDGEMANAGEMENT, '', 'parent', 64, 0, 3);
 
 		if (count($cate_arbo)) {
 			// Categories
@@ -276,7 +276,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%');
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%');
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -433,7 +433,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fields['answer']['enabled'] = 1;
 
 	// Categories
-	if (isModEnabled('categorie')) {
+	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_KNOWLEDGEMANAGEMENT, 1);
 		print "</td></tr>";
@@ -453,7 +453,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<br>';
 	print $langs->trans($object->fields['answer']['label']).'<br>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, 0, true, ROWS_9, '100%', 1);
+	$doleditor = new DolEditor('answer', $object->answer, '', 200, 'dolibarr_notes', 'In', true, true, true, ROWS_9, '100%', 1);
 	$out = $doleditor->Create(1);
 	print $out;
 
@@ -538,8 +538,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->knowledgemanagement->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $user->rights->knowledgemanagement->knowledgerecord->read; // If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->knowledgemanagement->knowledgerecord->write; // If you can create/edit, you can remove a file on card
+			$genallowed = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'read'); // If you can read, you can build the PDF to read content
+			$delallowed = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('knowledgemanagement:KnowledgeRecord', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

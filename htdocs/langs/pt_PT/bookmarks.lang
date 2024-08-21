@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Adicionar página atual aos marcadores
-Bookmark=Marcador
-Bookmarks=Marcadores
-ListOfBookmarks=Lista de Marcadores
-EditBookmarks=Listar/editar marcadores
-NewBookmark=Novo marcador
-ShowBookmark=Mostrar marcador
-OpenANewWindow=Abra uma nova guia
-ReplaceWindow=Substituir a guia atual
-BookmarkTargetNewWindowShort=Nova aba
-BookmarkTargetReplaceWindowShort=Aba atual
-BookmarkTitle=Nome do marcador
-UrlOrLink=URL
-BehaviourOnClick=Comportamento quando um URL de marcador é selecionado
-CreateBookmark=Criar marcador
-SetHereATitleForLink=Defina um nome para o favorito
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Escolha se a página vinculada deve ser aberta na guia atual ou em uma nova guia
-BookmarksManagement=Gestão de Marcadores
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Adicionar página atual aos marcadores
+BehaviourOnClick = Comportamento quando um URL de favorito é selecionado
+Bookmark = Marcador
+Bookmarks = Marcadores
+BookmarkTargetNewWindowShort = Nova aba
+BookmarkTargetReplaceWindowShort = Aba atual
+BookmarkTitle = Nome do marcador
+BookmarksManagement = Gestão de Marcadores
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Escolha se a página vinculada deve ser aberta na guia atual ou em uma nova guia
+CreateBookmark = Criar marcador
+EditBookmarks = Listar/editar marcadores
+ListOfBookmarks = Lista de Marcadores
+NewBookmark = Novo marcador
+NoBookmarkFound = Nenhum favorito encontrado
+NoBookmarks = Nenhum favorito definido
+OpenANewWindow = Abra uma nova guia
+ReplaceWindow = Substituir a guia atual
+SetHereATitleForLink = Defina um nome para o favorito
+ShowBookmark = Mostrar marcador
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Use um link externo/absoluto (https://externalurl.com) ou um link interno/relativo (/mypage.php). Também pode usar o telefone como tel:0123456.

@@ -35,8 +35,8 @@ if (!defined('NOREQUIRESOC')) {
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
-// If there is no need to load and show top and left menu
-if (!empty($_GET['public'])) {
+// If we need access without being logged.
+if (!empty($_GET['public'])) {	// Keep $_GET here. GETPOST() is not yet defined so we use $_GET
 	if (!defined("NOLOGIN")) {
 		define("NOLOGIN", '1');
 	}
@@ -54,10 +54,10 @@ $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $idticketgroup = GETPOST('idticketgroup', 'aZ09');
 $lang = GETPOST('lang', 'aZ09');
 
-/*if (defined("NOLOGIN") && !getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
-	// If we ask public content (so without login), we block if option TICKET_ENABLE_PUBLIC_INTERFACE is not enabled
-	httponly_accessforbidden('');
-}*/
+// Security check
+if (!defined("NOLOGIN")) {	// No need of restrictedArea if not logged: Later the select will filter on public articles only if not logged.
+	restrictedArea($user, 'knowledgemanagement', 0, 'knowledgemanagement_knowledgerecord', 'knowledgerecord');
+}
 
 
 /*

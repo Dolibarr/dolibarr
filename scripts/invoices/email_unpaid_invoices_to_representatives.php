@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'))) {
@@ -46,7 +48,7 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "Send an email to users to remind all unpaid customer invoices user is sale representative for.\n";
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add a delay (nb of days), only invoice with due date < today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 
@@ -58,6 +60,9 @@ $langs->load('main');
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
+
+$hookmanager->initHooks(array('cli'));
+
 
 /*
  * Main
@@ -78,7 +83,7 @@ if ($mode != 'confirm') {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date, s.nom as name, s.email, s.default_lang,";
@@ -90,7 +95,7 @@ $sql .= " , ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
 if (is_numeric($duration_value)) {
-	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, (int) $duration_value, "d"))."'";
 }
 $sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
@@ -106,9 +111,11 @@ if ($resql) {
 	$oldlang = '';
 	$total = 0;
 	$foundtoprocess = 0;
+
 	print "We found ".$num." couples (unpayed validated invoice - sale representative) qualified\n";
 	dol_syslog("We found ".$num." couples (unpayed validated invoice - sale representative) qualified");
 	$message = '';
+	$oldsalerepresentative = 0;
 
 	if ($num) {
 		while ($i < $num) {
@@ -144,7 +151,7 @@ if ($resql) {
 			$outputlangs->loadLangs(array("main", "bills"));
 
 			if (dol_strlen($obj->email)) {
-				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, - 1, $conf->currency)." : ".$obj->name."\n";
+				$message .= $outputlangs->trans("Invoice")." ".$obj->ref." : ".price($obj->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency)." : ".$obj->name."\n";
 				dol_syslog("email_unpaid_invoices_to_representatives.php: ".$obj->email);
 				$foundtoprocess++;
 			}
@@ -162,7 +169,7 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
 				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldsalerepresentative);
@@ -181,21 +188,21 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_unpaid_invoices_to_representatives.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**
  * Send email
  *
  * @param string $mode						Mode (test | confirm)
- * @param string $oldemail					Old email
+ * @param string $oldemail					Target email
  * @param string $message					Message to send
  * @param string $total						Total amount of unpayed invoices
  * @param string $userlang					Code lang to use for email output.
- * @param string $oldsalerepresentative		Old sale representative
- * @return int 								<0 if KO, >0 if OK
+ * @param string $oldtarget					Target name of sale representative
+ * @return int 								Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepresentative)
+function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
 	global $conf, $langs;
 
@@ -204,39 +211,39 @@ function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldsalerepre
 	}
 
 	$newlangs = new Translate('', $conf);
-	$newlangs->setDefaultLang(empty($userlang) ? (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $userlang);
+	$newlangs->setDefaultLang(empty($userlang) ? getDolGlobalString('MAIN_LANG_DEFAULT', 'auto') : $userlang);
 	$newlangs->load("main");
 	$newlangs->load("bills");
 
-	$subject = (empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT) ? $newlangs->trans("ListOfYourUnpaidInvoices") : $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT);
+	$subject = getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_SUBJECT', $newlangs->trans("ListOfYourUnpaidInvoices"));
 	$sendto = $oldemail;
-	$from = empty($conf->global->MAIN_MAIL_EMAIL_FROM) ? '' : $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$errorsto = empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '' : $conf->global->MAIN_MAIL_ERRORS_TO;
-	$msgishtml = - 1;
+	$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+	$errorsto = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+	$msgishtml = -1;
 
-	print "- Send email for ".$oldsalerepresentative." (".$oldemail."), total: ".$total."\n";
+	print "- Send email for ".$oldtarget." (".$oldemail."), total: ".$total."\n";
 	dol_syslog("email_unpaid_invoices_to_representatives.php: send mail to ".$oldemail);
 
 	$usehtml = 0;
-	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER) && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER'))) {
 		$usehtml += 1;
 	}
-	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER) && dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)) {
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER') && dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER'))) {
 		$usehtml += 1;
 	}
 
 	$allmessage = '';
-	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER;
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_HEADER');
 	} else {
 		$allmessage .= $newlangs->transnoentities("ListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n").($usehtml ? "<br>\n" : "\n");
 		$allmessage .= $newlangs->transnoentities("NoteListOfYourUnpaidInvoices").($usehtml ? "<br>\n" : "\n");
 	}
 	$allmessage .= $message.($usehtml ? "<br>\n" : "\n");
-	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $newlangs, 0, 0, - 1, $conf->currency).($usehtml ? "<br>\n" : "\n");
-	if (!empty($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
-		$allmessage .= $conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER;
-		if (dol_textishtml($conf->global->SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER)) {
+	$allmessage .= $langs->trans("Total")." = ".price($total, 0, $newlangs, 0, 0, -1, $conf->currency).($usehtml ? "<br>\n" : "\n");
+	if (getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER')) {
+		$allmessage .= getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER');
+		if (dol_textishtml(getDolGlobalString('SCRIPT_EMAIL_UNPAID_INVOICES_SALESREPRESENTATIVES_FOOTER'))) {
 			$usehtml += 1;
 		}
 	}

@@ -59,7 +59,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 $form = new Form($db);
 
 $page_name = "ImportSetup";
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), '', '', 0, 0, '', '', '', 'mod-admin page-import');
 
 // Subheader
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -90,7 +90,7 @@ print '<td class="center" width="100"></td>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ImportCsvSeparator").' ('.$langs->trans("ByDefault").')</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".(empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE) ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
+print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".(!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
 print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
 print '</td></tr>';
 

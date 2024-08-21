@@ -36,12 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/lib/knowledgemanagement_kno
 $langs->loadLangs(array("knowledgemanagement", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
@@ -49,15 +49,15 @@ if (GETPOST('actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -71,7 +71,7 @@ if (!$sortorder) {
 	$sortorder = 'DESC,DESC';
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new KnowledgeRecord($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->knowledgemanagement->dir_output.'/temp/massgeneration/'.$user->id;
@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('knowledgerecordagenda', 'globalcard')); // Note t
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = (!empty($conf->knowledgemanagement->multidir_output[$object->entity]) ? $conf->knowledgemanagement->multidir_output[$object->entity] : $conf->knowledgemanagement->dir_output)."/".$object->id;
 }
@@ -91,14 +91,14 @@ if ($id > 0 || !empty($ref)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->module, $object->id, $object->table_element, $object->element, '', 'rowid', $isdraft);
 
-$permissiontoadd = $user->rights->knowledgemanagement->knowledgerecord->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('knowledgemanagement', 'knowledgerecord', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
  *  Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -128,9 +128,8 @@ $form = new Form($db);
 
 if ($object->id > 0) {
 	$title = $langs->trans("Agenda");
-	//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-knowledgemanagement page-card_agenda');
 
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
@@ -203,16 +202,16 @@ if ($object->id > 0) {
 	$objthirdparty = $object;
 	$objcon = new stdClass();
 
-	$out = '&origin='.urlencode($object->element.'@'.$object->module).'&originid='.urlencode($object->id);
+	$out = '&origin='.urlencode((string) ($object->element.'@'.$object->module)).'&originid='.urlencode((string) ($object->id));
 	$urlbacktopage = $_SERVER['PHP_SELF'].'?id='.$object->id;
 	$out .= '&backtopage='.urlencode($urlbacktopage);
-	$permok = $user->rights->agenda->myactions->create;
+	$permok = $user->hasRight('agenda', 'myactions', 'create');
 	if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		//$out.='<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create';
 		if (get_class($objthirdparty) == 'Societe') {
-			$out .= '&socid='.urlencode($objthirdparty->id);
+			$out .= '&socid='.urlencode((string) ($objthirdparty->id));
 		}
-		$out .= (!empty($objcon->id) ? '&contactid='.urlencode($objcon->id) : '').'&percentage=-1';
+		$out .= (!empty($objcon->id) ? '&contactid='.urlencode($objcon->id) : '');
 		//$out.=$langs->trans("AddAnAction").' ';
 		//$out.=img_picto($langs->trans("AddAnAction"),'filenew');
 		//$out.="</a>";
@@ -222,7 +221,7 @@ if ($object->id > 0) {
 	print '<div class="tabsAction">';
 
 	if (isModEnabled('agenda')) {
-		if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create)) {
+		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
 		} else {
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
@@ -231,13 +230,13 @@ if ($object->id > 0) {
 
 	print '</div>';
 
-	if (isModEnabled('agenda') && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$param = '&id='.$object->id.'&socid='.$socid;
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 			$param .= '&contextpage='.urlencode($contextpage);
 		}
 		if ($limit > 0 && $limit != $conf->liste_limit) {
-			$param .= '&limit='.urlencode($limit);
+			$param .= '&limit='.((int) $limit);
 		}
 
 

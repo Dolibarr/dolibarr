@@ -1,0 +1,144 @@
+---
+name: pre-commit
+on:
+  # pull_request:
+  # push:
+  workflow_call:
+    inputs:
+      gh_event:
+        required: true
+        type: string
+  workflow_dispatch:
+
+concurrency:
+  group: pre-commit-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
+    }}
+  cancel-in-progress: true
+env:
+  gh_event: ${{ inputs.gh_event || github.event_name }}
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    env:
+      RAW_LOG: pre-commit.log
+      CS_XML: pre-commit.xml
+    steps:
+      - name: Install required tools
+        run: sudo apt-get update && sudo apt-get install cppcheck
+        if: false
+
+      # The next uses the git API because there is no clone yet.
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
+      # This is faster for a big repo.
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        uses: tj-actions/changed-files@v44
+        if: env.gh_event == 'pull_request'
+        with:
+          files: |
+            **.php
+
+      # Checkout git sources to analyze
+      - uses: actions/checkout@v4
+      # Action setup-python needs a requirements.txt or pyproject.toml
+      # This ensures one of them exists.
+      - name: Create requirements.txt if no requirements.txt or pyproject.toml
+        run: |-
+          [ -r requirements.txt ] || [ -r pyproject.toml ] || touch requirements.txt
+      # Install python and pre-commit tool
+      - uses: actions/setup-python@v5
+        with:
+          cache: pip
+          python-version: "3.11"
+      - run: python -m pip install pre-commit
+
+      # Restore previous cache of precommit
+      - uses: actions/cache/restore@v4
+        with:
+          path: ~/.cache/pre-commit/
+          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      # Run all the precommit tools (defined in pre-commit-config.yaml).
+      # We can force exclusion of some of them here.
+      - name: Run pre-commit hooks
+        env:
+          # SKIP is used by pre-commit to not execute certain hooks
+          SKIP: no-commit-to-branch,php-cs,php-cbf,trailing-whitespace,end-of-file-fixer
+        run: |
+          set -o pipefail
+          pre-commit gc
+          pre-commit run --show-diff-on-failure --color=always --all-files | tee ${RAW_LOG}
+
+      # The next uses git, which is slow for a bit repo.
+      # - name: Get all changed php files (if PR)
+      #   id: changed-php
+      #   uses: tj-actions/changed-files@v44
+      #   if: env.gh_event == 'pull_request'
+      #   with:
+      #     files: |
+      #        **.php
+
+      - name: Setup PHPCS
+        uses: shivammathur/setup-php@v2
+        # Install when we're going to run phpcs
+        if: |
+          ! cancelled() &&
+          (
+            steps.changed-php.outputs.any_changed == 'true'
+            ||
+            (
+              env.gh_event == 'push'
+              && (
+                   github.event.ref == 'refs/heads/develop'
+                 || endsWith(github.event.ref, '.0')
+              )
+            )
+          )
+        with:
+          php-version: 8.1
+          coverage: none # disable xdebug, pcov
+          tools: phpcs
+
+      - name: Run some pre-commit hooks on selected changed files only
+        if: "! cancelled() && steps.changed-php.outputs.any_changed == 'true'"
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-php.outputs.all_changed_files }}
+        run: |
+          set -o pipefail
+          pre-commit run php-cs --files ${ALL_CHANGED_FILES} | tee -a ${RAW_LOG}
+
+      - name: Run some pre-commit hooks on all files on push to "main" branches
+        if: |
+          env.gh_event == 'push'
+          && (
+               github.event.ref == 'refs/heads/develop'
+             || endsWith(github.event.ref, '.0')
+          )
+        run: |
+          set -o pipefail
+          ln -sf ~/.cache .cache  # Absolute path in .pre-commit-config.yaml
+          pre-commit run --hook-stage manual -a php-cs-with-cache | tee -a ${RAW_LOG}
+          pre-commit run --hook-stage manual -a sqlfluff-lint | tee -a ${RAW_LOG}
+          ls -l ~/.cache/pre-commit/
+
+      - name: Convert Raw Log to Annotations
+        uses: mdeweerd/logToCheckStyle@v2024.3.5
+        if: ${{ failure() }}
+        with:
+          in: ${{ env.RAW_LOG }}
+
+      # Save the precommit cache
+      - uses: actions/cache/save@v4
+        if: ${{ ! cancelled() }}
+        with:
+          path: ~/.cache/pre-commit/
+          key: pre-commit-4|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+      # Upload result log files of precommit into the Artifact shared store
+      - name: Provide log as artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ ! cancelled() }}
+        with:
+          name: precommit-logs
+          path: |
+            ${{ env.RAW_LOG }}
+            ${{ env.CS_XML }}

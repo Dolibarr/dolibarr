@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Танзими модули Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Мизоҷони худ саҳифаи пардохти онлайнро барои пардохтҳо бо кортҳои кредитӣ/дебетӣ тавассути <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a> пешниҳод кунед. Ин метавонад истифода шавад, то ба мизоҷони шумо имкон диҳад, ки пардохтҳои муваққатӣ ё пардохтҳои марбут ба объекти мушаххаси Dolibarr (инвойс, фармоиш, ...)
 StripeOrCBDoPayment=Бо корти кредитӣ ё Stripe пардохт кунед
 FollowingUrlAreAvailableToMakePayments=URL -ҳои зерин барои пешниҳоди саҳифа ба муштарӣ барои пардохт дар объектҳои Dolibarr дастрасанд
 PaymentForm=Шакли пардохт
@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL барои пешниҳоди %s с
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL барои пешниҳоди як саҳифаи пардохти онлайнии %s барои обунаи аъзо
 ToOfferALinkForOnlinePaymentOnDonation=URL барои пешниҳоди %s саҳифаи пардохти онлайн барои пардохти хайрия
 YouCanAddTagOnUrl=Шумо инчунин метавонед параметри url <b> & tag = <i> арзиши </i> </b> -ро ба ҳар кадоме аз ин URLҳо илова кунед (танҳо барои пардохти ҳатмӣ ба ашёе, ки ба объект вобаста нест) барои илова кардани барчаспҳои тафсири пардохти шумо. <br> Барои URL -и пардохтҳое, ки объекти мавҷудбуда надоранд, шумо инчунин метавонед параметри <strong> & noidempotency = 1 </strong> илова кунед, аз ин рӯ ҳамон истинод бо як барчаро чанд маротиба истифода бурдан мумкин аст (баъзе режими пардохт метавонад пардохтро барои ҳар як истиноди гуногун маҳдуд кунад) параметр)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe худро бо url <b> %s </b> танзим кунед, то пардохт ҳангоми тасдиқи Stripe ба таври худкор эҷод карда шавад.
 AccountParameter=Параметрҳои ҳисоб
 UsageParameter=Параметрҳои истифода
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Калиди зинда дар Webhook
 ONLINE_PAYMENT_WAREHOUSE=Ҳангоме ки пардохти онлайн анҷом дода мешавад, саҳмияҳо барои коҳиш додани саҳмия истифода мешаванд <br> (TODO Вақте ки имкони коҳиш додани саҳмия дар асоси амали суратҳисоб сурат мегирад ва пардохти онлайн ҳисобнома -фактураро тавлид мекунад?)
 StripeLiveEnabled=Stripe live фаъол аст (дар акси ҳол ҳолати санҷиш/қуттии қуттиҳо)
 StripeImportPayment=Пардохтҳои Stripe воридотӣ
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Намунаи корти кредитӣ барои пардохти санҷиш: %s => дуруст, %s => хатои CVC, %s => гузаштааст, %s => пардохт иҷро намешавад
+ExampleOfTestBankAcountForSEPA=Намунаи BAN суратҳисоби бонкӣ барои санҷиши дебетии мустақим: %s
 StripeGateways=Дарвозаҳои рахӣ
 OAUTH_STRIPE_TEST_ID=ID муштарии Stripe Connect (тақрибан _...)
 OAUTH_STRIPE_LIVE_ID=ID муштарии Stripe Connect (тақрибан _...)
@@ -51,6 +52,7 @@ StripeAccount=Ҳисоби Stripe
 StripeChargeList=Рӯйхати пардохтҳои Stripe
 StripeTransactionList=Рӯйхати амалиётҳои Stripe
 StripeCustomerId=Шиносаи муштарии Stripe
+StripePaymentId=Рақами пардохти Stripe
 StripePaymentModes=Усулҳои пардохти Stripe
 LocalID=ID маҳаллӣ
 StripeID=ID Stripe
@@ -62,7 +64,7 @@ DeleteACard=Кортро нест кунед
 ConfirmDeleteCard=Шумо мутмаин ҳастед, ки ин корти кредитӣ ё дебетиро нест кардан мехоҳед?
 CreateCustomerOnStripe=Дар Stripe муштарӣ эҷод кунед
 CreateCardOnStripe=Дар Stripe корт эҷод кунед
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Дар Stripe бонк эҷод кунед
 ShowInStripe=Дар Stripe нишон диҳед
 StripeUserAccountForActions=Ҳисоби корбаре, ки барои почтаи электронӣ дар бораи баъзе чорабиниҳои Stripe истифода мешавад (пардохтҳои Stripe)
 StripePayoutList=Рӯйхати пардохтҳои Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Истинод барои насб кардани Str
 ToOfferALinkForLiveWebhook=Истинод барои насб кардани Stripe WebHook барои занг задан ба IPN (ҳолати зинда)
 PaymentWillBeRecordedForNextPeriod=Пардохт барои давраи оянда сабт карда мешавад.
 ClickHereToTryAgain= <a href="%s"> Барои дубора кӯшиш кардан ин ҷо клик кунед ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Бо назардошти қоидаҳои қавии аутентификатсияи муштариён, сохтани корт бояд аз backoffice Stripe анҷом дода шавад. Шумо метавонед ин ҷо клик кунед, то сабти муштариёни Stripe -ро фаъол созед: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Бинобар қоидаҳои пурқуввати аутентификатсияи муштарӣ, эҷоди корт бояд аз офиси пушти Stripe анҷом дода шавад. Шумо метавонед ин ҷоро клик кунед, то сабти муштариёни Stripe-ро фаъол созед: %s
+STRIPE_CARD_PRESENT=Корт тақдим барои терминалҳои Stripe
+TERMINAL_LOCATION=Ҷойгиршавӣ (суроға) барои терминалҳои Stripe
+RequestDirectDebitWithStripe=Дебети мустақимро бо Stripe дархост кунед
+RequesCreditTransferWithStripe=Бо Stripe интиқоли қарзро дархост кунед
+STRIPE_SEPA_DIRECT_DEBIT=Пардохтҳои дебетии мустақимро тавассути Stripe фаъол созед
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Ҳолати пайвасти Stripe
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

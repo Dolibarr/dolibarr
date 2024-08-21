@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE commande/tpl/linkedobjectblock.tpl.php -->\n";
@@ -47,7 +48,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '<tr class="'.$trclass.'" >';
 	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("CustomerOrder");
-	if (!empty($showImportButton) && !empty($conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES)) {
+	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	echo '</td>';
@@ -55,8 +56,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td class="linkedcol-ref">'.$objectlink->ref_client.'</td>';
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
-	if ($user->rights->commande->lire) {
-		$total = $total + $objectlink->total_ht;
+	if ($user->hasRight('commande', 'lire')) {
+		$total += $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}
 	echo '</td>';

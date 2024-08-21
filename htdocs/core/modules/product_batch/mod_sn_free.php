@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,41 +29,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batc
 
 /**
  *	\class 		mod_codeproduct_leopard
- *	\brief 		Classe permettant la gestion leopard des codes produits
+ *	\brief 		Class permettant la gestion leopard des codes produits
  */
 class mod_sn_free extends ModeleNumRefBatch
 {
 	/*
-	 * Attention ce module est utilise par defaut si aucun module n'a
-	 * ete definit dans la configuration
-	 *
-	 * Le fonctionnement de celui-ci doit donc rester le plus ouvert possible
+	 * :warning:
+	 *    This module is used by default if none was set in the configuration.
+	 *    Therefore, the implementation must remain as open as possible.
 	 */
 
-	/**
-	 * @var string model name
-	 */
+	// variables inherited from ModeleNumRefBatch class
 	public $name = 'sn_free';
-
-	public $code_modifiable; // Code modifiable
-
-	public $code_modifiable_invalide; // Code modifiable si il est invalide
-
-	public $code_modifiable_null; // Code modifiables si il est null
-
-	public $code_null; // Code facultatif
-
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
-	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto;
-
+	public $version = 'dolibarr';
 
 	/**
 	 *	Constructor
@@ -79,26 +59,42 @@ class mod_sn_free extends ModeleNumRefBatch
 	/**
 	 *  Return description of module
 	 *
-	 *  @return string      		Description of module
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		$langs->load("companies");
 		return $langs->trans("LeopardNumRefModelDesc");
 	}
 
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	public function getExample()
+	{
+		global $db;
+
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		return $this->getNextValue($thirdparty, null);
+	}
 
 	/**
-	 * Return an example of result returned by getNextValue
+	 * 	Return next free value
 	 *
-	 * @param	Societe		$objsoc	    Object thirdparty
-	 * @param   Productlot	$object		Object we need next value for
-	 * @return	string					Return next value
+	 *  @param	Societe		$objsoc		Object thirdparty
+	 *  @param  Productlot	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Value if OK, <=0
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $langs;
 		return '';
 	}
 }

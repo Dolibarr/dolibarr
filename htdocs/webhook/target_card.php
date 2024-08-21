@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  */
 
 /**
- *    \file       target_card.php
+ *    \file       htdocs/webhook/target_card.php
  *    \ingroup    webhook
  *    \brief      Page to create/edit/view target
  */
@@ -26,14 +27,17 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/webhook/class/target.class.php');
-dol_include_once('/webhook/lib/webhook_target.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+global $conf, $db, $hookmanager, $langs, $user;
 
 // Load translation files required by the page
-$langs->loadLangs(array('other'));
+$langs->loadLangs(array('other','admin'));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -41,9 +45,9 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'targetcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid   = GETPOST('lineid', 'int');
+$lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
@@ -54,7 +58,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -68,18 +72,18 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
 $enablepermissioncheck = 0;
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->rights->webhook->target->read;
-	$permissiontoadd = $user->rights->webhook->target->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->rights->webhook->target->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-	$permissionnote = $user->rights->webhook->target->write; // Used by the include of actions_setnotes.inc.php
-	$permissiondellink = $user->rights->webhook->target->write; // Used by the include of actions_dellink.inc.php
+	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
+	$permissiontoadd = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+	$permissionnote = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_setnotes.inc.php
+	$permissiondellink = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_dellink.inc.php
 } else {
 	$permissiontoread = 1;
 	$permissiontoadd = 1; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -95,8 +99,12 @@ $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->webhook->enabled)) accessforbidden();
-if (!$permissiontoread) accessforbidden();
+if (!isModEnabled('webhook')) {
+	accessforbidden();
+}
+if (!$permissiontoread) {
+	accessforbidden();
+}
 
 
 /*
@@ -142,10 +150,31 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
+	}
+
+	if ($action == 'testsendtourl' && $permissiontoadd) {
+		$triggercode = GETPOST("triggercode");
+		$url = GETPOST("url");
+		$jsondata = GETPOST("jsondata", "restricthtml");
+		if (empty($url)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Url")), null, 'errors');
+		}
+		if (empty($jsondata)) {
+			$error++;
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DataToSendTrigger")), null, 'errors');
+		}
+		$response = getURLContent($url, 'POST', $jsondata, 1, array('content-type:application/json'), array('http', 'https'), 0, -1);
+		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
+			setEventMessages($langs->trans("Success"), null);
+		} else {
+			$errormsg = "The WebHook for triggercode: ".$triggercode." failed to get URL ".$url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+			setEventMessages($langs->trans($errormsg), null, 'errors');
+		}
 	}
 
 	// Actions to send emails
@@ -166,25 +195,21 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 
+$object->initListOfTriggers();
+
+$arrayofjs = array(
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+	//'/includes/ace/src/ext-chromevox.js'
+	//'/includes/jquery/plugins/jqueryscoped/jquery.scoped.js',
+);
+$arrayofcss = array();
+
 $title = $langs->trans("Target");
 $help_url = '';
-llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-// print '<script type="text/javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
-
+llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-webhook page-target_card');
 
 // Part to create
 if ($action == 'create') {
@@ -207,8 +232,6 @@ if ($action == 'create') {
 
 	print dol_get_fiche_head(array(), '');
 
-	// Set some default values
-	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
 
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
@@ -380,6 +403,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -402,7 +426,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Show object lines
 		$result = $object->getLinesArray();
 
-		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		print '<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '' : '#line_'.GETPOSTINT('lineid')).'" method="POST">
 		<input type="hidden" name="token" value="' . newToken().'">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 		<input type="hidden" name="mode" value="">
@@ -420,7 +444,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		if (!empty($object->lines)) {
-			$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1);
+			$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1);
 		}
 
 		// Form to add new line
@@ -430,9 +454,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-				if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-				if (empty($reshook))
+				if ($reshook < 0) {
+					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+				}
+				if (empty($reshook)) {
 					$object->formAddObjectLine(1, $mysoc, $soc);
+				}
 			}
 		}
 
@@ -463,19 +490,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&token='.newToken(), '', $permissiontoadd);
 
-			// Disable
-			if ($object->status == $object::STATUS_VALIDATED) {
-				print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
-			}
-
-			// Enable
-			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
-			}
-
 			// Clone
 			print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 
+			// Webhook send test
+			print dolGetButtonAction($langs->trans('TestWebhookTarget'), '', 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=test&token='.newToken(), '', $permissiontoadd);
 			/*
 			if ($permissiontoadd) {
 				if ($object->status == $object::STATUS_ENABLED) {
@@ -493,11 +512,113 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			*/
 
+			// Enable
+			if ($object->status == $object::STATUS_DRAFT) {
+				print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
+			}
+
+			// Disable
+			if ($object->status == $object::STATUS_VALIDATED) {
+				print dolGetButtonAction('', $langs->trans('Disable'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
+			}
+
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&token='.newToken(), '', $permissiontodelete);
 		}
 		print '</div>'."\n";
 	}
+}
+
+if ($action == "test") {
+	print '<div id="formtesttarget" name="formtesttarget"></div>';
+	print load_fiche_titre($langs->trans("TestWebhookTarget"));
+	print dol_get_fiche_head(array(), '', '', -1);
+
+	print "\n".'<!-- Begin form test target --><div id="targettestform"></div>'."\n";
+	print '<form method="POST" name="testtargetform" id="testtargetform" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="testsendtourl">';
+
+	print '<table class="tableforemailform boxtablenotop centpercent">';
+
+	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
+	print $langs->trans("TriggerCodes");
+	print '</td><td class="valuefieldcreate">';
+	$arraytriggercodes = explode(",", $object->trigger_codes);
+	$idtriggercode = '';
+	if (in_array(GETPOST("triggercodes"), $arraytriggercodes)) {
+		$idtriggercode = array_search(GETPOST("triggercodes"), $arraytriggercodes);
+	}
+	print $form->selectarray("triggercode", $arraytriggercodes, $idtriggercode, 0, 0, 1);
+	print '</td></tr>';
+
+	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
+	print $langs->trans("Url");
+	print '</td><td class="valuefieldcreate">';
+	print '<input class="flat minwidth400" name="url" value="'.(GETPOSTISSET("url") ? GETPOST("url") : $object->url).'" />';
+	print '</td></tr>';
+
+	// Json sample to send
+	print '<tr><td class="titlefieldcreate fieldrequired minwidth200">';
+	print $langs->trans("DataToSendTrigger");
+	print '</td><td>';
+
+	$json = new stdClass();
+	$json->triggercode = "TEST_TRIGGER_CODE";
+	$json->object = new stdClass();
+	$json->object->field1 = 'field1';
+	$json->object->field2 = 'field2';
+	$json->object->field3 = 'field3';
+
+	$datatosend = json_encode($json);
+	//$datatosend = preg_replace('/\,/', ",\n", $datatosend);
+
+	/*
+	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor("jsondata", $datatosend, 0, 200, 'dolibarr_details', 'In', true, true, 'ace');
+	print $doleditor->Create(0, '', true, '', 'json');
+	*/
+	print '<textarea id="jsondata" class="flat minwidth100" style="margin-top: 5px; width: 95%" rows="8" name="jsondata">';
+	print $datatosend;
+	print '</textarea>';
+
+	print '</td></tr>';
+	print '</table>';
+
+	print '<div class="center">';
+	print $form->buttonsSaveCancel("SendToUrl");
+	print '</div>';
+	print '</form>';
+
+	if ($conf->use_javascript_ajax) {
+		print '<script>
+		$("#triggercode").change(function(){
+			console.log("We change trigger code");
+			triggercode = $(this).val();
+			getDatatToSendTriggerCode(triggercode);
+		});
+
+		function getDatatToSendTriggerCode(triggercode){
+			$.ajax({
+				method: \'GET\',
+				url:  \''.DOL_URL_ROOT.'/webhook/ajax/webhook.php\',
+				data: { action: "getjsonformtrigger", triggercode: triggercode , token:"'.currentToken().'"},
+				success: function(response) {
+					obj = JSON.stringify(response);
+					$("#jsondata").val(obj);
+				}
+			})
+		};
+
+		$(document).ready(function () {
+			triggercode = $("#triggercode").val();
+			getDatatToSendTriggerCode(triggercode);
+		});
+		';
+		print '</script>';
+	}
+
+	print "\n".'<!-- END form test target -->';
 }
 
 // End of page

@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,36 +25,30 @@
 /**
  *	\file       htdocs/core/modules/delivery/modules_delivery.php
  *	\ingroup    expedition
- *	\brief      Fichier contenant la classe mere de generation de bon de livraison en PDF
- *				et la classe mere de numerotation des bons de livraisons
+ *	\brief      Fichier contenant la class mere de generation de bon de livraison en PDF
+ *				et la class mere de numerotation des bons de livraisons
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**
- *	Classe mere des modeles de bon de livraison
+ *	Class mere des modeles de bon de livraison
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param  DoliDB  $db                 Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return array                       List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'delivery';
 		$list = array();
 
@@ -62,99 +57,35 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param      Delivery	$object				Object to generate
+	 *  @param      Translate	$outputlangs		Lang output object
+	 *  @param      string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param      int<0,1>	$hidedetails		Do not show line details
+	 *  @param      int<0,1>	$hidedesc			Do not show desc
+	 *  @param      int<0,1>	$hideref			Do not show ref
+	 *  @return     int<0,1>             			1=OK, 0=KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 }
 
 
-
 /**
- *  \class      ModeleNumRefDeliveryOrder
- *  \brief      Classe mere des modeles de numerotation des references de bon de livraison
+ *  Class mere des modeles de numerotation des references de bon de livraison
  */
-abstract class ModeleNumRefDeliveryOrder
+abstract class ModeleNumRefDeliveryOrder extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * Return if a module can be used or not
+	 * 	Return next free value
 	 *
-	 * @return      boolean     true if module can be used
+	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param  Delivery	$object		Object we need next value for
+	 *  @return string|int<-1,0>  		Value if OK, 0 or -1 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi la description par defaut du modele de numerotation
-	 *
-	 * @return     string      Texte descripif
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * Return an example of numbering
-	 *
-	 * @return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("deliveries");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 * @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 *	@param  Societe     $objsoc         Object third party
-	 *  @param  Object      $object         Object delivery
-	 *	@return string                      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 * Renvoi version du module numerotation
-	 *
-	 * @return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	abstract public function getNextValue($objsoc, $object);
 }

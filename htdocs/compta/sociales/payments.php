@@ -7,6 +7,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,20 +46,20 @@ if (isModEnabled('accounting')) {
 
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'hrm'));
 
-$year = GETPOST("year", 'int');
-$search_sc_type = GETPOST('search_sc_type', 'int');
+$year = GETPOSTINT("year");
+$search_sc_type = GETPOST('search_sc_type', 'intcomma');
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -114,7 +116,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($sortfield) {
 	$param .= '&sortfield='.urlencode($sortfield);
@@ -123,10 +125,10 @@ if ($sortorder) {
 	$param .= '&sortorder='.urlencode($sortorder);
 }
 if ($year) {
-	$param .= '&year='.urlencode($year);
+	$param .= '&year='.urlencode((string) ($year));
 }
 if ($search_sc_type) {
-	$param .= '&search_sc_type='.urlencode($search_sc_type);
+	$param .= '&search_sc_type='.urlencode((string) ($search_sc_type));
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
@@ -171,18 +173,15 @@ if ($year > 0) {
 	$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 	$sql .= ")";
 }
-if (preg_match('/^cs\./', $sortfield)
-	|| preg_match('/^c\./', $sortfield)
-	|| preg_match('/^pc\./', $sortfield)
-	|| preg_match('/^pct\./', $sortfield)
-	|| preg_match('/^u\./', $sortfield)
-	|| preg_match('/^ba\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+if ($sortfield !== null
+	&& preg_match('/^(cs|c|pc|pct|u|ba)\./', $sortfield)
+) {
+	$sql .= $db->order($sortfield, $sortorder);
 }
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
@@ -226,7 +225,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 }
@@ -246,9 +245,9 @@ print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "pc.datep", "", $pa
 print_liste_field_titre("Employee", $_SERVER["PHP_SELF"], "u.rowid", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre("PaymentMode", $_SERVER["PHP_SELF"], "pct.code", "", $param, '', $sortfield, $sortorder);
 print_liste_field_titre("Numero", $_SERVER["PHP_SELF"], "pc.num_paiement", "", $param, '', $sortfield, $sortorder, '', 'ChequeOrTransferNumber');
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print_liste_field_titre("BankTransactionLine", $_SERVER["PHP_SELF"], "pc.fk_bank", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("BankAccount", $_SERVER["PHP_SELF"], "ba.label", "", $param, "", $sortfield, $sortorder);
 }
 print_liste_field_titre("ExpectedToPay", $_SERVER["PHP_SELF"], "cs.amount", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre("PayedByThisPayment", $_SERVER["PHP_SELF"], "pc.amount", "", $param, 'class="right"', $sortfield, $sortorder);
@@ -288,7 +287,7 @@ while ($i < min($num, $limit)) {
 	print $socialcontrib->getNomUrl(1, '');
 	print '</td>';
 	// Type
-	print '<td title="'.dol_escape_htmltag($obj->label_sc).'" class="tdoverflowmax300">'.$obj->label_sc.'</td>';
+	print '<td title="'.dol_escape_htmltag($obj->type_label).'" class="tdoverflowmax300">'.$obj->type_label.'</td>';
 	// Date
 	$date = $obj->periode;
 	if (empty($date)) {
@@ -307,7 +306,7 @@ while ($i < min($num, $limit)) {
 		$userstatic->admin = $obj->admin;
 		$userstatic->login = $obj->login;
 		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->status = $obj->statut;
 		print $userstatic->getNomUrl(1);
 		print "</td>\n";
 	}
@@ -324,7 +323,7 @@ while ($i < min($num, $limit)) {
 	print '<td>'.$obj->num_payment.'</td>';
 
 	// Account
-	if (isModEnabled("banque")) {
+	if (isModEnabled("bank")) {
 		// Bank transaction
 		print '<td class="nowraponall">';
 		$accountlinestatic->id = $obj->fk_bank;
@@ -367,8 +366,8 @@ while ($i < min($num, $limit)) {
 
 	print '</tr>';
 
-	$total = $total + $obj->total;
-	$totalpaid = $totalpaid + $obj->totalpaid;
+	$total += $obj->total;
+	$totalpaid += $obj->totalpaid;
 	$i++;
 }
 
@@ -380,7 +379,7 @@ print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
 print '<td align="center" class="liste_total">&nbsp;</td>';
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<td></td>';
 	print '<td></td>';
 }

@@ -7,6 +7,7 @@
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2019 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,32 +30,27 @@
  *  \brief      File that contains parent class for sending receipts models
  *              and parent class for sending receipts numbering models
  */
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
 
 /**
  *	Parent class of sending receipts models
  */
 abstract class ModelePdfExpedition extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return list of active generation models
+	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'shipping';
 		$list = array();
 
@@ -63,97 +59,36 @@ abstract class ModelePdfExpedition extends CommonDocGenerator
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *	@param		Expedition	$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
+	// phpcs:enable
 }
 
 
 /**
  *  Parent Class of numbering models of sending receipts references
  */
-abstract class ModelNumRefExpedition
+abstract class ModelNumRefExpedition extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/** Return if a model can be used or not
-	 *
-	 *  @return		boolean     true if model can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("sendings");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("sendings");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *	Test if existing numbers make problems with numbering
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns next value assigned
+	 *	Return next value
 	 *
 	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$shipment	Shipment object
-	 *	@return	string					Value
+	 *	@param	Expedition	$shipment	Shipment object
+	 *	@return string|int<-1,0> 		Value if OK, 0 or -1 if KO
 	 */
-	public function getNextValue($objsoc, $shipment)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns version of the numbering model
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	abstract public function getNextValue($objsoc, $shipment);
 }

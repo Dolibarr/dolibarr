@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Eric Seigne					<erics@rycks.com>
+ * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Open-DSI					<support@open-dsi.fr>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,32 +35,36 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other", "orders", "bills"));
 
-$action = GETPOST('action', 'aZ09');
+// Get Parameters
+$action 	= GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
-$optioncss = GETPOST('optioncss', 'alpha');
-$toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm', 'alpha');
+$confirm 	= GETPOST('confirm', 'alpha');
+$cancel     = GETPOST('cancel', 'alpha');
+$toselect 	= GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
+$optioncss 	= GETPOST('optioncss', 'alpha');
 
-$disabledefaultvalues = GETPOST('disabledefaultvalues', 'int');
+
+$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
-$resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
-$pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
+$resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
+$pid = GETPOSTINT("search_projectid", 3) ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
-$type = GETPOST('search_type', 'alphanohtml') ?GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
-$year = GETPOST("year", 'int');
-$month = GETPOST("month", 'int');
-$day = GETPOST("day", 'int');
+$type = GETPOST('search_type', 'alphanohtml') ? GETPOST('search_type', 'alphanohtml') : GETPOST('type', 'alphanohtml');
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
+$day = GETPOSTINT("day");
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array')) {
@@ -67,31 +73,34 @@ if (GETPOST('search_actioncode', 'array')) {
 		$actioncode = '0';
 	}
 } else {
-	$actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
+	$actioncode = GETPOST("search_actioncode", "alpha", 3) ? GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE')));
 }
 
+// Search Fields
 $search_id = GETPOST('search_id', 'alpha');
 $search_title = GETPOST('search_title', 'alpha');
 $search_note = GETPOST('search_note', 'alpha');
 
-$dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'), 'tzuserrel');
-$datestart_dtstart = dol_mktime(0, 0, 0, GETPOST('datestart_dtstartmonth', 'int'), GETPOST('datestart_dtstartday', 'int'), GETPOST('datestart_dtstartyear', 'int'), 'tzuserrel');
-$datestart_dtend = dol_mktime(23, 59, 59, GETPOST('datestart_dtendmonth', 'int'), GETPOST('datestart_dtendday', 'int'), GETPOST('datestart_dtendyear', 'int'), 'tzuserrel');
-$dateend_dtstart = dol_mktime(0, 0, 0, GETPOST('dateend_dtstartmonth', 'int'), GETPOST('dateend_dtstartday', 'int'), GETPOST('dateend_dtstartyear', 'int'), 'tzuserrel');
-$dateend_dtend = dol_mktime(23, 59, 59, GETPOST('dateend_dtendmonth', 'int'), GETPOST('dateend_dtendday', 'int'), GETPOST('dateend_dtendyear', 'int'), 'tzuserrel');
+// $dateselect is a day included inside the event range
+$dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'), 'tzuserrel');
+$datestart_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('datestart_dtstartmonth'), GETPOSTINT('datestart_dtstartday'), GETPOSTINT('datestart_dtstartyear'), 'tzuserrel');
+$datestart_dtend = dol_mktime(23, 59, 59, GETPOSTINT('datestart_dtendmonth'), GETPOSTINT('datestart_dtendday'), GETPOSTINT('datestart_dtendyear'), 'tzuserrel');
+$dateend_dtstart = dol_mktime(0, 0, 0, GETPOSTINT('dateend_dtstartmonth'), GETPOSTINT('dateend_dtstartday'), GETPOSTINT('dateend_dtstartyear'), 'tzuserrel');
+$dateend_dtend = dol_mktime(23, 59, 59, GETPOSTINT('dateend_dtendmonth'), GETPOSTINT('dateend_dtendday'), GETPOSTINT('dateend_dtendyear'), 'tzuserrel');
 if ($search_status == '' && !GETPOSTISSET('search_status')) {
-	$search_status = ((empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$search_status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
-	$mode = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_list');
 }
 
-$filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
-$usergroup = GETPOST("search_usergroup", "int", 3) ?GETPOST("search_usergroup", "int", 3) : GETPOST("usergroup", "int", 3);
-$showbirthday = empty($conf->use_javascript_ajax) ? (GETPOST("search_showbirthday", "int") ?GETPOST("search_showbirthday", "int") : GETPOST("showbirthday", "int")) : 1;
+$filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
+$filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
+$usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
+$showbirthday = empty($conf->use_javascript_ajax) ? (GETPOSTINT("search_showbirthday") ? GETPOSTINT("search_showbirthday") : GETPOSTINT("showbirthday")) : 1;
+$search_categ_cus = GETPOST("search_categ_cus", "intcomma", 3) ? GETPOST("search_categ_cus", "intcomma", 3) : 0;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
@@ -102,14 +111,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
-if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS)) {
+if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 	$filtert = $user->id;
 }
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+// Pagination parameters
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -129,7 +139,7 @@ if (!$sortfield) {
 }
 
 // Security check
-$socid = GETPOST("search_socid", 'int') ?GETPOST("search_socid", 'int') : GETPOST("socid", 'int');
+$socid = GETPOSTINT("search_socid") ? GETPOSTINT("search_socid") : GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -138,36 +148,37 @@ if ($socid < 0) {
 }
 
 $canedit = 1;
-if (empty($user->rights->agenda->myactions->read)) {
+if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
-if (empty($user->rights->agenda->allactions->read)) {
+if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
-if (empty($user->rights->agenda->allactions->read) || $filter == 'mine') {	// If no permission to see all, we show only affected to me
+if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// If no permission to see all, we show only affected to me
 	$filtert = $user->id;
 }
 
 $arrayfields = array(
-	'a.id'=>array('label'=>"Ref", 'checked'=>1),
-	'owner'=>array('label'=>"Owner", 'checked'=>1),
-	'c.libelle'=>array('label'=>"Type", 'checked'=>1),
-	'a.label'=>array('label'=>"Title", 'checked'=>1),
-	'a.note'=>array('label'=>'Description', 'checked'=>0),
-	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
-	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
-	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>0),
-	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>1, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
-	'a.datec'=>array('label'=>'DateCreation', 'checked'=>0, 'position'=>510),
-	'a.tms'=>array('label'=>'DateModification', 'checked'=>0, 'position'=>520),
-	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
+	'a.id' => array('label' => "Ref", 'checked' => 1),
+	'owner' => array('label' => "Owner", 'checked' => 1),
+	'c.libelle' => array('label' => "Type", 'checked' => 1),
+	'a.label' => array('label' => "Title", 'checked' => 1),
+	'a.note' => array('label' => 'Description', 'checked' => 0),
+	'a.datep' => array('label' => "DateStart", 'checked' => 1),
+	'a.datep2' => array('label' => "DateEnd", 'checked' => 1),
+	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
+	'a.fk_contact' => array('label' => "Contact", 'checked' => 0),
+	'a.fk_element' => array('label' => "LinkedObject", 'checked' => 1, 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
+	'a.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 510),
+	'a.tms' => array('label' => 'DateModification', 'checked' => 0, 'position' => 520),
+	'a.percent' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
@@ -180,7 +191,7 @@ if ($user->socid && $socid) {
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$mode = 'list';
+	$mode = 'show_list';
 	$massaction = '';
 }
 
@@ -196,7 +207,7 @@ if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday")) {
 	exit;
 }
 
-$parameters = array('id'=>$socid);
+$parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -260,10 +271,11 @@ if (empty($reshook)) {
 	$objectlabel = 'Events';
 	$uploaddir = true;
 	// Only users that can delete any event can remove records.
-	$permissiontodelete = $user->rights->agenda->allactions->delete;
-	$permissiontoadd = $user->rights->agenda->myactions->create;
+	$permissiontodelete = $user->hasRight('agenda', 'allactions', 'delete');
+	$permissiontoadd = $user->hasRight('agenda', 'myactions', 'create');
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
+
 
 /*
  * View
@@ -283,9 +295,9 @@ $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$
 
 $now = dol_now();
 
-$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
+$help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 $title = $langs->trans("Agenda");
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
 $listofextcals = array();
@@ -295,7 +307,7 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
-	$param .= '&limit='.urlencode($limit);
+	$param .= '&limit='.((int) $limit);
 }
 if ($actioncode != '') {
 	if (is_array($actioncode)) {
@@ -307,7 +319,7 @@ if ($actioncode != '') {
 	}
 }
 if ($resourceid > 0) {
-	$param .= "&search_resourceid=".urlencode($resourceid);
+	$param .= "&search_resourceid=".urlencode((string) ($resourceid));
 }
 if ($search_status != '') {
 	$param .= "&search_status=".urlencode($search_status);
@@ -319,22 +331,22 @@ if ($filtert) {
 	$param .= "&search_filtert=".urlencode($filtert);
 }
 if ($usergroup > 0) {
-	$param .= "&search_usergroup=".urlencode($usergroup);
+	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
 }
 if ($socid > 0) {
-	$param .= "&search_socid=".urlencode($socid);
+	$param .= "&search_socid=".urlencode((string) ($socid));
 }
 if ($showbirthday) {
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
-	$param .= "&search_projectid=".urlencode($pid);
+	$param .= "&search_projectid=".urlencode((string) ($pid));
 }
 if ($type) {
 	$param .= "&search_type=".urlencode($type);
 }
 if ($search_id != '') {
-	$param .= '&search_title='.urlencode($search_id);
+	$param .= '&search_id='.urlencode($search_id);
 }
 if ($search_title != '') {
 	$param .= '&search_title='.urlencode($search_title);
@@ -342,45 +354,49 @@ if ($search_title != '') {
 if ($search_note != '') {
 	$param .= '&search_note='.urlencode($search_note);
 }
-if (GETPOST('datestartday_dtstart', 'int')) {
-	$param .= '&datestartday_dtstart='.GETPOST('datestartday_dtstart', 'int');
+if (GETPOSTINT('datestart_dtstartday')) {
+	$param .= '&datestart_dtstartday='.GETPOSTINT('datestart_dtstartday');
 }
-if (GETPOST('datestartmonth_dtstart', 'int')) {
-	$param .= '&datestartmonth_dtstart='.GETPOST('datestartmonth_dtstart', 'int');
+if (GETPOSTINT('datestart_dtstartmonth')) {
+	$param .= '&datestart_dtstartmonth='.GETPOSTINT('datestart_dtstartmonth');
 }
-if (GETPOST('datestartyear_dtstart', 'int')) {
-	$param .= '&datestartyear_dtstart='.GETPOST('datestartyear_dtstart', 'int');
+if (GETPOSTINT('datestart_dtstartyear')) {
+	$param .= '&datestart_dtstartyear='.GETPOSTINT('datestart_dtstartyear');
 }
-if (GETPOST('datestartday_dtend', 'int')) {
-	$param .= '&datestartday_dtend='.GETPOST('datestartday_dtend', 'int');
+if (GETPOSTINT('datestart_dtendday')) {
+	$param .= '&datestart_dtendday='.GETPOSTINT('datestart_dtendday');
 }
-if (GETPOST('datestartmonth_dtend', 'int')) {
-	$param .= '&datestartmonth_dtend='.GETPOST('datestartmonth_dtend', 'int');
+if (GETPOSTINT('datestart_dtendmonth')) {
+	$param .= '&datestart_dtendmonth='.GETPOSTINT('datestart_dtendmonth');
 }
-if (GETPOST('datestartyear_dtend', 'int')) {
-	$param .= '&datestartyear_dtend='.GETPOST('datestartyear_dtend', 'int');
+if (GETPOSTINT('datestart_dtendyear')) {
+	$param .= '&datestart_dtendyear='.GETPOSTINT('datestart_dtendyear');
 }
-if (GETPOST('dateendday_dtstart', 'int')) {
-	$param .= '&dateendday_dtstart='.GETPOST('dateendday_dtstart', 'int');
+if (GETPOSTINT('dateend_dtstartday')) {
+	$param .= '&dateend_dtstartday='.GETPOSTINT('dateend_dtstartday');
 }
-if (GETPOST('dateendmonth_dtstart', 'int')) {
-	$param .= '&dateendmonth_dtstart='.GETPOST('dateendmonth_dtstart', 'int');
+if (GETPOSTINT('dateend_dtstartmonth')) {
+	$param .= '&dateend_dtstartmonth='.GETPOSTINT('dateend_dtstartmonth');
 }
-if (GETPOST('dateendyear_dtstart', 'int')) {
-	$param .= '&dateendyear_dtstart='.GETPOST('dateendyear_dtstart', 'int');
+if (GETPOSTINT('dateend_dtstartyear')) {
+	$param .= '&dateend_dtstartyear='.GETPOSTINT('dateend_dtstartyear');
 }
-if (GETPOST('dateendday_dtend', 'int')) {
-	$param .= '&dateendday_dtend='.GETPOST('dateendday_dtend', 'int');
+if (GETPOSTINT('dateend_dtendday')) {
+	$param .= '&dateend_dtendday='.GETPOSTINT('dateend_dtendday');
 }
-if (GETPOST('dateendmonth_dtend', 'int')) {
-	$param .= '&dateendmonth_dtend='.GETPOST('dateendmonth_dtend', 'int');
+if (GETPOSTINT('dateend_dtendmonth')) {
+	$param .= '&dateend_dtendmonth='.GETPOSTINT('dateend_dtendmonth');
 }
-if (GETPOST('dateendyear_dtend', 'int')) {
-	$param .= '&dateendyear_dtend='.GETPOST('dateendyear_dtend', 'int');
+if (GETPOSTINT('dateend_dtendyear')) {
+	$param .= '&dateend_dtendyear='.GETPOSTINT('dateend_dtendyear');
 }
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($search_categ_cus != 0) {
+	$param .= '&search_categ_cus='.urlencode((string) ($search_categ_cus));
+}
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -388,17 +404,17 @@ $paramnoactionodate = $param;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	'set_all_events_to_todo' => $langs->trans("SetAllEventsToTodo"),
-	'set_all_events_to_in_progress' => $langs->trans("SetAllEventsToInProgress"),
-	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
+	'set_all_events_to_todo' => img_picto('', 'circle', 'class="pictofixedwidth font-status1"').$langs->trans("SetAllEventsToTodo"),
+	'set_all_events_to_in_progress' => img_picto('', 'stop-circle', 'class="pictofixedwidth font-status2"').$langs->trans("SetAllEventsToInProgress"),
+	'set_all_events_to_finished' => img_picto('', 'stop-circle', 'class="pictofixedwidth badge-status5"').$langs->trans("SetAllEventsToFinished"),
 );
-if ($user->rights->agenda->allactions->delete) {
+if ($user->hasRight('agenda', 'allactions', 'delete')) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (isModEnabled('category') && $user->rights->agenda->myactions->create) {
+if (isModEnabled('category') && $user->hasRight('agenda', 'myactions', 'create')) {
 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
-if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete','preaffecttag'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -431,9 +447,6 @@ $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
-}
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
@@ -441,7 +454,7 @@ $sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 }
@@ -452,7 +465,7 @@ $sql .= " WHERE c.id = a.fk_action";
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';
 // Condition on actioncode
 if (!empty($actioncode)) {
-	if (empty($conf->global->AGENDA_USE_EVENT_TYPE)) {
+	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ($actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
@@ -485,13 +498,24 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
-if (empty($user->rights->societe->client->voir) && !$socid) {
-	$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
+// If the internal user must only see his customers, force searching by him
+$search_sale = 0;
+if (!$user->hasRight('societe', 'client', 'voir')) {
+	$search_sale = $user->id;
 }
-if ($socid > 0) {
-	$sql .= " AND s.rowid = ".((int) $socid);
+// Search on sale representative
+if ($search_sale && $search_sale != '-1') {
+	if ($search_sale == -2) {
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc)";
+	} elseif ($search_sale > 0) {
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = a.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
 }
-// We must filter on assignement table
+// Search on socid
+if ($socid) {
+	$sql .= " AND a.fk_soc = ".((int) $socid);
+}
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
@@ -525,7 +549,7 @@ if ($search_title) {
 if ($search_note) {
 	$sql .= natural_search('a.note', $search_note);
 }
-// We must filter on assignement table
+// We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " AND (";
 	if ($filtert > 0) {
@@ -554,6 +578,15 @@ if ($dateend_dtend > 0) {
 	$sql .= " AND a.datep2 <= '".$db->idate($dateend_dtend)."'";
 }
 
+// Search in categories, -1 is all and -2 is no categories
+if ($search_categ_cus != -1) {
+	if ($search_categ_cus == -2) {
+		$sql .= " AND NOT EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id)";
+	} elseif ($search_categ_cus > 0) {
+		$sql .= " AND EXISTS (SELECT ca.fk_actioncomm FROM ".MAIN_DB_PREFIX."categorie_actioncomm as ca WHERE ca.fk_actioncomm = a.id AND ca.fk_categorie IN (".$db->sanitize($search_categ_cus)."))";
+	}
+}
+
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
@@ -564,10 +597,11 @@ $sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
@@ -600,7 +634,7 @@ $num = $db->num_rows($resql);
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // Local calendar
-$newtitle = '<div class="nowrap clear inline-block minheight30 margintoponly">';
+$newtitle = '<div class="nowrap clear inline-block minheight30">';
 $newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
 $newtitle .= '</div>';
 //$newtitle=$langs->trans($title);
@@ -644,41 +678,42 @@ if (empty($reshook)) {
 } elseif ($reshook > 1) {
 	$s = $hookmanager->resPrint;
 }
+
 $viewyear = is_object($object) ? dol_print_date($object->datep, '%Y') : '';
 $viewmonth = is_object($object) ? dol_print_date($object->datep, '%m') : '';
 $viewday = is_object($object) ? dol_print_date($object->datep, '%d') : '';
-$viewmode = '';
-$viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
+
+$viewmode = '<div class="navmode inline-block">';
+
+$viewmode .= '<a class="btnTitle'.(($mode == 'list' || $mode == 'show_list') ? ' btnTitleSelected' : '').' btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&restore_lastsearch_values=1'.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("List"), 'object_calendarlist', 'class="imgforviewmode pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewList").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_month' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_month&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendarmonth', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewCal").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_week' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_week&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewWeek").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_day' ? ' btnTitleSelected' : '').' reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?mode=show_day&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow">'.$langs->trans("ViewDay").'</span></a>';
 
-$viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
+$viewmode .= '<a class="btnTitle'.($mode == 'show_peruser' ? ' btnTitleSelected' : '').' reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?mode=show_peruser&year='.$viewyear.'&month='.$viewmonth.'&day='.$viewday.$paramnoactionodate.'">';
 //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
 $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
 //$viewmode .= '</span>';
-$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
-
-$viewmode .= '<span class="marginrightonly"></span>';
+$viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone inline-block width75 divoverflow" title="'.dolPrintHTML($langs->trans("ViewPerUser")).'">'.$langs->trans("ViewPerUser").'</span></a>';
 
 // Add more views from hooks
 $parameters = array();
@@ -689,22 +724,24 @@ if (empty($reshook)) {
 	$viewmode = $hookmanager->resPrint;
 }
 
+$viewmode .= '</div>';
+
+$viewmode .= '<span class="marginrightonly"></span>';
+
+
 $tmpforcreatebutton = dol_getdate(dol_now(), true);
 
-$newparam = '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
-
-//$param='month='.$monthshown.'&year='.$year;
-$hourminsec = dol_print_date(dol_mktime(10, 0, 0, 1, 1, 1970, 'gmt'), '%H', 'gmt').'0000';	// Set $hourminsec to '100000' to auto set hour to 10:00 at creation
+$newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
-$url .= '&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec;
+$url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
 $url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
-$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create);
+$newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create'));
 
-$param .= '&mode='.$mode;
+$param .= '&mode='.urlencode($mode);
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1 * $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, is_numeric($nbtotalofrecords) ? -1 * $nbtotalofrecords : $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
 
 print $s;
 
@@ -721,7 +758,7 @@ if ($massactionbutton) {
 $i = 0;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
 
 print '<div class="div-table-responsive">';
@@ -784,7 +821,7 @@ if (!empty($arrayfields['a.fk_element']['checked'])) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
-$parameters = array('arrayfields'=>$arrayfields);
+$parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
@@ -795,13 +832,13 @@ if (!empty($arrayfields['a.tms']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
 if (!empty($arrayfields['a.percent']['checked'])) {
-	print '<td class="liste_titre right parentonrightofpage">';
+	print '<td class="liste_titre center parentonrightofpage">';
 	$formactions->form_select_status_action('formaction', $search_status, 1, 'search_status', 1, 2, 'search_status width100 onrightofpage');
 	print '</td>';
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -816,6 +853,7 @@ $totalarray['nbfield'] = 0;
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.id']['checked'])) {
 	print_liste_field_titre($arrayfields['a.id']['label'], $_SERVER["PHP_SELF"], "a.id", $param, "", "", $sortfield, $sortorder);
@@ -839,11 +877,11 @@ if (!empty($arrayfields['a.note']['checked'])) {
 }
 //if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 if (!empty($arrayfields['a.datep']['checked'])) {
-	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.datep2']['checked'])) {
-	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['a.datep2']['label'], $_SERVER["PHP_SELF"], "a.datep2", $param, '', '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
@@ -861,35 +899,36 @@ if (!empty($arrayfields['a.fk_element']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['a.datec']['checked'])) {
-	print_liste_field_titre($arrayfields['a.datec']['label'], $_SERVER["PHP_SELF"], "a.datec,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['a.datec']['label'], $_SERVER["PHP_SELF"], "a.datec,a.id", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['a.tms']['checked'])) {
-	print_liste_field_titre($arrayfields['a.tms']['label'], $_SERVER["PHP_SELF"], "a.tms,a.id", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['a.tms']['label'], $_SERVER["PHP_SELF"], "a.tms,a.id", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-
+// Status
 if (!empty($arrayfields['a.percent']['checked'])) {
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "a.percent", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	$totalarray['nbfield']++;
 }
-$totalarray['nbfield']++;
 print "</tr>\n";
 
 $now = dol_now();
 $delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$today_start_time = dol_mktime(0, 0, 0, (int) date('m', $now), (int) date('d', $now), (int) date('Y', $now));
 
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 $caction = new CActionComm($db);
-$arraylist = $caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0), '', 1);
+$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 $contactListCache = array();
 
 // Loop on record
@@ -898,6 +937,7 @@ $i = 0;
 //$savnbfield = $totalarray['nbfield'];
 //$totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
+$cache_user_list = array();
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
@@ -908,7 +948,7 @@ while ($i < $imaxinloop) {
 	$object->setVarsFromFetchObj($obj);
 
 	// Discard auto action if option is on
-	if (!empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO) && $obj->type_code == 'AC_OTH_AUTO') {
+	if (getDolGlobalString('AGENDA_ALWAYS_HIDE_AUTO') && $obj->type_code == 'AC_OTH_AUTO') {
 		$i++;
 		continue;
 	}
@@ -934,7 +974,55 @@ while ($i < $imaxinloop) {
 		$actionstatic->fetchResources();
 	}
 
-	print '<tr class="oddeven">';
+	// cache of user list (owners)
+	if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+		$userstatic = new User($db);
+		$res = $userstatic->fetch($obj->fk_user_action);
+		if ($res > 0) {
+			$cache_user_list[$obj->fk_user_action] = $userstatic;
+		}
+	}
+
+	// get event style for user owner
+	$event_owner_style = '';
+	// We decide to choose color of owner of event (event->userownerid is user id of owner, event->userassigned contains all users assigned to event)
+	if ($obj->fk_user_action > 0 && $cache_user_list[$obj->fk_user_action]->color != '') {
+		$event_owner_style .= 'border-left: #' . $cache_user_list[$obj->fk_user_action]->color . ' 5px solid;';
+	}
+
+	// get event style for start and end date
+	$event_more_class = '';
+	$event_start_date_css = '';
+	$event_end_date_css = '';
+	$event_start_date_time = $actionstatic->datep;
+	if ($event_start_date_time > $now) {
+		// future event
+		$event_more_class = 'event-future';
+		$event_start_date_css = $event_end_date_css = $event_more_class;
+	} else {
+		if ($obj->fulldayevent == 1) {
+			$today_start_date_time = $today_start_time;
+		} else {
+			$today_start_date_time = $now;
+		}
+
+		// check event end date
+		$event_end_date_time = $db->jdate($obj->dp2);
+		if ($event_end_date_time != null && $event_end_date_time < $today_start_date_time) {
+			// past event
+			$event_more_class = 'event-past';
+		} elseif ($event_end_date_time == null && $event_start_date_time < $today_start_date_time) {
+			// past event
+			$event_more_class = 'event-past';
+		} else {
+			// current event
+			$event_more_class = 'event-current';
+		}
+		$event_start_date_css = $event_end_date_css = $event_more_class;
+	}
+	$event_start_date_css = $event_end_date_css = $event_more_class;
+
+	print '<tr class="oddeven' . ($event_more_class != '' ? ' '.$event_more_class : '') . '">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
@@ -956,10 +1044,17 @@ while ($i < $imaxinloop) {
 
 	// User owner
 	if (!empty($arrayfields['owner']['checked'])) {
-		print '<td class="tdoverflowmax150">'; // With edge and chrome the td overflow is not supported correctly when content is not full text.
-		if ($obj->fk_user_action > 0) {
-			$userstatic->fetch($obj->fk_user_action);
-			print $userstatic->getNomUrl(-1);
+		//print '<td class="tdoverflowmax150"' . ($event_owner_style != '' ? ' style="'.$event_owner_style.'"' : '') . '>';
+		print '<td class="tdoverflowmax150">';
+		if ($obj->fk_user_action > 0 && !isset($cache_user_list[$obj->fk_user_action])) {
+			$userstatic = new User($db);
+			$res = $userstatic->fetch($obj->fk_user_action);
+			if ($res > 0) {
+				$cache_user_list[$obj->fk_user_action] = $userstatic;
+			}
+		}
+		if (isset($cache_user_list[$obj->fk_user_action])) {
+			print $cache_user_list[$obj->fk_user_action]->getNomUrl(-1);
 		} else {
 			print '&nbsp;';
 		}
@@ -971,10 +1066,10 @@ while ($i < $imaxinloop) {
 		print '<td class="nowraponall">';
 		print $actionstatic->getTypePicto();
 		$labeltype = $obj->type_code;
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) {
+		if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
 			$labeltype = 'AC_OTH';
 		}
-		if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
+		if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
 			$labeltype = $langs->trans("Message");
 		} else {
 			if (!empty($arraylist[$labeltype])) {
@@ -997,8 +1092,8 @@ while ($i < $imaxinloop) {
 
 	// Description
 	if (!empty($arrayfields['a.note']['checked'])) {
-		print '<td class="tdoverflowonsmartphone">';
 		$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 1));
+		print '<td class="tdoverflow200" title="'.dol_escape_htmltag($text).'">';
 		print $form->textwithtooltip(dol_trunc($text, 48), $actionstatic->note_private);
 		print '</td>';
 	}
@@ -1007,15 +1102,16 @@ while ($i < $imaxinloop) {
 
 	// Start date
 	if (!empty($arrayfields['a.datep']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center nowraponall'.($event_start_date_css ? ' '.$event_start_date_css : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			print dol_print_date($db->jdate($obj->dp), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
+		print '</span>';
 		$late = 0;
-		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100 ) {
+		if ($actionstatic->hasDelay() && $actionstatic->percentage >= 0 && $actionstatic->percentage < 100) {
 			$late = 1;
 		}
 		if ($late) {
@@ -1026,13 +1122,14 @@ while ($i < $imaxinloop) {
 
 	// End date
 	if (!empty($arrayfields['a.datep2']['checked'])) {
-		print '<td class="center nowraponall">';
+		print '<td class="center nowraponall'.($event_end_date_css ? ' '.$event_end_date_css : '').'"><span>';
 		if (empty($obj->fulldayevent)) {
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse, 'tzuserrel');
 		} else {
 			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse, ($tzforfullday ? $tzforfullday : 'tzuserrel'));
 		}
+		print '</span>';
 		print '</td>';
 	}
 
@@ -1106,7 +1203,7 @@ while ($i < $imaxinloop) {
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+	$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

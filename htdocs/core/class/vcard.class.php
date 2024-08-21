@@ -2,6 +2,7 @@
 /* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@
  */
 function encode($string)
 {
-	return str_replace(";", "\;", (dol_quoted_printable_encode(utf8_decode($string))));
+	return str_replace(";", "\;", (dol_quoted_printable_encode($string)));
 }
 
 
@@ -83,7 +84,7 @@ function dol_quoted_printable_encode($input, $line_max = 76)
 
 
 /**
- *	Class to buld vCard files
+ *	Class to build vCard files
  */
 class vCard
 {
@@ -100,14 +101,14 @@ class vCard
 	/**
 	 * @var string encoding
 	 */
-	public $encoding = "ISO-8859-1;ENCODING=QUOTED-PRINTABLE";
+	public $encoding = "ENCODING=QUOTED-PRINTABLE";
 
 
 	/**
 	 *  mise en forme du numero de telephone
 	 *
 	 *  @param	int		$number		numero de telephone
-	 *  @param	string	$type		Type
+	 *  @param	string	$type		Type ('cell')
 	 *  @return	void
 	 */
 	public function setPhoneNumber($number, $type = "")
@@ -117,48 +118,52 @@ class vCard
 		if ($type != "") {
 			$key .= ";".$type;
 		}
-		$key .= ";CHARSET=".$this->encoding;
-		$this->properties[$key] = encode($number);
+		$key .= ";VALUE=uri";
+		//$key .= ";".$this->encoding;
+		$this->properties[$key] = 'tel:'.$number;
 	}
 
 	/**
 	 *	mise en forme de la photo
 	 *  warning NON TESTE !
 	 *
-	 *  @param  string  $type			Type
+	 *  @param  string  $type			Type 'image/jpeg' or 'JPEG'
 	 *  @param  string  $photo			Photo
 	 *  @return	void
 	 */
 	public function setPhoto($type, $photo)
 	{
 		// $type = "GIF" | "JPEG"
-		$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
+		//$this->properties["PHOTO;MEDIATYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
+		$this->properties["PHOTO;MEDIATYPE=$type"] = $photo;		// must be url of photo
+		//$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);   // must be content of image
 	}
 
 	/**
-	 *	mise en forme du nom formate
+	 *	mise en forme du nom format
 	 *
 	 *	@param	string	$name			Name
 	 *	@return	void
 	 */
 	public function setFormattedName($name)
 	{
-		$this->properties["FN;CHARSET=".$this->encoding] = encode($name);
+		$this->properties["FN;".$this->encoding] = encode($name);
 	}
 
 	/**
-	 *	mise en forme du nom complet
+	 *	mise en forme du nom complete
 	 *
 	 *	@param	string	$family			Family name
 	 *	@param	string	$first			First name
 	 *	@param	string	$additional		Additional (e.g. second name, nick name)
-	 *	@param	string	$prefix			Prefix (e.g. "Mr.", "Ms.", "Prof.")
+	 *	@param	string	$prefix			Title prefix (e.g. "Mr.", "Ms.", "Prof.")
 	 *	@param	string	$suffix			Suffix (e.g. "sen." for senior, "jun." for junior)
 	 *	@return	void
 	 */
 	public function setName($family = "", $first = "", $additional = "", $prefix = "", $suffix = "")
 	{
-		$this->properties["N;CHARSET=".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		//$this->properties["N;".$this->encoding] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
+		$this->properties["N"] = encode($family).";".encode($first).";".encode($additional).";".encode($prefix).";".encode($suffix);
 		$this->filename = "$first%20$family.vcf";
 		if (empty($this->properties["FN"])) {
 			$this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
@@ -173,12 +178,13 @@ class vCard
 	 */
 	public function setBirthday($date)
 	{
-		// $date format is YYYY-MM-DD - RFC 2425 and RFC 2426
-		$this->properties["BDAY"] = dol_print_date($date, 'dayrfc');
+		// $date format is YYYY-MM-DD - RFC 2425 and RFC 2426 for vcard v3
+		// $date format is YYYYMMDD or ISO8601 for vcard v4
+		$this->properties["BDAY"] = dol_print_date($date, 'dayxcard');
 	}
 
 	/**
-	 *	mise en forme de l'adresse
+	 *	Address
 	 *
 	 *	@param	string	$postoffice		Postoffice
 	 *	@param	string	$extended		Extended
@@ -188,25 +194,29 @@ class vCard
 	 *	@param	string	$zip			Zip
 	 *	@param	string	$country		Country
 	 *	@param	string	$type			Type
+	 *  @param	string	$label			Label
 	 *	@return	void
 	 */
-	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME;POSTAL")
+	public function setAddress($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "", $label = "")
 	{
 		// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
 		if ($type != "") {
 			$key .= ";".$type;
 		}
-		$key .= ";CHARSET=".$this->encoding;
-		$this->properties[$key] = ";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
+		if ($label != "") {
+			$key .= ';LABEL="'.encode($label).'"';
+		}
+		$key .= ";".$this->encoding;
+		$this->properties[$key] = encode($postoffice).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
 
-		//if ($this->properties["LABEL;".$type.";CHARSET=".$this->encoding] == '') {
-			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
+		//if ($this->properties["LABEL;".$type.";".$this->encoding] == '') {
+		//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		//}
 	}
 
 	/**
-	 *  mise en forme du label
+	 *  Address (old standard)
 	 *
 	 *  @param	string	$postoffice		Postoffice
 	 *  @param	string	$extended		Extended
@@ -217,8 +227,9 @@ class vCard
 	 *  @param	string	$country		Country
 	 *  @param	string	$type			Type
 	 *  @return	void
+	 *  @deprecated
 	 */
-	public function setLabel($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME;POSTAL")
+	public function setLabel($postoffice = "", $extended = "", $street = "", $city = "", $region = "", $zip = "", $country = "", $type = "HOME")
 	{
 		$label = "";
 		if ($postoffice != "") {
@@ -243,21 +254,23 @@ class vCard
 			$country .= "$country\r\n";
 		}
 
-		$this->properties["LABEL;$type;CHARSET=".$this->encoding] = encode($label);
+		$this->properties["LABEL;$type;".$this->encoding] = encode($label);
 	}
 
 	/**
 	 *	Add a e-mail address to this vCard
 	 *
 	 *	@param	string	$address		E-mail address
-	 *	@param	string	$type			(optional) The type of the e-mail (typical "PREF;INTERNET" or "INTERNET")
+	 *	@param	string	$type			(optional) The type of the e-mail (typical "PREF" or "INTERNET")
 	 *	@return	void
 	 */
-	public function setEmail($address, $type = "TYPE=INTERNET;PREF")
+	public function setEmail($address, $type = "")
 	{
 		$key = "EMAIL";
-		if ($type != "") {
-			$key .= ";".$type;
+		if ($type == "PREF") {
+			$key .= ";PREF=1";
+		} elseif (!empty($type)) {
+			$key .= ";TYPE=".dol_strtolower($type);
 		}
 		$this->properties[$key] = $address;
 	}
@@ -270,7 +283,7 @@ class vCard
 	 */
 	public function setNote($note)
 	{
-		$this->properties["NOTE;CHARSET=".$this->encoding] = encode($note);
+		$this->properties["NOTE;".$this->encoding] = encode($note);
 	}
 
 	/**
@@ -281,7 +294,7 @@ class vCard
 	 */
 	public function setTitle($title)
 	{
-		$this->properties["TITLE;CHARSET=".$this->encoding] = encode($title);
+		$this->properties["TITLE;".$this->encoding] = encode($title);
 	}
 
 
@@ -293,7 +306,7 @@ class vCard
 	 */
 	public function setOrg($org)
 	{
-		$this->properties["ORG;CHARSET=".$this->encoding] = encode($org);
+		$this->properties["ORG;".$this->encoding] = encode($org);
 	}
 
 
@@ -305,7 +318,7 @@ class vCard
 	 */
 	public function setProdId($prodid)
 	{
-		$this->properties["PRODID;CHARSET=".$this->encoding] = encode($prodid);
+		$this->properties["PRODID"] = encode($prodid);
 	}
 
 
@@ -317,7 +330,7 @@ class vCard
 	 */
 	public function setUID($uid)
 	{
-		$this->properties["UID;CHARSET=".$this->encoding] = encode($uid);
+		$this->properties["UID"] = encode($uid);
 	}
 
 
@@ -346,13 +359,14 @@ class vCard
 	public function getVCard()
 	{
 		$text = "BEGIN:VCARD\r\n";
-		$text .= "VERSION:3.0\r\n";
+		$text .= "VERSION:4.0\r\n";		// With V4, all encoding are UTF-8
 		//$text.= "VERSION:2.1\r\n";
 		foreach ($this->properties as $key => $value) {
-			$text .= "$key:$value\r\n";
+			$newkey = preg_replace('/-.*$/', '', $key);	// remove suffix -twitter, -facebook, ...
+			$text .= $newkey.":".$value."\r\n";
 		}
-		$text .= "REV:".date("Y-m-d")."T".date("H:i:s")."Z\r\n";
-		$text .= "MAILER: Dolibarr\r\n";
+		$text .= "REV:".date("Ymd")."T".date("His")."Z\r\n";
+		//$text .= "MAILER: Dolibarr\r\n";
 		$text .= "END:VCARD\r\n";
 		return $text;
 	}
@@ -366,6 +380,173 @@ class vCard
 	{
 		return $this->filename;
 	}
+
+	/**
+	 * Return a VCARD string
+	 * See RFC https://datatracker.ietf.org/doc/html/rfc6350
+	 *
+	 * @param	Object			$object		Object (User or Contact)
+	 * @param	Societe|null	$company	Company. May be null
+	 * @param	Translate		$langs		Lang object
+	 * @param	string			$urlphoto	Full public URL of photo
+	 * @return	string						String
+	 */
+	public function buildVCardString($object, $company, $langs, $urlphoto = '')
+	{
+		global $dolibarr_main_instance_unique_id;
+
+		$this->setProdId('Dolibarr '.DOL_VERSION);
+
+		$this->setUID('DOLIBARR-USERID-'.dol_trunc(md5('vcard'.$dolibarr_main_instance_unique_id), 8, 'right', 'UTF-8', 1).'-'.$object->id);
+		$this->setName($object->lastname, $object->firstname, "", $object->civility_code, "");
+		$this->setFormattedName($object->getFullName($langs, 1));
+
+		if ($urlphoto) {
+			$mimetype = dol_mimetype($urlphoto);
+			if ($mimetype) {
+				$this->setPhoto($mimetype, $urlphoto);
+			}
+		}
+
+		if ($object->office_phone) {
+			$this->setPhoneNumber($object->office_phone, "TYPE=WORK,VOICE");
+		}
+		/* disabled
+		if ($object->personal_mobile) {
+			$this->setPhoneNumber($object->personal_mobile, "TYPE=CELL,VOICE");
+		}*/
+		if ($object->user_mobile) {
+			$this->setPhoneNumber($object->user_mobile, "TYPE=CELL,VOICE");
+		}
+		if ($object->office_fax) {
+			$this->setPhoneNumber($object->office_fax, "TYPE=WORK,FAX");
+		}
+
+		if (!empty($object->socialnetworks)) {
+			foreach ($object->socialnetworks as $key => $val) {
+				if (empty($val)) {	// Discard social network if empty
+					continue;
+				}
+				$urlsn = '';
+				if ($key == 'linkedin') {
+					if (!preg_match('/^http/', $val)) {
+						$urlsn = 'https://www.'.$key.'.com/company/'.urlencode($val);
+					} else {
+						$urlsn = $val;
+					}
+				} elseif ($key == 'youtube') {
+					if (!preg_match('/^http/', $val)) {
+						$urlsn = 'https://www.'.$key.'.com/user/'.urlencode($val);
+					} else {
+						$urlsn = $val;
+					}
+				} else {
+					if (!preg_match('/^http/', $val)) {
+						$urlsn = 'https://www.'.$key.'.com/'.urlencode($val);
+					} else {
+						$urlsn = $val;
+					}
+				}
+				if ($urlsn) {
+					$this->properties["SOCIALPROFILE;TYPE=WORK-".$key] = $key.':'.$urlsn;
+				}
+			}
+		}
+
+		$country = $object->country_code ? $object->country : '';
+
+		// User address
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
+			if ($object->address || $object->town || $object->state || $object->zip || $object->country) {
+				$this->setAddress("", "", $object->address, $object->town, $object->state, $object->zip, $country, "");
+				//$this->setLabel("", "", $object->address, $object->town, $object->state, $object->zip, $country, "TYPE=HOME");
+			}
+		}
+
+		if ($object->email) {
+			$this->setEmail($object->email, "TYPE=WORK");
+		}
+		/* disabled
+		if ($object->personal_email) {
+			$this->setEmail($object->personal_email, "TYPE=HOME");
+		} */
+		if ($object->note_public) {
+			$this->setNote($object->note_public);
+		}
+		if ($object->job) {
+			$this->setTitle($object->job);
+		}
+
+		// For user, $object->url is not defined
+		// For contact, $object->url is not defined
+		if (!empty($object->url)) {
+			$this->setURL($object->url, "");
+		}
+
+		if (is_object($company)) {
+			// Si user linked to a thirdparty and not a physical people
+			if ($company->typent_code != 'TE_PRIVATE') {
+				$this->setOrg($company->name);
+			}
+
+			$this->setURL($company->url, "");
+
+			if ($company->phone && $company->phone != $object->office_phone) {
+				$this->setPhoneNumber($company->phone, "TYPE=WORK,VOICE");
+			}
+			if ($company->fax && $company->fax != $object->office_fax) {
+				$this->setPhoneNumber($company->fax, "TYPE=WORK,FAX");
+			}
+			if ($company->address || $company->town || $company->state || $company->zip || $company->country) {
+				$this->setAddress("", "", $company->address, $company->town, $company->state, $company->zip, $company->country, "TYPE=WORK");
+			}
+
+			if ($company->email && $company->email != $object->email) {
+				$this->setEmail($company->email, "TYPE=WORK");
+			}
+
+			/*
+			if (!empty($company->socialnetworks)) {
+				foreach ($company->socialnetworks as $key => $val) {
+					$urlsn = '';
+					if ($key == 'linkedin') {
+						if (!preg_match('/^http/', $val)) {
+							$urlsn = 'https://www.'.$key.'.com/company/'.urlencode($val);
+						} else {
+							$urlsn = $val;
+						}
+					} elseif ($key == 'youtube') {
+						if (!preg_match('/^http/', $val)) {
+							$urlsn = 'https://www.'.$key.'.com/user/'.urlencode($val);
+						} else {
+							$urlsn = $val;
+						}
+					} else {
+						if (!preg_match('/^http/', $val)) {
+							$urlsn = 'https://www.'.$key.'.com/'.urlencode($val);
+						} else {
+							$urlsn = $val;
+						}
+					}
+					if ($urlsn) {
+						$this->properties["socialProfile;type=".$key] = $urlsn;
+					}
+				}
+			}
+			*/
+		}
+
+		// Birthday
+		if (!($object->element != 'user') || getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+			if ($object->birth) {
+				$this->setBirthday($object->birth);
+			}
+		}
+
+		// Return VCard string
+		return $this->getVCard();
+	}
+
 
 	/* Example from Microsoft Outlook 2019
 

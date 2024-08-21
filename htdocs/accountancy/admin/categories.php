@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2016       Jamal Elbaz         <jamelbaz@gmail.pro>
- * Copyright (C) 2017-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2017-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +35,35 @@ $error = 0;
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "accountancy", "compta"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $cancel = GETPOST('cancel', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$cat_id = GETPOST('account_category', 'int');
+$cat_id = GETPOSTINT('account_category');
 $selectcpt = GETPOST('cpt_bk', 'array');
-$cpt_id = GETPOST('cptid', 'int');
+$cpt_id = GETPOSTINT('cptid');
 
 if ($cat_id == 0) {
 	$cat_id = null;
+}
+
+// Load variable for pagination
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
+	$page = 0;
+}
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if (empty($sortfield)) {
+	$sortfield = 'account_number';
+}
+if (empty($sortorder)) {
+	$sortorder = 'ASC';
 }
 
 // Security check
@@ -93,7 +114,10 @@ if ($action == 'delete') {
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
-llxheader('', $langs->trans('AccountingCategory'));
+$title= $langs->trans('AccountingCategory');
+$help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
+
+llxHeader('', $title, $help_url);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 $titlepicto = 'setup';
@@ -111,8 +135,13 @@ print '<table class="border centpercent">';
 // Select the category
 print '<tr><td class="titlefield">'.$langs->trans("AccountingCategory").'</td>';
 print '<td>';
-$formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 0);
-print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
+$s = $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 0);
+if ($formaccounting->nbaccounts_category <= 0) {
+	print '<span class="opacitymedium">'.$s.'</span>';
+} else {
+	print $s;
+	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
+}
 print '</td></tr>';
 
 print '</table>';
@@ -136,15 +165,7 @@ if (!empty($cat_id)) {
 
 	if (is_array($accountingcategory->lines_cptbk) && count($accountingcategory->lines_cptbk) > 0) {
 		print img_picto($langs->trans("AccountingAccount"), 'accounting_account', 'class="pictofixedwith"');
-		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), null, null, '', 0, "80%", '', '', $langs->transnoentitiesnoconv("AddAccountFromBookKeepingWithNoCategories"));
-		//print '<br>';
-		/*print '<select class="flat minwidth200" size="8" name="cpt_bk[]" multiple>';
-		foreach ( $accountingcategory->lines_cptbk as $cpt ) {
-			print '<option value="' . length_accountg($cpt->numero_compte) . '">' . length_accountg($cpt->numero_compte) . ' (' . $cpt->label_compte . ' ' . $cpt->doc_ref . ')</option>';
-		}
-		print '</select><br>';
-		print ajax_combobox('cpt_bk');
-		*/
+		print $form->multiselectarray('cpt_bk', $arraykeyvalue, GETPOST('cpt_bk', 'array'), 0, 0, '', 0, "80%", '', '', $langs->transnoentitiesnoconv("AddAccountFromBookKeepingWithNoCategories"));
 		print '<input type="submit" class="button button-add small" id="" class="action-delete" value="'.$langs->trans("Add").'"> ';
 	}
 }
@@ -152,13 +173,16 @@ if (!empty($cat_id)) {
 print '</form>';
 
 
-if ($action == 'display' || $action == 'delete') {
+if ((empty($action) || $action == 'display' || $action == 'delete') && $cat_id > 0) {
+	$param = 'account_category='.((int) $cat_id);
+
 	print '<br>';
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">'.$langs->trans("AccountAccounting")."</td>";
-	print '<td class="liste_titre" colspan="2">'.$langs->trans("Label")."</td>";
-	print "</tr>\n";
+	print getTitleFieldOfList('AccountAccounting', 0, $_SERVER['PHP_SELF'], 'account_number', '', $param, '', $sortfield, $sortorder, '')."\n";
+	print getTitleFieldOfList('Label', 0, $_SERVER['PHP_SELF'], 'label', '', $param, '', $sortfield, $sortorder, '')."\n";
+	print getTitleFieldOfList('', 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+	print '</tr>'."\n";
 
 	if (!empty($cat_id)) {
 		$return = $accountingcategory->display($cat_id); // This load ->lines_display
@@ -167,6 +191,8 @@ if ($action == 'display' || $action == 'delete') {
 		}
 
 		if (is_array($accountingcategory->lines_display) && count($accountingcategory->lines_display) > 0) {
+			$accountingcategory->lines_display = dol_sort_array($accountingcategory->lines_display, $sortfield, $sortorder, -1, 0, 1);
+
 			foreach ($accountingcategory->lines_display as $cpt) {
 				print '<tr class="oddeven">';
 				print '<td>'.length_accountg($cpt->account_number).'</td>';

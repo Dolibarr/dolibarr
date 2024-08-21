@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +25,13 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf,$user,$langs,$db,$mysoc;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (! defined('NOREQUIREUSER')) {
 	define('NOREQUIREUSER', '1');
@@ -74,37 +76,8 @@ print "\n";
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsLibTest extends PHPUnit\Framework\TestCase
+class FunctionsLibTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-	protected $savmysoc;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return CoreTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db,$mysoc;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-		$this->savmysoc=$mysoc;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -116,60 +89,123 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		//$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
 		if (! function_exists('mb_substr')) {
-			print "\n".__METHOD__." function mb_substr must be enabled.\n"; die(1);
+			print "\n".__METHOD__." function mb_substr must be enabled.\n";
+			die(1);
 		}
 
 		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n"; die(1);
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
+			die(1);
 		}
 
 		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
-			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n"; die(1);
+			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
+			die(1);
 		}
 
 		print __METHOD__."\n";
 	}
 
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		//$db->rollback();
-
-		print __METHOD__."\n";
-	}
 
 	/**
-	 * Init phpunit tests. Restore variables before each test.
+	 * testDolCheckFilters
 	 *
-	 * @return	void
+	 * @return boolean
 	 */
-	protected function setUp(): void
+	public function testDolCheckFilters()
 	{
-		global $conf,$user,$langs,$db,$mysoc;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-		$mysoc=$this->savmysoc;
+		global $conf, $langs, $db;
 
-		print __METHOD__."\n";
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(( ... (a:=:1) .éééé. (b:=:1) ... ))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(((((a:=:1) ... ) .éééé.. (b:=:1) ..) ... ))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 2
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '((... (((a:=:1) ... ( .éééé.. (b:=:1) ..)))))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(2, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with global parenthesis at level 0
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(a:=:1) ... (b:=:1) éééé ...';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertTrue($result);
+
+		// A sql with bad balance
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '((((a:=:1) ... (b:=:1) éééé ..))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertFalse($result);
+
+		// A sql with bad balance
+		$error = '';
+		$parenthesislevel = 0;
+		$sql = '(((a:=:1) ... (b:=:1) éééé ..)))';
+		$result = dolCheckFilters($sql, $error, $parenthesislevel);
+		$this->assertEquals(0, $parenthesislevel);
+		$this->assertFalse($result);
+
+		return true;
 	}
+
 
 	/**
-	 * End phpunit tests
+	 * testDolForgeExplodeAnd
 	 *
-	 * @return	void
+	 * @return boolean
 	 */
-	protected function tearDown(): void
+	public function testDolForgeExplodeAnd()
 	{
-		print __METHOD__."\n";
-	}
+		$tmp = dolForgeExplodeAnd('');
+		$this->assertEquals(0, count($tmp));
 
+		$tmp = dolForgeExplodeAnd('(a:=:1)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND (b:=:2)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('(b:=:2)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND ((b:=:2) OR (c:=:3))');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('((b:=:2) OR (c:=:3))', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) AND (b:=:2) OR (c:=:3)');
+		$this->assertEquals('(a:=:1)', $tmp[0]);
+		$this->assertEquals('(b:=:2) OR (c:=:3)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) OR (b:=:2) AND (c:=:3)');
+		$this->assertEquals('(a:=:1) OR (b:=:2)', $tmp[0]);
+		$this->assertEquals('(c:=:3)', $tmp[1]);
+
+		$tmp = dolForgeExplodeAnd('(a:=:1) OR ((b:=:2) AND (c:=:3))');
+		$this->assertEquals('(a:=:1) OR ((b:=:2) AND (c:=:3))', $tmp[0]);
+
+		$tmp = dolForgeExplodeAnd('((y:=:1) AND (p:=:8))');
+		$this->assertEquals('(y:=:1)', $tmp[0]);
+		$this->assertEquals('(p:=:8)', $tmp[1]);
+
+		return true;
+	}
 
 	/**
 	 * testDolForgeCriteriaCallback
@@ -178,21 +214,64 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolForgeCriteriaCallback()
 	{
-		global $conf, $langs;
+		global $conf, $langs, $db;
+
+		// Test using like
+		$filter = "(lastname:like:'%aaa%') OR (firstname:like:'%bbb%')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((lastname LIKE '%aaa%') OR (firstname LIKE '%bbb%'))", $sql);
+
+		// Test on NOW
+		$filter = "(client:!=:8) AND (datefin:>=:'__NOW__')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertStringContainsStringIgnoringCase(" AND ((client <> 8) AND (datefin >= '", $sql);
 
 		// An attempt for SQL injection
-		$filter='if(now()=sysdate()%2Csleep(6)%2C0)';
+		$filter = 'if(now()=sysdate()%2Csleep(6)%2C0)';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, '1 = 3');
+		$this->assertEquals('Filter error - Bad syntax of the search string', $sql);
 
 		// A real search string
-		$filter='(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
+		$filter = '(((statut:=:1) or (entity:in:__AAA__)) and (abc:<:2.0) and (abc:!=:1.23))';
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, ' AND (((statut = 1 or entity IN (__AAA__)) and abc < 2 and abc <> 1.23))');
+		$this->assertEquals(' AND ((((statut = 1) or (entity IN (__AAA__))) and (abc < 2) and (abc <> 1.23)))', $sql);
 
-		$filter="(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
+		// A real search string
+		$filter = "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals($sql, " AND (t.ref LIKE 'SO-%' or t.date_creation < '20160101' or t.date_creation < 0 or t.nature IS NULL)");
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+
+		// A real search string
+		$filter = "(t.fieldstring:=:'aaa ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fieldstring = 'aaa ttt'))", $sql);
+
+		// Check that parenthesis are NOT allowed inside the last operand. Very important.
+		$filter = "(t.fieldint:=:(1,2))";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals("Filter error - Bad syntax of the search string", $sql);
+
+		// Check that ' is escaped into the last operand
+		$filter = "(t.fieldstring:=:'aaa'ttt')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+
+		if ($db->type == 'mysqli') {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa\'ttt'))", $sql);	// with mysql
+		} else {
+			$this->assertEquals(" AND ((t.fieldstring = 'aaa''ttt'))", $sql);	// with pgsql
+		}
+
+		$filter = "(t.fk_soc:IN:1,2)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (1,2)))", $sql);
+
+		$filter = "(t.fk_soc:IN:'1','2=b')";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN ('1','2=b')))", $sql);
+
+		$filter = "(t.fk_soc:IN:SELECT rowid FROM llx_societe WHERE fournisseur = 1)";
+		$sql = forgeSQLFromUniversalSearchCriteria($filter);
+		$this->assertEquals(" AND ((t.fk_soc IN (SELECT rowid FROM llx_societe WHERE fournisseur = 1)))", $sql);
 
 		return true;
 	}
@@ -205,22 +284,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolClone()
 	{
-		$newproduct1 = new Product($this->savdb);
+		global $db;
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		$newproduct1 = new Product($db);
+
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
 		$newproductcloned1 = dol_clone($newproduct1);
 
-		print __METHOD__." this->savdb has type ".(is_resource($this->savdb->db) ? get_resource_type($this->savdb->db) : (is_object($this->savdb->db) ? 'object' : 'unknown'))."\n";
+		print __METHOD__." this->savdb has type ".(is_resource($db->db) ? get_resource_type($db->db) : (is_object($db->db) ? 'object' : 'unknown'))."\n";
 		print __METHOD__." newproduct1->db->db has type ".(is_resource($newproduct1->db->db) ? get_resource_type($newproduct1->db->db) : (is_object($newproduct1->db->db) ? 'object' : 'unknown'))."\n";
-		$this->assertEquals($this->savdb->connected, 1, 'Savdb is connected');
+		$this->assertEquals($db->connected, 1, 'Savdb is connected');
 		$this->assertNotNull($newproduct1->db->db, 'newproduct1->db is not null');
 
-		$newproductcloned2 = dol_clone($newproduct1, 2);
-		var_dump($newproductcloned2);
+		//$newproductcloned2 = dol_clone($newproduct1, 2);
+		//var_dump($newproductcloned2);
 		//print __METHOD__." newproductcloned1->db must be null\n";
 		//$this->assertNull($newproductcloned1->db, 'newproductcloned1->db is null');
 	}
@@ -254,23 +335,23 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		// Nb of line is same than entry text
 
-		$input="bidon@bademail";
-		$result=isValidEmail($input);
+		$input = "bidon@bademail";
+		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertFalse($result, 'Check isValidEmail '.$input);
 
-		$input="test@yahoo.com";
-		$result=isValidEmail($input);
+		$input = "test@yahoo.com";
+		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'Check isValidEmail '.$input);
 
-		$input="The name of sender <test@yahoo.com>";
-		$result=isValidEmail($input);
+		$input = "The name of sender <test@yahoo.com>";
+		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertFalse($result, 'Check isValidEmail '.$input);
 
-		$input="1234.abcdefg@domainame.com.br";
-		$result=isValidEmail($input);
+		$input = "1234.abcdefg@domainame.com.br";
+		$result = isValidEmail($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertTrue($result, 'Check isValidEmail '.$input);
 	}
@@ -284,18 +365,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		// Nb of line is same than entry text
 
-		$input="yahoo.com";
-		$result=isValidMXRecord($input);
+		$input = "yahoo.com";
+		$result = isValidMXRecord($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result);
 
-		$input="yhaoo.com";
-		$result=isValidMXRecord($input);
+		$input = "yhaoo.com";
+		$result = isValidMXRecord($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
-		$input="dolibarr.fr";
-		$result=isValidMXRecord($input);
+		$input = "dolibarr.fr";
+		$result = isValidMXRecord($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(0, $result);
 	}
@@ -309,57 +390,57 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		// Nb of line is same than entry text
 
-		$input="aaaa";
-		$result=dolGetFirstLineOfText($input);
+		$input = "aaaa";
+		$result = dolGetFirstLineOfText($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa", $result);
 
-		$input="aaaa\nbbbbbbbbbbbb\n";
-		$result=dolGetFirstLineOfText($input, 2);
+		$input = "aaaa\nbbbbbbbbbbbb\n";
+		$result = dolGetFirstLineOfText($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa\nbbbbbbbbbbbb", $result);
 
-		$input="aaaa<br>bbbbbbbbbbbb<br>";
-		$result=dolGetFirstLineOfText($input, 2);
+		$input = "aaaa<br>bbbbbbbbbbbb<br>";
+		$result = dolGetFirstLineOfText($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb", $result);
 
 		// Nb of line is lower
 
-		$input="aaaa\nbbbbbbbbbbbb\ncccccc\n";
-		$result=dolGetFirstLineOfText($input);
+		$input = "aaaa\nbbbbbbbbbbbb\ncccccc\n";
+		$result = dolGetFirstLineOfText($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa...", $result);
 
-		$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
-		$result=dolGetFirstLineOfText($input);
+		$input = "aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+		$result = dolGetFirstLineOfText($input);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa...", $result);
 
-		$input="aaaa\nbbbbbbbbbbbb\ncccccc\n";
-		$result=dolGetFirstLineOfText($input, 2);
+		$input = "aaaa\nbbbbbbbbbbbb\ncccccc\n";
+		$result = dolGetFirstLineOfText($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa\nbbbbbbbbbbbb...", $result);
 
-		$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
-		$result=dolGetFirstLineOfText($input, 2);
+		$input = "aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+		$result = dolGetFirstLineOfText($input, 2);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb...", $result);
 
 		// Nb of line is higher
 
-		$input="aaaa<br>bbbbbbbbbbbb<br>cccccc";
-		$result=dolGetFirstLineOfText($input, 100);
+		$input = "aaaa<br>bbbbbbbbbbbb<br>cccccc";
+		$result = dolGetFirstLineOfText($input, 100);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 a');
 
-		$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
-		$result=dolGetFirstLineOfText($input, 100);
+		$input = "aaaa<br>bbbbbbbbbbbb<br>cccccc<br>";
+		$result = dolGetFirstLineOfText($input, 100);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 b');
 
-		$input="aaaa<br>bbbbbbbbbbbb<br>cccccc<br>\n";
-		$result=dolGetFirstLineOfText($input, 100);
+		$input = "aaaa<br>bbbbbbbbbbbb<br>cccccc<br>\n";
+		$result = dolGetFirstLineOfText($input, 100);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("aaaa<br>\nbbbbbbbbbbbb<br>\ncccccc", $result, 'dolGetFirstLineOfText with nb 100 c');
 	}
@@ -380,12 +461,12 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		var_dump($tmp);
 		*/
 
-		$result=dol_buildpath('/google/oauth2callback.php', 2);
-		print __METHOD__." result=".$result."\n";
+		$result = dol_buildpath('/google/oauth2callback.php', 2);
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 
-		$result=dol_buildpath('/google/oauth2callback.php', 3);
-		print __METHOD__." result=".$result."\n";
+		$result = dol_buildpath('/google/oauth2callback.php', 3);
+		print __METHOD__." dol_buildpath result=".$result."\n";
 		$this->assertStringStartsWith('http', $result);
 	}
 
@@ -398,8 +479,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testGetBrowserInfo()
 	{
 		// MSIE 5.0
-		$user_agent ='Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; KITV4 Wanadoo; KITV5 Wanadoo)';
-		$tmp=getBrowserInfo($user_agent);
+		$user_agent = 'Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt; KITV4 Wanadoo; KITV5 Wanadoo)';
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
 		$this->assertEquals('5.0', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
@@ -407,40 +488,40 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals('classic', $tmp['layout']);
 
 		// Firefox 0.9.1
-		$user_agent ='Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.5a) Gecko/20030728 Mozilla Firefox/0.9.1';
-		$tmp=getBrowserInfo($user_agent);
+		$user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.5a) Gecko/20030728 Mozilla Firefox/0.9.1';
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('firefox', $tmp['browsername']);
 		$this->assertEquals('0.9.1', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		$user_agent ='Mozilla/3.0 (Windows 98; U) Opera 6.03  [en]';
-		$tmp=getBrowserInfo($user_agent);
+		$user_agent = 'Mozilla/3.0 (Windows 98; U) Opera 6.03  [en]';
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('opera', $tmp['browsername']);
 		$this->assertEquals('6.03', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		$user_agent ='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21';
-		$tmp=getBrowserInfo($user_agent);
+		$user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.21 (KHTML, like Gecko) Chrome/19.0.1042.0 Safari/535.21';
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('chrome', $tmp['browsername']);
 		$this->assertEquals('19.0.1042.0', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		$user_agent ='chrome (Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11)';
-		$tmp=getBrowserInfo($user_agent);
+		$user_agent = 'chrome (Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11)';
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('chrome', $tmp['browsername']);
 		$this->assertEquals('17.0.963.56', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		$user_agent ='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
-		$tmp=getBrowserInfo($user_agent);
+		$user_agent = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('safari', $tmp['browsername']);
 		$this->assertEquals('533.21.1', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
@@ -449,7 +530,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		//Internet Explorer 11
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
-		$tmp=getBrowserInfo($user_agent);
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
 		$this->assertEquals('11.0', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
@@ -458,7 +539,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		//Internet Explorer 11 bis
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; NP06; rv:11.0) like Gecko';
-		$tmp=getBrowserInfo($user_agent);
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
 		$this->assertEquals('11.0', $tmp['browserversion']);
 		$this->assertEmpty($tmp['phone']);
@@ -467,12 +548,20 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		//iPad
 		$user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
-		$tmp=getBrowserInfo($user_agent);
+		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('safari', $tmp['browsername']);
 		$this->assertEquals('8536.25', $tmp['browserversion']);
 		$this->assertEquals('ios', $tmp['browseros']);
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
+
+		//Lynx
+		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('lynxlinks', $tmp['browsername']);
+		$this->assertEquals('2.8.8', $tmp['browserversion']);
+		$this->assertEquals('unknown', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
 	}
 
 
@@ -535,71 +624,71 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testDolTextIsHtml()
 	{
 		// True
-		$input='<html>xxx</html>';
-		$after=dol_textishtml($input);
+		$input = '<html>xxx</html>';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with html tag');
-		$input='<body>xxx</body>';
-		$after=dol_textishtml($input);
+		$input = '<body>xxx</body>';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with body tag');
-		$input='xxx <b>yyy</b> zzz';
-		$after=dol_textishtml($input);
+		$input = 'xxx <b>yyy</b> zzz';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with b tag');
-		$input='xxx <u>yyy</u> zzz';
-		$after=dol_textishtml($input);
+		$input = 'xxx <u>yyy</u> zzz';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with u tag');
-		$input='text with <div>some div</div>';
-		$after=dol_textishtml($input);
+		$input = 'text with <div>some div</div>';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with div tag');
-		$input='text with HTML &nbsp; entities';
-		$after=dol_textishtml($input);
+		$input = 'text with HTML &nbsp; entities';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with entities tag');
-		$input='xxx<br>';
-		$after=dol_textishtml($input);
+		$input = 'xxx<br>';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with entities br');
-		$input='xxx<br >';
-		$after=dol_textishtml($input);
+		$input = 'xxx<br >';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with entities br');
-		$input='xxx<br style="eee">';
-		$after=dol_textishtml($input);
+		$input = 'xxx<br style="eee">';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with entities br and attributes');
-		$input='xxx<br style="eee" >';
-		$after=dol_textishtml($input);
+		$input = 'xxx<br style="eee" >';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with entities br and attributes bis');
-		$input='<h2>abc</h2>';
-		$after=dol_textishtml($input);
+		$input = '<h2>abc</h2>';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with entities h2');
-		$input='<img id="abc" src="https://xxx.com/aaa/image.png" />';
-		$after=dol_textishtml($input);
+		$input = '<img id="abc" src="https://xxx.com/aaa/image.png" />';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with img tag');
-		$input='<a class="azerty" href="https://xxx.com/aaa/image.png" />';
-		$after=dol_textishtml($input);
+		$input = '<a class="azerty" href="https://xxx.com/aaa/image.png" />';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with a tag');
-		$input='This is a text with&nbsp;html spaces';
-		$after=dol_textishtml($input);
+		$input = 'This is a text with&nbsp;html spaces';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with a &nbsp;');
-		$input='This is a text with accent &eacute;';
-		$after=dol_textishtml($input);
+		$input = 'This is a text with accent &eacute;';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with a &eacute;');
-		$input='<i class="abc">xxx</i>';
-		$after=dol_textishtml($input);
+		$input = '<i class="abc">xxx</i>';
+		$after = dol_textishtml($input);
 		$this->assertTrue($after, 'Test with i tag and class;');
 
 		// False
-		$input='xxx < br>';
-		$after=dol_textishtml($input);
+		$input = 'xxx < br>';
+		$after = dol_textishtml($input);
 		$this->assertFalse($after);
-		$input='xxx <email@email.com>';	// <em> is html, <em... is not
-		$after=dol_textishtml($input);
+		$input = 'xxx <email@email.com>';	// <em> is html, <em... is not
+		$after = dol_textishtml($input);
 		$this->assertFalse($after);
-		$input='xxx <brstyle="ee">';
-		$after=dol_textishtml($input);
+		$input = 'xxx <brstyle="ee">';
+		$after = dol_textishtml($input);
 		$this->assertFalse($after);
-		$input='This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
-		$after=dol_textishtml($input);
+		$input = 'This is a text with html comments <!-- comment -->';	// we suppose this is not enough to be html content
+		$after = dol_textishtml($input);
 		$this->assertFalse($after);
 
-		$input="A text\nwith a link https://aaa?param=abc&amp;param2=def";
-		$after=dol_textishtml($input);
+		$input = "A text\nwith a link https://aaa?param=abc&amp;param2=def";
+		$after = dol_textishtml($input);
 		$this->assertFalse($after);
 	}
 
@@ -611,32 +700,32 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolHtmlCleanLastBr()
 	{
-		$input="A string\n";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string\n";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string", $after);
 
-		$input="A string first\nA string second\n";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string first\nA string second\n";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string first\nA string second", $after);
 
-		$input="A string\n\n\n";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string\n\n\n";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string", $after);
 
-		$input="A string<br>";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string<br>";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string", $after);
 
-		$input="A string first<br>\nA string second<br>";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string first<br>\nA string second<br>";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string first<br>\nA string second", $after);
 
-		$input="A string\n<br type=\"_moz\" />\n";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string\n<br type=\"_moz\" />\n";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string", $after);
 
-		$input="A string\n<br><br />\n\n";
-		$after=dol_htmlcleanlastbr($input);
+		$input = "A string\n<br><br />\n\n";
+		$after = dol_htmlcleanlastbr($input);
 		$this->assertEquals("A string", $after);
 
 		return true;
@@ -649,21 +738,48 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolConcat()
 	{
-		$text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
-		$after=dol_concatdesc($text1, $text2);
+		$text1 = "A string 1";
+		$text2 = "A string 2";	// text 1 and 2 are text, concat need only \n
+		$after = dol_concatdesc($text1, $text2);
 		$this->assertEquals("A string 1\nA string 2", $after);
 
-		$text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
-		$after=dol_concatdesc($text1, $text2);
+		$text1 = "A<br>string 1";
+		$text2 = "A string 2";	// text 1 is html, concat need <br>\n
+		$after = dol_concatdesc($text1, $text2);
 		$this->assertEquals("A<br>string 1<br>\nA string 2", $after);
 
-		$text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
-		$after=dol_concatdesc($text1, $text2);
+		$text1 = "A string 1";
+		$text2 = "A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+		$after = dol_concatdesc($text1, $text2);
 		$this->assertEquals("A string 1<br>\nA <b>string</b> 2", $after);
 
 		return true;
 	}
 
+
+	/**
+	 * testDolStringNoSpecial
+	 *
+	 * @return boolean
+	 */
+	public function testDolStringNoSpecial()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 0);
+		$this->assertEquals("A_string_with_space_and_special_char_like___or___and_more...\n", $after, "testDolStringNoSpecial 1");
+
+		$text = "A string with space and special char like ' or ° and more...\n";
+		$after = dol_string_nospecial($text, '_', '', '', 1);
+		$this->assertEquals("A string with space and special char like _ or _ and more...\n", $after, "testDolStringNoSpecial 2");
+
+		$text = 'Bahnhofstraße';
+		$after = dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($text), ' '), 70, 'right', 'UTF-8', 1));
+		$this->assertEquals("Bahnhofstraße", $after, "testDolStringNoSpecial with german char");
+
+		return true;
+	}
 
 	/**
 	 * testDolStringNohtmltag
@@ -672,52 +788,52 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolStringNohtmltag()
 	{
-		$text="A\nstring\n\nand more\n";
-		$after=dol_string_nohtmltag($text, 0);
+		$text = "A\nstring\n\nand more\n";
+		$after = dol_string_nohtmltag($text, 0);
 		$this->assertEquals("A\nstring\n\nand more", $after, "test1a");
 
-		$text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
-		$after=dol_string_nohtmltag($text, 0);
+		$text = "A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
+		$after = dol_string_nohtmltag($text, 0);
 		$this->assertEquals("A string\n\n\n\n\nwith html tag", $after, 'test2a 2 br and 3 \n give 5 \n');
 
-		$text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
-		$after=dol_string_nohtmltag($text, 1);
+		$text = "A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
+		$after = dol_string_nohtmltag($text, 1);
 		$this->assertEquals("A string with html tag", $after, 'test2b 2 br and 3 \n give 1 space');
 
-		$text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
-		$after=dol_string_nohtmltag($text, 2);
+		$text = "A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
+		$after = dol_string_nohtmltag($text, 2);
 		$this->assertEquals("A string\n\nwith html tag", $after, 'test2c 2 br and 3 \n give 2 \n');
 
-		$text="A <b>string<b><br>\r\n<br>\r\n\r\nwith html tag<br>\n";
-		$after=dol_string_nohtmltag($text, 2);
+		$text = "A <b>string<b><br>\r\n<br>\r\n\r\nwith html tag<br>\n";
+		$after = dol_string_nohtmltag($text, 2);
 		$this->assertEquals("A string\n\nwith html tag", $after, 'test2c 2 br and 3 \r\n give 2 \n');
 
-		$text="A string<br>Another string";
-		$after=dol_string_nohtmltag($text, 0);
+		$text = "A string<br>Another string";
+		$after = dol_string_nohtmltag($text, 0);
 		$this->assertEquals("A string\nAnother string", $after, "test4");
 
-		$text="A string<br>Another string";
-		$after=dol_string_nohtmltag($text, 1);
+		$text = "A string<br>Another string";
+		$after = dol_string_nohtmltag($text, 1);
 		$this->assertEquals("A string Another string", $after, "test5");
 
-		$text='<a href="/myurl" title="<u>Afficher projet</u>">ABC</a>';
-		$after=dol_string_nohtmltag($text, 1);
+		$text = '<a href="/myurl" title="<u>Afficher projet</u>">ABC</a>';
+		$after = dol_string_nohtmltag($text, 1);
 		$this->assertEquals("ABC", $after, "test6");
 
-		$text='<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
-		$after=dol_string_nohtmltag($text, 1);
+		$text = '<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
+		$after = dol_string_nohtmltag($text, 1);
 		$this->assertEquals("DEF", $after, "test7");
 
-		$text='<a href="/myurl" title="<u>A title</u>">HIJ</a>';
-		$after=dol_string_nohtmltag($text, 0);
+		$text = '<a href="/myurl" title="<u>A title</u>">HIJ</a>';
+		$after = dol_string_nohtmltag($text, 0);
 		$this->assertEquals("HIJ", $after, "test8");
 
-		$text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
-		$after=dol_string_nohtmltag($text, 0);
+		$text = "A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+		$after = dol_string_nohtmltag($text, 0);
 		$this->assertEquals("A string\n\nwith html tag and '<' chars", $after, "test9");
 
-		$text="A <b>string<b>\n\nwith tag with < chars<br>\n";
-		$after=dol_string_nohtmltag($text, 1);
+		$text = "A <b>string<b>\n\nwith tag with < chars<br>\n";
+		$after = dol_string_nohtmltag($text, 1);
 		$this->assertEquals("A string with tag with < chars", $after, "test10");
 
 		return true;
@@ -734,38 +850,38 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		// Text not already HTML
 
-		$input="A string\nwith a é, &, < and >.";
-		$after=dol_htmlentitiesbr($input, 0);    // Add <br> before \n
+		$input = "A string\nwith a é, &, < and >.";
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
 		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
 
-		$input="A string\nwith a é, &, < and >.";
-		$after=dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
+		$input = "A string\nwith a é, &, < and >.";
+		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
 		$this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.", $after);
 
-		$input="A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
-		$after=dol_htmlentitiesbr($input, 0);    // Add <br> before \n
+		$input = "A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
+		$after = dol_htmlentitiesbr($input, 0);    // Add <br> before \n
 		$this->assertEquals("A string<br>\nwith a &eacute;, &amp;, &lt; and &gt;.", $after);
 
-		$input="A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
-		$after=dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
+		$input = "A string\nwith a é, &, < and >.\n\n";	// With some \n at end that should be cleaned
+		$after = dol_htmlentitiesbr($input, 1);    // Replace \n with <br>
 		$this->assertEquals("A string<br>with a &eacute;, &amp;, &lt; and &gt;.", $after);
 
 		// Text already HTML, so &,<,> should not be converted
 
-		$input="A string<br>\nwith a é, &, < and >.";
-		$after=dol_htmlentitiesbr($input);
+		$input = "A string<br>\nwith a é, &, < and >.";
+		$after = dol_htmlentitiesbr($input);
 		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
 
-		$input="<li>\nA string with a é, &, < and >.</li>\nAnother string";
-		$after=dol_htmlentitiesbr($input);
+		$input = "<li>\nA string with a é, &, < and >.</li>\nAnother string";
+		$after = dol_htmlentitiesbr($input);
 		$this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string", $after);
 
-		$input="A string<br>\nwith a é, &, < and >.<br>";	// With some <br> at end that should be cleaned
-		$after=dol_htmlentitiesbr($input);
+		$input = "A string<br>\nwith a é, &, < and >.<br>";	// With some <br> at end that should be cleaned
+		$after = dol_htmlentitiesbr($input);
 		$this->assertEquals("A string<br>\nwith a &eacute;, &, < and >.", $after);
 
-		$input="<li>\nA string with a é, &, < and >.</li>\nAnother string<br>";	// With some <br> at end that should be cleaned
-		$after=dol_htmlentitiesbr($input);
+		$input = "<li>\nA string with a é, &, < and >.</li>\nAnother string<br>";	// With some <br> at end that should be cleaned
+		$after = dol_htmlentitiesbr($input);
 		$this->assertEquals("<li>\nA string with a &eacute;, &, < and >.</li>\nAnother string", $after);
 
 		// TODO Add test with param $removelasteolbr = 0
@@ -782,18 +898,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testDolNbOfLinesBis()
 	{
 		// This is not a html string so nb of lines depends on \n
-		$input="A string\nwith a é, &, < and > and bold tag.\nThird line";
-		$after=dol_nboflines_bis($input, 0);
+		$input = "A string\nwith a é, &, < and > and bold tag.\nThird line";
+		$after = dol_nboflines_bis($input, 0);
 		$this->assertEquals($after, 3);
 
 		// This is a html string so nb of lines depends on <br>
-		$input="A string\nwith a é, &, < and > and <b>bold</b> tag.\nThird line";
-		$after=dol_nboflines_bis($input, 0);
+		$input = "A string\nwith a é, &, < and > and <b>bold</b> tag.\nThird line";
+		$after = dol_nboflines_bis($input, 0);
 		$this->assertEquals($after, 1);
 
 		// This is a html string so nb of lines depends on <br>
-		$input="A string<br>with a é, &, < and > and <b>bold</b> tag.<br>Third line";
-		$after=dol_nboflines_bis($input, 0);
+		$input = "A string<br>with a é, &, < and > and <b>bold</b> tag.<br>Third line";
+		$after = dol_nboflines_bis($input, 0);
 		$this->assertEquals($after, 3);
 
 		return true;
@@ -809,8 +925,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		// Text not already HTML
 
-		$input="A string\nwith a à ä é è ë ï ü ö ÿ, &, < and >.";
-		$after=dol_string_unaccent($input);
+		$input = "A string\nwith a à ä é è ë ï ü ö ÿ, &, < and >.";
+		$after = dol_string_unaccent($input);
 		$this->assertEquals("A string\nwith a a a e e e i u o y, &, < and >.", $after);
 	}
 
@@ -823,17 +939,17 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testDolUtf8Check()
 	{
 		// True
-		$result=utf8_check('azerty');
+		$result = utf8_check('azerty');
 		$this->assertTrue($result);
 
-		$file=dirname(__FILE__).'/textutf8.txt';
-		$filecontent=file_get_contents($file);
-		$result=utf8_check($filecontent);
+		$file = dirname(__FILE__).'/textutf8.txt';
+		$filecontent = file_get_contents($file);
+		$result = utf8_check($filecontent);
 		$this->assertTrue($result);
 
-		$file=dirname(__FILE__).'/textiso.txt';
-		$filecontent=file_get_contents($file);
-		$result=utf8_check($filecontent);
+		$file = dirname(__FILE__).'/textiso.txt';
+		$filecontent = file_get_contents($file);
+		$result = utf8_check($filecontent);
 		$this->assertFalse($result);
 	}
 
@@ -845,15 +961,15 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testDolAsciiCheck()
 	{
 		// True
-		$result=ascii_check('azerty');
+		$result = ascii_check('azerty');
 		$this->assertTrue($result);
 
-		$result=ascii_check('é');
+		$result = ascii_check('é');
 		$this->assertFalse($result);
 
-		$file=dirname(__FILE__).'/textutf8.txt';
-		$filecontent=file_get_contents($file);
-		$result=ascii_check($filecontent);
+		$file = dirname(__FILE__).'/textutf8.txt';
+		$filecontent = file_get_contents($file);
+		$result = ascii_check($filecontent);
 		$this->assertFalse($result);
 	}
 
@@ -865,49 +981,49 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testDolTrunc()
 	{
 		// Default trunc (will add … if truncation truncation or keep last char if only one char)
-		$input="éeéeéeàa";
-		$after=dol_trunc($input, 3);
+		$input = "éeéeéeàa";
+		$after = dol_trunc($input, 3);
 		$this->assertEquals("éeé…", $after, 'Test A1');
-		$after=dol_trunc($input, 2);
+		$after = dol_trunc($input, 2);
 		$this->assertEquals("ée…", $after, 'Test A2');
-		$after=dol_trunc($input, 1);
+		$after = dol_trunc($input, 1);
 		$this->assertEquals("é…", $after, 'Test A3');
-		$input="éeée";
-		$after=dol_trunc($input, 3);
+		$input = "éeée";
+		$after = dol_trunc($input, 3);
 		$this->assertEquals("éeée", $after, 'Test B1');
-		$after=dol_trunc($input, 2);
+		$after = dol_trunc($input, 2);
 		$this->assertEquals("ée…", $after, 'Test B2');
-		$after=dol_trunc($input, 1);
+		$after = dol_trunc($input, 1);
 		$this->assertEquals("é…", $after, 'Test B3');
-		$input="éeée";
-		$after=dol_trunc($input, 3);
+		$input = "éeée";
+		$after = dol_trunc($input, 3);
 		$this->assertEquals("éeée", $after, 'Test C1');
-		$after=dol_trunc($input, 2);
+		$after = dol_trunc($input, 2);
 		$this->assertEquals("ée…", $after, 'Test C2');
-		$after=dol_trunc($input, 1);
+		$after = dol_trunc($input, 1);
 		$this->assertEquals("é…", $after, 'Test C3');
-		$input="éeé";
-		$after=dol_trunc($input, 3);
+		$input = "éeé";
+		$after = dol_trunc($input, 3);
 		$this->assertEquals("éeé", $after, 'Test C');
-		$after=dol_trunc($input, 2);
+		$after = dol_trunc($input, 2);
 		$this->assertEquals("éeé", $after, 'Test D');
-		$after=dol_trunc($input, 1);
+		$after = dol_trunc($input, 1);
 		$this->assertEquals("é…", $after, 'Test E');
 		// Trunc with no …
-		$input="éeéeéeàa";
-		$after=dol_trunc($input, 3, 'right', 'UTF-8', 1);
+		$input = "éeéeéeàa";
+		$after = dol_trunc($input, 3, 'right', 'UTF-8', 1);
 		$this->assertEquals("éeé", $after, 'Test F');
-		$after=dol_trunc($input, 2, 'right', 'UTF-8', 1);
+		$after = dol_trunc($input, 2, 'right', 'UTF-8', 1);
 		$this->assertEquals("ée", $after, 'Test G');
-		$input="éeé";
-		$after=dol_trunc($input, 3, 'right', 'UTF-8', 1);
+		$input = "éeé";
+		$after = dol_trunc($input, 3, 'right', 'UTF-8', 1);
 		$this->assertEquals("éeé", $after, 'Test H');
-		$after=dol_trunc($input, 2, 'right', 'UTF-8', 1);
+		$after = dol_trunc($input, 2, 'right', 'UTF-8', 1);
 		$this->assertEquals("ée", $after, 'Test I');
-		$after=dol_trunc($input, 1, 'right', 'UTF-8', 1);
+		$after = dol_trunc($input, 1, 'right', 'UTF-8', 1);
 		$this->assertEquals("é", $after, 'Test J');
-		$input="éeéeéeàa";
-		$after=dol_trunc($input, 4, 'middle');
+		$input = "éeéeéeàa";
+		$after = dol_trunc($input, 4, 'middle');
 		$this->assertEquals("ée…àa", $after, 'Test K');
 
 		return true;
@@ -922,49 +1038,49 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf;
 
-		$savtz=date_default_timezone_get();
+		$savtz = date_default_timezone_get();
 
 		// Some test for UTC TZ
 		date_default_timezone_set('UTC');
 
 		// Check bad hours
-		$result=dol_mktime(25, 0, 0, 1, 1, 1970, 1, 1);    // Error (25 hours)
+		$result = dol_mktime(25, 0, 0, 1, 1, 1970, 1, 1);    // Error (25 hours)
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
-		$result=dol_mktime(2, 61, 0, 1, 1, 1970, 1, 1);    // Error (61 minutes)
+		$result = dol_mktime(2, 61, 0, 1, 1, 1970, 1, 1);    // Error (61 minutes)
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
-		$result=dol_mktime(2, 1, 61, 1, 1, 1970, 1, 1);    // Error (61 seconds)
+		$result = dol_mktime(2, 1, 61, 1, 1, 1970, 1, 1);    // Error (61 seconds)
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
-		$result=dol_mktime(2, 1, 1, 1, 32, 1970, 1, 1);    // Error (day 32)
+		$result = dol_mktime(2, 1, 1, 1, 32, 1970, 1, 1);    // Error (day 32)
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
-		$result=dol_mktime(2, 1, 1, 13, 1, 1970, 1, 1);    // Error (month 13)
+		$result = dol_mktime(2, 1, 1, 13, 1, 1970, 1, 1);    // Error (month 13)
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('', $result);
 
-		$result=dol_mktime(2, 1, 1, 1, 1, 1970, 1);    // 1970-01-01 02:01:01 in GMT area -> 7261
+		$result = dol_mktime(2, 1, 1, 1, 1, 1970, 1);    // 1970-01-01 02:01:01 in GMT area -> 7261
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(7261, $result);
 
-		$result=dol_mktime(2, 0, 0, 1, 1, 1970, 0);                // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
+		$result = dol_mktime(2, 0, 0, 1, 1, 1970, 0);                // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
 		print __METHOD__." result=".$result."\n";
-		$tz=getServerTimeZoneInt('winter');                  // +1 in Europe/Paris at this time (this time is winter)
-		$this->assertEquals(7200-($tz*3600), $result);        // 7200 if we are at greenwich winter, 7200-($tz*3600) at local winter
+		$tz = getServerTimeZoneInt('winter');                  // +1 in Europe/Paris at this time (this time is winter)
+		$this->assertEquals(7200 - ($tz * 3600), $result);        // 7200 if we are at greenwich winter, 7200-($tz*3600) at local winter
 
 		// Some test for local TZ Europe/Paris
 		date_default_timezone_set('Europe/Paris');
 
 		// Check that tz for paris in winter is used
-		$result=dol_mktime(2, 0, 0, 1, 1, 1970, 'server');         // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
+		$result = dol_mktime(2, 0, 0, 1, 1, 1970, 'server');         // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(3600, $result);        			 // 7200 if we are at greenwich winter, 3600 at Europe/Paris
 
 		// Check that daylight saving time is used
-		$result=dol_mktime(2, 0, 0, 6, 1, 2014, 0);         		// 2014-06-01 02:00:00 = 1401588000-3600(location)-3600(daylight) in local area Europe/Paris = 1401588000 GMT
+		$result = dol_mktime(2, 0, 0, 6, 1, 2014, 0);         		// 2014-06-01 02:00:00 = 1401588000-3600(location)-3600(daylight) in local area Europe/Paris = 1401588000 GMT
 		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(1401588000-3600-3600, $result);  // 1401588000 are at greenwich summer, 1401588000-3600(location)-3600(daylight) at Europe/Paris summer
+		$this->assertEquals(1401588000 - 3600 - 3600, $result);  // 1401588000 are at greenwich summer, 1401588000-3600(location)-3600(daylight) at Europe/Paris summer
 
 		date_default_timezone_set($savtz);
 	}
@@ -977,32 +1093,48 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolEscapeJs()
 	{
-		$input="x&<b>#</b>,\"'";    // " will be converted into '
-		$result=dol_escape_js($input);
+		$input = "x&<b>#</b>,\"'";    // " will be converted into '
+		$result = dol_escape_js($input);
 		$this->assertEquals("x&<b>#</b>,\'\'", $result, "Test mode=0");
 
-		$result=dol_escape_js($input, 1);
+		$result = dol_escape_js($input, 1);
 		$this->assertEquals("x&<b>#</b>,\"\'", $result, "Test mode=1");
 
-		$result=dol_escape_js($input, 2);
+		$result = dol_escape_js($input, 2);
 		$this->assertEquals("x&<b>#</b>,\\\"'", $result, "Test mode=2");
 	}
 
 
 	/**
-	* testDolEscapeHtmlTag
-	*
-	* @return	void
-	*/
+	 * testDolEscapeHtmlTag
+	 *
+	 * @return	void
+	 */
 	public function testDolEscapeHtmlTag()
 	{
-		$input='x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
-		$result=dol_escape_htmltag($input);
+		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are removed
+		$result = dol_escape_htmltag($input);
 		$this->assertEquals('x&amp;#,&quot;', $result);
 
-		$input='x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
-		$result=dol_escape_htmltag($input, 1);
+		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1);
 		$this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;', $result);
+
+		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
+		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
+
+
+		$input = '<div style="float:left; margin-left:0px; margin-right:5px">
+		<img id="sigPhoto" src="https://www.domain.com/aaa.png" style="height:65px; width:65px" />
+		</div>
+		<div style="margin-left:74px"><strong>A text here</strong> and more<br>
+		<a href="mailto:abc+def@domain.com" id="sigEmail" style="color:#428BCA;">abc+def@domain.com</a><br>
+		<a href="https://www.another-domain.com" id="sigWebsite" style="color:#428BCA;">https://www.another-domain.com</a><br>
+		</div>';
+
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals($input, $result);
 	}
 
 
@@ -1014,67 +1146,67 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testDolFormatAddress()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$object=new Societe($db);
+		$object = new Societe($db);
 		$object->initAsSpecimen();
 
-		$object->country_code='FR';
-		$address=dol_format_address($object);
+		$object->country_code = 'FR';
+		$address = dol_format_address($object);
 		$this->assertEquals("21 jump street\n99999 MyTown", $address);
 
-		$object->country_code='GB';
-		$address=dol_format_address($object);
+		$object->country_code = 'GB';
+		$address = dol_format_address($object);
 		$this->assertEquals("21 jump street\nMyTown, MyState\n99999", $address);
 
-		$object->country_code='US';
-		$address=dol_format_address($object);
+		$object->country_code = 'US';
+		$address = dol_format_address($object);
 		$this->assertEquals("21 jump street\nMyTown, MyState, 99999", $address);
 
-		$object->country_code='AU';
-		$address=dol_format_address($object);
+		$object->country_code = 'AU';
+		$address = dol_format_address($object);
 		$this->assertEquals("21 jump street\nMyTown, MyState, 99999", $address);
 
-		$object->country_code='JP';
-		$address=dol_format_address($object);
+		$object->country_code = 'JP';
+		$address = dol_format_address($object);
 		$this->assertEquals("21 jump street\nMyState, MyTown 99999", $address);
 	}
 
 
 	/**
-	 * testDolFormatAddress
+	 * testDolPrintPhone
 	 *
 	 * @return	void
 	 */
 	public function testDolPrintPhone()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$object=new Societe($db);
+		$object = new Societe($db);
 		$object->initAsSpecimen();
 
-		$object->country_code='FR';
-		$phone=dol_print_phone('1234567890', $object->country_code);
-		$this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+		$object->country_code = 'FR';
+		$phone = dol_print_phone('1234567890', $object->country_code);
+		$this->assertEquals('<span class="paddingright">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
 
-		$object->country_code='FR';
-		$phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
-		$this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+		$object->country_code = 'FR';
+		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
+		$this->assertEquals('<span class="paddingright">1234567890</span>', $phone, 'Phone for FR 2');
 
-		$object->country_code='FR';
-		$phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+		$object->country_code = 'FR';
+		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
 
-		$object->country_code='CA';
-		$phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+		$object->country_code = 'CA';
+		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
+		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
 	}
 
 
@@ -1085,24 +1217,24 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testImgPicto()
 	{
-		$s=img_picto('title', 'user');
+		$s = img_picto('title', 'user');
 		print __METHOD__." s=".$s."\n";
-		$this->assertContains('fa-user', $s, 'testImgPicto1');
+		$this->assertStringContainsStringIgnoringCase('fa-user', $s, 'testImgPicto1');
 
-		$s=img_picto('title', 'img.png', 'style="float: right"', 0);
+		$s = img_picto('title', 'img.png', 'style="float: right"', 0);
 		print __METHOD__." s=".$s."\n";
-		$this->assertContains('theme', $s, 'testImgPicto2');
-		$this->assertContains('style="float: right"', $s, 'testImgPicto2');
+		$this->assertStringContainsStringIgnoringCase('theme', $s, 'testImgPicto2');
+		$this->assertStringContainsStringIgnoringCase('style="float: right"', $s, 'testImgPicto2');
 
-		$s=img_picto('title', '/fullpath/img.png', '', 1);
+		$s = img_picto('title', '/fullpath/img.png', '', 1);
 		print __METHOD__." s=".$s."\n";
 		$this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">', $s, 'testImgPicto3');
 
-		$s=img_picto('title', '/fullpath/img.png', '', true);
+		$s = img_picto('title', '/fullpath/img.png', '', true);
 		print __METHOD__." s=".$s."\n";
 		$this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">', $s, 'testImgPicto4');
 
-		$s=img_picto('title', 'delete', '', 0, 1);
+		$s = img_picto('title', 'delete', '', 0, 1);
 		print __METHOD__." s=".$s."\n";
 		$this->assertEquals(DOL_URL_ROOT.'/theme/eldy/img/delete.png', $s, 'testImgPicto5');
 	}
@@ -1114,39 +1246,49 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolNow()
 	{
-		$now=dol_now('gmt');
-		$nowtzserver=dol_now('tzserver');
-		print __METHOD__." getServerTimeZoneInt=".(getServerTimeZoneInt('now')*3600)."\n";
-		$this->assertEquals(getServerTimeZoneInt('now')*3600, ($nowtzserver-$now));
+		$now = dol_now('gmt');
+		$nowtzserver = dol_now('tzserver');
+		print __METHOD__." getServerTimeZoneInt=".(getServerTimeZoneInt('now') * 3600)."\n";
+		$this->assertEquals(getServerTimeZoneInt('now') * 3600, ($nowtzserver - $now));
+	}
+
+
+
+	/**
+	 * Data provider for testVerifCond
+	 *
+	 * @return array<string,array{0:string,1:bool}>
+	 */
+	public function verifCondDataProvider(): array
+	{
+		return [
+			'Test a true comparison' => ['1==1', true,],
+			'Test a false comparison' => ['1==2', false,],
+			'Test that the conf property of a module reports true when enabled' => ['isModEnabled("facture")', true,],
+			'Test that the conf property of a module reports false when disabled' => ['isModEnabled("moduledummy")', false,],
+			'Test that verifConf(0) returns false' => [0, false,],
+			'Test that verifConf("0") returns false' => ["0", false,],
+			'Test that verifConf("") returns false (special case)' => ['', true,],
+		];
 	}
 
 	/**
 	 * testVerifCond
 	 *
+	 * @dataProvider verifCondDataProvider
+	 *
+	 * @param string $cond     Condition to test using verifCond
+	 * @param string $expected Expected outcome of verifCond
+	 *
 	 * @return	void
 	 */
-	public function testVerifCond()
+	public function testVerifCond($cond, $expected)
 	{
-		$verifcond=verifCond('1==1');
-		$this->assertTrue($verifcond, 'Test a true comparison');
-
-		$verifcond=verifCond('1==2');
-		$this->assertFalse($verifcond, 'Test a false comparison');
-
-		$verifcond=verifCond('$conf->facture->enabled');
-		$this->assertTrue($verifcond, 'Test that the conf property of a module reports true when enabled');
-
-		$verifcond=verifCond('$conf->moduledummy->enabled');
-		$this->assertFalse($verifcond, 'Test that the conf property of a module reports false when disabled');
-
-		$verifcond=verifCond(0);
-		$this->assertFalse($verifcond, 'Test that verifConf(0) return False');
-
-		$verifcond=verifCond("0");
-		$this->assertFalse($verifcond, 'Test that verifConf("0") return False');
-
-		$verifcond=verifCond('');
-		$this->assertTrue($verifcond, 'Test that verifConf("") return False (special case)');
+		if ($expected) {
+			$this->assertTrue(verifCond($cond));
+		} else {
+			$this->assertFalse(verifCond($cond));
+		}
 	}
 
 	/**
@@ -1157,74 +1299,74 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testGetDefaultTva()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
 		// Sellers
-		$companyfrnovat=new Societe($db);
-		$companyfrnovat->country_code='FR';
-		$companyfrnovat->tva_assuj=0;
+		$companyfrnovat = new Societe($db);
+		$companyfrnovat->country_code = 'FR';
+		$companyfrnovat->tva_assuj = 0;
 
-		$companyfr=new Societe($db);
-		$companyfr->country_code='FR';
-		$companyfr->tva_assuj=1;
-		$companyfr->tva_intra='FR9999';
+		$companyfr = new Societe($db);
+		$companyfr->country_code = 'FR';
+		$companyfr->tva_assuj = 1;
+		$companyfr->tva_intra = 'FR9999';
 
 		// Buyers
-		$companymc=new Societe($db);
-		$companymc->country_code='MC';
-		$companymc->tva_assuj=1;
-		$companyfr->tva_intra='MC9999';
+		$companymc = new Societe($db);
+		$companymc->country_code = 'MC';
+		$companymc->tva_assuj = 1;
+		$companyfr->tva_intra = 'MC9999';
 
-		$companyit=new Societe($db);
-		$companyit->country_code='IT';
-		$companyit->tva_assuj=1;
-		$companyit->tva_intra='IT99999';
+		$companyit = new Societe($db);
+		$companyit->country_code = 'IT';
+		$companyit->tva_assuj = 1;
+		$companyit->tva_intra = 'IT99999';
 
-		$companyde=new Societe($db);
-		$companyde->country_code='DE';
-		$companyde->tva_assuj=1;
-		$companyde->tva_intra='DE99999';
+		$companyde = new Societe($db);
+		$companyde->country_code = 'DE';
+		$companyde->tva_assuj = 1;
+		$companyde->tva_intra = 'DE99999';
 
-		$notcompanyde=new Societe($db);
-		$notcompanyde->country_code='DE';
-		$notcompanyde->tva_assuj=0;
-		$notcompanyde->tva_intra='';
-		$notcompanyde->typent_code='TE_PRIVATE';
+		$notcompanyde = new Societe($db);
+		$notcompanyde->country_code = 'DE';
+		$notcompanyde->tva_assuj = 0;
+		$notcompanyde->tva_intra = '';
+		$notcompanyde->typent_code = 'TE_PRIVATE';
 
-		$companyus=new Societe($db);
-		$companyus->country_code='US';
-		$companyus->tva_assuj=1;
-		$companyus->tva_intra='';
+		$companyus = new Societe($db);
+		$companyus->country_code = 'US';
+		$companyus->tva_assuj = 1;
+		$companyus->tva_intra = '';
 
 
 		// Test RULE 0 (FR-DE)
 		// Not tested
 
 		// Test RULE 1
-		$vat=get_default_tva($companyfrnovat, $companymc, 0);
+		$vat = get_default_tva($companyfrnovat, $companymc, 0);
 		$this->assertEquals(0, $vat, 'RULE 1');
 
 		// Test RULE 2 (FR-FR)
-		$vat=get_default_tva($companyfr, $companyfr, 0);
+		$vat = get_default_tva($companyfr, $companyfr, 0);
 		$this->assertEquals(20, $vat, 'RULE 2');
 
 		// Test RULE 2 (FR-MC)
-		$vat=get_default_tva($companyfr, $companymc, 0);
+		$vat = get_default_tva($companyfr, $companymc, 0);
 		$this->assertEquals(20, $vat, 'RULE 2');
 
 		// Test RULE 3 (FR-DE company)
-		$vat=get_default_tva($companyfr, $companyit, 0);
+		$vat = get_default_tva($companyfr, $companyit, 0);
 		$this->assertEquals(0, $vat, 'RULE 3');
 
 		// Test RULE 4 (FR-DE not a company)
-		$vat=get_default_tva($companyfr, $notcompanyde, 0);
+		$vat = get_default_tva($companyfr, $notcompanyde, 0);
 		$this->assertEquals(20, $vat, 'RULE 4');
 
 		// Test RULE 5 (FR-US)
-		$vat=get_default_tva($companyfr, $companyus, 0);
+		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5');
 
 
@@ -1232,23 +1374,23 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$conf->global->SERVICE_ARE_ECOMMERCE_200238EC = 1;
 
 		// Test RULE 1 (FR-US)
-		$vat=get_default_tva($companyfr, $companyus, 0);
+		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 1 ECOMMERCE_200238EC');
 
 		// Test RULE 2 (FR-FR)
-		$vat=get_default_tva($companyfr, $companyfr, 0);
+		$vat = get_default_tva($companyfr, $companyfr, 0);
 		$this->assertEquals(20, $vat, 'RULE 2 ECOMMERCE_200238EC');
 
 		// Test RULE 3 (FR-DE company)
-		$vat=get_default_tva($companyfr, $companyde, 0);
+		$vat = get_default_tva($companyfr, $companyde, 0);
 		$this->assertEquals(0, $vat, 'RULE 3 ECOMMERCE_200238EC');
 
 		// Test RULE 4 (FR-DE not a company)
-		$vat=get_default_tva($companyfr, $notcompanyde, 0);
+		$vat = get_default_tva($companyfr, $notcompanyde, 0);
 		$this->assertEquals(19, $vat, 'RULE 4 ECOMMERCE_200238EC');
 
 		// Test RULE 5 (FR-US)
-		$vat=get_default_tva($companyfr, $companyus, 0);
+		$vat = get_default_tva($companyfr, $companyus, 0);
 		$this->assertEquals(0, $vat, 'RULE 5 ECOMMERCE_200238EC');
 	}
 
@@ -1260,72 +1402,72 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	public function testGetDefaultLocalTax()
 	{
 		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
+		$this->savconf = $conf;
+		$this->savuser = $user;
+		$this->savlangs = $langs;
+		$this->savdb = $db;
 
-		$companyfrnovat=new Societe($db);
-		$companyfrnovat->country_code='FR';
-		$companyfrnovat->tva_assuj=0;
-		$companyfrnovat->localtax1_assuj=0;
-		$companyfrnovat->localtax2_assuj=0;
+		$companyfrnovat = new Societe($db);
+		$companyfrnovat->country_code = 'FR';
+		$companyfrnovat->tva_assuj = 0;
+		$companyfrnovat->localtax1_assuj = 0;
+		$companyfrnovat->localtax2_assuj = 0;
 
-		$companyes=new Societe($db);
-		$companyes->country_code='ES';
-		$companyes->tva_assuj=1;
-		$companyes->localtax1_assuj=1;
-		$companyes->localtax2_assuj=1;
+		$companyes = new Societe($db);
+		$companyes->country_code = 'ES';
+		$companyes->tva_assuj = 1;
+		$companyes->localtax1_assuj = 1;
+		$companyes->localtax2_assuj = 1;
 
-		$companymc=new Societe($db);
-		$companymc->country_code='MC';
-		$companymc->tva_assuj=1;
-		$companymc->localtax1_assuj=0;
-		$companymc->localtax2_assuj=0;
+		$companymc = new Societe($db);
+		$companymc->country_code = 'MC';
+		$companymc->tva_assuj = 1;
+		$companymc->localtax1_assuj = 0;
+		$companymc->localtax2_assuj = 0;
 
-		$companyit=new Societe($db);
-		$companyit->country_code='IT';
-		$companyit->tva_assuj=1;
-		$companyit->tva_intra='IT99999';
-		$companyit->localtax1_assuj=0;
-		$companyit->localtax2_assuj=0;
+		$companyit = new Societe($db);
+		$companyit->country_code = 'IT';
+		$companyit->tva_assuj = 1;
+		$companyit->tva_intra = 'IT99999';
+		$companyit->localtax1_assuj = 0;
+		$companyit->localtax2_assuj = 0;
 
-		$notcompanyit=new Societe($db);
-		$notcompanyit->country_code='IT';
-		$notcompanyit->tva_assuj=1;
-		$notcompanyit->tva_intra='';
-		$notcompanyit->typent_code='TE_PRIVATE';
-		$notcompanyit->localtax1_assuj=0;
-		$notcompanyit->localtax2_assuj=0;
+		$notcompanyit = new Societe($db);
+		$notcompanyit->country_code = 'IT';
+		$notcompanyit->tva_assuj = 1;
+		$notcompanyit->tva_intra = '';
+		$notcompanyit->typent_code = 'TE_PRIVATE';
+		$notcompanyit->localtax1_assuj = 0;
+		$notcompanyit->localtax2_assuj = 0;
 
-		$companyus=new Societe($db);
-		$companyus->country_code='US';
-		$companyus->tva_assuj=1;
-		$companyus->tva_intra='';
-		$companyus->localtax1_assuj=0;
-		$companyus->localtax2_assuj=0;
+		$companyus = new Societe($db);
+		$companyus->country_code = 'US';
+		$companyus->tva_assuj = 1;
+		$companyus->tva_intra = '';
+		$companyus->localtax1_assuj = 0;
+		$companyus->localtax2_assuj = 0;
 
 		// Test RULE FR-MC
-		$vat1=get_default_localtax($companyfrnovat, $companymc, 1, 0);
-		$vat2=get_default_localtax($companyfrnovat, $companymc, 2, 0);
+		$vat1 = get_default_localtax($companyfrnovat, $companymc, 1, 0);
+		$vat2 = get_default_localtax($companyfrnovat, $companymc, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
 		// Test RULE ES-ES
-		$vat1=get_default_localtax($companyes, $companyes, 1, 0);
-		$vat2=get_default_localtax($companyes, $companyes, 2, 0);
+		$vat1 = get_default_localtax($companyes, $companyes, 1, 0);
+		$vat2 = get_default_localtax($companyes, $companyes, 2, 0);
 		$this->assertEquals($vat1, 5.2);
 		$this->assertStringStartsWith((string) $vat2, '-19:-15:-9');       // Can be -19 (old version) or '-19:-15:-9' (new setup)
 
 		// Test RULE ES-IT
-		$vat1=get_default_localtax($companyes, $companyit, 1, 0);
-		$vat2=get_default_localtax($companyes, $companyit, 2, 0);
+		$vat1 = get_default_localtax($companyes, $companyit, 1, 0);
+		$vat2 = get_default_localtax($companyes, $companyit, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
 		// Test RULE ES-IT
-		$vat1=get_default_localtax($companyes, $notcompanyit, 1, 0);
-		$vat2=get_default_localtax($companyes, $notcompanyit, 2, 0);
+		$vat1 = get_default_localtax($companyes, $notcompanyit, 1, 0);
+		$vat2 = get_default_localtax($companyes, $notcompanyit, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 
@@ -1333,8 +1475,8 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		// Not tested
 
 		// Test RULE ES-US
-		$vat1=get_default_localtax($companyes, $companyus, 1, 0);
-		$vat2=get_default_localtax($companyes, $companyus, 2, 0);
+		$vat1 = get_default_localtax($companyes, $companyus, 1, 0);
+		$vat2 = get_default_localtax($companyes, $companyus, 2, 0);
 		$this->assertEquals(0, $vat1);
 		$this->assertEquals(0, $vat2);
 	}
@@ -1368,11 +1510,17 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	 */
 	public function testDolExplodeIntoArray()
 	{
-		$stringtoexplode='AA=B/B.CC=.EE=FF.HH=GG;.';
-		$tmp=dolExplodeIntoArray($stringtoexplode, '.', '=');
+		$stringtoexplode = 'AA=B/B.CC=.EE=FF.HH=GG;.';
+		$tmp = dolExplodeIntoArray($stringtoexplode, '.', '=');
 
 		print __METHOD__." tmp=".json_encode($tmp)."\n";
 		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}', json_encode($tmp));
+
+		$stringtoexplode = "AA=B/B;CC=\n\rEE=FF\nHH=GG;;;\nII=JJ\n";
+		$tmp = dolExplodeIntoArray($stringtoexplode, "(\r\n|\n|\r|;)", '=');
+
+		print __METHOD__." tmp=".json_encode($tmp)."\n";
+		$this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG","II":"JJ"}', json_encode($tmp));
 	}
 
 	/**
@@ -1497,18 +1645,18 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
 		$conf->global->MAIN_START_WEEK = 0;
 
-		$tmp=dol_getdate(24*60*60+1, false, 'UTC');		// 2/1/1970 and 1 second = friday
+		$tmp = dol_getdate(24 * 60 * 60 + 1, false, 'UTC');		// 2/1/1970 and 1 second = friday
 		$this->assertEquals(5, $tmp['wday'], 'Bad value of day in week');
 
 		$conf->global->MAIN_START_WEEK = 1;
 
-		$tmp=dol_getdate(1, false, 'UTC');				// 1/1/1970 and 1 second = thirday
+		$tmp = dol_getdate(1, false, 'UTC');				// 1/1/1970 and 1 second = thirday
 		$this->assertEquals(4, $tmp['wday'], 'Bad value of day in week');
 
-		$tmp=dol_getdate(24*60*60+1, false, 'UTC');		// 2/1/1970 and 1 second = friday
+		$tmp = dol_getdate(24 * 60 * 60 + 1, false, 'UTC');		// 2/1/1970 and 1 second = friday
 		$this->assertEquals(5, $tmp['wday'], 'Bad value of day in week');
 
-		$tmp=dol_getdate(1, false, "Europe/Paris");						// 1/1/1970 and 1 second = thirday
+		$tmp = dol_getdate(1, false, "Europe/Paris");						// 1/1/1970 and 1 second = thirday
 		$this->assertEquals(1970, $tmp['year']);
 		$this->assertEquals(1, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
@@ -1518,7 +1666,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(15638401, false, "Europe/Paris");					// 1/7/1970 and 1 second = wednesday
+		$tmp = dol_getdate(15638401, false, "Europe/Paris");					// 1/7/1970 and 1 second = wednesday
 		$this->assertEquals(1970, $tmp['year']);
 		$this->assertEquals(7, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
@@ -1528,7 +1676,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(1593561601, false, "Europe/Paris");				// 1/7/2020 and 1 second = wednesday
+		$tmp = dol_getdate(1593561601, false, "Europe/Paris");				// 1/7/2020 and 1 second = wednesday
 		$this->assertEquals(2020, $tmp['year']);
 		$this->assertEquals(7, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
@@ -1538,7 +1686,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(1, false, 'UTC');						// 1/1/1970 and 1 second = thirday
+		$tmp = dol_getdate(1, false, 'UTC');						// 1/1/1970 and 1 second = thirday
 		$this->assertEquals(1970, $tmp['year']);
 		$this->assertEquals(1, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
@@ -1549,7 +1697,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(15638401, false, 'UTC');				// 1/7/1970 and 1 second = wednesday
+		$tmp = dol_getdate(15638401, false, 'UTC');				// 1/7/1970 and 1 second = wednesday
 		$this->assertEquals(1970, $tmp['year']);
 		$this->assertEquals(7, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
@@ -1560,7 +1708,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals(0, $tmp['minutes']);
 		$this->assertEquals(1, $tmp['seconds']);
 
-		$tmp=dol_getdate(1593561601, false, 'UTC');				// 1/7/2020 and 1 second = wednesday
+		$tmp = dol_getdate(1593561601, false, 'UTC');				// 1/7/2020 and 1 second = wednesday
 		$this->assertEquals(2020, $tmp['year']);
 		$this->assertEquals(7, $tmp['mon']);
 		$this->assertEquals(1, $tmp['mday']);
@@ -1586,16 +1734,16 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$langs->load("main");
 
 		// Try simple replacement
-		$substit = array("__AAA__"=>'Not used', "__BBB__"=>'Not used', "__CCC__"=>"C replaced", "DDD"=>"D replaced");
+		$substit = array("__AAA__" => 'Not used', "__BBB__" => 'Not used', "__CCC__" => "C instead", "DDD" => "D instead");
 		$substit += getCommonSubstitutionArray($langs);
 
 		$chaine = 'This is a string with theme constant __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__ and DDD and __MYCOMPANY_NAME__ and __YEAR__';
 		$newstring = make_substitutions($chaine, $substit);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C replaced and D replaced and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
+		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C instead and D instead and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
 
 		// Try mix HTML not HTML, no change on initial text
-		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
+		$substit = array("__NOHTML__" => 'No html', "__HTML__" => '<b>HTML</b>');
 
 		$chaine = "This is a text with\nNew line\nThen\n__NOHTML__\nThen\n__HTML__";
 		$newstring = make_substitutions($chaine, $substit, $langs);
@@ -1603,7 +1751,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 		$this->assertEquals($newstring, "This is a text with\nNew line\nThen\nNo html\nThen\n<b>HTML</b>", 'Test on make_substitutions with conversion of inserted values only');
 
 		// Try mix HTML not HTML, accept to change initial text
-		$substit = array("__NOHTML__"=>'No html', "__HTML__"=>'<b>HTML</b>');
+		$substit = array("__NOHTML__" => 'No html', "__HTML__" => '<b>HTML</b>');
 
 		$chaine = "This is a text with\nNew line\nThen\n__NOHTML__\nThen\n__HTML__";
 		$newstring = make_substitutions($chaine, $substit, $langs, 1);
@@ -1622,17 +1770,56 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf, $langs;
 
-		$chaine='This is an ISO string';
+		$chaine = 'This is an ISO string';
 		$result = dol_string_is_good_iso($chaine);
 		$this->assertEquals($result, 1);
 
-		$chaine='This is a not ISO string '.chr(0);
+		$chaine = 'This is a not ISO string '.chr(0);
 		$result = dol_string_is_good_iso($chaine);
 		$this->assertEquals($result, 0);
 
 		return true;
 	}
 
+	/**
+	 * testUtf8Check
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Check()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_check($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_check($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
+
+	/**
+	 * testUtf8Valid
+	 *
+	 * @return boolean
+	 */
+	public function testUtf8Valid()
+	{
+		global $conf, $langs;
+
+		$chaine = 'This is an UTF8 string with a é.';
+		$result = utf8_valid($chaine);
+		$this->assertEquals(true, $result);
+
+		$chaine = mb_convert_encoding('This is an UTF8 with a é.', 'ISO-8859-1', 'UTF-8');
+		$result = utf8_valid($chaine);
+		$this->assertEquals(false, $result);
+
+		return true;
+	}
 
 	/**
 	 * testGetUserRemoteIP
@@ -1643,21 +1830,62 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf, $langs;
 
-		$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4';
-		$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '1.2.3.4';
+		$_SERVER['HTTP_CLIENT_IP'] = '5.6.7.8';
 		$result = getUserRemoteIP();
 		$this->assertEquals($result, '1.2.3.4');
 
-		$_SERVER['HTTP_X_FORWARDED_FOR']='1.2.3.4<corrupted>';
-		$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '1.2.3.4<corrupted>';
+		$_SERVER['HTTP_CLIENT_IP'] = '5.6.7.8';
 		$result = getUserRemoteIP();
 		$this->assertEquals($result, '5.6.7.8');
 
-		$_SERVER['HTTP_X_FORWARDED_FOR']='[1:2:3:4]';
-		$_SERVER['HTTP_CLIENT_IP']='5.6.7.8';
+		$_SERVER['HTTP_X_FORWARDED_FOR'] = '[1:2:3:4]';
+		$_SERVER['HTTP_CLIENT_IP'] = '5.6.7.8';
 		$result = getUserRemoteIP();
 		$this->assertEquals($result, '[1:2:3:4]');
 
 		return true;
+	}
+
+	/**
+	 * testFetchObjectByElement
+	 *
+	 * @return boolean;
+	 */
+	public function testFetchObjectByElement()
+	{
+		global $conf, $langs;
+
+		$result = fetchObjectByElement(0, 'product');
+
+		$this->assertTrue(is_object($result));
+
+		return true;
+	}
+
+
+	/**
+	 * testRoundUpToNextMultiple
+	 *
+	 * @return void;
+	 */
+	public function testRoundUpToNextMultiple()
+	{
+		$this->assertEquals(roundUpToNextMultiple(39.5), 40);
+		$this->assertEquals(roundUpToNextMultiple(40), 40);
+		$this->assertEquals(roundUpToNextMultiple(40.4), 45);
+		$this->assertEquals(roundUpToNextMultiple(40.5), 45);
+		$this->assertEquals(roundUpToNextMultiple(44.5), 45);
+
+		$this->assertEquals(roundUpToNextMultiple(39.5, 10), 40);
+		$this->assertEquals(roundUpToNextMultiple(40, 10), 40);
+		$this->assertEquals(roundUpToNextMultiple(40.5, 10), 50);
+		$this->assertEquals(roundUpToNextMultiple(44.5, 10), 50);
+
+		$this->assertEquals(roundUpToNextMultiple(39.5, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(40, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(40.5, 6), 42);
+		$this->assertEquals(roundUpToNextMultiple(44.5, 6), 48);
 	}
 }

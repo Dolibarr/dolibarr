@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - eventorganization
+ModuleEventOrganizationName =Organización de Eventos
+EventOrganizationConferenceOrBoothMenuLeft =Conferencia o Puesto
+EventOrganizationConfOrBooth=Conferencia o stand
+ConferenceOrBooth =Conferencia o stand
+ConferenceOrBoothTab =Conferencia o stand
+EvntOrgCancelled =Cancelado
+EmailCompanyForInvoice=E-mail de la empresa (para la factura, si es diferente del e-mail del asistente)
+ConfirmModifyStatus=Confirmar el estado de modificación
+ConfirmModifyStatusQuestion=¿Está seguro de que quiere modificar el %s registro(s) seleccionado?
+RecordsUpdated=%s  Registros  actualizados
+NoRecordUpdated=Registro no actualizado

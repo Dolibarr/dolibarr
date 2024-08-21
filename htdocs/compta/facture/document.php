@@ -23,7 +23,7 @@
 
 /**
  *	\file       htdocs/compta/facture/document.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      Page for attached files on invoices
  */
 
@@ -43,17 +43,17 @@ if (isModEnabled('project')) {
 $langs->loadLangs(array('propal', 'compta', 'other', 'bills', 'companies'));
 
 
-$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -73,7 +73,7 @@ if ($object->fetch($id, $ref)) {
 	$upload_dir = $conf->facture->dir_output."/".dol_sanitizeFileName($object->ref);
 }
 
-$permissiontoadd = $user->rights->facture->creer;
+$permissiontoadd = $user->hasRight('facture', 'creer');
 
 // Security check
 if ($user->socid) {
@@ -126,7 +126,7 @@ if ($id > 0 || !empty($ref)) {
 		$totalpaid = $object->getSommePaiement();
 
 		// Build file list
-		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 		$totalsize = 0;
 		foreach ($filearray as $key => $file) {
 			$totalsize += $file['size'];
@@ -139,8 +139,8 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref customer
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 		// Project
@@ -184,8 +184,8 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 		$modulepart = 'facture';
-		$permissiontoadd = $user->rights->facture->creer;
-		$permtoedit = $user->rights->facture->creer;
+		$permissiontoadd = $user->hasRight('facture', 'creer');
+		$permtoedit = $user->hasRight('facture', 'creer');
 		$param = '&id='.$object->id;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 	} else {

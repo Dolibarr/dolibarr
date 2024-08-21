@@ -42,7 +42,6 @@ ToConsume=Consumir
 ToProduce=Producir
 QtyAlreadyConsumed=Cant. consumida
 QtyAlreadyProduced=Cant. producida
-QtyRequiredIfNoLoss=Si la cantidad requerida no tiene pérdidas (Eficiencia de fabricación es del 100%%)
 ConsumeOrProduce=Consumir o Producir
 ConsumeAndProduceAll=Consumir y Producir Todo
 TheProductXIsAlreadyTheProductToProduce=El producto a agregar es el producto a producir

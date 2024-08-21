@@ -23,6 +23,7 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان URL لعرض صفحة دفع
 ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان URL لتقديم صفحة دفع عبر الإنترنت %s لاشتراك عضو
 ToOfferALinkForOnlinePaymentOnDonation=عنوان URL لعرض صفحة دفع عبر الإنترنت %s لدفع تبرع
 YouCanAddTagOnUrl=يمكنك أيضًا إضافة معلمة url <b> & tag = <i> قيمة </i> </b> إلى أي من عناوين URL هذه (إلزامي فقط للدفع غير المرتبط بكائن) لإضافة علامة تعليق الدفع الخاصة بك. <br> بالنسبة إلى عنوان URL للدفعات التي لا تحتوي على كائن موجود ، يمكنك أيضًا إضافة المعلمة <strong> & noidempotency = 1 </strong> بحيث يمكن استخدام نفس الرابط مع نفس العلامة عدة مرات (قد تقصر بعض أوضاع الدفع الدفع على 1 لكل رابط مختلف بدون ذلك معامل)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=قم بإعداد Stripe باستخدام عنوان url <b> %s </b> ليتم إنشاء الدفع تلقائيًا عند التحقق من صحته بواسطة Stripe.
 AccountParameter=حساب المعلمات
 UsageParameter=استخدام المعلمات
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=المفتاح المباشر للخطاف التلقا�
 ONLINE_PAYMENT_WAREHOUSE=المخزون الذي سيتم استخدامه لتقليل المخزون عند إتمام الدفع عبر الإنترنت <br> (TODO عندما يتم تنفيذ خيار تقليل المخزون على إجراء على الفاتورة ويقوم الدفع عبر الإنترنت بإنشاء الفاتورة بنفسه؟)
 StripeLiveEnabled=تم تمكين Stripe Live (بخلاف ذلك وضع الاختبار / وضع الحماية)
 StripeImportPayment=استيراد مدفوعات الشريط
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=مثال على بطاقة الائتمان لدفعة تجريبية: %s => صالح، %s => خطأ في رمز التحقق من البطاقة (CVC)، %s => انتهت الصلاحية، %s => فشل الشحن
+ExampleOfTestBankAcountForSEPA=مثال على رقم BAN للحساب البنكي لاختبار الخصم المباشر: %s
 StripeGateways=بوابات شريطية
 OAUTH_STRIPE_TEST_ID=معرف عميل Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=معرف عميل Stripe Connect (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=حساب Stripe
 StripeChargeList=قائمة رسوم الشريط
 StripeTransactionList=قائمة معاملات Stripe
 StripeCustomerId=معرف عميل Stripe
+StripePaymentId=معرف الدفع الشريطي
 StripePaymentModes=طرق الدفع الشريطية
 LocalID=المعرف المحلي
 StripeID=معرف الشريط
@@ -62,7 +64,7 @@ DeleteACard=حذف البطاقة
 ConfirmDeleteCard=هل أنت متأكد أنك تريد حذف بطاقة الائتمان أو الخصم هذه؟
 CreateCustomerOnStripe=قم بإنشاء عميل على Stripe
 CreateCardOnStripe=قم بإنشاء بطاقة على Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=إنشاء بنك على الشريط
 ShowInStripe=عرض في شريط
 StripeUserAccountForActions=حساب مستخدم لاستخدامه في إشعار البريد الإلكتروني ببعض أحداث Stripe (دفعات Stripe)
 StripePayoutList=قائمة مدفوعات Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=رابط لإعداد Stripe WebHook لاستدعاء
 ToOfferALinkForLiveWebhook=رابط لإعداد Stripe WebHook لاستدعاء IPN (الوضع المباشر)
 PaymentWillBeRecordedForNextPeriod=سيتم تسجيل الدفع للفترة القادمة.
 ClickHereToTryAgain= <a href="%s"> انقر هنا للمحاولة مرة أخرى ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=نظرًا لقواعد مصادقة العميل القوية ، يجب أن يتم إنشاء بطاقة من Stripe backoffice. يمكنك النقر هنا للتبديل إلى سجل عميل Stripe: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=نظرًا لقواعد المصادقة القوية العميل، يجب أن يتم إنشاء البطاقة من المكتب الخلفي لشركة Stripe. يمكنك النقر هنا لتشغيل سجل الشريط العميل: %s
+STRIPE_CARD_PRESENT=البطاقة موجودة للمحطات الشريطية
+TERMINAL_LOCATION=الموقع (العنوان) لـ Stripe Terminals
+RequestDirectDebitWithStripe=طلب الخصم المباشر مع الشريط
+RequesCreditTransferWithStripe=طلب تحويل الرصيد مع Stripe
+STRIPE_SEPA_DIRECT_DEBIT=تمكين مدفوعات الخصم المباشر من خلال Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=وضع ربط الشريط
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

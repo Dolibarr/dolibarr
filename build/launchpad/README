@@ -49,7 +49,7 @@ If you want to build/test package locally:
     Use URL pattern (stable):
     For stable: http://www.dolibarr.org/files/lastbuild/package_debian-ubuntu/dolibarr_x.z.*.tar.gz
     
-- For Dev, you can also add link serie to GIT HEAD.
+- For Dev, you can also add link series to GIT HEAD.
 - For stable, you can init from command line
 	cd bzr/dolibarr-stable
     bzr init

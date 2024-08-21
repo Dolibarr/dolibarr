@@ -32,4 +32,3 @@ StripeUserAccountForActions=Cuenta de usuario para usar para la notificación po
 ToOfferALinkForTestWebhook=Enlace para configurar Stripe WebHook para llamar a IPN (modo de prueba)
 ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar a IPN (modo en vivo)
 ClickHereToTryAgain=<a href="%s">Haga clic aquí para volver a intentarlo...</a>
-TERMINAL_LOCATION=Location (address) for Stripe Terminals

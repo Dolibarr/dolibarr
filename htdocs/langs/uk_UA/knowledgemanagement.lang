@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Система управління знаннями
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Керуйте базою управління знаннями (KM) або Help-Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Налаштування системи управління знаннями
-Settings = Налаштування
 KnowledgeManagementSetupPage = Сторінка налаштування системи управління знаннями
-
-
-#
 # About page
-#
-About = Про
 KnowledgeManagementAbout = Про управління знаннями
 KnowledgeManagementAboutPage = Управління знаннями про сторінку
-
 KnowledgeManagementArea = Управління знаннями
 MenuKnowledgeRecord = База знань
+MenuKnowledgeRecordShort = База знань
 ListKnowledgeRecord = Список статей
 NewKnowledgeRecord = Нова стаття
 ValidateReply = Перевірте рішення
@@ -46,9 +32,14 @@ KnowledgeRecords = статті
 KnowledgeRecord = стаття
 KnowledgeRecordExtraFields = Додаткові поля для ст
 GroupOfTicket=Група квитків
-YouCanLinkArticleToATicketCategory=You can link the article to a ticket group (so the article will be highlighted on any tickets in this group)
-SuggestedForTicketsInGroup=Пропонується для квитків, коли група
-
+YouCanLinkArticleToATicketCategory=Ви можете прив’язати статтю до групи заявок (тому стаття буде виділена на будь-яких заявках у цій групі)
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Встановити як застаріле
 ConfirmCloseKM=Ви підтверджуєте закриття цієї статті як застарілу?
 ConfirmReopenKM=Ви бажаєте відновити цю статтю до статусу «Перевірено»?
+BoxLastKnowledgerecordDescription=Останні %s статті
+BoxLastKnowledgerecord=Останні статті
+BoxLastKnowledgerecordContent=Останні статті
+BoxLastKnowledgerecordModifiedContent=Останні змінені статті
+BoxLastModifiedKnowledgerecordDescription=Останні %s змінені статті
+BoxLastModifiedKnowledgerecord=Останні змінені статті

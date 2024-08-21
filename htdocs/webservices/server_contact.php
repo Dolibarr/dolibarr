@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +23,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require "../master.inc.php";
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT."/core/lib/ws.lib.php";
 require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
@@ -35,7 +55,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
 dol_syslog("Call Contact webservices interfaces");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -60,11 +80,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 
@@ -76,44 +96,44 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
 $contact_fields = array(
-	'id' => array('name'=>'id', 'type'=>'xsd:string'),
-	'ref_ext' => array('name'=>'ref_ext', 'type'=>'xsd:string'),
-	'lastname' => array('name'=>'lastname', 'type'=>'xsd:string'),
-	'firstname' => array('name'=>'firstname', 'type'=>'xsd:string'),
-	'address' => array('name'=>'address', 'type'=>'xsd:string'),
-	'zip' => array('name'=>'zip', 'type'=>'xsd:string'),
-	'town' => array('name'=>'town', 'type'=>'xsd:string'),
-	'state_id' => array('name'=>'state_id', 'type'=>'xsd:string'),
-	'state_code' => array('name'=>'state_code', 'type'=>'xsd:string'),
-	'state' => array('name'=>'state', 'type'=>'xsd:string'),
-	'country_id' => array('name'=>'country_id', 'type'=>'xsd:string'),
-	'country_code' => array('name'=>'country_code', 'type'=>'xsd:string'),
-	'country' => array('name'=>'country', 'type'=>'xsd:string'),
-	'socid' => array('name'=>'socid', 'type'=>'xsd:string'),
-	'status' => array('name'=>'status', 'type'=>'xsd:string'),
-	'phone_pro' => array('name'=>'phone_pro', 'type'=>'xsd:string'),
-	'fax' => array('name'=>'fax', 'type'=>'xsd:string'),
-	'phone_perso' => array('name'=>'phone_perso', 'type'=>'xsd:string'),
-	'phone_mobile' => array('name'=>'phone_mobile', 'type'=>'xsd:string'),
-	'code' => array('name'=>'code', 'type'=>'xsd:string'),
-	'email' => array('name'=>'email', 'type'=>'xsd:string'),
-	'birthday' => array('name'=>'birthday', 'type'=>'xsd:string'),
-	'default_lang' => array('name'=>'default_lang', 'type'=>'xsd:string'),
-	'note' => array('name'=>'note', 'type'=>'xsd:string'),
-	'ref_facturation' => array('name'=>'ref_facturation', 'type'=>'xsd:string'),
-	'ref_contrat' => array('name'=>'ref_contrat', 'type'=>'xsd:string'),
-	'ref_commande' => array('name'=>'ref_commande', 'type'=>'xsd:string'),
-	'ref_propal' => array('name'=>'ref_propal', 'type'=>'xsd:string'),
-	'user_id' => array('name'=>'user_id', 'type'=>'xsd:string'),
-	'user_login' => array('name'=>'user_login', 'type'=>'xsd:string'),
-	'civility_id' => array('name'=>'civility_id', 'type'=>'xsd:string'),
-	'poste' => array('name'=>'poste', 'type'=>'xsd:string')
+	'id' => array('name' => 'id', 'type' => 'xsd:string'),
+	'ref_ext' => array('name' => 'ref_ext', 'type' => 'xsd:string'),
+	'lastname' => array('name' => 'lastname', 'type' => 'xsd:string'),
+	'firstname' => array('name' => 'firstname', 'type' => 'xsd:string'),
+	'address' => array('name' => 'address', 'type' => 'xsd:string'),
+	'zip' => array('name' => 'zip', 'type' => 'xsd:string'),
+	'town' => array('name' => 'town', 'type' => 'xsd:string'),
+	'state_id' => array('name' => 'state_id', 'type' => 'xsd:string'),
+	'state_code' => array('name' => 'state_code', 'type' => 'xsd:string'),
+	'state' => array('name' => 'state', 'type' => 'xsd:string'),
+	'country_id' => array('name' => 'country_id', 'type' => 'xsd:string'),
+	'country_code' => array('name' => 'country_code', 'type' => 'xsd:string'),
+	'country' => array('name' => 'country', 'type' => 'xsd:string'),
+	'socid' => array('name' => 'socid', 'type' => 'xsd:string'),
+	'status' => array('name' => 'status', 'type' => 'xsd:string'),
+	'phone_pro' => array('name' => 'phone_pro', 'type' => 'xsd:string'),
+	'fax' => array('name' => 'fax', 'type' => 'xsd:string'),
+	'phone_perso' => array('name' => 'phone_perso', 'type' => 'xsd:string'),
+	'phone_mobile' => array('name' => 'phone_mobile', 'type' => 'xsd:string'),
+	'code' => array('name' => 'code', 'type' => 'xsd:string'),
+	'email' => array('name' => 'email', 'type' => 'xsd:string'),
+	'birthday' => array('name' => 'birthday', 'type' => 'xsd:string'),
+	'default_lang' => array('name' => 'default_lang', 'type' => 'xsd:string'),
+	'note' => array('name' => 'note', 'type' => 'xsd:string'),
+	'ref_facturation' => array('name' => 'ref_facturation', 'type' => 'xsd:string'),
+	'ref_contrat' => array('name' => 'ref_contrat', 'type' => 'xsd:string'),
+	'ref_commande' => array('name' => 'ref_commande', 'type' => 'xsd:string'),
+	'ref_propal' => array('name' => 'ref_propal', 'type' => 'xsd:string'),
+	'user_id' => array('name' => 'user_id', 'type' => 'xsd:string'),
+	'user_login' => array('name' => 'user_login', 'type' => 'xsd:string'),
+	'civility_id' => array('name' => 'civility_id', 'type' => 'xsd:string'),
+	'poste' => array('name' => 'poste', 'type' => 'xsd:string')
 	//...
 );
 
@@ -125,7 +145,7 @@ $elementtype = 'socpeople';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -137,7 +157,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 			$type = 'xsd:string';
 		}
 
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 if (is_array($extrafield_array)) {
@@ -185,9 +205,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'getContact',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref_ext'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref_ext' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'contact'=>'tns:contact'),
+	array('result' => 'tns:result', 'contact' => 'tns:contact'),
 	$ns,
 	$ns.'#getContact',
 	$styledoc,
@@ -199,9 +219,9 @@ $server->register(
 $server->register(
 	'createContact',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'contact'=>'tns:contact'),
+	array('authentication' => 'tns:authentication', 'contact' => 'tns:contact'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#createContact',
 	$styledoc,
@@ -212,9 +232,9 @@ $server->register(
 $server->register(
 	'getContactsForThirdParty',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'idthirdparty'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'idthirdparty' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'contacts'=>'tns:ContactsArray2'),
+	array('result' => 'tns:result', 'contacts' => 'tns:ContactsArray2'),
 	$ns,
 	$ns.'#getContactsForThirdParty',
 	$styledoc,
@@ -226,9 +246,9 @@ $server->register(
 $server->register(
 	'updateContact',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'contact'=>'tns:contact'),
+	array('authentication' => 'tns:authentication', 'contact' => 'tns:contact'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string'),
 	$ns,
 	$ns.'#updateContact',
 	$styledoc,
@@ -257,25 +277,27 @@ function getContact($authentication, $id, $ref_ext)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && ($id && $ref_ext)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$contact = new Contact($db);
-		$result = $contact->fetch($id, 0, $ref_ext);
+		$result = $contact->fetch($id, null, $ref_ext);
 		if ($result > 0) {
 			// Only internal user who have contact read permission
 			// Or for external user who have contact read permission, with restrict on socid
-			if ($fuser->rights->societe->contact->lire && !$fuser->socid
-				|| ($fuser->rights->societe->contact->lire && ($fuser->socid == $contact->socid))
+			if ($fuser->hasRight('societe', 'contact', 'lire') && !$fuser->socid
+				|| ($fuser->hasRight('societe', 'contact', 'lire') && ($fuser->socid == $contact->socid))
 			) {
 				$contact_result_fields = array(
 					'id' => $contact->id,
@@ -329,21 +351,23 @@ function getContact($authentication, $id, $ref_ext)
 
 				// Create
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'contact'=>$contact_result_fields
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'contact' => $contact_result_fields
 				);
 			} else {
 				$error++;
-				$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+				$errorcode = 'PERMISSION_DENIED';
+				$errorlabel = 'User does not have permission for this request';
 			}
 		} else {
 			$error++;
-			$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
+			$errorcode = 'NOT_FOUND';
+			$errorlabel = 'Object not found for id='.$id.' nor ref_ext='.$ref_ext;
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -354,12 +378,12 @@ function getContact($authentication, $id, $ref_ext)
  * Create Contact
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Contact		$contact		    $contact
+ * @param	array		$contact		    $contact
  * @return	array							Array result
  */
 function createContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -371,12 +395,15 @@ function createContact($authentication, $contact)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['lastname'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 	if (!$error) {
@@ -440,7 +467,7 @@ function createContact($authentication, $contact)
 
 		if (!$error) {
 			$db->commit();
-			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+			$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 		} else {
 			$db->rollback();
 			$error++;
@@ -450,7 +477,7 @@ function createContact($authentication, $contact)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -465,7 +492,7 @@ function createContact($authentication, $contact)
  */
 function getContactsForThirdParty($authentication, $idthirdparty)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	dol_syslog("Function: getContactsForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
@@ -475,13 +502,15 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && empty($idthirdparty)) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = 'Parameter id is not provided';
 	}
 
 	if (!$error) {
@@ -506,6 +535,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 
 		$resql = $db->query($sql);
 		if ($resql) {
+			$linescontact = array();
 			$num = $db->num_rows($resql);
 			$i = 0;
 			while ($i < $num) {
@@ -563,18 +593,19 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 			}
 
 			$objectresp = array(
-			'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			'contacts'=>$linescontact
+				'result' => array('result_code' => 'OK', 'result_label' => ''),
+				'contacts' => $linescontact
 
 			);
 		} else {
 			$error++;
-			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
+			$errorcode = $db->lasterrno();
+			$errorlabel = $db->lasterror();
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -585,12 +616,12 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  * Update a contact
  *
  * @param	array		$authentication		Array of authentication information
- * @param	Contact		$contact		    Contact
+ * @param	array		$contact		    Contact
  * @return	array							Array result
  */
 function updateContact($authentication, $contact)
 {
-	global $db, $conf, $langs;
+	global $db, $conf;
 
 	$now = dol_now();
 
@@ -602,17 +633,21 @@ function updateContact($authentication, $contact)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['id']) && empty($contact['ref_ext'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-	if (!$error && ($id && $ref_ext)) {
+	if (!$error && ($contact['id'] && $contact['ref_ext'])) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
 	}
 
 	if (!$error) {
@@ -621,7 +656,7 @@ function updateContact($authentication, $contact)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Contact($db);
-		$result = $object->fetch($contact['id'], 0, $contact['ref_ext']);
+		$result = $object->fetch($contact['id'], null, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -673,12 +708,13 @@ function updateContact($authentication, $contact)
 				$error++;
 			}
 		}
+		'@phan-var-force array{id:string} $contact';
 
 		if ((!$error) && ($objectfound)) {
 			$db->commit();
 			$objectresp = array(
-			'result'=>array('result_code'=>'OK', 'result_label'=>''),
-			'id'=>$object->id
+			'result' => array('result_code' => 'OK', 'result_label' => ''),
+			'id' => $object->id
 			);
 		} elseif ($objectfound) {
 			$db->rollback();
@@ -693,7 +729,7 @@ function updateContact($authentication, $contact)
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;

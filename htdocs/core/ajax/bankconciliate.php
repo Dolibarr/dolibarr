@@ -44,6 +44,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $action = GETPOST('action', 'aZ09');
 
+// Security check
+// Checks are done later
+
 
 /*
  * View
@@ -54,46 +57,46 @@ top_httphead();
 
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'dvnext') {
 	// Increase date
 	$al = new AccountLine($db);
-	$al->datev_next(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->datev_next(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($db->jdate($al->datev), "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
 
 	exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvprev') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'dvprev') {
 	// Decrease date
 	$al = new AccountLine($db);
-	$al->datev_previous(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->datev_previous(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($db->jdate($al->datev), "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
 
 	exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'donext') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'donext') {
 	// Increase date
 	$al = new AccountLine($db);
-	$al->dateo_next(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->dateo_next(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 
 	exit;
 }
 
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'doprev') {
+if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consolidate')) && $action == 'doprev') {
 	// Decrease date
 	$al = new AccountLine($db);
-	$al->dateo_previous(GETPOST('rowid', 'int'));
-	$al->fetch(GETPOST('rowid', 'int'));
+	$al->dateo_previous(GETPOSTINT('rowid'));
+	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($db->jdate($al->dateo), "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
 
 	exit;
 }

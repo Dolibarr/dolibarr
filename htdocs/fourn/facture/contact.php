@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
  * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2023       Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
  *      \file       htdocs/fourn/facture/contact.php
- *      \ingroup    facture, fournisseur
+ *      \ingroup    invoice, fournisseur
  *      \brief      Onglet de gestion des contacts des factures
  */
 
@@ -38,7 +39,7 @@ if (isModEnabled('project')) {
 
 $langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int'));
+$id		= (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -46,56 +47,67 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('invoicesuppliercardcontact','invoicesuppliercontactcard', 'globalcard'));
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
-$hookmanager->initHooks(array('invoicesuppliercardcontact'));
 
 $object = new FactureFournisseur($db);
 
-$usercancreate = ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer);
+$usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
 $permissiontoadd = $usercancreate;
 
-
 /*
- * Ajout d'un nouveau contact
+ * Actions
  */
 
-if ($action == 'addcontact' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-	$result = $object->fetch($id, $ref);
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
+/*
+ * Add a new contact
+ */
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+if (empty($reshook)) {
+	if ($action == 'addcontact' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		$result = $object->fetch($id, $ref);
+
+		if ($result > 0 && $id > 0) {
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
-	}
-} elseif ($action == 'swapstatut' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-	// bascule du statut d'un contact
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	} else {
-		dol_print_error($db);
-	}
-} elseif ($action == 'deletecontact' && ($user->rights->fournisseur->facture->creer || $user->rights->supplier_invoice->creer)) {
-	// Efface un contact
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid", 'int'));
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		dol_print_error($db);
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	} elseif ($action == 'swapstatut' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		// bascule du statut d'un contact
+		if ($object->fetch($id)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			dol_print_error($db);
+		}
+	} elseif ($action == 'deletecontact' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+		// Efface un contact
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
 	}
 }
 
@@ -111,7 +123,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -123,7 +135,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-		llxHeader('', $title, $helpurl);
+		llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_contact');
 
 		$head = facturefourn_prepare_head($object);
 
@@ -133,12 +145,12 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '<div class="refidno">';
 		// Ref supplier
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 		// Project
 		if (isModEnabled('project')) {
@@ -149,7 +161,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);

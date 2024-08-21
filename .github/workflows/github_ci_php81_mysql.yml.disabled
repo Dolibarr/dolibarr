@@ -46,6 +46,8 @@ jobs:
         sudo update-alternatives --set php /usr/bin/php8.1
         php -i | head -
         
+        cd $GITHUB_WORKSPACE
+        ls $GITHUB_WORKSPACE
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
           php-parallel-lint/php-parallel-lint ^1.2 \
           php-parallel-lint/php-console-highlighter ^0 \
@@ -94,14 +96,18 @@ jobs:
         mysql --version | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SELECT VERSION();"  | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
+        
         echo "Drop and create database"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
+        
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
+
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
+
     - name: Generate Dolibarr conf file
       run: |
         export CONF_FILE=$GITHUB_WORKSPACE/htdocs/conf/conf.php
@@ -127,16 +133,12 @@ jobs:
         set +e
         echo '<?php' > $INSTALL_FORCED_FILE
         echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
-        # For mysql
         echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_databaselogin=\'root\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
-        # For mysql
         echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createuser=false';' >> $INSTALL_FORCED_FILE
@@ -188,7 +190,7 @@ jobs:
         sudo cat /etc/apache2/sites-enabled/000-default.conf
         sudo service apache2 restart
         curl -I localhost
-    - name: Chech Apache availability
+    - name: Check Apache availability
       run: |
         echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
         # Ensure we stop on error with set -e
@@ -269,6 +271,9 @@ jobs:
         php upgrade.php 16.0.0 17.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade16001700.log
         php upgrade2.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-2.log
         php step5.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-3.log
+        php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
+        php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
+        php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
         
     - name: Result of migration scripts
       if: always()

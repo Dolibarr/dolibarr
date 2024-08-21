@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,7 @@
 /**
  *	\file       htdocs/asterisk/wrapper.php
  *  \brief      File that is entry point to call an Asterisk server
- *	\remarks	To be used, an Asterisk user must be created by adding this
- * 				in /etc/asterisk/manager.conf
+ *	\remarks	To be used, an Asterisk user must be created by adding this in /etc/asterisk/manager.conf
  * 				[dolibarr]
  * 				secret = dolibarr
  * 				deny=0.0.0.0/0.0.0.0
@@ -50,10 +50,24 @@ if (!defined('NOREQUIREAJAX')) {
 /**
  * Empty header
  *
- * @ignore
+ * @param 	string 			$head				Optional head lines
+ * @param 	string 			$title				HTML title
+ * @param	string			$help_url			Url links to help page
+ * 		                            			Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
+ *                                  			For other external page: http://server/url
+ * @param	string			$target				Target to use on links
+ * @param 	int    			$disablejs			More content into html header
+ * @param 	int    			$disablehead		More content into html header
+ * @param 	array|string  	$arrayofjs			Array of complementary js files
+ * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
+ * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
+ * @param	int				$disablenofollow	Disable the "nofollow" on meta robot header
+ * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader()
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
 {
 	print '<html>'."\n";
 	print '<head>'."\n";
@@ -64,10 +78,12 @@ function llxHeader()
 /**
  * Empty footer
  *
- * @ignore
+ * @param	string	$comment    				A text to add as HTML comment into HTML generated page
+ * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
+ * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter()
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 {
 	print "\n".'</html>'."\n";
 }
@@ -78,64 +94,77 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
 // Security check
-if (empty($conf->clicktodial->enabled)) {
+if (!isModEnabled('clicktodial')) {
 	accessforbidden();
 	exit;
 }
 
 
 // Define Asterisk setup
-if (!isset($conf->global->ASTERISK_HOST)) {
+if (!getDolGlobalString('ASTERISK_HOST')) {
 	$conf->global->ASTERISK_HOST = "127.0.0.1";
 }
-if (!isset($conf->global->ASTERISK_TYPE)) {
+if (!getDolGlobalString('ASTERISK_TYPE')) {
 	$conf->global->ASTERISK_TYPE = "SIP/";
 }
-if (!isset($conf->global->ASTERISK_INDICATIF)) {
+if (!getDolGlobalString('ASTERISK_INDICATIF')) {
 	$conf->global->ASTERISK_INDICATIF = "0";
 }
-if (!isset($conf->global->ASTERISK_PORT)) {
+if (!getDolGlobalString('ASTERISK_PORT')) {
 	$conf->global->ASTERISK_PORT = 5038;
 }
-if ($conf->global->ASTERISK_INDICATIF == 'NONE') {
+if (getDolGlobalString('ASTERISK_INDICATIF') == 'NONE') {
 	$conf->global->ASTERISK_INDICATIF = '';
 }
-if (!isset($conf->global->ASTERISK_CONTEXT)) {
+if (!getDolGlobalString('ASTERISK_CONTEXT')) {
 	$conf->global->ASTERISK_CONTEXT = "from-internal";
 }
-if (!isset($conf->global->ASTERISK_WAIT_TIME)) {
+if (!getDolGlobalString('ASTERISK_WAIT_TIME')) {
 	$conf->global->ASTERISK_WAIT_TIME = "30";
 }
-if (!isset($conf->global->ASTERISK_PRIORITY)) {
+if (!getDolGlobalString('ASTERISK_PRIORITY')) {
 	$conf->global->ASTERISK_PRIORITY = "1";
 }
-if (!isset($conf->global->ASTERISK_MAX_RETRY)) {
+if (!getDolGlobalString('ASTERISK_MAX_RETRY')) {
 	$conf->global->ASTERISK_MAX_RETRY = "2";
 }
 
 
 $login = GETPOST('login', 'alphanohtml');
-$password = GETPOST('password', 'none');
+$password = GETPOST('password', 'password');
 $caller = GETPOST('caller', 'alphanohtml');
 $called = GETPOST('called', 'alphanohtml');
 
+// Sanitize input data to avoid to use the wrapper to inject malicious paylod into asterisk
+$login = preg_replace('/[\n\r]/', '', $login);
+$password = preg_replace('/[\n\r]/', '', $password);
+$caller = preg_replace('/[\n\r]/', '', $caller);
+$called = preg_replace('/[\n\r]/', '', $called);
+
 // IP address of Asterisk server
-$strHost = $conf->global->ASTERISK_HOST;
-// Spécifiez le type d'extension par laquelle vous poste est connecte.
+$strHost = getDolGlobalString('ASTERISK_HOST');
+
+// Specify the type of extension through which your extension is connected.
 // ex: SIP/, IAX2/, ZAP/, etc
-$channel = $conf->global->ASTERISK_TYPE;
-// Indicatif de la ligne sortante
-$prefix = $conf->global->ASTERISK_INDICATIF;
-// Port
-$port = $conf->global->ASTERISK_PORT;
+$channel = getDolGlobalString('ASTERISK_TYPE');
+
+// Outgoing call sign
+$prefix = getDolGlobalString('ASTERISK_INDICATIF');
+
+// Asterisk Port
+$port = getDolGlobalString('ASTERISK_PORT');
+
 // Context ( generalement from-internal )
-$strContext = $conf->global->ASTERISK_CONTEXT;
-// Delai d'attente avant de raccrocher
-$strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
+$strContext = getDolGlobalString('ASTERISK_CONTEXT');
+
+// Waiting time before hanging up
+$strWaitTime = getDolGlobalString('ASTERISK_WAIT_TIME');
+
 // Priority
-$strPriority = $conf->global->ASTERISK_PRIORITY;
-// Nomber of try
-$strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
+$strPriority = getDolGlobalString('ASTERISK_PRIORITY');
+
+// Number of call attempts
+$strMaxRetry = getDolGlobalString('ASTERISK_MAX_RETRY');
 
 
 /*
@@ -175,7 +204,7 @@ if (!empty($number)) {
 		$errno = 0;
 		$errstr = 0;
 		$strCallerId = "Dolibarr caller $found <".strtolower($number).">";
-		$oSocket = @fsockopen($strHost, $port, $errno, $errstr, 10);
+		$oSocket = @fsockopen($strHost, (int) $port, $errno, $errstr, 10);
 		if (!$oSocket) {
 			print '<body>'."\n";
 			$txt = "Failed to execute fsockopen($strHost, $port, \$errno, \$errstr, 10)<br>\n";
@@ -188,20 +217,20 @@ if (!empty($number)) {
 		} else {
 			$txt = "Call Asterisk dialer for caller: ".$caller.", called: ".$called." clicktodiallogin: ".$login;
 			dol_syslog($txt);
-			print '<body onload="javascript:history.go(-1);">'."\n";
+			print '<body onload="history.go(-1);">'."\n";
 			print '<!-- '.$txt.' -->';
-			fputs($oSocket, "Action: login\r\n");
-			fputs($oSocket, "Events: off\r\n");
-			fputs($oSocket, "Username: $login\r\n");
-			fputs($oSocket, "Secret: $password\r\n\r\n");
-			fputs($oSocket, "Action: originate\r\n");
-			fputs($oSocket, "Channel: ".$channel.$caller."\r\n");
-			fputs($oSocket, "WaitTime: $strWaitTime\r\n");
-			fputs($oSocket, "CallerId: $strCallerId\r\n");
-			fputs($oSocket, "Exten: ".$prefix.$number."\r\n");
-			fputs($oSocket, "Context: $strContext\r\n");
-			fputs($oSocket, "Priority: $strPriority\r\n\r\n");
-			fputs($oSocket, "Action: Logoff\r\n\r\n");
+			fwrite($oSocket, "Action: login\r\n");
+			fwrite($oSocket, "Events: off\r\n");
+			fwrite($oSocket, "Username: $login\r\n");
+			fwrite($oSocket, "Secret: $password\r\n\r\n");
+			fwrite($oSocket, "Action: originate\r\n");
+			fwrite($oSocket, "Channel: ".$channel.$caller."\r\n");
+			fwrite($oSocket, "WaitTime: $strWaitTime\r\n");
+			fwrite($oSocket, "CallerId: $strCallerId\r\n");
+			fwrite($oSocket, "Exten: ".$prefix.$number."\r\n");
+			fwrite($oSocket, "Context: $strContext\r\n");
+			fwrite($oSocket, "Priority: $strPriority\r\n\r\n");
+			fwrite($oSocket, "Action: Logoff\r\n\r\n");
 			sleep(2);
 			fclose($oSocket);
 			print '</body>'."\n";

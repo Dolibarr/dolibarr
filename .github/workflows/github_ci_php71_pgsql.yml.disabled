@@ -116,18 +116,19 @@ jobs:
         mysql --version | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SELECT VERSION();"  | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
+        
         echo "Drop and create database"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
         
-        #psql -c 'create database travis;' -U postgres
-        #psql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
-        #pgloader mysql://root:pass@127.0.0.1:32574/dolibarr_src postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dest
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
+        
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
+
+        echo "Init postgresql database"        
         ps fauxww | grep postgres
         ls /etc/postgresql/14/main/
         sudo chmod -R a+rwx /etc/postgresql/14/main/pg_hba.conf
@@ -143,10 +144,12 @@ jobs:
 
         sudo mkdir -p /tmp/pgloader
         sudo chmod -R a+rwx /tmp/pgloader/
+        
         echo sudo pgloader mysql://root:password@127.0.0.1:32574/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         sudo pgloader mysql://root:password@127.0.0.1:32574/travis postgresql://postgres:postgres@127.0.0.1:5432/travis
         echo 'ALTER SEQUENCE llx_accountingaccount_rowid_seq RENAME TO llx_accounting_account_rowid_seq' | psql postgresql://postgres:postgres@127.0.0.1:5432/travis
         echo 'ALTER SEQUENCE llx_accounting_account_rowid_seq RESTART WITH 1000001;' | psql postgresql://postgres:postgres@127.0.0.1:5432/travis
+
         # Create pgsql compatibility functions
         psql postgresql://postgres:postgres@127.0.0.1:5432/travis < htdocs/install/pgsql/functions/functions.sql
 
@@ -160,11 +163,11 @@ jobs:
         echo '$'dolibarr_main_data_root=\'/var/www/html/documents\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_host=\'127.0.0.1\'';' >> $CONF_FILE
         echo '$'dolibarr_main_db_name=\'travis\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_user=\'root\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_pass=\'password\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_user=\'postgres\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_pass=\'postgres\'';' >> $CONF_FILE
         echo '$'dolibarr_main_instance_unique_id=\'travis1234567890\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_type=\'mysqli\'';' >> $CONF_FILE
-        echo '$'dolibarr_main_db_port=\'32574\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_type=\'pgsql\'';' >> $CONF_FILE
+        echo '$'dolibarr_main_db_port=\'5432\'';' >> $CONF_FILE
         echo '$'dolibarr_main_authentication=\'dolibarr\'';' >> $CONF_FILE
         cat $CONF_FILE
     - name: Generate install.forced.php file to test installation
@@ -175,13 +178,11 @@ jobs:
         set +e
         echo '<?php' > $INSTALL_FORCED_FILE
         echo '$'force_install_noedit=2';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_type=\'mysqli\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_type=\'pgsql\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_dbserver=\'127.0.0.1\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_database=\'travis\'';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_databaselogin=\'root\'';' >> $INSTALL_FORCED_FILE
-        echo '$'force_install_databasepass=\'password\'';' >> $INSTALL_FORCED_FILE
-        #echo '$'force_install_port=\'32574\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databaselogin=\'postgres\'';' >> $INSTALL_FORCED_FILE
+        echo '$'force_install_databasepass=\'postgres\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_port=\'5432\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_prefix=\'llx_\'';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_createdatabase=false';' >> $INSTALL_FORCED_FILE
@@ -234,7 +235,7 @@ jobs:
         sudo cat /etc/apache2/sites-enabled/000-default.conf
         sudo service apache2 restart
         curl -I localhost
-    - name: Chech Apache availability
+    - name: Check Apache availability
       run: |
         echo "Checking webserver availability by a wget -O - --debug http://127.0.0.1"
         # Ensure we stop on error with set -e
@@ -260,6 +261,7 @@ jobs:
         sudo chmod -R a+rwx /var/www
         ls -l /var/www
         cd /var/www/html/install
+
         echo Execute upgrade, upgrade2 and step5 for each major version
         php upgrade.php 3.5.0 3.6.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade350360.log
         php upgrade2.php 3.5.0 3.6.0 > $GITHUB_WORKSPACE/upgrade350360-2.log
@@ -285,6 +287,10 @@ jobs:
         php upgrade.php 6.0.0 7.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade600700.log
         php upgrade2.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-2.log
         php step5.php 6.0.0 7.0.0 > $GITHUB_WORKSPACE/upgrade600700-3.log
+        
+        echo "\dt llx_c_paiement" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+        echo "\dt llx_c_payment_term" | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
+
         php upgrade.php 7.0.0 8.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade700800.log
         php upgrade2.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-2.log
         php step5.php 7.0.0 8.0.0 > $GITHUB_WORKSPACE/upgrade700800-3.log
@@ -315,6 +321,9 @@ jobs:
         php upgrade.php 16.0.0 17.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade16001700.log
         php upgrade2.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-2.log
         php step5.php 16.0.0 17.0.0 > $GITHUB_WORKSPACE/upgrade16001700-3.log
+        php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
+        php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
+        php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
         
     - name: Result of migration scripts
       if: always()

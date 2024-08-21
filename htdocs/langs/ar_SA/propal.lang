@@ -12,9 +12,11 @@ NewPropal=اقتراح جديد
 Prospect=احتمال
 DeleteProp=اقتراح حذف التجارية
 ValidateProp=مصادقة على اقتراح التجارية
+CancelPropal=إلغاء
 AddProp=إنشاء اقتراح
 ConfirmDeleteProp=هل أنت متأكد أنك تريد حذف هذا العرض التجاري؟
 ConfirmValidateProp=هل أنت متأكد من أنك تريد التحقق من صحة هذا العرض التجاري تحت الاسم <b> %s </b>؟
+ConfirmCancelPropal=هل أنت متأكد أنك تريد إلغاء العرض التجاري <b>%s</b>؟
 LastPropals=أحدث مقترحات %s
 LastModifiedProposals=أحدث %s العروض المعدلة 
 AllPropals=جميع المقترحات
@@ -27,13 +29,15 @@ NbOfProposals=عدد من المقترحات والتجاري
 ShowPropal=وتظهر اقتراح
 PropalsDraft=المسودات
 PropalsOpened=فتح
+PropalStatusCanceled=ملغى (مهجور)
 PropalStatusDraft=مشروع (لا بد من التحقق من صحة)
 PropalStatusValidated=صادق (اقتراح فتح)
 PropalStatusSigned=وقعت (لمشروع القانون)
 PropalStatusNotSigned=لم يتم التوقيع (مغلقة)
 PropalStatusBilled=فواتير
+PropalStatusCanceledShort=ملغي
 PropalStatusDraftShort=مسودة
-PropalStatusValidatedShort=التحقق من صحتها (مفتوح)
+PropalStatusValidatedShort=مفتوح
 PropalStatusClosedShort=مغلقة
 PropalStatusSignedShort=وقعت
 PropalStatusNotSignedShort=لم يتم التوقيع
@@ -55,6 +59,7 @@ CopyPropalFrom=اقتراح إنشاء التجارية عن طريق نسخ و�
 CreateEmptyPropal=إنشاء عرض تجاري فارغ أو من قائمة المنتجات / الخدمات
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
 DefaultPuttingPricesUpToDate=بشكل افتراضي ، يتم تحديث الأسعار مع الأسعار الحالية المعروفة عند استنساخ الاقتراح
+DefaultPuttingDescUpToDate=بشكل افتراضي، قم بتحديث الأوصاف بالأوصاف الحالية المعروفة حول استنساخ الاقتراح
 UseCustomerContactAsPropalRecipientIfExist=استخدم جهة الاتصال / العنوان من النوع "اقتراح متابعة جهات الاتصال" إذا تم تحديده بدلاً من عنوان الطرف الثالث كعنوان مستلم الاقتراح
 ConfirmClonePropal=هل أنت متأكد من أنك تريد استنساخ العرض التجاري <b> %s </b>؟
 ConfirmReOpenProp=هل أنت متأكد من أنك تريد فتح العرض التجاري <b> %s </b>؟
@@ -72,13 +77,11 @@ AvailabilityTypeAV_1W=1 أسبوع
 AvailabilityTypeAV_2W=2 أسابيع
 AvailabilityTypeAV_3W=3 أسابيع
 AvailabilityTypeAV_1M=1 شهر
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=اقتراح ممثل متابعة
 TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 TypeContact_propal_external_SHIPPING=الاتصال بالعميل للتسليم
-
 # Document models
 CantBeNoSign=لا يمكن تعيين غير موقعة
 CaseFollowedBy=حالة متبوعة
@@ -89,13 +92,13 @@ ConfirmMassSignatureQuestion=هل أنت متأكد أنك تريد التوقي
 ConfirmMassValidation=تأكيد التحقق من صحة الجملة
 ConfirmMassValidationQuestion=هل أنت متأكد أنك تريد التحقق من صحة السجلات المحددة؟
 ConfirmRefusePropal=هل أنت متأكد أنك تريد رفض هذا العرض التجاري؟
-ContractSigned=Contract signed
+ContractSigned=تم توقيع العقد
 DefaultModelPropalClosed=القالب الافتراضي عند إغلاق الأعمال المقترح (فواتير)
 DefaultModelPropalCreate=إنشاء نموذج افتراضي
 DefaultModelPropalToBill=القالب الافتراضي عند إغلاق الأعمال المقترح (أن الفاتورة)
 DocModelAzurDescription=نموذج اقتراح كامل (التنفيذ القديم للقالب السماوي)
 DocModelCyanDescription=نموذج اقتراح كامل
-FichinterSigned=Intervention signed
+FichinterSigned=تم التوقيع على التدخل
 IdProduct=معرف المنتج
 IdProposal=معرف الاقتراح
 IsNotADraft=ليس مسودة
@@ -111,8 +114,11 @@ ProposalCustomerSignature=قبول كتابي، ختم الشركة والتار
 ProposalsStatisticsSuppliers=إحصاءات عروض البائعين
 RefusePropal=اقتراح رفض
 Sign=إشارة
-SignContract=Sign contract
-SignFichinter=Sign intervention
+SignContract=توقيع العقد
+SignFichinter=تدخل الإشارة
+SignSociete_rib=ولاية التوقيع
 SignPropal=قبول الاقتراح
 Signed=وقعت
 SignedOnly=وقعت فقط
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

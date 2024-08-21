@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  *       \file       htdocs/fourn/commande/contact.php
- *       \ingroup    commande
+ *       \ingroup    order
  *       \brief      Onglet de gestion des contacts de commande
  */
 
@@ -37,7 +38,7 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("facture", "orders", "sendings", "companies"));
 
-$id		= GETPOST('id', 'int');
+$id		= GETPOSTINT('id');
 $ref	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
@@ -45,59 +46,69 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('ordersuppliercardcontact', 'ordersuppliercontactcard', 'globalcard'));
 $result = restrictedArea($user, 'fournisseur', $id, 'commande_fournisseur', 'commande');
-$hookmanager->initHooks(array('ordersuppliercardcontact'));
 
 $object = new CommandeFournisseur($db);
 
-$usercancreate	= ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer);
+$usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
-
 
 /*
  * Actions
  */
 
-if ($action == 'addcontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
-	$result = $object->fetch($id);
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
+/*
+ * Add a new contact
+ */
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+if (empty($reshook)) {
+	if ($action == 'addcontact' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
+		$result = $object->fetch($id);
+
+		if ($result > 0 && $id > 0) {
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+		}
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	} elseif ($action == 'swapstatut' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
+		// Toggle the status of a contact
+		if ($object->fetch($id)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'deletecontact' && ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"))) {
+		// Deleting a contact
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
-	// Toggle the status of a contact
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-} elseif ($action == 'deletecontact' && ($user->rights->fournisseur->commande->creer || $user->rights->supplier_order->creer)) {
-	// Deleting a contact
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid", 'int'));
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
 }
-
 
 
 /*
@@ -112,7 +123,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                       */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -124,7 +135,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-		llxHeader('', $title, $help_url);
+		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-card_contact');
 
 		$head = ordersupplier_prepare_head($object);
 		print dol_get_fiche_head($head, 'contact', $langs->trans("SupplierOrder"), -1, 'order');
@@ -148,7 +159,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify' && $caneditproject) {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);

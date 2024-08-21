@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
-Holidays=Hoja
+Holiday=Hoja
 CPTitreMenu=Hoja
 MenuAddCP=Nueva solicitud de licencia
 NotActiveModCP=Debes habilitar el módulo Licencia para ver esta página.
@@ -64,7 +64,6 @@ MenuLogCP=Ver registros de cambios
 PrevSoldeCP=Balance anterior
 NewSoldeCP=Nuevo equilibrio
 alreadyCPexist=Ya se ha hecho una solicitud de permiso en este período
-BoxTitleLastLeaveRequests=Últimas solicitudes de licencia modificadas%s
 HolidaysCancelation=Cancelación de la solicitud de permiso
 EmployeeLastname=Apellido del empleado
 TypeWasDisabledOrRemoved=El tipo de licencia (id%s) fue deshabilitado o eliminado
@@ -94,4 +93,3 @@ GoIntoDictionaryHolidayTypes=Ir a <strong> Inicio - Configuración - Diccionario
 TemplatePDFHolidays=Plantilla para solicitudes de permisos PDF
 FreeLegalTextOnHolidays=Texto libre en PDF
 WatermarkOnDraftHolidayCards=Marcas de agua en las solicitudes de permiso borrador
-NobodyHasPermissionToValidateHolidays=Nadie tiene permiso para validar vacaciones

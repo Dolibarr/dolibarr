@@ -72,5 +72,5 @@ BoxAdded=Widget fue agregado en tu panel de control
 NoRecordedManualEntries=No hay registros de entradas manuales en contabilidad
 BoxSuspenseAccount=Cuenta la operación de contabilidad con cuenta de suspenso
 BoxLastCustomerShipments=Últimos envíos de clientes
-BoxTitleLastCustomerShipments=Últimos envíos de clientes %s
+BoxTitleLastLeaveRequests=Últimas solicitudes de licencia modificadas%s
 NoRecordedShipments=No se registraron envíos de clientes

@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +21,7 @@
 /**
  *	\file       htdocs/core/modules/reception/doc/pdf_squille.modules.php
  *	\ingroup    reception
- *	\brief      Fichier de la classe permettant de generer les bordereaux envoi au modele Squille
+ *	\brief      Fichier de la class permettant de generer les bordereaux envoi au modele Squille
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
@@ -28,15 +30,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les borderaux envoi au modele Squille
+ *	Class permettant de generer les borderaux envoi au modele Squille
  */
 class pdf_squille extends ModelePdfReception
 {
 	/**
-	 * Issuer
-	 * @var Societe object that emits
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
-	public $emetteur;
+	public $version = 'dolibarr';
+
+	/**
+	 * @var int posx weight vol
+	 */
+	public $posxweightvol;
+
+	/**
+	 * @var int posx qty ordered
+	 */
+	public $posxqtyordered;
+
+	/**
+	 * @var int posx qty to ship
+	 */
+	public $posxqtytoship;
+
+	/**
+	 * @var int posx totalht
+	 */
+	public $posxtotalht;
 
 
 	/**
@@ -79,7 +100,7 @@ class pdf_squille extends ModelePdfReception
 		$this->posxqtytoship = $this->page_largeur - $this->marge_droite - 28;
 		$this->posxpuht = $this->page_largeur - $this->marge_droite;
 
-		if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
+		if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
 			$this->posxweightvol = $this->page_largeur - $this->marge_droite - 118;
 			$this->posxqtyordered = $this->page_largeur - $this->marge_droite - 96;
 			$this->posxqtytoship = $this->page_largeur - $this->marge_droite - 68;
@@ -87,16 +108,17 @@ class pdf_squille extends ModelePdfReception
 			$this->posxtotalht = $this->page_largeur - $this->marge_droite - 20;
 		}
 
-		$this->posxpicture = $this->posxweightvol - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		$this->posxpicture = $this->posxweightvol - getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20); // width of images
 
-		if ($this->page_largeur < 210) { // To work with US executive format
+		// To work with US executive format
+		if ($this->page_largeur < 210) {
 			$this->posxweightvol -= 20;
 			$this->posxpicture -= 20;
 			$this->posxqtyordered -= 20;
 			$this->posxqtytoship -= 20;
 		}
 
-		if (!empty($conf->global->RECEPTION_PDF_HIDE_ORDERED)) {
+		if (getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$this->posxweightvol += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxpicture += ($this->posxqtytoship - $this->posxqtyordered);
 			$this->posxqtyordered = $this->posxqtytoship;
@@ -107,13 +129,13 @@ class pdf_squille extends ModelePdfReception
 	/**
 	 *	Function to build pdf onto disk
 	 *
-	 *	@param		Reception	$object			Object reception to generate (or id if old method)
-	 *	@param		Translate	$outputlangs		Lang output object
+	 *	@param		Reception	$object				Object reception to generate (or id if old method)
+	 *  @param		Translate	$outputlangs		Lang output object
 	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		int			$hidedetails		Do not show line details
-	 *  @param		int			$hidedesc			Do not show desc
-	 *  @param		int			$hideref			Do not show ref
-	 *  @return     int         	    			1=OK, 0=KO
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -126,22 +148,22 @@ class pdf_squille extends ModelePdfReception
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "deliveries", "receptions", "productbatch", "sendings"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (!empty($conf->global->RECEPTION_DRAFT_WATERMARK))) {
-			$this->watermark = $conf->global->RECEPTION_DRAFT_WATERMARK;
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
+			$this->watermark = getDolGlobalString('RECEPTION_DRAFT_WATERMARK');
 		}
 
 		$nblines = count($object->lines);
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
-		if (!empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE)) {
+		if (getDolGlobalString('MAIN_GENERATE_SHIPMENT_WITH_PICTURE')) {
 			$objphoto = new Product($this->db);
 
 			for ($i = 0; $i < $nblines; $i++) {
@@ -213,7 +235,7 @@ class pdf_squille extends ModelePdfReception
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -223,7 +245,7 @@ class pdf_squille extends ModelePdfReception
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs);
 				$heightforinfotot = 8; // Height reserved to output the info and total part
-				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				$pdf->SetAutoPageBreak(1, 0);
 
@@ -233,8 +255,8 @@ class pdf_squille extends ModelePdfReception
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (empty($conf->global->MAIN_DISABLE_FPDI) && !empty($conf->global->MAIN_ADD_PDF_BACKGROUND)) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+				if (!getDolGlobalString('MAIN_DISABLE_FPDI') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -243,7 +265,7 @@ class pdf_squille extends ModelePdfReception
 				$pdf->SetDrawColor(128, 128, 128);
 
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
@@ -255,6 +277,7 @@ class pdf_squille extends ModelePdfReception
 					$pdf->SetCompression(false);
 				}
 
+				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// New page
@@ -268,7 +291,7 @@ class pdf_squille extends ModelePdfReception
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 90;
+				$tab_top = 90;	// position of top tab
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
@@ -277,6 +300,7 @@ class pdf_squille extends ModelePdfReception
 				$height_incoterms = 0;
 				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
+
 					if ($desc_incoterms) {
 						$tab_top -= 2;
 
@@ -294,18 +318,18 @@ class pdf_squille extends ModelePdfReception
 					}
 				}
 
+				// Public note and Tracking code
 				if (!empty($object->note_public) || !empty($object->tracking_number)) {
-					$tab_top = 88 + $height_incoterms;
 					$tab_top_alt = $tab_top;
 
-					$pdf->SetFont('', 'B', $default_font_size - 2);
-					$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
-
-					$tab_top_alt = $pdf->GetY();
 					//$tab_top_alt += 1;
 
 					// Tracking number
 					if (!empty($object->tracking_number)) {
+						$pdf->SetFont('', 'B', $default_font_size - 2);
+						$pdf->writeHTMLCell(60, 4, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("TrackingNumber")." : ".$object->tracking_number, 0, 1, false, true, 'L');
+						$tab_top_alt = $pdf->GetY();
+
 						$object->getUrlTrackingStatus($object->tracking_number);
 						if (!empty($object->tracking_url)) {
 							if ($object->reception_method_id > 0) {
@@ -342,10 +366,45 @@ class pdf_squille extends ModelePdfReception
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
+				}
+
+				// Show barcode
+				$height_barcode = 0;
+				//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
+				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_RECEPTION_PDF')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
+
+					$encoding = 'QRCODE';
+					$module = new modTcpdfbarcode();
+					$barcode_path = '';
+					$result = 0;
+					if ($module->encodingIsSupported($encoding)) {
+						$result = $module->writeBarCode($object->ref, $encoding);
+
+						// get path of qrcode image
+						$newcode = $object->ref;
+						if (!preg_match('/^\w+$/', $newcode) || dol_strlen($newcode) > 32) {
+							$newcode = dol_hash($newcode, 'md5');
+						}
+						$barcode_path = $conf->barcode->dir_temp . '/barcode_' . $newcode . '_' . $encoding . '.png';
+					}
+
+					if ($result > 0) {
+						$tab_top -= 2;
+
+						$pdf->Image($barcode_path, $this->marge_gauche, $tab_top, 20, 20);
+
+						$nexY = $pdf->GetY();
+						$height_barcode = 20;
+
+						$tab_top += 22;
+					} else {
+						$this->error = 'Failed to generate barcode';
+					}
 				}
 
 				$iniY = $tab_top + 7;
@@ -389,7 +448,7 @@ class pdf_squille extends ModelePdfReception
 						$curY = $tab_top_newpage;
 
 						// Allows data in the first page if description is long enough to break in multiples pages
-						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+						if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 							$showpricebeforepagebreak = 1;
 						} else {
 							$showpricebeforepagebreak = 0;
@@ -448,14 +507,13 @@ class pdf_squille extends ModelePdfReception
 							// We found a page break
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE)) {
+							if (getDolGlobalString('MAIN_PDF_DATA_ON_FIRST_PAGE')) {
 								$showpricebeforepagebreak = 1;
 							} else {
 								$showpricebeforepagebreak = 0;
 							}
 						}
-					} else // No pagebreak
-					{
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 					}
 					$posYAfterDescription = $pdf->GetY();
@@ -479,24 +537,26 @@ class pdf_squille extends ModelePdfReception
 						$curY = $tab_top_newpage;
 					}
 
-					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
 
 					// Description
 					$pdf->SetXY($this->posxweightvol, $curY);
 					$weighttxt = '';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->weight) {
+					if ($object->lines[$i]->fk_product_type == 0 && is_object($object->lines[$i]->product) && $object->lines[$i]->product->weight) {
 						$weighttxt = round($object->lines[$i]->product->weight * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "weight", $object->lines[$i]->product->weight_units, 1);
 					}
 					$voltxt = '';
-					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->product->volume) {
+					if ($object->lines[$i]->fk_product_type == 0 && is_object($object->lines[$i]->product) && $object->lines[$i]->product->volume) {
 						$voltxt = round($object->lines[$i]->product->volume * $object->lines[$i]->qty, 5).' '.measuringUnitString(0, "volume", $object->lines[$i]->product->volume_units ? $object->lines[$i]->product->volume_units : 0, 1);
 					}
 
-					$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, 0, 0, false, true, 'C');
-					//$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
+					if (!getDolGlobalString('RECEPTION_PDF_HIDE_WEIGHT_AND_VOLUME')) {
+						$pdf->writeHTMLCell($this->posxqtyordered - $this->posxweightvol + 2, 3, $this->posxweightvol - 1, $curY, $weighttxt.(($weighttxt && $voltxt) ? '<br>' : '').$voltxt, 0, 0, false, true, 'C');
+						//$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
+					}
 
 					// Qty ordered
-					if (empty($conf->global->RECEPTION_PDF_HIDE_ORDERED)) {
+					if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 						$pdf->SetXY($this->posxqtyordered, $curY);
 						if ($object->lines[$i]->fk_commandefourndet != $fk_commandefourndet) {
 							$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
@@ -510,7 +570,7 @@ class pdf_squille extends ModelePdfReception
 					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty, '', 'C');
 
 					// Amount
-					if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
+					if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
 						$pdf->SetXY($this->posxpuht, $curY);
 						$pdf->MultiCell(($this->posxtotalht - $this->posxpuht - 1), 3, price($object->lines[$i]->subprice, 0, $outputlangs), '', 'R');
 
@@ -527,12 +587,12 @@ class pdf_squille extends ModelePdfReception
 					}
 
 					// Add line
-					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1)) {
+					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+						$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY - 1, $this->page_largeur - $this->marge_droite, $nexY - 1);
-						$pdf->SetLineStyle(array('dash'=>0));
+						$pdf->SetLineStyle(array('dash' => 0));
 					}
 
 					// Detect if some page were added automatically and output _tableau for past pages
@@ -582,7 +642,7 @@ class pdf_squille extends ModelePdfReception
 				// Pied de page
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 				}
 
 				$pdf->Close();
@@ -591,7 +651,7 @@ class pdf_squille extends ModelePdfReception
 
 				// Add pdfgeneration hook
 				$hookmanager->initHooks(array('pdfgeneration'));
-				$parameters = array('file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs);
+				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs);
 				global $action;
 				$reshook = $hookmanager->executeHooks('afterPDFCreation', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) {
@@ -599,9 +659,9 @@ class pdf_squille extends ModelePdfReception
 					$this->errors = $hookmanager->errors;
 				}
 
-				if (!empty($conf->global->MAIN_UMASK)) {
-					@chmod($file, octdec($conf->global->MAIN_UMASK));
-				}
+				dolChmod($file);
+
+				$this->result = array('fullpath' => $file);
 
 				return 1; // No error
 			} else {
@@ -620,10 +680,10 @@ class pdf_squille extends ModelePdfReception
 	 *	Show total to pay
 	 *
 	 *	@param	TCPDF		$pdf            Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param  Reception	$object         Object reception
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
-	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@param	Translate	$outputlangs	Object langs
 	 *  @param	int			$totalOrdered	Total ordered
 	 *  @param	int			$totalAmount	Total amount
 	 *	@return int							Position pour suite
@@ -648,7 +708,7 @@ class pdf_squille extends ModelePdfReception
 		{
 			$col2x-=20;
 		}*/
-		if (empty($conf->global->RECEPTION_PDF_HIDE_ORDERED)) {
+		if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$largcol2 = ($this->posxqtyordered - $this->posxweightvol);
 		} else {
 			$largcol2 = ($this->posxqtytoship - $this->posxweightvol);
@@ -666,11 +726,10 @@ class pdf_squille extends ModelePdfReception
 		$totalVolume = $tmparray['volume'];
 		$totalToShip = $tmparray['toship'];
 
-
 		// Set trueVolume and volume_units not currently stored into database
 		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) {
-			$object->trueVolume = ($object->trueWidth * $object->trueHeight * $object->trueDepth);
-			$object->volume_units = $object->size_units * 3;
+			$object->trueVolume = price(((float) $object->trueWidth * (float) $object->trueHeight * (float) $object->trueDepth), 0, $outputlangs, 0, 0);
+			$object->volume_units = (float) $object->size_units * 3;
 		}
 
 		if ($totalWeight != '') {
@@ -679,10 +738,10 @@ class pdf_squille extends ModelePdfReception
 		if ($totalVolume != '') {
 			$totalVolumetoshow = showDimensionInBestUnit($totalVolume, 0, "volume", $outputlangs, -1, 'no', 1);
 		}
-		if ($object->trueWeight) {
+		if (isset($object->trueWeight) && !empty($object->trueWeight)) {
 			$totalWeighttoshow = showDimensionInBestUnit($object->trueWeight, $object->weight_units, "weight", $outputlangs, -1, 'no', 1);
 		}
-		if ($object->trueVolume) {
+		if (isset($object->trueVolume) && !empty($object->trueVolume)) {
 			$totalVolumetoshow = showDimensionInBestUnit($object->trueVolume, $object->volume_units, "volume", $outputlangs, -1, 'no', 1);
 		}
 
@@ -705,7 +764,7 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		// Total qty ordered
-		if (empty($conf->global->RECEPTION_PDF_HIDE_ORDERED)) {
+		if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', 1);
 		}
@@ -715,7 +774,7 @@ class pdf_squille extends ModelePdfReception
 		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
 
 		// Amount
-		if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
+		if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
 			$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
 
@@ -738,8 +797,8 @@ class pdf_squille extends ModelePdfReception
 	 *   Show table for lines
 	 *
 	 *   @param		TCPDF		$pdf     		Object PDF
-	 *   @param		string		$tab_top		Top position of table
-	 *   @param		string		$tab_height		Height of table (rectangle)
+	 *   @param		float|int	$tab_top		Top position of table
+	 *   @param		float|int	$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
 	 *   @param		Translate	$outputlangs	Langs object
 	 *   @param		int			$hidetop		Hide top bar of array
@@ -785,7 +844,7 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		// Qty ordered
-		if (empty($conf->global->RECEPTION_PDF_HIDE_ORDERED)) {
+		if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$pdf->line($this->posxqtyordered - 1, $tab_top, $this->posxqtyordered - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxqtyordered - 1, $tab_top + 1);
@@ -812,7 +871,7 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		// Amount
-		if (!empty($conf->global->MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT)) {
+		if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
 			$pdf->line($this->posxpuht - 1, $tab_top, $this->posxpuht - 1, $tab_top + $tab_height);
 			if (empty($hidetop)) {
 				$pdf->SetXY($this->posxpuht - 1, $tab_top + 1);
@@ -832,10 +891,10 @@ class pdf_squille extends ModelePdfReception
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Reception	$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @return	void
+	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
@@ -859,8 +918,16 @@ class pdf_squille extends ModelePdfReception
 		$pdf->SetXY($this->marge_gauche, $posy);
 
 		// Logo
-		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
 		if ($this->emetteur->logo) {
+			$logodir = $conf->mycompany->dir_output;
+			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			}
+			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
+				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
+			} else {
+				$logo = $logodir.'/logos/'.$this->emetteur->logo;
+			}
 			if (is_readable($logo)) {
 				$height = pdf_getHeightForLogo($logo);
 				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
@@ -875,26 +942,7 @@ class pdf_squille extends ModelePdfReception
 			$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
-		// Show barcode
-		if (isModEnabled('barcode')) {
-			$posx = 105;
-		} else {
-			$posx = $this->marge_gauche + 3;
-		}
-		//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
-		if (isModEnabled('barcode')) {
-			// TODO Build code bar with function writeBarCode of barcode module for reception ref $object->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
-			//$pdf->Image($logo,10, 5, 0, 24);
-		}
-
 		$pdf->SetDrawColor(128, 128, 128);
-		if (isModEnabled('barcode')) {
-			// TODO Build code bar with function writeBarCode of barcode module for reception ref $object->ref
-			//$pdf->SetXY($this->marge_gauche+3, $this->marge_haute+3);
-			//$pdf->Image($logo,10, 5, 0, 24);
-		}
-
 
 		$posx = $this->page_largeur - $w - $this->marge_droite;
 		$posy = $this->marge_haute;
@@ -915,10 +963,10 @@ class pdf_squille extends ModelePdfReception
 
 		// Date planned delivery
 		if (!empty($object->date_delivery)) {
-				$posy += 4;
-				$pdf->SetXY($posx, $posy);
-				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
+			$posy += 4;
+			$pdf->SetXY($posx, $posy);
+			$pdf->SetTextColor(0, 0, 60);
+			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
 		}
 
 		if (!empty($object->thirdparty->code_fournisseur)) {
@@ -936,8 +984,10 @@ class pdf_squille extends ModelePdfReception
 		$origin = $object->origin;
 		$origin_id = $object->origin_id;
 
+		$object->fetch_origin();
+
 		// TODO move to external function
-		if ((isModEnabled("fournisseur") && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || isModEnabled("supplier_order")) {     // commonly $origin='commande'
+		if (isModEnabled("supplier_order")) {     // commonly $origin='commande'
 			$outputlangs->load('orders');
 
 			$classname = 'CommandeFournisseur';
@@ -948,45 +998,54 @@ class pdf_squille extends ModelePdfReception
 
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$text = $linkedobject->ref;
-				if ($linkedobject->ref_client) {
+				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
 					$text .= ' ('.$linkedobject->ref_client.')';
 				}
-				$Yoff = $Yoff + 8;
+				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), 0, 'R');
-				$Yoff = $Yoff + 3;
+				$Yoff += 3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
 			}
 		}
+
+		$top_shift = 0;
 
 		if ($showaddress) {
 			// Sender properties
 			$carac_emetteur = '';
 			// Add internal contact of origin element if defined
 			$arrayidcontact = array();
-			if (!empty($origin) && is_object($object->$origin)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SALESREPFOLL');
+			if (!empty($origin) && is_object($object->origin_object)) {
+				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SALESREPFOLL');
 			}
 			if (empty($arrayidcontact)) {
-				$arrayidcontact = $object->$origin->getIdContact('internal', 'SHIPPING');
+				$arrayidcontact = $object->origin_object->getIdContact('internal', 'SHIPPING');
 			}
 			if (count($arrayidcontact) > 0) {
 				$object->fetch_user(reset($arrayidcontact));
-				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+				$labelbeforecontactname = ($outputlangs->transnoentities("FromContactName") != 'FromContactName' ? $outputlangs->transnoentities("FromContactName") : $outputlangs->transnoentities("Name"));
+				$carac_emetteur .= ($carac_emetteur ? "\n" : '').$labelbeforecontactname.": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs));
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ' (' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && !empty($object->user->office_phone)) ? $object->user->office_phone : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') && getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ', ' : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT') && !empty($object->user->email)) ? $object->user->email : '';
+				$carac_emetteur .= (getDolGlobalInt('PDF_SHOW_PHONE_AFTER_USER_CONTACT') || getDolGlobalInt('PDF_SHOW_EMAIL_AFTER_USER_CONTACT')) ? ')' : '';
+				$carac_emetteur .= "\n";
 			}
 
 			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->marge_gauche;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->page_largeur - $this->marge_droite - 80;
 			}
 
-			$hautcadre = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
-			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
+			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
+			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
 
 			// Show sender frame
 			$pdf->SetTextColor(0, 0, 0);
@@ -1001,7 +1060,7 @@ class pdf_squille extends ModelePdfReception
 
 			// If RECEPTION contact defined, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->$origin->getIdContact('external', 'SHIPPING');
+			$arrayidcontact = $object->origin_object->getIdContact('external', 'SHIPPING');
 
 			if (count($arrayidcontact) > 0) {
 				$usecontact = true;
@@ -1009,7 +1068,7 @@ class pdf_squille extends ModelePdfReception
 			}
 
 			// Recipient name
-			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)))) {
+			if ($usecontact && ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT')))) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
@@ -1017,9 +1076,9 @@ class pdf_squille extends ModelePdfReception
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), $usecontact, 'targetwithdetails', $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (!empty($object->contact) ? $object->contact : null), ($usecontact ? 1 : 0), 'targetwithdetails', $object);
 
-				// Show recipient name
+			// Show recipient name
 			$pdf->SetXY($posx + 2, $posy + 3);
 			$pdf->SetFont('', 'B', $default_font_size);
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client_name, 0, 'L');
@@ -1032,13 +1091,13 @@ class pdf_squille extends ModelePdfReception
 			$pdf->MultiCell($widthrecbox - 2, 4, $carac_client, 0, 'L');
 
 			// Show recipient
-			$widthrecbox = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
+			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
 			if ($this->page_largeur < 210) {
 				$widthrecbox = 84; // To work with US executive format
 			}
-			$posy = !empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
+			$posy = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 40 : 42;
 			$posx = $this->page_largeur - $this->marge_droite - $widthrecbox;
-			if (!empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+			if (getDolGlobalString('MAIN_INVERT_SENDER_RECIPIENT')) {
 				$posx = $this->marge_gauche;
 			}
 
@@ -1064,6 +1123,8 @@ class pdf_squille extends ModelePdfReception
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
+
+		return $top_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

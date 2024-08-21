@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +24,7 @@
  */
 
 /**
- * Class to manage accounting accounts
+ * Class to manage accounting journals
  */
 class AccountingJournal extends CommonObject
 {
@@ -40,11 +42,6 @@ class AccountingJournal extends CommonObject
 	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = '';
-
-	/**
-	 * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 */
-	public $ismultientitymanaged = 0;
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -77,19 +74,14 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array array of lines
-	 */
-	public $lines;
-
-	/**
 	 * @var array 		Accounting account cached
 	 */
-	static public $accounting_account_cached = array();
+	public static $accounting_account_cached = array();
 
 	/**
 	 * @var array 		Nature mapping
 	 */
-	static public $nature_maps = array(
+	public static $nature_maps = array(
 		1 => 'variousoperations',
 		2 => 'sells',
 		3 => 'purchases',
@@ -107,16 +99,18 @@ class AccountingJournal extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 0;
 	}
 
 	/**
 	 * Load an object from database
 	 *
-	 * @param	int		$rowid				Id of record to load
-	 * @param 	string 	$journal_code		Journal code
-	 * @return	int							<0 if KO, Id of record if OK and found
+	 * @param	int			$rowid			Id of record to load
+	 * @param 	string|null $journal_code	Journal code
+	 * @return	int							Return integer <0 if KO, Id of record if OK and found
 	 */
-	public function fetch($rowid = null, $journal_code = null)
+	public function fetch($rowid = 0, $journal_code = null)
 	{
 		global $conf;
 
@@ -159,76 +153,7 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 * Load object in memory from the database
-	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int $limit offset limit
-	 * @param int $offset offset limit
-	 * @param array $filter filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
-	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
-	{
-		$sql = "SELECT rowid, code, label, nature, active";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.code' || $key == 't.label' || $key == 't.nature') {
-					$sqlwhere[] = $key.'\''.$this->db->escape($value).'\'';
-				} elseif ($key == 't.rowid' || $key == 't.active') {
-					$sqlwhere[] = $key.'='.$value;
-				}
-			}
-		}
-		$sql .= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (".getEntity('accountancy').")";
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND ".implode(" ".$filtermode." ", $sqlwhere);
-		}
-
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield, $sortorder);
-		}
-		if (!empty($limit)) {
-			$sql .= $this->db->plimit($limit + 1, $offset);
-		}
-		$this->lines = array();
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new self($this->db);
-
-				$line->id = $obj->rowid;
-				$line->code = $obj->code;
-				$line->label = $obj->label;
-				$line->nature = $obj->nature;
-				$line->active = $obj->active;
-
-				$this->lines[] = $line;
-			}
-
-			$this->db->free($resql);
-
-			return $num;
-		} else {
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
-
-			return -1;
-		}
-	}
-
-	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param	int		$withlabel		0=No label, 1=Include label of journal, 2=Include nature of journal
@@ -239,7 +164,7 @@ class AccountingJournal extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $conf, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -262,7 +187,7 @@ class AccountingJournal extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAccountingJournal");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
@@ -281,11 +206,11 @@ class AccountingJournal extends CommonObject
 		}
 
 		$label_link = $this->code;
-		if ($withlabel != 2 && !empty($this->label)) {
+		if ($withlabel == 1 && !empty($this->label)) {
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$langs->transnoentities($this->label).($nourl ? '</span>' : '');
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
-			$key = $langs->trans("AccountingJournalType".strtoupper($this->nature));
+			$key = $langs->trans("AccountingJournalType".$this->nature);
 			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
@@ -301,7 +226,7 @@ class AccountingJournal extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('accountingjournaldao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -312,10 +237,10 @@ class AccountingJournal extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut d'un user (actif, inactif)
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode		  0=libelle long, 1=libelle court
-	 *  @return	string 				   Label of type
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibType($mode = 0)
 	{
@@ -327,7 +252,7 @@ class AccountingJournal extends CommonObject
 	 *  Return type of an accounting journal
 	 *
 	 *  @param	int		$nature			Id type
-	 *  @param  int		$mode		  	0=libelle long, 1=libelle court
+	 *  @param  int		$mode		  	0=label long, 1=label short
 	 *  @return string 				   	Label of type
 	 */
 	public function LibType($nature, $mode = 0)
@@ -367,6 +292,7 @@ class AccountingJournal extends CommonObject
 				return $langs->trans('AccountingJournalType1');
 			}
 		}
+		return "";
 	}
 
 
@@ -378,20 +304,18 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							<0 if KO, >0 if OK
+	 * @return 	array|int							Return integer <0 if KO, >0 if OK
 	 */
 	public function getData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
 		global $hookmanager;
 
 		// Clean parameters
-		if (empty($type)) $type = 'view';
-		if (empty($in_bookkeeping)) $in_bookkeeping = 'notyet';
-
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
+		if (empty($type)) {
+			$type = 'view';
+		}
+		if (empty($in_bookkeeping)) {
+			$in_bookkeeping = 'notyet';
 		}
 
 		$data = array();
@@ -408,12 +332,12 @@ class AccountingJournal extends CommonObject
 				case 1: // Various Journal
 					$data = $this->getAssetData($user, $type, $date_start, $date_end, $in_bookkeeping);
 					break;
-				//              case 2: // Sells Journal
-				//              case 3: // Purchases Journal
-				//              case 4: // Bank Journal
-				//              case 5: // Expense reports Journal
-				//              case 8: // Inventory Journal
-				//              case 9: // hasnew Journal
+					//              case 2: // Sells Journal
+					//              case 3: // Purchases Journal
+					//              case 4: // Bank Journal
+					//              case 5: // Expense reports Journal
+					//              case 8: // Inventory Journal
+					//              case 9: // hasnew Journal
 			}
 		}
 
@@ -428,7 +352,7 @@ class AccountingJournal extends CommonObject
 	 * @param 	int				$date_start			Filter 'start date'
 	 * @param 	int				$date_end			Filter 'end date'
 	 * @param 	string			$in_bookkeeping		Filter 'in bookkeeping' ('already', 'notyet')
-	 * @return 	array|int							<0 if KO, >0 if OK
+	 * @return 	array|int							Return integer <0 if KO, >0 if OK
 	 */
 	public function getAssetData(User $user, $type = 'view', $date_start = null, $date_end = null, $in_bookkeeping = 'notyet')
 	{
@@ -454,27 +378,12 @@ class AccountingJournal extends CommonObject
 		}
 
 		$sql = "";
-
-		// FIXME sql error with Mysql 5.7
-		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
-			$sql .= "WITH in_accounting_bookkeeping(fk_docdet) AS (";
-			$sql .= " SELECT DISTINCT fk_docdet";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
-			$sql .= " WHERE doc_type = 'asset'";
-			$sql .= ") ";
-		}*/
-
 		$sql .= "SELECT ad.fk_asset AS rowid, a.ref AS asset_ref, a.label AS asset_label, a.acquisition_value_ht AS asset_acquisition_value_ht";
 		$sql .= ", a.disposal_date AS asset_disposal_date, a.disposal_amount_ht AS asset_disposal_amount_ht, a.disposal_subject_to_vat AS asset_disposal_subject_to_vat";
 		$sql .= ", ad.rowid AS depreciation_id, ad.depreciation_mode, ad.ref AS depreciation_ref, ad.depreciation_date, ad.depreciation_ht, ad.accountancy_code_debit, ad.accountancy_code_credit";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation as ad";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "asset as a ON a.rowid = ad.fk_asset";
-		// FIXME sql error with Mysql 5.7
-		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
-			$sql .= " LEFT JOIN in_accounting_bookkeeping as iab ON iab.fk_docdet = ad.rowid";
-		}*/
 		$sql .= " WHERE a.entity IN (" . getEntity('asset', 0) . ')'; // We don't share object for accountancy, we use source object sharing
-		// Compatibility with Mysql 5.7
 		if ($in_bookkeeping == 'already') {
 			$sql .= " AND EXISTS (SELECT iab.fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS iab WHERE iab.fk_docdet = ad.rowid AND doc_type = 'asset')";
 		} elseif ($in_bookkeeping == 'notyet') {
@@ -485,14 +394,9 @@ class AccountingJournal extends CommonObject
 			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($date_start) . "' AND ad.depreciation_date <= '" . $this->db->idate($date_end) . "'";
 		}
 		// Define begin binding date
-		if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
-			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate($conf->global->ACCOUNTING_DATE_START_BINDING) . "'";
+		if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
+			$sql .= " AND ad.depreciation_date >= '" . $this->db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) . "'";
 		}
-		// Already in bookkeeping or not
-		// FIXME sql error with Mysql 5.7
-		/*if ($in_bookkeeping == 'already' || $in_bookkeeping == 'notyet') {
-			$sql .= " AND iab.fk_docdet IS" . ($in_bookkeeping == 'already' ? " NOT" : "") . " NULL";
-		}*/
 		$sql .= " ORDER BY ad.depreciation_date";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -554,8 +458,6 @@ class AccountingJournal extends CommonObject
 			$element_link = $element_static->getNomUrl(1, 'with_label');
 
 			$element_name_formatted_0 = dol_trunc($element_static->label, 16);
-			$element_name_formatted_1 = utf8_decode(dol_trunc($element_static->label, 32));
-			$element_name_formatted_2 = utf8_decode(dol_trunc($element_static->label, 16));
 			$label_operation = $element_static->getNomUrl(0, 'label', 16);
 
 			$element = array(
@@ -639,12 +541,12 @@ class AccountingJournal extends CommonObject
 				$disposal_date = $pre_data_info['disposal']['date'];
 
 				if ((!($date_start && $date_end) || ($date_start <= $disposal_date && $disposal_date <= $date_end)) &&
-					(empty($conf->global->ACCOUNTING_DATE_START_BINDING) || $conf->global->ACCOUNTING_DATE_START_BINDING <= $disposal_date)
+					(!getDolGlobalString('ACCOUNTING_DATE_START_BINDING') || getDolGlobalInt('ACCOUNTING_DATE_START_BINDING') <= $disposal_date)
 				) {
 					$disposal_amount = $pre_data_info['disposal']['amount'];
 					$disposal_subject_to_vat = $pre_data_info['disposal']['subject_to_vat'];
 					$disposal_date_formatted = dol_print_date($disposal_date, 'day');
-					$disposal_vat = $conf->global->ASSET_DISPOSAL_VAT > 0 ? $conf->global->ASSET_DISPOSAL_VAT : 20;
+					$disposal_vat = getDolGlobalInt('ASSET_DISPOSAL_VAT') > 0 ? getDolGlobalInt('ASSET_DISPOSAL_VAT') : 20;
 
 					// Get accountancy codes
 					//---------------------------
@@ -680,13 +582,15 @@ class AccountingJournal extends CommonObject
 							}
 
 							$lines = array();
-							$lines[0][$accountancy_code_value_asset_sold] = -($element_static->acquisition_value_ht - $last_cumulative_amount_ht);
+							$lines[0][$accountancy_code_value_asset_sold] = -((float) $element_static->acquisition_value_ht - $last_cumulative_amount_ht);
 							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
-							$disposal_amount_vat = $disposal_subject_to_vat ? (double) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
+							$disposal_amount_vat = $disposal_subject_to_vat ? (float) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
 							$lines[1][$accountancy_code_receivable_on_assignment] = -($disposal_amount + $disposal_amount_vat);
-							if ($disposal_subject_to_vat) $lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							if ($disposal_subject_to_vat) {
+								$lines[1][$accountancy_code_vat_collected] = $disposal_amount_vat;
+							}
 							$lines[1][$accountancy_code_proceeds_from_sales] = $disposal_amount;
 
 							foreach ($lines as $lines_block) {
@@ -755,7 +659,7 @@ class AccountingJournal extends CommonObject
 				}
 			}
 
-			$journal_data[$pre_data_id] = $element;
+			$journal_data[(int) $pre_data_id] = $element;
 		}
 		unset($pre_data);
 
@@ -803,18 +707,12 @@ class AccountingJournal extends CommonObject
 	 *                                          ),
 	 * 											);
 	 * @param	int		$max_nb_errors			Nb error authorized before stop the process
-	 * @return 	int								<0 if KO, >0 if OK
+	 * @return 	int								Return integer <0 if KO, >0 if OK
 	 */
 	public function writeIntoBookkeeping(User $user, &$journal_data = array(), $max_nb_errors = 10)
 	{
 		global $conf, $langs, $hookmanager;
 		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
-
-		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
 
 		$error = 0;
 
@@ -950,21 +848,18 @@ class AccountingJournal extends CommonObject
 	 * 													);
 	 * @param	int				$search_date_end		Search date end
 	 * @param	string			$sep					CSV separator
-	 * @return 	int|string								<0 if KO, >0 if OK
+	 * @return 	int|string								Return integer <0 if KO, >0 if OK
 	 */
 	public function exportCsv(&$journal_data = array(), $search_date_end = 0, $sep = '')
 	{
 		global $conf, $langs, $hookmanager;
 
-		if (empty($sep)) $sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+		if (empty($sep)) {
+			$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
+		}
 		$out = '';
 
 		// Hook
-		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
-			$hookmanager = new HookManager($this->db);
-		}
-
 		$hookmanager->initHooks(array('accountingjournaldao'));
 		$parameters = array('journal_data' => &$journal_data, 'search_date_end' => &$search_date_end, 'sep' => &$sep, 'out' => &$out);
 		$reshook = $hookmanager->executeHooks('exportCsv', $parameters, $this); // Note that $action and $object may have been
@@ -1012,7 +907,9 @@ class AccountingJournal extends CommonObject
 				);
 			}
 
-			if (!empty($header)) $out .= '"' . implode('"' . $sep . '"', $header) . '"' . "\n";
+			if (!empty($header)) {
+				$out .= '"' . implode('"' . $sep . '"', $header) . '"' . "\n";
+			}
 			foreach ($journal_data as $element_id => $element) {
 				foreach ($element['blocks'] as $lines) {
 					foreach ($lines as $line) {
@@ -1043,7 +940,7 @@ class AccountingJournal extends CommonObject
 					'found' => true,
 					'label' => $accountingaccount->label,
 					'code_formatted_1' => length_accounta(html_entity_decode($account)),
-					'label_formatted_1' => utf8_decode(dol_trunc($accountingaccount->label, 32)),
+					'label_formatted_1' => mb_convert_encoding(dol_trunc($accountingaccount->label, 32), 'ISO-8859-1'),
 					'label_formatted_2' => dol_trunc($accountingaccount->label, 32),
 				);
 			} else {

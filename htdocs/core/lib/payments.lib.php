@@ -1,7 +1,7 @@
 <?php
 /**
  * Copyright (C) 2013	    Marcos García	        <marcosgdf@gmail.com>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Abbes Bahfir            <bafbes@gmail.com>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  *
@@ -29,7 +29,7 @@
  */
 function payment_prepare_head(Paiement $object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $db;
 
 	$h = 0;
 	$head = array();
@@ -48,6 +48,19 @@ function payment_prepare_head(Paiement $object)
 	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
+	$h++;
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->compta->payment->dir_output.'/'.$object->ref;
+	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
+	$nbLinks = Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles + $nbLinks) > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+	}
+	$head[$h][2] = 'documents';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'payment', 'remove');
@@ -141,12 +154,12 @@ function payment_supplier_prepare_head(Paiement $object)
 /**
  * Return array of valid payment mode
  *
- * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
+ * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', 'stripe', ...)
  * @return	array						Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod = '')
 {
-	global $conf, $langs, $hookmanager, $action;
+	global $langs, $hookmanager, $action;
 
 	$validpaymentmethod = array();
 
@@ -155,7 +168,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 		$validpaymentmethod['paypal'] = 'valid';
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-		$langs->load("paybox");
+		$langs->loadLangs(array("paybox", "stripe"));
 		$validpaymentmethod['paybox'] = 'valid';
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
@@ -164,7 +177,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 	}
 
 	// This hook is used to complete the $validpaymentmethod array so an external payment modules
-	// can add its own key (ie 'payzen' for Payzen, ...)
+	// can add its own key (ie 'payzen' for Payzen, 'helloasso' for HelloAsso...)
 	$parameters = [
 		'paymentmethod' => $paymentmethod,
 		'validpaymentmethod' => &$validpaymentmethod
@@ -230,19 +243,18 @@ function getHtmlOnlinePaymentLink($type, $ref, $label = '', $amount = 0)
 /**
  * Return string with full Url
  *
- * @param   int			$mode		      0=True url, 1=Url formated with colors
+ * @param   int			$mode		      0=True url, 1=Url formatted with colors
  * @param   string		$type		      Type of URL ('free', 'order', 'invoice', 'contractline', 'member', 'boothlocation', ...)
  * @param	string		$ref		      Ref of object
  * @param	int|float	$amount		      Amount of money to request for
  * @param	string		$freetag	      Free tag (required and used for $type='free' only)
- * @param   string  	$localorexternal  0=Url for browser, 1=Url for external access
+ * @param   int     	$localorexternal  0=Url for browser, 1=Url for external access
  * @return	string					      Url string
  */
 function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'your_tag', $localorexternal = 1)
 {
 	global $conf, $dolibarr_main_url_root;
 
-	$ref = str_replace(' ', '', $ref);
 	$out = '';
 
 	// Define $urlwithroot
@@ -250,18 +262,20 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$urltouse = DOL_MAIN_URL_ROOT;
+	$urltouse = DOL_MAIN_URL_ROOT;						// Should be "https://www.mydomain.com/mydolibarr" for example
+	//dol_syslog("getOnlinePaymentUrl DOL_MAIN_URL_ROOT=".DOL_MAIN_URL_ROOT);
+
 	if ($localorexternal) {
 		$urltouse = $urlwithroot;
 	}
 
 	if ($type == 'free') {
 		$out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<span style="color: #666666">' : '').$amount.($mode ? '</span>' : '').'&tag='.($mode ? '<span style="color: #666666">' : '').$freetag.($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
-				$out .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2));
+				$out .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2));
 			}
 		}
 		//if ($mode) $out.='&noidempotency=1';
@@ -274,16 +288,16 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + order_ref)";
+					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + order_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -297,16 +311,16 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
+					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -320,16 +334,16 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
+					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + contractline_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -346,16 +360,16 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$newtype."' + member_ref)";
+					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$newtype."' + member_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$newtype.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $newtype.$ref, 2);
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -369,16 +383,16 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + donation_ref)";
+					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + donation_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -392,16 +406,16 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 			$out .= urlencode($ref);
 		}
 		$out .= ($mode ? '</span>' : '');
-		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-				$out .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+		if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+			if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+				$out .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 			} else {
 				$out .= '&securekey='.($mode ? '<span style="color: #666666">' : '');
 				if ($mode == 1) {
-					$out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
+					$out .= "hash('" . getDolGlobalString('PAYMENT_SECURITY_TOKEN')."' + '".$type."' + invoice_ref)";
 				}
 				if ($mode == 0) {
-					$out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+					$out .= dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $type.$ref, 2);
 				}
 				$out .= ($mode ? '</span>' : '');
 			}
@@ -414,108 +428,4 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = 0, $freetag = 'y
 	}
 
 	return $out;
-}
-
-
-
-/**
- * Show footer of company in HTML pages
- *
- * @param   Societe		$fromcompany	Third party
- * @param   Translate	$langs			Output language
- * @param	int			$addformmessage	Add the payment form message
- * @param	string		$suffix			Suffix to use on constants
- * @param	Object		$object			Object related to payment
- * @return	void
- */
-function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)
-{
-	global $conf;
-
-	// Juridical status
-	$line1 = "";
-	if ($fromcompany->forme_juridique_code) {
-		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
-	}
-	// Capital
-	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
-	}
-	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
-		$field = $langs->transcountrynoentities("ProfId1", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
-	}
-	// Prof Id 2
-	if ($fromcompany->idprof2) {
-		$field = $langs->transcountrynoentities("ProfId2", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
-	}
-
-	// Second line of company infos
-	$line2 = "";
-	// Prof Id 3
-	if ($fromcompany->idprof3) {
-		$field = $langs->transcountrynoentities("ProfId3", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
-	}
-	// Prof Id 4
-	if ($fromcompany->idprof4) {
-		$field = $langs->transcountrynoentities("ProfId4", $fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i', $field, $reg)) {
-			$field = $reg[1];
-		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
-	}
-	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '') {
-		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
-	}
-
-	print '<!-- htmlPrintOnlinePaymentFooter -->'."\n";
-
-	print '<br>';
-
-	print '<div class="center paddingleft paddingright">'."\n";
-	if ($addformmessage) {
-		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
-		print '<br>';
-
-		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
-		if (!empty($conf->global->$parammessageform)) {
-			print $langs->transnoentities($conf->global->$parammessageform);
-		} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORM)) {
-			print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORM);
-		}
-
-		// Add other message if VAT exists
-		if (!empty($object->total_vat) || !empty($object->total_tva)) {
-			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
-			if (!empty($conf->global->$parammessageform)) {
-				print $langs->transnoentities($conf->global->$parammessageform);
-			} elseif (!empty($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT)) {
-				print $langs->transnoentities($conf->global->ONLINE_PAYMENT_MESSAGE_FORMIFVAT);
-			}
-		}
-	}
-
-	print '<span style="font-size: 10px;"><br><hr>'."\n";
-	print $fromcompany->name.'<br>';
-	print $line1;
-	if (strlen($line1.$line2) > 50) {
-		print '<br>';
-	} else {
-		print ' - ';
-	}
-	print $line2;
-	print '</span></div>'."\n";
 }

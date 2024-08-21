@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 DeliveryRef=Referentie aflevering
-DeliveryCard=Afleverings kaart
+DeliveryCard=Leveringsbewijs
 DeliveryOrder=Ontvangstbewijs
 DeliveryDate=Leveringsdatum
 CreateDeliveryOrder=Genereer afleverbon

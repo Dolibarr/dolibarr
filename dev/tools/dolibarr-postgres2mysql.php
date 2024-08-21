@@ -3,6 +3,7 @@
 /*
  * Copyright (C) 2005-2011 James Grant 			<james@lightbox.org> 			Lightbox Technologies Inc.
  * Copyright (C) 2020 	   Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +23,8 @@
  */
 
 /**
- * \file 	dev/tools/dolibarr-postgres2mysql.php
- * \brief 	Script to migrate a postgresql dump into a mysql dump
+ * \file    dev/tools/dolibarr-postgres2mysql.php
+ * \brief   Script to migrate a postgresql dump into a mysql dump
  */
 
 $sapi_type = php_sapi_name();
@@ -37,14 +38,14 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit();
 }
 
-error_reporting(E_ALL & ~ E_DEPRECATED);
+error_reporting(E_ALL & ~E_DEPRECATED);
 define('PRODUCT', "pg2mysql");
 define('VERSION', "2.0");
 
 // this is the default, it can be overridden here, or specified as the third parameter on the command line
 $config['engine'] = "InnoDB";
 
-if (! ($argv[1] && $argv[2])) {
+if (!($argv[1] && $argv[2])) {
 	echo "Usage: php pg2mysql_cli.php <inputfilename> <outputfilename> [engine]\n";
 	exit();
 } else {
@@ -67,8 +68,8 @@ XHTML;
 /**
  * getfieldname
  *
- * @param	string		$l		String
- * @return	string|null			Field name
+ * @param  string $l String
+ * @return string|null         Field name
  */
 function getfieldname($l)
 {
@@ -94,8 +95,8 @@ function getfieldname($l)
 /**
  * formatsize
  *
- * @param 	string $s	Size to format
- * @return 	string		Formated size
+ * @param  string $s Size to format
+ * @return string      Formatted size
  */
 function formatsize($s)
 {
@@ -113,9 +114,9 @@ function formatsize($s)
 /**
  * pg2mysql_large
  *
- * @param string	$infilename			Input filename
- * @param string	$outfilename		Output filename
- * @return int							<0 if KO, >=0 if OK
+ * @param  string $infilename  Input filename
+ * @param  string $outfilename Output filename
+ * @return int                          <0 if KO, >=0 if OK
  */
 function pg2mysql_large($infilename, $outfilename)
 {
@@ -141,7 +142,7 @@ function pg2mysql_large($infilename, $outfilename)
 	echo "Filesize: " . formatsize($fs) . "\n";
 
 	while ($instr = fgets($infp)) {
-		$linenum ++;
+		$linenum++;
 		$memusage = round(memory_get_usage(true) / 1024 / 1024);
 		$len = strlen($instr);
 		$pgsqlchunk[] = $instr;
@@ -163,7 +164,7 @@ function pg2mysql_large($infilename, $outfilename)
 		}
 
 		if (strlen($instr) > 3 && ($instr[$len - 3] == ")" && $instr[$len - 2] == ";" && $instr[$len - 1] == "\n") && $inquotes == false) {
-			$chunkcount ++;
+			$chunkcount++;
 
 			if ($linenum % 10000 == 0) {
 				$currentpos = ftell($infp);
@@ -234,10 +235,10 @@ function pg2mysql_large($infilename, $outfilename)
 /**
  * pg2mysql
  *
- * @param array		$input								Array of input
- * @param array		$arrayofprimaryalreadyintabledef	Array of table already output with a primary key set into definition
- * @param boolean 	$header								Boolean
- * @return string[]										Array of output
+ * @param  array   $input                           Array of input
+ * @param  array   $arrayofprimaryalreadyintabledef Array of table already output with a primary key set into definition
+ * @param  boolean $header                          Boolean
+ * @return string[]                                     Array of output
  */
 function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 {
@@ -246,7 +247,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 	if (is_array($input)) {
 		$lines = $input;
 	} else {
-		$lines = split("\n", $input);
+		$lines = explode("\n", $input);
 	}
 
 	if ($header) {
@@ -302,7 +303,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 				$output .= 'DROP TABLE IF EXISTS `' . $reg2[1] . '`;' . "\n";
 			}
 			$output .= $line;
-			$linenumber ++;
+			$linenumber++;
 			continue;
 		}
 
@@ -313,7 +314,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$output .= $tbl_extra;
 			$output .= $line;
 
-			$linenumber ++;
+			$linenumber++;
 			$tbl_extra = "";
 			continue;
 		}
@@ -395,10 +396,10 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			if (strstr($line, " CONSTRAINT ")) {
 				$line = "";
 				// and if the previous output ended with a , remove the ,
-				$lastchr = substr($output, - 2, 1);
+				$lastchr = substr($output, -2, 1);
 				// echo "lastchr=$lastchr";
 				if ($lastchr == ",") {
-					$output = substr($output, 0, - 2) . "\n";
+					$output = substr($output, 0, -2) . "\n";
 				}
 			}
 
@@ -408,29 +409,29 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 		if (substr($line, 0, 11) == "INSERT INTO") {
 			$line = str_replace('public.', '', $line);
 
-			if (substr($line, - 3, - 1) == ");") {
+			if (substr($line, -3, -1) == ");") {
 				// we have a complete insert on one line
-				list ($before, $after) = explode(" VALUES ", $line, 2);
+				list($before, $after) = explode(" VALUES ", $line, 2);
 				// we only replace the " with ` in what comes BEFORE the VALUES
 				// (ie, field names, like INSERT INTO table ("bla","bla2") VALUES ('s:4:"test"','bladata2');
 				// should convert to INSERT INTO table (`bla`,`bla2`) VALUES ('s:4:"test"','bladata2');
 
 				$before = str_replace("\"", "`", $before);
 
-				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string'), but could also be (number, E'string'); so we cant search for the previoous '
+				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string'), but could also be (number, E'string'); so we can't search for the previous '
 				// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-				// at a time, and thats just stupid, so lets just hope this doesnt appear anywhere in the actual data
+				// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 				$after = str_replace(" (E'", " ('", $after);
 				$after = str_replace(", E'", ", '", $after);
 
 				$output .= $before . " VALUES " . $after;
-				$linenumber ++;
+				$linenumber++;
 				continue;
 			} else {
 				// this insert spans multiple lines, so keep dumping the lines until we reach a line
 				// that ends with ");"
 
-				list ($before, $after) = explode(" VALUES ", $line, 2);
+				list($before, $after) = explode(" VALUES ", $line, 2);
 				// we only replace the " with ` in what comes BEFORE the VALUES
 				// (ie, field names, like INSERT INTO table ("bla","bla2") VALUES ('s:4:"test"','bladata2');
 				// should convert to INSERT INTO table (`bla`,`bla2`) VALUES ('s:4:"test"','bladata2');
@@ -439,7 +440,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 				// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string')
 				// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-				// at a time, and thats just stupid, so lets just hope this doesnt appear anywhere in the actual data
+				// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 				$after = str_replace(" (E'", " ('", $after);
 				$after = str_replace(", E'", ", '", $after);
 
@@ -453,13 +454,13 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 
 				$output .= $before . " VALUES " . $after;
 				do {
-					$linenumber ++;
+					$linenumber++;
 
 					// in after, we need to watch out for escape format strings, ie (E'escaped \r in a string'), and ('bla',E'escaped \r in a string')
 					// ugh i guess its possible these strings could exist IN the data as well, but the only way to solve that is to process these lines one character
-					// at a time, and thats just stupid, so lets just hope this doesnt appear anywhere in the actual data
+					// at a time, and that's just stupid, so let's just hope this doesn't appear anywhere in the actual data
 
-					// after the first line, we only need to check for it in the middle, not at the beginning of an insert (becuase the beginning will be on the first line)
+					// after the first line, we only need to check for it in the middle, not at the beginning of an insert (because the beginning will be on the first line)
 					// $after=str_replace(" (E'","' ('",$after);
 					$line = $lines[$linenumber];
 					$line = str_replace("', E'", "', '", $line);
@@ -477,7 +478,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 						}
 						// echo "inquotes=$inquotes\n";
 					}
-				} while (substr($lines[$linenumber], - 3, - 1) != ");" || $inquotes);
+				} while (substr($lines[$linenumber], -3, -1) != ");" || $inquotes);
 			}
 		}
 		if (substr($line, 0, 16) == "ALTER TABLE ONLY") {
@@ -486,18 +487,18 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			$line = str_replace("public.", "", $line);
 			$pkey = $line;
 
-			$linenumber ++;
+			$linenumber++;
 			if (!empty($lines[$linenumber])) {
 				$line = $lines[$linenumber];
 			} else {
 				$line = '';
 			}
 
-			if (strstr($line, " PRIMARY KEY ") && substr($line, - 3, - 1) == ");") {
+			if (strstr($line, " PRIMARY KEY ") && substr($line, -3, -1) == ");") {
 				$reg2 = array();
 				if (preg_match('/ALTER TABLE ([^\s]+)/', $pkey, $reg2)) {
 					if (empty($arrayofprimaryalreadyintabledef[$reg2[1]])) {
-						// looks like we have a single line PRIMARY KEY definition, lets go ahead and add it
+						// looks like we have a single line PRIMARY KEY definition, let's go ahead and add it
 						$output .= str_replace("\n", "", $pkey);
 						// the postgres and mysql syntax for this is (at least, in the example im looking at)
 						// identical, so we can just add it as is.
@@ -580,7 +581,7 @@ function pg2mysql(&$input, &$arrayofprimaryalreadyintabledef, $header = true)
 			}
 		}
 
-		$linenumber ++;
+		$linenumber++;
 	}
 
 	return array('output' => $output,'outputatend' => $outputatend);

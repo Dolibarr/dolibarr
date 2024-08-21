@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte (del pla comptable) utilitzat per defecte per a tercers «usuaris».
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=El compte dedicat definit a la fitxa d'usuari només s'utilitzarà per a la comptabilitat de subllibre. Aquest s'utilitzarà per al Llibre Major i com a valor predeterminat de la comptabilitat del subllibre si no es defineix un compte comptable d'usuari dedicat a l'usuari.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Compte (del pla comptable) utilitzat per defecte per als «usuaris» dels sous
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=El compte dedicat definit a la fitxa d'usuari només s'utilitzarà per a la comptabilitat de Subllibre. Aquest s'utilitzarà per al Llibre Major, però també com a valor predeterminat de la comptabilitat del Subllibre si no hi ha cap compte comptable d'usuari dedicat a l'usuari.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per als pagaments salarials
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=De manera predeterminada, deixeu buida l'opció "Crear automàticament un pagament total" quan creeu un sou
 Salary=Sou
@@ -24,4 +24,10 @@ SalariesStatistics=Estadístiques de salaris
 SalariesAndPayments=Salaris i pagaments
 ConfirmDeleteSalaryPayment=Voleu eliminar aquest pagament del salari?
 FillFieldFirst=Empleneu primer el camp dels empleats
-UpdateAmountWithLastSalary=Establiu l'import amb l'últim sou
+UpdateAmountWithLastSalary=Establiu l'import de l'últim sou
+MakeTransferRequest=Fes una sol·licitud de transferència
+VirementOrder=Sol·licitud de transferència de crèdit
+BankTransferAmount=Import de la transferència de crèdit
+WithdrawalReceipt=Ordre de transferència bancària
+OrderWaiting=Comanda pendent
+FillEndOfMonth=Ompliu amb final de mes

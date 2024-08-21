@@ -3,14 +3,24 @@ This file describes changes made on external libraries after being included
 in Dolibarr root.
 
 
+
 ALL:
 ----
 Check "@CHANGE"
 
 
 
-PrestaShopWebservice:
----------------------
+PCLZIP
+------
+Replace
+	touch($p_entry['filename'], $p_entry['mtime']);
+With
+	@touch($p_entry['filename'], $p_entry['mtime']);
+
+
+
+PHP PrestaShopWebservice:
+-------------------------
 Replace
 	$params = array('filter', 'display', 'sort', 'limit', 'id_shop', 'id_group_shop');
 With
@@ -18,18 +28,37 @@ With
 
 
 
-CKEDITOR (4.6.2):
------------------
+PHP PHPIMAP:
+------------
+* In htdocs/includes/webklex/php-imap/vendor/nesbot/carbon/src/Carbon/Traits/Creator.php
+
+Replace:
+	self::setLastErrors(parent::getLastErrors());
+with:
+	if (parent::getLastErrors()) {
+      	self::setLastErrors(parent::getLastErrors());
+	}
+
+
+
+PHP CKEDITOR:
+-------------
 * In ckeditor/ckeditor/contents.css
 Replace:
 	body { ... margin: 20px;
 With
 	body { ... margin: 5px;
 
+* In ckeditor/ckeditor/ckeditor.js
+Replace:
+    d.items&&
+With
+    d&&d.items&&
 
 
-ESCPOS:
--------
+
+PHP ESCPOS:
+-----------
 Replace
 	private $connector;
 With
@@ -37,61 +66,63 @@ With
 
 
 
-NUSOAP:
--------
-* In file nusoap.php, to avoid a warning,
-Replace
-	if (isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
-By
-	if (! is_array($this->methodreturn) && isset($this->methodreturn) && ((get_class($this->methodreturn) == 'soap_fault') || (get_class($this->methodreturn) == 'nusoap_fault'))) {
-
-* In file nusoap.php, to avoid a warning,
-Replace call to serialize_val with no bugged value
-
-* In all files, replace constructor names into __construct. Replace also parent::constructor_name with parent::__construct
-
-* Line 4222 of file nusoap.php
-
-		$rev = array();
-		preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
-		$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
+PHP SABRE:
+----------
+rm -fr ./htdocs/includes/sabre/sabre/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/bin;
+rm -fr ./htdocs/includes/sabre/sabre/*/*/*/*/bin;
 
 
 
+PHP NUSOAP:
+-----------
+* Line 1257 of file nusoap.php. Add:
 
-TCPDF:
-------
+	libxml_disable_entity_loader(true);	// Avoid load of external entities (security problem). Required only for libxml < 2.
+
+
+* Line 4346 of file nusoap.php
+
+	$rev = array();
+	preg_match('/\$Revision: ([^ ]+)/', $this->revision, $rev);
+	$this->outgoing_headers[] = "X-SOAP-Server: $this->title/$this->version (".(isset($rev[1]) ? $rev[1] : '').")";
+
+* Line 6566 of file nusoap.php, replace
+
+	if (count($attrs) > 0) {
+	with
+	if (is_array($attrs) && count($attrs) > 0) {
+
+
+
+PHP TCPDF:
+----------
+* Modify in tcpdf.php: make TCPDF::_out public.
+  (htdocs/core/lib/pdf.lib.php uses it as a public method)
+
+  Change:
+      protected function _out($s)
+  to
+      public function _out($s)
+
+  Change in method's _out phpdoc:
+
+      * @protected
+  to
+      * @public
+
 * Replace in tcpdf.php:
-
-            if (isset($this->imagekeys)) {
-                foreach($this->imagekeys as $file) {
-                    unlink($file);
-                }
-            }
-with
-
-            if (isset($this->imagekeys)) {
-                foreach($this->imagekeys as $file) {
-				// DOL CHANGE If we keep this, source image files are physically destroyed
-				// unlink($file);
-                }
-            }
-
-* Replace in tcpdf.php
-
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
 			'cached_files',
-
 with
-
 		$preserve = array(
 			'file_id',
-			'internal_encoding',
 			'state',
 			'bufferlen',
 			'buffer',
@@ -99,30 +130,24 @@ with
 			// @CHANGE DOL
 			'imagekeys',
 
-* Replace in tcpdf.php
-
-			if (!@TCPDF_STATIC::file_exists($file)) {
-				return false;	
+* Replace in tcpdf.php:
+			if (!@this->fileExists($file)) {
+				return false;
 			}
-
 with
-
-			if (!@TCPDF_STATIC::file_exists($file)) {
+			if (!@this->fileExists($file)) {
 				// DOL CHANGE If we keep this, the image is not visible on pages after the first one.
-				//var_dump($file.' '.(!@TCPDF_STATIC::file_exists($file)));
-				//return false;	
+				//var_dump($file.' '.(!@this->fileExists($file)));
+				//return false;
                 $tfile = str_replace(' ', '%20', $file);
-				if (@TCPDF_STATIC::file_exists($tfile)) {
+				if (@this->fileExists($tfile)) {
 					$file = $tfile;
 				}
 			}
-			
-* Replace in tcpdf.php
 
+* Replace in tcpdf.php:
 		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
-
 with
-
 		// @CHANGE LDR Add support for src="file://..." links
 		if (strpos($imgsrc, 'file://') === 0) {
 			$imgsrc = str_replace('file://', '/', $imgsrc);
@@ -139,12 +164,9 @@ with
 		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
 
 
-* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace
-
+* In tecnickcom/tcpdf/include/tcpdf_static.php, in function fopenLocal, replace:
 		if (strpos($filename, '://') === false) {
-
 with
-
         if (strpos($filename, '//') === 0) {
             // Share folder on a (windows) server
             // e.g.: "//[MyServerName]/[MySharedFolder]/"
@@ -153,42 +175,52 @@ with
         }
         elseif (strpos($filename, '://') === false)
 
-* To avoid to have QRcode changed because generated with a random mask, replace
-define('QR_FIND_FROM_RANDOM', 2);
+* In tecnickcom/tcpdf/include/barcodes/qrcode.php To avoid to have QRcode changed because generated with a random mask, replace:
+	define('QR_FIND_FROM_RANDOM', 2);
 with
-define('QR_FIND_FROM_RANDOM', false);
+	define('QR_FIND_FROM_RANDOM', false);
+
+* Change line:
+	imagesetpixel($imgalpha, $xpx, $ypx, $alpha);
+into
+	imagesetpixel($imgalpha, $xpx, $ypx, (int) $alpha);
 
 * Removed useless directories ("examples", "tools")
 
-* Optionnaly, removed all fonts except 
-    dejavusans* (used by greek, arab, persan, romanian, turkish), 
-    freemono* (russian), 
-    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), 
+* Optionally, removed all fonts except
+    dejavusans* (used by greek, arab, person, romanian, turkish),
+    freemono* (russian),
+    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese),
     helvetica* (all other languages),
     zapfdingbats.php (for special chars like form checkboxes)
 
-* Optionnaly, made freemono the default monotype font if we removed courier
+* Optionally, made freemono the default monotype font if we removed courier
 In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
 
-* In tecnickcom/tcpdf/include/tcpdf_static, in function intToRoman, right at the beginning
-  of the function, replace:
+* Add this at begin of tcpdf_autoconfig.php
 
-		$roman = '';
-
-with:
-
-		$roman = '';
-		if ($number >= 4000) {
-			// do not represent numbers above 4000 in Roman numerals
-			return strval($number);
+	// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+	if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
+		if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
+			$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
+		} else {
+			// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
+			$_SERVER['DOCUMENT_ROOT'] = '/';
 		}
+	}
+	$_SERVER['DOCUMENT_ROOT'] = str_replace('//', '/', $_SERVER['DOCUMENT_ROOT']);
+	if (substr($_SERVER['DOCUMENT_ROOT'], -1) != '/') {
+		$_SERVER['DOCUMENT_ROOT'] .= '/';
+	}
 
 
 
-TCPDI:
-------
+PHP TCPDI:
+----------
 Add file fpdf_tpl.php 1.2
 
 Add file tcpdi.php
@@ -201,7 +233,7 @@ with:
 
 * Fix syntax error by replacing
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1] >= 2))) {
-with
+	with
 	} elseif (($key == '/Index') AND ($v[0] == PDF_TYPE_ARRAY AND count($v[1]) >= 2)) {
 
 * Fix php fatal error on php 8.0 on tcpdi.php
@@ -209,50 +241,21 @@ with
 with
 	foreach ($value[1] as $k => $v) {
 
-* Fix by replacing 
+* Fix by replacing
 	if ($res[0] == PDF_TYPE_OBJECT)
 with
-	if ($res && $res[0] == PDF_TYPE_OBJECT)
+	if (isset($res[0]) && $res[0] == PDF_TYPE_OBJECT)
 
 
 
-JSGANTT:
---------
-* Replace in function JSGantt.taskLink
-    var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
-with
-    // LDR To open in same window
-    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
-    window.location.href=pRef
-
-* Replace
-    vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
-with                       
-    var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
-    vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
-    vTmpNode.setAttribute('href',vTaskList[i].getLink());
-                        
-* Replace '% Comp.' to have a smaller text column header
-    'comp':'% Comp.'
-with
-    'comp':'%'
-
-
-
-JCROP:
-------
-* Remove analytics tag into file index.html
-
-
-
-JQUERYFILETREE:
----------------
+PHP JQUERYFILETREE:
+-------------------
 * Remove directory htdocs/includes/jquery/plugins/jqueryFileTree/connectors
 
 
 
-RESTLER:
---------
+PHP RESTLER:
+------------
 
 * Add line into Util.php to complete function
 
@@ -273,24 +276,42 @@ RESTLER:
     	// @CHANGE LDR
         if (!is_string($haystack)) return false;
 
-* Replace  
+* Replace
 
 	$loaders = array_unique(static::$rogueLoaders);
-	
-	with 
-	
+
+	with
+
 	$loaders = array_unique(static::$rogueLoaders, SORT_REGULAR);
-	
+
 * Replace CommentParser.php line 423
 	elseif (count($value) && is_numeric($value[0]))
-	
+
 	with
-	
+
 	elseif (count($value) && isset($value[0]) && is_numeric($value[0]))
 
 * Add CommentParser.php line 406 & 407 to remove a warning on api request in php 8.1
 	empty($value[0]) ? null :
 	empty($value[1]) ? null :
+
+* Add a test into AutoLoader.php to complete function loadThisLoader and test if property exists before calling it. For this replace code
+
+	if (false !== $file = $b::$loader[1]($className) && $this->exists($className, $b::$loader[1])) {
+        	return $file;
+        }
+
+	with:
+
+	//avoid PHP Fatal error:  Uncaught Error: Access to undeclared static property: Composer\\Autoload\\ClassLoader::$loader
+	//in case of multiple autoloader systems
+	if(property_exists($b, $loader[1])) {
+		if (false !== $file = $b::$loader[1]($className)
+			&& $this->exists($className, $b::$loader[1])) {
+			return $file;
+		}
+	}
+
 
 +With swagger 2 provided into /explorer:
 ----------------------------------------
@@ -299,22 +320,21 @@ Change content of file htdocs/includes/restler/framework/Luracast/Restler/explor
 
 
 
-PARSEDOWN
----------
+PHP PARSEDOWN
+-------------
 
 * Add support of css by adding in Parsedown.php:
 
 	// @CHANGE LDR
-	'class' => $Link['element']['attributes']['class'] 
+	'class' => $Link['element']['attributes']['class']
 
 	...
-	
+
 	// @CHANGE LDR
-    if (preg_match('/{([^}]+)}/', $remainder, $matches2))
-    {
-        $Element['attributes']['class'] = $matches2[1];
-       	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
-    }
+	if (preg_match('/{([^}]+)}/', $remainder, $matches2)) {
+		$Element['attributes']['class'] = $matches2[1];
+       		$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+    	}
 
 
 	// @CHANGE LDR
@@ -333,9 +353,11 @@ PARSEDOWN
 
 
 
-OAUTH
------
-Add into Class Google of file OAuth2/Service/Google:
+PHP OAUTH
+---------
+Restore old OAuth2/Service/Google.php file and OAuth2/Service/Microsoft.php and OAuth2/Service/Microsoft2.php
+
+Or add into Class Google of file OAuth2/Service/Google:
 
     // LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
     public $approvalPrompt='auto';
@@ -347,10 +369,37 @@ Add into Class Google of file OAuth2/Service/Google:
         }
         $this->approvalPrompt = $prompt;
     }
-    
 
 
-JEDITABLE.JS
+Modify function
+
+    public function getAuthorizationEndpoint()
+    {
+		// LDR CHANGE Add approval_prompt to force the prompt if value is set to 'force' so it force return of a "refresh token" in addition to "standard token"
+		//return new Uri('https://accounts.google.com/o/oauth2/auth?access_type='.$this->accessType);
+		$url = 'https://accounts.google.com/o/oauth2/auth?'.($this->approvalPrompt?'approval_prompt='.$this->approvalPrompt.'&':'').'access_type='.$this->accessType;
+		return new Uri($url);
+	}
+
+
+
+JS JSGANTT:
+-----------
+* Replace in function JSGantt.taskLink
+    window.open(pRef, 'newwin', 'height=' + vHeight + ',width=' + vWidth);
+with
+    // @CHANGE DOLI To open in same window
+    //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
+    window.location.href=pRef
+
+* Replace '% Comp.' to have a smaller text column header
+    'comp': '%...'
+with
+    'comp': '%'
+
+
+
+JS JEDITABLE
 ------------
 
 * <button type="submit" />  =>  <button class="button" type="submit" />
@@ -358,8 +407,8 @@ JEDITABLE.JS
 
 
 
-SELECT2
--------
+JS SELECT2
+----------
 
 Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug: https://github.com/select2/select2/issues/5832
 
@@ -368,3 +417,7 @@ Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug:
 }
 
 
+
+JS JCROP:
+----------
+* Remove analytics tag into file index.html

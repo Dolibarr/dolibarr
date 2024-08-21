@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +30,14 @@ global $conf,$user,$langs,$db;
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/stripe/lib/stripe.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
 	$user->getrights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -45,35 +47,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class StripeTest extends PHPUnit\Framework\TestCase
+class StripeTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @return ProductTest
-	 */
-	public function __construct()
-	{
-		parent::__construct();
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
 	/**
 	 * setUpBeforeClass
 	 *
@@ -83,8 +58,9 @@ class StripeTest extends PHPUnit\Framework\TestCase
 	{
 		global $conf,$user,$langs,$db;
 
-		if (empty($conf->stripe->enabled)) {
-			print __METHOD__." Module Stripe must be enabled.\n"; die(1);
+		if (!isModEnabled('stripe')) {
+			print __METHOD__." Module Stripe must be enabled.\n";
+			die(1);
 		}
 
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
@@ -92,44 +68,6 @@ class StripeTest extends PHPUnit\Framework\TestCase
 		print __METHOD__."\n";
 	}
 
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
 
 	/**
 	 * testStripeOk
@@ -139,15 +77,15 @@ class StripeTest extends PHPUnit\Framework\TestCase
 	public function testStripeOk()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$urltotest=getOnlinePaymentUrl(0, 'free');
+		$urltotest = getOnlinePaymentUrl(0, 'free');
 		print "urltotest=".$urltotest."\n";
 
-		$result=getURLContent($urltotest, 'GET', '', 1, array(), array('http', 'https'), 2);
+		$result = getURLContent($urltotest, 'GET', '', 1, array(), array('http', 'https'), 2);
 
 		print __METHOD__." result=".$result['http_code']."\n";
 		$this->assertEquals(200, $result['http_code']);

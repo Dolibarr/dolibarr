@@ -1,8 +1,13 @@
 <?php
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > dont remove this line it's an ide hack */
+}
+
+// When no photo, we show the login name, so we need an offset to output picto at a fixed position.
+$atoploginusername = empty($user->photo) ? 52 : 0;
+
+?>
+/* <style type="text/css" > don't remove this line it's an ide hack */
 /*
  * Dropdown of user popup
  */
@@ -21,26 +26,36 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
-	color: #fff;
+#topmenu-global-search-dropdown a.login-dropdown-a, #topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
+	color: var(--colortextbackhmenu);
+}
+
+div#topmenu-global-search-dropdown {
+	position: fixed;
+	<?php echo $right; ?>: <?php echo (125 + $atoploginusername); ?>px;
+	top: 0px;
 }
 div#topmenu-quickadd-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 55px;
+	<?php echo $right; ?>: <?php echo (90 + $atoploginusername); ?>px;
 	top: 0px;
 }
 div#topmenu-bookmark-dropdown {
+	position: fixed;
+	<?php echo $right; ?>: <?php print !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? (55 + $atoploginusername) : 85; ?>px;
+	top: 0px;
+}
+div#topmenu-login-dropdown {
 	position: fixed;
 	<?php echo $right; ?>: 20px;
 	top: 0px;
 }
 
-
 #topmenu-login-dropdown .dropdown-toggle:after {
 	display: none;
 }
 
-#topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
+#topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-login-dropdown .dropdown-menu {
 	min-width: 300px;
 	max-width: 360px;
 }
@@ -125,10 +140,10 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	padding-right: 2px;
 }
-div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
 
@@ -139,7 +154,7 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 
 .dropdown-toggle::after {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
 	font-weight: 900;
 	font-style: normal;
@@ -162,8 +177,9 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	/* display: none; */
 }
@@ -209,8 +225,12 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-login-dropdown {
+	<?php if ($disableimages) { ?>
+		line-height: 35px;
+	<?php } else { ?>
+		line-height: 46px;
+	<?php } ?>
 }
 a.top-menu-dropdown-link {
 	padding: 8px;
@@ -379,7 +399,7 @@ a.dropdown-item {
 
 .dropdown-item::before {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -400,15 +420,15 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
 /*
-* SEARCH
-*/
+ * SEARCH
+ */
 
 .dropdown-search-input {
 	width: 100%;
@@ -434,6 +454,135 @@ a.dropdown-item {
 
 }
 
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+/*
+ * QUICK ADD
+ */
+
+#topmenu-quickadd-dropdown .dropdown-menu {
+	width: 310px !important;
+	color: #444;
+}
+
+.quickadd-body.dropdown-body {
+	padding: unset;
+}
+
+.quickadd-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.quickadd-item:before {
+	content: none;
+}
+
+.quickadd-header {
+	color: #444 !important;
+}
+
+div.quickadd {
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-align-content: center;
+	-ms-flex-line-pack: center;
+	align-content: center;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+div.quickadd a {
+	color: #444;
+}
+
+div.quickadd a:hover, div.quickadd a:active {
+	color: #000000;
+}
+
+div.quickaddblock {
+	width: 95px;
+	height: 80px;
+}
+
+div.quickaddblock:hover,
+div.quickaddblock:active,
+div.quickaddblock:focus {
+	background: <?php print $colorbacklinepair1; ?>;
+}
+
+
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content a.butAction {
+	display: flex;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+.dropdown-content .butActionRefused {
+	margin-left: 0;
+	margin-right: 0;
+	border: none;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
 
 /* smartphone */
 @media only screen and (max-width: 767px)
@@ -446,18 +595,26 @@ a.dropdown-item {
 		min-width: 220px;
 		max-width: 360px;
 	}
+	#topmenu-login-dropdown .dropdown-menu {
+		min-width: 220px;
+		max-width: 360px;
+	}
 
 	#topmenu-quickadd-dropdown a.login-dropdown-a,
-	#topmenu-bookmark-dropdown a.login-dropdown-a {
+	#topmenu-bookmark-dropdown a.login-dropdown-a,
+	#topmenu-login-dropdown a.login-dropdown-a {
 		color: #000;
 	}
 	#topmenu-quickadd-dropdown .dropdown-menu,
-	#topmenu-bookmark-dropdown .dropdown-menu {
+	#topmenu-bookmark-dropdown .dropdown-menu,
+	#topmenu-login-dropdown .dropdown-menu {
 		width: 230px;
 	}
 
+	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
-	div#topmenu-bookmark-dropdown {
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-login-dropdown {
 		position: unset;
 	}
 

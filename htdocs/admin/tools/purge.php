@@ -38,8 +38,8 @@ $nbsecondsold = GETPOSTINT('nbsecondsold');
 
 // Define filelog to discard it from purge
 $filelog = '';
-if (!empty($conf->syslog->enabled)) {
-	$filelog = $conf->global->SYSLOG_FILE;
+if (isModEnabled('syslog')) {
+	$filelog = getDolGlobalString('SYSLOG_FILE');
 	$filelog = preg_replace('/DOL_DATA_ROOT/i', DOL_DATA_ROOT, $filelog);
 }
 
@@ -78,7 +78,7 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-tools_purge');
 
 $form = new Form($db);
 
@@ -92,11 +92,12 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 
+print '<div class="divsection wordbreak">';
 print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
 
-if (!empty($conf->syslog->enabled)) {
+if (isModEnabled('syslog')) {
 	print '<input type="radio" name="choice" id="choicelogfile" value="logfile"';
 	print ($choice && $choice == 'logfile') ? ' checked' : '';
 	$filelogparam = $filelog;
@@ -123,6 +124,7 @@ if (getDolGlobalInt('MAIN_PURGE_ACCEPT_NBSECONDSOLD')) {
 	print 'NbSecondsOld = <input class="width50 right" type="text" name="nbsecondsold" value="'.$nbsecondsold.'">';
 }
 print '</td></tr></table>';
+print '</div>';
 
 //if ($choice != 'confirm_allfiles')
 //{

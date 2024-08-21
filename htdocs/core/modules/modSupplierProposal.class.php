@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modSupplierProposal extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -62,7 +61,7 @@ class modSupplierProposal extends DolibarrModules
 		// Data directories to create when module is enabled.
 		$this->dirs = array();
 
-		 // Config pages. Put here list of php page names stored in admin directory used to setup module.
+		// Config pages. Put here list of php page names stored in admin directory used to setup module.
 		$this->config_page_url = array("supplier_proposal.php");
 
 		// Dependencies
@@ -108,37 +107,37 @@ class modSupplierProposal extends DolibarrModules
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Read supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Create/modify supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Validate supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'validate_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'send_advance';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Delete supplier proposals'; // libelle de la permission
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'supprimer';
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
 		$this->rights[$r][1] = 'Close supplier price requests'; // libelle de la permission
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'cloturer';
 
 		// Main menu entries

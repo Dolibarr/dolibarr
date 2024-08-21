@@ -23,6 +23,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
  *	Class to manage HTML output components for orders
@@ -30,16 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormOrder extends Form
 {
-
 	/**
-	 *  Return combo list of differents status of a orders
+	 *  Return combo list of different statuses of orders
 	 *
 	 *  @param	string	$selected   Preselected value
 	 *  @param	int		$short		Use short labels
 	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @param	string	$morecss	More CSS
 	 *  @return	void
 	 */
-	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status', $morecss = '')
 	{
 		$options = array();
 
@@ -68,7 +69,43 @@ class FormOrder extends Form
 			$selectedarray = explode(',', $selected);
 		}
 
-		print Form::multiselectarray($hmlname, $options, $selectedarray, 0);
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, $morecss, 0, 150);
+	}
+
+	/**
+	 *  Return combo list of different status of orders
+	 *
+	 *  @param	string	$selected   Preselected value
+	 *  @param	int		$short		Use short labels
+	 *  @param	string	$hmlname	Name of HTML select element
+	 *  @return	void
+	 */
+	public function selectOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
+	{
+		$options = array();
+
+		$statustohow = array(
+			Commande::STATUS_DRAFT,
+			Commande::STATUS_VALIDATED,
+			Commande::STATUS_SHIPMENTONPROCESS,
+			Commande::STATUS_CLOSED,
+			Commande::STATUS_CANCELED
+		);
+
+		$tmpsupplierorder = new Commande($this->db);
+
+		foreach ($statustohow as $value) {
+			$tmpsupplierorder->statut = $value;
+			$options[$value] = $tmpsupplierorder->getLibStatut($short);
+		}
+
+		if (is_array($selected)) {
+			$selectedarray = $selected;
+		} else {
+			$selectedarray = explode(',', $selected);
+		}
+
+		print Form::multiselectarray($hmlname, $options, $selectedarray, 0, 0, '', 0, 150);
 	}
 
 	/**
@@ -78,7 +115,7 @@ class FormOrder extends Form
 	 *	@param	string	$selected		Id of preselected input method
 	 *  @param  string	$htmlname 		Name of HTML select list
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
-	 *  @return	array					Tableau des sources de commandes
+	 *  @return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
 	{

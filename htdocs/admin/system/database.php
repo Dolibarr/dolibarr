@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +41,7 @@ if (!$user->admin) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_database');
 
 print load_fiche_titre($langs->trans("InfoDatabase"), '', 'title_setup');
 
@@ -53,6 +54,7 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("DatabaseServer").'</
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DatabasePort").'</td><td>'.(empty($conf->db->port) ? $langs->trans("Default") : $conf->db->port).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DatabaseName").'</td><td>'.$conf->db->name.'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DriverType").'</td><td>'.$conf->db->type.($db->getDriverInfo() ? ' ('.$db->getDriverInfo().')' : '').'</td></tr>'."\n";
+// @phan-suppress-next-line PhanTypeSuspiciousStringExpression  (user is defined in the stdClass)
 print '<tr class="oddeven"><td width="300">'.$langs->trans("User").'</td><td>'.$conf->db->user.'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Password").'</td><td>'.preg_replace('/./i', '*', $dolibarr_main_db_pass).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase().'</td></tr>'."\n";
@@ -89,8 +91,8 @@ if (!count($listofvars) && !count($listofstatus)) {
 		$arraytest = array();
 		if (preg_match('/mysql/i', $db->type)) {
 			$arraytest = array(
-				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set', 'valifempty'=>'utf8'),
-				'collation_database'=>array('var'=>'dolibarr_main_db_collation', 'valifempty'=>'utf8_unicode_ci')
+				'character_set_database' => array('var' => 'dolibarr_main_db_character_set', 'valifempty' => 'utf8'),
+				'collation_database' => array('var' => 'dolibarr_main_db_collation', 'valifempty' => 'utf8_unicode_ci')
 			);
 		}
 
@@ -108,12 +110,14 @@ if (!count($listofvars) && !count($listofstatus)) {
 			print $param;
 			print '</td>';
 			print '<td class="wordbreak">';
-			$show = 0; $text = '';
+			$show = 0;
+			$text = '';
 			foreach ($arraytest as $key => $val) {
 				if ($key != $param) {
 					continue;
 				}
-				$val2 = ${$val['var']};
+				$tmpvar = $val['var'];
+				$val2 = ${$tmpvar};
 				$text = 'Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2 ? $val2 : "'' (=".$val['valifempty'].")").'</b>';
 				$show = 1;
 			}
@@ -121,9 +125,11 @@ if (!count($listofvars) && !count($listofstatus)) {
 				print $paramval;
 			}
 			if ($show == 1) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($paramval, $text);
 			}
 			if ($show == 2) {
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				print $form->textwithpicto($paramval, $text, 1, 'warning');
 			}
 			print '</td>';

@@ -100,7 +100,6 @@ SendRequestCollectiveCP=Envoyer la demande de congé collectif
 AutoValidationOnCreate=Validation automatique
 FirstDayOfHoliday=Premier jour de congés
 LastDayOfHoliday=Dernier jour de congés
-BoxTitleLastLeaveRequests=Les %s dernières demandes de congés modifiées
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
 HolidaysCancelation=Annulation de la demande de congés

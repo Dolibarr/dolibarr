@@ -5,36 +5,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organizare evenimente
 EventOrganizationDescription = Organizare evenimente utilizând modulul Proiecte
 EventOrganizationDescriptionLong= Gestionați organizarea unui eveniment (spectacol, conferință, participanți sau speak-eri, cu pagini publice pentru propuneri, vot sau înregistrare) 
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organizare evenimente
 EventOrganizationConferenceOrBoothMenuLeft = Conferinţe sau Stand-uri
-
 PaymentEvent=Plată eveniment
-
-#
+EventFee=Fără eveniment
 # Admin page
-#
 NewRegistration=Înregistrare
 EventOrganizationSetup=Configurare Organizare evenimente
 EventOrganization=Organizare eveniment
-Settings=Configurări
 EventOrganizationSetupPage = Pagină de configurare Organizare evenimente
 EVENTORGANIZATION_TASK_LABEL = Etichetă task-uri de creat automat atunci când proiectul este validat 
 EVENTORGANIZATION_TASK_LABELTooltip = Când validați un eveniment de organizare, unele task-uri pot fi create automat în proiect.<br> <br> De exemplu: <br>Apelare telefonică pentru conferințe<br>Apelare telefonică pentru stand-uri<br> Validare propuneri pentru conferințe<br> Validare aplicare pentru stand-uri<br> Deschidere înscriere la la eveniment pentru participanți<br> Trimitere reminder eveniment pentru speaker-i <br>Trimitere reminder eveniment pentru găzduitorii de stand-uri<br> Trimitere reminder eveniment către participanți
@@ -49,12 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Șablon email de utilizat atunci
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Șablon email de utilizat atunci când se trimit email-uri în masă "Trimite email-uri" la lista de participanți 
 EVENTORGANIZATION_FILTERATTENDEES_CAT = În formularul de creare/adăugare participant, se restricționează lista de terți după categorie
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = În formularul pentru a creare/adăugare participant, se restricționează lista terților după natură
-
-#
 # Object
-#
+OrganizedEvent=Eveniment organizat
 EventOrganizationConfOrBooth= Conferinţe sau Stand-uri
-EventOrganizationConfOrBoothes=Conferințe sau Standuri
+EventOrganizationConfOrBoothes=Conferințe sau Stand-uri
 ManageOrganizeEvent = Administrează organizarea unui eveniment
 ConferenceOrBooth = Conferinţe sau Stand-uri
 ConferenceOrBoothTab = Conferinţe sau Stand-uri
@@ -63,10 +50,7 @@ DateOfRegistration = Dată înregistrare
 ConferenceOrBoothAttendee = Participant la Conferinţă sau Stand
 ApplicantOrVisitor=Aplicant sau vizitator
 Speaker=Speaker
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Solicitarea pentru conferinţă a fost recepţionată
 YourOrganizationEventBoothRequestWasReceived = Solicitarea ta pentru stand a fost primită
 EventOrganizationEmailAskConf = Solicitare conferinţă
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Înscriere la eveniment
 EventOrganizationMassEmailAttendees = Comunicare către participanţi
 EventOrganizationMassEmailSpeakers = Comunicare către speaker-i
 ToSpeakers=Către speaker-i
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Permite vizitatorilor să propună conferinţe
 AllowUnknownPeopleSuggestConfHelp=Permite persoanelor necunoscute să propună o conferință pe care doresc să o facă 
 AllowUnknownPeopleSuggestBooth=Permite persoanelor cunoscute să solicite un stand
@@ -88,27 +69,29 @@ PriceOfRegistration=Preţ înregistrare
 PriceOfRegistrationHelp=Preț de plătit pentru înregistrare sau participare la eveniment 
 PriceOfBooth=Preț înscriere pentru stand
 PriceOfBoothHelp=Preț înscriere pentru stand
+EventOrganizationICSLinkProject=Asociere ICS pentru eveniment
 EventOrganizationICSLink=Link ICS pentru conferinţe
-ConferenceOrBoothInformation=Informaţii Conferinţă sau Stand
+ConferenceOrBoothInformation=Informații despre conferință sau stand
+ConferenceOrBoothFormat=Mod conferință sau stand
+ConferenceOrBoothFormatID=ID conferință sau stand
+ConferenceOrBoothFormatCode=Cod mod conferință sau stand
+ConferenceOrBoothFormatLabel=Etichetă mod conferință sau stand
 Attendees=Participanți
-ListOfAttendeesOfEvent=Lista participanților la proiectul eveniment
+ListOfAttendeesOfEvent=Listă participanți la proiecte de tip eveniment
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Link descărcare ICS
 EVENTORGANIZATION_SECUREKEY = Seed de securizare a cheii paginii de înregistrare publică pentru a propune o conferință
 SERVICE_BOOTH_LOCATION = Serviciu utilizat pentru linia de facturare privind locaţia standului
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Serviciu utilizat pentru linia de factură aferentă unui abonament de participare la un eveniment
 NbVotes=Număr de voturi
-#
 # Status
-#
 EvntOrgDraft = Schiţă
 EvntOrgSuggested = Sugerat
 EvntOrgConfirmed = Confirmat
 EvntOrgNotQualified = Ne-calificat
 EvntOrgDone = Efectuat
 EvntOrgCancelled = Anulat
-#
-# Public page
-#
+# Other
 SuggestForm = Pagină de propuneri
 SuggestOrVoteForConfOrBooth = Pagină pentru sugestii sau vot
 EvntOrgRegistrationHelpMessage = Aici, puteți vota pentru o conferință sau puteți propune una nouă pentru eveniment. De asemenea, puteți aplica pentru a avea un stand în timpul evenimentului.
@@ -131,9 +114,10 @@ EventType = Tip eveniment
 LabelOfBooth=Etichetă stand
 LabelOfconference=Etichetă conferinţă
 ConferenceIsNotConfirmed=Înregistrarea nu este disponibilă, conferinţa nu a fost confirmată încă
+EventRegistrationAreClosed=Înregistrările la eveniment sunt închise
 DateMustBeBeforeThan=%s trebuie să fie înainte de %s
 DateMustBeAfterThan=%s trebuie să fie după %s
-MaxNbOfAttendeesReached=Numărul maxim de participanți a fost atins 
+MaxNbOfAttendeesReached=Numărul maxim de participanți a fost atins
 NewSubscription=Înregistrare
 OrganizationEventConfRequestWasReceived=Propunerea ta pentru conferinţă a fost primită
 OrganizationEventBoothRequestWasReceived=Solicitarea ta de rezervare a unui stand a fost primită
@@ -143,13 +127,8 @@ OrganizationEventBulkMailToAttendees=Aceasta este un reminder cu privire la part
 OrganizationEventBulkMailToSpeakers=Acesta este un reminder cu privire la participarea ta ca speaker la eveniment
 OrganizationEventLinkToThirdParty=Link către un terț (client, furnizor sau partener)
 OrganizationEvenLabelName=Nume public conferință sau stand
-
 NewSuggestionOfBooth=Aplicare pentru stand
-NewSuggestionOfConference=Aplicare pentru conferinţă
-
-#
-# Vote page
-#
+NewSuggestionOfConference=Propunere pentru organizarea unei conferințe 
 EvntOrgRegistrationWelcomeMessage = Bine ați venit pe pagina de propuneri conferință sau stand.
 EvntOrgRegistrationConfWelcomeMessage = Bine ai venit pe pagina de propuneri a conferinței.
 EvntOrgRegistrationBoothWelcomeMessage = Bine ai venit pe pagina de propuneri stand.
@@ -157,8 +136,8 @@ EvntOrgVoteHelpMessage = Aici poți vizualiza și vota evenimentele propuse pent
 VoteOk = Votul tău a fost acceptat.
 AlreadyVoted = Ai votat deja pentru acest eveniment.
 VoteError = A apărut o eroare în timpul votului, vă rugăm să încercați din nou.
-
 SubscriptionOk=Înregistrarea ta a fost salvată
+AmountOfRegistrationPaid=Valoare înregistrare plătită
 ConfAttendeeSubscriptionConfirmation = Confirmarea înscrierii la un eveniment
 Attendee = Participant
 PaymentConferenceAttendee = Plată participant conferinţă
@@ -168,9 +147,16 @@ RegistrationAndPaymentWereAlreadyRecorder=O înscriere şi o plată este înregi
 EmailAttendee=Email participant
 EmailCompany=Emai companie
 EmailCompanyForInvoice=Email companie (pentru facturare, dacă diferă de cel al participantului)
-ErrorSeveralCompaniesWithEmailContactUs=Au fost găsite mai multe companii cu acest email, nu putem valida automat înregistrarea dumneavoastră. Vă rugăm să ne contactați la %s pentru o validare manuală
-ErrorSeveralCompaniesWithNameContactUs=Au fost găsite mai multe companii cu acest nume, nu putem valida automat înregistrarea dumneavoastră. Vă rugăm să ne contactați la %s pentru o validare manuală
+ErrorSeveralCompaniesWithEmailContactUs=Au fost găsite mai multe companii cu această adresă de email, așa că nu putem valida automat înregistrarea ta. Te rugăm să ne contactezi la %s pentru o validare manuală
+ErrorSeveralCompaniesWithNameContactUs=Au fost găsite mai multe companii cu această denumire, așa că nu-ți putem valida automat înregistrarea. Te rugăm să ne contactezi la %s pentru o validare manuală
 NoPublicActionsAllowedForThisEvent=Nu sunt acțiuni publice deschise pentru acest eveniment
 MaxNbOfAttendees=Număr maxim de participanți
 DateStartEvent=Dată start eveniment
 DateEndEvent=Dată sfârșit eveniment
+ModifyStatus=Modificare status
+ConfirmModifyStatus=Confirmare modificare status
+ConfirmModifyStatusQuestion=Ești sigur că vrei să modifici înregistrăr(ile) selectate %s ?
+RecordsUpdated=%s înregistrări actualizate
+RecordUpdated=Înregistrare actualizată
+NoRecordUpdated=Nicio înregistrare actualizată
+ProfitPerValidatedAttendee=Profit per participant

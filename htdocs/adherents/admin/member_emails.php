@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012      J. Fernando Lagrange <fernando@demo-tic.org>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
+ * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,18 +49,24 @@ $action = GETPOST('action', 'aZ09');
 
 $error = 0;
 
+$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
+$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
+//$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
+
 // Editing global variables not related to a specific theme
 $constantes = array(
 	'MEMBER_REMINDER_EMAIL'=>array('type'=>'yesno', 'label'=>$langs->trans('MEMBER_REMINDER_EMAIL', $langs->transnoentities("Module2300Name"))),
-	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>'emailtemplate:member',
-	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_AUTOREGISTER_MAIL
-	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_VALID
-	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_COTIS
-	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>'emailtemplate:member',	// until Dolibarr 7 it was ADHERENT_MAIL_RESIL
-	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>'emailtemplate:member',
-	'ADHERENT_MAIL_FROM'							=>'string',
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>'string',
-	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>'html',
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' 	=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'		=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'			=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_EMAIL_TEMPLATE_EXCLUSION'				=>array('type'=>'emailtemplate:member','label'=>''),
+	'ADHERENT_MAIL_FROM'							=>array('type'=>'string','label'=>''),
+	'ADHERENT_CC_MAIL_FROM'							=>array('type'=>'string','label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'		=>array('type'=>'string','label'=>''),
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'				=>array('type'=>'html', 'tooltip'=>$helptext,'label'=>'')
 );
 
 
@@ -99,7 +106,7 @@ if ($action == 'updateall') {
 
 // Action to update or add a constant
 if ($action == 'update' || $action == 'add') {
-	$constlineid = GETPOST('rowid', 'int');
+	$constlineid = GETPOSTINT('rowid');
 	$constname = GETPOST('constname', 'alpha');
 
 	$constvalue = (GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alphanohtml') : GETPOST('constvalue'));
@@ -129,9 +136,10 @@ if ($action == 'update' || $action == 'add') {
 
 $form = new Form($db);
 
+$title = $langs->trans("MembersSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin_emails');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -147,12 +155,9 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="updateall">';
 
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-//$helptext.='__YEAR__, __MONTH__, __DAY__';	// Not supported
+print '<br>';
 
-form_constantes($constantes, 3, $helptext);
+form_constantes($constantes, 3, '');
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
 print '</form>';

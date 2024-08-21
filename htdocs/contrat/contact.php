@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
- * Copyright (C) 2005-2009	Destailleur Laurent	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+/* Copyright (C) 2005		Patrick Rouillon			<patrick@rouillon.net>
+ * Copyright (C) 2005-2009	Destailleur Laurent			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2023       Christian Foellmann			<christian@foellmann.de>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,78 +41,90 @@ $langs->loadLangs(array('contracts', 'companies'));
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
-$socid = GETPOST('socid', 'int');
-$id = GETPOST('id', 'int');
+$socid = GETPOSTINT('socid');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contractcard', 'globalcard'));
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('contractcontactcard', 'globalcard'));
 
-$permissiontoadd   = $user->rights->contrat->creer;     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+
+$result = restrictedArea($user, 'contrat', $object->id);
 
 
 /*
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->contrat->creer) {
-	$result = $object->fetch($id);
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-	if ($result > 0 && $id > 0) {
-		$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
+if (empty($reshook)) {
+	// Add new contact
+	if ($action == 'addcontact' && $user->hasRight('contrat', 'creer')) {
+		$result = $object->fetch($id);
 
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
-		} else {
-			$mesg = $object->error;
+		if ($result > 0 && $id > 0) {
+			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
 
-		setEventMessages($mesg, null, 'errors');
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+			} else {
+				$mesg = $object->error;
+			}
+
+			setEventMessages($mesg, null, 'errors');
+		}
+	}
+
+	// Toggle the status of a contact
+	if ($action == 'swapstatut' && $user->hasRight('contrat', 'creer')) {
+		if ($object->fetch($id)) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		} else {
+			dol_print_error($db, $object->error);
+		}
+	}
+
+	// Delete contact
+	if ($action == 'deletecontact' && $user->hasRight('contrat', 'creer')) {
+		$object->fetch($id);
+		$result = $object->delete_contact(GETPOSTINT("lineid"));
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		}
 	}
 }
-
-// bascule du statut d'un contact
-if ($action == 'swapstatut' && $user->rights->contrat->creer) {
-	if ($object->fetch($id)) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	} else {
-		dol_print_error($db, $object->error);
-	}
-}
-
-// Delete contact
-if ($action == 'deletecontact' && $user->rights->contrat->creer) {
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid", 'int'));
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	}
-}
-
 
 /*
  * View
  */
 
-llxHeader('', $langs->trans("Contract"), "");
+$title = $langs->trans("Contract");
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -119,7 +133,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode vue et edition                                                         */
+/* Card view and edit mode                                                     */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -140,7 +154,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$morehtmlref = '';
 		//if (!empty($modCodeContract->code_auto)) {
-			$morehtmlref .= $object->ref;
+		$morehtmlref .= $object->ref;
 		/*} else {
 			$morehtmlref.=$form->editfieldkey("",'ref',$object->ref,0,'string','',0,3);
 			$morehtmlref.=$form->editfieldval("",'ref',$object->ref,0,'string','',0,2);

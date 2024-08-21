@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       bookcal/bookcalindex.php
+ *	\file       htdocs/bookcal/bookcalindex.php
  *	\ingroup    bookcal
  *	\brief      Home page of bookcal top menu
  */
@@ -29,23 +29,24 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bookcal@bookcal"));
+$langs->loadLangs(array("agenda"));
 
 $action = GETPOST('action', 'aZ09');
 
 
 // Security check
-// if (! $user->rights->bookcal->myobject->read) {
+// if (! $user->hasRight('bookcal', 'myobject', 'read')) {
 // 	accessforbidden();
 // }
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = 5;
 $now = dol_now();
+$NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 
 /*
@@ -62,17 +63,18 @@ $now = dol_now();
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("BookCalArea"));
+llxHeader("", $langs->trans("BookCalArea"), '', '', 0, 0, '', '', '', 'mod-bookcal page-index');
 
-print load_fiche_titre($langs->trans("BookCalArea"), '', 'bookcal.png@bookcal');
+print load_fiche_titre($langs->trans("BookCalArea"), '', 'fa-calendar-check');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabled)) {
+if ($user->hasRight('bookcal', 'availabilities', 'read') && isModEnabled('bookcal')) {
 	$langs->load("orders");
+	/*$myobjectstatic = new Booking($db);
 
 	$sql = "SELECT rowid, `ref`, fk_soc, fk_project, description, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, last_main_doc, import_key, model_pdf, status, firstname, lastname, email, `start`, duration";
 	$sql .= " FROM ". MAIN_DB_PREFIX . 'bookcal_booking';
@@ -92,7 +94,6 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 		<th colspan="3">id</th>
 		<th colspan="3">ref</th>
 		<th colspan="3">name</th>
-		<th colspan="3">date</th>
 		<th colspan="3">hour</th>
 		<th colspan="3">duration</th>
 		<th colspan="3">description</th>
@@ -105,7 +106,6 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 
 				$myobjectstatic->id=$obj->rowid;
 				$myobjectstatic->ref=$obj->ref;
-				$myobjectstatic->date = $obj->start;
 				$myobjectstatic->firstname = $obj->firstname;
 				$myobjectstatic->lastname = $obj->lastname;
 				$myobjectstatic->start = $obj->start;
@@ -116,7 +116,7 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->id . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->ref . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->firstname . " " . $myobjectstatic->lastname . "</td>";
-				print '<td colspan="3" class="nowrap">' . $myobjectstatic->start . "</td>";
+				print '<td colspan="3" class="nowrap">' . dol_print_date($myobjectstatic->start, 'dayhourtext') . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->duration . "</td>";
 				print '<td colspan="3" class="nowrap">' . $myobjectstatic->description . "</td>";
 				$i++;
@@ -129,7 +129,7 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 		$db->free($resql);
 	} else {
 		dol_print_error($db);
-	}
+	}*/
 }
 //END MODULEBUILDER DRAFT MYOBJECT */
 
@@ -138,13 +138,9 @@ if ($user->rights->bookcal->availabilities->read && !empty($conf->bookcal->enabl
 print '</div><div class="fichetwothirdright">';
 
 
-$NBMAX = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (! empty($conf->bookcal->enabled))
-{
+if (isModEnabled('bookcal')) {
 	$sql = "SELECT rowid, `ref`, fk_soc, fk_project, description, note_public, note_private, date_creation, tms, fk_user_creat, fk_user_modif, last_main_doc, import_key, model_pdf, status, firstname, lastname, email, `start`, duration";
 	$sql .= " FROM ". MAIN_DB_PREFIX . 'bookcal_booking';
 	print "here2";

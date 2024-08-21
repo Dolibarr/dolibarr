@@ -23,7 +23,7 @@
 /**
  *  \file       htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
  *  \ingroup    core
- *  \brief      Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *  \brief      Fichier de la class permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -175,15 +175,13 @@ class pdf_standardlabel extends CommonStickerGenerator
 				}
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell($this->_Width - $widthtouse - $xleft - $xleft - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
-			} else // text on halft left and text on half right
-			{
+			} else { // text on halft left and text on half right
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX + round($this->_Width / 2), $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-		} else // Only a right part
-		{
+		} else { // Only a right part
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) {
 				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, $widthtouse, $heighttouse);
@@ -227,9 +225,9 @@ class pdf_standardlabel extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	array		$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
@@ -244,7 +242,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 		$this->type = 'pdf';
@@ -261,7 +259,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -302,7 +300,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$pdf->SetAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Enable  printing the label when the page was already started
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {
@@ -337,9 +335,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 		// Output to file
 		$pdf->Output($file, 'F');
 
-		if (!empty($conf->global->MAIN_UMASK)) {
-			@chmod($file, octdec($conf->global->MAIN_UMASK));
-		}
+		dolChmod($file);
 
 		$this->result = array('fullpath'=>$file);
 

@@ -29,7 +29,7 @@ namespace Stripe;
  * @property null|string|\Stripe\Invoice $invoice The ID of the invoice (if any) related to the transaction.
  * @property bool $livemode Has the value <code>true</code> if the object exists in live mode or the value <code>false</code> if the object exists in test mode.
  * @property null|\Stripe\StripeObject $metadata Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach to an object. This can be useful for storing additional information about the object in a structured format.
- * @property string $type Transaction type: <code>adjustment</code>, <code>applied_to_invoice</code>, <code>credit_note</code>, <code>initial</code>, <code>invoice_too_large</code>, <code>invoice_too_small</code>, <code>unspent_receiver_credit</code>, or <code>unapplied_from_invoice</code>. See the <a href="https://stripe.com/docs/billing/customer/balance#types">Customer Balance page</a> to learn more about transaction types.
+ * @property string $type Transaction type: <code>adjustment</code>, <code>applied_to_invoice</code>, <code>credit_note</code>, <code>initial</code>, <code>invoice_overpaid</code>, <code>invoice_too_large</code>, <code>invoice_too_small</code>, <code>unspent_receiver_credit</code>, or <code>unapplied_from_invoice</code>. See the <a href="https://stripe.com/docs/billing/customer/balance#types">Customer Balance page</a> to learn more about transaction types.
  */
 class CustomerBalanceTransaction extends ApiResource
 {
@@ -39,6 +39,7 @@ class CustomerBalanceTransaction extends ApiResource
     const TYPE_APPLIED_TO_INVOICE = 'applied_to_invoice';
     const TYPE_CREDIT_NOTE = 'credit_note';
     const TYPE_INITIAL = 'initial';
+    const TYPE_INVOICE_OVERPAID = 'invoice_overpaid';
     const TYPE_INVOICE_TOO_LARGE = 'invoice_too_large';
     const TYPE_INVOICE_TOO_SMALL = 'invoice_too_small';
     const TYPE_UNSPENT_RECEIVER_CREDIT = 'unspent_receiver_credit';

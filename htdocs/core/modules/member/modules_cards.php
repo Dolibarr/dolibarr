@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2004	   Eric Seigne			<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +52,6 @@ class ModelePDFCards
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
-		global $conf;
-
 		$type = 'member';
 		$list = array();
 
@@ -75,7 +74,7 @@ class ModelePDFCards
  *	@param	string		$outputdir		Output directory
  *	@param	string		$template		pdf generenate document class to use default 'standard'
  *  @param	string		$filename		Name of output file (without extension)
- *	@return int							<0 if KO, >0 if OK
+ *	@return int							Return integer <0 if KO, >0 if OK
  */
 function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $outputdir = '', $template = 'standard', $filename = 'tmp_cards')
 {
@@ -96,8 +95,8 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 
 	// Positionne le modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->ADHERENT_CARDS_ADDON_PDF)) {
-			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
+		if (getDolGlobalString('ADHERENT_CARDS_ADDON_PDF')) {
+			$code = getDolGlobalString('ADHERENT_CARDS_ADDON_PDF');
 		} else {
 			$code = $modele;
 		}
@@ -117,7 +116,6 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	// Search template files
 	$file = '';
 	$classname = '';
-	$filefound = 0;
 	$dirmodels = array('/');
 	if (is_array($conf->modules_parts['models'])) {
 		$dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
@@ -129,22 +127,23 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 			// We check that file of doc generaotr exists
 			$file = dol_buildpath($reldir."core/modules/member/doc/".$file, 0);
 			if (file_exists($file)) {
-				$filefound = 1;
 				$classname = $prefix.'_'.$template;
 				break;
 			}
 		}
-		if ($filefound) {
+		if ($classname !== '') {
 			break;
 		}
 	}
 
 
 	// Charge le modele
-	if ($filefound) {
+	if ($classname !== '') {
 		require_once $file;
 
 		$obj = new $classname($db);
+
+		'@phan-var-force ModelePDFMember $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
@@ -158,7 +157,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}
 }

@@ -41,9 +41,9 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$id 	= GETPOST('id', 'int');
+$id 	= GETPOSTINT('id');
 
-// Initialize technical objects
+// Initialize a technical objects
 $form = new Form($db);
 $object = new Position($db);
 $res = $object->fetch($id);
@@ -52,10 +52,10 @@ if ($res < 0) {
 }
 
 // Permissions
-$permissiontoread = $user->rights->hrm->all->read;
-$permissiontoadd = $user->rights->hrm->all->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->hrm->all->delete;
-$permissiondellink = $user->rights->hrm->all->write; // Used by the include of actions_dellink.inc.php
+$permissiontoread = $user->hasRight('hrm', 'all', 'read');
+$permissiontoadd = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
+$permissiondellink = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1] . '/position';
 
 // Security check (enable the most restrictive one)
@@ -63,16 +63,20 @@ $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->enti
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (empty($conf->hrm->enabled)) accessforbidden();
-if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) accessforbidden();
+if (empty($conf->hrm->enabled)) {
+	accessforbidden();
+}
+if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
+	accessforbidden();
+}
 
 $langs->loadLangs(array("hrm", "other"));
 
 
 
 // Get parameters
-$id 	= GETPOST('id', 'int');
-$fk_job = GETPOST('fk_job', 'int');
+$id 	= GETPOSTINT('id');
+$fk_job = GETPOSTINT('fk_job');
 
 $ref 	= GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -83,7 +87,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 //	$lineid   = GETPOST('lineid', 'int');
 
-// Initialize technical objects
+// Initialize a technical objects
 //$object = new Position($db);
 //$res = $object->fetch($id);
 /*if ($res < 0) {
@@ -100,7 +104,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -114,7 +118,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 /*
@@ -142,7 +146,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'hrm_POSITION_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'HRM_POSITION_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT . '/core/actions_addupdatedelete.inc.php';
@@ -160,14 +164,14 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->setProject(GETPOST('projectid', 'int'));
+		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	// Actions to send emails
-	$triggersendname = 'hrm_POSITION_SENTBYMAIL';
+	$triggersendname = 'HRM_POSITION_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_POSITION_TO';
 	$trackid = 'position' . $object->id;
 	include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
@@ -193,6 +197,7 @@ function displayPositionCard(&$object)
 	global $user, $langs, $db, $conf, $extrafields, $hookmanager, $action, $permissiontoadd, $permissiontodelete;
 
 	$id = $object->id;
+	$ref = $object->ref;
 
 	/*
 	 * View
@@ -347,7 +352,7 @@ function displayPositionCard(&$object)
 //		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
-//		$delallowed = $user->rights->societe->creer;
+//		$delallowed = $user->hasRight('societe', 'creer');
 //
 //		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 //	}

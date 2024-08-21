@@ -36,7 +36,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modAdherent extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -148,7 +147,7 @@ class modAdherent extends DolibarrModules
 		$this->const[$r][0] = "ADHERENT_MAILMAN_ADMIN_PASSWORD";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "";
-		$this->const[$r][3] = "Mot de passe Admin des liste mailman";
+		$this->const[$r][3] = "Password admin mailman lists";
 		$this->const[$r][4] = 0;
 		$r++;
 
@@ -161,7 +160,7 @@ class modAdherent extends DolibarrModules
 
 		$this->const[$r][0] = "ADHERENT_ETIQUETTE_TEXT";
 		$this->const[$r][1] = "texte";
-		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY%";
+		$this->const[$r][2] = "__FULLNAME__\n__ADDRESS__\n__ZIP__ __TOWN__\n__COUNTRY__";
 		$this->const[$r][3] = "Text to print on member address sheets";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -198,6 +197,7 @@ class modAdherent extends DolibarrModules
 			4 => array('file'=>'box_members_last_subscriptions.php', 'enabledbydefaulton'=>'membersindex'),
 			5 => array('file'=>'box_members_subscriptions_by_year.php', 'enabledbydefaulton'=>'membersindex'),
 			6 => array('file'=>'box_members_by_type.php', 'enabledbydefaulton'=>'membersindex'),
+			7 => array('file'=>'box_members_by_tags.php', 'enabledbydefaulton'=>'membersindex'),
 		);
 
 		// Permissions
@@ -207,9 +207,9 @@ class modAdherent extends DolibarrModules
 		$r = 0;
 
 		// $this->rights[$r][0]     Id permission (unique tous modules confondus)
-		// $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
+		// $this->rights[$r][1]     Libelle par default si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
 		// $this->rights[$r][2]     Non utilise
-		// $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
+		// $this->rights[$r][3]     1=Permis par default, 0=Non permis par default
 		// $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
 		// $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
 
@@ -362,8 +362,8 @@ class modAdherent extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'a.ref'=>array(
 				'rule'=>'getrefifauto',
-				'class'=>(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON),
-				'path'=>"/core/modules/member/".(empty($conf->global->MEMBER_ADDON) ? 'mod_member_simple' : $conf->global->MEMBER_ADDON).'.php'
+				'class' => getDolGlobalString('MEMBER_ADDON', 'mod_member_simple'),
+				'path'=>"/core/modules/member/".getDolGlobalString('MEMBER_ADDON', 'mod_member_simple').'.php'
 			),
 			'a.state_id' => array(
 				'rule' => 'fetchidfromcodeid',
@@ -431,7 +431,7 @@ class modAdherent extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf, $langs;
+		global $conf;
 
 		// Permissions
 		$this->remove($options);

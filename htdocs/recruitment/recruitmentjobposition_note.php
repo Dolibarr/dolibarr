@@ -31,13 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment_recruitmentjobposit
 $langs->loadLangs(array("recruitment", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new RecruitmentJobPosition($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->recruitment->dir_output.'/temp/massgeneration/'.$user->id;
@@ -51,13 +51,13 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 //$result = restrictedArea($user, 'recruitment', $id);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->recruitment->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity]."/".$object->id;
 }
 
-$permissionnote = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_setnotes.inc.php
-$permissiontoadd = $user->rights->recruitment->recruitmentjobposition->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissionnote = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('recruitment', 'recruitmentjobposition', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -75,7 +75,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be 'include', not 'include_once'
 }
 
 
@@ -108,7 +108,7 @@ if ($id > 0 || !empty($ref)) {
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (!empty($conf->project->enabled)) {
+	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project').' ';
 		if ($permissiontoadd) {
@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
-	 $morehtmlref .= '</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

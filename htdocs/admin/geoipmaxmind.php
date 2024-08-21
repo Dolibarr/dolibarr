@@ -81,7 +81,7 @@ if (!isset($conf->global->GEOIP_VERSION)) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-geoipmaxmind');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"), $linkback, 'title_setup');
@@ -89,7 +89,7 @@ print '<br>';
 
 $version = '';
 $geoip = '';
-if (!empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE)) {
+if (getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE')) {
 	$geoip = new DolGeoIP('country', $conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
 }
 
@@ -109,7 +109,7 @@ print '<tr class="oddeven"><td>'.$langs->trans("GeoIPLibVersion").'</td>';
 print '<td>';
 $arrayofvalues = array('php' => 'Native PHP functions', '1' => 'Embedded GeoIP v1', '2' => 'Embedded GeoIP v2');
 print $form->selectarray('geoipversion', $arrayofvalues, (isset($conf->global->GEOIP_VERSION) ? $conf->global->GEOIP_VERSION : '2'));
-if ($conf->global->GEOIP_VERSION == 'php') {
+if (getDolGlobalString('GEOIP_VERSION') == 'php') {
 	if ($geoip) {
 		$version = $geoip->getVersion();
 	}
@@ -126,7 +126,7 @@ $gimcdf = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 // Path to database file
 print '<tr class="oddeven"><td>'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td>';
-if ($conf->global->GEOIP_VERSION == 'php') {
+if (getDolGlobalString('GEOIP_VERSION') == 'php') {
 	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /pathtodatafile/GeoLite2-Country.mmdb<br>';
 }
 print '<input type="text" class="minwidth200" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag(getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE')).'">';
@@ -163,6 +163,9 @@ $textoshow = str_replace('{s1}', '<a href="'.$url2.'" target="_blank" rel="noope
 print $textoshow;
 
 if ($geoip) {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+
 	print '<br><br>';
 	print '<br><span class="opacitymedium">'.$langs->trans("TestGeoIPResult", $ip).':</span>';
 
@@ -213,6 +216,20 @@ if ($geoip) {
 			print $langs->trans("NotAPublicIp");
 		}
 	}
+
+	$ip = GETPOST("iptotest");
+	print '<br><input type="text class="width100" name="iptotest" id="iptotest" placeholder="'.dol_escape_htmltag($langs->trans("EnterAnIP")).'" value="'.$ip.'">';
+	print '<input type="submit" class="width40 button small smallpaddingimp" value=" -> ">';
+	if ($ip) {
+		$result = dol_print_ip($ip, 1);
+		if ($result) {
+			print $result;
+		} else {
+			print $langs->trans("Error");
+		}
+	}
+
+	print '</form>';
 
 	$geoip->close();
 }

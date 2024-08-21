@@ -5,6 +5,8 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +37,21 @@ interface Database
 	 */
 	public function ifsql($test, $resok, $resko);
 
+	/**
+	 * Return SQL string to aggregate using the Standard Deviation of population
+	 *
+	 * @param	string	$nameoffield	Name of field
+	 * @return	string					SQL string
+	 */
+	public function stddevpop($nameoffield);
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array
+	 * @TODO deprecate this. Use fetch_object() so you can access a field with its name instead of using an index of position of field.
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
+	 * @return  array                   			Array
 	 */
 	public function fetch_row($resultset);
 	// phpcs:enable
@@ -65,7 +76,7 @@ interface Database
 	 * Start transaction
 	 *
 	 * @param	string	$textinlog		Add a small text into log. '' by default.
-	 * @return  int      				1 if transaction successfuly opened or already opened, 0 if error
+	 * @return  int      				1 if transaction successfully opened or already opened, 0 if error
 	 */
 	public function begin($textinlog = '');
 
@@ -79,7 +90,7 @@ interface Database
 	 * @param   string 		$charset 		Charset used to store data
 	 * @param   string 		$collation 		Charset used to sort data
 	 * @param   string 		$owner 			Username of database owner
-	 * @return  resource                	resource defined if OK, null if KO
+	 * @return  bool|SQLite3Result|mysqli_result|resource      Resource result of the query to create database if OK, null if KO
 	 */
 	public function DDLCreateDb($database, $charset = '', $collation = '', $owner = '');
 	// phpcs:enable
@@ -98,14 +109,14 @@ interface Database
 	 * @param   string $type Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
 	 * @return  string        SQL request line converted
 	 */
-	public static function convertSQLFromMysql($line, $type = 'ddl');
+	public function convertSQLFromMysql($line, $type = 'ddl');
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return the number of lines in the result of a request INSERT, DELETE or UPDATE
 	 *
-	 * @param   resource $resultset Cursor of the desired request
-	 * @return 	int            Number of lines
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Cursor of the desired request
+	 * @return 	int            						Number of lines
 	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset);
@@ -129,6 +140,17 @@ interface Database
 	public function DDLListTables($database, $table = '');
 	// phpcs:enable
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  List tables into a database with table type
+	 *
+	 *  @param	string		$database	Name of database
+	 *  @param	string		$table		Name of table filter ('xxx%')
+	 *  @return	array					List of tables in an array
+	 */
+	public function DDLListTablesFull($database, $table = '');
+	// phpcs:enable
+
 	/**
 	 * Return last request executed with query()
 	 *
@@ -143,7 +165,7 @@ interface Database
 	 * @param   string $sortorder Sort order
 	 * @return  string            String to provide syntax of a sort sql string
 	 */
-	public function order($sortfield = null, $sortorder = null);
+	public function order($sortfield = '', $sortorder = '');
 
 	/**
 	 * Decrypt sensitive data in database
@@ -157,8 +179,8 @@ interface Database
 	/**
 	 *    Return datas as an array
 	 *
-	 * @param   resource $resultset Resultset of request
-	 * @return  array                    Array
+	 * @param   mysqli_result|resource|SQLite3Result $resultset 	Resultset of request
+	 * @return  array|null|false           							Result with row
 	 */
 	public function fetch_array($resultset);
 	// phpcs:enable
@@ -173,22 +195,14 @@ interface Database
 	/**
 	 * Escape a string to insert data
 	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
+	 * @param   string $stringtoencode 		String to escape
+	 * @return  string                      String escaped
 	 */
 	public function escape($stringtoencode);
 
 	/**
-	 * Escape a string to insert data
-	 *
-	 * @param   string $stringtoencode String to escape
-	 * @return  string                        String escaped
-	 * @deprecated
-	 */
-	public function escapeunderscore($stringtoencode);
-
-	/**
-	 *	Escape a string to insert data into a like
+	 *	Escape a string to insert data into a like.
+	 *  Can be used this way: LIKE '%".dbhandler->escape(dbhandler->escapeforlike(...))."%'
 	 *
 	 *	@param	string	$stringtoencode		String to escape
 	 *	@return	string						String escaped
@@ -225,31 +239,31 @@ interface Database
 	 *    Canceling a transaction and returning to old values
 	 *
 	 * @param	string $log Add more log to default log line
-	 * @return  int                1 if cancelation ok or transaction not open, 0 if error
+	 * @return  int                1 if cancellation ok or transaction not open, 0 if error
 	 */
 	public function rollback($log = '');
 
 	/**
 	 * Execute a SQL request and return the resultset
 	 *
-	 * @param   string 	$query 			SQL query string
-	 * @param   int		$usesavepoint 	0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
-	 *                            		Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
-	 * @param   string 	$type 			Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-	 * @param	int		$result_mode	Result mode
-	 * @return  bool|resource			Resultset of answer or false
+	 * @param   string 	$query 					SQL query string
+	 * @param   int		$usesavepoint 			0=Default mode, 1=Run a savepoint before and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+	 *                            				Note that with Mysql, this parameter is not used as Myssql can already commit a transaction even if one request is in error, without using savepoints.
+	 * @param   string 	$type 					Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
+	 * @param	int		$result_mode			Result mode
+	 * @return  bool|mysqli_result|resource		Resultset of answer or false
 	 */
 	public function query($query, $usesavepoint = 0, $type = 'auto', $result_mode = 0);
 
 	/**
-	 *    Connexion to server
+	 * Connection to server
 	 *
-	 * @param   string $host database server host
-	 * @param   string $login login
-	 * @param   string $passwd password
-	 * @param   string $name name of database (not used for mysql, used for pgsql)
-	 * @param   int    $port Port of database server
-	 * @return  resource            Database access handler
+	 * @param   string 			$host 						Database server host
+	 * @param   string 			$login 						Login
+	 * @param   string 			$passwd 					Password
+	 * @param   string 			$name 						Name of database (not used for mysql, used for pgsql)
+	 * @param   int    			$port 						Port of database server
+	 * @return  false|resource|mysqli|mysqliDoli|PgSql\Connection|SQLite3    Database access handler
 	 * @see     close()
 	 */
 	public function connect($host, $login, $passwd, $name, $port = 0);
@@ -290,8 +304,8 @@ interface Database
 	/**
 	 * Return number of lines for result of a SELECT
 	 *
-	 * @param   resource $resultset Resulset of requests
-	 * @return 	int                        Nb of lines
+	 * @param   mysqli_result|resource|SQLite3Result 	$resultset 	Resulset of requests
+	 * @return 	int                        							Nb of lines
 	 * @see    	affected_rows()
 	 */
 	public function num_rows($resultset);
@@ -314,7 +328,7 @@ interface Database
 	/**
 	 * Return generic error code of last operation.
 	 *
-	 * @return    string        Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return    string        Error code (Examples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	public function errno();
 
@@ -323,13 +337,13 @@ interface Database
 	 * Create a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @param        array 	$fields 		Associative table [field name][table of descriptions]
+	 * @param        array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}> 	$fields 		Associative table [field name][table of descriptions]
 	 * @param        string $primary_key 	Name of the field that will be the primary key
 	 * @param        string $type 			Type of the table
 	 * @param        array 	$unique_keys 	Associative array Name of fields that will be unique key => value
 	 * @param        array 	$fulltext_keys 	Field name table that will be indexed in fulltext
 	 * @param        array $keys 			Table of key fields names => value
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
 	// phpcs:enable
@@ -339,7 +353,7 @@ interface Database
 	 * Drop a table into database
 	 *
 	 * @param        string $table 			Name of table
-	 * @return       int                    <0 if KO, >=0 if OK
+	 * @return       int                    Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLDropTable($table);
 	// phpcs:enable
@@ -357,9 +371,9 @@ interface Database
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to add
-	 * @param    string $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
+	 * @param    array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} $field_desc 		Associative array of description of the field to insert [parameter name][parameter value]
 	 * @param    string $field_position 	Optional ex .: "after field stuff"
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLAddField($table, $field_name, $field_desc, $field_position = "");
 	// phpcs:enable
@@ -370,7 +384,7 @@ interface Database
 	 *
 	 * @param    string $table 				Name of table
 	 * @param    string $field_name 		Name of field to drop
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLDropField($table, $field_name);
 	// phpcs:enable
@@ -381,8 +395,8 @@ interface Database
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field_name 	Name of field to modify
-	 * @param    string 	$field_desc 	Array with description of field format
-	 * @return   int                        <0 if KO, >0 if OK
+	 * @param    array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string} 	$field_desc 	Array with description of field format
+	 * @return   int                        Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc);
 	// phpcs:enable
@@ -400,7 +414,7 @@ interface Database
 	 *
 	 * @param    string 	$table 			Name of table
 	 * @param    string 	$field 			Optional : Name of field if we want description of field
-	 * @return   resource            		Resource
+	 * @return   bool|resource|mysqli_result|SQLite3Result            Resource
 	 */
 	public function DDLDescTable($table, $field = "");
 	// phpcs:enable
@@ -427,7 +441,7 @@ interface Database
 	 * @param    string $dolibarr_main_db_user 	Username to create
 	 * @param    string $dolibarr_main_db_pass 	User password to create
 	 * @param    string $dolibarr_main_db_name 	Database name where user must be granted
-	 * @return   int                            <0 if KO, >=0 if OK
+	 * @return   int                            Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateUser(
 		$dolibarr_main_db_host,
@@ -437,14 +451,24 @@ interface Database
 	);
 	// phpcs:enable
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * List information of columns into a table.
+	 *
+	 * @param   string 			$table 			Name of table
+	 * @return  array                			Array with information on table
+	 */
+	public function DDLInfoTable($table);
+	// phpcs:enable
+
 	/**
 	 * Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 19700101020000 -> 3600 with TZ+1 and gmt=0
-	 * 19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 * 19700101020000 -> 7200 whatever is TZ if gmt=1
 	 *
 	 * @param	string			$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @param	bool			$gm			1=Input informations are GMT values, otherwise local to server TZ
-	 * @return	int|string					Date TMS or ''
+	 * @param	bool			$gm			1=Input information are GMT values, otherwise local to server TZ
+	 * @return	int|''						Date TMS or ''
 	 */
 	public function jdate($string, $gm = false);
 
@@ -466,28 +490,18 @@ interface Database
 	 */
 	public function commit($log = '');
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * List information of columns into a table.
-	 *
-	 * @param   string 			$table 			Name of table
-	 * @return  array                			Array with information on table
-	 */
-	public function DDLInfoTable($table);
-	// phpcs:enable
-
 	/**
 	 * Free last resultset used.
 	 *
-	 * @param  	resource 		$resultset 		Free cursor
+	 * @param  	resource|mysqli_result|SQLite3Result	$resultset 		Free cursor
 	 * @return  void
 	 */
 	public function free($resultset = null);
 
 	/**
-	 * Close database connexion
+	 * Close database connection
 	 *
-	 * @return  boolean     					True if disconnect successfull, false otherwise
+	 * @return  boolean     					True if disconnect successful, false otherwise
 	 * @see     connect()
 	 */
 	public function close();
@@ -501,9 +515,9 @@ interface Database
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return connexion ID
+	 * Return connection ID
 	 *
-	 * @return  string      Id connexion
+	 * @return  string      Id connection
 	 */
 	public function DDLGetConnectId();
 	// phpcs:enable
@@ -512,8 +526,8 @@ interface Database
 	/**
 	 * Returns the current line (as an object) for the resultset cursor
 	 *
-	 * @param   resource|Connection		$resultset 		Handler of the desired request
-	 * @return  Object                  				Object result line or false if KO or end of cursor
+	 * @param   mysqli_result|resource|PgSql\Connection|SQLite3Result		$resultset 		Handler of the desired request
+	 * @return  Object|false                    											Object result line or false if KO or end of cursor
 	 */
 	public function fetch_object($resultset);
 	// phpcs:enable

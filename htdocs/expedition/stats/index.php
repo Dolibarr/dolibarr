@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,17 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid = GETPOST('userid', 'int');
-$socid = GETPOST('socid', 'int');
+$userid = GETPOSTINT('userid');
+$socid = GETPOSTINT('socid');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$nowyear = dol_print_date(dol_now(), "%Y");
-$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
-$startyear = $year - (empty($conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS) ? 2 : max(1, min(10, $conf->global->MAIN_STATS_GRAPHS_SHOW_N_YEARS)));
+$nowyear = (int) dol_print_date(dol_now(), "%Y");
+$year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
+$startyear = $year - (!getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 
 // Load translation files required by the page
@@ -61,11 +62,11 @@ restrictedArea($user, 'expedition');
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-expedition page-stats_index');
 
 print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 
-
+$dir = (!empty($conf->expedition->multidir_temp[$conf->entity]) ? $conf->expedition->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
 $stats = new ExpeditionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
@@ -76,7 +77,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 // $data = array(array('Lib',val1,val2,val3),...)
 
 
-if (empty($user->rights->societe->client->voir) || $user->socid) {
+if (!$user->hasRight('societe', 'client', 'voir')) {
 	$filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
 } else {
 	$filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
@@ -84,9 +85,11 @@ if (empty($user->rights->societe->client->voir) || $user->socid) {
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
+$fileurlnb = '';
 if (!$mesg) {
 	$px1->SetData($data);
-	$i = $startyear; $legend = array();
+	$i = $startyear;
+	$legend = array();
 	while ($i <= $endyear) {
 		$legend[] = $i;
 		$i++;
@@ -208,7 +211,7 @@ $type = 'shipment_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
-print dol_get_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
+print dol_get_fiche_head($head, 'byyear', '', -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -310,7 +313,7 @@ print '</td></tr></table>';
 
 
 print '</div></div>';
-print '<div style="clear:both"></div>';
+print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 

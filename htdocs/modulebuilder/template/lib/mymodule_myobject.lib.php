@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 /**
  * Prepare array of tabs for MyObject
  *
- * @param	MyObject	$object		MyObject
- * @return 	array					Array of tabs
+ * @param	MyObject	$object					MyObject
+ * @return 	array<array{string,string,string}>	Array of tabs
  */
 function myobjectPrepareHead($object)
 {
@@ -42,7 +42,7 @@ function myobjectPrepareHead($object)
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/mymodule/myobject_card.php", 1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("MyObject");
 	$head[$h][2] = 'card';
 	$h++;
 

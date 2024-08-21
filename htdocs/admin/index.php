@@ -34,7 +34,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('homesetup'));
 
 
@@ -45,15 +45,15 @@ $hookmanager->initHooks(array('homesetup'));
 $form = new Form($db);
 
 $wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-index');
 
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
 
-if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
-	if (!empty($conf->global->MAIN_MOTD_SETUPPAGE)) {
+	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 		$i = 0;
 		$reg = array();
 		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100) {
@@ -83,7 +83,7 @@ print '</span>';
 print '<br>';
 
 // Show info setup company
-if (empty($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) || !empty($conf->global->MAIN_INFO_SOCIETE_SETUP_TODO_WARNING)) {
+if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
 }
 
@@ -105,10 +105,19 @@ print '<br>';
 
 print '<section class="setupsection">';
 
+// Define $nbmodulesnotautoenabled - TODO This code is at different places
+$nbmodulesnotautoenabled = count($conf->modules);
+$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+foreach ($listofmodulesautoenabled as $moduleautoenable) {
+	if (in_array($moduleautoenable, $conf->modules)) {
+		$nbmodulesnotautoenabled--;
+	}
+}
+
 // Show info setup module
 print img_picto('', 'cog', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
 print '<br><br>'.$langs->trans("SetupDescription4b");
-if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING) ? 1 : $conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)) {	// If only minimal initial modules enabled
+if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningEnableYourModulesApplications"), 'style="padding-right: 6px;"');
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningEnableYourModulesApplications").'</a></div>';

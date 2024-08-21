@@ -121,7 +121,6 @@ class Canvas
 		$controlclassfile = dol_buildpath('/'.$this->dirmodule.'/canvas/'.$this->canvas.'/actions_'.$this->card.'_'.$this->canvas.'.class.php');
 		if (file_exists($controlclassfile)) {
 			// Include actions class (controller)
-			$this->control_file = $controlclassfile;
 			require_once $controlclassfile;
 
 			// Instantiate actions class (controller)
@@ -157,7 +156,7 @@ class Canvas
 	}
 
 	/**
-	 *	Return the template to display canvas (if it exists)
+	 *	Return if a template exists to display as canvas (if it exists)
 	 *
 	 *	@param	string	$action		Action code
 	 *	@return	int		0=Canvas template file does not exist, 1=Canvas template file exists
@@ -225,5 +224,6 @@ class Canvas
 			$ret = $this->control->doActions($action, $id);
 			return $ret;
 		}
+		return null;
 	}
 }

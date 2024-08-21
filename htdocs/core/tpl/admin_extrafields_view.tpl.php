@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2021	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,20 +28,26 @@
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
-
+global $action, $form, $langs;
 
 $langs->load("modulebuilder");
+
+if ($action == 'delete') {
+	$attributekey = GETPOST('attrname', 'aZ09');
+	print $form->formconfirm($_SERVER['PHP_SELF']."?attrname=$attributekey", $langs->trans("DeleteExtrafield"), $langs->trans("ConfirmDeleteExtrafield", $attributekey), "confirm_delete", '', 0, 1);
+}
 
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_view.tpl.php -->
 <?php
 
-$title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '': $textobject).'</span><br>'."\n";
+$title = '<span class="opacitymedium">'.$langs->trans("DefineHereComplementaryAttributes", empty($textobject) ? '' : $textobject).'</span><br>'."\n";
 //if ($action != 'create' && $action != 'edit') {
-$newcardbutton = dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', (($action != 'create' && $action != 'edit') ? 1 : 1));
+$newcardbutton = '';
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewAttribute'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
 /*} else {
 	$newcardbutton = '';
 }*/
@@ -59,6 +66,9 @@ print '<div class="div-table-responsive">';
 print '<table summary="listofattributes" class="noborder centpercent small">';
 
 print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td width="80">&nbsp;</td>';
+}
 print '<td class="left">'.$langs->trans("Position");
 print '<span class="nowrap">';
 print img_picto('A-Z', '1downarrow.png');
@@ -73,7 +83,7 @@ print '<td>'.$langs->trans("ComputedFormula").'</td>';
 print '<td class="center">'.$langs->trans("Unique").'</td>';
 print '<td class="center">'.$langs->trans("Mandatory").'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")).'</td>';
-print '<td class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")).'</td>';
+print '<td class="center">'.$form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
 print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnEdit"), $langs->trans("HelpCssOnEditDesc")).'</td>';
@@ -82,12 +92,15 @@ print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnList"), $la
 if (isModEnabled('multicompany')) {
 	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
-print '<td width="80">&nbsp;</td>';
+// Action column
+if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td width="80">&nbsp;</td>';
+}
 print "</tr>\n";
 
 if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafields->attributes[$elementtype]['type']) && count($extrafields->attributes[$elementtype]['type'])) {
 	foreach ($extrafields->attributes[$elementtype]['type'] as $key => $value) {
-		/*if (! dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
+		/*if (! (int) dol_eval($extrafields->attributes[$elementtype]['enabled'][$key], 1, 1, '1')) {
 			// TODO Uncomment this to exclude extrafields of modules not enabled. Add a link to "Show extrafields disabled"
 			// continue;
 		}*/
@@ -98,6 +111,16 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		}
 
 		print '<tr class="oddeven">';
+		// Actions
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="center nowraponall">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+			}
+			print '</td>'."\n";
+		}
 		// Position
 		print "<td>".dol_escape_htmltag($extrafields->attributes[$elementtype]['pos'][$key])."</td>\n";
 		// Label
@@ -109,6 +132,7 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 		// Type
 		$typetoshow = $type2label[$extrafields->attributes[$elementtype]['type'][$key]];
 		print '<td title="'.dol_escape_htmltag($typetoshow).'" class="tdoverflowmax100">';
+		print getPictoForType($extrafields->attributes[$elementtype]['type'][$key]);
 		print dol_escape_htmltag($typetoshow);
 		print "</td>\n";
 		// Size
@@ -145,18 +169,25 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 				}
 				if (empty($multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]])) {
 					global $mc;
-					$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
-					$multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]] = $mc->label ? $mc->label : $extrafields->attributes[$elementtype]['entityid'][$key];
+					if (is_object($mc) && method_exists($mc, 'getInfo')) {
+						$mc->getInfo($extrafields->attributes[$elementtype]['entityid'][$key]);
+						$multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]] = $mc->label ? $mc->label : $extrafields->attributes[$elementtype]['entityid'][$key];
+					}
 				}
 				print $multicompanylabel_cache[$extrafields->attributes[$elementtype]['entityid'][$key]];
 			}
 			print '</td>';
 		}
 		// Actions
-		print '<td class="right nowraponall">';
-		print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
-		print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
-		print '</td>'."\n";
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			print '<td class="right nowraponall">';
+			print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&attrname='.urlencode($key).'#formeditextrafield">'.img_edit().'</a>';
+			print '&nbsp; <a class="paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&attrname='.urlencode($key).'">'.img_delete().'</a>';
+			if ($extrafields->attributes[$elementtype]['type'][$key] == 'password' && !empty($extrafields->attributes[$elementtype]['param'][$key]['options']) && array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$key]['options'])) {
+				print '&nbsp; <a class="aaa" href="'.$_SERVER["PHP_SELF"].'?action=encrypt&token='.newToken().'&attrname='.urlencode($key).'" title="'.dol_escape_htmltag($langs->trans("ReEncryptDesc")).'">'.img_picto('', 'refresh').'</a>';
+			}
+			print '</td>'."\n";
+		}
 		print "</tr>";
 	}
 } else {

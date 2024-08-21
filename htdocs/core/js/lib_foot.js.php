@@ -65,38 +65,86 @@ if (empty($dolibarr_nocache)) {
 
 
 // Wrapper to show tooltips (html or onclick popup)
-print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */\n";
-print "jQuery(document).ready(function () {\n";
+print "\n/* JS CODE TO ENABLE Tooltips on all object with class classfortooltip */
+jQuery(document).ready(function () {\n";
 
 if (empty($conf->dol_no_mouse_hover)) {
-	print 'jQuery(".classfortooltip").tooltip({
+	print '
+    /* for standard tooltip */
+	jQuery(".classfortooltip").tooltip({
+		tooltipClass: "mytooltip",
 		show: { collision: "flipfit", effect:"toggle", delay:50, duration: 20 },
 		hide: { delay: 250, duration: 20 },
-		tooltipClass: "mytooltip",
 		content: function () {
-    		console.log("Return title for popup");
-            return $(this).prop("title");		/* To force to get title as is */
-   		}
-	});'."\n";
+			console.log("Return title for popup");
+			return $(this).prop("title");		/* To force to get title as is */
+		}
+	});
+
+	var opendelay = 100;
+	var elemtostoretooltiptimer = jQuery("#dialogforpopup");
+	var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+
+	/* for ajax tooltip */
+	target = jQuery(".classforajaxtooltip");
+	target.tooltip({
+		tooltipClass: "mytooltip",
+		show: { collision: "flipfit", effect:"toggle", delay: 0, duration: 20 },
+		hide: { delay: 250, duration: 20 }
+	});
+
+	target.off("mouseover mouseout");
+	target.on("mouseover", function(event) {
+		console.log("we will create timer for ajax call");
+	    event.stopImmediatePropagation();
+		clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+
+		var params = JSON.parse($(this).attr("data-params"));
+		params.token = currenttoken;
+		var elemfortooltip = $(this);
+
+	    elemtostoretooltiptimer.data("openTimeoutId", setTimeout(function() {
+			target.tooltip("close");
+			$.ajax({
+					url:"'. DOL_URL_ROOT.'/core/ajax/ajaxtooltip.php",
+					type: "post",
+					async: true,
+					data: params,
+					success: function(response){
+						// Setting content option
+						console.log("ajax success");
+						elemfortooltip.tooltip("option","content",response);
+						elemfortooltip.tooltip("open");
+					}
+				});
+			 }, opendelay));
+	});
+	target.on("mouseout", function(event) {
+		console.log("mouse out of a .classforajaxtooltip");
+	    event.stopImmediatePropagation();
+	    clearTimeout(elemtostoretooltiptimer.data("openTimeoutId"));
+	    target.tooltip("close");
+	});
+	';
 }
 
 print '
-jQuery(".classfortooltiponclicktext").dialog({
-    closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
-    modal: true,
-    autoOpen: false
-    }).css("z-index: 5000");
-jQuery(".classfortooltiponclick").click(function () {
-    console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
-    if ($(this).attr(\'dolid\')) {
-        obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
-        obj.dialog("open");
-        return false;
-    }
-});'."\n";
-
-print "});\n";
+	jQuery(".classfortooltiponclicktext").dialog({
+		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
+		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
+		modal: true,
+		autoOpen: false
+	}).css("z-index: 5000");
+	jQuery(".classfortooltiponclick").click(function () {
+		console.log("We click on tooltip for element with dolid="+$(this).attr(\'dolid\'));
+		if ($(this).attr(\'dolid\')) {
+			obj=$("#idfortooltiponclick_"+$(this).attr(\'dolid\'));		/* obj is a div component */
+			obj.dialog("open");
+			return false;
+		}
+	});
+});
+';
 
 
 // Wrapper to manage dropdown
@@ -108,6 +156,7 @@ if (!defined('JS_JQUERY_DISABLE_DROPDOWN')) {
                   // Click onto the link "link to" or "hamburger", toggle dropdown
 				  $(document).on(\'click\', \'.dropdown dt a\', function () {
                   	  console.log("toggle dropdown dt a");
+                  	  setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
 
                       //$(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       $(".ulselectedfields").removeClass("open");
@@ -184,7 +233,7 @@ if ($conf->browser->layout != 'phone') {
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
 	jQuery(document).ready(function() {
-				/* If page_y set, we set scollbar with it */
+				/* If page_y set, we set scrollbar with it */
 				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
 				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
 				if (page_y > 0)
@@ -284,11 +333,12 @@ print '
 	jQuery(document).ready(function() {
 		jQuery(".cssforclicktodial").click(function() {
 			event.preventDefault();
-			console.log("We click on a cssforclicktodial class with url="+this.href);
+			var currenttoken = jQuery("meta[name=anti-csrf-currenttoken]").attr("content");
+			console.log("We click on a cssforclicktodial class with href="+this.href);
 			$.ajax({
 			  url: this.href,
 			  type: \'GET\',
-			  data: { token: \''.newToken().'\' }
+			  data: { token: currenttoken }
 			}).done(function(xhr, textStatus, errorThrown) {
 			    /* do nothing */
 			}).fail(function(xhr, textStatus, errorThrown) {

@@ -32,28 +32,28 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
  */
 function dolDispatchToDo($order_id)
 {
-	global $db;
+	global $db, $conf;
 
 	$dispatched = array();
 	$ordered = array();
 
 	// Count nb of quantity dispatched per product
-	$sql = 'SELECT fk_product, SUM(qty) FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+	$sql = 'SELECT fk_product, SUM(qty) as qtydispatched FROM '.MAIN_DB_PREFIX.'receptiondet_batch';
 	$sql .= ' WHERE fk_commande = '.((int) $order_id);
 	$sql .= ' GROUP BY fk_product';
 	$sql .= ' ORDER by fk_product';
 	$resql = $db->query($sql);
 	if ($resql && $db->num_rows($resql)) {
 		while ($obj = $db->fetch_object($resql)) {
-			$dispatched[$obj->fk_product] = $obj;
+			$dispatched[$obj->fk_product] = $obj->qtydispatched;
 		}
 	}
 
 	// Count nb of quantity to dispatch per product
-	$sql = 'SELECT fk_product, SUM(qty) FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
+	$sql = 'SELECT fk_product, SUM(qty) as qtyordered FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet';
 	$sql .= ' WHERE fk_commande = '.((int) $order_id);
 	$sql .= ' AND fk_product > 0';
-	if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+	if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 		$sql .= ' AND product_type = 0';
 	}
 	$sql .= ' GROUP BY fk_product';
@@ -61,13 +61,13 @@ function dolDispatchToDo($order_id)
 	$resql = $db->query($sql);
 	if ($resql && $db->num_rows($resql)) {
 		while ($obj = $db->fetch_object($resql)) {
-			$ordered[$obj->fk_product] = $obj;
+			$ordered[$obj->fk_product] = $obj->qtyordered;
 		}
 	}
 
 	$todispatch = 0;
 	foreach ($ordered as $key => $val) {
-		if ($ordered[$key] > $dispatched[$key]) {
+		if ((empty($ordered[$key]) ? 0 : $ordered[$key]) > (empty($dispatched[$key]) ? 0 : $dispatched[$key])) {
 			$todispatch++;
 		}
 	}
@@ -79,7 +79,7 @@ function dolDispatchToDo($order_id)
 /**
  * dispatchedOrders
  *
- * @return string		Array of id of orders wit all dispathing already done or not required
+ * @return string		Array of id of orders with all dispatching already done or not required
  */
 function dispatchedOrders()
 {
@@ -113,7 +113,7 @@ function dispatchedOrders()
  */
 function ordered($product_id)
 {
-	global $db, $langs, $conf;
+	global $db, $conf;
 
 	$sql = 'SELECT DISTINCT cfd.fk_product, SUM(cfd.qty) as qty FROM';
 	$sql .= ' '.MAIN_DB_PREFIX.'commande_fournisseurdet as cfd ';
@@ -132,17 +132,15 @@ function ordered($product_id)
 	$resql = $db->query($sql);
 	if ($resql) {
 		$exists = $db->num_rows($resql);
-		if ($exists) {
-			$obj = $db->fetch_array($resql);
+		if ($exists && $obj = $db->fetch_array($resql)) {
 			return $obj['qty']; //. ' ' . img_picto('','tick');
 		} else {
 			return null; //img_picto('', 'stcomm-1');
 		}
 	} else {
-		$error = $db->lasterror();
 		dol_print_error($db);
 
-		return $langs->trans('error');
+		return 'Error '.$db->lasterror();
 	}
 }
 
@@ -155,6 +153,7 @@ function ordered($product_id)
 function getProducts($order_id)
 {
 	global $db;
+
 	$order = new CommandeFournisseur($db);
 	$f = $order->fetch($order_id);
 	$products = array();

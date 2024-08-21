@@ -2,7 +2,7 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > dont remove this line it's an ide hack */
+/* <style type="text/css" > don't remove this line it's an ide hack */
 /*
  * Dropdown of user popup
  */
@@ -123,16 +123,16 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	padding-right: 5px;
 }
-div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
 
 
 .dropdown-toggle::after {
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
 	font-weight: 900;
 	font-style: normal;
@@ -156,8 +156,9 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	display: none;
 }
@@ -181,7 +182,8 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 .side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
-	padding: 1px 0 0 0;
+	padding: 0 0 0 0;
+	margin-top: 2px !important;
 	border-top-width: 0;
 	width: 360px;
 }
@@ -207,7 +209,7 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 }
 
 div#topmenu-global-search-dropdown, div#topmenu-bookmark-dropdown, div#topmenu-quickadd-dropdown {
-	<?php if (!getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE')) { ?>
+	<?php if (!$disableimages) { ?>
 		line-height: 46px;
 	<?php } ?>
 }
@@ -290,7 +292,7 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -375,7 +377,7 @@ a.dropdown-item {
 
 .dropdown-item::before {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -396,15 +398,15 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover span::before, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
 /*
-* SEARCH
-*/
+ * SEARCH
+ */
 
 .dropdown-search-input {
 	width: 100%;
@@ -436,9 +438,30 @@ a.dropdown-item {
 	display: none !important;
 }
 
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1em;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+
 /*
  * QUICK ADD
  */
+
 #topmenu-quickadd-dropdown .dropdown-menu {
 	width: 310px !important;
 	color: #444;
@@ -449,6 +472,7 @@ a.dropdown-item {
 }
 
 .quickadd-item {
+	font-size: 1em;
 	padding-top: 6px;
 	padding-bottom: 6px;
 }
@@ -501,6 +525,51 @@ div.quickaddblock:focus {
 	background: <?php print $colorbacklinepair1; ?>;
 }
 
+
+/* for the dropdown on action buttons */
+dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:10px;	/* will be set with js */
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>
+}
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content a.butAction {
+	display: flex;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	text-decoration: underline;
+}
+.dropdown-content .butActionRefused {
+	margin-left: 0;
+	margin-right: 0;
+	border: none;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+
+
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
@@ -509,13 +578,13 @@ div.quickaddblock:focus {
 	}
 
 	.tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
-		margin-left: 5px;
+		margin-left: 8px;
 		right: 0;
 	}
 
 	#topmenu-quickadd-dropdown .dropdown-menu {
 		min-width: 220px;
-		max-width: 235px;
+		max-width: 270px;
 	}
 	#topmenu-bookmark-dropdown .dropdown-menu {
 		min-width: 220px;

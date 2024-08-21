@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 // Security check
-if (!$user->rights->opensurvey->write) {
+if (!$user->hasRight('opensurvey', 'write')) {
 	accessforbidden();
 }
 
@@ -151,7 +151,7 @@ print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.$langs->trans("ExpireDate").'</td><td>';
 
-print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', '', '', '', "add", 1, 0);
+print $form->selectDate($champdatefin ? $champdatefin : -1, 'champdatefin', 0, 0, 0, "add", 1, 0);
 
 print '</tr>'."\n";
 print '</table>'."\n";
@@ -198,7 +198,7 @@ if (GETPOST('choix_sondage')) {
 	print '<input type="hidden" name="choix_sondage" value="'.GETPOST('choix_sondage').'">';
 	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date' ? $langs->trans("TypeDate") : $langs->trans("TypeClassic")).')">';
 } else {
-	// Show image to selecte between date survey or other survey
+	// Show image to select between date survey or other survey
 	print '<br><table>'."\n";
 	print '<tr><td>'.$langs->trans("CreateSurveyDate").'</td><td></td> '."\n";
 	print '<td><input type="image" name="creation_sondage_date" value="'.$langs->trans('CreateSurveyDate').'" src="../img/calendar-32.png"></td></tr>'."\n";

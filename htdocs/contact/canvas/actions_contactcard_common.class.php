@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +19,12 @@
 /**
  *	\file       htdocs/contact/canvas/actions_contactcard_common.class.php
  *	\ingroup    thirdparty
- *	\brief      Fichier de la classe Thirdparty contact card controller (common)
+ *	\brief      File for the class Thirdparty contact card controller (common)
  */
 
 /**
  *	\class      ActionsContactCardCommon
- *	\brief      Classe permettant la gestion des contacts par defaut
+ *	\brief      Common Abstract Class for contact managmeent
  */
 abstract class ActionsContactCardCommon
 {
@@ -70,12 +71,14 @@ abstract class ActionsContactCardCommon
 		}
 		else
 		{*/
-			$object = new Contact($this->db);
+		$object = new Contact($this->db);
 		if (!empty($id)) {
 			$object->fetch($id);
 		}
-			$this->object = $object;
-		//}
+
+		$this->object = $object;
+
+		return $object;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -84,7 +87,7 @@ abstract class ActionsContactCardCommon
 	 *
 	 *  @param	string		$action    Type of action
 	 *  @param	int			$id			Id
-	 *  @return	string					HTML output
+	 *  @return	void
 	 */
 	public function assign_values(&$action, $id)
 	{
@@ -127,7 +130,7 @@ abstract class ActionsContactCardCommon
 			$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
 			// Predefined with third party
-			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) {
+			if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE') || getDolGlobalString('CONTACT_USE_COMPANY_ADDRESS')) {
 				if (dol_strlen(trim($this->object->address)) == 0) {
 					$this->tpl['address'] = $objsoc->address;
 				}
@@ -154,7 +157,7 @@ abstract class ActionsContactCardCommon
 			// Town
 			$this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
 
-			if (dol_strlen(trim($this->object->country_id)) == 0) {
+			if (dol_strlen(trim((string) $this->object->country_id)) == 0) {
 				$this->object->country_id = $objsoc->country_id;
 			}
 
@@ -174,7 +177,7 @@ abstract class ActionsContactCardCommon
 			}
 
 			// Public or private
-			$selectarray = array('0'=>$langs->trans("ContactPublic"), '1'=>$langs->trans("ContactPrivate"));
+			$selectarray = array('0' => $langs->trans("ContactPublic"), '1' => $langs->trans("ContactPrivate"));
 			$this->tpl['select_visibility'] = $form->selectarray('priv', $selectarray, $this->object->priv, 0);
 		}
 
@@ -191,7 +194,7 @@ abstract class ActionsContactCardCommon
 
 			$this->object->load_ref_elements();
 
-			if (isModEnabled('commande')) {
+			if (isModEnabled('order')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForOrders");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_commande ? $this->object->ref_commande : $langs->trans("NoContactForAnyOrder");
 				$i++;
@@ -201,12 +204,12 @@ abstract class ActionsContactCardCommon
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_propal ? $this->object->ref_propal : $langs->trans("NoContactForAnyProposal");
 				$i++;
 			}
-			if (isModEnabled('contrat')) {
+			if (isModEnabled('contract')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForContracts");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_contrat ? $this->object->ref_contrat : $langs->trans("NoContactForAnyContract");
 				$i++;
 			}
-			if (isModEnabled('facture')) {
+			if (isModEnabled('invoice')) {
 				$this->tpl['contact_element'][$i]['linked_element_label'] = $langs->trans("ContactForInvoices");
 				$this->tpl['contact_element'][$i]['linked_element_value'] = $this->object->ref_facturation ? $this->object->ref_facturation : $langs->trans("NoContactForAnyInvoice");
 				$i++;
@@ -247,11 +250,11 @@ abstract class ActionsContactCardCommon
 			$this->tpl['phone_perso'] = dol_print_phone($this->object->phone_perso, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['phone_mobile'] = dol_print_phone($this->object->phone_mobile, $this->object->country_code, 0, $this->object->id, 'AC_TEL');
 			$this->tpl['fax'] = dol_print_phone($this->object->fax, $this->object->country_code, 0, $this->object->id, 'AC_FAX');
-			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 'AC_EMAIL');
+			$this->tpl['email'] = dol_print_email($this->object->email, 0, $this->object->id, 1);
 
 			$this->tpl['visibility'] = $this->object->LibPubPriv($this->object->priv);
 
-			$this->tpl['note'] = nl2br($this->object->note);
+			$this->tpl['note'] = $this->object->note_private;
 		}
 
 		if ($action == 'create_user') {
@@ -276,14 +279,14 @@ abstract class ActionsContactCardCommon
 	/**
 	 *  Assign POST values into object
 	 *
-	 *  @return		string					HTML output
+	 *  @return		void
 	 */
 	private function assign_post()
 	{
 		// phpcs:enable
 		global $langs, $mysoc;
 
-		$this->object->socid = GETPOST("socid", 'int');
+		$this->object->socid = GETPOSTINT("socid");
 		$this->object->lastname			= GETPOST("name");
 		$this->object->firstname		= GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");

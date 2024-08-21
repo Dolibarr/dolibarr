@@ -14,12 +14,12 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "sabre/vobject": "^4.1.0",
-        "sabre/event" : ">=2.0.0, <4.0.0",
-        "sabre/xml"  : "^1.4.0",
-        "sabre/http" : "^4.2.1",
-        "sabre/uri" : "^1.0.1",
+        "php": "^7.1.0 || ^8.0",
+        "sabre/vobject": "^4.2.1",
+        "sabre/event" : "^5.0",
+        "sabre/xml"  : "^2.0.1",
+        "sabre/http" : "^5.0.5",
+        "sabre/uri" : "^2.0",
         "ext-dom": "*",
         "ext-pcre": "*",
         "ext-spl": "*",
@@ -29,24 +29,29 @@
         "ext-date" : "*",
         "ext-iconv" : "*",
         "lib-libxml" : ">=2.7.0",
-        "psr/log": "^1.0"
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
+        "ext-json": "*"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "> 4.8, <6.0.0",
-        "evert/phpdoc-md" : "~0.1.0",
-        "sabre/cs"        : "^1.0.0",
-        "monolog/monolog": "^1.18"
+        "friendsofphp/php-cs-fixer": "^2.19",
+        "monolog/monolog": "^1.27 || ^2.0",
+        "phpstan/phpstan": "^0.12 || ^1.0",
+        "phpstan/phpstan-phpunit": "^1.0",
+        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6"
     },
     "suggest" : {
         "ext-curl" : "*",
-        "ext-pdo" : "*"
+        "ext-pdo" : "*",
+        "ext-imap": "*"
     },
     "autoload": {
         "psr-4" : {
-            "Sabre\\DAV\\"     : "lib/DAV/",
-            "Sabre\\DAVACL\\"  : "lib/DAVACL/",
-            "Sabre\\CalDAV\\"  : "lib/CalDAV/",
-            "Sabre\\CardDAV\\" : "lib/CardDAV/"
+            "Sabre\\" : "lib/"
+        }
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Sabre\\" : "tests/Sabre/"
         }
     },
     "support" : {
@@ -57,12 +62,20 @@
         "bin/sabredav",
         "bin/naturalselection"
     ],
-    "config" : {
-        "bin-dir" : "./bin"
-    },
-    "extra" : {
-        "branch-alias": {
-            "dev-master": "3.1.0-dev"
-        }
+    "scripts": {
+        "phpstan": [
+            "phpstan analyse lib tests"
+        ],
+        "cs-fixer": [
+            "php-cs-fixer fix"
+        ],
+        "phpunit": [
+            "phpunit --configuration tests/phpunit.xml"
+        ],
+        "test": [
+            "composer phpstan",
+            "composer cs-fixer",
+            "composer phpunit"
+        ]
     }
 }

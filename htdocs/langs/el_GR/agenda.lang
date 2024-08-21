@@ -8,8 +8,6 @@ LocalAgenda=Προεπιλεγμένο ημερολόγιο
 ActionsOwnedBy=Ενέργεια χρήστη
 ActionsOwnedByShort=Χρήστης
 AffectedTo=Ανατεθειμένο σε
-Event=Συμβάν
-Events=Συμβάντα
 EventsNb=Αριθμός ενεργειών
 ListOfActions=Λίστα ενεργειών
 EventReports=Αναφορές συμβάντων
@@ -23,7 +21,6 @@ MenuDoneMyActions=Ολοκληρωμένες ενέργειες
 ListOfEvents=Λίστα συμβάντων (προεπιλεγμένο ημερολόγιο)
 ActionsAskedBy=Ενέργειες που ανατέθηκαν από
 ActionsToDoBy=Ενέργειες που ανατέθηκαν σε
-ActionsDoneBy=Ενέργειες που ολοκληρώθηκαν από
 ActionAssignedTo=Ενέργεια ανατεθειμένη σε
 ViewCal=Μηνιαία προβολή
 ViewDay=Προβολή ημέρας
@@ -57,12 +54,12 @@ MemberValidatedInDolibarr=Το μέλος %s επικυρώθηκε
 MemberModifiedInDolibarr=Το μέλος %s τροποποιήθηκε
 MemberResiliatedInDolibarr=Το μέλος %s διαγράφηκε
 MemberDeletedInDolibarr=Το μέλος %s διαγράφηκε
-MemberExcludedInDolibarr=Το μέλος %sεξαιρέθηκε 
+MemberExcludedInDolibarr=Το μέλος %sεξαιρέθηκε
 MemberSubscriptionAddedInDolibarr=Προστέθηκε συνδρομή %s για το μέλος %s
 MemberSubscriptionModifiedInDolibarr=Η συνδρομή %s για το μέλος %s τροποποιήθηκε
 MemberSubscriptionDeletedInDolibarr=Η συνδρομή %s για το μέλος %s διαγράφηκε
 ShipmentValidatedInDolibarr=Η αποστολή %s επικυρώθηκε
-ShipmentClassifyClosedInDolibarr=Η αποστολή %s ταξινομήθηκε ως τιμολογημένη
+ShipmentClassifyClosedInDolibarr=Η αποστολή %s ταξινομήθηκε ως κλειστή
 ShipmentUnClassifyCloseddInDolibarr=Η αποστολή %s ταξινομήθηκε ως ανοικτή ξανά
 ShipmentBackToDraftInDolibarr=Επιστροφή της αποστολης %s σε κατάσταση προσχεδίου
 ShipmentDeletedInDolibarr=Η αποστολή %s διαγράφηκε
@@ -89,6 +86,8 @@ ShippingSentByEMail=Η αποστολή %s στάλθηκε μέσω email
 ShippingValidated= Η αποστολή %s επικυρώθηκε
 InterventionSentByEMail=Η παρέμβαση %s στάλθηκε μέσω email
 ProjectSentByEMail=Το έργο %s στάλθηκε μέσω email
+ProjectDeletedInDolibarr=Το έργο %s διαγράφηκε
+ProjectClosedInDolibarr=Το έργο %s έκλεισε.
 ProposalDeleted=Η προσφορά διαγράφηκε
 OrderDeleted=Η παραγγελία διαγράφηκε
 InvoiceDeleted=Το τιμολόγιο διαγράφηκε
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=Το ΜΟ παράχθηκε
 MRP_MO_DELETEInDolibarr=Το MO διαγράφηκε
 MRP_MO_CANCELInDolibarr=Το MO ακυρώθηκε
 PAIDInDolibarr=%s πληρώθηκε
+ENABLEDISABLEInDolibarr=Ο χρήστης ενεργοποιήθηκε ή απενεργοποιήθηκε
+CANCELInDolibarr=Ακυρώθηκε
 ##### End agenda events #####
 AgendaModelModule=Πρότυπα εγγράφων για συμβάν
 DateActionStart=Ημερομηνία έναρξης
 DateActionEnd=Ημερομηνία λήξης
 AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε τα αποτέλεσμα:
-AgendaUrlOptions3= <b> logina= </b> για περιορισμό της εξόδου σε ενέργειες που ανήκουν σε έναν χρήστη <b>%s</b>.
-AgendaUrlOptionsNotAdmin= <b> logina=! </b> για περιορισμό της εξόδου σε ενέργειες που δεν ανήκουν στον χρήστη <b>%s</b>.
+AgendaUrlOptions3= <b> logina=%s </b> για περιορισμό της εξόδου σε ενέργειες που ανήκουν σε έναν χρήστη <b>%s</b>(χρησιμοποιήστε <b>logina=!%s</b>για συμβάντα που ανήκουν στο χρήστη).
 AgendaUrlOptions4= <b> logint= </b> για περιορισμό της εξόδου σε ενέργειες που έχουν ανατεθεί στον χρήστη <b>%s</b>(ιδιοκτήτης και άλλοι)
 AgendaUrlOptionsProject= <b> έργο=__PROJECT_ID__ </b> για περιορισμό της εξόδου σε ενέργειες που συνδέονται με το έργο <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> για την εξαίρεση αυτόματων συμβάντων.
+AgendaUrlOptionsType=<b>actiontype=%s</b> είτε αυτόματη είτε μη αυτόματη λήψη
+AgendaUrlOptionsCode=<b>actioncode=%s</b> για να λάβετε μόνο συμβάντα με ένα κωδικό
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> για να συμπεριληφθούν εκδηλώσεις εορτών.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> για περιορισμό στα συμβάντα των τελευταίων %s ημερών (η προεπιλογή είναι %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> για περιορισμό στα τελευταία 50 συμβάντα (προεπιλογή και  μέγιστο είναι%s).
 AgendaShowBirthdayEvents=Γενέθλια επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
 Busy=Απασχολημένος
@@ -180,3 +183,25 @@ BrowserPush=Αναδυόμενη ειδοποίηση προγράμματος �
 Reminders=Υπενθυμίσεις
 ActiveByDefault=Ενεργοποιημένο από προεπιλογή
 Until=μέχρι
+DataFromWasMerged=Τα δεδομένα από το %s συγχωνεύτηκαν
+AgendaShowBookcalCalendar=Ημερολόγιο κρατήσεων: %s
+MenuBookcalIndex=Ηλεκτρονικό ραντεβού
+BookcalLabelAvailabilityHelp=Ετικέτα του εύρους διαθεσιμότητας. Για παράδειγμα:<br>Γενική διαθεσιμότητα<br>Διαθεσιμότητα κατά τις διακοπές των Χριστουγέννων
+DurationOfRange=Διάρκεια εύρους
+BookCalSetup = Ρύθμιση ηλεκτρονικού ραντεβού
+BookCalSetupPage = Σελίδα ρύθμισης ηλεκτρονικών ραντεβού
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Τίτλος διεπαφής
+BookCalAbout = Σχετικά με το Ημερολόγιο κρατήσεων
+BookCalAboutPage = Σελίδα Ημερολογίου κρατήσεων
+Calendars=Ημερολόγια
+Availabilities=Διαθεσιμότητες
+NewAvailabilities=Νέες διαθεσιμότητες
+NewCalendar=Νέο ημερολόγιο
+ThirdPartyBookCalHelp=Η εκδήλωση στην οποία έγινε κράτηση σε αυτό το ημερολόγιο θα συνδεθεί αυτόματα με αυτό το τρίτο μέρος.
+AppointmentDuration = Διάρκεια ραντεβού : %s
+BookingSuccessfullyBooked=Η κράτηση σας έχει αποθηκευτεί
+BookingReservationHourAfter=Επιβεβαιώνουμε την κράτηση της συνάντησής μας στην ημερομηνία %s
+BookcalBookingTitle=Διαδικτυακό ραντεβού
+Transparency = Διαφάνεια
+ReadMore = Διαβάστε περισσότερα
+ReadLess = Διαβάστε λιγότερα

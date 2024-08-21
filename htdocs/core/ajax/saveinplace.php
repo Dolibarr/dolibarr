@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 
 /**
  *       \file       htdocs/core/ajax/saveinplace.php
- *       \brief      File to save field value
+ *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -41,6 +42,7 @@ $field = GETPOST('field', 'alpha', 2);
 $element = GETPOST('element', 'alpha', 2);
 $table_element = GETPOST('table_element', 'alpha', 2);
 $fk_element = GETPOST('fk_element', 'alpha', 2);
+$id = $fk_element;
 
 /* Example:
 field:editval_ref_customer (8 first chars will removed to know name of property)
@@ -53,6 +55,28 @@ loadmethod:
 savemethod:
 savemethodname:
 */
+
+// Load object according to $id and $element
+$object = fetchObjectByElement($id, $element);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
 
 
 /*
@@ -103,7 +127,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$newelement = $element;
 	}
 
-	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
+	$_POST['action'] = 'update'; // Keep this. It is a hack so restrictarea will test permissions on write too
 
 	$feature = $newelement;
 	$feature2 = $subelement;
@@ -146,7 +170,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		} elseif ($type == 'datepicker') {
-			$timestamp = GETPOST('timestamp', 'int', 2);
+			$timestamp = GETPOSTINT('timestamp', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
 		} elseif ($type == 'select') {

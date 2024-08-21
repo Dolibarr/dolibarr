@@ -54,7 +54,7 @@ $result = restrictedArea($user, 'variants');
 
 top_httphead('application/json');
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 if (!$id) {
 	print json_encode(array(
@@ -83,4 +83,4 @@ if ($res == -1) {
 	exit();
 }
 
-print json_encode($res);
+print json_encode($res, JSON_PARTIAL_OUTPUT_ON_ERROR);

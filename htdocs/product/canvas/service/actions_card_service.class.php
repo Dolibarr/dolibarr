@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +25,37 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**
- *	Class with controller methods for product canvas
+ *	Class with controller methods for service canvas
  */
 class ActionsCardService
 {
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
+
+	public $dirmodule;
+	public $module;
+	public $label;
+	public $price_base_type;
+	public $accountancy_code_sell;
+	public $accountancy_code_buy;
 	public $targetmodule;
 	public $canvas;
 	public $card;
 
+	public $name;
+	public $definition;
+	public $fieldListName;
+	public $next_prev_filter;
+
+	//! Object container
+	public $object;
+
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
 
 	public $id;
@@ -45,18 +65,30 @@ class ActionsCardService
 	public $price;
 	public $price_min;
 
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+
 
 	/**
 	 *    Constructor
 	 *
-	 *    @param   DoliDB	$db             Handler acces base de donnees
-	 *    @param   string	$targetmodule   Name of directory of module where canvas is stored
+	 *    @param	DoliDB	$db             Database handler
+	 *    @param	string	$dirmodule		Name of directory of module
+	 *    @param	string	$targetmodule	Name of directory where canvas is stored
 	 *    @param   string	$canvas         Name of canvas
 	 *    @param   string	$card           Name of tab (sub-canvas)
 	 */
-	public function __construct($db, $targetmodule, $canvas, $card)
+	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
 		$this->db = $db;
+		$this->dirmodule = $dirmodule;
 		$this->targetmodule = $targetmodule;
 		$this->canvas           = $canvas;
 		$this->card             = $card;
@@ -81,9 +113,8 @@ class ActionsCardService
 	public function assign_values(&$action, $id = 0, $ref = '')
 	{
 		// phpcs:enable
-		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $langs, $user, $mysoc, $canvas;
-		global $form, $formproduct;
+		global $form;
 
 		$tmpobject = new Product($this->db);
 		if (!empty($id) || !empty($ref)) {
@@ -152,7 +183,7 @@ class ActionsCardService
 		$this->tpl['label'] = $this->object->label;
 		$this->tpl['id'] = $this->object->id;
 		$this->tpl['type'] = $this->object->type;
-		$this->tpl['note'] = $this->object->note;
+		$this->tpl['note'] = $this->object->note_private;
 		$this->tpl['seuil_stock_alerte'] = $this->object->seuil_stock_alerte;
 
 		// Duration
@@ -218,7 +249,7 @@ class ActionsCardService
 	 *
 	 *  @return	void
 	 */
-	private function getFieldListCanvas()
+	private function getFieldListCanvas() // @phpstan-ignore-line
 	{
 		global $conf, $langs;
 

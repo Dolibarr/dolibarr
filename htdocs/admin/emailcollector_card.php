@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2022 Charlene Benke	   <charlene@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,6 @@ include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 use Webklex\PHPIMAP\ClientManager;
 use Webklex\PHPIMAP\Exceptions\ConnectionFailedException;
-use Webklex\PHPIMAP\Exceptions\InvalidWhereQueryCriteriaException;
 
 
 use OAuth\Common\Storage\DoliStorage;
@@ -54,17 +54,17 @@ if (!isModEnabled('emailcollector')) {
 $langs->loadLangs(array("admin", "mails", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'emailcollectorcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$operationid = GETPOST('operationid', 'int');
+$operationid = GETPOSTINT('operationid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new EmailCollector($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->emailcollector->dir_output.'/temp/massgeneration/'.$user->id;
@@ -75,7 +75,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// Initialize array of search criterias
+// Initialize array of search criteria
 $search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val) {
@@ -92,7 +92,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -149,19 +149,19 @@ if (GETPOST('addfilter', 'alpha')) {
 	if ($result > 0) {
 		$object->fetchFilters();
 	} else {
-		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+		setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 	}
 }
 
 if ($action == 'deletefilter') {
 	$emailcollectorfilter = new EmailCollectorFilter($db);
-	$emailcollectorfilter->fetch(GETPOST('filterid', 'int'));
+	$emailcollectorfilter->fetch(GETPOSTINT('filterid'));
 	if ($emailcollectorfilter->id > 0) {
 		$result = $emailcollectorfilter->delete($user);
 		if ($result > 0) {
 			$object->fetchFilters();
 		} else {
-			setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
+			setEventMessages($emailcollectorfilter->error, $emailcollectorfilter->errors, 'errors');
 		}
 	}
 }
@@ -192,14 +192,14 @@ if (GETPOST('addoperation', 'alpha')) {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
 
 if ($action == 'updateoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('rowidoperation2', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('rowidoperation2'));
 
 	$emailcollectoroperation->actionparam = GETPOST('operationparam2', 'alphawithlgt');
 
@@ -216,19 +216,19 @@ if ($action == 'updateoperation') {
 			$object->fetchActions();
 		} else {
 			$error++;
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
 if ($action == 'deleteoperation') {
 	$emailcollectoroperation = new EmailCollectorAction($db);
-	$emailcollectoroperation->fetch(GETPOST('operationid', 'int'));
+	$emailcollectoroperation->fetch(GETPOSTINT('operationid'));
 	if ($emailcollectoroperation->id > 0) {
 		$result = $emailcollectoroperation->delete($user);
 		if ($result > 0) {
 			$object->fetchActions();
 		} else {
-			setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
+			setEventMessages($emailcollectoroperation->error, $emailcollectoroperation->errors, 'errors');
 		}
 	}
 }
@@ -242,7 +242,7 @@ if ($action == 'collecttest') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -257,7 +257,7 @@ if ($action == 'confirm_collect') {
 		setEventMessages($object->lastresult, null, 'mesgs');
 	} else {
 		$debuginfo = $object->debuginfo;
-		setEventMessages($object->error, null, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	$action = '';
@@ -274,7 +274,7 @@ $formfile = new FormFile($db);
 
 $help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 
-llxHeader('', 'EmailCollector', $help_url);
+llxHeader('', 'EmailCollector', $help_url, '', 0, 0, '', '', '', 'mod-admin page-emailcollector_card');
 
 // Part to create
 if ($action == 'create') {
@@ -384,28 +384,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
 
-	$morehtml = $langs->trans("NbOfEmailsInInbox").' : ';
+	$morehtml = '';
 
 	$sourcedir = $object->source_directory;
 	$targetdir = ($object->target_directory ? $object->target_directory : ''); // Can be '[Gmail]/Trash' or 'mytag'
 
 	$connection = null;
-	$connectstringserver = '';
+	$connectstringserver = $object->getConnectStringIMAP();	// Note: $object->host has been loaded by the fetch
 	$connectstringsource = '';
 	$connectstringtarget = '';
 
-	// Note: $object->host has been loaded by the fetch
-	$usessl = 1;
-
-	$connectstringserver = $object->getConnectStringIMAP($usessl);
 
 	if ($action == 'scan') {
-		if (!empty($conf->global->MAIN_IMAP_USE_PHPIMAP)) {
+		if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
 			require_once DOL_DOCUMENT_ROOT.'/includes/webklex/php-imap/vendor/autoload.php';
 
 			if ($object->acces_type == 1) {
+				dol_syslog("Scan IMAP with authentication mode = OAUTH2");
+
 				// Mode OAUth2 with PHP-IMAP
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php'; // define $supportedoauth2array
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+				$supportedoauth2array = getSupportedOauth2Array();
+
 				$keyforsupportedoauth2array = $object->oauth_service;
 				if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
 					$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
@@ -438,15 +439,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$credentials = new Credentials(
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_ID'),
 							getDolGlobalString('OAUTH_'.$object->oauth_service.'_SECRET'),
-							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLAUTHORIZE')
+							getDolGlobalString('OAUTH_'.$object->oauth_service.'_URLCALLBACK')
 						);
 						$serviceFactory = new \OAuth\ServiceFactory();
 						$oauthname = explode('-', $OAUTH_SERVICENAME);
 
 						// ex service is Google-Emails we need only the first part Google
 						$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+						'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 
-						// We have to save the token because Google give it only once
+						// We need to save the token because Google provides it only once
 						$refreshtoken = $tokenobj->getRefreshToken();
 
 						//var_dump($tokenobj);
@@ -456,9 +458,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							throw new Exception("Failed to refresh access token: ".$e->getMessage());
 						}
 
+						// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 						$tokenobj->setRefreshToken($refreshtoken);
 						$storage->storeAccessToken($OAUTH_SERVICENAME, $tokenobj);
 					}
+
 					$tokenobj = $storage->retrieveAccessToken($OAUTH_SERVICENAME);
 					if (is_object($tokenobj)) {
 						$token = $tokenobj->getAccessToken();
@@ -488,6 +492,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					'authentication' => "oauth",
 				]);
 			} else {
+				dol_syslog("Scan IMAP with authentication mode = PASS");
+
 				// Mode login/pass with PHP-IMAP
 				$cm = new ClientManager();
 				$client = $cm->make([
@@ -515,8 +521,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					// See github.com/Webklex/php-imap/issues/81
 					$client->connect();
 
+					// Uncomment this to output debug info
+					//$client->getConnection()->enableDebug();	// Add debug
+
 					$f = $client->getFolders(false, $object->source_directory);
-					$nbemail = $f[0]->examine()["exists"];
+					if ($f) {	// $f is Webklex\PHPIMAP\Support\FolderCollection
+						$folder = $f[0];
+						if ($folder instanceof Webklex\PHPIMAP\Folder) {
+							$nbemail = $folder->examine()["exists"];
+						} else {
+							$nbemail = 0;
+						}
+					} else {
+						$nbemail = 0;
+					}
 					$morehtml .= $nbemail;
 				} catch (ConnectionFailedException $e) {
 					$morehtml .= 'ConnectionFailedException '.$e->getMessage();
@@ -534,8 +552,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$connectstringtarget = $connectstringserver.$object->getEncodedUtf7($targetdir);
 					}
 
-					$timeoutconnect = empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT;
-					$timeoutread = empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 20 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT;
+					$timeoutconnect = getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5);
+					$timeoutread = getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 20);
 
 					dol_syslog("imap_open connectstring=".$connectstringsource." login=".$object->login." password=".$object->password." timeoutconnect=".$timeoutconnect." timeoutread=".$timeoutread);
 
@@ -573,11 +591,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$morehtml .= 'IMAP functions not available on your PHP. ';
 			}
 		}
-	} else {
-		$morehtml .= '<a class="flat" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 	}
 
-	$morehtml .= $form->textwithpicto('', 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP'));
+	$morehtml = $form->textwithpicto($langs->trans("NbOfEmailsInInbox"), 'Connect string = '.$connectstringserver.'<br>Option MAIN_IMAP_USE_PHPIMAP = '.getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')).': '.($morehtml !== '' ? $morehtml : '?');
+	$morehtml .= '<a class="flat paddingleft marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=scan&token='.newToken().'">'.img_picto('', 'refresh', 'class="paddingrightonly"').$langs->trans("Refresh").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref.'<div class="refidno">'.$morehtml.'</div>', '', 0, '', '', 0, '');
 
@@ -585,6 +602,16 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
+
+	// Clean info (in view mode only)
+	if ($object->acces_type == 0) {
+		// If authent is using LOGIN and not OAUTHTOKEN, we don't need to show the OAUTH token
+		unset($object->fields['oauth_service']);
+	}
+	if ($object->acces_type == 1) {
+		// If authent is using OAUTHTOKEN, we don't need to show the password
+		unset($object->fields['password']);
+	}
 
 	// Common attributes
 	//$keyforbreak='fieldkeytoswithonsecondcolumn';
@@ -604,7 +631,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Filters
 	print '<div class="div-table-responsive-no-min">';
-	print '<table id="tablelineoffilters" class="noborder margintable noshadow">';
+	print '<table id="tablelineoffilters" class="noborder nobordertop noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
 	print '<td>'.img_picto('', 'filter', 'class="pictofixedwidth opacitymedium"').$form->textwithpicto($langs->trans("Filters"), $langs->trans("EmailCollectorFilterDesc")).'</td><td></td><td></td>';
 	print '</tr>';
@@ -612,32 +639,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
 	$arrayoftypes = array(
-		'from'=>array('label'=>'MailFrom', 'data-placeholder'=>$langs->trans('SearchString')),
-		'to'=>array('label'=>'MailTo', 'data-placeholder'=>$langs->trans('SearchString')),
-		'cc'=>array('label'=>'Cc', 'data-placeholder'=>$langs->trans('SearchString')),
-		'bcc'=>array('label'=>'Bcc', 'data-placeholder'=>$langs->trans('SearchString')),
-		'subject'=>array('label'=>'Subject', 'data-placeholder'=>$langs->trans('SearchString')),
-		'body'=>array('label'=>'Body', 'data-placeholder'=>$langs->trans('SearchString')),
+		'from' => array('label' => 'MailFrom', 'data-placeholder' => $langs->trans('SearchString')),
+		'to' => array('label' => 'MailTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'cc' => array('label' => 'Cc', 'data-placeholder' => $langs->trans('SearchString')),
+		'bcc' => array('label' => 'Bcc', 'data-placeholder' => $langs->trans('SearchString')),
+		'replyto' => array('label' => 'ReplyTo', 'data-placeholder' => $langs->trans('SearchString')),
+		'subject' => array('label' => 'Subject', 'data-placeholder' => $langs->trans('SearchString')),
+		'body' => array('label' => 'Body', 'data-placeholder' => $langs->trans('SearchString')),
 		// disabled because PHP imap_search is not compatible IMAPv4, only IMAPv2
 		//'header'=>array('label'=>'Header', 'data-placeholder'=>'HeaderKey SearchString'),                // HEADER key value
 		//'X1'=>'---',
-		//'notinsubject'=>array('label'=>'SubjectNotIn', 'data-placeholder'=>'SearchString'),
-		//'notinbody'=>array('label'=>'BodyNotIn', 'data-placeholder'=>'SearchString'),
-		'X2'=>'---',
-		'seen'=>array('label'=>'AlreadyRead', 'data-noparam'=>1),
-		'unseen'=>array('label'=>'NotRead', 'data-noparam'=>1),
-		'unanswered'=>array('label'=>'Unanswered', 'data-noparam'=>1),
-		'answered'=>array('label'=>'Answered', 'data-noparam'=>1),
-		'smaller'=>array('label'=>'SmallerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
-		'X3'=>'---',
-		'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
-		'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
-		'withtrackingidinmsgid'=>array('label'=>'WithDolTrackingIDInMsgId', 'data-noparam'=>1),
-		'withouttrackingidinmsgid'=>array('label'=>'WithoutDolTrackingIDInMsgId', 'data-noparam'=>1),
-		'X4'=>'---',
-		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
-		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
+		'X2' => '---',
+		'seen' => array('label' => 'AlreadyRead', 'data-noparam' => 1),
+		'unseen' => array('label' => 'NotRead', 'data-noparam' => 1),
+		'unanswered' => array('label' => 'Unanswered', 'data-noparam' => 1),
+		'answered' => array('label' => 'Answered', 'data-noparam' => 1),
+		'smaller' => array('label' => $langs->trans("Size").' ('.$langs->trans("SmallerThan").")", 'data-placeholder' => $langs->trans('NumberOfBytes')),
+		'larger' => array('label' => $langs->trans("Size").' ('.$langs->trans("LargerThan").")", 'data-placeholder' => $langs->trans('NumberOfBytes')),
+		'X3' => '---',
+		'withtrackingid' => array('label' => 'WithDolTrackingID', 'data-noparam' => 1),
+		'withouttrackingid' => array('label' => 'WithoutDolTrackingID', 'data-noparam' => 1),
+		'withtrackingidinmsgid' => array('label' => 'WithDolTrackingIDInMsgId', 'data-noparam' => 1),
+		'withouttrackingidinmsgid' => array('label' => 'WithoutDolTrackingIDInMsgId', 'data-noparam' => 1),
+		'X4' => '---',
+		'isnotanswer' => array('label' => 'IsNotAnAnswer', 'data-noparam' => 1),
+		'isanswer' => array('label' => 'IsAnAnswer', 'data-noparam' => 1)
 	);
 	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300', 1, '', 2);
 
@@ -647,23 +673,32 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
         console.log("We change a filter");
         if (jQuery("#filtertype option:selected").attr("data-noparam")) {
             jQuery("#rulevalue").attr("placeholder", "");
-            jQuery("#rulevalue").text(""); jQuery("#rulevalue").prop("disabled", true);
-        }
-        else { jQuery("#rulevalue").prop("disabled", false); }
+            jQuery("#rulevalue").text("");
+			jQuery("#rulevalue").prop("disabled", true);
+			jQuery("#rulevaluehelp").addClass("unvisible");
+        } else {
+			jQuery("#rulevalue").prop("disabled", false);
+			jQuery("#rulevaluehelp").removeClass("unvisible");
+		}
         jQuery("#rulevalue").attr("placeholder", (jQuery("#filtertype option:selected").attr("data-placeholder")));
     ';
 	/*$noparam = array();
-	foreach ($arrayoftypes as $key => $value)
-	{
-		if ($value['noparam']) $noparam[] = $key;
-	}*/
+	 foreach ($arrayoftypes as $key => $value)
+	 {
+	 if ($value['noparam']) $noparam[] = $key;
+	 }*/
 	print '})';
 	print '</script>'."\n";
 
-	print '</td><td>';
-	print '<input type="text" name="rulevalue" id="rulevalue">';
+	print '</td><td class="nowraponall">';
+	print '<div class="nowraponall">';
+	print '<input type="text" name="rulevalue" id="rulevalue" class="inline-block valignmiddle">';
+	print '<div class="inline-block valignmiddle unvisible" id="rulevaluehelp">';
+	print img_warning($langs->trans("FilterSearchImapHelp"), '', 'pictowarning classfortooltip');
+	print '</div>';
+	print '</div>';
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button small" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addfilter" id="addfilter" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List filters
 	foreach ($object->filters as $rulefilter) {
@@ -691,7 +726,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="div-table-responsive-no-min">';
 	print '<table id="tablelines" class="noborder noshadow">';
 	print '<tr class="liste_titre nodrag nodrop">';
-	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td><td></td><td></td><td></td>';
+	print '<td>'.img_picto('', 'technic', 'class="pictofixedwidth"').$form->textwithpicto($langs->trans("EmailcollectorOperations"), $langs->trans("EmailcollectorOperationsDesc")).'</td>';
+	print '<td>';
+	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
+	print $form->textwithpicto($langs->trans("Parameters"), $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
+	print '</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	$arrayoftypes = array(
@@ -729,15 +770,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Add operation
 	print '<tr class="oddeven nodrag nodrop">';
 	print '<td>';
-	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth300', 1);
+	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'minwidth150 maxwidth250', 1);
 	print '</td><td>';
-	//print '<input type="text" name="operationparam">';
-	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
-	print $form->textwithpicto('<input type="text" name="operationparam">', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
+	print '<textarea class="centpercent" name="operationparam" rows="3"></textarea>';
 	print '</td>';
 	print '<td>';
 	print '</td>';
-	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button small" value="'.$langs->trans("Add").'"></td>';
+	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button smallpaddingimp" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations
 	$nboflines = count($object->actions);
@@ -745,7 +784,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$fk_element = 'position';
 	$i = 0;
 	foreach ($object->actions as $ruleaction) {
-		$ruleactionobj = new EmailcollectorAction($db);
+		$ruleactionobj = new EmailCollectorAction($db);
 		$ruleactionobj->fetch($ruleaction['id']);
 
 		print '<tr class="drag drop oddeven" id="row-'.$ruleaction['id'].'">';
@@ -767,12 +806,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		print '<td class="wordbreak minwidth300 small">';
 		if ($action == 'editoperation' && $ruleaction['id'] == $operationid) {
-			print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
+			//print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.dol_escape_htmltag($ruleaction['actionparam']).'"><br>';
+			print '<textarea class="centpercent" name="operationparam2" rows="3">';
+			print dol_escape_htmltag($ruleaction['actionparam'], 0, 1);
+			print '</textarea>';
 			print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'">';
 			print '<input type="submit" class="button small button-save" name="saveoperation2" value="'.$langs->trans("Save").'">';
 			print '<input type="submit" class="button small button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 		} else {
-			print dol_escape_htmltag($ruleaction['actionparam']);
+			print dol_nl2br(dol_escape_htmltag($ruleaction['actionparam'], 0, 1));
 		}
 		print '</td>';
 		// Move up/down
