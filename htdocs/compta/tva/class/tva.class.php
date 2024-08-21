@@ -69,7 +69,7 @@ class Tva extends CommonObject
 	public $datev;
 
 	/**
-	 * @var float VAT amount
+	 * @var float|string VAT amount
 	 */
 	public $amount;
 
@@ -163,7 +163,7 @@ class Tva extends CommonObject
 		$now = dol_now();
 
 		// Clean parameters
-		$this->amount = (float) $this->amount;
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->type_payment = (int) $this->type_payment;
 		$this->note = trim($this->note);
@@ -243,7 +243,7 @@ class Tva extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->amount = (float) $this->amount;
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->fk_user_creat = (int) $this->fk_user_creat;
