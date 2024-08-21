@@ -587,7 +587,7 @@ class Tva extends CommonObject
 		$this->db->begin();
 
 		// Clean parameters
-		$this->amount = price2num(trim($this->amount));
+		$this->amount = (float) price2num($this->amount);
 		$this->label = trim($this->label);
 		$this->note = trim($this->note);
 		$this->num_payment = trim($this->num_payment);
