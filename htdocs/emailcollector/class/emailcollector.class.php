@@ -1696,7 +1696,7 @@ class EmailCollector extends CommonObject
 
 				$emailto = $this->decodeSMTPSubject($overview[0]->to);
 
-				$operationslog .= '<br>** Process email #'.dol_escape_htmltag($iforemailloop);
+				$operationslog .= '<br>** Process email #'.dol_escape_htmltag((string) $iforemailloop);
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
@@ -3625,7 +3625,7 @@ class EmailCollector extends CommonObject
 
 		if (!$s->parts) {
 			// simple
-			$this->getpart($mbox, $mid, $s, 0); // pass 0 as part-number
+			$this->getpart($mbox, $mid, $s, '0'); // pass '0' as part-number
 		} else {
 			// multipart: cycle through each part
 			foreach ($s->parts as $partno0 => $p) {
