@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,13 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;
+$j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -60,13 +64,8 @@ require_once '../lib/mymodule.lib.php';
 // Translations
 $langs->loadLangs(array("admin", "mymodule@mymodule"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
-
-// Access control
-if (!$user->admin) {
-	accessforbidden();
-}
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -78,58 +77,64 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
-
 $error = 0;
 $setupnotempty = 0;
+
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
+
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
 
 if (!class_exists('FormSetup')) {
-	// For retrocompatibility Dolibarr < 16.0
-	if (floatval(DOL_VERSION) < 16.0 && !class_exists('FormSetup')) {
-		require_once __DIR__.'/../backport/v16/core/class/html.formsetup.class.php';
-	} else {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
-	}
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 }
-
 $formSetup = new FormSetup($db);
 
+// Access control
+if (!$user->admin) {
+	accessforbidden();
+}
 
-// HTTP HOST
-$item = $formSetup->newItem('NO_PARAM_JUST_TEXT');
+
+// Enter here all parameters in your setup page
+
+// Setup conf for selection of an URL
+$item = $formSetup->newItem('MYMODULE_MYPARAM1');
 $item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
-// Setup conf MYMODULE_MYPARAM1 as a simple string input
-$item = $formSetup->newItem('MYMODULE_MYPARAM1');
-$item->defaultFieldValue = 'default value';
-
-// Setup conf MYMODULE_MYPARAM2 as a simple textarea input but we replace the text of field title
+// Setup conf for selection of a simple string input
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
+$item->defaultFieldValue = 'default value';
+$item->fieldAttr['placeholder'] = 'A placeholder here';
+
+// Setup conf for selection of a simple textarea input but we replace the text of field title
+$item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf MYMODULE_MYPARAM3
-$item = $formSetup->newItem('MYMODULE_MYPARAM3');
+// Setup conf for a selection of a thirdparty
+$item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
-// Setup conf MYMODULE_MYPARAM4 : exemple of quick define write style
-$formSetup->newItem('MYMODULE_MYPARAM4')->setAsYesNo();
+// Setup conf for a selection of a boolean
+$formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
 
-// Setup conf MYMODULE_MYPARAM5
-$formSetup->newItem('MYMODULE_MYPARAM5')->setAsEmailTemplate('thirdparty');
+// Setup conf for a selection of an email template of type thirdparty
+$formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');
 
-// Setup conf MYMODULE_MYPARAM6
-$formSetup->newItem('MYMODULE_MYPARAM6')->setAsSecureKey()->enabled = 0; // disabled
+// Setup conf for a selection of a secured key
+//$formSetup->newItem('MYMODULE_MYPARAM7')->setAsSecureKey();
 
-// Setup conf MYMODULE_MYPARAM7
-$formSetup->newItem('MYMODULE_MYPARAM7')->setAsProduct();
+// Setup conf for a selection of a product
+$formSetup->newItem('MYMODULE_MYPARAM8')->setAsProduct();
 
-$formSetup->newItem('Title')->setAsTitle();
+// Add a title for a new section
+$formSetup->newItem('NewSection')->setAsTitle();
 
-// Setup conf MYMODULE_MYPARAM8
-$item = $formSetup->newItem('MYMODULE_MYPARAM8');
 $TField = array(
 	'test01' => $langs->trans('test01'),
 	'test02' => $langs->trans('test02'),
@@ -138,13 +143,17 @@ $TField = array(
 	'test05' => $langs->trans('test05'),
 	'test06' => $langs->trans('test06'),
 );
-$item->setAsMultiSelect($TField);
-$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM8');
 
-
-// Setup conf MYMODULE_MYPARAM9
+// Setup conf for a simple combo list
 $formSetup->newItem('MYMODULE_MYPARAM9')->setAsSelect($TField);
 
+// Setup conf for a multiselect combo list
+$item = $formSetup->newItem('MYMODULE_MYPARAM10');
+$item->setAsMultiSelect($TField);
+$item->helpText = $langs->transnoentities('MYMODULE_MYPARAM10');
+
+// Setup conf for a category selection
+$formSetup->newItem('MYMODULE_CATEGORY_ID_XXX')->setAsCategory('product');
 
 // Setup conf MYMODULE_MYPARAM10
 $item = $formSetup->newItem('MYMODULE_MYPARAM10');
@@ -165,13 +174,23 @@ $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+$moduledir = 'mymodule';
+$myTmpObjects = array();
+// TODO Scan list of objects to fill this array
+$myTmpObjects['myobject'] = array('label' => 'MyObject', 'includerefgeneration' => 0, 'includedocgeneration' => 0, 'class' => 'MyObject');
+
+$tmpobjectkey = GETPOST('object', 'aZ09');
+if ($tmpobjectkey && !array_key_exists($tmpobjectkey, $myTmpObjects)) {
+	accessforbidden('Bad value for object. Hack attempt ?');
+}
+
 
 /*
  * Actions
  */
 
 // For retrocompatibility Dolibarr < 15.0
-if ( versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
+if (versioncompare(explode('.', DOL_VERSION), array(15)) < 0 && $action == 'update' && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 }
 
@@ -193,29 +212,33 @@ if ($action == 'updateMask') {
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen') {
+} elseif ($action == 'specimen' && $tmpobjectkey) {
 	$modele = GETPOST('module', 'alpha');
-	$tmpobjectkey = GETPOST('object');
 
-	$tmpobject = new $tmpobjectkey($db);
+	$className = $myTmpObjects[$tmpobjectkey]['class'];
+	$tmpobject = new $className($db);
+	'@phan-var-force MyObject $tmpobject';
 	$tmpobject->initAsSpecimen();
 
 	// Search template files
-	$file = ''; $classname = ''; $filefound = 0;
+	$file = '';
+	$className = '';
 	$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 	foreach ($dirmodels as $reldir) {
 		$file = dol_buildpath($reldir."core/modules/mymodule/doc/pdf_".$modele."_".strtolower($tmpobjectkey).".modules.php", 0);
 		if (file_exists($file)) {
-			$filefound = 1;
-			$classname = "pdf_".$modele."_".strtolower($tmpobjectkey);
+			$className = "pdf_".$modele."_".strtolower($tmpobjectkey);
 			break;
 		}
 	}
 
-	if ($filefound) {
+	if ($className !== '') {
 		require_once $file;
 
-		$module = new $classname($db);
+		$module = new $className($db);
+		'@phan-var-force ModelePDFMyObject $module';
+
+		'@phan-var-force ModelePDFMyObject $module';
 
 		if ($module->write_file($tmpobject, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=mymodule-".strtolower($tmpobjectkey)."&file=SPECIMEN.pdf");
@@ -230,7 +253,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setmod') {
 	// TODO Check if numbering module chosen can be activated by calling method canBeActivated
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
 		dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
@@ -241,7 +263,6 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		$tmpobjectkey = GETPOST('object');
 		if (!empty($tmpobjectkey)) {
 			$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 			if (getDolGlobalString($constforval) == "$value") {
@@ -251,7 +272,6 @@ if ($action == 'updateMask') {
 	}
 } elseif ($action == 'setdoc') {
 	// Set or unset default model
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
@@ -267,13 +287,13 @@ if ($action == 'updateMask') {
 		}
 	}
 } elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object');
 	if (!empty($tmpobjectkey)) {
 		$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
 		dolibarr_del_const($db, $constforval, $conf->entity);
 	}
 }
 
+$action = 'edit';
 
 
 /*
@@ -283,44 +303,43 @@ if ($action == 'updateMask') {
 $form = new Form($db);
 
 $help_url = '';
-$page_name = "MyModuleSetup";
+$title = "MyModuleSetup";
 
-llxHeader('', $langs->trans($page_name), $help_url);
+llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-mymodule page-admin');
 
 // Subheader
 $linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "mymodule@mymodule");
+print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "mymodule@mymodule");
 
 // Setup page goes here
 echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><br><br>';
 
 
-if ($action == 'edit') {
+/*if ($action == 'edit') {
+ print $formSetup->generateOutput(true);
+ print '<br>';
+ } elseif (!empty($formSetup->items)) {
+ print $formSetup->generateOutput();
+ print '<div class="tabsAction">';
+ print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+ print '</div>';
+ }
+ */
+if (!empty($formSetup->items)) {
 	print $formSetup->generateOutput(true);
 	print '<br>';
-} elseif (!empty($formSetup->items)) {
-	print $formSetup->generateOutput();
-	print '<div class="tabsAction">';
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-	print '</div>';
 } else {
 	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 
-$moduledir = 'mymodule';
-$myTmpObjects = array();
-// TODO Scan list of objects
-$myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
-
-
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-	if ($myTmpObjectArray['includerefgeneration']) {
+	if (!empty($myTmpObjectArray['includerefgeneration'])) {
 		/*
 		 * Orders Numbering model
 		 */
@@ -352,6 +371,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							require_once $dir.'/'.$file.'.php';
 
 							$module = new $file($db);
+							'@phan-var-force ModeleNumRefMyObject $module';
 
 							// Show modules according to features level
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -364,8 +384,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							if ($module->isEnabled()) {
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
 
-								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-								print $module->info();
+								print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
+								print $module->info($langs);
 								print '</td>';
 
 								// Show example of numbering model
@@ -392,8 +412,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 								print '</td>';
 
-								$nameofclass = $myTmpObjectArray['class'];
-								$mytmpinstance = new $nameofclass($db);
+								$className = $myTmpObjectArray['class'];
+								$mytmpinstance = new $className($db);
+								'@phan-var-force MyObject $mytmpinstance';
 								$mytmpinstance->initAsSpecimen();
 
 								// Info
@@ -428,7 +449,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print "</table><br>\n";
 	}
 
-	if ($myTmpObjectArray['includedocgeneration']) {
+	if (!empty($myTmpObjectArray['includedocgeneration'])) {
 		/*
 		 * Document templates generators
 		 */
@@ -456,8 +477,8 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 			dol_print_error($db);
 		}
 
-		print "<table class=\"noborder\" width=\"100%\">\n";
-		print "<tr class=\"liste_titre\">\n";
+		print '<table class="noborder centpercent">'."\n";
+		print '<tr class="liste_titre">'."\n";
 		print '<td>'.$langs->trans("Name").'</td>';
 		print '<td>'.$langs->trans("Description").'</td>';
 		print '<td class="center" width="60">'.$langs->trans("Status")."</td>\n";
@@ -476,6 +497,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				if (is_dir($dir)) {
 					$handle = opendir($dir);
 					if (is_resource($handle)) {
+						$filelist = array();
 						while (($file = readdir($handle)) !== false) {
 							$filelist[] = $file;
 						}
@@ -486,10 +508,11 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file)) {
 								if (file_exists($dir.'/'.$file)) {
 									$name = substr($file, 4, dol_strlen($file) - 16);
-									$classname = substr($file, 0, dol_strlen($file) - 12);
+									$className = substr($file, 0, dol_strlen($file) - 12);
 
 									require_once $dir.'/'.$file;
-									$module = new $classname($db);
+									$module = new $className($db);
+									'@phan-var-force ModelePDFMyObject $module';
 
 									$modulequalified = 1;
 									if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -501,10 +524,10 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 									if ($modulequalified) {
 										print '<tr class="oddeven"><td width="100">';
-										print (empty($module->name) ? $name : $module->name);
+										print(empty($module->name) ? $name : $module->name);
 										print "</td><td>\n";
 										if (method_exists($module, 'info')) {
-											print $module->info($langs);
+											print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 										} else {
 											print $module->description;
 										}

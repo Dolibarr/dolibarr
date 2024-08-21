@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent   <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 print "<!-- BEGIN PHP TEMPLATE bom/tpl/linkedobjectblock.tpl.php -->\n";
@@ -30,12 +31,15 @@ global $user, $db;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
 $langs->load("bom");
 
+'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type before use
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
+'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type after dol_sort_array which looses typing
 
 $total = 0;
 $ilink = 0;
@@ -65,7 +69,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<td class="linkedcol-date center">'.dol_print_date($objectlink->date_creation, 'day').'</td>';
 	echo '<td class="linkedcol-amount right">';
 	if ($user->hasRight('commande', 'lire')) {
-		$total = $total + $objectlink->total_ht;
+		$total += $objectlink->total_ht;
 		echo price($objectlink->total_ht);
 	}
 	echo '</td>';

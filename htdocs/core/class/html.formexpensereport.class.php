@@ -50,41 +50,43 @@ class FormExpenseReport
 
 
 	/**
-	 *    Retourne la liste deroulante des differents etats d'une note de frais.
-	 *    Les valeurs de la liste sont les id de la table c_expensereport_statuts
+	 *    Return the combobox for the different statuses of an expense report
+	 *    The list values are the ids from the labelStatus.
 	 *
 	 *    @param    int     $selected       preselect status
 	 *    @param    string  $htmlname       Name of HTML select
 	 *    @param    int     $useempty       1=Add empty line
 	 *    @param    int     $useshortlabel  Use short labels
+	 *    @param	string	$morecss		More CSS
 	 *    @return   string                  HTML select with status
 	 */
-	public function selectExpensereportStatus($selected = '', $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0)
+	public function selectExpensereportStatus($selected = 0, $htmlname = 'fk_statut', $useempty = 1, $useshortlabel = 0, $morecss = '')
 	{
 		global $langs;
 
 		$tmpep = new ExpenseReport($this->db);
 
-		$html = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+		$html = '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
 		if ($useempty) {
 			$html.='<option value="-1">&nbsp;</option>';
 		}
-		$arrayoflabels = $tmpep->statuts;
+		$arrayoflabels = $tmpep->labelStatus;
 		if ($useshortlabel) {
-			$arrayoflabels = $tmpep->statuts_short;
+			$arrayoflabels = $tmpep->labelStatusShort;
 		}
 		foreach ($arrayoflabels as $key => $val) {
-			if ($selected != '' && $selected == $key) {
-				$html .= '<option value="'.$key.'" selected>';;
+			if (!empty($selected) && $selected == $key) {
+				$html .= '<option value="'.$key.'" selected>';
 			} else {
 				$html .=  '<option value="'.$key.'">';
 			}
 			$html .= $langs->trans($val);
 			$html .= '</option>';
 		}
-		$html .= '</select>';
-		$html .= ajax_combobox($htmlname);
-		print $html;
+		$html .= '</select>'."\n";
+
+		$html .= ajax_combobox($htmlname, array(), 0, 0, 'resolve', ($useempty < 0 ? (string) $useempty : '-1'), $morecss);
+
 		return $html;
 	}
 
@@ -97,7 +99,7 @@ class FormExpenseReport
 	 *  @param      int     $active         1=Active only, 0=Unactive only, -1=All
 	 *  @return     string                  Select html
 	 */
-	public function selectTypeExpenseReport($selected = '', $htmlname = 'type', $showempty = 0, $active = 1)
+	public function selectTypeExpenseReport($selected = 0, $htmlname = 'type', $showempty = 0, $active = 1)
 	{
 		// phpcs:enable
 		global $langs, $user;

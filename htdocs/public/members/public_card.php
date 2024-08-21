@@ -40,7 +40,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
-// TODO This should be useless. Because entity must be retrieve from object ref and not from url.
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -53,14 +53,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Security check
-if (!isModEnabled('adherent')) {
-	httponly_accessforbidden('Module Memebership no enabled');
+if (!isModEnabled('member')) {
+	httponly_accessforbidden('Module Membership not enabled');
 }
 
 
 $langs->loadLangs(array("main", "members", "companies", "other"));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 
@@ -79,8 +79,8 @@ $extrafields = new ExtraFields($db);
  */
 
 $morehead = '';
-if (!empty($conf->global->MEMBER_PUBLIC_CSS)) {
-	$morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
+	$morehead = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MEMBER_PUBLIC_CSS').'">';
 } else {
 	$morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 }
@@ -93,14 +93,15 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 if ($id > 0) {
 	$res = $object->fetch($id);
 	if ($res < 0) {
-		dol_print_error($db, $object->error); exit;
+		dol_print_error($db, $object->error);
+		exit;
 	}
 	$res = $object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
 	if (empty($object->public)) {
-		 print $langs->trans("ErrorThisMemberIsNotPublic");
+		print $langs->trans("ErrorThisMemberIsNotPublic");
 	} else {
 		print '<table class="public_border" width="100%" cellpadding="3">';
 

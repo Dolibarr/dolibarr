@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Supportsedler
 Module56000Desc=Supportseddel-system for problemer eller forespørsel om service
-
 Permission56001=Se supportsedler
 Permission56002=Endre supportsedler
 Permission56003=Slett supportsedler
 Permission56004=Administrer supportsedler
 Permission56005=Se billetter til alle tredjeparter (ikke effektive for eksterne brukere, alltid begrenset til tredjepart de er avhengige av)
 Permission56006=Eksporter billetter
-
 Tickets=Supportsedler
 TicketDictType=Billett - Typer
-TicketDictCategory=Billett - Grupper
+TicketDictCategory=Supportseddel – Grupper
 TicketDictSeverity=Billett - Alvorlighetsgrader
 TicketDictResolution=Billett - Løsning
-
 TicketTypeShortCOM=Prisforespørsel
-TicketTypeShortHELP=Be om funksjonell hjelp
+TicketTypeShortHELP=Forespørsel om funksjonell hjelp
 TicketTypeShortISSUE=Problem eller feil
 TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Endring- eller forbedringsforespørsel
 TicketTypeShortPROJET=Prosjekt
 TicketTypeShortOTHER=Annet
-
 TicketSeverityShortLOW=Lav
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Høy
 TicketSeverityShortBLOCKING=Kritisk, blokkerende
-
 TicketCategoryShortOTHER=Annet
-
 ErrorBadEmailAddress=Felt '%s' er feil
 MenuTicketMyAssign=Mine supportsedler
 MenuTicketMyAssignNonClosed=Mine åpne supportsedler
 MenuListNonClosed=Åpne supportsedler
-
 TypeContact_ticket_internal_CONTRIBUTOR=Bidragsyter
 TypeContact_ticket_internal_SUPPORTTEC=Tilordnet bruker
 TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hendelsessporing
 TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragsyter
-
 OriginEmail=Rapport-epost
+EmailReplyto=Svar på epost
+EmailReferences=Referanser i e-poster
 Notify_TICKET_SENTBYMAIL=Send billettmelding via e-post
-
 ExportDataset_ticket_1=Supportsedler
-
 # Status
 Read=Les
 Assigned=Tildelt
 NeedMoreInformation=Venter på tilbakemelding på rapporten
 NeedMoreInformationShort=Venter på tilbakemelding
-Answered=Besvarte
 Waiting=Venter
 SolvedClosed=Løst
 Deleted=Slettede
-
 # Dict
-Type=Type
 Severity=Alvorlighetsgrad
 TicketGroupIsPublic=Gruppen er offentlig
 TicketGroupIsPublicDesc=Hvis en billettgruppe er offentlig, vil den være synlig i skjemaet når du oppretter en billett fra det offentlige grensesnittet
-
 # Email templates
 MailToSendTicketMessage=Å sende epost fra supportseddel-melding
-
-#
 # Admin page
-#
 TicketSetup=Oppsett av supportseddel-modul
 TicketSettings=Aktiva oppsettside
-TicketSetupPage=
 TicketPublicAccess=Et offentlig grensesnitt som ikke krever identifikasjon er tilgjengelig på følgende nettadresse
 TicketSetupDictionaries=Typen av billett, alvorlighetsgrad og analytiske koder kan konfigureres fra ordbøker
 TicketParamModule=Oppsett av modulvariabler
 TicketParamMail=Epostoppsett
 TicketEmailNotificationFrom=Avsender e-post for varsling om svar
-TicketEmailNotificationFromHelp=Avsender-e-post som skal brukes til å sende varslings-epost når et svar er gitt inne på backoffice. For eksempel noreply@example.com
+TicketEmailNotificationFromHelp=Avsender-epost som skal brukes til å sende epostvarsel når et svar gis på bakkontoret. For eksempel noreply@example.com
 TicketEmailNotificationTo=Gi beskjed om opprettelse av billett til denne e-postadressen
 TicketEmailNotificationToHelp=Hvis tilstede, vil denne e-postadressen bli varslet om en billettoppretting
 TicketNewEmailBodyLabel=Tekstmelding sendt etter å ha opprettet en billett
@@ -105,10 +84,8 @@ TicketsEmailMustExistHelp=I det offentlige grensesnittet må epostadressen aller
 TicketsShowProgression=Vis billettfremdriften i det offentlige grensesnittet
 TicketsShowProgressionHelp=Aktiver dette alternativet for å skjule fremdriften til billetten på de offentlige grensesnittsidene
 TicketCreateThirdPartyWithContactIfNotExist=Spør navn og firmanavn for ukjente e-poster.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Sjekk om det finnes en tredjepart eller en kontakt for e-posten du har skrevet inn. Hvis ikke, spør om et navn og et firmanavn for å opprette en tredjepart med kontakt.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Sjekk om det finnes en tredjepart eller en kontakt for epost som er angitt. Hvis ikke, spør et navn og et firmanavn for å opprette en tredjepart med kontakt.
 PublicInterface=Offentlig grensesnitt
-TicketUrlPublicInterfaceLabelAdmin=Alternativ nettadresse for offentlig grensesnitt
-TicketUrlPublicInterfaceHelpAdmin=Det er mulig å definere et alias til webserveren og dermed gjøre tilgjengelig det offentlige grensesnittet med en annen nettadresse (serveren må fungere som en proxy på denne nye nettadressen)
 TicketPublicInterfaceTextHomeLabelAdmin=Velkommentekst for det offentlige grensesnittet
 TicketPublicInterfaceTextHome=Du kan opprette en supportseddel eller se eksisterende fra sporingsidentifikasjonen.
 TicketPublicInterfaceTextHomeHelpAdmin=Teksten som er legges her, vises på hjemmesiden til det offentlige grensesnittet.
@@ -145,23 +122,22 @@ TicketsPublicNotificationNewMessage=Send e-post (e) når en ny melding/kommentar
 TicketsPublicNotificationNewMessageHelp=Send epost(er) når en ny melding legges til fra det offentlige grensesnittet (til tildelt bruker eller varslings-eposten til (oppdatering) og/eller varslings-eposten til)
 TicketPublicNotificationNewMessageDefaultEmail=E-postvarsler til (oppdatere)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send en e-post til denne adressen for hver nye meldingsvarsling hvis billetten ikke har en bruker tildelt den, eller hvis brukeren ikke har noen kjent e-post.
-TicketsAutoReadTicket=Merk automatisk billetten som lest (når den er opprettet fra backoffice)
-TicketsAutoReadTicketHelp=Merk automatisk billetten som lest når den opprettes fra backoffice. Når billetten opprettes fra det offentlige grensesnittet, forblir billetten med statusen "Ikke lest".
+TicketsAutoReadTicket=Merk supportseddel automatisk som lest (når opprettet fra backoffice)
+TicketsAutoReadTicketHelp=Merk supportseddel automatisk som lest når den opprettes fra backoffice. Når supportseddel opprettes fra det offentlige grensesnittet, forblir supportseddel med statusen "Ikke lest".
 TicketsDelayBeforeFirstAnswer=En ny billett bør få et første svar før (timer):
 TicketsDelayBeforeFirstAnswerHelp=Hvis en ny billett ikke har fått svar etter denne tidsperioden (i timer), vil et viktig advarselsikon vises i listevisningen.
 TicketsDelayBetweenAnswers=En uløst billett skal ikke være inaktiv i løpet av (timer):
 TicketsDelayBetweenAnswersHelp=Hvis en uavklart billett som allerede har mottatt svar ikke har hatt ytterligere interaksjon etter denne tidsperioden (i timer), vil et advarselsikon vises i listevisningen.
-TicketsAutoNotifyClose=Varsle automatisk tredjepart når du lukker en billett
-TicketsAutoNotifyCloseHelp=Når du lukker en billett, vil det bli foreslått å sende en melding til en av tredjeparts kontakter. Ved massestenging vil en melding bli sendt til en kontakt fra tredjeparten knyttet til billetten.
+TicketsAutoNotifyClose=Gi automatisk beskjed til tredjeparten når du lukker en supportseddel
+TicketsAutoNotifyCloseHelp=Når du lukker en supportseddel, vil det bli foreslått å sende en melding til en av tredjepartskontaktene. Ved massestenging vil en melding bli sendt til en kontakt fra tredjeparten som er knyttet til supportseddelen.
 TicketWrongContact=Forutsatt at kontakt ikke er en del av gjeldende billettkontakter. E-post ikke sendt.
 TicketChooseProductCategory=Produktkategori for billettstøtte
 TicketChooseProductCategoryHelp=Velg produktkategori for billettstøtte. Dette vil bli brukt til å automatisk knytte en kontrakt til en billett.
 TicketUseCaptchaCode=Bruk grafisk kode (CAPTCHA) når du oppretter en billett
 TicketUseCaptchaCodeHelp=Legger til CAPTCHA-verifisering når du oppretter en ny billett.
-
-#
+TicketsAllowClassificationModificationIfClosed=Tillat å endre klassifisering av lukkede supportsedler
+TicketsAllowClassificationModificationIfClosedHelp=Tillat å endre klassifisering (type, supportseddel gruppe, alvorlighetsgrad) selv om supportsedler er stengt.
 # Index & list page
-#
 TicketsIndex=Billettområde
 TicketList=Liste over supportsedler
 TicketAssignedToMeInfos=Denne siden viser Supportseddel-liste som er tilordnet gjeldende bruker
@@ -176,10 +152,7 @@ ShowAsConversation=Vis som samtaleliste
 MessageListViewType=Vis som tabell
 ConfirmMassTicketClosingSendEmail=Send e-post automatisk når du stenger billetter
 ConfirmMassTicketClosingSendEmailQuestion=Vil du varsle tredjeparter når du stenger disse billettene?
-
-#
 # Ticket card
-#
 Ticket=Billett
 TicketCard=Supportseddel-kort
 CreateTicket=Opprett supportseddel
@@ -221,8 +194,8 @@ ConfirmAbandonTicket=Bekrefter du lukkingen av billetten til status 'Forlatt'
 ConfirmDeleteTicket=Vennligst bekreft fjerning av supportseddel
 TicketDeletedSuccess=Supportseddel slettet
 TicketMarkedAsClosed=Supportseddel merket som lukket
-TicketDurationAuto=Beregnet varighet
-TicketDurationAutoInfos=Varighet automatisk beregnet fra relatert intervensjon
+TicketDurationAuto=Varighet av intervensjoner
+TicketDurationAutoInfos=Varighet beregnes automatisk fra relaterte intervensjoner
 TicketUpdated=Supportseddel oppdatert
 SendMessageByEmail=Send melding via epost
 TicketNewMessage=Ny melding
@@ -243,7 +216,7 @@ TimeElapsedSince=Tid forløpt siden
 TicketTimeToRead=Tid forløpt før lesing
 TicketTimeElapsedBeforeSince=Tid som har gått før/siden
 TicketContacts=Kontakter supportseddel
-TicketDocumentsLinked=Dokumenter knyttet til supportseddel 
+TicketDocumentsLinked=Dokumenter knyttet til supportseddel
 ConfirmReOpenTicket=Bekreft gjenåpning av denne supportseddelen?
 TicketMessageMailIntroAutoNewPublicMessage=En ny melding ble lagt ut på billetten med emnet %s:
 TicketAssignedToYou=Supportseddel tildelt
@@ -279,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Det har gått for lang tid siden siste svar 
 TicketNoContractFoundToLink=Det ble ikke funnet noen kontrakt som ble automatisk knyttet til denne billetten. Vennligst koble en kontrakt manuelt.
 TicketManyContractsLinked=Mange kontrakter er automatisk knyttet til denne billetten. Sørg for å bekrefte hvilken som skal velges.
 TicketRefAlreadyUsed=Referansen [%s] er allerede brukt, din nye referanse er [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Billett %s lest av %s
 NoLogForThisTicket=Ingen logg på denne supportseddelen ennå
 TicketLogAssignedTo=Billett %s tildelt %s
 TicketLogPropertyChanged=Billett %s endret: klassifisering fra %s til %s
 TicketLogClosedBy=Billett %s lukket av %s
 TicketLogReopen=Billett %s gjenåpnet
-
-#
 # Public pages
-#
 TicketSystem=Supportseddel-system
 ShowListTicketWithTrackId=Vis supportseddel-liste fra sporings-ID
 ShowTicketWithTrackId=Vis supportseddel fra sporings-ID
@@ -307,13 +274,13 @@ TicketNewEmailBodyCustomer=Dette er en automatisk epost for å bekrefte at en ny
 TicketNewEmailBodyInfosTicket=Informasjon for å overvåke supportseddelen
 TicketNewEmailBodyInfosTrackId=Billettsporingsnummer: %s
 TicketNewEmailBodyInfosTrackUrl=Du kan se fremdriften til billetten ved å klikke på følgende lenke
-TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremdriften til supportseddelen i det spesifikke grensesnittet ved å klikke på følgende lenke
+TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremdriften til supportseddelen i den offentlige portalen ved å klikke på følgende kobling
 TicketCloseEmailBodyInfosTrackUrlCustomer=Du kan se historien til denne billetten ved å klikke på følgende lenke
 TicketEmailPleaseDoNotReplyToThisEmail=Vennligst ikke svar direkte på denne eposten! Bruk koblingen til å svare via grensesnittet.
 TicketPublicInfoCreateTicket=Dette skjemaet gir deg mulighet til å registrere en supportseddel i vårt styringssystem.
-TicketPublicPleaseBeAccuratelyDescribe=Vennligst beskriv spørsmålet ditt nøyaktig. Gi mest mulig informasjon slik at vi kan identifisere forespørselen din på riktig måte.
+TicketPublicPleaseBeAccuratelyDescribe=Vennligst beskriv forespørselen din nøyaktig. Gi mest mulig informasjon slik at vi kan identifisere forespørselen din på riktig måte.
 TicketPublicMsgViewLogIn=Vennligst oppgi supportseddel sporings-ID
-TicketTrackId=Offentlig sporings-ID
+TicketTrackId=Sporings-ID
 OneOfTicketTrackId=En av sporings-IDene dine
 ErrorTicketNotFound=Billett med sporings-ID %s ikke funnet!
 Subject=Subjekt
@@ -331,7 +298,6 @@ NumberOfTicketsByMonth=Antall billetter per måned
 NbOfTickets=Antall billetter
 ExternalContributors=Eksterne bidragsytere
 AddContributor=Legg til ekstern bidragsyter
-
 # notifications
 TicketCloseEmailSubjectCustomer=Billett stengt
 TicketCloseEmailBodyCustomer=Dette er en automatisk melding for å varsle deg om at billett %s nettopp har blitt stengt.
@@ -343,12 +309,8 @@ TicketNotificationRecipient=Meldingsmottaker
 TicketNotificationLogMessage=Loggmelding
 TicketNotificationEmailBodyInfosTrackUrlinternal=Se supportseddel i grensesnitt
 TicketNotificationNumberEmailSent=Melding sendt til e-post: %s
-
 ActionsOnTicket=Hendelser på billett
-
-#
 # Boxes
-#
 BoxLastTicket=Siste opprettede supportsedler
 BoxLastTicketDescription=Siste %s opprettede supportsedler
 BoxLastTicketContent=
@@ -368,3 +330,4 @@ BoxNewTicketVSClose=Antall billetter kontra lukkede billetter (i dag)
 TicketCreatedToday=Billett opprettet i dag
 TicketClosedToday=Billetter lukket i dag
 KMFoundForTicketGroup=Vi fant emner og vanlige spørsmål som kan svare på spørsmålet ditt, takk for at du sjekker dem før du sender inn billetten
+SetTitle=Angi tittel

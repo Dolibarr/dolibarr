@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ if (!defined('NOREQUIREHTML')) {
 if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
-if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
+if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {	// Keep $_GET here, GETPOST is not yet defined
 	define('NOREQUIREHTML', '1');
 }
 
@@ -43,23 +44,25 @@ if (empty($_GET['keysearch']) && !defined('NOREQUIREHTML')) {
 require '../../main.inc.php';
 
 $htmlname = GETPOST('htmlname', 'aZ09');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
+// type can be empty string or 0 or 1
 $type = GETPOST('type', 'int');
-$mode = GETPOST('mode', 'int');
-$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
-$status_purchase = ((GETPOST('status_purchase', 'int') >= 0) ? GETPOST('status_purchase', 'int') : - 1);	// status purchase when mode = customer
-$outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
-$price_level = GETPOST('price_level', 'int');
+$mode = GETPOSTINT('mode');
+$status = ((GETPOSTINT('status') >= 0) ? GETPOSTINT('status') : - 1);	// status buy when mode = customer , status purchase when mode = supplier
+$status_purchase = ((GETPOSTINT('status_purchase') >= 0) ? GETPOSTINT('status_purchase') : - 1);	// status purchase when mode = customer
+$outjson = (GETPOSTINT('outjson') ? GETPOSTINT('outjson') : 0);
+$price_level = GETPOSTINT('price_level');
 $action = GETPOST('action', 'aZ09');
-$id = GETPOST('id', 'int');
-$price_by_qty_rowid = GETPOST('pbq', 'int');
-$finished = GETPOST('finished', 'int');
-$alsoproductwithnosupplierprice = GETPOST('alsoproductwithnosupplierprice', 'int');
+$id = GETPOSTINT('id');
+$price_by_qty_rowid = GETPOSTINT('pbq');
+$finished = GETPOSTINT('finished');
+$alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
-$hidepriceinlabel = GETPOST('hidepriceinlabel', 'int');
+$hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
+$warehouseId = GETPOST('warehouseid', 'int');
 
 // Security check
-restrictedArea($user, 'produit|service', 0, 'product&product');
+restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
 
 
 /*
@@ -67,7 +70,6 @@ restrictedArea($user, 'produit|service', 0, 'product&product');
  */
 
 // print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
-// print_r($_GET);
 
 if ($action == 'fetch' && !empty($id)) {
 	// action='fetch' is used to get product information on a product. So when action='fetch', id must be the product id.
@@ -134,7 +136,7 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Price by qty
-		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price related to qty
+		if (!empty($price_by_qty_rowid) && $price_by_qty_rowid >= 1 && (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) { // If we need a particular price related to qty
 			$sql = "SELECT price, unitprice, quantity, remise_percent";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 			$sql .= " WHERE rowid = ".((int) $price_by_qty_rowid);
@@ -159,7 +161,7 @@ if ($action == 'fetch' && !empty($id)) {
 		}
 
 		// Multiprice (1 price per level)
-		if (!$found && isset($price_level) && $price_level >= 1 && (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))) { // If we need a particular price level (from 1 to 6)
+		if (!$found && isset($price_level) && $price_level >= 1 && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES'))) { // If we need a particular price level (from 1 to 6)
 			$sql = "SELECT price, price_ttc, price_base_type,";
 			$sql .= " tva_tx, default_vat_code";	// Vat rate and code will be used if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on.
 			$sql .= " FROM ".MAIN_DB_PREFIX."product_price ";
@@ -174,11 +176,11 @@ if ($action == 'fetch' && !empty($id)) {
 				$objp = $db->fetch_object($result);
 				if ($objp) {
 					$found = true;
-					$outprice_ht = price($objp->price);			// formated for langage user because is inserted into input field
-					$outprice_ttc = price($objp->price_ttc);	// formated for langage user because is inserted into input field
+					$outprice_ht = price($objp->price);			// formatted for language user because is inserted into input field
+					$outprice_ttc = price($objp->price_ttc);	// formatted for language user because is inserted into input field
 					$outpricebasetype = $objp->price_base_type;
-					if (!empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL)) {
-						$outtva_tx_formated = price($objp->tva_tx);	// formated for langage user because is inserted into input field
+					if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
+						$outtva_tx_formated = price($objp->tva_tx);	// formatted for language user because is inserted into input field
 						$outtva_tx = price2num($objp->tva_tx);		// international numeric
 						$outdefault_vat_code = $objp->default_vat_code;
 					} else {
@@ -195,7 +197,7 @@ if ($action == 'fetch' && !empty($id)) {
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') && !empty($socid)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
-			$prodcustprice = new Productcustomerprice($db);
+			$prodcustprice = new ProductCustomerPrice($db);
 
 			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
 
@@ -228,7 +230,7 @@ if ($action == 'fetch' && !empty($id)) {
 		$product_outdefault_vat_code = $outdefault_vat_code;
 
 		// If we ask the price according to buyer, we change it.
-		if (GETPOST('addalsovatforthirdpartyid', 'int')) {
+		if (GETPOSTINT('addalsovatforthirdpartyid')) {
 			$thirdparty_buyer = new Societe($db);
 			$thirdparty_buyer->fetch($socid);
 
@@ -307,7 +309,7 @@ if ($action == 'fetch' && !empty($id)) {
 	}
 
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, 0, $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, 0, $alsoproductwithnosupplierprice);
 	}

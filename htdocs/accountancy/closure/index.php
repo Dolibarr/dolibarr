@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019       Open-DSI    	    <support@open-dsi.fr>
+/* Copyright (C) 2019-2023  Open-DSI    	    <support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,37 +26,18 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy"));
 
-$validatemonth = GETPOST('validatemonth', 'int');
-$validateyear = GETPOST('validateyear', 'int');
-
 $action = GETPOST('action', 'aZ09');
-
-$object = new BookKeeping($db);
-
-$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
-if (GETPOST("year", 'int')) {
-	$year_start = GETPOST("year", 'int');
-} else {
-	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) {
-		$year_start--; // If current month is lower that starting fiscal month, we start last year
-	}
-}
-$year_end = $year_start + 1;
-$month_end = $month_start - 1;
-if ($month_end < 1) {
-	$month_end = 12;
-	$year_end--;
-}
-$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-$search_date_end = dol_get_last_day($year_end, $month_end);
-$year_current = $year_start;
+$confirm = GETPOST('confirm', 'aZ09');
+$fiscal_period_id = GETPOSTINT('fiscal_period_id');
+$validatemonth = GETPOSTINT('validatemonth');
+$validateyear = GETPOSTINT('validateyear');
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -68,48 +50,105 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('accountancyclosure'));
+
+$object = new BookKeeping($db);
+
+$now = dol_now();
+$fiscal_periods = $object->getFiscalPeriods();
+if (!is_array($fiscal_periods)) {
+	setEventMessages($object->error, $object->errors, 'errors');
+}
+
+$active_fiscal_periods = array();
+$last_fiscal_period = null;
+$current_fiscal_period = null;
+$next_fiscal_period = null;
+$next_active_fiscal_period = null;
+if (is_array($fiscal_periods)) {
+	foreach ($fiscal_periods as $fiscal_period) {
+		if (empty($fiscal_period['status'])) {
+			$active_fiscal_periods[] = $fiscal_period;
+		}
+		if (isset($current_fiscal_period)) {
+			if (!isset($next_fiscal_period)) {
+				$next_fiscal_period = $fiscal_period;
+			}
+			if (!isset($next_active_fiscal_period) && empty($fiscal_period['status'])) {
+				$next_active_fiscal_period = $fiscal_period;
+			}
+		} else {
+			if ($fiscal_period_id == $fiscal_period['id'] || (empty($fiscal_period_id) && $fiscal_period['date_start'] <= $now && $now <= $fiscal_period['date_end'])) {
+				$current_fiscal_period = $fiscal_period;
+			} else {
+				$last_fiscal_period = $fiscal_period;
+			}
+		}
+	}
+}
+
+$accounting_groups_used_for_balance_sheet_account = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT'))), 'strlen');
+$accounting_groups_used_for_income_statement = array_filter(array_map('trim', explode(',', getDolGlobalString('ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT'))), 'strlen');
 
 
 /*
  * Actions
  */
 
-$now = dol_now();
+$parameters = array('fiscal_periods' => $fiscal_periods, 'last_fiscal_period' => $last_fiscal_period, 'current_fiscal_period' => $current_fiscal_period, 'next_fiscal_period' => $next_fiscal_period);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
-if ($action == 'validate_movements_confirm' && $user->hasRight('accounting', 'fiscalyear', 'write')) {
-	$date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-	$date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+if (empty($reshook)) {
+	if (isset($current_fiscal_period) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
+		if ($action == 'confirm_step_1' && $confirm == "yes") {
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
-	$error = 0;
+			$result = $object->validateMovementForFiscalPeriod($date_start, $date_end);
+			if ($result > 0) {
+				setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
 
-	$db->begin();
+				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				exit;
+			} else {
+				setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action = '';
+			}
+		} elseif ($action == 'confirm_step_2' && $confirm == "yes") {
+			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
+			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
+			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
 
-	// Specify as export : update field date_validated on selected month/year
-	$sql = " UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping";
-	$sql .= " SET date_validated = '".$db->idate($now)."'";
-	$sql .= " WHERE entity = " . ((int) $conf->entity);
-	$sql .= " AND doc_date >= '" . $db->idate($date_start) . "'";
-	$sql .= " AND doc_date <= '" . $db->idate($date_end) . "'";
-	$sql .= " AND date_validated IS NULL";
+			$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans("AccountancyClosureCloseSuccessfully"), null, 'mesgs');
 
-	dol_syslog("/accountancy/closure/index.php action=validate_movement_confirm -> Set movements as validated", LOG_DEBUG);
-	$result = $db->query($sql);
-	if (!$result) {
-		$error++;
-	}
+				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				exit;
+			}
+		} elseif ($action == 'confirm_step_3' && $confirm == "yes") {
+			$inventory_journal_id = GETPOSTINT('inventory_journal_id');
+			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+			$date_end = dol_mktime(23, 59, 59, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 
-	if (!$error) {
-		$db->commit();
+			$result = $object->insertAccountingReversal($current_fiscal_period['id'], $inventory_journal_id, $new_fiscal_period_id, $date_start, $date_end);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				setEventMessages($langs->trans("AccountancyClosureInsertAccountingReversalSuccessfully"), null, 'mesgs');
 
-		setEventMessages($langs->trans("AllMovementsWereRecordedAsValidated"), null, 'mesgs');
-
-		header("Location: ".$_SERVER['PHP_SELF']."?year=".$year_start);
-		exit;
-	} else {
-		$db->rollback();
-
-		setEventMessages($langs->trans("NotAllMovementsCouldBeRecordedAsValidated"), null, 'errors');
-		$action = '';
+				header("Location: " . $_SERVER['PHP_SELF'] . (isset($current_fiscal_period) ? '?fiscal_period_id=' . $current_fiscal_period['id'] : ''));
+				exit;
+			}
+		}
 	}
 }
 
@@ -123,118 +162,236 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans('Closure');
 
-$help_url ='EN:Module_Double_Entry_Accounting';
+$help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double#Cl.C3.B4ture_annuelle';
 
 llxHeader('', $title, $help_url);
 
-if ($action == 'validate_movements') {
-	$form_question = array();
+$formconfirm = '';
 
-	$month = isset($conf->global->SOCIETE_FISCAL_MONTH_START) ? intval($conf->global->SOCIETE_FISCAL_MONTH_START) : 1;
-	$date_start = new DateTime(sprintf('%04d-%02d-%02d', $year_start, $month, 1));
-	$date_end = new DateTime(sprintf('%04d-%02d-%02d', $year_start, $month, 1));
-	$date_end->add(new DateInterval('P1Y'));
-	$date_end->sub(new DateInterval('P1D'));
+if (isset($current_fiscal_period)) {
+	if ($action == 'step_1') {
+		$form_question = array();
 
-	$form_question['date_start'] = array(
-		'name' => 'date_start',
-		'type' => 'date',
-		'label' => $langs->trans('DateStart'),
-		'value' => $date_start->format('Y-m-d')
-	);
-	$form_question['date_end'] = array(
-		'name' => 'date_end',
-		'type' => 'date',
-		'label' => $langs->trans('DateEnd'),
-		'value' => $date_end->format('Y-m-d')
-	);
+		$form_question['date_start'] = array(
+			'name' => 'date_start',
+			'type' => 'date',
+			'label' => $langs->trans('DateStart'),
+			'value' => $current_fiscal_period['date_start']
+		);
+		$form_question['date_end'] = array(
+			'name' => 'date_end',
+			'type' => 'date',
+			'label' => $langs->trans('DateEnd'),
+			'value' => $current_fiscal_period['date_end']
+		);
 
-	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?year='.$year_start, $langs->trans('ValidateMovements'), $langs->trans('DescValidateMovements', $langs->transnoentitiesnoconv("RegistrationInAccounting")), 'validate_movements_confirm', $form_question, '', 1, 300);
-	print $formconfirm;
-}
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
+			$langs->trans('ValidateMovements'),
+			$langs->trans('DescValidateMovements', $langs->transnoentitiesnoconv("RegistrationInAccounting")),
+			'confirm_step_1',
+			$form_question,
+			'',
+			1,
+			300
+		);
+	} elseif ($action == 'step_2') {
+		$form_question = array();
 
-$textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current - 1).'">'.img_previous().'</a>';
-$textnextyear = '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_current + 1).'">'.img_next().'</a>';
+		$fiscal_period_arr = array();
+		foreach ($active_fiscal_periods as $info) {
+			$fiscal_period_arr[$info['id']] = $info['label'];
+		}
+		$form_question['new_fiscal_period_id'] = array(
+			'name' => 'new_fiscal_period_id',
+			'type' => 'select',
+			'label' => $langs->trans('AccountancyClosureStep3NewFiscalPeriod'),
+			'values' => $fiscal_period_arr,
+			'default' => isset($next_active_fiscal_period) ? $next_active_fiscal_period['id'] : '',
+		);
+		$form_question['generate_bookkeeping_records'] = array(
+			'name' => 'generate_bookkeeping_records',
+			'type' => 'checkbox',
+			'label' => $langs->trans('AccountancyClosureGenerateClosureBookkeepingRecords'),
+			'value' => 1
+		);
+		$form_question['separate_auxiliary_account'] = array(
+			'name' => 'separate_auxiliary_account',
+			'type' => 'checkbox',
+			'label' => $langs->trans('AccountancyClosureSeparateAuxiliaryAccounts'),
+			'value' => 0
+		);
 
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
+			$langs->trans('AccountancyClosureClose'),
+			$langs->trans('AccountancyClosureConfirmClose'),
+			'confirm_step_2',
+			$form_question,
+			'',
+			1,
+			300
+		);
+	} elseif ($action == 'step_3') {
+		$form_question = array();
 
-print load_fiche_titre($langs->trans("Closure")." ".$textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, '', 'title_accountancy');
+		$form_question['inventory_journal_id'] = array(
+			'name' => 'inventory_journal_id',
+			'type' => 'other',
+			'label' => $langs->trans('InventoryJournal'),
+			'value' => $formaccounting->select_journal(0, "inventory_journal_id", 8, 1, 0, 0)
+		);
+		$fiscal_period_arr = array();
+		foreach ($active_fiscal_periods as $info) {
+			$fiscal_period_arr[$info['id']] = $info['label'];
+		}
+		$form_question['new_fiscal_period_id'] = array(
+			'name' => 'new_fiscal_period_id',
+			'type' => 'select',
+			'label' => $langs->trans('AccountancyClosureStep3NewFiscalPeriod'),
+			'values' => $fiscal_period_arr,
+			'default' => isset($next_active_fiscal_period) ? $next_active_fiscal_period['id'] : '',
+		);
+		$form_question['date_start'] = array(
+			'name' => 'date_start',
+			'type' => 'date',
+			'label' => $langs->trans('DateStart'),
+			'value' => dol_time_plus_duree((int) $current_fiscal_period['date_end'], -1, 'm')
+		);
+		$form_question['date_end'] = array(
+			'name' => 'date_end',
+			'type' => 'date',
+			'label' => $langs->trans('DateEnd'),
+			'value' => $current_fiscal_period['date_end']
+		);
 
-print '<span class="opacitymedium">'.$langs->trans("DescClosure").'</span><br>';
-print '<br>';
-
-
-$y = $year_current;
-
-$buttonvalidate = '<a class="butAction" name="button_validate_movements" href="'.$_SERVER["PHP_SELF"].'?action=validate_movements&year='.$year_start.'">'.$langs->trans("ValidateMovements").'</a>';
-
-print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-for ($i = 1; $i <= 12; $i++) {
-	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-	if ($j > 12) {
-		$j -= 12;
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $current_fiscal_period['id'],
+			$langs->trans('AccountancyClosureAccountingReversal'),
+			$langs->trans('AccountancyClosureConfirmAccountingReversal'),
+			'confirm_step_3',
+			$form_question,
+			'',
+			1,
+			300
+		);
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad($j, 2, '0', STR_PAD_LEFT)).'</td>';
 }
-print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
-if (getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")) {
-	// TODO Analyse is done by finding record not into a closed period
-	$sql = "SELECT COUNT(b.rowid) as detail,";
+// Call Hook formConfirm
+$parameters = array('formConfirm' => $formconfirm, 'fiscal_periods' => $fiscal_periods, 'last_fiscal_period' => $last_fiscal_period, 'current_fiscal_period' => $current_fiscal_period, 'next_fiscal_period' => $next_fiscal_period);
+$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+if (empty($reshook)) {
+	$formconfirm .= $hookmanager->resPrint;
+} elseif ($reshook > 0) {
+	$formconfirm = $hookmanager->resPrint;
+}
+
+// Print form confirm
+print $formconfirm;
+
+$fiscal_period_nav_text = $langs->trans("FiscalPeriod");
+
+$fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($last_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $last_fiscal_period['id'] : '#" class="disabled') . '">' . img_previous() . '</a>';
+$fiscal_period_nav_text .= '&nbsp;<a href="' . (isset($next_fiscal_period) ? $_SERVER["PHP_SELF"] . '?fiscal_period_id=' . $next_fiscal_period['id'] : '#" class="disabled') . '">' . img_next() . '</a>';
+if (!empty($current_fiscal_period)) {
+	$fiscal_period_nav_text .= $current_fiscal_period['label'].' &nbsp;(' . (isset($current_fiscal_period) ? dol_print_date($current_fiscal_period['date_start'], 'day') . '&nbsp;-&nbsp;' . dol_print_date($current_fiscal_period['date_end'], 'day') . ')' : '');
+}
+
+print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
+
+if (empty($current_fiscal_period)) {
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
+}
+
+if (isset($current_fiscal_period)) {
+	// Step 1
+	$head = array();
+	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
+	$head[0][1] = $langs->trans("AccountancyClosureStep1");
+	$head[0][2] = 'step1';
+	print dol_get_fiche_head($head, 'step1', '', -1, '');
+
+	print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
+
+	$count_by_month = $object->getCountByMonthForFiscalPeriod($current_fiscal_period['date_start'], $current_fiscal_period['date_end']);
+	if (!is_array($count_by_month)) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	if (empty($count_by_month['total'])) {
+		$buttonvalidate = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("ValidateMovements") . '</a>';
+	} else {
+		$buttonvalidate = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_1&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("ValidateMovements") . '</a>';
+	}
+	print_barre_liste($langs->trans("OverviewOfMovementsNotValidated"), '', '', '', '', '', '', -1, '', '', 0, $buttonvalidate, '', 0, 1, 0);
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+
+	print '<tr class="liste_titre">';
+	$nb_years = is_array($count_by_month['list']) ? count($count_by_month['list']) : 0;
+	if ($nb_years > 1) {
+		print '<td class="right">' . $langs->trans("Year") . '</td>';
+	}
 	for ($i = 1; $i <= 12; $i++) {
-		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-		if ($j > 12) {
-			$j -= 12;
-		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
+		print '<td class="right">' . $langs->trans('MonthShort' . str_pad((string) $i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
-	$sql .= " COUNT(b.rowid) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-	$sql .= " WHERE b.doc_date >= '".$db->idate($search_date_start)."'";
-	$sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
-	$sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
-	// Loop on each closed period
-	$sql .= " AND b.doc_date BETWEEN 0 AND 0";
-} else {
-	// Analyse closed record using the unitary flag/date on each record
-	$sql = "SELECT COUNT(b.rowid) as detail,";
-	for ($i = 1; $i <= 12; $i++) {
-		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1) - 1;
-		if ($j > 12) {
-			$j -= 12;
+	print '<td class="right"><b>' . $langs->trans("Total") . '</b></td>';
+	print '</tr>';
+
+	if (is_array($count_by_month['list'])) {
+		foreach ($count_by_month['list'] as $info) {
+			print '<tr class="oddeven">';
+			if ($nb_years > 1) {
+				print '<td class="right">' . $info['year'] . '</td>';
+			}
+			for ($i = 1; $i <= 12; $i++) {
+				print '<td class="right">' . ((int) $info['count'][$i]) . '</td>';
+			}
+			print '<td class="right"><b>' . $info['total'] . '</b></td></tr>';
 		}
-		$sql .= "  SUM(".$db->ifsql("MONTH(b.doc_date)=".$j, "1", "0").") AS month".str_pad($j, 2, "0", STR_PAD_LEFT).",";
 	}
-	$sql .= " COUNT(b.rowid) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-	$sql .= " WHERE b.doc_date >= '".$db->idate($search_date_start)."'";
-	$sql .= " AND b.doc_date <= '".$db->idate($search_date_end)."'";
-	$sql .= " AND b.entity IN (".getEntity('bookkeeping', 0).")"; // We don't share object for accountancy
-	$sql .= " AND date_validated IS NULL";
+
+	print "</table>\n";
+	print '</div>';
+
+	print '<br>';
+
+	// Step 2
+	$head = array();
+	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
+	$head[0][1] = $langs->trans("AccountancyClosureStep2");
+	$head[0][2] = 'step2';
+	print dol_get_fiche_head($head, 'step2', '', -1, '');
+
+	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep2Desc") . '</span><br>';
+
+	if (empty($count_by_month['total']) && empty($current_fiscal_period['status'])) {
+		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_2&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureClose") . '</a>';
+	} else {
+		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureClose") . '</a>';
+	}
+	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
+
+	print '<br>';
+
+	// Step 3
+	$head = array();
+	$head[0][0] = DOL_URL_ROOT . '/accountancy/closure/index.php?fiscal_period_id=' . $current_fiscal_period['id'];
+	$head[0][1] = $langs->trans("AccountancyClosureStep3");
+	$head[0][2] = 'step3';
+	print dol_get_fiche_head($head, 'step3', '', -1, '');
+
+	// print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep3Desc") . '</span><br>';
+
+	if (empty($current_fiscal_period['status'])) {
+		$button = '<a class="butActionRefused classfortooltip" href="#">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
+	} else {
+		$button = '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=step_3&fiscal_period_id=' . $current_fiscal_period['id'] . '">' . $langs->trans("AccountancyClosureAccountingReversal") . '</a>';
+	}
+	print_barre_liste('', '', '', '', '', '', '', -1, '', '', 0, $button, '', 0, 1, 0);
 }
-
-dol_syslog('htdocs/accountancy/closure/index.php', LOG_DEBUG);
-$resql = $db->query($sql);
-if ($resql) {
-	$num = $db->num_rows($resql);
-
-	while ($row = $db->fetch_row($resql)) {
-		print '<tr class="oddeven">';
-		for ($i = 1; $i <= 12; $i++) {
-			print '<td class="right">'.$row[$i].'</td>';
-		}
-		print '<td class="right"><b>'.$row[13].'</b></td>';
-		print '</tr>';
-	}
-
-	$db->free($resql);
-} else {
-	print $db->lasterror(); // Show last sql error
-}
-print "</table>\n";
-print '</div>';
 
 // End of page
 llxFooter();

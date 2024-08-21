@@ -6,6 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2012      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // required for use by classes that inherit
 
 
@@ -38,14 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // requir
  */
 abstract class ModelePDFBom extends CommonDocGenerator
 {
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param	DoliDB		$db     			Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return	string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -58,6 +59,21 @@ abstract class ModelePDFBom extends CommonDocGenerator
 
 		return $list;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build a document on disk using the generic odt module.
+	 *
+	 *	@param		BOM			$object				Object source to build document
+	 *	@param		Translate	$outputlangs		Lang output object
+	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *	@return		int<-1,1>						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
+	// phpcs:enable
 }
 
 
@@ -65,93 +81,16 @@ abstract class ModelePDFBom extends CommonDocGenerator
 /**
  *  Parent class to manage numbering of BOMs
  */
-abstract class ModeleNumRefBoms
+abstract class ModeleNumRefBoms extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
+	// No overload code
 
 	/**
-	 *	Return if a module can be used or not
+	 * 	Return next free value
 	 *
-	 *	@return		boolean     true if module can be used
+	 *  @param	Product	$objprod    Object product
+	 *  @param  Bom		$object		Object we need next value for
+	 *  @return string|int<-1,-1>	Next value if OK, -1 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns the default description of the numbering template
-	 *
-	 *	@return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("mrp");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns an example of numbering
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("mrp");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns next assigned value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns version of numbering module
-	 *
-	 *	@return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	abstract public function getNextValue($objprod, $object);
 }

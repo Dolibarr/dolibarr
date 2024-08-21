@@ -3,7 +3,7 @@
 * text=auto
 
 
-# Explicitly declare text files we want to always be normalized and converted 
+# Explicitly declare text files we want to always be normalized and converted
 # to native line endings on checkout.
 *.php text eol=lf
 *.pl text eol=lf
@@ -21,6 +21,7 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 *.conf text eol=lf
+*.neon text eol=lf
 
 .bash_aliases text eol=lf
 

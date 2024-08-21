@@ -46,10 +46,10 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php'
 // Load translation files required by the page
 $langs->loadlangs(array('errors', 'trips'));
 
-$fk_expense = GETPOST('fk_expense', 'int');
-$fk_c_exp_tax_cat = GETPOST('fk_c_exp_tax_cat', 'int');
-$vatrate = GETPOST('vatrate', 'int');
-$qty = GETPOST('qty', 'int');
+$fk_expense = GETPOSTINT('fk_expense');
+$fk_c_exp_tax_cat = GETPOSTINT('fk_c_exp_tax_cat');
+$vatrate = GETPOSTINT('vatrate');
+$qty = GETPOSTINT('qty');
 
 // Security check
 $result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
@@ -59,11 +59,11 @@ $result = restrictedArea($user, 'expensereport', $fk_expense, 'expensereport');
  * View
  */
 
-top_httphead();
+top_httphead('application/json');
+
 $rep = new stdClass();
 $rep->response_status = 0;
 $rep->data = null;
-$rep->error = '';//@todo deprecated use error_message instead
 $rep->errorMessage = '';
 
 
@@ -90,7 +90,6 @@ if (empty($fk_expense) || $fk_expense < 0) {
 			if ($result) {
 				$result = $expense->computeTotalKm($fk_c_exp_tax_cat, $qty, $vatrate);
 				if ($result < 0) {
-					$rep->error = $result;
 					$rep->errorMessage = $langs->trans('errorComputeTtcOnMileageExpense');
 					$rep->response_status = 'error';
 				} else {

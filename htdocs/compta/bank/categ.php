@@ -44,12 +44,12 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $bankcateg = new BankCateg($db);
 
 
 // Security Check  Access Control
-if (!$user->rights->banque->configurer) {
+if (!$user->hasRight('banque', 'configurer')) {
 	accessforbidden();
 }
 
@@ -109,7 +109,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Label").'</td>';
@@ -128,7 +128,7 @@ if ($action != 'edit') {
 
 
 $sql = "SELECT rowid, label";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql .= " FROM ".MAIN_DB_PREFIX."category_bank";
 $sql .= " WHERE entity = ".$conf->entity;
 $sql .= " ORDER BY rowid";
 

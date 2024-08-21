@@ -14,7 +14,7 @@ LastSendings=最近的 %s 份发货单
 StatisticsOfSendings=发货单统计
 NbOfSendings=发货单数量
 NumberOfShipmentsByMonth=每月发货单数量
-SendingCard=发货信息卡
+SendingCard=发货单
 NewSending=新建发货单
 CreateShipment=创建发货单
 QtyShipped=已发货数量
@@ -39,7 +39,7 @@ StatusSendingValidatedShort=已验证
 StatusSendingProcessedShort=已处理
 SendingSheet=发货单
 ConfirmDeleteSending=您确定要删除此发货单吗？
-ConfirmValidateSending=您确定要验证编号为 <b> %s </b> 的发货单吗？
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=您确定要取消此发货单吗？
 DocumentModelMerou=Merou A5 模板
 WarningNoQtyLeftToSend=警告，没有等待发货的产品。
@@ -62,6 +62,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=已收货的未完成采购订单�
 NoProductToShipFoundIntoStock=仓库 <b> %s </b> 中找不到要发货的产品。纠正库存或返回选择另一个仓库。
 WeightVolShort=重量/体积
 ValidateOrderFirstBeforeShipment=您必须先验证订单才能创建发货单。
+NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
 
 # Sending methods
 # ModelDocument
@@ -74,8 +75,12 @@ SumOfProductWeights=产品总重量
 # warehouse details
 DetailWarehouseNumber= 仓库详情
 DetailWarehouseFormat= 重量：%s(数量：%d)
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 
 ShipmentDistribution=发货单分布
 
-ErrorTooManyCombinationBatchcode=行 %s 未配送，因为发现了太多的（%s）仓库、产品、批次代码的组合。
-ErrorNoCombinationBatchcode=行 %s 未配送，因为未找到仓库、产品、批次代码的组合。
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

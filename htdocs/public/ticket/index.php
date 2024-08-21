@@ -9,7 +9,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -17,26 +17,30 @@
  */
 
 /**
- *       \file       htdocs/public/ticket/index.php
- *       \ingroup    ticket
- *       \brief      Public page to add and manage ticket
+ *    \file       htdocs/public/ticket/index.php
+ *    \ingroup    ticket
+ *    \brief      Public page to add and manage tickets
  */
 
 if (!defined('NOREQUIREMENU')) {
 	define('NOREQUIREMENU', '1');
 }
+
 if (!defined('NOLOGIN')) {
 	define('NOLOGIN', '1');       // If this page is public (can be called outside logged session)
 }
+
 if (!defined('NOIPCHECK')) {
 	define('NOIPCHECK', '1');     // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
+
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
-// For MultiCompany module.
+// For MultiCompany module
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -59,8 +63,9 @@ $track_id = GETPOST('track_id', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $suffix = "";
 
+// Check access to Module(s)
 if (!isModEnabled('ticket')) {
-	httponly_accessforbidden('Module Ticket not enabled');
+	httponly_accessforbidden('Module Ticket is not enabled');
 }
 
 
@@ -75,10 +80,11 @@ if (!getDolGlobalString('TICKET_ENABLE_PUBLIC_INTERFACE')) {
 	print $langs->trans('TicketPublicInterfaceForbidden');
 	exit;
 }
-$arrayofjs = array();
-$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/ticket/').'css/styles.css.php');
 
-llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
+$arrayofjs = array();
+$arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/ticket/').'css/styles.css.php');
+
+llxHeaderTicket($langs->trans('Tickets'), "", 0, 0, $arrayofjs, $arrayofcss);
 
 print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
@@ -89,14 +95,16 @@ $baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/publ
 
 print '<div class="ticketform">';
 print '<a href="'.$baseurl . 'create_ticket.php?action=create'.(!empty($entity) && isModEnabled('multicompany')?'&entity='.$entity:'').'&token='.newToken().'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_create bigrounded"><span class="fa fa-15 fa-plus-circle valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("CreateTicket")).'</div></a>';
-print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-15 fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';
-print '<a href="view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
+print '<a href="list.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded"><span class="fa fa-15 fa-list-alt valignmiddle btnTitle-icon"></span><br>'.dol_escape_htmltag($langs->trans("ViewMyTicketList")).'</div></a>';
+print '<a href="view.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener" class="butAction marginbottomonly"><div class="index_display bigrounded">'.img_picto('', 'ticket', 'class="fa-15"').'<br>'.dol_escape_htmltag($langs->trans("ShowTicketWithTrackId")).'</div></a>';
 print '<div class="clearboth"></div>';
-print '</div>';
-print '</div>';
+print '</div>';  // ends '<div class="ticketform">';
+print '</div>';  // ends '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
-// End of page
-htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+if (getDolGlobalInt('TICKET_SHOW_COMPANY_FOOTER')) {
+	// End of page
+	htmlPrintOnlineFooter($mysoc, $langs, 0, $suffix, $object);
+}
 
 llxFooter('', 'public');
 

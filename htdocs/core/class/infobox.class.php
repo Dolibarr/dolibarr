@@ -118,7 +118,7 @@ class InfoBox
 			$sql .= " WHERE d.entity IN (0, ".$conf->entity.")";
 		}
 
-		dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
+		dol_syslog(self::class."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 		$resql = $dbs->query($sql);
 		if ($resql) {
 			$num = $dbs->num_rows($resql);
@@ -219,7 +219,7 @@ class InfoBox
 	 *  @param	int		$zone       	Name of area (0 for Homepage, ...)
 	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
 	 *  @param  int     $userid     	Id of user
-	 *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
+	 *  @return int                   	Return integer <0 if KO, 0=Nothing done, > 0 if OK
 	 */
 	public static function saveboxorder($dbs, $zone, $boxorder, $userid = 0)
 	{

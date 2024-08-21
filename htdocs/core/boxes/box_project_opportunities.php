@@ -4,6 +4,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +23,19 @@
 /**
  *  \file       htdocs/core/boxes/box_project_opportunities.php
  *  \ingroup    project
- *  \brief      Module to show Projet activity of the current Year
+ *  \brief      Module to show Project opportunities of the current Year
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
- * Class to manage the box to show last projet
+ * Class to manage the box to show project opportunities
  */
 class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
-	public $boximg = "object_projectpub";
+	public $boximg  = "object_projectpub";
 	public $boxlabel;
-	//var $depends = array("projet");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
+	// var $depends = array("projet");
 
 	/**
 	 *  Constructor
@@ -79,7 +70,7 @@ class box_project_opportunities extends ModeleBoxes
 		$this->max = $max;
 
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
-		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
+		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
 		$i = 0;
 		// list the summary of the orders
@@ -90,11 +81,11 @@ class box_project_opportunities extends ModeleBoxes
 			$companystatic = new Societe($this->db);
 
 			$socid = 0;
-			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
+			//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 
 			// Get list of project id allowed to user (in a string list separated by coma)
 			$projectsListId = '';
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 			}
 
@@ -109,7 +100,7 @@ class box_project_opportunities extends ModeleBoxes
 			$sql .= " AND p.fk_opp_status > 0";
 			$sql .= " AND p.fk_statut IN (".$this->db->sanitize($projectstatic::STATUS_DRAFT.",".$projectstatic::STATUS_VALIDATED).")"; // draft and open projects
 			//$sql .= " AND p.fk_statut = ".((int) $projectstatic::STATUS_VALIDATED); // Only open projects
-			if (empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$sql .= " AND p.rowid IN (".$this->db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
 			}
 
@@ -156,7 +147,7 @@ class box_project_opportunities extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array('td' => 'class="amount right nowraponall"', 'text' => ($projectstatic->opp_amount ? price($projectstatic->opp_amount) : ''));
 
-					$this->info_box_contents[$i][] = array('td' => 'class="nowraponall"', 'asis'=>1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
+					$this->info_box_contents[$i][] = array('td' => 'class="nowraponall"', 'asis' => 1, 'text' => ($projectstatic->opp_status_code ? $langs->trans("OppStatus".$projectstatic->opp_status_code).' ' : '').'<span class="opacitymedium small">('.round($projectstatic->opp_percent).'%)</span>');
 
 					$this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => $projectstatic->getLibStatut(3));
 
@@ -201,9 +192,9 @@ class box_project_opportunities extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

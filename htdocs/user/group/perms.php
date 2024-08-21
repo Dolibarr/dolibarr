@@ -39,12 +39,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $module = GETPOST('module', 'alpha');
-$rights = GETPOST('rights', 'int');
-$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
+$rights = GETPOSTINT('rights');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'groupperms'; // To manage different context of search
 
 if (!isset($id) || empty($id)) {
 	accessforbidden();
@@ -56,13 +56,17 @@ $canreadperms = ($user->admin || $user->hasRight("user", "user", "read"));
 $caneditperms = ($user->admin || $user->hasRight("user", "user", "write"));
 // Advanced permissions
 $advancedpermsactive = false;
-if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$advancedpermsactive = true;
 	$canreadperms = ($user->admin || ($user->hasRight("user", "group_advance", "read") && $user->hasRight("user", "group_advance", "readperms")));
 	$caneditperms = ($user->admin || $user->hasRight("user", "group_advance", "write"));
 }
 
 // Security check
+$socid = 0;
+if (isset($user->socid) && $user->socid > 0) {
+	$socid = $user->socid;
+}
 //$result = restrictedArea($user, 'user', $id, 'usergroup', '');
 if (!$canreadperms) {
 	accessforbidden();
@@ -70,19 +74,19 @@ if (!$canreadperms) {
 
 $object = new UserGroup($db);
 $object->fetch($id);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('groupperms', 'globalcard'));
 
 
-/**
+/*
  * Actions
  */
 
-$parameters = array();
+$parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -102,7 +106,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
@@ -118,7 +122,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 }
 
@@ -131,7 +135,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_perms');
 
 if ($object->id > 0) {
 	$head = group_prepare_head($object);
@@ -193,8 +197,8 @@ if ($object->id > 0) {
 			if (!isset($permsgroupbyentity[$obj->entity])) {
 				$permsgroupbyentity[$obj->entity] = array();
 			}
-				array_push($permsgroupbyentity[$obj->entity], $obj->id);
-				$i++;
+			array_push($permsgroupbyentity[$obj->entity], $obj->id);
+			$i++;
 		}
 		$db->free($result);
 	} else {
@@ -210,10 +214,8 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'id', $linkback, $user->hasRight("user", "user", "read") || $user->admin);
 
 	print '<div class="fichecenter">';
-	print '<div class="fichehalfleft">';
+
 	print '<div class="underbanner clearboth"></div>';
-
-
 	print '<table class="border centpercent tableforfield">';
 
 	// Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
@@ -227,7 +229,7 @@ if ($object->id > 0) {
 	}
 
 	// Multicompany
-	if (isModEnabled('multicompany') && is_object($mc) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity) {
+	if (isModEnabled('multicompany') && is_object($mc) && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && $user->admin && !$user->entity) {
 		$mc->getInfo($object->entity);
 		print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
 		print '<td class="valeur">'.dol_escape_htmltag($mc->label);
@@ -244,7 +246,7 @@ if ($object->id > 0) {
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 	print '</table>';
-	print '</div>';
+
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
@@ -290,7 +292,7 @@ if ($object->id > 0) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 	$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
 	$sql .= " AND r.entity = ".((int) $entity);
-	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+	if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 		$sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is disable
 	}
 	$sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
@@ -298,7 +300,8 @@ if ($object->id > 0) {
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
-		$i = 0;$j = 0;
+		$i = 0;
+		$j = 0;
 		$oldmod = '';
 
 		$cookietohidegroup = (empty($_COOKIE["DOLUSER_PERMS_HIDE_GRP"]) ? '' : preg_replace('/^,/', '', $_COOKIE["DOLUSER_PERMS_HIDE_GRP"]));
@@ -316,7 +319,7 @@ if ($object->id > 0) {
 			$objMod = $modules[$obj->module];
 
 			if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-				$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+				$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 			} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 				$ishidden = 1;
 			} else {
@@ -325,12 +328,12 @@ if ($object->id > 0) {
 			$isexpanded = ! $ishidden;
 
 			// Break found, it's a new module to catch
-			if (isset($obj->module) && ($oldmod <> $obj->module)) {
+			if (isset($obj->module) && ($oldmod != $obj->module)) {
 				$oldmod = $obj->module;
 
 				$j++;
 				if (GETPOSTISSET('forbreakperms_'.$obj->module)) {
-					$ishidden = GETPOST('forbreakperms_'.$obj->module, 'int');
+					$ishidden = GETPOSTINT('forbreakperms_'.$obj->module);
 				} elseif (in_array($j, $cookietohidegrouparray)) {	// If j is among list of hidden group
 					$ishidden = 1;
 				} else {
@@ -344,7 +347,7 @@ if ($object->id > 0) {
 				// Show break line
 				print '<tr class="oddeven trforbreakperms" data-hide-perms="'.$obj->module.'" data-j="'.$j.'">';
 				// Picto and label of module
-				print '<td class="maxwidthonsmartphone tdoverflowonsmartphone tdforbreakperms" data-hide-perms="'.$obj->module.'">';
+				print '<td class="maxwidthonsmartphone tdoverflowmax200 tdforbreakperms" data-hide-perms="'.$obj->module.'" title="'.dol_escape_htmltag($objMod->getName()).'">';
 				print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
 				print '<a name="'.$objMod->getName().'"></a>';
 				print '</td>';
@@ -381,7 +384,7 @@ if ($object->id > 0) {
 
 
 			// Picto and label of module
-			print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
+			print '<td class="maxwidthonsmartphone tdoverflowmax200">';
 			print '<input type="hidden" name="forbreakperms_'.$obj->module.'" id="idforbreakperms_'.$obj->module.'" css="cssforfieldishiden" data-j="'.$j.'" value="'.($isexpanded ? '0' : "1").'">';
 			//print img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
 			print '</td>';
@@ -423,10 +426,20 @@ if ($object->id > 0) {
 			}
 
 			// Description of permission (2 columns)
-			$permlabel = (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ($langs->trans("PermissionAdvanced".$obj->id) != ("PermissionAdvanced".$obj->id)) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != ("Permission".$obj->id)) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
+			$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 			print '<td>';
 			print $permlabel;
-			if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS)) {
+			$idtouse = $obj->id;
+			if (in_array($idtouse, array(121, 122, 125, 126))) {	// Force message for the 3 permission on third parties
+				$idtouse = 122;
+			}
+			if ($langs->trans("Permission".$idtouse.'b') != "Permission".$idtouse.'b') {
+				print '<br><span class="opacitymedium">'.$langs->trans("Permission".$idtouse.'b').'</span>';
+			}
+			if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+				print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+			}
+			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 				if (preg_match('/_advance$/', $obj->perms)) {
 					print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';
 				}
@@ -437,7 +450,7 @@ if ($object->id > 0) {
 			if ($user->admin) {
 				print '<td class="right">';
 				$htmltext = $langs->trans("ID").': '.$obj->id;
-				$htmltext .= '<br>'.$langs->trans("Permission").': user->rights->'.$obj->module.'->'.$obj->perms.($obj->subperms ? '->'.$obj->subperms : '');
+				$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
 				print $form->textwithpicto('', $htmltext);
 				//print '<span class="opacitymedium">'.$obj->id.'</span>';
 				print '</td>';

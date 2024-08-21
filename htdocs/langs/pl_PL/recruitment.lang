@@ -4,40 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Rekrutacja
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Zarządzaj i śledź kampanie rekrutacyjne na nowe stanowiska pracy
-
-#
 # Admin page
-#
 RecruitmentSetup = Konfiguracja rekrutacji
-Settings = Ustawienia
 RecruitmentSetupPage = Wpisz tutaj ustawienia głównych opcji modułu rekrutacyjnego
 RecruitmentArea=Obszar rekrutacji
 PublicInterfaceRecruitmentDesc=Publiczne strony ofert pracy to publiczne adresy URL służące do wyświetlania otwartych ofert pracy i odpowiadania na nie. Dla każdego otwartego stanowiska istnieje jeden link, znajdujący się w każdym rekordzie pracy.
 EnablePublicRecruitmentPages=Włącz publiczne strony otwartych ofert pracy
 
-#
-# About page
-#
-About = O
-RecruitmentAbout = O rekrutacji
-RecruitmentAboutPage = Rekrutacja o stronie
 NbOfEmployeesExpected=Oczekiwana liczba pracowników
 JobLabel=Etykieta stanowiska pracy
 WorkPlace=Miejsce pracy
@@ -49,7 +34,6 @@ PositionToBeFilled=Stanowisko
 PositionsToBeFilled=Stanowiska pracy
 ListOfPositionsToBeFilled=Lista stanowisk pracy
 NewPositionToBeFilled=Nowe stanowiska pracy
-
 JobOfferToBeFilled=Stanowisko do obsadzenia
 ThisIsInformationOnJobPosition=Informacje o stanowisku do obsadzenia
 ContactForRecruitment=Kontakt w sprawie rekrutacji
@@ -58,15 +42,15 @@ ToUseAGenericEmail=Aby użyć ogólnej wiadomości e-mail. Jeśli nie zostanie z
 NewCandidature=Nowa aplikacja
 ListOfCandidatures=Lista aplikacji
 Remuneration=Wypłata
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+RequestedRemuneration=Żądane wynagrodzenie
+ProposedRemuneration=Proponowane wynagrodzenie
 ContractProposed=Proponowana umowa
 ContractSigned=Umowa podpisana
 ContractRefused=Umowa została odrzucona
 RecruitmentCandidature=Podanie
 JobPositions=Stanowiska pracy
 RecruitmentCandidatures=Aplikacje
-InterviewToDo=Contacts to follow
+InterviewToDo=Kontakty, które warto śledzić
 AnswerCandidature=Odpowiedź aplikacji
 YourCandidature=Twoje zgłoszenie
 YourCandidatureAnswerMessage=Dziękuję za zgłoszenie. <br> ...
@@ -75,5 +59,8 @@ JobClosedTextCanceled=Stanowisko jest zamknięte.
 ExtrafieldsJobPosition=Atrybuty uzupełniające (stanowiska pracy)
 ExtrafieldsApplication=Atrybuty uzupełniające (np. podania o pracę)
 MakeOffer=Złożyć ofertę
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+WeAreRecruiting=Prowadzimy rekrutację. Oto lista wolnych stanowisk do obsadzenia...
+NoPositionOpen=W tej chwili nie ma żadnych wolnych stanowisk
+ConfirmClose=Potwierdź anulowanie
+ConfirmCloseAsk=Czy na pewno chcesz anulować tę kandydaturę rekrutacyjną?
+Recruitment=Rekrutacja

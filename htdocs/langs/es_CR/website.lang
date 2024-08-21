@@ -1,2 +1,34 @@
 # Dolibarr language file - Source file is en_US - website
+WebsiteSetupDesc=Crea aquí los sitios web que deseas utilizar. A continuación, vaya a los sitios web de menú para editarlos.
+WEBSITE_PAGENAME=Nombre de página/alias
+WEBSITE_ALIASALTDesc=Utilice aquí la lista de otros nombres/alias para que también se pueda acceder a la página usando estos otros nombres/alias (por ejemplo, el nombre anterior después de cambiar el nombre del alias para mantener el enlace posterior en funcionamiento). La sintaxis es:<br> alternativename1, alternativename2, ...
+WEBSITE_CSS_URL=URL del archivo CSS externo
+WEBSITE_HTACCESS=Sitio web .htaccess archivo
+PageNameAliasHelp=Nombre o alias de la página.<br> Este alias también se usa para forjar una URL SEO cuando el sitio web se ejecuta desde un host virtual de un servidor web (como Apacke, Nginx, ...). Use el botón "<strong>%s</strong>" para editar este alias.
+EditCss=Editar propiedades web
+EditMenu=Editar menú
+Webpage=Página web/contenedor
+RequestedPageHasNoContentYet=La página solicitada con id %s todavía no tiene contenido o el archivo de caché .tpl.php fue eliminado. Editar el contenido de la página para resolver esto.
+PageDeleted=Página/Contenair '%s' del sitio web %s eliminado
+ViewSiteInNewTab=Ver el sitio en una nueva pestaña
+ViewPageInNewTab=Ver la página en una nueva pestaña
+SetAsHomePage=Establecer como página de inicio
+RealURL=URL real
+ViewWebsiteInProduction=Ver sitio web utilizando las URL de inicio
+SetHereVirtualHost=<u> Úselo con Apache / NGinx / ... </u> <br> Cree en su servidor web (Apache, Nginx, ...) un host virtual dedicado con PHP habilitado y un directorio raíz en <br><strong>%s</strong>
+CheckVirtualHostPerms=Compruebe también que el usuario del host virtual (por ejemplo, www-data) tiene permisos <strong> %s </strong> en archivos en <br><strong>%s</strong>
 ReadPerm=Leer
+PreviewSiteServedByWebServer=<u>Obtenga una vista previa de %s en una nueva pestaña. </u><br><br> El %s será servido por un servidor web externo (como Apache, Nginx, IIS). Debe instalar y configurar este servidor antes de apuntar al directorio:<br><strong>%s</strong><br> URL servida por un servidor externo: <br><strong>%s</strong>
+VirtualHostUrlNotDefined=URL del host virtual servido por el servidor web externo no definido
+SyntaxHelp=Ayuda sobre consejos de sintaxis específicos
+YouCanEditHtmlSource2=Para una imagen compartida con un enlace para compartir (acceso abierto usando la clave hash para compartir del archivo), la sintaxis es: <br> <strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+SiteAdded=Sitio web añadido
+OrEnterPageInfoManually=O crea una página desde cero o desde una plantilla de página ...
+WebsiteAccounts=Cuentas de sitio web
+GrabImagesInto=Insertar también las imágenes encontradas en CSS y página.
+CSSContentTooltipHelp=Ingrese aquí el contenido CSS. Para evitar cualquier conflicto con el CSS de la aplicación, asegúrese de anteponer todas las declaraciones con la clase .bodywebsite. Por ejemplo: <br> <br> #mycssselector, input.myclass: hover {...} <br> debe ser <br> .bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Nota: si tiene un archivo grande sin este prefijo, puede usar 'lessc' para convertirlo y agregar el prefijo .bodywebsite en todas partes.
+WebPortalOrderListMenu=Órdenes de venta
+WebPortalMemberCardTitle=Ficha de miembro
+WebPortalPartnershipCardMenu=Asociación
+WebPortalPartnership=Asociación
+WebPortalPropal=Cotización

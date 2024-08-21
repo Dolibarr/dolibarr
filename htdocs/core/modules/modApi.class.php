@@ -20,7 +20,8 @@
 
 /**
  * 	\defgroup   api     Module Api
- *  \brief      Descriptor file for Api modulee
+ *  \brief      Module for API (REST) management
+ *
  *  \file       htdocs/core/modules/modApi.class.php
  *  \ingroup    api
  *  \brief      Description and activation file for the module Api
@@ -94,8 +95,8 @@ class modApi extends DolibarrModules
 		$this->const = array();
 
 		// Array to add new pages in new tabs
-		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@api:$user->rights->api->read:/api/mynewtab1.php?id=__ID__',  					// To add a new tab identified by code tabname1
-		//                              'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@api:$user->rights->othermodule->read:/api/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
+		// Example: $this->tabs = array('objecttype:+tabname1:Title1:mylangfile@api:$user->hasRight('api','read'):/api/mynewtab1.php?id=__ID__',  					// To add a new tab identified by code tabname1
+		//                              'objecttype:+tabname2:SUBSTITUTION_Title2:mylangfile@api:$user->hasRight('othermodule','read'):/api/mynewtab2.php?id=__ID__',  	// To add another new tab identified by code tabname2. Label will be result of calling all substitution functions on 'Title2' key.
 		//                              'objecttype:-tabname:NU:conditiontoremove');                                                     										// To remove an existing tab identified by code tabname
 		// where objecttype can be
 		// 'categories_x'	  to add a tab in category view (replace 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
@@ -105,7 +106,7 @@ class modApi extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -143,8 +144,8 @@ class modApi extends DolibarrModules
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Generate/modify users API key';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'apikey';				// In php code, permission will be checked by test if ($user->hasRight('permkey','level1','level2'))
+		$this->rights[$r][5] = 'generate';				// In php code, permission will be checked by test if ($user->hasRight('permkey','level1','level2'))
 		$r++;
 
 
@@ -162,7 +163,6 @@ class modApi extends DolibarrModules
 			'langs'=>'modulebuilder',
 			'position'=>100,
 			'perms'=>'1',
-			//'enabled'=>'isModEnabled("api") && preg_match(\'/^(devtools)/\',$leftmenu)',
 			'enabled'=>'isModEnabled("api")',
 			'target'=>'_apiexplorer',
 			'user'=>0);

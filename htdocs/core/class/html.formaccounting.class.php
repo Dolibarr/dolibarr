@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2016-2020 Alexandre Spangaro   <aspangaro@open-dsi.fr>
+/* Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
  */
 class FormAccounting extends Form
 {
+	/**
+	 * @var array<string,array<string,string>>
+	 */
 	private $options_cache = array();
 
 	/**
@@ -77,7 +81,7 @@ class FormAccounting extends Form
 	 * @param	string	$morecss	More css non HTML object
 	 * @param	string	$usecache	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param   int     $disabledajaxcombo Disable ajax combo box.
-	 * @return	string				String with HTML select
+	 * @return	string|int				String with HTML select, or -1 if error
 	 */
 	public function select_journal($selectid, $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = 'maxwidth300 maxwidthonsmartphone', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -94,7 +98,7 @@ class FormAccounting extends Form
 			$sql = "SELECT rowid, code, label, nature, entity, active";
 			$sql .= " FROM ".$this->db->prefix()."accounting_journal";
 			$sql .= " WHERE active = 1";
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			if ($nature && is_numeric($nature)) {
 				$sql .= " AND nature = ".((int) $nature);
 			}
@@ -148,16 +152,16 @@ class FormAccounting extends Form
 	/**
 	 * Return list of journals with label by nature
 	 *
-	 * @param	array	$selectedIds		Preselected journal code array
-	 * @param	string	$htmlname			Name of field in html form
-	 * @param	int		$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
-	 * @param	int		$showempty			Add an empty field
-	 * @param	int		$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
-	 * @param	int		$select_out			Set value returned by select. 0=rowid (default), 1=code
-	 * @param	string	$morecss			More css non HTML object
-	 * @param	string	$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int     $disabledajaxcombo 	Disable ajax combo box.
-	 * @return	string						String with HTML select
+	 * @param	string[]	$selectedIds		Preselected journal code array
+	 * @param	string		$htmlname			Name of field in html form
+	 * @param	int			$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int			$showempty			Add an empty field
+	 * @param	int			$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
+	 * @param	int			$select_out			Set value returned by select. 0=rowid (default), 1=code
+	 * @param	string		$morecss			More css non HTML object
+	 * @param	string		$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
+	 * @param   int    		$disabledajaxcombo Disable ajax combo box.
+	 * @return	string|int<-1,-1>				String with HTML select, or -1 if error
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
 	{
@@ -228,23 +232,25 @@ class FormAccounting extends Form
 	 *	Return list of accounting category.
 	 * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	string	$selected       Preselected type
+	 *	@param	int		$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
 	 * 	@param	int		$useempty		Set to 1 if we want an empty value
 	 * 	@param	int		$maxlen			Max length of text in combo box
 	 * 	@param	int		$help			Add or not the admin help picto
 	 *  @param  int     $allcountries   All countries
-	 * 	@return	string					HTML component with the select
+	 * 	@return	void|string				HTML component with the select
 	 */
-	public function select_accounting_category($selected = '', $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
+	public function select_accounting_category($selected = 0, $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
 	{
 		// phpcs:enable
 		global $langs, $mysoc;
 
 		if (empty($mysoc->country_id) && empty($mysoc->country_code) && empty($allcountries)) {
-			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
 			exit;
 		}
+
+		$out = '';
 
 		if (!empty($mysoc->country_id)) {
 			$sql = "SELECT c.rowid, c.label as type, c.range_account";
@@ -276,7 +282,7 @@ class FormAccounting extends Form
 			if ($num) {
 				$this->nbaccounts_category = $num;
 
-				$out = '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
+				$out .= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.'">';
 				$i = 0;
 
 				if ($useempty) {
@@ -292,7 +298,8 @@ class FormAccounting extends Form
 					if ($obj->rowid == $selected) {
 						$out .= ' selected';
 					}
-					$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 1, 0, 0, array('span'))).'"';
+					//$out .= ' data-html="'.dol_escape_htmltag(dol_string_onlythesehtmltags($titletoshowhtml, 1, 0, 0, 0, array('span'))).'"';
+					$out .= ' data-html="'.dolPrintHTMLForAttribute($titletoshowhtml).'"';
 					$out .= '>';
 					$out .= dol_escape_htmltag($titletoshow);
 					$out .= '</option>';
@@ -300,14 +307,14 @@ class FormAccounting extends Form
 				}
 				$out .= '</select>';
 				//if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+
+				$out .= ajax_combobox($htmlname, array());
 			} else {
-				$out = $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("AccountingCategories"));
+				$out .= '<span class="opacitymedium">'.$langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accounting"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategories")).'</span>';
 			}
 		} else {
 			dol_print_error($this->db);
 		}
-
-		$out .= ajax_combobox($htmlname, array());
 
 		return $out;
 	}
@@ -316,9 +323,9 @@ class FormAccounting extends Form
 	/**
 	 * Return select filter with date of transaction
 	 *
-	 * @param string $htmlname         Name of select field
-	 * @param string $selectedkey      Value
-	 * @return string                  HTML edit field
+	 * @param 	string 				$htmlname       Name of select field
+	 * @param 	string 				$selectedkey    Value
+	 * @return 	string|int<-1,-1>					HTML edit field, or -1 if error
 	 */
 	public function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
 	{
@@ -352,13 +359,13 @@ class FormAccounting extends Form
 	 * @param string   		$selectid          	Preselected id of accounting accounts (depends on $select_in)
 	 * @param string   		$htmlname          	Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
 	 * @param int|string    $showempty         	1=Add an empty field, 2=Add an empty field+'None' field
-	 * @param array    		$event             	Event options
+	 * @param array<array<string,mixed>> $event Event options
 	 * @param int      		$select_in         	0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
 	 * @param int      		$select_out        	Set value returned by select. 0=rowid (default), 1=account_number
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$active				Filter on status active or not: '0', '1' or '' for no filter
-	 * @return string       	               	String with HTML select
+	 * @return string|int<-1,-1>               	String with HTML select, or -1 if error
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')
 	{
@@ -376,7 +383,7 @@ class FormAccounting extends Form
 		}
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
-			$options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
+			$options += $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 			$selected = $selectid;
 		} else {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', 50);
@@ -449,7 +456,7 @@ class FormAccounting extends Form
 		}
 
 
-		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
@@ -458,7 +465,7 @@ class FormAccounting extends Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return list of auxilary accounts. Cumulate list from customers, suppliers and users.
+	 * Return list of auxiliary accounts. Cumulate list from customers, suppliers and users.
 	 *
 	 * @param string   		$selectid       Preselected pcg_type
 	 * @param string   		$htmlname       Name of field in html form
@@ -466,7 +473,7 @@ class FormAccounting extends Form
 	 * @param string   		$morecss        More css
 	 * @param string   		$usecache       Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param string		$labelhtmlname	HTML name of label for autofill of account from name.
-	 * @return string       	   			String with HTML select
+	 * @return string|int<-1,-1>			String with HTML select, or -1 if error
 	 */
 	public function select_auxaccount($selectid, $htmlname = 'account_num_aux', $showempty = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $labelhtmlname = '')
 	{
@@ -476,12 +483,12 @@ class FormAccounting extends Form
 		$aux_account = array();
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
-			$aux_account = $aux_account + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
+			$aux_account += $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		} else {
 			dol_syslog(get_class($this)."::select_auxaccount", LOG_DEBUG);
 
 			// Auxiliary thirdparties account
-			$sql = "SELECT code_compta, code_compta_fournisseur, nom as name";
+			$sql = "SELECT code_compta as code_compta_client, code_compta_fournisseur, nom as name";
 			$sql .= " FROM ".$this->db->prefix()."societe";
 			$sql .= " WHERE entity IN (".getEntity('societe').")";
 			$sql .= " AND (client IN (1,3) OR fournisseur = 1)";
@@ -489,8 +496,8 @@ class FormAccounting extends Form
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				while ($obj = $this->db->fetch_object($resql)) {
-					if (!empty($obj->code_compta)) {
-						$aux_account[$obj->code_compta] = $obj->code_compta.' <span class="opacitymedium">('.$obj->name.')</span>';
+					if (!empty($obj->code_compta_client)) {
+						$aux_account[$obj->code_compta_client] = $obj->code_compta_client.' <span class="opacitymedium">('.$obj->name.')</span>';
 					}
 					if (!empty($obj->code_compta_fournisseur)) {
 						$aux_account[$obj->code_compta_fournisseur] = $obj->code_compta_fournisseur.' <span class="opacitymedium">('.$obj->name.')</span>';
@@ -533,7 +540,7 @@ class FormAccounting extends Form
 
 		// Build select
 		$out = '';
-		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty): 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		$out .= Form::selectarray($htmlname, $aux_account, $selectid, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 		//automatic filling if we give the name of the subledger_label input
 		if (!empty($conf->use_javascript_ajax) && !empty($labelhtmlname)) {
 			$out .= '<script nonce="'.getNonce().'">
@@ -558,8 +565,8 @@ class FormAccounting extends Form
 	 * @param string 	$selected 		Preselected value
 	 * @param string 	$htmlname 		Name of HTML select object
 	 * @param int 		$useempty 		Affiche valeur vide dans liste
-	 * @param string 	$output_format 	(html/opton (for option html only)/array (to return options arrays
-	 * @return string|array				HTML select component or array of select options
+	 * @param string 	$output_format 	(html/option (for option html only)/array (to return options arrays
+	 * @return string|array<string,string>|int<-1,-1>	HTML select component || array of select options || - 1 if error
 	 */
 	public function selectyear_accountancy_bookkepping($selected = '', $htmlname = 'yearid', $useempty = 0, $output_format = 'html')
 	{
@@ -589,6 +596,46 @@ class FormAccounting extends Form
 			return Form::selectarray($htmlname, $out_array, $selected, $useempty, 0, 0, 'placeholder="aa"');
 		} else {
 			return $out_array;
+		}
+	}
+
+	/**
+	 *  Output html select to select accounting account
+	 *
+	 *  @param	string	$page       			Page
+	 *  @param  string	$selected   			Id preselected
+	 * 	@param	string	$htmlname				Name of HTML select object
+	 *  @param  int		$option					option (0: aggregate by general account or 1: aggregate by subaccount)
+	 *  @param  int		$useempty				Show empty value in list
+	 *  @param  string	$filter         		optional filters criteria
+	 *  @param  int		$nooutput       		No print output. Return it only.
+	 *  @return	void|string
+	 */
+	public function formAccountingAccount($page, $selected = '', $htmlname = 'none', $option = 0, $useempty = 1, $filter = '', $nooutput = 0)
+	{
+		global $langs;
+
+		$out = '';
+		if ($htmlname != "none") {
+			$out .= '<form method="post" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="set'.$htmlname.'">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($option == 0) {
+				$out .= $this->select_account($selected, $htmlname, $useempty, array(), 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accounts', $filter);
+			} else {
+				$out .= $this->select_auxaccount($selected, $htmlname, $useempty, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'subaccounts');
+			}
+			$out .= '<input type="submit" class="button smallpaddingimp valignmiddle" name="modify" value="' . $langs->trans("Modify") . '">';
+			//$out .= '<input type="submit" class="button smallpaddingimp valignmiddle button-cancel" name="cancel" value="' . $langs->trans("Cancel") . '">';
+			$out .= '</form>';
+		} else {
+			$out .= "&nbsp;";
+		}
+
+		if ($nooutput) {
+			return $out;
+		} else {
+			print $out;
 		}
 	}
 }

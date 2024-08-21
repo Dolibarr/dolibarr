@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -175,7 +176,7 @@ class modRecruitment extends DolibarrModules
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -255,75 +256,75 @@ class modRecruitment extends DolibarrModules
 		/* END MODULEBUILDER TOPMENU */
 		/* BEGIN MODULEBUILDER LEFTMENU RECRUITMENTJOBPOSITION */
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=hrm', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left', // This is a Top menu entry
-			'titre'=>'Recruitment',
+			'fk_menu' => 'fk_mainmenu=hrm', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left', // This is a Top menu entry
+			'titre' => 'Recruitment',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'hrm',
-			'leftmenu'=>'recruitmentjobposition',
-			'url'=>'/recruitment/index.php',
-			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'mainmenu' => 'hrm',
+			'leftmenu' => 'recruitmentjobposition',
+			'url' => '/recruitment/index.php',
+			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled.
+			'perms' => '$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'NewPositionToBeFilled',
-			'mainmenu'=>'hrm',
-			'leftmenu'=>'recruitment_recruitmentjobposition_new',
-			'url'=>'/recruitment/recruitmentjobposition_card.php?action=create',
-			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->write', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'NewPositionToBeFilled',
+			'mainmenu' => 'hrm',
+			'leftmenu' => 'recruitment_recruitmentjobposition_new',
+			'url' => '/recruitment/recruitmentjobposition_card.php?action=create',
+			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->rights->recruitment->recruitmentjobposition->write', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'ListOfPositionsToBeFilled',
-			'mainmenu'=>'hrm',
-			'leftmenu'=>'recruitment_recruitmentjobposition_list',
-			'url'=>'/recruitment/recruitmentjobposition_list.php',
-			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'ListOfPositionsToBeFilled',
+			'mainmenu' => 'hrm',
+			'leftmenu' => 'recruitment_recruitmentjobposition_list',
+			'url' => '/recruitment/recruitmentjobposition_list.php',
+			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'NewCandidature',
-			'mainmenu'=>'hrm',
-			'leftmenu'=>'recruitment_recruitmentcandidature_new',
-			'url'=>'/recruitment/recruitmentcandidature_card.php?action=create',
-			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->recruitment->recruitmentjobposition->write', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'NewCandidature',
+			'mainmenu' => 'hrm',
+			'leftmenu' => 'recruitment_recruitmentcandidature_new',
+			'url' => '/recruitment/recruitmentcandidature_card.php?action=create',
+			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->rights->recruitment->recruitmentjobposition->write', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$this->menu[$r++] = array(
-			'fk_menu'=>'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left', // This is a Left menu entry
-			'titre'=>'ListOfCandidatures',
-			'mainmenu'=>'hrm',
-			'leftmenu'=>'recruitment_recruitmentcandidature_list',
-			'url'=>'/recruitment/recruitmentcandidature_list.php',
-			'langs'=>'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000 + $r,
-			'enabled'=>'$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=recruitmentjobposition', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type' => 'left', // This is a Left menu entry
+			'titre' => 'ListOfCandidatures',
+			'mainmenu' => 'hrm',
+			'leftmenu' => 'recruitment_recruitmentcandidature_list',
+			'url' => '/recruitment/recruitmentcandidature_list.php',
+			'langs' => 'recruitment', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position' => 1000 + $r,
+			'enabled' => '$conf->recruitment->enabled', // Define condition to show or hide menu entry. Use '$conf->recruitment->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'perms' => '$user->hasRight("recruitment", "recruitmentjobposition", "read")', // Use 'perms'=>'$user->rights->recruitment->level1->level2' if you want your menu with a permission rules
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER LEFTMENU RECRUITMENTJOBPOSITION */
 
@@ -413,12 +414,9 @@ class modRecruitment extends DolibarrModules
 		// Document template
 		$moduledir = 'recruitment';
 		$myTmpObjects = array();
-		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration'=>1, 'includedocgeneration'=>1);
+		$myTmpObjects['RecruitmentJobPosition'] = array('includerefgeneration' => 1, 'includedocgeneration' => 1);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'MyObject') {
-				continue;
-			}
 			if ($myTmpObjectArray['includedocgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/'.$moduledir.'/template_recruitmentjobposition.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/'.$moduledir;

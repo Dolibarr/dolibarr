@@ -5,96 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tichete de suport
 Module56000Desc=Sistem de tichete pentru gestionarea problemelor sau a cererilor, suport şi asistenţă tehnică
-
 Permission56001=Vedeți tichetele de suport
 Permission56002=Modifică tichete
 Permission56003=Șterge tichete
 Permission56004=Gestionați tichetele
 Permission56005=Vedeți tichetele tuturor terților (nu este efectiv pentru utilizatorii externi, întotdeauna se limitează la terțul de care depind)
 Permission56006=Export tichete
-
 Tickets=Tichete de suport
 TicketDictType=Tipuri de tichete
 TicketDictCategory=Tichet - Grupuri
 TicketDictSeverity=Tichet - Severități
 TicketDictResolution=Tichet - Rezoluție
-
 TicketTypeShortCOM=Întrebare comercială
-TicketTypeShortHELP=Solicitare funcţionalitate
+TicketTypeShortHELP=Solicitare de ajutor funcțional
 TicketTypeShortISSUE=Problemă sau bug
 TicketTypeShortPROBLEM=Problemă
 TicketTypeShortREQUEST=Solicitare de modificare sau îmbunătăţire
 TicketTypeShortPROJET=Proiect
 TicketTypeShortOTHER=Altele
-
 TicketSeverityShortLOW=Scăzut
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Mare
 TicketSeverityShortBLOCKING=Critic, blocant
-
 TicketCategoryShortOTHER=Altele
-
 ErrorBadEmailAddress=Câmpul '%s' este incorect
 MenuTicketMyAssign=Tichetele mele
 MenuTicketMyAssignNonClosed=Tichetele mele deschise
 MenuListNonClosed=Tichete deschise
-
 TypeContact_ticket_internal_CONTRIBUTOR=Contributor
 TypeContact_ticket_internal_SUPPORTTEC=Utilizator atribuit
 TypeContact_ticket_external_SUPPORTCLI=Contact client urmărire incidente
 TypeContact_ticket_external_CONTRIBUTOR=Contributor extern
-
 OriginEmail=Email raportor
+EmailReplyto=Răspuns la in Email
+EmailReferences=Referințe în Email-uri
 Notify_TICKET_SENTBYMAIL=Trimite mesaj tichet pe email
-
 ExportDataset_ticket_1=Tichete de suport
-
 # Status
 Read=Citit
 Assigned=Atribuit
 NeedMoreInformation=În aşteptare feedback de la raportor
 NeedMoreInformationShort=În aşteptare feedback
-Answered=S-a răspuns
 Waiting=În aşteptare
 SolvedClosed=Rezolvat
 Deleted=Șters
-
 # Dict
-Type=Tip
 Severity=Gravitate
 TicketGroupIsPublic=Grupul este public
 TicketGroupIsPublicDesc=Dacă un grup de tichete este public, acesta va fi vizibil în formular la crearea unui tichet din interfața publică
-
 # Email templates
 MailToSendTicketMessage=Pentru a trimite emailuri din mesajul tichetului
-
-#
 # Admin page
-#
 TicketSetup=Configurare modul Tichete de suport
 TicketSettings=Configurări
-TicketSetupPage=
 TicketPublicAccess=O interfață publică care nu necesită identificarea este disponibilă la următorul URL
 TicketSetupDictionaries=Tipul tichetului, severitatea și codurile analitice sunt configurabile din dicționare
 TicketParamModule=Setări variabile modul
 TicketParamMail=Setări email
 TicketEmailNotificationFrom=Email expeditor pentru notificarea răspunsurilor 
-TicketEmailNotificationFromHelp=Email expeditor de utilizat pentru a trimite email de notificare atunci când este oferit un răspuns în backoffice. De exemplu noreply@example.com
+TicketEmailNotificationFromHelp=Adresă de email expeditor de utilizat pentru a trimite email-ul de notificare atunci când se oferă un răspuns în back office. De exemplu noreply@example.com
 TicketEmailNotificationTo=Notifică crearea de tichet la această adresă de email
 TicketEmailNotificationToHelp=Dacă este completată, această adresă de email va fi notificată cu privire la crearea unui tichet
 TicketNewEmailBodyLabel=Mesaj text trimis după crearea unui tichet
@@ -107,8 +86,6 @@ TicketsShowProgressionHelp=Activează  această opțiune pentru a ascunde progre
 TicketCreateThirdPartyWithContactIfNotExist=Solicită numele și denumirea companiei pentru adresele de email necunoscute.
 TicketCreateThirdPartyWithContactIfNotExistHelp=Verifică dacă există un terț sau o persoană de contact pentru email-ul introdus. Dacă nu, solicită un nume și o denumire de companie pentru a crea un terț cu contact.
 PublicInterface=Interfață publică
-TicketUrlPublicInterfaceLabelAdmin=URL alternativ pentru interfața publică
-TicketUrlPublicInterfaceHelpAdmin=Este posibil să definiți un alias pentru serverul web și astfel să puneți la dispoziție interfața publică cu un alt URL (serverul trebuie să acționeze ca proxy pe acest nou URL)
 TicketPublicInterfaceTextHomeLabelAdmin=Textul de bun venit din interfeța publică
 TicketPublicInterfaceTextHome=Puteți crea un tichet de asistență sau vizualiza unul existent pe baza identificatorului de urmărire.
 TicketPublicInterfaceTextHomeHelpAdmin=Textul definit aici va apărea pe pagina de start a interfeței publice.
@@ -140,28 +117,27 @@ TicketsAutoAssignTicketHelp=La crearea unui tichet, utilizatorul poate fi automa
 TicketNumberingModules=Modul de numerotare a tichetelor
 TicketsModelModule=Şabloane documente pentru tichete
 TicketNotifyTiersAtCreation=Notificați terțul la creare
-TicketsDisableCustomerEmail=Dezactivați întotdeauna email-urile atunci când un tichet este creat din interfața publică 
+TicketsDisableCustomerEmail=Dezactivați întotdeauna email-urile atunci când un tichet este creat din interfața publică
 TicketsPublicNotificationNewMessage=Trimite email(uri) atunci când un nou mesaj/comentariu este adăugat la un tichet
 TicketsPublicNotificationNewMessageHelp=Trimiteți email(uri) când un nou mesaj este adăugat din interfața publică (utilizatorului atribuit sau adreselor de notificări la (actualizare) și/sau email-ului de notificări către)
 TicketPublicNotificationNewMessageDefaultEmail=Notificări email către (actualizare)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Trimite un email la această adresă pentru fiecare notificare de mesaj nou dacă tichetul nu are un utilizator atribuit sau dacă utilizatorul nu are niciun email cunoscut.
-TicketsAutoReadTicket=Marcare automată tichet ca citit (când este creat din backoffice) 
-TicketsAutoReadTicketHelp=Marcare automată tichet ca citit atunci când este creat din backoffice. Când tichetul este creat din interfața publică, tichetul rămâne cu statusul "Necitit".
+TicketsAutoReadTicket=Marchează automat tichetul ca citit (când este creat din back office)
+TicketsAutoReadTicketHelp=Marchează automat tichetul ca citit atunci când este creat din back office. Când tichetul este creat din interfața publică, tichetul rămâne cu starea "Necitit".
 TicketsDelayBeforeFirstAnswer=Un tichet nou ar trebui să primească un prim răspuns înainte de (ore):
 TicketsDelayBeforeFirstAnswerHelp=Dacă un tichet nou nu a primit răspuns după această perioadă de timp (în ore), în vizualizarea listă va fi afișată o pictogramă de avertizare importantă.
 TicketsDelayBetweenAnswers=Un tichet nerezolvat nu ar trebui să fie inactiv timp de (ore):
 TicketsDelayBetweenAnswersHelp=Dacă un tichet nerezolvat care a primit deja un răspuns nu a mai avut interacțiune după această perioadă de timp (în ore), o pictogramă de avertizare va fi afișată în vizualizarea de tip listă.
-TicketsAutoNotifyClose=Notificare automată terţ la închiderea tichetului
-TicketsAutoNotifyCloseHelp=Când închizi un tichet, ţi se va propune să trimiți un mesaj uneia dintre persoanele de contact ale terților. La închiderea în masă, un mesaj va fi trimis unei persoane de contact a terțului asociat tichetului.
+TicketsAutoNotifyClose=Notifică automat terțul atunci când se închide un tichet
+TicketsAutoNotifyCloseHelp=Când închideți un tichet, ți se va propune să trimiți un mesaj uneia dintre persoanele de contact ale terțului. La închiderea în masă, un mesaj va fi trimis unei persoane de contact ale terțului asociat tichetului.
 TicketWrongContact=Contactul furnizat nu face parte din contactele asociate pentru tichete. Email-ul nu a fost trimis.
 TicketChooseProductCategory=Categorie de produs pentru tichete suport
 TicketChooseProductCategoryHelp=Selectează categoria de produs pentru tichete de suport. Acesta va fi folosită pentru a asocia automat un contract la un tichet.
 TicketUseCaptchaCode=Utilizare cod grafic (CAPTCHA) când se crează un tichet
 TicketUseCaptchaCodeHelp=Adaugă verificare CAPTCHA la crearea unui tichet nou.
-
-#
+TicketsAllowClassificationModificationIfClosed=Permite modificarea clasificării tichetelor închise
+TicketsAllowClassificationModificationIfClosedHelp=Permite modificarea clasificării (tip, grup de tichete, gravitate) chiar dacă tichetele sunt închise.
 # Index & list page
-#
 TicketsIndex=Tichete de suport
 TicketList=Listă de tichete
 TicketAssignedToMeInfos=Această pagină afișează lista de tichete creată de utilizatorul curent sau atribuită acestuia
@@ -176,15 +152,12 @@ ShowAsConversation=Afişare ca listă de conversaţie
 MessageListViewType=Afişare listă ca tabel
 ConfirmMassTicketClosingSendEmail=Trimitere automată email-uri la închiderea tichetelor
 ConfirmMassTicketClosingSendEmailQuestion=Vrei să anunți terții când închizi aceste tichete ?
-
-#
 # Ticket card
-#
 Ticket=Tichete
 TicketCard=Fişă tichet
 CreateTicket=Creare tichet
 EditTicket=Editare tichet
-TicketsManagement=Managementul tichetelor de suport tehnic incidente 
+TicketsManagement=Managementul tichetelor de suport tehnic incidente
 CreatedBy=Creat de
 NewTicket=Tichet nou
 SubjectAnswerToTicket=Răspuns la tichet
@@ -221,8 +194,8 @@ ConfirmAbandonTicket=Confirmați închiderea tichetului cu statusul 'Abandonat'
 ConfirmDeleteTicket=Confirmați ștergerea tichetului
 TicketDeletedSuccess=Tichet a fost șters cu succes
 TicketMarkedAsClosed=Tichet marcat ca închis
-TicketDurationAuto=Durata calculată
-TicketDurationAutoInfos=Durata calculată automat din intervenția asociată
+TicketDurationAuto=Durată intervenții
+TicketDurationAutoInfos=Durată calculată automat din intervențiile aferente
 TicketUpdated=Tichetul a fost actualizat
 SendMessageByEmail=Trimite un mesaj pe email
 TicketNewMessage=Mesaj nou
@@ -279,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=A trecut prea mult timp de la ultimul răspu
 TicketNoContractFoundToLink=Nu s-a găsit niciun contract asociat automat la acest tichet. Asociază manual un contract.
 TicketManyContractsLinked=Mai multe contracte au fost asociate automat la acest tichet. Asigură-te că verifici contractul care ar trebui să fie ales.
 TicketRefAlreadyUsed=Referința [%s] este deja utilizată, noua ta referință este [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Tichetul %s a fost citit de %s
 NoLogForThisTicket=Nu există jurnal pentru acest tichet încă
 TicketLogAssignedTo=Tichetul %s a fost atribuit lui %s
 TicketLogPropertyChanged=Tichet %s modificat: clasificat din %s la %s
 TicketLogClosedBy=Tichet %s a fost închis de %s
-TicketLogReopen=Tichetul %s a fost re-deschis 
-
-#
+TicketLogReopen=Tichetul %s a fost re-deschis
 # Public pages
-#
 TicketSystem=Sistem de tichete
 ShowListTicketWithTrackId=Afișează lista de tichete din ID-ul de urmărire
 ShowTicketWithTrackId=Afișează tichetul din ID-ul de urmărire
@@ -300,27 +267,27 @@ TicketPublicDesc=Puteți crea un tichet de asistență sau să verificaţi unul 
 YourTicketSuccessfullySaved=Tichetul a fost salvat cu succes!
 MesgInfosPublicTicketCreatedWithTrackId=Un nou tichet a fost creat cu ID-ul %s şi Ref %s.
 PleaseRememberThisId=Păstrați numărul de urmărire pe care vi l-am putea solicita ulterior.
-TicketNewEmailSubject=Confirmare creare tichet - Ref %s (ID tichet public %s) 
+TicketNewEmailSubject=Confirmare creare tichet - Ref %s (ID tichet public %s)
 TicketNewEmailSubjectCustomer=Tichet de asistență nou
 TicketNewEmailBody=Acesta este un email automat de confirmare a faptului că ați înregistrat un tichet nou.
 TicketNewEmailBodyCustomer=Acesta este un email automat de confirmare că un nou tichet a fost creat în contul tău.
 TicketNewEmailBodyInfosTicket=Informații privind monitorizarea tichetului
 TicketNewEmailBodyInfosTrackId=Numărul de urmărire a tichetului: %s
 TicketNewEmailBodyInfosTrackUrl=Poți vedea statusul tichetului făcând clic pe următorul link
-TicketNewEmailBodyInfosTrackUrlCustomer=Puteți vedea statusul tichetului în interfața specifică făcând clic pe următorul link
+TicketNewEmailBodyInfosTrackUrlCustomer=Poți vedea statusul tichetului în portalul public de tichete făcând clic pe următorul link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Poți consulta istoricul acestui tichet făcând clic pe următorul link
 TicketEmailPleaseDoNotReplyToThisEmail=Nu răspundeți direct la acest email! Utilizați linkul pentru a răspunde în interfață.
 TicketPublicInfoCreateTicket=Acest formular vă permite să înregistrați un tichet de asistență în sistemul nostru de management al lucrărilor.
-TicketPublicPleaseBeAccuratelyDescribe=Vă rugăm să descrieți cu exactitate întrebarea dvs. Furnizați cât mai multe informații posibile pentru a ne permite să vă identificăm corect solicitarea.
+TicketPublicPleaseBeAccuratelyDescribe=Te rugăm să descrii cu acuratețe solicitarea ta. Furnizează cât mai multe informații posibile pentru a ne permite să identificăm corect solicitarea.
 TicketPublicMsgViewLogIn=Introduceți codul de urmărire a tichetului
-TicketTrackId=ID urmărire public
+TicketTrackId=ID tracking
 OneOfTicketTrackId=Unul dintre ID-urile tale de urmărire
 ErrorTicketNotFound=Tichetul cu codul de urmărire %s nu a fost găsit!
 Subject=Subiect
 ViewTicket=Afişare tichet
 ViewMyTicketList=Afişează lista mea de tichete
 ErrorEmailMustExistToCreateTicket=Eroare: adresa de email nu a fost găsită în baza noastră de date
-TicketNewEmailSubjectAdmin=Un nou tichet creat - Ref %s(ID tichet public %s) 
+TicketNewEmailSubjectAdmin=Un nou tichet creat - Ref %s(ID tichet public %s)
 TicketNewEmailBodyAdmin=<p> Tichetul tocmai a fost creat cu ID # %s, vezi informațiile: </p>
 SeeThisTicketIntomanagementInterface=Vezi tichetul în interfața de management
 TicketPublicInterfaceForbidden=Interfața publică pentru tichete nu a fost activată
@@ -331,7 +298,6 @@ NumberOfTicketsByMonth=Număr de tichete pe lună
 NbOfTickets=Număr de tichete
 ExternalContributors=Contributori externi
 AddContributor=Adăugare contributor extern
-
 # notifications
 TicketCloseEmailSubjectCustomer=Tichet închis
 TicketCloseEmailBodyCustomer=Acesta este un mesaj automat pentru a te anunța că tichetul %s tocmai a fost închis.
@@ -343,18 +309,14 @@ TicketNotificationRecipient=Destinatar notificare
 TicketNotificationLogMessage=Jurnal notificare tichet
 TicketNotificationEmailBodyInfosTrackUrlinternal=Afişează tichetul în interfață
 TicketNotificationNumberEmailSent=Email-ul de notificare a fost trimis: %s
-
 ActionsOnTicket=Evenimente pe tichet
-
-#
 # Boxes
-#
 BoxLastTicket=Ultimele tichete create
 BoxLastTicketDescription=Ultimele %s tichete create
 BoxLastTicketContent=
 BoxLastTicketNoRecordedTickets=Niciun tichet recent necitit
 BoxLastModifiedTicket=Ultimele tichete modificate
-BoxLastModifiedTicketDescription=Ultimele %s tichet modificate 
+BoxLastModifiedTicketDescription=Ultimele %s tichet modificate
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Nu există tichete modificate recent
 BoxTicketType=Distribuţia tichetelor deschise după tip
@@ -368,3 +330,4 @@ BoxNewTicketVSClose=Nr. tichete versus tichete închise (azi)
 TicketCreatedToday=Tichet creat azi
 TicketClosedToday=Tichet închis azi
 KMFoundForTicketGroup=Am găsit subiecte și întrebări frecvente care pot răspunde la întrebarea ta, te rugăm să le verifici înainte de trimiterea tichetului
+SetTitle=Setare titlu

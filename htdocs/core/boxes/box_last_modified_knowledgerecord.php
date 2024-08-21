@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,34 +42,14 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public $boximg = "knowledgemanagement";
 
 	/**
-	 * @var string boc label
+	 * @var string box label
 	 */
 	public $boxlabel;
 
 	/**
-	 * @var array box dependancies
+	 * @var string[] box dependencies
 	 */
 	public $depends = array("knowledgemanagement");
-
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string param
-	 */
-	public $param;
-
-	/**
-	 * @var array box info heads
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array box info content
-	 */
-	public $info_box_contents = array();
 
 	/**
 	 * Constructor
@@ -78,7 +59,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	public function __construct($db, $param = '')
 	{
 		global $langs;
-		$langs->load("boxes", "knowledgemanagement", "languages");
+		$langs->loadLangs(array("boxes", "knowledgemanagement", "languages"));
 		$this->db = $db;
 
 		$this->boxlabel = $langs->transnoentitiesnoconv("BoxLastModifiedKnowledgerecord");
@@ -118,7 +99,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 				$sql .= " AND k.fk_soc= ".((int) $user->socid);
 			}
 
-			$sql.= " AND k.status > 0";
+			$sql .= " AND k.status > 0";
 
 			$sql .= " ORDER BY k.tms DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);
@@ -205,9 +186,9 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 	/**
 	 *     Method to show box
 	 *
-	 *     @param  array $head     Array with properties of box title
-	 *     @param  array $contents Array with properties of box lines
-	 *     @param  int   $nooutput No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *     @return string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

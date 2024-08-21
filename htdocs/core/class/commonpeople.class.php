@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,35 @@
 
 
 /**
- *      Superclass for thirdparties, contacts, members or users
+ *      Support class for third parties, contacts, members, users or resources
+ *
+ *
+ * Properties expected in the class the trait is attached to.
+ *
+ * @property int 	$id
+ * @property int 	$contact_id
+ * @property int 	$fk_soc
+ * @property string $civility_code
+ * @property DoliDB	$db
+ * @property string $element
+ * @property string $name
+ * @property string $name_alias
+ * @property string $nom
+ * @property string $company
+ * @property string $firstname
+ * @property string $lastname
+ * @property string $personal_email
+ * @property array<string,string> $socialnetworks
+ * @property string $fax
+ * @property string $office_fax
+ * @property string $office_phone
+ * @property string $phone
+ * @property string $phone_perso
+ * @property string $phone_pro
+ * @property string $phone_mobile
+ * @property string $user_mobile
+ * @property string $country_code
+ * @property string $region
  */
 trait CommonPeople
 {
@@ -43,11 +72,27 @@ trait CommonPeople
 	public $town;
 
 	/**
-	 * @var int		$state_id
+	 * @var int	The state/department
 	 */
-	public $state_id; // The state/department
+	public $state_id;
+	/**
+	 * @var string
+	 */
 	public $state_code;
+	/**
+	 * @var string
+	 */
 	public $state;
+
+	/**
+	 * @var string email
+	 */
+	public $email;
+
+	/**
+	 * @var string url
+	 */
+	public $url;
 
 
 	/**
@@ -65,7 +110,7 @@ trait CommonPeople
 		$lastname = $this->lastname;
 		$firstname = $this->firstname;
 		if (empty($lastname)) {
-			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (property_exists($this, 'nom') && isset($this->nom) ? $this->nom : (property_exists($this, 'societe') && isset($this->societe) ? $this->societe : (property_exists($this, 'company') && isset($this->company) ? $this->company : '')))));
 		}
 
 		$ret = '';
@@ -121,7 +166,7 @@ trait CommonPeople
 			if (!empty($conf->use_javascript_ajax)) {
 				// Add picto with tooltip on map
 				$namecoords = '';
-				if ($this->element == 'contact' && !empty($conf->global->MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS)) {
+				if ($this->element == 'contact' && getDolGlobalString('MAIN_SHOW_COMPANY_NAME_IN_BANNER_ADDRESS')) {
 					$namecoords .= $object->name.'<br>';
 				}
 				$namecoords .= $this->getFullName($langs, 1).'<br>'.$coords;
@@ -139,8 +184,8 @@ trait CommonPeople
 
 			// List of extra languages
 			$arrayoflangcode = array();
-			if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE)) {
-				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
+				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
@@ -151,7 +196,7 @@ trait CommonPeople
 				$extralanguages->fetch_name_extralanguages($elementforaltlanguage);
 
 				if (!empty($extralanguages->attributes[$elementforaltlanguage]['address']) || !empty($extralanguages->attributes[$elementforaltlanguage]['town'])) {
-					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".join(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
+					$out .= "<!-- alternatelanguage for '".$elementforaltlanguage."' set to fields '".implode(',', $extralanguages->attributes[$elementforaltlanguage])."' -->\n";
 					$this->fetchValuesForExtraLanguages();
 					if (!is_object($form)) {
 						$form = new Form($this->db);
@@ -170,9 +215,9 @@ trait CommonPeople
 		}
 
 		// If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-		if (!in_array($this->country_code, $countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) {
-			if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 && $this->region) {
+		if (!in_array($this->country_code, $countriesusingstate) && !getDolGlobalString('MAIN_FORCE_STATE_INTO_ADDRESS')
+				&& !getDolGlobalString('SOCIETE_DISABLE_STATE') && $this->state) {
+			if (getDolGlobalInt('MAIN_SHOW_REGION_IN_STATE_SELECT') == 1 && $this->region) {
 				$out .= ($outdone ? ' - ' : '').$this->region.' - '.$this->state;
 			} else {
 				$out .= ($outdone ? ' - ' : '').$this->state;
@@ -225,11 +270,14 @@ trait CommonPeople
 		}
 		$outdone = 0;
 		if (!empty($this->email)) {
-			$out .= dol_print_email($this->email, $this->id, $object->id, 'AC_EMAIL', 0, 0, 1);
+			$out .= dol_print_email($this->email, $this->id, $object->id, 1, 0, 0, 1);
 			$outdone++;
 		}
 		if (!empty($this->url)) {
 			//$out.=dol_print_url($this->url,'_goout',0,1);//steve changed to blank
+			if (!empty($this->email)) {
+				$out .= ' ';
+			}
 			$out .= dol_print_url($this->url, '_blank', 0, 1);
 			$outdone++;
 		}
@@ -262,24 +310,26 @@ trait CommonPeople
 	/**
 	 * Set to upper or ucwords/lower if needed
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function setUpperOrLowerCase()
 	{
-		global $conf;
-
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_FIRST_TO_UPPER')) {
 			$this->lastname = dol_ucwords(dol_strtolower($this->lastname));
 			$this->firstname = dol_ucwords(dol_strtolower($this->firstname));
 			$this->name = dol_ucwords(dol_strtolower($this->name));
-			$this->name_alias = isset($this->name_alias)?dol_ucwords(dol_strtolower($this->name_alias)):'';
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = isset($this->name_alias) ? dol_ucwords(dol_strtolower($this->name_alias)) : '';
+			}
 		}
-		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_ALL_TO_UPPER')) {
 			$this->lastname = dol_strtoupper($this->lastname);
 			$this->name = dol_strtoupper($this->name);
-			$this->name_alias = dol_strtoupper($this->name_alias);
+			if (property_exists($this, 'name_alias')) {
+				$this->name_alias = dol_strtoupper($this->name_alias);
+			}
 		}
-		if (!empty($conf->global->MAIN_ALL_TOWN_TO_UPPER)) {
+		if (getDolGlobalString('MAIN_ALL_TOWN_TO_UPPER')) {
 			$this->address = dol_strtoupper($this->address);
 			$this->town = dol_strtoupper($this->town);
 		}
@@ -290,4 +340,29 @@ trait CommonPeople
 			$this->personal_email = dol_strtolower($this->personal_email);
 		}
 	}
+
+
+	// Methods used by this Trait that must be implemented in the parent class.
+	// Note: this helps static type checking
+
+	/**
+	 *  Return full address of contact
+	 *
+	 *  @param      int<0,1>    $withcountry        1=Add country into address string
+	 *  @param      string      $sep                Separator to use to build string
+	 *  @param      int<0,1>    $withregion         1=Add region into address string
+	 *  @param      string      $extralangcode      User extralanguages as value
+	 *  @return     string                          Full address string
+	 */
+	abstract public function getFullAddress($withcountry = 0, $sep = "\n", $withregion = 0, $extralangcode = '');
+
+
+	/**
+	 *  Function to get alternative languages of a data into $this->array_languages
+	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *
+	 *  @return int<-1,1>                   Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
+	 *  @see fetch_optionnals()
+	 */
+	abstract public function fetchValuesForExtraLanguages();
 }

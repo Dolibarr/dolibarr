@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018		Quentin Vial-Gouteyron	<quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2019		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +38,12 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *  Return default description of numbering model
 	 *
-	 *  @return     string      text description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
-		global $conf, $langs, $db;
+		global $langs, $db;
 
 		$langs->load("bills");
 
@@ -59,10 +61,11 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
+		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.getDolGlobalString("RECEPTION_MOONSTONE_MASK").'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -96,9 +99,9 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe			$objsoc     Third party object
-	 *	@param	Object|null		$reception	Reception object
-	 *	@return string      				Value if OK, 0 if KO
+	 *	@param	Societe		$objsoc		Third party object
+	 *	@param	?Reception	$reception	Reception object
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{
@@ -122,19 +125,5 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
-	}
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Return next free value
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$objforref	Reception object
-	 *	@return string      			Next free value
-	 */
-	public function reception_get_num($objsoc, $objforref)
-	{
-		// phpcs:enable
-		return $this->getNextValue($objsoc, $objforref);
 	}
 }

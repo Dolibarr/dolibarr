@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = מערכת ניהול ידע
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=נהל בסיס ניהול ידע (KM) או בסיס עזרה
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = הגדרת מערכת ניהול ידע
+KnowledgeManagementSetupPage = דף התקנת מערכת ניהול הידע
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeManagementAbout = על ניהול ידע
+KnowledgeManagementAboutPage = ניהול ידע אודות הדף
+KnowledgeManagementArea = ניהול ידע
+MenuKnowledgeRecord = בסיס ידע
+MenuKnowledgeRecordShort = בסיס ידע
+ListKnowledgeRecord = רשימת מאמרים
+NewKnowledgeRecord = מאמר חדש
+ValidateReply = אימות פתרון
+KnowledgeRecords = מאמרים
+KnowledgeRecord = מאמר
+KnowledgeRecordExtraFields = שדות נוספים למאמר
+GroupOfTicket=קבוצת כרטיסים
+YouCanLinkArticleToATicketCategory=ניתן לקשר את הכתבה לקבוצת כרטיסים (כך שהמאמר יודגש על כל כרטיסים בקבוצה זו)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=מוגדר כמיושן
+ConfirmCloseKM=האם אתה מאשר את סגירת מאמר זה כמתיישן?
+ConfirmReopenKM=האם ברצונך לשחזר מאמר זה למצב "אומת"?
+BoxLastKnowledgerecordDescription=מאמרים אחרונים %s
+BoxLastKnowledgerecord=מאמרים אחרונים
+BoxLastKnowledgerecordContent=מאמרים אחרונים
+BoxLastKnowledgerecordModifiedContent=מאמרים ששונו לאחרונה
+BoxLastModifiedKnowledgerecordDescription=מאמרים אחרונים שהשתנו %s
+BoxLastModifiedKnowledgerecord=מאמרים ששונו לאחרונה

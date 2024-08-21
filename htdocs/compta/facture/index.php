@@ -35,17 +35,16 @@ restrictedArea($user, 'facture');
 $langs->load('bills');
 
 // Filter to show only result of one customer
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if (isset($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
 
-$max = $conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
-
 // Maximum elements of the tables
-$maxDraftCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
-$maxOpenCount = empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
+$maxDraftCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
+$maxOpenCount = !getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? $max : $conf->global->MAIN_MAXLIST_OVERLOAD;
 
 
 /*

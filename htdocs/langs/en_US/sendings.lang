@@ -39,7 +39,7 @@ StatusSendingValidatedShort=Validated
 StatusSendingProcessedShort=Processed
 SendingSheet=Shipment sheet
 ConfirmDeleteSending=Are you sure you want to delete this shipment?
-ConfirmValidateSending=Are you sure you want to validate this shipment with reference <b>%s</b>?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=Are you sure you want to cancel this shipment?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. C
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+CreateInvoiceForThisCustomerFromSendings=Bill sendings
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
 
 # Sending methods
 # ModelDocument
@@ -71,12 +74,12 @@ DocumentModelStorm=More complete document model for delivery receipts and extraf
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
 SumOfProductVolumes=Sum of product volumes
 SumOfProductWeights=Sum of product weights
-
 # warehouse details
 DetailWarehouseNumber= Warehouse details
 DetailWarehouseFormat= W:%s (Qty: %d)
-
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
+CreationOptions=Available options during shipment creation
 ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combination warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=No dispatch for line %s as no combination warehouse, product, batch code was found.
+ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
+ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s

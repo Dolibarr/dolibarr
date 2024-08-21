@@ -26,7 +26,7 @@
 /**
  *       \file       htdocs/product/stock/productlot_document.php
  *       \ingroup    product
- *       \brief      Page of attached documents for porudct lots
+ *       \brief      Page of attached documents for product lots
  */
 
 // Load Dolibarr environment
@@ -38,11 +38,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
+global $conf, $db, $langs, $user;
+
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products'));
 
-$id     = GETPOST('id', 'int');
-$ref    = GETPOST('ref', 'alpha');
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -52,16 +54,17 @@ $fieldtype = 'rowid';
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productlotdocuments'));
 
+$result = restrictedArea($user, 'produit|service');
+
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -97,9 +100,9 @@ if ($id || $ref) {
 	}
 }
 
-$usercanread = $user->rights->produit->lire;
-$usercancreate = $user->rights->produit->creer;
-$usercandelete = $user->rights->produit->supprimer;
+$usercanread = $user->hasRight('produit', 'lire');
+$usercancreate = $user->hasRight('produit', 'creer');
+$usercandelete = $user->hasRight('produit', 'supprimer');
 
 if (empty($upload_dir)) {
 	$upload_dir = $conf->productbatch->multidir_output[$conf->entity];
@@ -107,11 +110,11 @@ if (empty($upload_dir)) {
 
 $permissiontoread = $usercanread;
 $permissiontoadd = $usercancreate;
-$permtoedit = $user->rights->produit->creer;
+$permtoedit = $user->hasRight('produit', 'creer');
 //$permissiontodelete = $usercandelete;
 
 // Security check
-if (empty($conf->productbatch->enabled)) {
+if (!isModEnabled('productbatch')) {
 	accessforbidden('Module not enabled');
 }
 $socid = 0;
@@ -147,7 +150,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans('ProductLot'), '');
+llxHeader('', $langs->trans('ProductLot'), '', '', 0, 0, '', '', '', 'mod-product page-stock_productlot_document');
 
 
 if ($object->id) {
@@ -163,7 +166,7 @@ if ($object->id) {
 	}
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
@@ -174,7 +177,7 @@ if ($object->id) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/productlot_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$shownav = 1;
-	if ($user->socid && !in_array('batch', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+	if ($user->socid && !in_array('batch', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 		$shownav = 0;
 	}
 

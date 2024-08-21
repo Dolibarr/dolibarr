@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +23,22 @@
  *  \brief      File that contains parent class for sending receipts models
  *              and parent class for sending receipts numbering models
  */
- require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 /**
  *	Parent class of sending receipts models
  */
 abstract class ModelePdfReception extends CommonDocGenerator
 {
-	public $error = '';
-
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -51,95 +51,36 @@ abstract class ModelePdfReception extends CommonDocGenerator
 
 		return $list;
 	}
+
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build a document
+	 *
+	 *  @param		Reception	$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>	$hidedetails		Do not show line details
+	 *  @param		int<0,1>	$hidedesc			Do not show desc
+	 *  @param		int<0,1>	$hideref			Do not show ref
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
 }
 
 
 /**
  *  Parent Class of numbering models of sending receipts references
  */
-abstract class ModelNumRefReception
+abstract class ModelNumRefReception extends CommonNumRefGenerator
 {
-	public $error = '';
-
-	public $version;
-
-
 	/**
-	 *  Return if a model can be used or not
+	 *	Return next value
 	 *
-	 *  @return		boolean     true if model can be used
+	 *	@param	Societe		$objsoc		Third party object
+	 *	@param	?Reception	$reception	Reception object
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("reception");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Returns numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("reception");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *	Test if existing numbers make problems with numbering
-	 *
-	 *	@return     boolean     false if conflit, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns next value assigned
-	 *
-	 *	@param	Societe		$objsoc     Third party object
-	 *	@param	Object		$reception	Reception object
-	 *	@return	string					Value
-	 */
-	public function getNextValue($objsoc, $reception)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns version of the numbering model
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	abstract public function getNextValue($objsoc, $reception);
 }

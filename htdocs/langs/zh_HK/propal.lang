@@ -12,9 +12,11 @@ NewPropal=新提案
 Prospect=前景
 DeleteProp=刪除商業提案
 ValidateProp=驗證商業提案
+CancelPropal=Cancel
 AddProp=創建提案
 ConfirmDeleteProp=您確定要刪除此商業提案嗎？
-ConfirmValidateProp=您確定要驗證名稱為 <span class='notranslate'><b></span> 的商業提案嗎\n %s </b> ？
+ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
+ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
 LastPropals=最新%s 提案
 LastModifiedProposals=最新%s 修改後的提案
 AllPropals=所有提案
@@ -27,13 +29,15 @@ NbOfProposals=商業提案數量
 ShowPropal=顯示提案
 PropalsDraft=草稿
 PropalsOpened=打開
+PropalStatusCanceled=Canceled (Abandoned)
 PropalStatusDraft=草案（需要驗證）
 PropalStatusValidated=已驗證（提案已開放）
 PropalStatusSigned=簽字（需要開具賬單）
 PropalStatusNotSigned=未簽署（已關閉）
 PropalStatusBilled=計費
+PropalStatusCanceledShort=已取消
 PropalStatusDraftShort=草稿
-PropalStatusValidatedShort=Validated (open)
+PropalStatusValidatedShort=Open
 PropalStatusClosedShort=關閉
 PropalStatusSignedShort=簽
 PropalStatusNotSignedShort=未簽名
@@ -73,13 +77,11 @@ AvailabilityTypeAV_1W=1週
 AvailabilityTypeAV_2W=2週
 AvailabilityTypeAV_3W=3週
 AvailabilityTypeAV_1M=1個月
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=代表後續提案
 TypeContact_propal_external_BILLING=客戶發票聯繫方式
 TypeContact_propal_external_CUSTOMER=客戶聯繫後續提案
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
-
 # Document models
 CantBeNoSign=cannot be set not signed
 CaseFollowedBy=Case followed by
@@ -114,6 +116,9 @@ RefusePropal=Refuse proposal
 Sign=Sign
 SignContract=Sign contract
 SignFichinter=Sign intervention
+SignSociete_rib=Sign mandate
 SignPropal=Accept proposal
 Signed=signed
 SignedOnly=Signed only
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

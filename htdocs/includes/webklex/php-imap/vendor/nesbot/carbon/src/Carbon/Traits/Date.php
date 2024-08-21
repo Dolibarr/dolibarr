@@ -1857,7 +1857,7 @@ trait Date
             ? (
                 \function_exists('mb_convert_encoding')
                 ? mb_convert_encoding($formatted, 'UTF-8', mb_list_encodings())
-                : utf8_encode($formatted)
+                : mb_convert_encoding($formatted, 'UTF-8', 'ISO-8859-1')
             )
             : $formatted;
     }

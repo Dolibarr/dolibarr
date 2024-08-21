@@ -32,7 +32,7 @@ require 'lib/variants.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -49,20 +49,21 @@ if (!isModEnabled('variants')) {
 if ($user->socid > 0) { // Protection if external user
 	accessforbidden();
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('productattributecard', 'globalcard'));
+
 $result = restrictedArea($user, 'variants');
 
 $object = new ProductAttribute($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('productattributecard', 'globalcard'));
-
-$permissiontoread = $user->rights->variants->read;
-$permissiontoadd = $user->rights->variants->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontoedit = $user->rights->variants->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->rights->variants->delete;
+$permissiontoread = $user->hasRight('variants', 'read');
+$permissiontoadd = $user->hasRight('variants', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontoedit = $user->hasRight('variants', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontodelete = $user->hasRight('variants', 'delete');
 
 $error = 0;
 
@@ -191,7 +192,7 @@ if ($action == 'create') {
 
 	print '</form>';
 
-	dol_set_focus('input[name="label"]');
+	dol_set_focus('input[name="ref"]');
 } elseif (($id || $ref) && $action == 'edit') {
 	// Part to edit record
 	print load_fiche_titre($langs->trans("ProductAttribute"), '', 'object_' . $object->picto);
@@ -286,7 +287,9 @@ if ($action == 'create') {
 		print '<div class="tabsAction">' . "\n";
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		if ($reshook < 0) {
+			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		}
 
 		if (empty($reshook)) {
 			// Modify
@@ -307,7 +310,7 @@ if ($action == 'create') {
 
 		print load_fiche_titre($langs->trans("PossibleValues") . (!empty($object->lines) ? '<span class="opacitymedium colorblack paddingleft">(' . count($object->lines) . ')</span>' : ''));
 
-		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOST('lineid', 'int')) . '" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '' : '#line_' . GETPOSTINT('lineid')) . '" method="POST">
 		<input type="hidden" name="token" value="' . newToken() . '">
 		<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline') . '">
 		<input type="hidden" name="mode" value="">
@@ -330,7 +333,7 @@ if ($action == 'create') {
 			print '<table id="tablelines" class="noborder centpercent">';
 		}
 
-		$object->printObjectLines($action, $mysoc, null, GETPOST('lineid', 'int'), 1, '/variants/tpl', ($permissiontoedit ? 1 : 0));
+		$object->printObjectLines($action, $mysoc, null, GETPOSTINT('lineid'), 1, '/variants/tpl', ($permissiontoedit ? 1 : 0));
 
 		if (!empty($object->lines) || ($permissiontoedit && $action != 'selectlines' && $action != 'editline')) {
 			print '</table>';

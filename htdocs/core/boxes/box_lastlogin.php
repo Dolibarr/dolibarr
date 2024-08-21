@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2017 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2020 Frederic France        <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -10,8 +11,8 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
@@ -20,32 +21,22 @@
 /**
  *  \file       htdocs/core/boxes/box_lastlogin.php
  *  \ingroup    core
- *  \brief      Module to show box of bills, orders & propal of the current year
+ *  \brief      Module to show box of last user logins
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 /**
- * Class to manage the box of last login
+ *  Class to manage the box of last login
  */
 class box_lastlogin extends ModeleBoxes
 {
-	public $boxcode = "lastlogin";
-	public $boximg = "object_user";
+	public $boxcode  = "lastlogin";
+	public $boximg   = "object_user";
 	public $boxlabel = 'BoxLoginInformation';
-	public $depends = array("user");
+	public $depends  = array("user");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
 	public $enabled = 1;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
 
 	/**
 	 *  Constructor
@@ -61,7 +52,7 @@ class box_lastlogin extends ModeleBoxes
 	}
 
 	/**
-	 *  Charge les donnees en memoire pour affichage ulterieur
+	 *  Load data into memory for later display
 	 *
 	 *  @param  int     $max        Maximum number of records to load
 	 *  @return void
@@ -73,7 +64,7 @@ class box_lastlogin extends ModeleBoxes
 		$textHead = $langs->trans("BoxLoginInformation");
 		$this->info_box_head = array(
 			'text' => $textHead,
-			'limit'=> dol_strlen($textHead),
+			'limit' => dol_strlen($textHead),
 		);
 
 		$line = 0;
@@ -107,9 +98,9 @@ class box_lastlogin extends ModeleBoxes
 	/**
 	 *  Method to show box
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *  @return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

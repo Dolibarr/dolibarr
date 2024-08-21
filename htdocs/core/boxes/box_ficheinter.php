@@ -2,6 +2,7 @@
 /* Copyright (C) 2013 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015 Frederic France	<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +38,6 @@ class box_ficheinter extends ModeleBoxes
 	public $depends = array("ficheinter"); // conf->contrat->enabled
 
 	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
-
-	/**
 	 *  Constructor
 	 *
 	 *  @param  DoliDB  $db         Database handler
@@ -78,9 +68,11 @@ class box_ficheinter extends ModeleBoxes
 		$ficheinterstatic = new Fichinter($this->db);
 		$thirdpartystatic = new Societe($this->db);
 
-		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
+		$this->info_box_head = array(
+			'text' => $langs->trans("BoxTitleLastFicheInter", $max).'<a class="paddingleft" href="'.DOL_URL_ROOT.'/fichinter/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>'
+		);
 
-		if (!empty($user->rights->ficheinter->lire)) {
+		if ($user->hasRight('ficheinter', 'lire')) {
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
 			$sql .= ", f.datec";
 			$sql .= ", f.date_valid as datev";
@@ -89,13 +81,13 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (empty($user->rights->societe->client->voir)) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (empty($user->rights->societe->client->voir) && !$user->socid) {
+			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -127,6 +119,7 @@ class box_ficheinter extends ModeleBoxes
 					//$thirdpartystatic->name_alias = $objp->name_alias;
 					$thirdpartystatic->code_client = $objp->code_client;
 					$thirdpartystatic->code_compta = $objp->code_compta;
+					$thirdpartystatic->code_compta_client = $objp->code_compta;
 					$thirdpartystatic->client = $objp->client;
 					$thirdpartystatic->logo = $objp->logo;
 					$thirdpartystatic->email = $objp->email;
@@ -160,8 +153,8 @@ class box_ficheinter extends ModeleBoxes
 
 				if ($num == 0) {
 					$this->info_box_contents[$i][0] = array(
-					'td' => 'class="center opacitymedium"',
-					'text'=>$langs->trans("NoRecordedInterventions")
+					'td' => 'class="center"',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedInterventions").'</span>'
 					);
 				}
 
@@ -169,14 +162,14 @@ class box_ficheinter extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
-				'td' => 'class="nohover opacitymedium left"',
-				'text' => $langs->trans("ReadPermissionNotAllowed")
+				'td' => 'class="nohover left"',
+				'text' => '<span class="opacitymedium">'.$langs->trans("ReadPermissionNotAllowed").'</span>'
 			);
 		}
 	}
@@ -184,9 +177,9 @@ class box_ficheinter extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

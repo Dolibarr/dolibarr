@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +23,13 @@
 
 /**
  *	\file       htdocs/core/modules/facture/modules_facture.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File that contains parent class for invoices models
  *              and parent class for invoices numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required because used in classes that inherit
 
@@ -39,11 +41,6 @@ use Sprain\SwissQrBill;
  */
 abstract class ModelePDFFactures extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	public $posxpicture;
 	public $posxtva;
 	public $posxup;
@@ -61,13 +58,14 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	public $atleastonediscount = 0;
 	public $atleastoneratenotnull = 0;
 
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -80,6 +78,23 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *  @param		Facture			$object				Object to generate
+	 *  @param		Translate		$outputlangs		Lang output object
+	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		int<0,1>		$hidedetails		Do not show line details
+	 *  @param		int<0,1>		$hidedesc			Do not show desc
+	 *  @param		int<0,1>		$hideref			Do not show ref
+	 *  @return		int<-1,1>							1=OK, <=0=KO
+	 */
+	abstract public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0);
+	// phpcs:enable
+
 
 	/**
 	 * Get the SwissQR object, including validation
@@ -199,7 +214,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 * @param Translate $langs   	Translation object
 	 * @return int      			Height in mm of the bottom-page QR invoice. Can be zero if not on right page; not enabled
 	 */
-	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs) : int
+	protected function getHeightForQRInvoice(int $pagenbr, Facture $object, Translate $langs)
 	{
 		if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
 			// Keep it, to reset it after QRinvoice getter
@@ -227,7 +242,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 * @param Translate $langs   	Translation object
 	 * @return bool 				True for for success
 	 */
-	public function addBottomQRInvoice(TCPDF $pdf, Facture $object, Translate $langs) : bool
+	public function addBottomQRInvoice(TCPDF $pdf, Facture $object, Translate $langs): bool
 	{
 		if (!($qrBill = $this->getSwissQrBill($object, $langs))) {
 			return false;
@@ -251,95 +266,15 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 /**
  *  Parent class of invoice reference numbering templates
  */
-abstract class ModeleNumRefFactures
+abstract class ModeleNumRefFactures extends CommonNumRefGenerator
 {
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	public $version;
-
-
-	/**
-	 * Return if a module can be used or not
+	 * Return next value not used or last value used
 	 *
-	 * @return	boolean     true if module can be used
+	 * @param	Societe		$objsoc		Object third party
+	 * @param   Facture		$invoice	Object invoice
+	 * @param   string		$mode		'next' for next value or 'last' for last value
+	 * @return  string|int<-1,1>		Value if OK, <=0 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * Returns the default description of the numbering pattern
-	 *
-	 * @return    string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 * Return an example of numbering
-	 *
-	 * @return	string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 * @return	boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 * Renvoi prochaine valeur attribuee
-	 *
-	 * @param	Societe		$objsoc		Objet societe
-	 * @param   Facture		$invoice	Objet facture
-	 * @param   string		$mode       'next' for next value or 'last' for last value
-	 * @return  string      			Value
-	 */
-	public function getNextValue($objsoc, $invoice, $mode = 'next')
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 * Renvoi version du modele de numerotation
-	 *
-	 * @return    string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("NotAvailable");
-		}
-	}
+	abstract public function getNextValue($objsoc, $invoice, $mode = 'next');
 }
