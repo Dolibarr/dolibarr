@@ -139,7 +139,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array		Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -2548,6 +2548,7 @@ abstract class CommonObject
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		if (!empty($this->fields['fk_project'])) {		// Common case
 			if ($projectid) {
 				$sql .= " SET fk_project = ".((int) $projectid);
@@ -7362,7 +7363,7 @@ abstract class CommonObject
 		$param = array();
 		$param['options'] = array();
 		$reg = array();
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$size = !empty($this->fields[$key]['size']) ? $this->fields[$key]['size'] : 0;
 		// Because we work on extrafields
 		if (preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
@@ -7402,7 +7403,7 @@ abstract class CommonObject
 		// Special case that force options and type ($type can be integer, varchar, ...)
 		if (!empty($this->fields[$key]['arrayofkeyval']) && is_array($this->fields[$key]['arrayofkeyval'])) {
 			$param['options'] = $this->fields[$key]['arrayofkeyval'];
-			// Special case that prevent to force $type to have multiple input
+			// Special case that prevent to force $type to have multiple input @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -7412,18 +7413,18 @@ abstract class CommonObject
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
 		$default = (!empty($this->fields[$key]['default']) ? $this->fields[$key]['default'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$computed = (!empty($this->fields[$key]['computed']) ? $this->fields[$key]['computed'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$unique = (!empty($this->fields[$key]['unique']) ? $this->fields[$key]['unique'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
 
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
-		// @phan-suppress-next-line PhanTypeArraySuspiciousNullable
+		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$list = (!empty($this->fields[$key]['list']) ? $this->fields[$key]['list'] : 0);
 		$hidden = (in_array(abs($this->fields[$key]['visible']), array(0, 2)) ? 1 : 0);
 
@@ -7987,12 +7988,14 @@ abstract class CommonObject
 
 			if (!preg_match('/search_/', $keyprefix)) {
 				if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusxx';
 					} else {
 						$morecss .= ' widthcentpercentminusx';
 					}
 				} else {
+					// @phan-suppress-next-line PhanTypeMismatchProperty
 					if (!empty($this->fields[$key]['picto'])) {
 						$morecss .= ' widthcentpercentminusx';
 					}
@@ -8114,6 +8117,7 @@ abstract class CommonObject
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if (empty($this->fields[$key]['multiinput'])) {
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
@@ -8194,6 +8198,7 @@ abstract class CommonObject
 
 		// Format output value differently according to properties of field
 		if (in_array($key, array('rowid', 'ref')) && method_exists($this, 'getNomUrl')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			if ($key != 'rowid' || empty($this->fields['ref'])) {	// If we want ref field or if we want ID and there is no ref field, we show the link.
 				$value = $this->getNomUrl(1, '', 0, '', 1);
 			}
@@ -8591,7 +8596,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param 	array<string,?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  	string  $fieldKey           Key of attribute
 	 * @param	string  $fieldValue         Value of attribute
 	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
