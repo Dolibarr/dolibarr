@@ -31,7 +31,8 @@ $sanitizeRegex
 			// Not documented:
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
-			'restricthtmlnolink'
+			'restricthtmlnolink',
+			'restricthtmlallowlinkscript'
 		)
 	).')*$/';
 

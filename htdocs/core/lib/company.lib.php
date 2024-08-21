@@ -1210,7 +1210,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'name'      => array('type' => 'varchar(128)', 'label' => 'Name', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1),
 		'poste'     => array('type' => 'varchar(128)', 'label' => 'PostOrFunction', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 2, 'index' => 1, 'position' => 20),
 		'address'   => array('type' => 'varchar(128)', 'label' => 'Address', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 3, 'index' => 1, 'position' => 30),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => ((int) !getDolGlobalBool('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'visible' => 3, 'position' => 35),
 		'role'      => array('type' => 'checkbox', 'label' => 'Role', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 4, 'index' => 1, 'position' => 40),
 		'birthday' 	=> array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'notnull' => 0, 'position' => 45),
 		'statut'    => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'default' => '0', 'index' => 1, 'position' => 50, 'arrayofkeyval' => array(0 => $contactstatic->LibStatut(0, 1), 1 => $contactstatic->LibStatut(1, 1))),
