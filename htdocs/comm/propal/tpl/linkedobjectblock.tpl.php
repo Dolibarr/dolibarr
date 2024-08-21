@@ -71,7 +71,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="linkedcol-action right"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&token='.newToken().'&dellinkid='.$key.'">'.img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink').'</a></td>';
 	print "</tr>\n";
 }
-if (count($linkedObjectBlock) > 1 || !empty($conf->global->LINKED_OBJECTS_HAVE_ALWAYS_SUBTOTAL)) {
+if (count($linkedObjectBlock) > 1 || getDolGlobalInt('LINKED_OBJECTS_HAVE_ALWAYS_SUBTOTAL')) {
 	print '<tr class="liste_total '.(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : '').'">';
 	print '<td>'.$langs->trans("Total").'</td>';
 	print '<td></td>';

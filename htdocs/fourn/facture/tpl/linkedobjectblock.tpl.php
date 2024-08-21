@@ -73,7 +73,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	</tr>
 	<?php
 }
-if (count($linkedObjectBlock) > 1 || !empty($conf->global->LINKED_OBJECTS_HAVE_ALWAYS_SUBTOTAL)) {
+if (count($linkedObjectBlock) > 1 || getDolGlobalInt('LINKED_OBJECTS_HAVE_ALWAYS_SUBTOTAL')) {
 	?>
 	<tr class="liste_total <?php echo(empty($noMoreLinkedObjectBlockAfter) ? 'liste_sub_total' : ''); ?>">
 		<td><?php echo $langs->trans("Total"); ?></td>
