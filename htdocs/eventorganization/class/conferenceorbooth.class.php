@@ -255,7 +255,7 @@ class ConferenceOrBooth extends ActionComm
 
 		$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.urlencode((string) ($id)).'&type=conf';
 
-		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.$id, 2);
+		$encodedsecurekey = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'conferenceorbooth'.$id, '2');
 		$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 
 		/*$this->fields['pubregister'] = array('type'=>'url', 'label'=>$langs->trans("PublicAttendeeSubscriptionPage"), 'enabled'=>'1', 'position'=>72, 'notnull'=>0, 'visible'=>1);

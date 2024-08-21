@@ -489,7 +489,7 @@ if (empty($reshook) && $action == 'add') {
 						}
 						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
 							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, 2));
+								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
 							} else {
 								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
 							}
