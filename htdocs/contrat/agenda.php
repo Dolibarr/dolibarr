@@ -64,6 +64,10 @@ if ($user->socid) {
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($id) ? 'rowid' : 'ref');
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('agendacontract', 'globalcard'));
+
 $result = restrictedArea($user, 'contrat', $fieldvalue, '', '', '', $fieldtype);
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -88,9 +92,6 @@ $object = new Contrat($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('agendacontract', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 

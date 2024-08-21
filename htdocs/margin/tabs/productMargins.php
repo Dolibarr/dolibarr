@@ -61,13 +61,13 @@ if (!$sortfield) {
 	$sortfield = "f.datef";
 }
 
+$hookmanager->initHooks(array('tabproductmarginlist'));
+
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 if (!$user->hasRight('margins', 'liretous')) {
 	accessforbidden();
 }
-
-$hookmanager->initHooks(array('tabproductmarginlist'));
 
 $search_invoice_date_start = '';
 $search_invoice_date_end = '';
@@ -96,8 +96,8 @@ if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GET
 		$search_invoice_date_start = strtotime($fiscalYear->date_start);
 		$search_invoice_date_end = strtotime($fiscalYear->date_end);
 	} else {
-		$month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? $conf->global->SOCIETE_FISCAL_MONTH_START : 1);
-		$year_start = dol_print_date(dol_now(), '%Y');
+		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
+		$year_start = (int) dol_print_date(dol_now(), '%Y');
 		if (dol_print_date(dol_now(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}

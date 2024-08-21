@@ -68,15 +68,15 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 // If user is not user that read and no permission to read other users, we stop
 if (($object->id != $user->id) && (!$user->hasRight('user', 'user', 'lire'))) {
 	accessforbidden();
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('usercard', 'useragenda', 'globalcard'));
 
 /*
  * Actions
