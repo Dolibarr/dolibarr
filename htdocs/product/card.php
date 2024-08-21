@@ -187,6 +187,9 @@ if (!empty($canvas)) {
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($id) ? 'rowid' : 'ref');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('productcard', 'globalcard'));
+
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
 		restrictedArea($user, 'produit', $object->id, 'product&product', '', '');
@@ -197,9 +200,6 @@ if ($object->id > 0) {
 } else {
 	restrictedArea($user, 'produit|service', 0, 'product&product', '', '', $fieldtype);
 }
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('productcard', 'globalcard'));
 
 // Permissions
 $usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'read')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));

@@ -59,6 +59,7 @@ $lineid = GETPOSTINT('lineid');
 $batch = GETPOST('batch', 'alphanohtml');
 $totalExpectedValuation = 0;
 $totalRealValuation = 0;
+$hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
 if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$result = restrictedArea($user, 'stock', $id);
 } else {
@@ -69,7 +70,7 @@ if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 $object = new Inventory($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stock->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('inventorycard')); // Note that conf->hooks_modules contains array
+
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

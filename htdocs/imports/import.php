@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('exports', 'compta', 'errors', 'projects', 'admin'));
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('imports'));
+
 // Security check
 $result = restrictedArea($user, 'import');
 
@@ -146,11 +149,6 @@ $separator			= (GETPOST('separator', 'nohtml') ? GETPOST('separator', 'nohtml', 
 $enclosure			= (GETPOST('enclosure', 'nohtml') ? GETPOST('enclosure', 'nohtml') : '"');	// We must use 'nohtml' and not 'alphanohtml' because we must accept "
 $charset            = GETPOST('charset', 'aZ09');
 $separator_used     = str_replace('\t', "\t", $separator);
-
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('imports'));
-
 
 $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));

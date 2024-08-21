@@ -65,6 +65,10 @@ $id = GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('deliverycard', 'globalcard'));
+
 $result = restrictedArea($user, 'expedition', $id, 'delivery', 'delivery');
 
 $object = new Delivery($db);
@@ -78,9 +82,6 @@ $extrafields->fetch_name_optionals_label($object->table_element_line);
 
 // Load object. Make an object->fetch
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('deliverycard', 'globalcard'));
 
 $error = 0;
 
