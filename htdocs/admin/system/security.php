@@ -583,11 +583,12 @@ if (!$test) {
 }
 print '<br>';
 
-print '<br>';
 
 // Modules for Payments
 $test = isModEnabled('stripe');
 if ($test) {
+	print '<br>';
+
 	print '<strong>'.$langs->trans("Stripe").'</strong>: ';
 	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
@@ -598,6 +599,8 @@ if ($test) {
 } else {
 	$test = isModEnabled('paypal');
 	if ($test) {
+		print '<br>';
+
 		print '<strong>'.$langs->trans("Paypal").'</strong>: ';
 		if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 			print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
@@ -714,10 +717,19 @@ print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span>";
+
+// Test compatibility of MAIN_RESTRICTHTML_ONLY_VALID_HTML
+$savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES');
+$savMAIN_RESTRICTHTML_ONLY_VALID_HTML = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+$savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
 $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 $result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = $savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES;
+$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML;
+$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
+
 if ($result == 'InvalidHTMLStringCantBeCleaned') {
 	print ' &nbsp; - &nbsp; '.img_warning().' Your libxml seems to old to work correctly with this option. Disable it !';
 } else {
@@ -730,10 +742,18 @@ print '<br>';
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span> &nbsp; - &nbsp; Module "php-tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : img_picto('', 'warning').' Not available').")";
 if (extension_loaded('tidy') && class_exists("tidy")) {
+	// Test compatibility of MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
+	$savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES');
+	$savMAIN_RESTRICTHTML_ONLY_VALID_HTML = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+	$savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
 	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 	$result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = $savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES;
+	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML;
+	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
+
 	if ($result == 'InvalidHTMLStringCantBeCleaned') {
 		print ' &nbsp; - &nbsp; '.img_warning().' Your libxml seems to old to work correctly with this option. Disable it !';
 	} else {

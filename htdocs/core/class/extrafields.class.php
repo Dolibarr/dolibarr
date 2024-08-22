@@ -1619,6 +1619,8 @@ class ExtraFields
 					// print $sql;
 
 					$sql .= $sqlwhere;
+					$sql .= ' ORDER BY '.implode(', ', $fields_label);
+
 					dol_syslog(get_class($this).'::showInputField type=chkbxlst', LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if ($resql) {

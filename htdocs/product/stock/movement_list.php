@@ -980,11 +980,11 @@ if ((empty($action) || $action == 'list') && $id > 0) {
 	// modified by hook
 	if (empty($reshook)) {
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction&token='.newToken().'">'.$langs->trans("CorrectStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
 		}
 
 		if ($user->hasRight('stock', 'mouvement', 'creer')) {
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert&token='.newToken().'">'.$langs->trans("TransferStock").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction&token='.newToken().'">'.$langs->trans("CorrectStock").'</a>';
 		}
 	}
 
