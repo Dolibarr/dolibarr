@@ -247,10 +247,12 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			 */
 			dol_syslog("functions_ldap::check_user_password_ldap Authentication KO failed to connect to LDAP for '".$usertotest."'", LOG_NOTICE);
 			if ($ldapdebug) {
-				if ($ldap->connection !== false || is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
-					$ldap->ldapErrorCode = ldap_errno($ldap->connection);
-					$ldap->ldapErrorText = ldap_error($ldap->connection);
-					dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
+				if ($ldap->connection != false) {
+					if (is_resource($ldap->connection) || is_object($ldap->connection)) {    // If connection ok but bind ko
+						$ldap->ldapErrorCode = ldap_errno($ldap->connection);
+						$ldap->ldapErrorText = ldap_error($ldap->connection);
+						dol_syslog("functions_ldap::check_user_password_ldap ".$ldap->ldapErrorCode." ".$ldap->ldapErrorText);
+					}
 				}
 			}
 			sleep(1); // Anti brut force protection. Must be same delay when user and password are not valid.
@@ -258,9 +260,7 @@ function check_user_password_ldap($usertotest, $passwordtotest, $entitytotest)
 			$langs->loadLangs(array('main', 'other', 'errors'));
 			$_SESSION["dol_loginmesg"] = ($ldap->error ? $ldap->error : $langs->transnoentitiesnoconv("ErrorBadLoginPassword"));
 		}
-		if ($ldap->connection !== false) {
-			$ldap->unbind();
-		}
+		$ldap->unbind();
 	}
 
 	return $login;

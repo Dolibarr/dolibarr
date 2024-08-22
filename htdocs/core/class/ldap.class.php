@@ -307,7 +307,12 @@ class Ldap
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
 					}
-					$this->connection = ldap_connect($host, $this->serverPort);
+					if (strnatcmp(phpversion(), '8.3.0') >= 0) {
+						$uri = $host.':'.$this->serverPort;
+						$this->connection = ldap_connect($uri);
+					} else {
+						$this->connection = ldap_connect($host, $this->serverPort);
+					}
 				} else {
 					if (preg_match('/^ldaps/i', $host)) {
 						// With host = ldaps://server, the serverPing to ssl://server sometimes fails, even if the ldap_connect succeed, so
@@ -315,7 +320,12 @@ class Ldap
 						if ($ldapdebug) {
 							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
 						}
-						$this->connection = ldap_connect($host, $this->serverPort);
+						if (strnatcmp(phpversion(), '8.3.0') >= 0) {
+							$uri = $host.':'.$this->serverPort;
+							$this->connection = ldap_connect($uri);
+						} else {
+							$this->connection = ldap_connect($host, $this->serverPort);
+						}
 					} else {
 						continue;
 					}
@@ -463,14 +473,26 @@ class Ldap
 	/**
 	 * Unbind of LDAP server (close connection).
 	 *
-	 * @return	boolean					true or false
-	 * @see close()
+	 * @return		boolean		true or false
+	 * @see	close()
 	 */
 	public function unbind()
 	{
 		$this->result = true;
-		if (is_resource($this->connection) || is_object($this->connection)) {
-			$this->result = @ldap_unbind($this->connection);
+		if (strnatcmp(phpversion(), '8.1.0') >= 0) {
+			if (is_object($this->connection)) {
+				try {
+					$this->result = ldap_unbind($this->connection);
+				} catch (Throwable $exception) {
+					$this->error = 'Failed to unbind LDAP connection: '.$exception;
+					$this->result = false;
+					dol_syslog(get_class($this).'::unbind - '.$this->error, LOG_WARNING);
+				}
+			}
+		} else {
+			if (is_resource($this->connection)) {
+				$this->result = @ldap_unbind($this->connection);
+			}
 		}
 		if ($this->result) {
 			return true;
