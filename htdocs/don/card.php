@@ -326,7 +326,7 @@ if (empty($reshook)) {
 		$object->setProject($projectid);
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('don', 'creer')) {
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object, 2);
