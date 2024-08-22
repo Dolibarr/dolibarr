@@ -203,14 +203,16 @@ class TimePlanned extends CommonObject
 		if (property_exists($object, 'ref')) {
 			if (empty($this->fields['ref']['default']))
 				$object->ref = "Copy_Of_".$object->ref;
-			else
+			else {
 				$object->ref = $this->fields['ref']['default'];
+			}
 		}
 		if (property_exists($object, 'label')) {
-			if(empty($this->fields['label']['default']))
+			if (empty($this->fields['label']['default']))
 				$object->label = $langs->trans("CopyOf")." ".$object->label;
-			else
+			else {
 				$object->label = $this->fields['label']['default'];
+			}
 		}
 		if (property_exists($object, 'status')) {
 			$object->status = self::STATUS_DRAFT;
