@@ -408,12 +408,12 @@ class modStock extends DolibarrModules
 		$this->export_icon[$r] = "inventory";
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
-			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
+			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.title' => 'InventoryLabel', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
 			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated', 'id.fk_warehouse' => 'InventoryEntrepot',
 			'id.batch' => 'Lotserial',
 			'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 			'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
-			'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
+			'p.price' => "Barcode", 'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
 		);
 		if (isModEnabled('barcode')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode' => 'BarCode'));
@@ -422,8 +422,8 @@ class modStock extends DolibarrModules
 			'id.rowid' => 'Numeric',
 			'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.description' => 'Text', 'e.lieu' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 			'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
-			'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date',
-			'i.rowid' => 'Numeric', 'i.ref' => 'Text', 'i.date_inventory' => 'Date', 'i.status' => 'Numeric', 'i.title' => 'Text',
+			'p.barcode' => "Text", 'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date',
+			'i.rowid' => 'Numeric', 'i.ref' => 'Text', 'i.title' => 'Text', 'i.date_inventory' => 'Date', 'i.status' => 'Numeric', 'i.title' => 'Text',
 			'id.qty_view' => 'Numeric', 'id.qty_stock' => 'Numeric', 'id.batch' => 'Text',
 			'id.qty_regulated' => 'Numeric', 'id.fk_warehouse' => 'Numeric',
 		);
@@ -433,7 +433,7 @@ class modStock extends DolibarrModules
 		$this->export_entities_array[$r] = array(
 			'e.rowid' => 'warehouse', 'e.ref' => 'warehouse', 'e.description' => 'warehouse', 'e.lieu' => 'warehouse', 'e.address' => 'warehouse', 'e.zip' => 'warehouse', 'e.town' => 'warehouse',
 			'p.rowid' => "product", 'p.ref' => "product", 'p.fk_product_type' => "product", 'p.label' => "product", 'p.description' => "product", 'p.note' => "product",
-			'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product", 'p.datec' => 'product', 'p.tms' => 'product'
+			'p.barcode' => "product", 'p.price' => "product", 'p.tva_tx' => 'product', 'p.tosell' => "product", 'p.tobuy' => "product", 'p.duration' => "product", 'p.datec' => 'product', 'p.tms' => 'product'
 		);	// We define here only fields that use another icon that the one defined into export_icon
 		if (isModEnabled('productbatch')) {
 			$this->export_fields_array[$r]['id.batch'] = 'Batch';
