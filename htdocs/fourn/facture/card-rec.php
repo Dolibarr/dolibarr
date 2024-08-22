@@ -404,7 +404,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form

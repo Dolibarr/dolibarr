@@ -749,7 +749,7 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('ficheinter', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
