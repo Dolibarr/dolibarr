@@ -408,12 +408,12 @@ class modStock extends DolibarrModules
 		$this->export_icon[$r] = "inventory";
 		$this->export_permission[$r] = array(array("stock", "lire"));
 		$this->export_fields_array[$r] = array(
-			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.title' => 'InventoryLabel', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
+			'i.rowid' => 'InventoryId', 'i.ref' => 'InventoryRef', 'i.date_inventory' => 'DateInventory', 'i.status' => 'InventoryStatus', 'i.title' => 'InventoryTitle',
 			'id.rowid' => 'InventoryLineId', 'id.qty_view' => 'QtyViewed', 'id.qty_stock' => 'QtyStock', 'id.qty_regulated' => 'QtyRegulated', 'id.fk_warehouse' => 'InventoryEntrepot',
 			'id.batch' => 'Lotserial',
 			'e.rowid' => 'IdWarehouse', 'e.ref' => 'LocationSummary', 'e.description' => 'DescWareHouse', 'e.lieu' => 'LieuWareHouse', 'e.address' => 'Address', 'e.zip' => 'Zip', 'e.town' => 'Town',
 			'p.rowid' => "ProductId", 'p.ref' => "Ref", 'p.fk_product_type' => "Type", 'p.label' => "Label", 'p.description' => "Description", 'p.note' => "Note",
-			'p.price' => "Barcode", 'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
+			'p.barcode' => "Barcode", 'p.price' => "Price", 'p.tva_tx' => 'VAT', 'p.tosell' => "OnSell", 'p.tobuy' => 'OnBuy', 'p.duration' => "Duration", 'p.datec' => 'DateCreation', 'p.tms' => 'DateModification'
 		);
 		if (isModEnabled('barcode')) {
 			$this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode' => 'BarCode'));
@@ -423,7 +423,7 @@ class modStock extends DolibarrModules
 			'e.rowid' => 'List:entrepot:ref::stock', 'e.ref' => 'Text', 'e.description' => 'Text', 'e.lieu' => 'Text', 'e.address' => 'Text', 'e.zip' => 'Text', 'e.town' => 'Text',
 			'p.rowid' => "Numeric", 'p.ref' => "Text", 'p.fk_product_type' => "Text", 'p.label' => "Text", 'p.description' => "Text", 'p.note' => "Text",
 			'p.barcode' => "Text", 'p.price' => "Numeric", 'p.tva_tx' => 'Numeric', 'p.tosell' => "Boolean", 'p.tobuy' => "Boolean", 'p.duration' => "Duree", 'p.datec' => 'Date', 'p.tms' => 'Date',
-			'i.rowid' => 'Numeric', 'i.ref' => 'Text', 'i.title' => 'Text', 'i.date_inventory' => 'Date', 'i.status' => 'Numeric', 'i.title' => 'Text',
+			'i.rowid' => 'Numeric', 'i.ref' => 'Text', 'i.date_inventory' => 'Date', 'i.status' => 'Numeric', 'i.title' => 'Text',
 			'id.qty_view' => 'Numeric', 'id.qty_stock' => 'Numeric', 'id.batch' => 'Text',
 			'id.qty_regulated' => 'Numeric', 'id.fk_warehouse' => 'Numeric',
 		);
