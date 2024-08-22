@@ -1505,6 +1505,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$dateend = isset($this->cronjobs[$key]['dateend']) ? $this->cronjobs[$key]['dateend'] : '';
 				$status = isset($this->cronjobs[$key]['status']) ? $this->cronjobs[$key]['status'] : '';
 				$test = isset($this->cronjobs[$key]['test']) ? $this->cronjobs[$key]['test'] : ''; // Line must be enabled or not (so visible or not)
+				$datenextrun = isset($this->cronjobs[$key]['datenextrun']) ? $this->cronjobs[$key]['datenextrun'] : '';
 
 				// Search if cron entry already present
 				$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
@@ -1546,6 +1547,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							if (is_int($priority)) {
 								$sql .= ' priority,';
 							}
+							if (!empty($datenextrun)){
+								$sql .= ' datenextrun,';
+							}
 							if (is_int($status)) {
 								$sql .= ' status,';
 							}
@@ -1571,6 +1575,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							}
 							if (is_int($priority)) {
 								$sql .= "'".$this->db->escape($priority)."', ";
+							}
+							if (!empty($datenextrun)){
+								$sql .= "'".$this->db->escape($datenextrun)."', ";
 							}
 							if (is_int($status)) {
 								$sql .= ((int) $status).", ";
