@@ -1547,7 +1547,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							if (is_int($priority)) {
 								$sql .= ' priority,';
 							}
-							if (!empty($datenextrun)){
+							if (!empty($datenextrun)) {
 								$sql .= ' datenextrun,';
 							}
 							if (is_int($status)) {
@@ -1576,7 +1576,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 							if (is_int($priority)) {
 								$sql .= "'".$this->db->escape($priority)."', ";
 							}
-							if (!empty($datenextrun)){
+							if (!empty($datenextrun)) {
 								$sql .= "'".$this->db->escape($datenextrun)."', ";
 							}
 							if (is_int($status)) {
