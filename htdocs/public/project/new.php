@@ -4,9 +4,9 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -73,7 +72,7 @@ if (!getDolGlobalString('PROJECT_ENABLE_PUBLIC')) {
 	exit;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewleadcard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -201,7 +200,7 @@ if (empty($reshook) && $action == 'add') {
 		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
 	}
 	// Set default opportunity status
-	$defaultoppstatus = getDolGlobalString('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
+	$defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
 	if (empty($defaultoppstatus)) {
 		$error++;
 		$langs->load("errors");
@@ -215,7 +214,7 @@ if (empty($reshook) && $action == 'add') {
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $object->email);
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
@@ -239,7 +238,6 @@ if (empty($reshook) && $action == 'add') {
 			// Fill array 'array_options' with data from the form
 			$extrafields->fetch_name_optionals_label($thirdparty->table_element);
 			$ret = $extrafields->setOptionalsFromPost(null, $thirdparty, '', 1);
-			//var_dump($thirdparty->array_options);exit;
 			if ($ret < 0) {
 				$error++;
 				$errmsg = ($extrafields->error ? $extrafields->error.'<br>' : '').implode('<br>', $extrafields->errors);
@@ -260,7 +258,7 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		// Defined the ref into $defaultref
 		$defaultref = '';
-		$modele = !getDolGlobalString('PROJECT_ADDON') ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+		$modele = getDolGlobalString('PROJECT_ADDON', 'mod_project_simple');
 
 		// Search template files
 		$file = '';
@@ -276,11 +274,13 @@ if (empty($reshook) && $action == 'add') {
 			}
 		}
 
-		if ($filefound) {
+		if ($filefound && !empty($classname)) {
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-			$modProject = new $classname();
+			if (class_exists($classname)) {
+				$modProject = new $classname();
 
-			$defaultref = $modProject->getNextValue($thirdparty, $object);
+				$defaultref = $modProject->getNextValue($thirdparty, $object);
+			}
 		}
 
 		if (is_numeric($defaultref) && $defaultref <= 0) {
@@ -305,8 +305,8 @@ if (empty($reshook) && $action == 'add') {
 		$proj->usage_opportunity = 1;
 		$proj->title       = $langs->trans("LeadFromPublicForm");
 		$proj->description = GETPOST("description", "alphanohtml");
-		$proj->opp_status  = $defaultoppstatus;
-		$proj->fk_opp_status  = $defaultoppstatus;
+		$proj->opp_status = $defaultoppstatus;
+		$proj->fk_opp_status = $defaultoppstatus;
 
 		$proj->ip = getUserRemoteIP();
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);

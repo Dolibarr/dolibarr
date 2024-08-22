@@ -8,6 +8,7 @@
  * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +185,7 @@ if (GETPOST("delete")) {
  */
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ExternalRSSSetup"));
+llxHeader('', $langs->trans("ExternalRSSSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-external_rss');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExternalRSSSetup"), $linkback, 'title_setup');
@@ -320,7 +321,7 @@ if ($resql) {
 		}
 
 		// Active
-		$active = _isInBoxList($idrss, $boxlist) ? 'yes' : 'no';
+		$active = _isInBoxList((int) $idrss, $boxlist) ? 'yes' : 'no';
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans('WidgetAvailable').'</td>';
 		print '<td>'.yn($active);

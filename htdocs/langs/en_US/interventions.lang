@@ -75,3 +75,4 @@ TypeContact_fichinter_internal_INTERREPFOLL=Responsible for intervention follow-
 TypeContact_fichinter_internal_INTERVENING=Intervenant
 TypeContact_fichinter_external_BILLING=Customer contact of intervention billing
 TypeContact_fichinter_external_CUSTOMER=Customer contact of intervention follow-up
+NotARecurringInterventionalTemplate=Not a recurring intervention template

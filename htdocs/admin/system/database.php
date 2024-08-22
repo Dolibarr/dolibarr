@@ -41,7 +41,7 @@ if (!$user->admin) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_database');
 
 print load_fiche_titre($langs->trans("InfoDatabase"), '', 'title_setup');
 

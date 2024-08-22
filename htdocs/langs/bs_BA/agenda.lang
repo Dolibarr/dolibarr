@@ -21,7 +21,6 @@ MenuDoneMyActions=Moji završeni događaji
 ListOfEvents=Lista događaja (podrazumevani kalendar)
 ActionsAskedBy=Događaje izvijestio/la
 ActionsToDoBy=Događaji dodijeljeni korisniku
-ActionsDoneBy=Događaji završeni od strane korisnika
 ActionAssignedTo=Događaj dodijeljen
 ViewCal=Mjesečni pregled
 ViewDay=Dnevni pregled
@@ -135,12 +134,14 @@ AgendaModelModule=Predlošci dokumenata za događaj
 DateActionStart=Datum početka
 DateActionEnd=Datum završetka
 AgendaUrlOptions1=Također možete dodati sljedeće parametre za filtriranje prikazanog:
-AgendaUrlOptions3=<b>logina=%s</b> za ograničavanje izlaza na radnje u vlasništvu korisnika <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> za ograničavanje izlaza na radnje koje nisu u vlasništvu korisnik <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> da isključite automatske događaje.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> da uključi događaje praznika.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Rođendani kontakata
 AgendaHideBirthdayEvents=Sakrij rođendane kontakata
 Busy=Zauzet
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Vaša rezervacija je sačuvana
 BookingReservationHourAfter=Potvrđujemo rezervaciju našeg sastanka na datum %s
 BookcalBookingTitle=Online termin
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

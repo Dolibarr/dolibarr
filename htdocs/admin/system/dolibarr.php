@@ -74,7 +74,7 @@ $form = new Form($db);
 $help_url = '';
 $title = $langs->trans("InfoDolibarr");
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-system_dolibarr');
 
 print load_fiche_titre($title, '', 'title_setup');
 

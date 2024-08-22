@@ -109,7 +109,7 @@ if (empty($conf->bookmark->enabled)) {
 			$i++;
 		}
 		if ($i == 0) {
-			$bookmarkList .= '<br><span class="opacitymedium">'.$langs->trans("NoBookmarks").'</span>';
+			$bookmarkList .= '<br><div class="opacitymedium center">'.$langs->trans("NoBookmarks").'</div>';
 			$bookmarkList .= '<br><br>';
 		}
 
@@ -146,7 +146,7 @@ if (empty($reshook)) {
 
 print "\n";
 print "<!-- Begin Bookmarks list -->\n";
-print '<div class="center"><div class="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 30px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
 print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $bookmarkList;

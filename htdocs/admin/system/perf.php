@@ -46,7 +46,7 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
 $form = new Form($db);
 $nowstring = dol_print_date(dol_now(), 'dayhourlog');
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_perf');
 
 print load_fiche_titre($langs->trans("PerfDolibarr"), '', 'title_setup');
 
@@ -675,7 +675,7 @@ print '<br>';
 
 
 if (getDolGlobalInt('MAIN_CACHE_COUNT')) {
-	print img_picto('', 'tick.png', 'class="pictofixedwidth"').' MAIN_CACHE_COUNT';
+	print img_picto('', 'tick.png', 'class="pictofixedwidth"');
 } else {
 	print img_picto('', 'minus', 'class="pictofixedwidth"');
 }

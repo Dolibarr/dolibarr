@@ -3,6 +3,8 @@
  * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2018 Charlene BENKE  	<charlie@patas-monkey.com>
  * Copyright (C) 2020      Maxime DEMAREST <maxime@indelog.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,7 +203,7 @@ class pdf_paiement extends CommonDocGenerator
 				$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
 				break;
 		}
-		$sql .= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+		$sql .= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
 		$sql .= " AND p.entity = ".$conf->entity;
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -234,7 +236,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
-				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
 				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
@@ -272,7 +274,7 @@ class pdf_paiement extends CommonDocGenerator
 					$sql .= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 				}
 				$sql .= " AND f.entity IN (".getEntity('invoice').")";
-				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year, $month))."' AND '".$this->db->idate(dol_get_last_day($year, $month))."'";
+				$sql .= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day((int) $year, (int) $month))."' AND '".$this->db->idate(dol_get_last_day((int) $year, (int) $month))."'";
 				if (!$user->hasRight('societe', 'client', 'voir')) {
 					$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 				}
@@ -353,7 +355,7 @@ class pdf_paiement extends CommonDocGenerator
 		$this->Body($pdf, 1, $lines, $outputlangs);
 
 		if (method_exists($pdf, 'AliasNbPages')) {
-			$pdf->AliasNbPages();
+			$pdf->AliasNbPages();  // @phan-suppress-current-line PhanUndeclaredMethod
 		}
 
 		$pdf->Close();
@@ -525,7 +527,7 @@ class pdf_paiement extends CommonDocGenerator
 
 				$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][4], 0, 'R', 1);
-				$yp = $yp + 5;
+				$yp += 5;
 				$total_page += $lines[$j][9];
 				if (($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) {
 					$total_mod += $lines[$j][9];
@@ -547,7 +549,7 @@ class pdf_paiement extends CommonDocGenerator
 			// Payment amount
 			$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][6], 0, 'R', 0);
-			$yp = $yp + 5;
+			$yp += 5;
 
 			if ($oldprowid != $lines[$j][7]) {
 				$oldprowid = $lines[$j][7];
@@ -567,7 +569,7 @@ class pdf_paiement extends CommonDocGenerator
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$mod = $lines[$j + 1][2];
 				$total_mod = 0;
-				$yp = $yp + 5;
+				$yp += 5;
 				if ($yp > $this->tab_height - 5) {
 					$page++;
 					$pdf->AddPage();

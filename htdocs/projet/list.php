@@ -59,6 +59,7 @@ $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 
 $title = $langs->trans("Projects");
 
@@ -99,6 +100,7 @@ $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
 $search_societe_alias = GETPOST("search_societe_alias", 'alpha');
+$search_societe_country = GETPOST("search_societe_country", 'alpha');
 $search_opp_status = GETPOST("search_opp_status", 'alpha');
 $search_opp_percent = GETPOST("search_opp_percent", 'alpha');
 $search_opp_amount = GETPOST("search_opp_amount", 'alpha');
@@ -190,7 +192,7 @@ if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Project($db);
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
@@ -229,7 +231,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (int) dol_eval($val['enabled'], 1, 1, '1')),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -241,7 +243,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 // Add non object fields to fields for list
 $arrayfields['s.nom'] = array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 21, 'enabled' => (!isModEnabled('societe') ? 0 : 1));
 $arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'checked' => 0, 'position' => 22);
-$arrayfields['commercial'] = array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => 0, 'position' => 23);
+$arrayfields['co.country_code'] = array('label' => "Country", 'checked' => -1, 'position' => 23);
+$arrayfields['commercial'] = array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => 0, 'position' => 25);
 $arrayfields['c.assigned'] = array('label' => $langs->trans("AssignedTo"), 'checked' => 1, 'position' => 120);
 $arrayfields['opp_weighted_amount'] = array('label' => $langs->trans('OpportunityWeightedAmountShort'), 'checked' => 0, 'enabled' => (!getDolGlobalString('PROJECT_USE_OPPORTUNITIES') ? 0 : 1), 'position' => 106);
 $arrayfields['u.login'] = array('label' => "Author", 'checked' => -1, 'position' => 165);
@@ -266,10 +269,10 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Add a groupby field. Set $groupby and $groupbyvalues.
 // TODO Move this into a inc file
-if ($mode == 'kanban') {
+$groupbyvalues = array();
+$groupofcollpasedvalues = array();
+if ($mode == 'kanban' && $groupby) {
 	$groupbyold = null;
-	$groupbyvalues = array();
-	$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
 	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
 		$groupbyfield = $object->fields[$groupbyfield]['alias'];
@@ -282,7 +285,8 @@ if ($mode == 'kanban') {
 		} elseif (!empty($object->fields[preg_replace('/[a-z]\./', '', $groupby)]['arrayofkeyval'])) {
 			$groupbyvalues = $object->fields[preg_replace('/[a-z]\./', '', $groupby)]['arrayofkeyval'];
 		} else {
-			// If type is 'integer:Object:classpath'
+			// var_dump($object->fields[$groupby]['type']);
+			// If type is 'integer:Object:classpath', for example "integer:CLeadStatus:core/class/cleadstatus.class.php"
 			// TODO
 			// $groupbyvalues = ...
 
@@ -291,7 +295,7 @@ if ($mode == 'kanban') {
 			$sql .= " WHERE active = 1";
 			//$sql .= " AND cls.code <> 'LOST'";
 			//$sql .= " AND cls.code <> 'WON'";
-			$sql .= $db->order('cls.rowid', 'ASC');
+			$sql .= $db->order('cls.rowid', 'ASC');	// Must use the same order key than the key in $groupby
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
@@ -303,10 +307,13 @@ if ($mode == 'kanban') {
 					$i++;
 				}
 			}
+
+			$groupofcollpasedvalues = array(6,7);	// LOST and WON
 		}
 		//var_dump($groupbyvalues);
 	}
-	if ($groupby) {
+	// Add a filter on the group by if not yet included first
+	if ($groupby && !preg_match('/^'.preg_quote($db->sanitize($groupby), '/').'/', $sortfield)) {
 		//var_dump($arrayfields);
 		$sortfield = $db->sanitize($groupby).($sortfield ? ",".$sortfield : "");
 		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
@@ -343,6 +350,7 @@ if (empty($reshook)) {
 		$search_label = "";
 		$search_societe = "";
 		$search_societe_alias = '';
+		$search_societe_country = '';
 		$search_status = -1;
 		$search_opp_status = -1;
 		$search_opp_amount = '';
@@ -519,7 +527,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
 $sql = "SELECT p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
-$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
+$sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount * p.opp_percent / 100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
 $sql .= " p.accept_conference_suggestions, p.accept_booth_suggestions, p.price_registration, p.price_booth,";
@@ -579,6 +587,9 @@ if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
+}
+if ($search_societe_country) {
+	$sql .= natural_search('country.code', $search_societe_country);
 }
 if ($search_opp_amount) {
 	$sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
@@ -834,7 +845,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-project page-list');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -851,6 +862,10 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+if ($groupby != '') {
+	$param .= '&groupby='.urlencode($groupby);
+}
+
 if ($socid) {
 	$param .= '&socid='.urlencode((string) $socid);
 }
@@ -988,6 +1003,9 @@ if ($search_societe != '') {
 if ($search_societe_alias != '') {
 	$param .= '&search_societe_alias='.urlencode($search_societe_alias);
 }
+if ($search_societe_country != '') {
+	$param .= '&search_societe_country='.urlencode($search_societe_country);
+}
 if ($search_status != '' && $search_status != '-1') {
 	$param .= "&search_status=".urlencode($search_status);
 }
@@ -1105,7 +1123,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
-
+print '<input type="hidden" name="groupby" value="'.$groupby.'">';
 
 // Show description of content
 $texthelp = '';
@@ -1243,18 +1261,19 @@ if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print '<input type="text" class="flat" name="search_societe_alias" size="8" value="'.dol_escape_htmltag($search_societe_alias).'">';
 	print '</td>';
 }
+// Country of thirdparty
+if (!empty($arrayfields['co.country_code']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat width50" name="search_societe_country" value="'.dol_escape_htmltag($search_societe_country).'">';
+	print '</td>';
+}
 // Sale representative
 if (!empty($arrayfields['commercial']['checked'])) {
 	print '<td class="liste_titre">&nbsp;</td>';
 }
 // Start date
 if (!empty($arrayfields['p.dateo']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
-	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
-	 }
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	 print $formother->selectyear($search_syear ? $search_syear : -1, 'search_syear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_start_start ? $search_date_start_start : -1, 'search_date_start_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1265,12 +1284,7 @@ if (!empty($arrayfields['p.dateo']['checked'])) {
 }
 // End date
 if (!empty($arrayfields['p.datee']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
-	/*if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) {
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
-	 }
-	 print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	 print $formother->selectyear($search_eyear ? $search_eyear : -1, 'search_eyear', 1, 20, 5, 0, 0, '', 'widthauto valignmiddle');*/
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_end_start ? $search_date_end_start : -1, 'search_date_end_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1371,7 +1385,7 @@ $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // N
 print $hookmanager->resPrint;
 // Creation date
 if (!empty($arrayfields['p.datec']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_creation_start ? $search_date_creation_start : -1, 'search_date_creation_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1382,7 +1396,7 @@ if (!empty($arrayfields['p.datec']['checked'])) {
 }
 // Modification date
 if (!empty($arrayfields['p.tms']['checked'])) {
-	print '<td class="liste_titre center nowraponall">';
+	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
 	print $form->selectDate($search_date_modif_start ? $search_date_modif_start : -1, 'search_date_modif_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 	print '</div>';
@@ -1440,6 +1454,10 @@ if (!empty($arrayfields['s.nom']['checked'])) {
 }
 if (!empty($arrayfields['s.name_alias']['checked'])) {
 	print_liste_field_titre($arrayfields['s.name_alias']['label'], $_SERVER["PHP_SELF"], "s.name_alias", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['co.country_code']['checked'])) {
+	print_liste_field_titre($arrayfields['co.country_code']['label'], $_SERVER["PHP_SELF"], "co.country_code", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['commercial']['checked'])) {
@@ -1646,7 +1664,7 @@ while ($i < $imaxinloop) {
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
-			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
+			print '<tr class="trkanban'.(empty($groupby) ? '' : ' trkanbangroupby').'"><td colspan="'.$savnbfield.'">';
 		}
 
 		if (!empty($groupby)) {
@@ -1654,17 +1672,32 @@ while ($i < $imaxinloop) {
 				print '<div class="box-flex-container-columns kanban">';	// Start div for all kanban columns
 			}
 			// Start kanban column
-			if ($groupbyold !== $obj->$groupbyfield) {
+			if (is_null($obj->$groupbyfield)) {
+				$groupbyvalue = 'undefined';
+			} else {
+				$groupbyvalue = $obj->$groupbyfield;
+			}
+			if ($groupbyold !== $groupbyvalue) {
 				if (!is_null($groupbyold)) {
 					print '</div>';	// We need a new kanban column - end box-flex-container
 				}
-				// TODO Create kanban column for all values into $groupbyvalues, until we reach the new $obj->$groupbyfield
-				//
-				//var_dump($groupbyvalues);
-				//var_dump($obj->$groupbyfield);
-				print '<div class="box-flex-container-column kanban column" data-html="column_'.preg_replace('/[^a-z0-9]/', '', $obj->$groupbyfield).'">';	// Start new column
+				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
+					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
+					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) { continue; }
+					if ($tmpcursor >= $groupbyvalue) { continue; }
+					// We found a possible column with no value, we output the empty column
+					print '<div class="box-flex-container-column kanban column';
+					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
+						print ' kanbancollapsed';
+					}
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue).'</div>';
+					print '</div>';	// Start and end the new column
+				}
+				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'">';	// Start new column
+				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$groupbyvalue]) ? 'Undefined' : $groupbyvalues[$groupbyvalue]).'</div>';
 			}
-			$groupbyold = $obj->$groupbyfield;
+			$groupbyold = $groupbyvalue;
 		} elseif ($i == 0) {
 			print '<div class="box-flex-container kanban">';
 		}
@@ -1679,13 +1712,25 @@ while ($i < $imaxinloop) {
 		}
 		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
 
-		print $object->getKanbanView('', $arrayofdata);
+		print $object->getKanbanView('', $arrayofdata, ($groupby ? 'small' : ''));
 
 		// if no more elements to show
 		if ($i == ($imaxinloop - 1)) {
 			// Close kanban column
 			if (!empty($groupby)) {
 				print '</div>';	// end box-flex-container
+				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
+					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
+					if ($tmpcursor <= $groupbyvalue) { continue; }
+					// We found a possible column with no value, we output the empty column
+					print '<div class="box-flex-container-column kanban column';
+					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
+						print ' kanbancollapsed';
+					}
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue) ? 'Undefined' : $tmpgroupbyvalue).'</div>';
+					print '</div>';	// Start and end the new column
+				}
 				print '</div>';	// end box-flex-container-columns
 			} else {
 				print '</div>';	// end box-flex-container
@@ -1711,7 +1756,7 @@ while ($i < $imaxinloop) {
 
 		// Show here line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $object->status > 1) ? 'opacitymedium' : '').'">';
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="nowrap center">';
@@ -1769,6 +1814,15 @@ while ($i < $imaxinloop) {
 			} else {
 				print '&nbsp;';
 			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Country code
+		if (!empty($arrayfields['co.country_code']['checked'])) {
+			print '<td class="tdoverflowmax125">';
+			print $obj->country_code;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

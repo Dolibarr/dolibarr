@@ -86,11 +86,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Security check
 if ($user->socid > 0) {	// Protection if external user
@@ -830,7 +830,7 @@ if (empty($action) || $action == "view" || $action == "close") {
 				foreach ($arrayofpaymentmode as $key => $val) {
 					print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
 					if ($key == 'cash') {
-						$deltaforcash = ($object->opening - $initialbalanceforterminal[$terminalid]['cash']);
+						$deltaforcash = ((float) $object->opening - $initialbalanceforterminal[$terminalid]['cash']);
 						print price($theoricalamountforterminal[$terminalid][$key] + $deltaforcash).'<br>';
 					} else {
 						print price($theoricalamountforterminal[$terminalid][$key]).'<br>';

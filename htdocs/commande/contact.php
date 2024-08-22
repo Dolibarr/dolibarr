@@ -45,11 +45,10 @@ $action = GETPOST('action', 'aZ09');
 if ($user->socid) {
 	$socid = $user->socid;
 }
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ordercontact', 'globalcard'));
 
 $result = restrictedArea($user, 'commande', $id, '');
-$hookmanager->initHooks(array('ordercontactcard', 'globalcard'));
 
 $usercancreate  =  $user->hasRight("commande", "creer");
 

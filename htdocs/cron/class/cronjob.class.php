@@ -518,9 +518,9 @@ class Cronjob extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset ppage
-	 * @param	int				$status			Display active or not
+	 * @param	int				$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
 	 * @param	string|array	$filter			Filter USF.
-	 * @param	int				$processing		Processing or not
+	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
 	 * @return	int								if KO: <0 || if OK: >0
 	 */
 	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
@@ -1188,7 +1188,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1226,7 +1226,7 @@ class Cronjob extends CommonObject
 		$this->lastresult = '';
 		$this->processing = 1; // To know job was started
 		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
-		$this->nbrun = $this->nbrun + 1;
+		$this->nbrun += 1;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1455,7 +1455,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);

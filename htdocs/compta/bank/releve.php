@@ -6,6 +6,8 @@
  * Copyright (C) 2017       Patrick Delcroix        <pmpdelcroix@gmail.com>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +64,7 @@ $newbankreceipt = GETPOST('newbankreceipt', 'alpha');
 $rel = GETPOST("rel", 'alphanohtml');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'dvnext' && !empty($dvid)) {
@@ -101,7 +103,7 @@ if ($id > 0 || !empty($ref)) {
 	$id = $object->id; // Force the search field on id of account
 }
 
-// Initialize technical object to manage context to save list fields
+// Initialize a technical object to manage context to save list fields
 $contextpage = 'banktransactionlist'.(empty($object->ref) ? '' : '-'.$object->id);
 
 // Security check
@@ -312,7 +314,7 @@ if (empty($numref)) {
 
 			// If not cash account and can be reconciliate
 			if ($user->hasRight('banque', 'consolidate')) {
-				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
+				$buttonreconcile = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&token='.newToken().'&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0&search_account='.$id.$param.'">'.$titletoconciliatemanual.'</a>';
 			} else {
 				$buttonreconcile = '<a class="butActionRefused classfortooltip" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliatemanual.'</a>';
 			}
@@ -323,7 +325,7 @@ if (empty($numref)) {
 				if ($user->hasRight('banque', 'consolidate')) {
 					$newparam = $param;
 					$newparam = preg_replace('/search_conciliated=\d+/i', '', $newparam);
-					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
+					$buttonreconcile .= ' <a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&token='.newToken().'&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&search_conciliated=0'.$newparam.'">'.$titletoconciliateauto.'</a>';
 				} else {
 					$buttonreconcile .= ' <a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$titletoconciliateauto.'</a>';
 				}
@@ -505,7 +507,7 @@ if (empty($numref)) {
 
 		while ($i < $num) {
 			$objp = $db->fetch_object($resql);
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 
 			print '<tr class="oddeven">';
 
@@ -662,8 +664,8 @@ if (empty($numref)) {
 			// Categories
 			if ($ve) {
 				$sql = "SELECT label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as ct";
-				$sql .= ", ".MAIN_DB_PREFIX."bank_class as cl";
+				$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as ct";
+				$sql .= ", ".MAIN_DB_PREFIX."category_bankline as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".((int) $conf->entity);
 				$sql .= " AND cl.lineid = ".((int) $objp->rowid);
@@ -688,10 +690,10 @@ if (empty($numref)) {
 			print "</td>";
 
 			if ($objp->amount < 0) {
-				$totald = $totald + abs($objp->amount);
+				$totald += abs($objp->amount);
 				print '<td class="nowrap right">'.price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 			} else {
-				$totalc = $totalc + abs($objp->amount);
+				$totalc += abs($objp->amount);
 				print '<td>&nbsp;</td><td class="nowrap right">'.price($objp->amount)."</td>\n";
 			}
 

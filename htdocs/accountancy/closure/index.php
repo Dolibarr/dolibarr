@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2019-2023  Open-DSI    	    <support@open-dsi.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {
 	accessforbidden();
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('accountancyclosure'));
 
 $object = new BookKeeping($db);
@@ -255,7 +256,7 @@ if (isset($current_fiscal_period)) {
 			'name' => 'date_start',
 			'type' => 'date',
 			'label' => $langs->trans('DateStart'),
-			'value' => dol_time_plus_duree($current_fiscal_period['date_end'], -1, 'm')
+			'value' => dol_time_plus_duree((int) $current_fiscal_period['date_end'], -1, 'm')
 		);
 		$form_question['date_end'] = array(
 			'name' => 'date_end',
@@ -300,7 +301,7 @@ if (!empty($current_fiscal_period)) {
 print load_fiche_titre($langs->trans("Closure") . " - " . $fiscal_period_nav_text, '', 'title_accountancy');
 
 if (empty($current_fiscal_period)) {
-	print $langs->trans('ErrorNoFiscalPeriodActiveFound');
+	print $langs->trans('ErrorNoFiscalPeriodActiveFound', $langs->trans("Accounting"), $langs->trans("Setup"), $langs->trans("FiscalPeriod"));
 }
 
 if (isset($current_fiscal_period)) {

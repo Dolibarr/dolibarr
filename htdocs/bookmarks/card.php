@@ -138,7 +138,7 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-bookmarks page-card');
 
 $form = new Form($db);
 

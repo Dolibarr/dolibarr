@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/comm/mailing/cibles.php
  *       \ingroup    mailing
- *       \brief      Page to define emailing targets
+ *       \brief      Page to define or view emailing targets
  */
 
 // Load Dolibarr environment
@@ -59,6 +59,8 @@ if (!$sortorder) {
 $id = GETPOSTINT('id');
 $rowid = GETPOSTINT('rowid');
 $action = GETPOST('action', 'aZ09');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $search_lastname = GETPOST("search_lastname", 'alphanohtml');
 $search_firstname = GETPOST("search_firstname", 'alphanohtml');
 $search_email = GETPOST("search_email", 'alphanohtml');
@@ -71,7 +73,7 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 $result = $object->fetch($id);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('ciblescard', 'globalcard'));
 
 $sqlmessage = '';
@@ -90,14 +92,28 @@ if (version_compare(phpversion(), '7.0', '>=')) {
 if (!$user->hasRight('mailing', 'lire') || (!getDolGlobalString('EXTERNAL_USERS_ARE_AUTHORIZED') && $user->socid > 0)) {
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'mailing');
+if (empty($action) && empty($object->id)) {
+	accessforbidden('Object not found');
+}
+
+$permissiontoread = $user->hasRight('maling', 'lire');
+$permissiontocreate = $user->hasRight('mailing', 'creer');
+$permissiontovalidatesend = $user->hasRight('mailing', 'valider');
+$permissiontodelete = $user->hasRight('mailing', 'supprimer');
 
 
 /*
  * Actions
  */
+if (GETPOST('cancel', 'alpha')) {
+	$action = 'list';
+	$massaction = '';
+}
+if (!GETPOST('confirmmassaction', 'alpha')) {
+	$massaction = '';
+}
 
-if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipients
+if ($action == 'add' && $permissiontocreate) {		// Add recipients
 	$module = GETPOST("module", 'alpha');
 	$result = -1;
 
@@ -146,7 +162,7 @@ if ($action == 'add' && $user->hasRight('mailing', 'creer')) {		// Add recipient
 	}
 }
 
-if (GETPOSTINT('clearlist') && $user->hasRight('mailing', 'creer')) {
+if (GETPOSTINT('clearlist') && $permissiontocreate) {
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
@@ -156,7 +172,7 @@ if (GETPOSTINT('clearlist') && $user->hasRight('mailing', 'creer')) {
 	*/
 }
 
-if (GETPOSTINT('exportcsv') && $user->hasRight('mailing', 'lire')) {
+if (GETPOSTINT('exportcsv') && $permissiontoread) {
 	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename='.$completefilename);
@@ -195,7 +211,7 @@ if (GETPOSTINT('exportcsv') && $user->hasRight('mailing', 'lire')) {
 	exit;
 }
 
-if ($action == 'delete' && $user->hasRight('mailing', 'creer')) {
+if ($action == 'delete' && $permissiontocreate) {
 	// Ici, rowid indique le destinataire et id le mailing
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid = ".((int) $rowid);
 	$resql = $db->query($sql);
@@ -214,6 +230,33 @@ if ($action == 'delete' && $user->hasRight('mailing', 'creer')) {
 	}
 }
 
+if ($action == "confirm_reset_target" && $permissiontocreate) {
+	if ($object->id > 0) {
+		$db->begin();
+		$nbok = 0;
+		$error = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $object->resetTargetErrorStatus($user, $toselectid);
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+				break;
+			} elseif ($result > 0) {
+				$nbok++;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+}
+
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_lastname = '';
@@ -221,6 +264,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_email = '';
 	$search_other = '';
 	$search_dest_status = '';
+	$toselect = array();
 }
 
 // Action update description of emailing
@@ -252,7 +296,7 @@ if ($action == 'settitle' || $action == 'setemail_from' || $action == 'setreplyt
 		$mesg = $object->error;
 	}
 
-	setEventMessages($mesg, null, 'errors');
+	setEventMessages($mesg, $mesgs, 'errors');
 	$action = "";
 }
 
@@ -265,6 +309,7 @@ llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES
 
 $form = new Form($db);
 $formmailing = new FormMailing($db);
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
@@ -301,6 +346,7 @@ if ($object->fetch($id) >= 0) {
 
 	print '<table class="border centpercent tableforfield">';
 
+	// From
 	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td>';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
@@ -327,12 +373,34 @@ if ($object->fetch($id) >= 0) {
 			if ($name != $email) {
 				print dol_escape_htmltag($name).' &lt;'.$email;
 				print '&gt;';
-				if (!isValidEmail($email)) {
+				if ($email && !isValidEmail($email)) {
 					$langs->load("errors");
 					print img_warning($langs->trans("ErrorBadEMail", $email));
+				} elseif ($email && !isValidMailDomain($email)) {
+					$langs->load("errors");
+					print img_warning($langs->trans("ErrorBadMXDomain", $email));
 				}
 			} else {
 				print dol_print_email($object->email_errorsto, 0, 0, 0, 0, 1);
+			}
+		}
+		print '</td></tr>';
+	}
+
+	// Reply to
+	if ($object->messtype != 'sms') {
+		print '<tr><td>';
+		print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+		print '</td><td>';
+		print $form->editfieldval("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+		$email = CMailFile::getValidAddress($object->email_replyto, 2);
+		if ($action != 'editemail_replyto') {
+			if ($email && !isValidEmail($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadEMail", $email));
+			} elseif ($email && !isValidMailDomain($email)) {
+				$langs->load("errors");
+				print img_warning($langs->trans("ErrorBadMXDomain", $email));
 			}
 		}
 		print '</td></tr>';
@@ -354,7 +422,7 @@ if ($object->fetch($id) >= 0) {
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
 		$text = '';
-		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
+		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
@@ -376,19 +444,24 @@ if ($object->fetch($id) >= 0) {
 	print '<tr><td>';
 	print $langs->trans("MAIN_MAIL_SENDMODE");
 	print '</td><td>';
-	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
-	} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
-		$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
-	} else {
-		$text = $listofmethods['mail'];
-	}
-	print $text;
-	if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
-			print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING').')</span>';
+	if ($object->messtype != 'sms') {
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+			$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING')];
+		} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE')) {
+			$text = $listofmethods[getDolGlobalString('MAIN_MAIL_SENDMODE')];
+		} else {
+			$text = $listofmethods['mail'];
 		}
-	} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+		print $text;
+		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
+			}
+		} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
+			print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
+		}
+	} else {
+		print 'SMS ';
 		print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER').')</span>';
 	}
 	print '</td></tr>';
@@ -672,15 +745,17 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="page_y" value="">';
 
 		$morehtmlcenter = '';
+		$arrayofmassactions = array();
+		if ($permissiontocreate) {
+			$arrayofmassactions['reset_target'] = img_picto('', 'refresh', 'class="pictofixedwidth"').$langs->trans("ResetMailingTargetMassaction");
+		}
+		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+		$morehtmlcenter .= $massactionbutton .'<br>';
+
 		if ($object->status == $object::STATUS_DRAFT) {
 			$morehtmlcenter = '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ToClearAllRecipientsClickHere").'</span> <a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition smallpaddingimp">'.$langs->trans("TargetsReset").'</a>';
 		}
 		$morehtmlcenter .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=exportcsv&token='.newToken().'&exportcsv=1&id='.$object->id.'">'.img_picto('', 'download', 'class="pictofixedwidth"').$langs->trans("Download").'</a>';
-
-		$massactionbutton = '';
-
-		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		print '</form>';
 
@@ -693,6 +768,14 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 		print '<input type="hidden" name="limit" value="'.$limit.'">';
 		print '<input type="hidden" name="page_y" value="">';
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $morehtmlcenter, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
+
+		if ($massaction == 'reset_target') {
+			// Confirm reset
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ConfirmResetMailingTargetMassaction"), $langs->trans("ConfirmResetMailingTargetMassactionQuestion"), "confirm_reset_target", null, '', 0, 0, 500, 1);
+		}
 
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
@@ -802,6 +885,13 @@ if ($object->fetch($id) >= 0) {
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
+					if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+						$selected = 0;
+						if (in_array($obj->rowid, $arrayofselected)) {
+							$selected = 1;
+						}
+						print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+					}
 					if ($obj->status == $object::STATUS_DRAFT) {	// Not sent yet
 						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
@@ -860,18 +950,18 @@ if ($object->fetch($id) >= 0) {
 
 				// Date sent
 				print '<td class="center nowraponall">';
-				if ($obj->status != $object::STATUS_DRAFT) {
+				if ($obj->status != $object::STATUS_DRAFT) {		// If status of target line is not draft
 					// Date sent
-					print $obj->date_envoi;
+					print $obj->date_envoi;		// @TODO Must store date in date format
 				}
 				print '</td>';
 
 				// Status of recipient sending email (Warning != status of emailing)
 				print '<td class="nowrap center">';
-				if ($obj->status == $object::STATUS_DRAFT) {
-					print $object::libStatutDest($obj->status, 2, '');
+				if ($obj->status == $object::STATUS_DRAFT) {		// If status of target line is not draft
+					print $object::libStatutDest((int) $obj->status, 2, '');
 				} else {
-					print $object::libStatutDest($obj->status, 2, $obj->error_text);
+					print $object::libStatutDest((int) $obj->status, 2, $obj->error_text);
 				}
 				print '</td>';
 
@@ -879,7 +969,7 @@ if ($object->fetch($id) >= 0) {
 				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="center">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
-					if ($obj->status == $object::STATUS_DRAFT) {	// Not sent yet
+					if ($obj->status == $object::STATUS_DRAFT) {	// If status of target line is not sent yet
 						if ($user->hasRight('mailing', 'creer')) {
 							print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=delete&token='.newToken().'&rowid='.((int) $obj->rowid).$param.'">'.img_delete($langs->trans("RemoveRecipient")).'</a>';
 						}

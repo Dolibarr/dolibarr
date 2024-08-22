@@ -36,7 +36,7 @@ $action = GETPOST('action', 'aZ09');
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_xcache');
 
 print load_fiche_titre("XCache", '', 'title_setup');
 

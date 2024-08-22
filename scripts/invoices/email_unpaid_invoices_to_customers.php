@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,6 +90,8 @@ if (!empty($dolibarr_main_db_readonly)) {
 	exit(1);
 }
 
+/** @var DoliDB $db */
+
 $sql = "SELECT f.ref, f.total_ttc, f.date_lim_reglement as due_date,";
 $sql .= " s.rowid as sid, s.nom as name, s.email, s.default_lang";
 if ($targettype == 'contacts') {
@@ -100,10 +104,10 @@ if ($targettype == 'contacts') {
 $sql .= " WHERE f.fk_statut = 1 AND f.paye = 0";
 $sql .= " AND f.fk_soc = s.rowid";
 if (is_numeric($duration_value2)) {
-	$sql .= " AND f.date_lim_reglement >= '".$db->idate(dol_time_plus_duree($now, $duration_value2, "d"))."'";
+	$sql .= " AND f.date_lim_reglement >= '".$db->idate(dol_time_plus_duree($now, (int) $duration_value2, "d"))."'";
 }
 if (is_numeric($duration_value)) {
-	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_time_plus_duree($now, (int) $duration_value, "d"))."'";
 }
 if ($targettype == 'contacts') {
 	$sql .= " AND s.rowid = sp.fk_soc";
@@ -155,7 +159,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget);
+					envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -206,10 +210,10 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, $total, $oldlang, $oldtarget);
+				envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {

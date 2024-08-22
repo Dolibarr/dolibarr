@@ -74,11 +74,11 @@ if (!$canreadperms) {
 
 $object = new UserGroup($db);
 $object->fetch($id);
-$object->getrights();
+$object->loadRights();
 
 $entity = $conf->entity;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('groupperms', 'globalcard'));
 
 
@@ -106,7 +106,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 
 	if ($action == 'delrights' && $caneditperms) {
@@ -122,7 +122,7 @@ if (empty($reshook)) {
 		}
 
 		$user->clearrights();
-		$user->getrights();
+		$user->loadRights();
 	}
 }
 
@@ -135,7 +135,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('Permissions');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_perms');
 
 if ($object->id > 0) {
 	$head = group_prepare_head($object);

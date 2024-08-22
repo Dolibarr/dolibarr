@@ -29,13 +29,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 /**
  * Core function to output top menu auguria
  *
- * @param 	DoliDB	$db				Database handler
- * @param 	string	$atarget		Target (Example: '' or '_top')
- * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
+ * @param 	DoliDB		$db			Database handler
+ * @param 	string		$atarget	Target (Example: '' or '_top')
+ * @param 	int			$type_user	0=Menu for backoffice, 1=Menu for front office
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}> $tabMenu		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
- * @param	Menu	$menu			Object Menu to return back list of menu entries
- * @param	int		$noout			1=Disable output (Initialise &$menu only).
- * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
+ * @param	Menu		$menu		Object Menu to return back list of menu entries
+ * @param	int<0,1>	$noout		1=Disable output (Initialise &$menu only).
+ * @param	string		$mode		'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
 function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 0, $mode = '')
@@ -220,14 +220,14 @@ function print_start_menu_entry_auguria($idsel, $classname, $showmode)
 /**
  * Output menu entry
  *
- * @param	string	$text			Text
- * @param	int		$showmode		0 = hide, 1 = allowed or 2 = not allowed
- * @param	string	$url			Url
- * @param	string	$id				Id
- * @param	string	$idsel			Id sel
- * @param	string	$classname		Class name
- * @param	string	$atarget		Target
- * @param	array	$menuval		All the $menuval array
+ * @param	string		$text		Text
+ * @param	int<0,2>	$showmode	0 = hide, 1 = allowed or 2 = not allowed
+ * @param	string		$url		Url
+ * @param	string		$id			Id
+ * @param	string		$idsel		Id sel
+ * @param	string		$classname	Class name
+ * @param	string		$atarget	Target
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}|array{}	$menuval	The full $menuval array
  * @return	void
  */
 function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $classname, $atarget, $menuval = array())
@@ -314,11 +314,11 @@ function print_end_menu_array_auguria()
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
  * @param	array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}> 	$tabMenu       		If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu		$menu				Object Menu to return back list of menu entries
- * @param	int			$noout				Disable output (Initialise &$menu only).
+ * @param	int<0,1>	$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not defined in session.
- * @param	array		$moredata			An array with more data to output
- * @param 	int			$type_user     		0=Menu for backoffice, 1=Menu for front office
+ * @param	?array<string,string>	$moredata	An array with more data to output
+ * @param 	int<0,1>	$type_user     		0=Menu for backoffice, 1=Menu for front office
  * @return	int								Nb of menu entries
  */
 function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$tabMenu, &$menu, $noout = 0, $forcemainmenu = '', $forceleftmenu = '', $moredata = null, $type_user = 0)
@@ -467,7 +467,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		while ($i <= $MAXFTP) {
 			$paramkey = 'FTP_NAME_'.$i;
 			//print $paramkey;
-			if (!empty($conf->global->$paramkey)) {
+			if (getDolGlobalString($paramkey)) {
 				$link = "/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
 
 				$newmenu->add($link, dol_trunc($conf->global->$paramkey, 24));
@@ -500,10 +500,10 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 	$reshook = $hookmanager->executeHooks('menuLeftMenuItems', $parameters, $hook_items); // Note that $action and $object may have been modified by some hooks
 
 	if (is_numeric($reshook)) {
-		if ($reshook == 0 && !empty($hookmanager->results)) {
-			$menu_array[] = $hookmanager->results; // add
+		if ($reshook == 0 && !empty($hookmanager->resArray)) {
+			$menu_array[] = $hookmanager->resArray; // add
 		} elseif ($reshook == 1) {
-			$menu_array = $hookmanager->results; // replace
+			$menu_array = $hookmanager->resArray; // replace
 		}
 
 		// @todo Sort menu items by 'position' value
@@ -578,7 +578,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				//$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url, 1).($param ? '?'.$param : '');
 				$shorturlwithoutparam = $shorturl;
-				$shorturl = $shorturl.($param ? '?'.$param : '');
+				$shorturl .= ($param ? '?'.$param : '');
 			}
 
 
@@ -689,9 +689,9 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
  * Function to test if an entry is enabled or not
  *
  * @param	string		$type_user					0=We need backoffice menu, 1=We need frontoffice menu
- * @param	array		$menuentry					Array for menu entry
- * @param	array		$listofmodulesforexternal	Array with list of modules allowed to external users
- * @return	int										0=Hide, 1=Show, 2=Show gray
+ * @param	array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}	$menuentry	Array for menu entry
+ * @param	string[]	$listofmodulesforexternal	Array with list of modules allowed to external users
+ * @return	int<0,2>								0=Hide, 1=Show, 2=Show gray
  */
 function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
 {
@@ -703,7 +703,7 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 		return 0; // Entry disabled by condition
 	}
 	if ($type_user && $menuentry['module']) {
-		$tmploops = explode('|', $menuentry['module']);
+		$tmploops = explode('|', (string) $menuentry['module']);
 		$found = 0;
 		foreach ($tmploops as $tmploop) {
 			if (in_array($tmploop, $listofmodulesforexternal)) {

@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Sistema de xestión do coñecemento 
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Xestionar a Xestión do Coñecemento (XC) ou  Help_Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Configuración do Sistema de Xestión do Coñecemento
 KnowledgeManagementSetupPage = Páxina de configuración do Sistema de Xestión do Coñecemento
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Sobre a Xestión do Coñécemento
 KnowledgeManagementAboutPage = Páxina sobre a Xestión do Coñecemento
-
 KnowledgeManagementArea = Xestión do Coñecemento
 MenuKnowledgeRecord = Base de Coñecemento
 MenuKnowledgeRecordShort = Base de Coñecemento
@@ -47,7 +34,6 @@ KnowledgeRecordExtraFields = Campos extras para Artigos
 GroupOfTicket=Grupo de tickets
 YouCanLinkArticleToATicketCategory=Pode ligar o artigo a un grupo de entradas (polo que o artigo destacará en calquera entrada deste grupo)
 SuggestedForTicketsInGroup=Suxerido para a creación de tickets
-
 SetObsolete=Establécese como obsoleto
 ConfirmCloseKM=Está certo de querer confirmar o peche deste artigo como obsoleto?
 ConfirmReopenKM=Está certo de querer restaurar este artigo ao estado "Validado"?

@@ -110,7 +110,7 @@ $form = new Form($db);
 $now = dol_now();
 $title = $langs->trans('Calendar')." - ".$langs->trans('Bookings');
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-bookcal page-list');
 
 
 if ($object->id > 0) {

@@ -48,13 +48,12 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
+
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 $object = new Localtax($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('localtaxvatcard', 'globalcard'));
-
 
 /**
  * Actions

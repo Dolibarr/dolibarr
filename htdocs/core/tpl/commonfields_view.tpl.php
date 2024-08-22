@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $action
  * $conf
@@ -47,10 +47,10 @@ foreach ($object->fields as $key => $val) {
 	if (abs($val['visible']) != 1 && abs($val['visible']) != 3 && abs($val['visible']) != 4 && abs($val['visible']) != 5) {
 		continue;
 	}
-
 	if (array_key_exists('enabled', $val) && isset($val['enabled']) && !verifCond($val['enabled'])) {
 		continue; // We don't want this field
 	}
+
 	if (in_array($key, array('ref', 'status'))) {
 		continue; // Ref and status are already in dol_banner
 	}

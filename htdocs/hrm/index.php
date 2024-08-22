@@ -52,7 +52,7 @@ if (isModEnabled('holiday')) {
 }
 
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks('hrmindex');
@@ -112,7 +112,12 @@ if (!empty($setupcompanynotcomplete)) {
 }
 
 
-print '<div class="fichecenter"><div class="fichethirdleft">';
+print '<div class="fichecenter">';
+
+print '<div class="twocolumns">';
+
+print '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
+
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This is useless due to the global search combo
 	if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
@@ -185,8 +190,7 @@ if (isModEnabled('holiday')) {
 }
 
 
-print '</div><div class="fichetwothirdright">';
-
+print '</div><div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
 
 // Latest modified leave requests
@@ -225,8 +229,8 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 		print '<span class="badge marginleftonlyshort">...</span>';
 		print '</a>';
 		print '</th>';
-		print '<th>'.$langs->trans("from").'</th>';
-		print '<th>'.$langs->trans("to").'</th>';
+		print '<th></th>';
+		print '<th></th>';
 		print '<th></th>';
 		print '<th class="right">';
 		print '</th>';
@@ -260,9 +264,9 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';
 
-				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_start), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
-				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_end), 'day').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_start), 'dayreduceformat').' <span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
+				print '<td class="tdoverflowmax125">'.dol_print_date($db->jdate($obj->date_end), 'dayreduceformat').' <span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">'.$holidaystatic->LibStatut($obj->status, 3, $holidaystatic->date_debut).'</td>';
 				print '</tr>';
 
@@ -312,7 +316,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 		print '</a>';
 		print '</th>';
 		print '<th class="right">'.$langs->trans("AmountHT").'</th>';
-		print '<th class="right">'.$langs->trans("TotalTTC").'</th>';
+		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 		print '<th></th>';
 		print '<th class="right">';
 		print '</th>';
@@ -342,7 +346,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right amount">'.price($obj->total_ht).'</td>';
 				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>';
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
@@ -419,7 +423,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
 				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day').'</td>';
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";
@@ -439,9 +443,9 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 	}
 }
 
-print '</div></div>';
+print '</div></div></div>';
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $parameters = array('user' => $user);
 $reshook = $hookmanager->executeHooks('dashboardHRM', $parameters, $object); // Note that $action and $object may have been modified by hook
 

@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -47,7 +47,7 @@ if (empty($filtertype)) {
 	$filtertype = 0;
 }
 
-print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_title.tpl.php -->\n";
 
 
 // Title line
@@ -61,7 +61,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product or sub-bom
-print '<td class="linecoldescription">'.$langs->trans('Description');
+print '<td class="linecoldescription bomline">'.$langs->trans('Description');
 if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 	print ' &nbsp; <a id="show_all" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a>&nbsp;&nbsp;';
 	print '<a id="hide_all" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>&nbsp;';
@@ -69,13 +69,16 @@ if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 print '</td>';
 
 // Qty
-print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
+print '<td class="linecolqty width100 right">'.$form->textwithpicto($langs->trans('Qty'), ($filtertype != 1) ? $langs->trans("QtyRequiredIfNoLoss") : '').'</td>';
 
-if ($filtertype != 1) {
+if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-		print '<td class="linecoluseunit left">' . $langs->trans('Unit') . '</td>';
+		print '<td class="linecoluseunit"></td>';
 	}
-
+} else { // Service
+	print '<td class="linecolunit"></td>';
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
 	// Qty frozen
 	print '<td class="linecolqtyfrozen right">' . $form->textwithpicto($langs->trans('QtyFrozen'), $langs->trans("QuantityConsumedInvariable")) . '</td>';
 
@@ -84,24 +87,20 @@ if ($filtertype != 1) {
 
 	// Efficiency
 	print '<td class="linecolefficiency right">' . $form->textwithpicto($langs->trans('ManufacturingEfficiency'), $langs->trans('ValueOfMeansLoss')) . '</td>';
-
-	// Cost
-	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
-} else {
-	print '<td class="linecolunit right">' . $form->textwithpicto($langs->trans('Unit'), '').'</td>';
-
-	if (isModEnabled('workstation')) {
-		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
-	}
-
-	// Cost
-	print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCostService")).'</td>';
 }
 
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
+	// Workstation
+	if (isModEnabled('workstation')) {
+		print '<td class="linecolworkstation">' .img_picto('', 'workstation', 'class="pictofixedwidth"').  $form->textwithpicto($langs->trans('DefaultWorkstation'), '') . '</td>';
+	}
+}
 
+// Cost
+print '<td class="linecolcost right">'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td>';
 
-
-print '<td class="linecoledit"></td>'; // No width to allow autodim
+print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim
 
 print '<td class="linecoldelete" style="width: 10px"></td>';
 

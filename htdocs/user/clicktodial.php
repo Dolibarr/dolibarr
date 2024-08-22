@@ -39,11 +39,10 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
-$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('usercard', 'globalcard'));
 
+$result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 /*
  * Actions
@@ -81,13 +80,13 @@ $form = new Form($db);
 if ($id > 0) {
 	$object = new User($db);
 	$object->fetch($id, '', '', 1);
-	$object->getrights();
+	$object->loadRights();
 	$object->fetch_clicktodial();
 
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('ClickToDial');
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-clicktodial');
 
 	$head = user_prepare_head($object);
 

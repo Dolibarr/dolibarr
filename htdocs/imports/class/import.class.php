@@ -332,7 +332,7 @@ class Import
 	}
 
 	/**
-	 *  Save an export model in database
+	 *  Save an import model in database
 	 *
 	 *  @param		User	$user 	Object user that save
 	 *  @return		int				Return integer <0 if KO, >0 if OK

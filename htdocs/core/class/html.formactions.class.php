@@ -77,11 +77,41 @@ class FormActions
 		);
 		// +ActionUncomplete
 
+		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
+			//var_dump($selected);
+			if ($selected == 'done') {
+				$selected = '100';
+			}
+			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
+			if ($showempty) {
+				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
+			}
+			foreach ($listofstatus as $key => $val) {
+				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
+				if ($key == '50' && $onlyselect == 2) {
+					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
+				}
+			}
+			print '</select>';
+			if ($selected == 0 || $selected == 100) {
+				$canedit = 0;
+			}
+
+			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
+
+			if (empty($onlyselect)) {
+				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
+				print '<span class="hideonsmartphone hideifna">%</span>';
+			}
+		} else {
+			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
+		}
+
 		if (!empty($conf->use_javascript_ajax)) {
 			print "\n";
 			print '<script nonce="'.getNonce().'" type="text/javascript">';
 			print "
-                var htmlname = '".$htmlname."';
+                var htmlname = '".dol_escape_js($htmlname)."';
 
                 $(document).ready(function () {
                 	select_status();
@@ -123,35 +153,6 @@ class FormActions
                 }
                 </script>\n";
 		}
-		if (!empty($conf->use_javascript_ajax) || $onlyselect) {
-			//var_dump($selected);
-			if ($selected == 'done') {
-				$selected = '100';
-			}
-			print '<select '.($canedit ? '' : 'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'">';
-			if ($showempty) {
-				print '<option value="-1"'.($selected == '' ? ' selected' : '').'>&nbsp;</option>';
-			}
-			foreach ($listofstatus as $key => $val) {
-				print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected' : '').'>'.$val.'</option>';
-				if ($key == '50' && $onlyselect == 2) {
-					print '<option value="todo"'.($selected == 'todo' ? ' selected' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionsToDoShort")."+".$langs->trans("ActionRunningShort").')</option>';
-				}
-			}
-			print '</select>';
-			if ($selected == 0 || $selected == 100) {
-				$canedit = 0;
-			}
-
-			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
-
-			if (empty($onlyselect)) {
-				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
-				print '<span class="hideonsmartphone hideifna">%</span>';
-			}
-		} else {
-			print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
-		}
 	}
 
 
@@ -171,7 +172,7 @@ class FormActions
 	 */
 	public function showactions($object, $typeelement, $socid = 0, $forceshowtitle = 0, $morecss = 'listactions', $max = 0, $moreparambacktopage = '', $morehtmlcenter = '', $assignedtouser = 0)
 	{
-		global $langs, $conf, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -183,10 +184,6 @@ class FormActions
 		if (!is_array($listofactions)) {
 			dol_print_error($this->db, 'FailedToGetActions');
 		}
-
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-		$caction = new CActionComm($this->db);
-		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
 		$num = count($listofactions);
 		if ($num || $forceshowtitle) {
@@ -217,7 +214,7 @@ class FormActions
 				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
 				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
 				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
-				$url .= ($assignedtouser > 0 ? '&assignedtouser='.$assignedtouser : '');
+				$url .= ($assignedtouser > 0 ? '&assignedtouser='.((int) $assignedtouser) : '');
 				$url .= '&backtopage='.urlencode($urlbacktopage);
 				$morehtmlright .= dolGetButtonTitle($langs->trans("AddEvent"), '', 'fa fa-plus-circle', $url);
 			}
@@ -274,10 +271,10 @@ class FormActions
 					print '<tr class="oddeven">';
 
 					// Ref
-					print '<td class="nowraponall">'.$actioncomm->getNomUrl(1, -1).'</td>';
+					print '<td class="nowraponall nopaddingrightimp">'.$actioncomm->getNomUrl(1, -1).'</td>';
 
 					// Date
-					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhour', 'tzuserrel');
+					print '<td class="center nowraponall">'.dol_print_date($actioncomm->datep, 'dayhourreduceformat', 'tzuserrel');
 					if ($actioncomm->datef) {
 						$tmpa = dol_getdate($actioncomm->datep);
 						$tmpb = dol_getdate($actioncomm->datef);
@@ -286,13 +283,13 @@ class FormActions
 								print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
 							}
 						} else {
-							print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+							print '-'.dol_print_date($actioncomm->datef, 'dayhourreduceformat', 'tzuserrel');
 						}
 					}
 					print '</td>';
 
 					// Owner
-					print '<td class="nowraponall tdoverflowmax125">';
+					print '<td class="nowraponall tdoverflowmax100">';
 					if (!empty($actioncomm->userownerid)) {
 						if (isset($cacheusers[$actioncomm->userownerid]) && is_object($cacheusers[$actioncomm->userownerid])) {
 							$tmpuser = $cacheusers[$actioncomm->userownerid];
@@ -307,34 +304,19 @@ class FormActions
 					}
 					print '</td>';
 
-					$actionstatic = $actioncomm;
-
 					// Example: Email sent from invoice card
 					//$actionstatic->code = 'AC_BILL_SENTBYMAIL
 					//$actionstatic->type_code = 'AC_OTHER_AUTO'
 
 					// Type
-					$labeltype = $actionstatic->type_code;
-					if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
-						$labeltype = 'AC_OTH';
-					}
-					if (preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-						$labeltype = $langs->trans("Message");
-					} else {
-						if (!empty($arraylist[$labeltype])) {
-							$labeltype = $arraylist[$labeltype];
-						}
-						if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) {
-							$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
-						}
-					}
+					$labeltype = $actioncomm->getTypeLabel(0);
 					print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($labeltype).'">';
 					print $actioncomm->getTypePicto();
 					print $labeltype;
 					print '</td>';
 
 					// Label
-					print '<td class="tdoverflowmax200">';
+					print '<td class="tdoverflowmax250">';
 					print $actioncomm->getNomUrl(0);
 					print '</td>';
 

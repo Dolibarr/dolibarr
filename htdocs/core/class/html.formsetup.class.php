@@ -16,7 +16,6 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 /**
  * This class help you create setup render
  */
@@ -323,6 +322,9 @@ class FormSetup
 			if ($item->getType() == 'title') {
 				$trClass = 'liste_titre';
 			}
+			if (!empty($item->fieldParams['trClass'])) {
+				$trClass .= ' '.$item->fieldParams['trClass'];
+			}
 
 			$this->setupNotEmpty++;
 			$out .= '<tr class="'.$trClass.'">';
@@ -488,7 +490,7 @@ class FormSetup
 			// calc new rank for each item to make place for new item
 			foreach ($this->items as $fItem) {
 				if ($item->rank <= $fItem->rank) {
-					$fItem->rank = $fItem->rank + 1;
+					$fItem->rank += 1;
 					$this->setItemMaxRank($fItem->rank); // set new max rank if needed
 				}
 			}
@@ -1117,6 +1119,7 @@ class FormSetupItem
 		if ($this->picto) {
 			$s .= img_picto('', $this->picto, 'class="pictofixedwidth"');
 		}
+
 		$s .= $this->form->selectarray($this->confKey, $this->fieldOptions, $this->fieldValue, 0, 0, 0, '', 0, 0, 0, '', $this->cssClass);
 
 		return $s;
@@ -1476,8 +1479,8 @@ class FormSetupItem
 	 * Set type of input as a category selector
 	 * TODO add default value
 	 *
-	 * @param	int		$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @return self
+	 * @param	string	$catType		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @return	self
 	 */
 	public function setAsCategory($catType)
 	{

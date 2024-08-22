@@ -40,7 +40,7 @@ $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 160);
 $id = GETPOST('account') ? GETPOST('account', 'alpha') : GETPOST('id');
 $ref = GETPOST('ref');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankannualreport', 'globalcard'));
 
 // Security check
@@ -53,7 +53,7 @@ $result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_accoun
 
 $year_start = GETPOST('year_start');
 //$year_current = strftime("%Y", time());
-$year_current = dol_print_date(time(), "%Y");
+$year_current = (int) dol_print_date(time(), "%Y");
 if (!$year_start) {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;

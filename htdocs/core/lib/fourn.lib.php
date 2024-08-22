@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023 	    Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,12 +179,12 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 			$nbDispachedLines = count($dispachedLines);
 
 			for ($line = 0 ; $line < $nbDispachedLines; $line++) {
-				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
+				$sumQtyAllreadyDispatched += $dispachedLines[$line]['qty'];
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
 				//If line is a product of conf to manage stocks for services
 				if ($object->lines[$line]->product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-					$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+					$sumQtyOrdered += $object->lines[$line]->qty;
 				}
 			}
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.price2num($sumQtyAllreadyDispatched, 'MS').' / '.price2num($sumQtyOrdered, 'MS').'</span>';

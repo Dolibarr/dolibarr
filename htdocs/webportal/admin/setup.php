@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
 
 // Parameters
@@ -118,7 +118,7 @@ if (isModEnabled('member')) {
 // Add logged user
 //$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();
 // only enabled users
-$userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 0, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 1);
+$userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 0, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 2);
 
 $item = $formSetup->newItem('WEBPORTAL_USER_LOGGED');
 $item->setAsSelect($userList);

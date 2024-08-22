@@ -53,7 +53,7 @@ $version = '0.0';
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_about');
 
 
 print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');

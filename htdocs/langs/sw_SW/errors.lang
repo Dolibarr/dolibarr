@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Imepata sintaksia ya barua pepe isiyo sahihi ya %s mist
 ErrorUserCannotBeDelete=Mtumiaji hawezi kufutwa. Labda inahusishwa na vyombo vya Dolibarr.
 ErrorFieldsRequired=Baadhi ya sehemu zinazohitajika zimeachwa wazi.
 ErrorSubjectIsRequired=Somo la barua pepe linahitajika
+ErrorInAddAttachmentsImageBaseOnMedia=Error in creating image files into media directory for attachment
+ErrorInAddAttachmentsImageBaseIsSrcData=Error in creating image files (found as data:) into temp directory for attachment
 ErrorFailedToCreateDir=Imeshindwa kuunda saraka. Angalia kuwa mtumiaji wa seva ya Wavuti ana ruhusa ya kuandika kwenye saraka ya hati ya Dolibarr. Ikiwa kigezo <b> safe_mode </b>  imewashwa kwenye PHP hii, angalia kuwa faili za Dolibarr php zinamiliki mtumiaji wa seva ya wavuti (au kikundi).
 ErrorNoMailDefinedForThisUser=Hakuna barua iliyofafanuliwa kwa mtumiaji huyu
 ErrorSetupOfEmailsNotComplete=Usanidi wa barua pepe haujakamilika
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Hitilafu, mfuatano wa kuchukua nafasi ni tupu
 ErrorProductNeedBatchNumber=Hitilafu, bidhaa ' <b> %s </b> ' unahitaji nambari nyingi / serial
 ErrorProductDoesNotNeedBatchNumber=Hitilafu, bidhaa ' <b> %s </b> ' haikubali nambari nyingi / serial
 ErrorFailedToReadObject=Hitilafu, imeshindwa kusoma kitu cha aina <b> %s </b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php<> to allow use of Command Line Interface by the internal job scheduler
+ErrorParameterMustBeEnabledToAllwoThisFeature=Error, parameter <b>%s</b> must be enabled into <b>conf/conf.php</b> to allow use of Command Line Interface by the internal job scheduler
 ErrorLoginDateValidity=Hitilafu, kuingia huku kuko nje ya kipindi cha tarehe ya uhalali
 ErrorValueLength=Urefu wa sehemu ' <b> %s </b> ' lazima iwe juu zaidi ya ' <b> %s </b> '
 ErrorReservedKeyword=Neno ' <b> %s </b> ' ni neno kuu lililohifadhiwa
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Mtu wa tatu au Mwanachama wa ushirikiano ni
 ErrorFailedToWriteInTempDirectory=Imeshindwa kuandika katika saraka ya muda
 ErrorQuantityIsLimitedTo=Kiasi ni %s
 ErrorFailedToLoadThirdParty=Failed to find/load third party from id=%s, email=%s, name=%s
-ErrorThisPaymentModeIsNotSepa=Njia hii ya malipo si akaunti ya benki
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe customer is not set for this third party (or set to a value deleted on Stripe side). Create (or re-attach) it first.
 ErrorCharPlusNotSupportedByImapForSearch=Utafutaji wa IMAP hauwezi kutafuta mtumaji au mpokeaji kwa mfuatano ulio na herufi +
 ErrorTableNotFound=Jedwali <b> %s </b>  haipatikani
@@ -322,16 +325,21 @@ ErrorFixThisHere= <a href="%s"> Rekebisha hii hapa </a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Hitilafu: URL ya mfano wako wa sasa (%s) hailingani na URL iliyofafanuliwa kwenye usanidi wako wa kuingia wa OAuth2 (%s) Kuingia kwa OAuth2 katika usanidi huo hairuhusiwi.
 ErrorMenuExistValue=Tayari kuna Menyu iliyo na Kichwa hiki au URL
 ErrorSVGFilesNotAllowedAsLinksWithout=Faili za SVG haziruhusiwi kama viungo vya nje bila chaguo %s
-ErrorTypeMenu=Haiwezekani kuongeza menyu nyingine ya moduli sawa kwenye upau wa urambazaji, bado haijashughulikiwa
+ErrorTypeMenu=Impossible to add another menu for the same module on the navbar, not handled yet
+ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code shape)
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
-
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Check the command used for the export into the Advanced options of the export
-
+ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
+ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Kigezo chako cha PHP upload_max_filesize (%s) ni kubwa kuliko kigezo cha PHP post_max_size (%s) Huu sio usanidi thabiti.
 WarningPasswordSetWithNoAccount=Nenosiri limewekwa kwa mwanachama huyu. Hata hivyo, hakuna akaunti ya mtumiaji iliyoundwa. Kwa hivyo nenosiri hili limehifadhiwa lakini haliwezi kutumiwa kuingia kwenye Dolibarr. Inaweza kutumiwa na moduli/kiolesura cha nje lakini ikiwa huhitaji kufafanua kuingia wala nenosiri lolote kwa mwanachama, unaweza kulemaza chaguo la "Dhibiti kuingia kwa kila mwanachama" kutoka kwa usanidi wa moduli ya Mwanachama. Ikiwa unahitaji kudhibiti kuingia lakini huhitaji nenosiri lolote, unaweza kuweka sehemu hii tupu ili kuepuka onyo hili. Kumbuka: Barua pepe inaweza pia kutumika kama njia ya kuingia ikiwa mwanachama ameunganishwa na mtumiaji.
@@ -344,6 +352,7 @@ WarningConfFileMustBeReadOnly=Onyo, faili yako ya usanidi ( <b> htdocs/conf/conf
 WarningsOnXLines=Maonyo kuhusu <b> %s </b>  rekodi za chanzo
 WarningNoDocumentModelActivated=Hakuna kielelezo, cha kutengeneza hati, kilichoamilishwa. Muundo utachaguliwa kwa chaguomsingi hadi uangalie usanidi wa moduli yako.
 WarningLockFileDoesNotExists=Onyo, usanidi ukishakamilika, lazima uzime zana za usakinishaji/uhamishaji kwa kuongeza faili <b> install.lock </b>  kwenye saraka <b> %s </b> . Kuacha kuunda faili hii ni hatari kubwa ya usalama.
+WarningUpgradeHasBeenUnlocked=Warning, upgrade process has been unlocked for everybody
 WarningUntilDirRemoved=Onyo hili la usalama litaendelea kutumika mradi tu kuna uwezekano wa kuathiriwa.
 WarningCloseAlways=Onyo, kufunga kunafanywa hata kama kiasi kinatofautiana kati ya chanzo na vipengele lengwa. Washa kipengele hiki kwa tahadhari.
 WarningUsingThisBoxSlowDown=Onyo, kwa kutumia kisanduku hiki punguza kasi kwa umakini kurasa zote zinazoonyesha kisanduku.
@@ -373,16 +382,18 @@ WarningModuleNeedRefresh = Module <b>%s</b> has been disabled. Don't forget to e
 WarningPermissionAlreadyExist=Ruhusa zilizopo za kitu hiki
 WarningGoOnAccountancySetupToAddAccounts=If this list is empty, go into menu %s - %s - %s to load or create accounts for your chart of account.
 WarningCorrectedInvoiceNotFound=Corrected invoice not found
-WarningCommentNotFound=Please check placement of start and end comments for <b>%s</b> section in file <b>%s</b> before submitting your action
+WarningCommentNotFound=Warning: Can't find the start and/or end comments for the section <b>%s</b> into the file <b>%s</b>
 WarningAlreadyReverse=Stock movement already reversed
-
+WarningParentIDDoesNotExistAnymore=This parent ID does not exists anymore
+WarningReadBankAlsoAllowedIfUserHasPermission=Warning, reading bank account is also allowed with the permission to Manage chart of account
+WarningNoDataTransferedInAccountancyYet=Please note, there is no data in the accounting table. Please transfer your data recorded in the application to the accounting section or change the calculation mode to analyze the data recorded outside of accounting.
+WarningChangingThisMayBreakStopTaskScheduler=Warning, changing this value may disable the scheduler
 SwissQrOnlyVIR = SwissQR invoice can only be added on invoices set to be paid with credit transfer payments.
 SwissQrCreditorAddressInvalid = Anwani ya mkopeshaji si sahihi (Je, ZIP na jiji zimewekwa? (%s)
 SwissQrCreditorInformationInvalid = Maelezo ya mkopeshaji si sahihi kwa IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN bado haijatekelezwa
 SwissQrPaymentInformationInvalid = Taarifa ya malipo haikuwa sahihi kwa jumla ya %s : %s
 SwissQrDebitorAddressInvalid = Maelezo ya mtoa pesa yalikuwa batili (%s)
-
 # Validate
 RequireValidValue = Thamani si halali
 RequireAtLeastXString = Inahitaji angalau %s wahusika
@@ -404,10 +415,10 @@ BadSetupOfFieldClassNotFoundForValidation = Hitilafu ya usanidi wa uga : Darasa 
 BadSetupOfFieldFileNotFound = Hitilafu ya usanidi wa uga : Faili haikupatikana kwa kujumuishwa
 BadSetupOfFieldFetchNotCallable = Hitilafu ya usanidi wa uga : Leta haipatikani darasani
 ErrorTooManyAttempts= Too many attempts, please try again later
-
 TotalAmountEmpty=Total Amount Empty
 FailedToFoundTheConversionRateForInvoice=Failed to found the conversion rate for invoice
 ThisIdNotDefined=Id not defined
 OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
+EmptyMessageNotAllowedError=Empty message is not allowed

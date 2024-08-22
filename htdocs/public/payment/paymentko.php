@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,17 +105,7 @@ if ($ws) {
 }
 
 
-$validpaymentmethod = array();
-if (isModEnabled('paypal')) {
-	$validpaymentmethod['paypal'] = 'paypal';
-}
-if (isModEnabled('paybox')) {
-	$validpaymentmethod['paybox'] = 'paybox';
-}
-if (isModEnabled('stripe')) {
-	$validpaymentmethod['stripe'] = 'stripe';
-}
-
+$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 // Security check
 if (empty($validpaymentmethod)) {
@@ -171,7 +163,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$errormessage       = $_SESSION['errormessage'];
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
-		// Call trigger
+		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
 		if ($result < 0) {
 			$error++;
@@ -207,7 +199,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		$ishtml = dol_textishtml($content); // May contain urls
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
+		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0);
 
 		$result = $mailfile->sendfile();
 		if ($result) {
@@ -243,7 +235,7 @@ if (empty($doactionsthenredirect)) {
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
 	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) {
+	if (getDolGlobalString($paramlogo)) {
 		$logosmall = getDolGlobalString($paramlogo);
 	} elseif (getDolGlobalString('ONLINE_PAYMENT_LOGO')) {
 		$logosmall = getDolGlobalString('ONLINE_PAYMENT_LOGO');
@@ -285,7 +277,7 @@ if (empty($doactionsthenredirect)) {
 	print $langs->trans("YourPaymentHasNotBeenRecorded")."<br><br>";
 
 	$key = 'ONLINE_PAYMENT_MESSAGE_KO';
-	if (!empty($conf->global->$key)) {
+	if (getDolGlobalString($key)) {
 		print $conf->global->$key;
 	}
 
