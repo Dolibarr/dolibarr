@@ -1566,7 +1566,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				if (!$result) {
 					$this->error = $this->db->lasterror();
 					$err++;
-					continue;
+					break;
 					// else box already registered into database
 				}
 
