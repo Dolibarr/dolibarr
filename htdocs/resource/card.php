@@ -370,7 +370,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		$resql_label = "SELECT label FROM ".$db->prefix()."c_type_resource WHERE code = '".$object->fk_code_type_resource."'";
 
 		$result_label = $db->query($resql_label);
-		if($result_label > 0){
+		if ($result_label > 0) {
 			$obj = $db->fetch_object($result_label);
 		}
 		$type_label = $obj->label;
