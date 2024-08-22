@@ -253,9 +253,9 @@ class WebPortalPropal extends Propal
 	/**
 	 * Return a thumb for kanban views
 	 *
-	 * @param	string	$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 * @param	array	$arraydata	Array of data
-	 * @return	string	HTML Code for Kanban thumb.
+	 * @param	string					$option				Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param	array{string,mixed}		$arraydata			Array of data
+	 * @return	string										HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
