@@ -91,7 +91,6 @@ if (!empty($user->socid)) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-
 /*
  *  Actions
  */
@@ -119,8 +118,8 @@ if (empty($reshook)) {
 
 
 /*
- *	View
- */
+*	View
+*/
 
 $form = new Form($db);
 
@@ -183,8 +182,6 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-
-
 	// Actions buttons
 
 	$objthirdparty = $object;
@@ -208,9 +205,9 @@ if ($object->id > 0) {
 	$morehtmlright = '';
 
 	$messagingUrl = DOL_URL_ROOT.'/compta/facture/messaging.php?id='.$object->id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 	$messagingUrl = DOL_URL_ROOT.'/compta/facture/agenda.php?id='.$object->id;
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
 
 	if (isModEnabled('agenda')) {
 		if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
@@ -246,10 +243,6 @@ if ($object->id > 0) {
 		$filters['search_rowid'] = $search_rowid;
 
 		// TODO Replace this with same code than into list.php
-		show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder, property_exists($object, 'module') ? $object->module : '');
+		show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 	}
 }
-
-// End of page
-llxFooter();
-$db->close();
