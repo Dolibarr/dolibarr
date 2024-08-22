@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,8 +106,8 @@ print '<script type="text/javascript">
 
 if ($disableSellBy == 0 || $disableEatBy == 0) {
 	print '
-			var disableSellBy = '.dol_escape_js($disableSellBy).';
-			var disableEatBy = '.dol_escape_js($disableSellBy).';
+			var disableSellBy = '.dol_escape_js((string) $disableSellBy).';
+			var disableEatBy = '.dol_escape_js((string) $disableSellBy).';
 			jQuery("#batch_number").change(function(event) {
 				var batch = jQuery(this).val();
 				jQuery.getJSON("'.DOL_URL_ROOT.'/product/ajax/product_lot.php?action=search&token='.currentToken().'&product_id='.$id.'&batch="+batch, function(data) {
