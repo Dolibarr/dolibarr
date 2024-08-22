@@ -11113,11 +11113,11 @@ class Form
 		$retstring .= $withoutdiv ? '' : '</div>';
 
 		if ($dol_openinpopup) {
-			$retstring .= '<!-- buttons are shown into a $dol_openinpopup=' . $dol_openinpopup . ' context, so we enable the close of dialog on cancel -->' . "\n";
+			$retstring .= '<!-- buttons are shown into a $dol_openinpopup=' . dol_escape_htmltag($dol_openinpopup) . ' context, so we enable the close of dialog on cancel -->' . "\n";
 			$retstring .= '<script nonce="' . getNonce() . '">';
 			$retstring .= 'jQuery(".button-cancel").click(function(e) {
-				e.preventDefault(); console.log(\'We click on cancel in iframe popup ' . $dol_openinpopup . '\');
-				window.parent.jQuery(\'#idfordialog' . $dol_openinpopup . '\').dialog(\'close\');
+				e.preventDefault(); console.log(\'We click on cancel in iframe popup ' . dol_escape_js($dol_openinpopup) . '\');
+				window.parent.jQuery(\'#idfordialog' . dol_escape_js($dol_openinpopup) . '\').dialog(\'close\');
 				 });';
 			$retstring .= '</script>';
 		}

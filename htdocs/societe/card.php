@@ -109,7 +109,7 @@ $confirm 	= GETPOST('confirm', 'alpha');
 $dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
