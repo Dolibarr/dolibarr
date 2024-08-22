@@ -78,7 +78,7 @@ if ($object->element == 'product') {
 	print $formproduct->selectWarehouses($selected, 'id_entrepot', $warehousestatus, 1, 0, 0, '', 0, 0, array(), 'minwidth75 maxwidth300 widthcentpercentminusx');
 	print '</td>';
 }
-if ($object->element == 'stock') {
+if ($object->element == 'stockmouvement') {
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
