@@ -149,7 +149,7 @@ function getAttachments($jk, $mbox)
  * @param integer $jk numéro du mail
  * @param integer $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
- * @param object $mbox object connection imaap
+ * @param object $mbox object connection imap
  * @return mixed data
  */
 function getFileData($jk, $fpos, $type, $mbox)
