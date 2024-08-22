@@ -30,7 +30,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
@@ -70,7 +70,7 @@ if (!$sortfield) {
 }
 
 
-$object = new Dolresource($db);
+$object = new Resource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -145,7 +145,7 @@ if ($object->id > 0) {
 
 	print dol_get_fiche_end();
 
-	$modulepart = 'dolresource';
+	$modulepart = 'resource';
 	$permissiontoadd = $user->hasRight('resource', 'write');
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

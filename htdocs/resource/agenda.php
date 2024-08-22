@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
 
 // Load translation files required by the page
 $langs->load('companies');
@@ -81,7 +81,7 @@ if (!$sortorder) {
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('agendaresource'));
 
-$object = new Dolresource($db);
+$object = new Resource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.

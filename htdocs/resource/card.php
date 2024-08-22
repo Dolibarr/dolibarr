@@ -28,7 +28,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -60,7 +60,7 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 
-$object = new Dolresource($db);
+$object = new Resource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -112,8 +112,8 @@ if (empty($reshook)) {
 				$object->address				= $address;
 				$object->zip					= $zip;
 				$object->town					= $town;
-				$object->country_id				= $country_id;
-				$object->state_id				= $state_id;
+				$object->fk_country				= $country_id;
+				$object->fk_state				= $state_id;
 				$object->description			= $description;
 				$object->phone					= $phone;
 				$object->email					= $email;
@@ -160,14 +160,15 @@ if (empty($reshook)) {
 				$object->address				= $address;
 				$object->zip					= $zip;
 				$object->town					= $town;
-				$object->country_id             = $country_id;
-				$object->state_id				= $state_id;
+				$object->fk_country				= $country_id;
+				$object->fk_state				= $state_id;
 				$object->description  			= $description;
 				$object->phone					= $phone;
 				$object->email					= $email;
 				$object->max_users				= $max_users;
 				$object->url					= $url;
 				$object->fk_code_type_resource  = $fk_code_type_resource;
+
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
@@ -272,7 +273,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country($object->country_id);
+		print $form->select_country($object->fk_country);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -288,7 +289,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 
 			if ($object->country_id) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formresource->select_state($object->state_id, $object->country_code);
+				print $formresource->select_state($object->fk_state, $object->country_code);
 			} else {
 				print $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 			}
@@ -366,6 +367,15 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Print form confirm
 		print $formconfirm;
 
+		$resql_label = "SELECT label FROM ".$db->prefix()."c_type_resource WHERE code = '".$object->fk_code_type_resource."'";
+
+		$result_label = $db->query($resql_label);
+		if($result_label > 0){
+			$obj = $db->fetch_object($result_label);
+		}
+		$type_label = $obj->label;
+
+
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -384,7 +394,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		print $object->type_label;
+		print $type_label ?? '';
 		print '</td>';
 		print '</tr>';
 
