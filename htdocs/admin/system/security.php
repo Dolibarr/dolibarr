@@ -125,6 +125,12 @@ print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? im
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
 
+if (getDolGlobalString('MAIN_SECURITY_SHOW_MORE_INFO')) {
+	print "<strong>PHP auto_prepend_file</strong> = ".(ini_get('auto_prepend_file') ? ini_get('auto_prepend_file') : '')."</span><br>\n";
+
+	print "<strong>PHP sendmail_path</strong> = ".(ini_get('sendmail_path') ? ini_get('sendmail_path') : '')."</span><br>\n";
+}
+
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'dl,apache_note,apache_setenv,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,show_source,virtual');
@@ -579,11 +585,12 @@ if (!$test) {
 }
 print '<br>';
 
-print '<br>';
 
 // Modules for Payments
 $test = isModEnabled('stripe');
 if ($test) {
+	print '<br>';
+
 	print '<strong>'.$langs->trans("Stripe").'</strong>: ';
 	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
@@ -594,6 +601,8 @@ if ($test) {
 } else {
 	$test = isModEnabled('paypal');
 	if ($test) {
+		print '<br>';
+
 		print '<strong>'.$langs->trans("Paypal").'</strong>: ';
 		if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 			print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
