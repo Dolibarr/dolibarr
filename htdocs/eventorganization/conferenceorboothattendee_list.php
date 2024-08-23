@@ -721,7 +721,7 @@ foreach ($search as $key => $val) {
 	}
 }
 if ($confOrBooth->id > 0) {
-	$param .= '&conforboothid='.urlencode($confOrBooth->id);
+	$param .= '&conforboothid='.urlencode((string) $confOrBooth->id);
 }
 if ($projectstatic->id > 0) {
 	$param .= '&fk_project='.urlencode((string) ($projectstatic->id));
