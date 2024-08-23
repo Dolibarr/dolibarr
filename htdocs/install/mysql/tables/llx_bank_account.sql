@@ -67,4 +67,4 @@ create table llx_bank_account
   extraparams			    varchar(255),				-- for other parameters with json format
   ics						varchar(32),                -- Creditor Identifier CI
   ics_transfer              varchar(32)                 -- Creditor Identifier CI for transfer
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
