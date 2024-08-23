@@ -154,7 +154,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	}
 }
 
-if ($action == 'updatesocialnetwork' && GETPOSTISSET('key')) {
+if ($action == 'updatesocialnetwork') {
 	$error = 0;
 	$id = GETPOST('key', 'alpha');
 	$name = GETPOST('socialnetwork_name');
@@ -390,7 +390,7 @@ if ($resql) {
 		print '</td>';
 		print '</tr>'."\n";
 
-		if ($action == 'editsocialnetwork' && $key == GETPOST('key')) {
+		if ($action == 'editsocialnetwork' && $socialNetworkId == GETPOST('key')) {
 			foreach ($socialNetworkData as $k => $val) {
 				if ($k != 'title' && $k != 'url') {
 					print '<tr class="oddeven">';
