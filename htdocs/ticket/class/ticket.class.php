@@ -1495,7 +1495,7 @@ class Ticket extends CommonObject
 	/**
 	 * Return status label of object
 	 *
-	 * @param	string		$status			Id status
+	 * @param	int			$status			Id status
 	 * @param	int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @param	int			$notooltip		1=No tooltip
 	 * @param	int			$progress		Progression (0 to 100)
