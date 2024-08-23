@@ -312,7 +312,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	//global $dolibarr_main_instance_unique_id;
 	//$url .= '?securitykey='.dol_hash('stripeipn-'.$dolibarr_main_instance_unique_id.'-'.$conf->global->STRIPE_LIVE_PUBLISHABLE_KEY, 'md5');
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
-	$out .= ajax_autoselect("onlinelivewebhookurl", 0);
+	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
 	print '<br>'.$out;
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
