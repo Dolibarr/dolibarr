@@ -64,4 +64,4 @@ create table llx_projet
   last_main_doc	   	varchar(255),				-- relative filepath+filename of last main generated document
   import_key	   	varchar(14),				-- Import key
   extraparams		varchar(255)				-- to save other parameters with json format
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
