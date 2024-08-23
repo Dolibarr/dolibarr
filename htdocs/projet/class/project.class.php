@@ -2702,7 +2702,7 @@ class Project extends CommonObject
 					$error++;
 				}
 
-				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', 0, 'text/html');
+				$mail = new CMailFile($subject, $to, $from, $reportContent, array(), array(), array(), '', '', 0, -1, '', '', '', 'text/html');
 
 				if ($mail->sendfile()) {
 					$nbMailSend++;
