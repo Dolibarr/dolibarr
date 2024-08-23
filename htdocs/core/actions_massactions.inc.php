@@ -49,6 +49,18 @@
 @phan-var-force ?string $deliveryreceipt
 ';
 
+'
+@phan-var-force ?string $permissiontoread
+@phan-var-force ?string $permissiontodelete
+@phan-var-force ?string $permissiontoclose
+@phan-var-force ?string $permissiontoapprove
+@phan-var-force ?int[] $toselect
+@phan-var-force ?string $diroutputmassaction
+@phan-var-force ?string $objectlabel
+@phan-var-force ?string $option
+@phan-var-force ?string $deliveryreceipt
+';
+
 
 // Protection
 if (empty($objectclass) || empty($uploaddir)) {
