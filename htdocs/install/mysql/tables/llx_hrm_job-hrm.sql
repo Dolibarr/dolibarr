@@ -29,4 +29,4 @@ CREATE TABLE llx_hrm_job(
     fk_user_creat integer,
     fk_user_modif integer
 
-) ENGINE=innodb;
+) ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
