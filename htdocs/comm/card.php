@@ -276,7 +276,7 @@ if (empty($reshook)) {
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object, 2);

@@ -13604,7 +13604,7 @@ function dolForgeCriteriaCallback($matches)
 	if (empty($matches[1])) {
 		return '';
 	}
-	$tmp = explode(':', $matches[1]);
+	$tmp = explode(':', $matches[1], 3);
 	if (count($tmp) < 3) {
 		return '';
 	}
@@ -13879,9 +13879,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
-			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
-		}
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
+			$sql .= ", ".MAIN_DB_PREFIX."facture as o";
+    } elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
+          $sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
+        }
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!$force_filter_contact) {
@@ -13924,8 +13926,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_contact = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'invoice_supplier'";
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
+				$sql .= "AND a.fk_element = o.rowid";
+      }
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}

@@ -10,6 +10,7 @@
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2266,6 +2267,7 @@ class Project extends CommonObject
 		$response->label = $langs->trans("OpenedProjects");
 		$response->labelShort = $langs->trans("Opened");
 		$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+		$response->url_late = DOL_URL_ROOT.'/projet/list.php?search_option=late&mainmenu=project';
 		$response->img = img_object('', "projectpub");
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
@@ -2493,10 +2495,10 @@ class Project extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @param		string		$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		string					$size					Size of thumb (''=auto, 'large'=large, 'small'=small)
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null, $size = '')
 	{
