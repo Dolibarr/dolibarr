@@ -2875,7 +2875,7 @@ class EmailCollector extends CommonObject
 							} else {
 								$pj = getAttachments($imapemail, $connection);
 								foreach ($pj as $key => $val) {
-									$data[$val['filename']] = getFileData($imapemail, $val['pos'], $val['type'], $connection);
+									$data[$val['filename']] = getFileData($imapemail, (string) $val['pos'], $val['type'], $connection);
 								}
 							}
 							if (count($data) > 0) {
