@@ -149,7 +149,7 @@ if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
 	$titre = $langs->trans('SupplierInvoice');
 
-	print dol_get_fiche_head($head, 'card', $titre, -1, 'supplier_invoice', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'agenda', $titre, -1, 'supplier_invoice', 0, '', '', 0, '', 1);
 
 	// Object card
 	// ------------------------------------------------------------
@@ -157,10 +157,13 @@ if ($object->id > 0) {
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, $usercancreate, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'supplier');
+	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+		$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.((int) $object->thirdparty->id).'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
+	}
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
