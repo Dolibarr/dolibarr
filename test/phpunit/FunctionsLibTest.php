@@ -239,7 +239,7 @@ class FunctionsLibTest extends CommonClassTest
 		// A real search string
 		$filter = "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.date_creation:<:'2016-01-01 12:30:00') or (t.nature:is:NULL)";
 		$sql = forgeSQLFromUniversalSearchCriteria($filter);
-		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < 0) or (t.nature IS NULL))", $sql);
+		$this->assertEquals(" AND ((t.ref LIKE 'SO-%') or (t.date_creation < '20160101') or (t.date_creation < '2016-01-01 12:30:00') or (t.nature IS NULL))", $sql);
 
 		// A real search string
 		$filter = "(t.fieldstring:=:'aaa ttt')";
