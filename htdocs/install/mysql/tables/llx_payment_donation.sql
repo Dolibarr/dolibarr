@@ -32,4 +32,4 @@ create table llx_payment_donation
   fk_bank         integer NOT NULL,
   fk_user_creat   integer,                              -- creation user
   fk_user_modif   integer                               -- last modification user
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
