@@ -32,4 +32,4 @@ CREATE TABLE llx_hrm_skill(
 	note_public text, 
 	note_private text
 	-- END MODULEBUILDER FIELDS
-) ENGINE=innodb;
+) ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
