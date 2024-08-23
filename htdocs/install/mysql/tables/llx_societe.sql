@@ -130,4 +130,4 @@ create table llx_societe
   multicurrency_code	   varchar(3),
 
   import_key               varchar(14)                          		-- import key
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
