@@ -140,7 +140,7 @@ if (GETPOST('confirmation')) {
 						$erreur = true;
 					}
 
-					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty($j, $_SESSION['horaires'.$i]) === false) {
+					if (issetAndNoEmpty('horaires'.$i, $_SESSION) === false || issetAndNoEmpty((string) $j, $_SESSION['horaires'.$i]) === false) {
 						if (issetAndNoEmpty('horaires'.$i, $_SESSION) === true) {
 							$_SESSION["horaires$i"][$j] = '';
 						} else {
