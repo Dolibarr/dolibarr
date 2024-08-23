@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -493,7 +494,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$url = getPublicJobPositionUrl(0, $object->ref);
 			$out .= '<div class="urllink"><input type="text" id="recruitmentjobpositionurl" class="quatrevingtpercent" value="'.$url.'">';
 			$out .= '<a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe').'</a></div>';
-			$out .= ajax_autoselect("recruitmentjobpositionurl", 0);
+			$out .= ajax_autoselect("recruitmentjobpositionurl", '0');
 
 			print $out;
 		}
