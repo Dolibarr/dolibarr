@@ -435,10 +435,10 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_fk_project > 0) {
-	$sql .= natural_search('fk_project', $search_fk_project, 2);
+	$sql .= natural_search('fk_project', (string) $search_fk_project, 2);
 }
 if ($search_fk_contract > 0) {
-	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
+	$sql .= natural_search('fk_contract', (string) $search_fk_contract, 2);
 }
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
