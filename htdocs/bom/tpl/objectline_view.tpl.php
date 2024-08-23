@@ -92,7 +92,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 $objectline = new BOMLine($object->db);
 
 $coldisplay = 0;
-print "<!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE bom/tpl/objectline_view.tpl.php -->\n";
 print '<tr id="row-'.$line->id.'" class="drag drop oddeven" '.$domData.' >';
 
 // Line nb
@@ -102,7 +102,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
 }
 
 // Product
-print '<td class="linecoldescription bomline minwidth300imp">';
+print '<td class="linecoldescription bomline minwidth300imp tdoverflowmax300">';
 print '<div id="line_'.$line->id.'"></div>';
 $coldisplay++;
 $tmpproduct = new Product($object->db);
@@ -139,7 +139,7 @@ $coldisplay++;
 echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
-if ($filtertype != 1) {
+if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
 		print '<td class="linecoluseunit nowrap">';
 		$label = measuringUnitString($line->fk_unit, '', '', 1);
@@ -148,21 +148,7 @@ if ($filtertype != 1) {
 		}
 		print '</td>';
 	}
-
-	print '<td class="linecolqtyfrozen nowrap right">';
-	$coldisplay++;
-	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
-	print '</td>';
-	print '<td class="linecoldisablestockchange nowrap right">';
-	$coldisplay++;
-	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
-	print '</td>';
-
-	print '<td class="linecolefficiency nowrap right">';
-	$coldisplay++;
-	echo $line->efficiency;
-	print '</td>';
-} else {
+} else { // Service
 	// Unit											// For services, units are always enabled
 	print '<td class="linecolunit nowrap">';
 	$coldisplay++;
@@ -175,25 +161,38 @@ if ($filtertype != 1) {
 	}
 
 	print '</td>';
-
+}
+if ($filtertype != 1 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) { // Product or stock support for Services is active
 	// Qty frozen
 	print '<td class="linecolqtyfrozen nowrap right">';
 	$coldisplay++;
 	echo $line->qty_frozen ? yn($line->qty_frozen) : '';
 	print '</td>';
 
-	// Work station
-	if (isModEnabled('workstation')) {
-		$workstation = new Workstation($object->db);
-		$res = $workstation->fetch($line->fk_default_workstation);
+	// Disable stock change
+	print '<td class="linecoldisablestockchange nowrap right">';
+	$coldisplay++;
+	echo $line->disable_stock_change ? yn($line->disable_stock_change) : ''; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
+	print '</td>';
 
-		print '<td class="linecolworkstation nowrap">';
-		$coldisplay++;
-		if ($res > 0) {
-			echo $workstation->getNomUrl(1);
-		}
-		print '</td>';
+	// Efficiency
+	print '<td class="linecolefficiency nowrap right">';
+	$coldisplay++;
+	echo $line->efficiency;
+	print '</td>';
+}
+
+// Service and workstations are active
+if ($filtertype == 1 && isModEnabled('workstation')) {
+	$workstation = new Workstation($object->db);
+	$res = $workstation->fetch($line->fk_default_workstation);
+
+	print '<td class="linecolworkstation nowrap">';
+	$coldisplay++;
+	if ($res > 0) {
+		echo $workstation->getNomUrl(1);
 	}
+	print '</td>';
 }
 
 // Cost
@@ -247,7 +246,7 @@ if ($this->status == 0 && ($object_rights->write) && $action != 'selectlines') {
 	}
 } else {
 	print '<td colspan="3"></td>';
-	$coldisplay = $coldisplay + 3;
+	$coldisplay += 3;
 }
 
 if ($action == 'selectlines') {

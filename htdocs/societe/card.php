@@ -109,7 +109,7 @@ $confirm 	= GETPOST('confirm', 'alpha');
 $dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
 	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = $tmpbacktopagejsfields[0];
+	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
 }
 
 $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
@@ -235,20 +235,20 @@ if (empty($reshook)) {
 		$_POST["supplier_code"] = "Acompleter";
 	}
 
-	if ($action == 'set_localtax1') {
+	if ($action == 'set_localtax1' && $user->hasRight('societe', 'creer')) {
 		//get selected from combobox
 		$value = GETPOST('lt1');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
-	if ($action == 'set_localtax2') {
+	if ($action == 'set_localtax2' && $user->hasRight('societe', 'creer')) {
 		//get selected from combobox
 		$value = GETPOST('lt2');
 		$object->fetch($socid);
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('societe', 'creer')) {
 		$object->fetch($socid);
 
 		$object->oldcopy = dol_clone($object, 2);
@@ -275,8 +275,7 @@ if (empty($reshook)) {
 	}
 
 	// Add new or update third party
-	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode'))
-	&& ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
+	if ((!GETPOST('getcustomercode') && !GETPOST('getsuppliercode')) && ($action == 'add' || $action == 'update') && $user->hasRight('societe', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (!GETPOST('name')) {
@@ -2764,7 +2763,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<table class="border tableforfield centpercent">';
 
 			// Type Prospect/Customer/Supplier
-			print '<tr><td class="titlefieldhalf">'.$langs->trans('NatureOfThirdParty').'</td><td>';
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 			print $object->getTypeUrl(1);
 			print '</td></tr>';
 

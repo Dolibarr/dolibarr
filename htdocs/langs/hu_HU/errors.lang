@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Harmadik fél vagy partnerségi tag kötele
 ErrorFailedToWriteInTempDirectory=Nem sikerült írni a temp könyvtárba
 ErrorQuantityIsLimitedTo=A mennyiség korlátozott: %s
 ErrorFailedToLoadThirdParty=Nem sikerült megtalálni/betöltés partner innen: id=%s, email=%s , name=%s
-ErrorThisPaymentModeIsNotSepa=Ez a fizetési mód nem bankszámla
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=A vevő csík nincs beállítva ehhez a partnerhoz (vagy a Stripe oldalán törölt értékre van állítva). Először hozza létre (vagy csatolja újra).
 ErrorCharPlusNotSupportedByImapForSearch=Az IMAP-keresés nem képes a feladóban vagy a címzettben keresni a + karaktert tartalmazó karakterláncot
 ErrorTableNotFound=A <b>%s</b> táblázat nem található
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Szótár <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=Nem sikerült létrehozni a %s szimbolikus linket, amely a következőre mutat: %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Ellenőrizze az exportáláshoz használt parancsot az exportálás Speciális beállításainál
 ErrorEndTimeMustBeGreaterThanStartTime=A befejezési időpontnak nagyobbnak kell lennie, mint a kezdő időpont
-ErrorIncoherentDates=A kezdő dátumnak kisebbnek kell lennie, mint a befejezési dátum
-ErrorEndHourIsNull=A befejezés dátuma nem lehet nulla
-ErrorStartHourIsNull=A kezdő dátum nem lehet nulla
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Túl sok sort kell feldolgozni. Kérjük, használjon szelektívebb szűrőt.
 ErrorEmptyValueForQty=A mennyiség nem lehet nulla.
 # Warnings

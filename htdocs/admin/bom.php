@@ -212,6 +212,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $classname($db);
 
+					'@phan-var-force ModeleNumRefBoms $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;

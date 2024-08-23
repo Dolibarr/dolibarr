@@ -313,7 +313,9 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'FactureFournisseur';
 	$objectlabel = 'SupplierInvoices';
+
 	$uploaddir = $conf->fournisseur->facture->dir_output;
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'banktransfertrequest') {
@@ -381,8 +383,9 @@ if (empty($reshook)) {
 						$error++;
 						setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 					} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'VIR') {
+						$langs->load("errors");
 						$error++;
-						setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+						setEventMessages($objecttmp->ref.' '.$langs->trans("ErrorThisPaymentModeIsNotCreditTransfer"), $objecttmp->errors, 'errors');
 					} else {
 						$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 					}
@@ -958,7 +961,7 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'validate' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+  'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 
@@ -2006,7 +2009,7 @@ while ($i < $imaxinloop) {
 
 		// Date creation
 		if (!empty($arrayfields['f.datec']['checked'])) {
-			print '<td class="center nowraponll">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {

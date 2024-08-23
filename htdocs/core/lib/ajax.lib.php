@@ -295,7 +295,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
  *  This use the jQuery "autocomplete" function.
  *
  *	@param	string	$htmlname           HTML name of input field
- *	@param	array	$fields				Array of key of fields to autocomplete
+ *	@param	string[]	$fields				Array of key of fields to autocomplete
  *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
@@ -313,11 +313,11 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 					//alert(fields + " " + nboffields);
 
 					// Activate the autocomplete to execute the GET
-    				jQuery("input#'.$htmlname.'").autocomplete({
-    					dataType: "json",
-    					minLength: '.$minLength.',
-    					source: function( request, response ) {
-    						jQuery.getJSON( "'.$url.($option ? '?'.$option : '').'", { '.$htmlname.': request.term }, function(data){
+					jQuery("input#'.$htmlname.'").autocomplete({
+						dataType: "json",
+						minLength: '.$minLength.',
+						source: function( request, response ) {
+							jQuery.getJSON( "'.$url.($option ? '?'.$option : '').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
 									if (autoselect == 1 && data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
@@ -327,7 +327,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 										}
 										for (i=0;i<nboffields;i++) {
 											if (item[fields[i]]) {   // If defined
-                                            	//alert(item[fields[i]]);
+												//alert(item[fields[i]]);
 												jQuery("#" + fields[i]).val(item[fields[i]]);
 											}
 										}
@@ -335,52 +335,52 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 									return item
 								}));
 							});
-    					},
-    					select: function( event, ui ) {
-    					    needtotrigger = "";
-    						for (i=0;i<nboffields;i++) {
-    							//alert(fields[i] + " = " + ui.item[fields[i]]);
+						},
+						select: function( event, ui ) {
+							needtotrigger = "";
+							for (i=0;i<nboffields;i++) {
+								//alert(fields[i] + " = " + ui.item[fields[i]]);
 								if (fields[i]=="selectcountry_id")
 								{
-								    if (ui.item[fields[i]] > 0)     // Do not erase country if unknown
-								    {
-								    	oldvalue=jQuery("#" + fields[i]).val();
-								        newvalue=ui.item[fields[i]];
-								    	//alert(oldvalue+" "+newvalue);
-								        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
-								        if (oldvalue != newvalue)	// To force select2 to refresh visible content
-								        {
-									    	needtotrigger="#" + fields[i];
+									if (ui.item[fields[i]] > 0)	 // Do not erase country if unknown
+									{
+										oldvalue=jQuery("#" + fields[i]).val();
+										newvalue=ui.item[fields[i]];
+										//alert(oldvalue+" "+newvalue);
+										jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+										if (oldvalue != newvalue)	// To force select2 to refresh visible content
+										{
+											needtotrigger="#" + fields[i];
 										}
 
-								        // If we set new country and new state, we need to set a new list of state to allow change
-                                        if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
-                                            jQuery("#state_id").html(ui.item.states);
-                                        }
-								    }
-								}
-                                else if (fields[i]=="state_id" || fields[i]=="state_id")
-                                {
-                                    if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
-                                    {
-								    	oldvalue=jQuery("#" + fields[i]).val();
-								        newvalue=ui.item[fields[i]];
-								    	//alert(oldvalue+" "+newvalue);
-                                        jQuery("#" + fields[i]).val(ui.item[fields[i]]);    // This may fails if not correct country
-								        if (oldvalue != newvalue)	// To force select2 to refresh visible content
-								        {
-									    	needtotrigger="#" + fields[i];
+										// If we set new country and new state, we need to set a new list of state to allow change
+										if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
+											jQuery("#state_id").html(ui.item.states);
 										}
-                                    }
-                                }
+									}
+								}
+								else if (fields[i]=="state_id" || fields[i]=="state_id")
+								{
+									if (ui.item[fields[i]] > 0)	 // Do not erase state if unknown
+									{
+										oldvalue=jQuery("#" + fields[i]).val();
+										newvalue=ui.item[fields[i]];
+										//alert(oldvalue+" "+newvalue);
+										jQuery("#" + fields[i]).val(ui.item[fields[i]]);	// This may fails if not correct country
+										if (oldvalue != newvalue)	// To force select2 to refresh visible content
+										{
+											needtotrigger="#" + fields[i];
+										}
+									}
+								}
 								else if (ui.item[fields[i]]) {   // If defined
-							    	oldvalue=jQuery("#" + fields[i]).val();
-							        newvalue=ui.item[fields[i]];
-							    	//alert(oldvalue+" "+newvalue);
-							        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
-							        if (oldvalue != newvalue)	// To force select2 to refresh visible content
-							        {
-								    	needtotrigger="#" + fields[i];
+									oldvalue=jQuery("#" + fields[i]).val();
+									newvalue=ui.item[fields[i]];
+									//alert(oldvalue+" "+newvalue);
+									jQuery("#" + fields[i]).val(ui.item[fields[i]]);
+									if (oldvalue != newvalue)	// To force select2 to refresh visible content
+									{
+										needtotrigger="#" + fields[i];
 									}
 								}
 
@@ -389,11 +389,11 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLen
 									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
 									// This is required for example when changing zip with autocomplete that change the country
 									jQuery(needtotrigger).delay(500).queue(function() {
-	    								jQuery(this).trigger("change");
+										jQuery(this).trigger("change");
 									});
 								}
 							}
-    					}
+						}
 					});
   				});';
 	$script .= '</script>';

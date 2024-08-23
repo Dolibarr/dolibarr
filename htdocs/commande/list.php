@@ -193,7 +193,7 @@ $arrayfields = array(
 	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled("shipping")),
 	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
 	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
-	'c.fk_input_reason' => array('label' => "Channel", 'checked' => -1, 'position' => 69),
+	'c.fk_input_reason' => array('label' => "Origin", 'checked' => -1, 'position' => 69),
 	'c.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 75),
 	'c.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 80),
 	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 85),
@@ -1375,7 +1375,7 @@ if ($permissiontovalidate) {
 	$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate");
 }
 if ($permissiontoclose) {
-	$arrayofmassactions['preshipped'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
+	$arrayofmassactions['preshipped'] = img_picto('', 'dolly', 'class="pictofixedwidth"').$langs->trans("ClassifyShipped");
 }
 if (isModEnabled('invoice') && $user->hasRight("facture", "creer")) {
 	$arrayofmassactions['createbills'] = img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans("CreateInvoiceForThisCustomer");
@@ -2149,7 +2149,7 @@ while ($i < $imaxinloop) {
 	$projectstatic->title = $obj->project_label;
 
 	$marginInfo = array();
-	if ($with_margin_info === true) {
+	if ($with_margin_info) {
 		$generic_commande->fetch_lines();
 		$marginInfo = $formmargin->getMarginInfosArray($generic_commande);
 		$total_ht += $obj->total_ht;
@@ -2280,8 +2280,8 @@ while ($i < $imaxinloop) {
 
 		// Alias name
 		if (!empty($arrayfields['s.name_alias']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print $obj->alias;
+			print '<td class="nocellnopadd tdoverflowmax125" title="'.dolPrintHTMLForTextArea($obj->alias).'">';
+			print dolPrintLabel($obj->alias);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2311,8 +2311,8 @@ while ($i < $imaxinloop) {
 
 		// Town
 		if (!empty($arrayfields['s.town']['checked'])) {
-			print '<td class="nocellnopadd">';
-			print $obj->town;
+			print '<td class="tdoverflowmax100">';
+			print dolPrintLabel($obj->town);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2322,7 +2322,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['s.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print $obj->zip;
+			print dolPrintLabel($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2331,7 +2331,7 @@ while ($i < $imaxinloop) {
 
 		// State
 		if (!empty($arrayfields['state.nom']['checked'])) {
-			print "<td>".$obj->state_name."</td>\n";
+			print "<td>".dolPrintLabel($obj->state_name)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

@@ -69,7 +69,7 @@ if (empty($reshook)) {
 				$accountancy_code = $assetaccountancycodes->accountancy_codes[$mode_key][$field_key];
 				if (isModEnabled('accounting')) {
 					$accountingaccount = new AccountingAccount($db);
-					$accountingaccount->fetch('', $accountancy_code, 1);
+					$accountingaccount->fetch(0, $accountancy_code, 1);
 
 					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 				} else {

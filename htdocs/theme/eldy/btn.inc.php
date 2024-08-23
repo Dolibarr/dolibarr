@@ -262,17 +262,21 @@ a.btnTitle.btnTitleSelected {
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
-		color: #8a8a8a;
-		cursor: not-allowed;
-		background-color: #fbfbfb;
-		background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
+	color: #8a8a8a;
+	cursor: not-allowed;
+	background-color: #fbfbfb;
+	background: repeating-linear-gradient( 45deg, #ffffff, #f1f1f1 4px, #f1f1f1 4px, #f1f1f1 4px );
 }
 
-.btnTitle:hover .btnTitle-label{
-	 color: var(--btncolorborderhover);
+.btnTitle:hover .btnTitle-label {
+	color: var(--btncolorborderhover);
+}
+.btnTitle.reposition:not(.btnTitleSelected) {
+	background-color: unset;
+	border: unset;
 }
 
-.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label{
+.btnTitle.refused .btnTitle-label, .btnTitle.refused:hover .btnTitle-label {
 	color: #8a8a8a;
 }
 

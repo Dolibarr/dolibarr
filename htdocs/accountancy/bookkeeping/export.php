@@ -172,7 +172,7 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
@@ -1243,7 +1243,7 @@ while ($i < min($num, $limit)) {
 	// Journal code
 	if (!empty($arrayfields['t.code_journal']['checked'])) {
 		$accountingjournal = new AccountingJournal($db);
-		$result = $accountingjournal->fetch('', $line->code_journal);
+		$result = $accountingjournal->fetch(0, $line->code_journal);
 		$journaltoshow = (($result > 0) ? $accountingjournal->getNomUrl(0, 0, 0, '', 0) : $line->code_journal);
 		print '<td class="center tdoverflowmax150">'.$journaltoshow.'</td>';
 		if (!$i) {
@@ -1270,7 +1270,6 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$objectstatic = new Facture($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'facture';
 
 			if ($objectstatic->id > 0) {
 				$filename = dol_sanitizeFileName($line->doc_ref);
@@ -1284,13 +1283,12 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$objectstatic = new FactureFournisseur($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'invoice_supplier';
 
 			if ($objectstatic->id > 0) {
 				$modulepart = 'invoice_supplier';
 				$filename = dol_sanitizeFileName($line->doc_ref);
-				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
-				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
+				$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $objectstatic->element).dol_sanitizeFileName($line->doc_ref);
+				$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $objectstatic->element).dol_sanitizeFileName($line->doc_ref);
 				$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
 			}
 		} elseif ($line->doc_type == 'expense_report') {
@@ -1299,7 +1297,6 @@ while ($i < min($num, $limit)) {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$objectstatic = new ExpenseReport($db);
 			$objectstatic->fetch($line->fk_doc);
-			//$modulepart = 'expensereport';
 
 			if ($objectstatic->id > 0) {
 				$filename = dol_sanitizeFileName($line->doc_ref);

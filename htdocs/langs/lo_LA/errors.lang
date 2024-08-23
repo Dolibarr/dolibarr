@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=ພາກສ່ວນທີສາມຫຼ�
 ErrorFailedToWriteInTempDirectory=ລົ້ມເຫລວໃນການຂຽນໃນ temp directory
 ErrorQuantityIsLimitedTo=ຈໍານວນຈໍາກັດແມ່ນ %s
 ErrorFailedToLoadThirdParty=ຊອກຫາ/ໂຫຼດພາກສ່ວນທີສາມຈາກ id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=ຮູບແບບການຈ່າຍເງິນນີ້ບໍ່ແມ່ນບັນຊີທະນາຄານ
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=ລູກ​ຄ້າ Stripe ບໍ່​ໄດ້​ຖືກ​ຕັ້ງ​ສໍາ​ລັບ​ພາກ​ສ່ວນ​ທີ​ສາມ​ນີ້ (ຫຼື​ຕັ້ງ​ເປັນ​ຄ່າ​ທີ່​ຖືກ​ລົບ​ຢູ່​ຂ້າງ Stripe​)​. ສ້າງ (ຫຼືຕິດໃຫມ່) ມັນກ່ອນ.
 ErrorCharPlusNotSupportedByImapForSearch=ການຄົ້ນຫາ IMAP ບໍ່ສາມາດຊອກຫາຜູ້ສົ່ງ ຫຼືຜູ້ຮັບໄດ້ສຳລັບສະຕຣິງທີ່ມີຕົວອັກສອນ +
 ErrorTableNotFound=ຕາຕະລາງ <b>%s</b> ບໍ່ພົບ
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=ວັດຈະນານຸກົມ <b>%s</b> ບໍ່
 ErrorFailedToCreateSymLinkToMedias=ລົ້ມເຫລວໃນການສ້າງລິ້ງສັນຍາລັກ %s ເພື່ອຊີ້ໄປທີ່ %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=ກວດເບິ່ງຄໍາສັ່ງທີ່ໃຊ້ສໍາລັບການສົ່ງອອກເຂົ້າໄປໃນຕົວເລືອກຂັ້ນສູງຂອງການສົ່ງອອກ
 ErrorEndTimeMustBeGreaterThanStartTime=End time must be greater than start time
-ErrorIncoherentDates=Date start must be less than date end
-ErrorEndHourIsNull=End date cannot be zero
-ErrorStartHourIsNull=Start date cannot be zero
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Too many lines to process. Please use a more selective filter.
 ErrorEmptyValueForQty=Quantity cannot be zero.
 # Warnings

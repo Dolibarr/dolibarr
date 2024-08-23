@@ -58,11 +58,10 @@ $socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(array('loancard', 'globalcard'));
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 $object = new Loan($db);
-
-$hookmanager->initHooks(array('loancard', 'globalcard'));
 
 $error = 0;
 

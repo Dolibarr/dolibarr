@@ -137,10 +137,10 @@ $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_c
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	$sql .= " spe.accountancy_code_customer as code_compta,";
+	$sql .= " spe.accountancy_code_customer as code_compta_client,";
 	$sql .= " spe.accountancy_code_supplier as code_compta_fournisseur,";
 } else {
-	$sql .= " soc.code_compta,";
+	$sql .= " soc.code_compta as code_compta_client,";
 	$sql .= " soc.code_compta_fournisseur,";
 }
 $sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
@@ -215,7 +215,7 @@ $tabtype = array();
 $tabmoreinfo = array();
 
 '
-@phan-var-force array<array{id:mixed,name:mixed,code_compta:string,email:string}> $tabcompany
+@phan-var-force array<array{id:mixed,name:mixed,code_compta_client:string,email:string}> $tabcompany
 @phan-var-force array<array{id:int,name:string,lastname:string,firstname:string,email:string,accountancy_code:string,status:int> $tabuser
 @phan-var-force array<int,array{date:string,type_payment:string,ref:string,fk_bank:int,ban_account_ref:string,fk_bank_account:int,lib:string,type:string}> $tabpay
 @phan-var-force array<array{lib:string,date?:int|string,type_payment?:string,ref?:string,fk_bank?:int,ban_account_ref?:string,fk_bank_account?:int,type?:string,bank_account_ref?:string,paymentid?:int,paymentsupplierid?:int,soclib?:string,paymentscid?:int,paymentdonationid?:int,paymentsubscriptionid?:int,paymentvatid?:int,paymentsalid?:int,paymentexpensereport?:int,paymentvariousid?:int,account_various?:string,paymentloanid?:int}> $tabtp
@@ -238,7 +238,7 @@ if ($result) {
 	$account_pay_subscription = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 	$account_transfer = getDolGlobalString('ACCOUNTING_ACCOUNT_TRANSFER_CASH', 'NotDefined'); // NotDefined is a reserved word
 
-	// Loop on each line into llx_bank table. For each line, we should get:
+	// Loop on each line into the llx_bank table. For each line, we should get:
 	// one line tabpay = line into bank
 	// one line for bank record = tabbq
 	// one line for thirdparty record = tabtp
@@ -279,7 +279,7 @@ if ($result) {
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
 		}
 		if ($lineisasale > 0) {
-			$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+			$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $account_customer);
 		}
 
 		$tabcompany[$obj->rowid] = array(
@@ -355,9 +355,12 @@ if ($result) {
 					break;
 				}
 			}
+
 			// Now loop on each link of record in bank (code similar to bankentries_list.php)
 			foreach ($links as $key => $val) {
 				if ($links[$key]['type'] == 'user' && !$is_sc && !$is_salary && !$is_expensereport) {
+					// We must avoid as much as possible this "continue". If we want to jump to next loop, it means we don't want to process
+					// the case the link is user (often because managed by hard coded code into another link), and we must avoid this.
 					continue;
 				}
 				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'member', 'payment_loan', 'payment_salary', 'payment_various'))) {

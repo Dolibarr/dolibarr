@@ -30,12 +30,14 @@ create table llx_contrat
   datec						datetime,                   	-- creation date
   date_contrat				datetime,
   statut					smallint DEFAULT 0,				-- not used. deprecated
-  fin_validite				datetime,
-  date_cloture				datetime,
+
+  fin_validite				datetime,	-- not used
+  date_cloture				datetime,	-- not used
+
   fk_soc					integer NOT NULL,
   fk_projet					integer,
-  fk_commercial_signature	integer, -- obsolete
-  fk_commercial_suivi 		integer, -- obsolete
+  fk_commercial_signature	integer, 	-- obsolete
+  fk_commercial_suivi 		integer, 	-- obsolete
   fk_user_author			integer NOT NULL default 0,
   fk_user_modif				integer,
   fk_user_cloture			integer,

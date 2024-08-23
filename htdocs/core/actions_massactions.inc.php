@@ -72,6 +72,7 @@ if (!$error && isset($toselect) && is_array($toselect) && count($toselect) > $ma
 if (!$error && $massaction == 'confirm_presend' && !GETPOST('sendmail')) {  // If we do not choose button send (for example when we change template or limit), we must not send email, but keep on send email form
 	$massaction = 'presend';
 }
+
 if (!$error && $massaction == 'confirm_presend') {
 	$resaction = '';
 	$nbsent = 0;
@@ -409,10 +410,10 @@ if (!$error && $massaction == 'confirm_presend') {
 					$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
 				} elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', $user->email_aliases);
-					$from = trim($tmp[($reg[1] - 1)]);
+					$from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/global_aliases_(\d+)/', $fromtype, $reg)) {
 					$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
-					$from = trim($tmp[($reg[1] - 1)]);
+					$from = trim($tmp[((int) $reg[1] - 1)]);
 				} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
 					$sql = "SELECT rowid, label, email FROM ".MAIN_DB_PREFIX."c_email_senderprofile WHERE rowid = ".(int) $reg[1];
 					$resql = $db->query($sql);
@@ -765,11 +766,12 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 
 	// build list of files with full path
 	$files = array();
+
 	foreach ($listofobjectref as $basename) {
 		$basename = dol_sanitizeFileName($basename);
 		foreach ($listoffiles as $filefound) {
 			if (strstr($filefound["name"], $basename)) {
-				$files[] = $uploaddir.'/'.$basename.'/'.$filefound["name"];
+				$files[] = $filefound['fullname'];
 				break;
 			}
 		}
@@ -798,7 +800,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -874,8 +876,9 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
+
 		// Save merged file
-		if (in_array($objecttmp->element, array('facture', 'facture_fournisseur')) && $search_status == Facture::STATUS_VALIDATED) {
+		if (in_array($objecttmp->element, array('facture', 'invoice_supplier')) && $search_status == Facture::STATUS_VALIDATED) {
 			if ($option == 'late') {
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
 			} else {
@@ -1133,9 +1136,9 @@ if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == '
 // @todo : propose model selection
 if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 	$db->begin();
-	$objecttmp = new $objectclass($db);
 	$nbok = 0;
 	foreach ($toselect as $toselectid) {
+		$objecttmp = new $objectclass($db);
 		$result = $objecttmp->fetch($toselectid);
 		if ($result > 0) {
 			$outputlangs = $langs;
@@ -1182,6 +1185,8 @@ if (!$error && $massaction == 'generate_doc' && $permissiontoread) {
 			} else {
 				$nbok++;
 			}
+
+			unset($objecttmp);
 		} else {
 			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 			$error++;

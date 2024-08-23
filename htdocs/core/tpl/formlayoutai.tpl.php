@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,10 @@
  * $conf
  * $formmail
  * $formwebsite (optional)
- * $showlinktolayout
- * $showlinktolayoutlabel
+ * $showlinktolayout=0|1
+ * $showlinktolayoutlabel='...'
  * $showlinktoai ('' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...)
- * $showlinktoailabel
+ * $showlinktoailabel='...'
  * $htmlname
  */
 
@@ -31,10 +32,23 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+if (empty($htmlname)) {
+	print 'Parameter htmlname not defined.';
+	exit(1);
+}
+
 ?>
 <!-- BEGIN PHP TEMPLATE formlayoutai.tpl.php -->
 <?php
 
+'
+@phan-var-force ?FormWebSite $formwebsite
+@phan-var-force ?FormMail $formmail
+';
+
+if (!isset($out)) {
+	$out = '';
+}
 // Add link to add layout
 if ($showlinktolayout) {
 	$out .= '<a href="#" id="linkforlayouttemplates" class="reposition notasortlink inline-block alink marginrightonly">';
@@ -57,19 +71,19 @@ if ($showlinktolayout) {
 }
 // Add link to add AI content
 if ($showlinktoai) {
-	$out .= '<a href="#" id="linkforaiprompt" class="reposition notasortlink inline-block alink marginrightonly">';
+	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="reposition notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
 	$out .= $showlinktoailabel.'...';
 	$out .= '</a>';
 
 	$out .= '<script>
 						$(document).ready(function() {
-  							$("#linkforaiprompt").click(function() {
-								console.log("We click on linkforaiprompt");
+  							$("#linkforaiprompt'.$showlinktoai.'").click(function() {
+								console.log("formlayoutai.tpl: We click on linkforaiprompt'.$showlinktoai.', we toggle #ai_input'.$showlinktoai.'");
 								event.preventDefault();
-								jQuery("#ai_input").toggle();
+								jQuery("#ai_input'.$htmlname.'").toggle();
 								jQuery("#template-selector").hide();
-								if (!jQuery("ai_input").is(":hidden")) {
+								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
 									console.log("Set focus on input field");
 									jQuery("#ai_instructions").focus();
 									if (!jQuery("pageContent").is(":hidden")) {		// May exists for website page only
@@ -87,9 +101,13 @@ if ($showlinktolayout) {
 	} else {
 		$out .= $formmail->getModelEmailTemplate($htmlname);
 	}
+} else {
+	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to 1, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
 	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+} else {
+	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }
 
 ?>

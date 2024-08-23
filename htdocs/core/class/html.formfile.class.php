@@ -398,7 +398,7 @@ class FormFile
 		$printer = 0;
 		// The direct print feature is implemented only for such elements
 		if (in_array($modulepart, array('contract', 'facture', 'supplier_proposal', 'propal', 'proposal', 'order', 'commande', 'expedition', 'commande_fournisseur', 'expensereport', 'delivery', 'ticket'))) {
-			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled)) ? true : false;
+			$printer = ($user->hasRight('printing', 'read') && !empty($conf->printing->enabled));
 		}
 
 		$hookmanager->initHooks(array('formfile'));
@@ -1135,7 +1135,7 @@ class FormFile
 				// Download
 				$tmpout .= '<li class="nowrap"><a class="pictopreview nowrap" ';
 				if (getDolGlobalInt('MAIN_DISABLE_FORCE_SAVEAS') == 2) {
-						$tmpout .= 'target="_blank" ';
+					$tmpout .= 'target="_blank" ';
 				}
 				$tmpout .= 'href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime = dol_mimetype($relativepath, '', 0);
@@ -1356,6 +1356,12 @@ class FormFile
 			$i = 0;
 			$nboflines = 0;
 			$lastrowid = 0;
+			$parametersByDefault = array(
+				'modulepart'=> $modulepart,
+				'relativepath'=> $relativepath,
+				'permtoedit' => $permtoeditline,
+				'permonobject' => $permonobject,
+			);
 			foreach ($filearray as $key => $file) {      // filearray must be only files here
 				if ($file['name'] != '.' && $file['name'] != '..' && !preg_match('/\.meta$/i', $file['name'])) {
 					if (array_key_exists('rowid', $filearray[$key]) && $filearray[$key]['rowid'] > 0) {
@@ -1363,8 +1369,13 @@ class FormFile
 					}
 					//var_dump($filearray[$key]);
 
-					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
+					// get specific parameters from file attributes if set or get default ones
+					$modulepart = ($file['modulepart'] ?? $parametersByDefault['modulepart']);
+					$relativepath = ($file['relativepath'] ?? $parametersByDefault['relativepath']);
+					$permtoeditline = ($file['permtoedit'] ?? $parametersByDefault['permtoedit']);
+					$permonobject = ($file['permonobject'] ?? $parametersByDefault['permonobject']);
 
+					// Note: for supplier invoice, $modulepart may be already 'facture_fournisseur' and $relativepath may be already '6/1/SI2210-0013/'
 					if (empty($relativepath) || empty($modulepart)) {
 						$filepath = $file['level1name'].'/'.$file['name'];
 					} else {
@@ -1923,7 +1934,7 @@ class FormFile
 						if ($id) {
 							$result = $object_instance->fetch($id);
 						} else {
-							if (!($result = $object_instance->fetch('', $ref))) {
+							if (!($result = $object_instance->fetch(0, $ref))) {
 								//fetchOneLike looks for objects with wildcards in its reference.
 								//It is useful for those masks who get underscores instead of their actual symbols (because the _ had replaced all forbidden chars into filename)
 								// TODO Example when this is needed ?

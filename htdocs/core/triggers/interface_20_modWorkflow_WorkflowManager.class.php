@@ -106,6 +106,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (isModEnabled('invoice') && getDolGlobalString('WORKFLOW_ORDER_AUTOCREATE_INVOICE')) {
 				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				'@phan-var-force Facture $object';
 				$newobject = new Facture($this->db);
 
 				$newobject->context['createfromorder'] = 'createfromorder';

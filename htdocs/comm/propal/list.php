@@ -177,13 +177,13 @@ if (!empty($socid)) {
 	$module = 'societe';
 	$dbtable = '&societe';
 }
+$hookmanager->initHooks(array('propallist'));
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
 $diroutputmassaction = $conf->propal->multidir_output[$conf->entity].'/temp/massgeneration/'.$user->id;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Propal($db);
-$hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -635,15 +635,28 @@ if ($search_project) {
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
 }
+$societe_add_ref_in_list = getDolGlobalInt('SOCIETE_ADD_REF_IN_LIST');
 if (empty($arrayfields['s.name_alias']['checked']) && $search_societe) {
-	$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	if ($societe_add_ref_in_list == 1) {
+		$sql .= natural_search(array("s.nom", "s.name_alias", "s.code_client"), $search_societe);
+	} else {
+		$sql .= natural_search(array("s.nom", "s.name_alias"), $search_societe);
+	}
 } else {
 	if ($search_societe) {
-		$sql .= natural_search('s.nom', $search_societe);
+		if ($societe_add_ref_in_list == 1) {
+			$sql .= natural_search(array('s.nom', 's.code_client'), $search_societe);
+		} else {
+			$sql .= natural_search('s.nom', $search_societe);
+		}
 	}
 	if ($search_societe_alias) {
 		$sql .= natural_search('s.name_alias', $search_societe_alias);
 	}
+}
+// Rechercher dans code_client si SOCIETE_ADD_REF_IN_LIST est égal à 1
+if ($societe_add_ref_in_list == 1 && $search_code_client && !$search_societe) {
+	$sql .= natural_search('s.code_client', $search_code_client);
 }
 if ($search_login) {
 	$sql .= natural_search(array("u.login", "u.firstname", "u.lastname"), $search_login);
@@ -1770,7 +1783,7 @@ while ($i < $imaxinloop) {
 	}
 
 	$marginInfo = array();
-	if ($with_margin_info === true) {
+	if ($with_margin_info) {
 		$objectstatic->fetch_lines();
 		$marginInfo = $formmargin->getMarginInfosArray($objectstatic);
 		$total_ht += $obj->total_ht;

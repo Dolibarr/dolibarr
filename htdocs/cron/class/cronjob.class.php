@@ -246,9 +246,6 @@ class Cronjob extends CommonObject
 		if (isset($this->module_name)) {
 			$this->module_name = trim($this->module_name);
 		}
-		if (isset($this->priority)) {
-			$this->priority = trim($this->priority);
-		}
 		if (isset($this->lastoutput)) {
 			$this->lastoutput = trim($this->lastoutput);
 		}
@@ -351,7 +348,7 @@ class Cronjob extends CommonObject
 		$sql .= "libname,";
 		$sql .= "test";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->entity) ? $conf->entity : $this->db->escape($this->entity)).",";
+		$sql .= " ".(!isset($this->entity) ? (int) $conf->entity : (int) $this->entity).",";
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " ".(!isset($this->jobtype) ? 'NULL' : "'".$this->db->escape($this->jobtype)."'").",";
 		$sql .= " ".(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").",";
@@ -362,7 +359,7 @@ class Cronjob extends CommonObject
 		$sql .= " ".(!isset($this->params) ? 'NULL' : "'".$this->db->escape($this->params)."'").",";
 		$sql .= " ".(!isset($this->md5params) ? 'NULL' : "'".$this->db->escape($this->md5params)."'").",";
 		$sql .= " ".(!isset($this->module_name) ? 'NULL' : "'".$this->db->escape($this->module_name)."'").",";
-		$sql .= " ".(!isset($this->priority) ? '0' : $this->priority).",";
+		$sql .= " ".(is_numeric($this->priority) ? (int) $this->priority : 50).",";
 		$sql .= " ".(!isset($this->datelastrun) || dol_strlen($this->datelastrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datelastrun)."'").",";
 		$sql .= " ".(!isset($this->datenextrun) || dol_strlen($this->datenextrun) == 0 ? 'NULL' : "'".$this->db->idate($this->datenextrun)."'").",";
 		$sql .= " ".(!isset($this->dateend) || dol_strlen($this->dateend) == 0 ? 'NULL' : "'".$this->db->idate($this->dateend)."'").",";
@@ -1188,7 +1185,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1226,7 +1223,7 @@ class Cronjob extends CommonObject
 		$this->lastresult = '';
 		$this->processing = 1; // To know job was started
 		$this->pid = function_exists('getmypid') ? getmypid() : null; // Avoid dol_getmypid to get null if the function is not available
-		$this->nbrun = $this->nbrun + 1;
+		$this->nbrun += 1;
 		$result = $this->update($user); // This include begin/commit
 		if ($result < 0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
@@ -1455,7 +1452,7 @@ class Cronjob extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($this->db);
-		$result = $user->fetch('', $userlogin);
+		$result = $user->fetch(0, $userlogin);
 		if ($result < 0) {
 			$this->error = "User Error : ".$user->error;
 			dol_syslog(get_class($this)."::reprogram_jobs ".$this->error, LOG_ERR);

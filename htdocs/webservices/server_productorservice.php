@@ -392,7 +392,7 @@ function getProductOrService($authentication, $id = 0, $ref = '', $ref_ext = '',
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire') || $fuser->hasRight('service', 'lire')) {
@@ -1029,7 +1029,7 @@ function getProductsForCategory($authentication, $id, $lang = '')
 		$langcode = ($lang ? $lang : (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
 		$langs->setDefaultLang($langcode);
 
-		$fuser->getrights();
+		$fuser->loadRights();
 
 		$nbmax = 10;
 		if ($fuser->hasRight('produit', 'lire')) {

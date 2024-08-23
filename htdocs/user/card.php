@@ -75,7 +75,7 @@ $group = GETPOSTINT("group", 3);
 $cancel		= GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
 
-if (empty($id) && $action != 'create') {
+if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
 }
 
@@ -349,8 +349,8 @@ if (empty($reshook)) {
 			$id = $object->create($user);
 			if ($id > 0) {
 				$resPass = 0;
-				if (GETPOST('password', 'none')) {
-					$resPass = $object->setPassword($user, GETPOST('password', 'none'));
+				if (GETPOST('password', 'password')) {
+					$resPass = $object->setPassword($user, GETPOST('password', 'password'));
 				}
 				if (is_int($resPass) && $resPass < 0) {
 					$langs->load("errors");
@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && $canedituser) {
+	if ($action == 'update' && ($canedituser || $caneditpasswordandsee)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield) {    // Case we can edit all field
@@ -438,7 +438,7 @@ if (empty($reshook)) {
 				}
 				$object->gender = GETPOST("gender", 'aZ09');
 				if ($caneditpasswordandsee) {
-					$object->pass = GETPOST("password", 'none');	// We can keep 'none' for password fields
+					$object->pass = GETPOST("password", 'password');
 				}
 				if ($caneditpasswordandsee || $user->hasRight("api", "apikey", "generate")) {
 					$object->api_key = (GETPOST("api_key", 'alphanohtml')) ? GETPOST("api_key", 'alphanohtml') : $object->api_key;
@@ -658,10 +658,10 @@ if (empty($reshook)) {
 
 				$object->fetch($id);
 
-				if (GETPOST("password", "none")) {	// If pass is empty, we do not change it.
+				if (GETPOST("password", "password")) {	// If pass is empty, we do not change it.
 					$object->oldcopy = clone $object;
 
-					$ret = $object->setPassword($user, GETPOST("password", "none"));
+					$ret = $object->setPassword($user, GETPOST("password", "password"));
 					if (is_int($ret) && $ret < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
@@ -1437,7 +1437,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		// Check if user has rights
 		if (!getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-			$object->getrights();
+			$object->loadRights();
 			if (empty($object->nb_rights) && $object->statut != 0 && empty($object->admin)) {
 				setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
 			}
@@ -2974,12 +2974,19 @@ if ($action == 'create' || $action == 'adduserldap') {
 			$linktoelem = $form->showLinkToObjectBlock($object, null, null);
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+			$MAXEVENT = 10;
+
+			$morehtmlcenter = '<div class="nowraponall">';
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT.'/user/messaging.php?id='.$object->id);
+			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/user/agenda.php?id='.$object->id);
+			$morehtmlcenter .= '</div>';
+
 			print '</div><div class="fichehalfright">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', 0, '', '', $object->id);
+			$somethingshown = $formactions->showactions($object, 'user', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter, $object->id);
 
 			print '</div></div>';
 		}

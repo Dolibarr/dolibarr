@@ -93,6 +93,7 @@ ProfId3CH=Prof Id 1 (Número federal)
 ProfId4CH=Prof Id 2 (Número gravado comercial)
 ProfId1CM=Id. prof. 1 (Registro Comercial)
 ProfId2CM=Id. prof. 2 (nº de Contribuinte)
+ProfId2ShortCM=Taxpayer No.
 ProfId1DE=Prof Id 1 (IVA)
 ProfId2DE=Prof Id 2 (Inscrição Estadual)
 ProfId3DE=Prof Id 3 (Inscrição Municipal)

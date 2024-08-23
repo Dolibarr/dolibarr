@@ -30,6 +30,7 @@
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 require_once DOL_DOCUMENT_ROOT . '/core/modules/import/modules_import.php';
 
@@ -51,7 +52,7 @@ class ImportXlsx extends ModeleImports
 
 	/**
 	 * Dolibarr version of driver
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr';
 
@@ -302,22 +303,34 @@ class ImportXlsx extends ModeleImports
 	public function import_read_record()
 	{
 		// phpcs:enable
-		global $conf;
-
 		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
 		if ($this->record > $rowcount) {
 			return false;
 		}
 		$array = array();
+
 		$xlsx = new Xlsx();
 		$info = $xlsx->listWorksheetinfo($this->file);
 		$countcolumns = $info[0]['totalColumns'];
+
 		for ($col = 1; $col <= $countcolumns; $col++) {
-			$val = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record)->getValue();
+			$tmpcell = $this->workbook->getActiveSheet()->getCellByColumnAndRow($col, $this->record);
+
+			$val = $tmpcell->getValue();
+
+			if (Date::isDateTime($tmpcell)) {
+				// For date field, we use the standard date format string.
+				$dateValue = Date::excelToDateTimeObject($val);
+				$val = $dateValue->format('Y-m-d H:i:s');
+			}
+
 			$array[$col]['val'] = $val;
 			$array[$col]['type'] = (dol_strlen($val) ? 1 : -1); // If empty we consider it null
 		}
 		$this->record++;
+
+		unset($xlsx);
+
 		return $array;
 	}
 
@@ -632,7 +645,7 @@ class ImportXlsx extends ModeleImports
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomeraccountancycodeifauto') {
 									if (strtolower($newval) == 'auto') {
 										$this->thirdpartyobject->get_codecompta('customer');
-										$newval = $this->thirdpartyobject->code_compta;
+										$newval = $this->thirdpartyobject->code_compta_client;
 										//print 'code_compta='.$newval;
 									}
 									if (empty($newval)) {

@@ -7,6 +7,7 @@
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2021		Antonin MARCHAL		<antonin@letempledujeu.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +45,11 @@ $langs->loadLangs(array('products', 'stocks', 'orders'));
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'produit|service');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('stockreplenishlist'));
+
+$result = restrictedArea($user, 'produit|service');
 
 //checks if a product has been ordered
 
@@ -202,7 +204,7 @@ if ($action == 'order' && GETPOST('valid')) {
 						$tva = $line->tva_tx / 100;
 						$line->total_tva = $line->total_ht * $tva;
 						$line->total_ttc = $line->total_ht + $line->total_tva;
-						$line->remise_percent = $productsupplier->remise_percent;
+						$line->remise_percent = (float) $productsupplier->remise_percent;
 						$line->ref_fourn = $productsupplier->ref_supplier;
 						$line->type = $productsupplier->type;
 						$line->fk_unit = $productsupplier->fk_unit;
@@ -243,7 +245,7 @@ if ($action == 'order' && GETPOST('valid')) {
 
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
-						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
 					$result = $order->addline(
 						$line->desc,
@@ -285,12 +287,12 @@ if ($action == 'order' && GETPOST('valid')) {
 
 				foreach ($supplier['lines'] as $line) {
 					if (empty($line->remise_percent)) {
-						$line->remise_percent = $order->thirdparty->remise_supplier_percent;
+						$line->remise_percent = (float) $order->thirdparty->remise_supplier_percent;
 					}
 					$order->lines[] = $line;
 				}
-				$order->cond_reglement_id = $order->thirdparty->cond_reglement_supplier_id;
-				$order->mode_reglement_id = $order->thirdparty->mode_reglement_supplier_id;
+				$order->cond_reglement_id = (int) $order->thirdparty->cond_reglement_supplier_id;
+				$order->mode_reglement_id = (int) $order->thirdparty->mode_reglement_supplier_id;
 
 				$id = $order->create($user);
 				if ($id < 0) {
@@ -366,7 +368,7 @@ $sql .= ' FROM ' . MAIN_DB_PREFIX . 'product as p';
 $sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'product_stock as s ON p.rowid = s.fk_product';
 $sql .= ' AND s.fk_entrepot  IN (' . $db->sanitize($list_warehouse) . ')';
 
-$list_warehouse_selected = ($fk_entrepot < 0 || empty($fk_entrepot)) ? '0' : $fk_entrepot;
+$list_warehouse_selected = ($fk_entrepot < 0 || empty($fk_entrepot)) ? $list_warehouse : $fk_entrepot;
 $sql .= ' AND s.fk_entrepot  IN (' . $db->sanitize($list_warehouse_selected) . ')';
 
 
