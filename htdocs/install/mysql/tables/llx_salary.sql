@@ -43,4 +43,4 @@ create table llx_salary
   fk_account      integer,
   fk_user_author  integer,                    -- user creating
   fk_user_modif   integer                     -- user making last change
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
