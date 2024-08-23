@@ -25,4 +25,4 @@ create table llx_accounting_journal
   label             varchar(128) NOT NULL,
   nature            smallint DEFAULT 1 NOT NULL,        -- type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 5:expense report / 9:has-new)
   active            smallint DEFAULT 0
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
