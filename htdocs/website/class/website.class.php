@@ -638,7 +638,7 @@ class Website extends CommonObject
 
 	/**
 	 * Purge website
-	 * Delete website directory and all pages and medias
+	 * Delete website directory content and all pages and medias. Differs from delete() because it does not delete the website entry.
 	 *
 	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
