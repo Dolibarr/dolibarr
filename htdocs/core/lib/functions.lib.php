@@ -13604,7 +13604,7 @@ function dolForgeCriteriaCallback($matches)
 	if (empty($matches[1])) {
 		return '';
 	}
-	$tmp = explode(':', $matches[1]);
+	$tmp = explode(':', $matches[1], 3);
 	if (count($tmp) < 3) {
 		return '';
 	}
