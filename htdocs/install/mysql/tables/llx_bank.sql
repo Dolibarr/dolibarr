@@ -44,4 +44,4 @@ create table llx_bank
   origin_id       integer,
   origin_type     varchar(64) NULL,
   import_key	  varchar(14)
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
