@@ -145,7 +145,6 @@ return [
         'htdocs/blockedlog/admin/blockedlog_list.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/blockedlog/ajax/block-info.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/blockedlog/ajax/check_signature.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/blockedlog/class/blockedlog.class.php' => ['PhanTypeSuspiciousNonTraversableForeach'],
         'htdocs/blockedlog/lib/blockedlog.lib.php' => ['PhanPluginUnknownArrayFunctionReturnType'],
         'htdocs/bom/bom_card.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/bom/bom_document.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
