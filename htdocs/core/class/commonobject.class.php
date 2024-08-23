@@ -10734,6 +10734,7 @@ abstract class CommonObject
 			}
 
 			if (!$error) {
+				$this->signed_status = $status;
 				$this->db->commit();
 				return 1;
 			} else {
