@@ -138,7 +138,7 @@ if ($id > 0 || !empty($ref)) {
 		$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 	}
 
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-margin page-tabs_productmargins');
 
 	$param = "&id=".$object->id;
 	if ($limit > 0 && $limit != $conf->liste_limit) {
