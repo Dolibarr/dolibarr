@@ -61,4 +61,4 @@ create table llx_contrat
 
   import_key				varchar(14),
   extraparams				varchar(255)
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
