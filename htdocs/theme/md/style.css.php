@@ -2382,7 +2382,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width:calc(100% - 252px);
 	display: inline-block;
 }
 
@@ -3425,7 +3425,7 @@ div.login_block table {
 div.login {
 	white-space:nowrap;
 	font-weight: bold;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 div.login a {
 	color: var(--colortextvmenu);
@@ -3448,8 +3448,8 @@ div.login_block_other { padding-top: 15px; }
 	vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
-	text-align: right;
-	margin-right: 8px;
+	text-align: <?php echo $right; ?>;
+	margin-<?php echo $right; ?>: 8px;
 	max-width: 200px;
 }
 
@@ -3458,7 +3458,7 @@ div.login_block_other { padding-top: 15px; }
 	line-height: 25px;
 }
 .login_block_elem {
-	float: right;
+	float: <?php echo $right; ?>;
 	vertical-align: middle;
 	padding: 0px 3px 0px 3px !important;
 	height: 18px;
