@@ -268,6 +268,8 @@ if (empty($reshook)) {
 		$num = count($objectsrc->lines);
 		$totalqty = 0;
 
+		$product_batch_used = array();
+
 		for ($i = 0; $i < $num; $i++) {
 			$idl = "idl".$i;
 
