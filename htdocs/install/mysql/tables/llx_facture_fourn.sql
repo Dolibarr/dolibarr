@@ -94,4 +94,4 @@ create table llx_facture_fourn
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
   multicurrency_total_ttc	double(24,8) DEFAULT 0
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
