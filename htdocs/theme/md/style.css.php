@@ -1173,16 +1173,16 @@ td.wordbreak img, td.wordbreakimp img {
 	padding: 0;
 }
 .nopaddingleft {
-	padding-left: 0;
+	padding-<?php print $left; ?>: 0;
 }
 .nopaddingright {
-	padding-right: 0;
+	padding-<?php print $right; ?>: 0;
 }
 .nopaddingleftimp {
-	padding-left: 0 !important;
+	padding-<?php print $left; ?>: 0 !important;
 }
 .nopaddingrightimp {
-	padding-right: 0 !important;
+	padding-<?php print $right; ?>: 0 !important;
 }
 .paddingleft {
 	padding-<?php print $left; ?>: 4px;
@@ -2113,7 +2113,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.divphotoref {
-		padding-right: 10px !important;
+		padding-<?php echo $right; ?>: 10px !important;
 	}
 
 	table.liste tr.trkanban td {
@@ -2283,19 +2283,16 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.statusref {
-		padding-right: 10px;
+		padding-<?php echo $right; ?>: 10px;
 		max-width: 55%;
 	   }
-	div.statusref img {
-		padding-right: 3px !important;
-	   }
-	div.statusrefbis {
-		padding-right: 3px !important;
-	   }
+	div.statusref img, div.statusrefbis {
+		padding-<?php echo $right; ?>: 3px !important;
+	}
 
-	   input.buttonpayment {
+	input.buttonpayment {
 		min-width: 300px;
-	   }
+	}
 }
 
 /* Force values for small screen 320 */
@@ -2385,7 +2382,7 @@ td.showDragHandle {
 	float: left;
 }
 .classforhorizontalscrolloftabs #id-right {
-	width:calc(100% - 210px);
+	width:calc(100% - 252px);
 	display: inline-block;
 }
 
@@ -2791,8 +2788,8 @@ div.paginationref {
 	padding-bottom: 10px;
 }
 div.statusref {
-	float: right;
-	padding-left: 12px;
+	float: <?php echo $right; ?>;
+	padding-<?php echo $left; ?>: 12px;
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
@@ -2805,8 +2802,8 @@ div.statusref img {
 }
 div.statusrefbis {
 	padding-left: 8px;
-	   padding-right: 9px;
-	   vertical-align: text-bottom;
+	padding-right: 9px;
+	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
 	border: 1px solid #CCC;
@@ -3428,7 +3425,7 @@ div.login_block table {
 div.login {
 	white-space:nowrap;
 	font-weight: bold;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 div.login a {
 	color: var(--colortextvmenu);
@@ -3451,8 +3448,8 @@ div.login_block_other { padding-top: 15px; }
 	vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
-	text-align: right;
-	margin-right: 8px;
+	text-align: <?php echo $right; ?>;
+	margin-<?php echo $right; ?>: 8px;
 	max-width: 200px;
 }
 
@@ -3461,7 +3458,7 @@ div.login_block_other { padding-top: 15px; }
 	line-height: 25px;
 }
 .login_block_elem {
-	float: right;
+	float: <?php echo $right; ?>;
 	vertical-align: middle;
 	padding: 0px 3px 0px 3px !important;
 	height: 18px;
@@ -4388,7 +4385,7 @@ div.refaddress div.address {
 }
 
 div.pagination {
-	float: right;
+	float:<?php echo $right; ?>
 }
 div.pagination a {
 	font-weight: normal;
@@ -5205,8 +5202,8 @@ label.radioprivate {
 /*	margin-bottom: 2px;
 	margin-top: 2px; */
 }
-div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
-	margin-right: 15px;
+div.divphotoref > div > .photowithmargin, div.divphotoref > img.photowithmargin, div.divphotoref > a > .photowithmargin {		/* Margin right for photo not inside a div.photoref frame only */
+	margin-<?php echo $right; ?>: 15px;
 }
 .photowithborder {
 	border: 1px solid #f0f0f0;
@@ -6448,8 +6445,8 @@ ul.ecmjqft a:hover {
 div.ecmjqft {
 	vertical-align: middle;
 	display: inline-block !important;
-	text-align: right;
-	float: right;
+	text-align: <?php echo $right; ?>;
+	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
 }
@@ -6460,7 +6457,7 @@ div#ecm-layout-west {
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; }
@@ -8205,7 +8202,7 @@ table.jPicker {
 		min-width: 0 !important;
 	}
 	div.divphotoref {
-		padding-right: 5px;
+		padding-<?php echo $right; ?>: 5px;
 	}
 	img.photoref, div.photoref {
 		border: 1px solid rgba(0, 0, 0, 0.2);

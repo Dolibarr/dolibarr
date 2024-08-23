@@ -118,11 +118,14 @@ $usercanread = $user->hasRight('facture', 'lire');
 $usercancreate = $user->hasRight('facture', 'creer');
 $usercanissuepayment = $user->hasRight('facture', 'paiement');
 $usercandelete = $user->hasRight('facture', 'supprimer');
+
+// Advanced permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'validate')));
 $usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->rights->facture->invoice_advance->send);
 $usercanreopen = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->rights->facture->invoice_advance->reopen);
 $usercanunvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'unvalidate')));
 
+// Other permissions
 $usercanproductignorepricemin = ((getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('produit', 'ignore_price_min_advance')) || !getDolGlobalString('MAIN_USE_ADVANCED_PERMS'));
 $usercancreatemargin = $user->hasRight("margins", "creer");
 $usercanreadallmargin = $user->hasRight("margins", "liretous");
@@ -312,19 +315,19 @@ if (empty($reshook)) {
 
 
 	// Update field
-	if ($action == 'setconditions' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'setconditions' && $usercancreate) {
 		// Set condition
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentTerm"));
 		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
-	} elseif ($action == 'setmode' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setmode' && $usercancreate) {
 		// Set mode
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("PaymentMode"));
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
-	} elseif ($action == 'classin' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'classin' && $usercancreate) {
 		// Set project
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Project"));
 		$object->setProject(GETPOSTINT('projectid'));
-	} elseif ($action == 'setref' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setref' && $usercancreate) {
 		// Set bank account
 		$object->context['actionmsg'] = $langs->trans("FieldXModifiedFromYToZ", $langs->transnoentitiesnoconv("Title"), $object->title, $ref);
 		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user, 'BILLREC_MODIFY');
@@ -340,33 +343,33 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'setbankaccount' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setbankaccount' && $usercancreate) {
 		// Set bank account
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Bank"));
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
-	} elseif ($action == 'setfrequency' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setfrequency' && $usercancreate) {
 		// Set frequency and unit frequency
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("Frequency"));
 		$object->setFrequencyAndUnit(GETPOSTINT('frequency'), GETPOST('unit_frequency'));
-	} elseif ($action == 'setdate_when' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setdate_when' && $usercancreate) {
 		// Set next date of execution
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 		if (!empty($date)) {
 			$object->setNextDate($date);
 		}
-	} elseif ($action == 'setnb_gen_max' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setnb_gen_max' && $usercancreate) {
 		// Set max period
 		$object->setMaxPeriod(GETPOSTINT('nb_gen_max'));
-	} elseif ($action == 'setauto_validate' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setauto_validate' && $usercancreate) {
 		// Set auto validate
 		$object->setAutoValidate(GETPOSTINT('auto_validate'));
-	} elseif ($action == 'setgenerate_pdf' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setgenerate_pdf' && $usercancreate) {
 		// Set generate pdf
 		$object->setGeneratepdf(GETPOSTINT('generate_pdf'));
-	} elseif ($action == 'setmodelpdf' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'setmodelpdf' && $usercancreate) {
 		// Set model pdf
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
-	} elseif ($action == 'disable' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'disable' && $usercancreate) {
 		// Set status disabled
 		$db->begin();
 
@@ -383,7 +386,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'enable' && $user->hasRight('facture', 'creer')) {
+	} elseif ($action == 'enable' && $usercancreate) {
 		// Set status enabled
 		$db->begin();
 
@@ -409,7 +412,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete line
-	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->hasRight('facture', 'creer')) {
+	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate) {
 		$object->fetch($id);
 		$object->fetch_thirdparty();
 
@@ -434,7 +437,7 @@ if (empty($reshook)) {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras' && $usercancreate) {
 		$object->oldcopy = dol_clone($object, 2);
 
 		// Fill array 'array_options' with data from update form
