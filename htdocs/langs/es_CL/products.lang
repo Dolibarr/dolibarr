@@ -50,7 +50,6 @@ SupplierRef=SKU del proveedor
 ProductsAndServicesArea=Área de productos y servicios
 ProductsArea=Área de producto
 ServicesArea=Área de servicios
-ListOfStockMovements=Lista de movimientos de stock
 SupplierCard=Tarjeta de proveedor
 SetDefaultBarcodeType=Establecer el tipo de código de barras
 BarcodeValue=Valor de código de barras

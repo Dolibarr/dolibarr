@@ -66,7 +66,7 @@ if (empty($refund)) {
 $datev = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 $datep = dol_mktime(12, 0, 0, GETPOSTINT("datepmonth"), GETPOSTINT("datepday"), GETPOSTINT("datepyear"));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Tva($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->tax->dir_output.'/temp/massgeneration/'.$user->id;
@@ -80,7 +80,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $permissiontoread = $user->hasRight('tax', 'charges', 'lire');
 $permissiontoadd = $user->hasRight('tax', 'charges', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -173,7 +173,7 @@ if (empty($reshook)) {
 		$error = 0;
 
 		$object->fk_account = GETPOSTINT("accountid");
-		$object->type_payment = GETPOST("type_payment", 'alphanohtml');
+		$object->type_payment = GETPOSTINT("type_payment");
 		$object->num_payment = GETPOST("num_payment", 'alphanohtml');
 
 		$object->datev = $datev;

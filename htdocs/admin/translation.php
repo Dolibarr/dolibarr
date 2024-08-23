@@ -67,10 +67,10 @@ if (!$sortfield) {
 	$sortfield = 'lang,transkey';
 }
 if (!$sortorder) {
-	$sortorder = 'ASC';
+	$sortorder = 'ASC,ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admintranslation', 'globaladmin'));
 
 
@@ -112,7 +112,7 @@ if ($action == 'setMAIN_ENABLE_OVERWRITE_TRANSLATION') {
 
 if ($action == 'update') {
 	if ($transkey == '') {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Key")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TranslationKey")), null, 'errors');
 		$error++;
 	}
 	if ($transvalue == '') {
@@ -150,7 +150,7 @@ if ($action == 'add') {
 		$error++;
 	}
 	if ($transkey == '') {
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Key")), null, 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("TranslationKey")), null, 'errors');
 		$error++;
 	}
 	if ($transvalue == '') {
@@ -291,7 +291,7 @@ foreach ($modulesdir as $keydir => $tmpsearchdir) {
 	$dir_lang = dirname(dirname($searchdir))."/langs/".$langcode; // The 2 dirname is to go up in dir for 2 levels
 	$dir_lang_osencoded = dol_osencode($dir_lang);
 
-	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ? SORT_ASC : SORT_DESC), 1);
+	$filearray = dol_dir_list($dir_lang_osencoded, 'files', 0, '', '', "name", SORT_ASC, 1);
 
 	foreach ($filearray as $file) {
 		$tmpfile = preg_replace('/.lang/i', '', basename($file['name']));
@@ -342,7 +342,7 @@ if ($mode == 'overwrite') {
 	print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
 	print ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
-	print $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("Key"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
+	print $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	print '</span></div>';
 
@@ -356,7 +356,7 @@ if ($mode == 'overwrite') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("TranslationKey", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("NewTranslationStringToShow", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
 	//if (isModEnabled('multicompany') && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
 	print '<td align="center"></td>';
@@ -539,7 +539,7 @@ if ($mode == 'searchkey') {
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Key", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("TranslationKey", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("CurrentTranslationString", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
 	//if (isModEnabled('multicompany') && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
 	print '<td align="center"></td>';
@@ -569,10 +569,21 @@ if ($mode == 'searchkey') {
 		if ($limit && $i > ($offset + $limit)) {
 			break;
 		}
-		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td class="small">';
-		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>'.(!empty($langsenfileonly->tab_translate[$key]) ? $langsenfileonly->trans($key) : '<span class="opacitymedium">'.$langs->trans("None").'</span>');
-		print '<span title="'.dol_escape_htmltag($titleforvalue).'" class="classfortooltip">';
-		print dol_escape_htmltag($val);
+		print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td>';
+		print '<td class="small">';
+		$titleforvalue = $langs->trans("Translation").' en_US for key '.$key.':<br>';
+		if (!empty($langsenfileonly->tab_translate[$key])) {
+			if (substr_count($langsenfileonly->tab_translate[$key], '%s') <= 4) {	// To avoid errors when more than 4 %s.
+				$titleforvalue .= $langsenfileonly->trans($key);
+			}
+		} else {
+			$titleforvalue .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+		}
+		print '<span title="'.dolPrintHTMLForAttribute($titleforvalue).'" class="classfortooltip">';
+		print dolPrintHTML($val);
+		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 4) {
+			print '<br><div class="warning">Error, more than 4 %s in the source</div>';
+		}
 		print '</span>';
 		print '</td>';
 		print '<td class="right nowraponall">';

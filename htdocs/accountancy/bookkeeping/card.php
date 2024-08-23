@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
+ * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,6 +180,8 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$datedoc = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+
 			$object = new BookKeeping($db);
 
 			$object->numero_compte = $accountingaccount_number;
@@ -189,7 +191,7 @@ if (empty($reshook)) {
 			$object->label_operation = $label_operation;
 			$object->debit = $debit;
 			$object->credit = $credit;
-			$object->doc_date = (string) GETPOST('doc_date', 'alpha');
+			$object->doc_date = $datedoc;
 			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 			$object->piece_num = $piece_num;
 			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
@@ -258,10 +260,12 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
+			$date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+
 			$object->label_compte = '';
 			$object->debit = 0;
 			$object->credit = 0;
-			$object->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+			$object->doc_date = $date_start;
 			$object->doc_type = GETPOST('doc_type', 'alpha');
 			$object->piece_num = GETPOSTINT('next_num_mvt');
 			$object->doc_ref = GETPOST('doc_ref', 'alpha');
@@ -352,7 +356,7 @@ $formaccounting = new FormAccounting($db);
 
 $title = $langs->trans("CreateMvts");
 $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_Partie_Double';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-card');
 
 // Confirmation to delete the command
 if ($action == 'delete') {
@@ -482,7 +486,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print $form->selectDate($object->doc_date ? $object->doc_date : - 1, 'doc_date', 0, 0, 0, "setdate");
+			print $form->selectDate($object->doc_date ? $object->doc_date : -1, 'doc_date', 0, 0, 0, "setdate");
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -606,6 +610,14 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 		}
+
+		// Due date
+		print '<tr>';
+		print '<td class="titlefield">' . $langs->trans('DateDue') . '</td>';
+		print '<td>';
+		print $object->date_lim_reglement ? dol_print_date($object->date_lim_reglement, 'day') : '&nbsp;';
+		print '</td>';
+		print '</tr>';
 
 		// Validate
 		/*

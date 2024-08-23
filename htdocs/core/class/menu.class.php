@@ -32,7 +32,7 @@ class Menu
 	/**
 	 * List of menu items
 	 *
-	 * @var array<array{url:string,titre:string,enabled:int<0,2>,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,id:string,idsel:string,classname:string,prefix:string}>
+	 * @var array<array{url:string,titre:string,enabled:int<0,2>,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,id:string,idsel:string,classname:string,prefix?:string}>
 	 */
 	public $liste;
 

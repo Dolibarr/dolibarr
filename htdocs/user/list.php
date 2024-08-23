@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -67,7 +67,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
@@ -137,16 +137,20 @@ $arrayfields = array(
 	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
 	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
 	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
-	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 60, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 61, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 50),
+	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 50, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 51, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 60),
 	'u.salary' => array('label' => "Salary", 'checked' => -1, 'position' => 80, 'enabled' => (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
-	'u.datelastlogin' => array('label' => "LastConnexion", 'checked' => 1, 'position' => 100),
-	'u.datepreviouslogin' => array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110),
 	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
 	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
 	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
 );
+
+if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
+	$arrayfields['u.datelastlogin'] = array('label'=>"LastConnexion", 'checked'=>1, 'position'=>100);
+	$arrayfields['u.datepreviouslogin'] = array('label'=>"PreviousConnexion", 'checked'=>0, 'position'=>110);
+}
+
 // Extra fields
 include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -267,13 +271,15 @@ if (empty($reshook)) {
 		$search_warehouse = "";
 		$search_supervisor = "";
 		$search_api_key = "";
-		$search_datelastlogin = "";
-		$search_datepreviouslogin = "";
 		$search_date_creation = "";
 		$search_date_modification = "";
 		$search_categ = 0;
 		$toselect = array();
 		$search_array_options = array();
+		if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
+			$search_datelastlogin = "";
+			$search_datepreviouslogin = "";
+		}
 	}
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
 		|| GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha')) {
@@ -812,10 +818,10 @@ if (!empty($arrayfields['u.job']['checked'])) {
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print '<td class="liste_titre"></td>';
 }
-if (!empty($arrayfields['u.datelastlogin']['checked'])) {
+if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
-if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
+if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print '<td class="liste_titre"></td>';
 }
 // Extra fields
@@ -915,10 +921,6 @@ if (!empty($arrayfields['u.entity']['checked'])) {
 	print_liste_field_titre($arrayfields['u.entity']['label'], $_SERVER['PHP_SELF'], "u.entity", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.job']['checked'])) {
-	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", $param, "", "", $sortfield, $sortorder);
-	$totalarray['nbfield']++;
-}
 if (!empty($arrayfields['u.ref_employee']['checked'])) {
 	print_liste_field_titre("RefEmployee", $_SERVER['PHP_SELF'], "u.ref_employee", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -927,15 +929,19 @@ if (!empty($arrayfields['u.national_registration_number']['checked'])) {
 	print_liste_field_titre("NationalRegistrationNumber", $_SERVER['PHP_SELF'], "u.national_registration_number", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['u.job']['checked'])) {
+	print_liste_field_titre($arrayfields['u.job']['label'], $_SERVER['PHP_SELF'], "u.job", $param, "", "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['u.salary']['checked'])) {
 	print_liste_field_titre("Salary", $_SERVER['PHP_SELF'], "u.salary", $param, "", "", $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.datelastlogin']['checked'])) {
+if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print_liste_field_titre("LastConnexion", $_SERVER['PHP_SELF'], "u.datelastlogin", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
+if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 	print_liste_field_titre("PreviousConnexion", $_SERVER['PHP_SELF'], "u.datepreviouslogin", $param, "", '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -1298,14 +1304,14 @@ while ($i < $imaxinloop) {
 		}
 
 		// Date last login
-		if (!empty($arrayfields['u.datelastlogin']['checked'])) {
+		if (!empty($arrayfields['u.datelastlogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datelastlogin), "dayhour").'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Date previous login
-		if (!empty($arrayfields['u.datepreviouslogin']['checked'])) {
+		if (!empty($arrayfields['u.datepreviouslogin']['checked']) && getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
 			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datepreviouslogin), "dayhour").'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

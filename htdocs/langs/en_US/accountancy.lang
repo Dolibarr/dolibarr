@@ -409,6 +409,7 @@ Formula=Formula
 ## Reconcile
 LetteringAuto=Reconcile auto
 LetteringManual=Reconcile manual
+LetteringPartial=Reconcile partial
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Unreconcile manual
@@ -454,7 +455,7 @@ AccountancyErrorMismatchBalanceAmount=The balance (%s) is not equal to 0
 AccountancyErrorLetteringBookkeeping=Errors have occurred concerning the transactions: %s
 ErrorAccountNumberAlreadyExists=The accounting number %s already exists
 ErrorArchiveAddFile=Can't put "%s" file in archive
-ErrorNoFiscalPeriodActiveFound=No active fiscal period found
+ErrorNoFiscalPeriodActiveFound=No active fiscal period found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 ## Import

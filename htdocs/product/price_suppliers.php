@@ -98,7 +98,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('pricesuppliercard', 'globalcard'));
 
 $object = new ProductFournisseur($db);
@@ -1258,7 +1258,7 @@ if ($id > 0 || $ref) {
 						// Date modification
 						if (!empty($arrayfields['pfp.tms']['checked'])) {
 							print '<td class="right nowraponall">';
-							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
+							print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour", "tzuserrel");
 							print '</td>';
 						}
 

@@ -55,6 +55,8 @@ ErrorFoundBadEmailInFile=Fundet forkerte e-mail syntaks for %s linjer i filen (f
 ErrorUserCannotBeDelete=Bruger kan ikke slettes. Måske er det forbundet med Dolibarr enheder.
 ErrorFieldsRequired=Nogle obligatoriske felter er efterladt tomme.
 ErrorSubjectIsRequired=E-mail-emnet er påkrævet
+ErrorInAddAttachmentsImageBaseOnMedia=Fejl ved oprettelse af billedfiler i mediemappe til vedhæftning
+ErrorInAddAttachmentsImageBaseIsSrcData=Fejl ved oprettelse af billedfiler (fundet som data:) i midlertidig mappe til vedhæftning
 ErrorFailedToCreateDir=Det lykkedes ikke at oprette en mappe. Kontroller, at web-server bruger har tilladelse til at skrive i Dolibarr dokument mappen. Hvis parameteren <b>safe_mode</b> er aktiveret i PHP, kontroller at Dolibarr php filer ejes af web-server bruger (eller gruppe).
 ErrorNoMailDefinedForThisUser=Ingen e-mail defineret for denne bruger
 ErrorSetupOfEmailsNotComplete=Opsætningen af e-mails er ikke afsluttet
@@ -263,7 +265,7 @@ ErrorReplaceStringEmpty=Fejl, strengen, der skal erstattes til, er tom
 ErrorProductNeedBatchNumber=Fejl, produkt '<b> %s </b>' har brug for meget / serienummer
 ErrorProductDoesNotNeedBatchNumber=Fejl, produkt '<b> %s </b>' accepterer ikke meget / serienummer
 ErrorFailedToReadObject=Fejl, objektet af typen <b> kunne ikke læses %s </b>
-ErrorParameterMustBeEnabledToAllwoThisFeature=Fejl, parameter <b>%s</b> skal være aktiveret i <b>conf/conf.php<> for at tillade brug af kommandolinjegrænseflade af den interne jobplanlægger
+ErrorParameterMustBeEnabledToAllwoThisFeature=Fejl, parameter <b>%s</b> skal være aktiveret i <b>conf/conf.php</b> for at tillade brug af kommandolinjegrænseflade af den interne jobplanlægger
 ErrorLoginDateValidity=Fejl, dette login er uden for gyldighedsdatointervallet
 ErrorValueLength=Feltets længde '<b> %s </b>' skal være højere end '<b> %s </b>'
 ErrorReservedKeyword=Ordet '<b> %s </b>' er et forbeholdt nøgleord
@@ -301,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Tredjepart eller medlem af partnerskab er o
 ErrorFailedToWriteInTempDirectory=Kunne ikke skrive i midlertidigt bibliotek
 ErrorQuantityIsLimitedTo=Mængden er begrænset til %s
 ErrorFailedToLoadThirdParty=Kunne ikke finde/indlæse tredjepart fra id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Denne betalingsmetode er ikke en bankkonto
+ErrorThisPaymentModeIsNotDirectDebit=Betalingsmåden er ikke direkte debitering
+ErrorThisPaymentModeIsNotCreditTransfer=Betalingsmåden er ikke kreditoverførsel
 ErrorStripeCustomerNotFoundCreateFirst=Stripe-kunde er ikke indstillet til denne tredjepart (eller indstillet til en værdi slettet på Stripe-siden). Opret (eller vedhæft igen) det først.
 ErrorCharPlusNotSupportedByImapForSearch=IMAP-søgning er ikke i stand til at søge i afsender eller modtager efter en streng, der indeholder tegnet +
 ErrorTableNotFound=Tabel <b> %s </b> blev ikke fundet
@@ -322,16 +325,21 @@ ErrorFixThisHere= <a href="%s"> Løs dette her </a>
 ErrorTheUrlOfYourDolInstanceDoesNotMatchURLIntoOAuthSetup=Fejl: URL'en på din aktuelle forekomst (%s) matcher ikke den URL, der er defineret i din OAuth2-loginopsætning (%s). Det er ikke tilladt at udføre OAuth2-login i en sådan konfiguration.
 ErrorMenuExistValue=Der findes allerede en menu med denne titel eller URL
 ErrorSVGFilesNotAllowedAsLinksWithout=SVG-filer er ikke tilladt som eksterne links uden muligheden %s
-ErrorTypeMenu=Umuligt at tilføje en anden menu for det samme modul på navbaren, ikke håndtere endnu
+ErrorTypeMenu=Umuligt at tilføje endnu en menu for det samme modul på navbaren, ikke håndteret endnu
+ErrorGeneratingBarcode=Fejl under generering af stregkoden (sandsynligvis ugyldig kodeform)
 ErrorObjectNotFound = Objektet <b>%s</b> er ikke fundet, tjek venligst din url
 ErrorCountryCodeMustBe2Char=Land kode skal være en streng på 2 tegn
 ErrorABatchShouldNotContainsSpaces=Et parti eller serienummer bør ikke indeholde mellemrum
-
 ErrorTableExist=Tabel <b> %s </b> findes allerede
 ErrorDictionaryNotFound=Ordbog <b> %s </b> ikke fundet
 ErrorFailedToCreateSymLinkToMedias=Kunne ikke oprette det symbolske link %s for at pege på %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Tjek kommandoen, der bruges til eksporten, i de avancerede indstillinger for eksporten
-
+ErrorEndTimeMustBeGreaterThanStartTime=Sluttidspunktet skal være længere end starttidspunktet
+ErrorIncoherentDates=Startdatoen skal være tidligere end slutdatoen
+ErrorEndHourIsNull=Slutdatofeltet må ikke være tomt
+ErrorStartHourIsNull=Startdato-feltet må ikke være tomt
+ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=For mange linjer til at behandle. Brug venligst et mere selektivt filter.
+ErrorEmptyValueForQty=Mængden kan ikke være nul.
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Din PHP-parameter upload_max_filesize (%s) er højere end PHP-parameter post_max_size (%s). Dette er ikke en ensartet opsætning.
 WarningPasswordSetWithNoAccount=Der blev angivet en adgangskode til dette medlem. Der blev dog ikke oprettet en brugerkonto. Så denne adgangskode er gemt, men kan ikke bruges til at logge ind på Dolibarr. Det kan bruges af et eksternt modul/interface, men hvis du ikke behøver at definere noget login eller adgangskode for et medlem, kan du deaktivere muligheden "Administrer et login for hvert medlem" fra medlemsmodulets opsætning. Hvis du har brug for at administrere et login, men ikke har brug for nogen adgangskode, kan du holde dette felt tomt for at undgå denne advarsel. Bemærk: E-mail kan også bruges som login, hvis medlemmet er knyttet til en bruger.
@@ -344,6 +352,7 @@ WarningConfFileMustBeReadOnly=Advarsel, config fil <b>(htdocs / conf / conf.php)
 WarningsOnXLines=Advarsler om <b>%s</b> kildelinjer
 WarningNoDocumentModelActivated=Ingen model til dokumentgenerering er blevet aktiveret. En model vælges som standard, indtil du tjekker din modulopsætning.
 WarningLockFileDoesNotExists=Advarsel, når installationen er afsluttet, skal du deaktivere installations- / migreringsværktøjerne ved at tilføje en fil <b>install.lock</b> i biblioteket<b>%s</b>. At udelade oprettelsen af denne fil er en alvorlig sikkerhedsrisiko.
+WarningUpgradeHasBeenUnlocked=Advarsel, opgraderingsprocessen er blevet låst op for alle
 WarningUntilDirRemoved=Denne sikkerhedsadvarsel forbliver aktiv, så længe sårbarheden er til stede.
 WarningCloseAlways=Advarsel, lukning udføres, selvom mængden er forskellig mellem kilde- og målelementer. Aktiver denne funktion med forsigtighed.
 WarningUsingThisBoxSlowDown=Advarsel, brug af denne boks langsommere seriøst alle sider, der viser boksen.
@@ -373,16 +382,18 @@ WarningModuleNeedRefresh = Modul <b> %s </b> er blevet deaktiveret. Glem ikke at
 WarningPermissionAlreadyExist=Eksisterende tilladelser for dette objekt
 WarningGoOnAccountancySetupToAddAccounts=Hvis denne liste er tom, skal du gå ind i menuen %s - %s - %s for at indlæse eller oprette konti til din kontoplan.
 WarningCorrectedInvoiceNotFound=Rettet faktura blev ikke fundet
-WarningCommentNotFound=Tjek venligst placeringen af start- og slutkommentarer for <b>%s</b> sektionen i fil <b>%s</b>, før du indsender din handling
+WarningCommentNotFound=Advarsel: Kan ikke finde start- og/eller slutkommentarerne for afsnittet <b>%s </b> i filen <b>%s</b>
 WarningAlreadyReverse=Lagerbevægelsen er allerede vendt
-
+WarningParentIDDoesNotExistAnymore=Dette forældre-id findes ikke længere
+WarningReadBankAlsoAllowedIfUserHasPermission=Advarsel, læsning af bankkonto er også tilladt med tilladelse til at administrere kontoplan
+WarningNoDataTransferedInAccountancyYet=Bemærk venligst, at der ikke er data i regnskabstabellen. Overfør venligst dine data, der er registreret i applikationen, til regnskabssektionen, eller skift beregningstilstanden for at analysere de data, der er registreret uden for regnskabet.
+WarningChangingThisMayBreakStopTaskScheduler=Advarsel, ændring af denne værdi kan deaktivere skemalæggeren
 SwissQrOnlyVIR = SwissQR-faktura kan kun tilføjes på fakturaer, der skal betales med kreditoverførselsbetalinger.
 SwissQrCreditorAddressInvalid = Kreditoradressen er ugyldig (er postnummer og by angivet? (%s)
 SwissQrCreditorInformationInvalid = Kreditoroplysninger er ugyldige for IBAN (%s): %s
 SwissQrIbanNotImplementedYet = QR-IBAN er ikke implementeret endnu
 SwissQrPaymentInformationInvalid = Betalingsoplysningerne var ugyldige for total %s: %s
 SwissQrDebitorAddressInvalid = Debitoroplysninger var ugyldige (%s)
-
 # Validate
 RequireValidValue = Værdien er ikke gyldig
 RequireAtLeastXString = Kræver mindst %s karakter (er)
@@ -404,10 +415,10 @@ BadSetupOfFieldClassNotFoundForValidation = Fejl ved dårlig opsætning af felte
 BadSetupOfFieldFileNotFound = Fejl ved dårlig opsætning af feltet: Filen blev ikke fundet til inkludering
 BadSetupOfFieldFetchNotCallable = Fejl dårlig opsætning af felt: Hentning kan ikke kaldes på klassen
 ErrorTooManyAttempts= For mange forsøg, prøv venligst igen senere
-
 TotalAmountEmpty=Samlet mængde tom
 FailedToFoundTheConversionRateForInvoice=Konverteringskursen for faktura kunne ikke findes
 ThisIdNotDefined=Id ikke defineret
 OperNotDefined=Betalingsmetode ikke defineret
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s er allerede defineret som kontaktperson for denne type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Kontakterne med denne gruppe er allerede defineret som kontaktpersoner for denne type.
+EmptyMessageNotAllowedError=Tom besked er ikke tilladt

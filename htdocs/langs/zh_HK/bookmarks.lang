@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - marque pages / bookmarks
 
 AddThisPageToBookmarks = 將當前頁面添加到書籤
-BehaviourOnClick = 選擇書籤 URL 時的行為
+BehaviourOnClick = 選擇書籤網址時的行為
 Bookmark = 書籤
 Bookmarks = 書籤
-BookmarkTargetNewWindowShort = 新標籤
-BookmarkTargetReplaceWindowShort = 當前選項卡
+BookmarkTargetNewWindowShort = 新增標籤
+BookmarkTargetReplaceWindowShort = 當前標籤
 BookmarkTitle = 書籤名稱
 BookmarksManagement = 書籤管理
 BookmarksMenuShortCut = Ctrl + shift + m
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = 選擇是否應在當前選項卡或新選項卡中打開鏈接頁面
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = 選擇連結頁面應在當前標籤頁中打開還是新標籤頁中打開
 CreateBookmark = 創建書籤
-EditBookmarks = List/edit bookmarks
-ListOfBookmarks = List of bookmarks
+EditBookmarks = 列出/編輯書籤
+ListOfBookmarks = 列出書籤
 NewBookmark = 新書籤
-NoBookmarkFound = No bookmark found
-NoBookmarks = No bookmarks defined
+NoBookmarkFound = 未找到書籤
+NoBookmarks = 未定義書籤
 OpenANewWindow = 打開新標籤頁
-ReplaceWindow = 替換當前選項卡
+ReplaceWindow = 替換當前標籤
 SetHereATitleForLink = 為書籤設置名稱
 ShowBookmark = 顯示書籤
 UrlOrLink = 網址

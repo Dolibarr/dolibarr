@@ -47,7 +47,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -525,7 +525,7 @@ if (isModEnabled('stock')) {
 
 
 $latestmovement = '';
-if (isModEnabled('product')) {
+if (isModEnabled('stock')) {
 	// Latest movements
 	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
@@ -628,7 +628,7 @@ if (isModEnabled('product')) {
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}
-			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			$latestmovement .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$latestmovement .= "</table>";
@@ -701,7 +701,7 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
 	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";

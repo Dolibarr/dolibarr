@@ -173,6 +173,8 @@ foreach ($dirbarcode as $reldir) {
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);
 
+						'@phan-var-force ModeleBarCode $module';
+
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
@@ -233,7 +235,7 @@ if (isModEnabled('product')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') && $conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM') == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -288,6 +290,9 @@ if (isModEnabled('societe')) {
 					}
 
 					$modBarCode = new $file();
+
+					'@phan-var-force ModeleNumRefBarCode $modBarCode';
+
 					print '<tr class="oddeven">';
 					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
 					print $modBarCode->info($langs);

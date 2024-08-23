@@ -147,8 +147,8 @@ if ($result < 0) {
 
 // Reload langs
 $langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
-if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
-	$langcode = $user->conf->MAIN_LANG_DEFAULT;
+if (getDolUserString('MAIN_LANG_DEFAULT')) {
+	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
 	$langs->setDefaultLang($langcode);
@@ -184,12 +184,14 @@ if (!empty($id)) {
 // Update old jobs that were not closed correctly so processing is moved from 1 to 0 (otherwise task stopped with fatal error are always in status "in progress")
 $sql = "UPDATE ".MAIN_DB_PREFIX."cronjob set processing = 0";
 $sql .= " WHERE processing = 1";
-$sql .= " AND datelastrun <= '".$db->idate(dol_now() - 24*3600, 'gmt')."'";
+$sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
 $sql .= " AND datelastresult IS NULL";
 $db->query($sql);
 
+dol_syslog("cron_run_jobs.php search qualified job using filter: ".json_encode($filter), LOG_DEBUG);
+echo "cron_run_jobs.php search qualified job using filter: ".json_encode($filter)."\n";
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);

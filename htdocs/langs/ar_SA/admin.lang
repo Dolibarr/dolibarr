@@ -88,6 +88,8 @@ SearchString=دالة البحث
 NotAvailableWhenAjaxDisabled=غير متوفر عندما يكون أجاكس معطلاً
 AllowToSelectProjectFromOtherCompany=في مستند تابع لطرف ثالث ، يمكن اختيار مشروع مرتبط بجهة خارجية أخرى
 TimesheetPreventAfterFollowingMonths=منع وقت التسجيل المستغرق بعد عدد الأشهر التالية
+PROJECT_DISPLAY_LINKED_BY_CONTACT=عرض مشروع المرتبط بجهة اتصال مشتركة
+PROJECT_DISPLAY_LINKED_BY_CONTACT_help=This option adds a new list on Project tab with all projects linked to thirdparty via a contact relationship
 JavascriptDisabled=الجافا سكربت معطل
 UsePreviewTabs=إستخدم زر المعاينة
 ShowPreview=آظهر المعاينة
@@ -248,7 +250,7 @@ Required=مطلوب
 UsedOnlyWithTypeOption=المستخدمة من قبل بعض خيار جدول فقط
 Security=الأمن
 Passwords=كلمة السر
-DoNotStoreClearPassword=تشفير كلمات المرور المخزنة في قاعدة البيانات (وليس كنص عادي). يوصى بشدة بتنشيط هذا الخيار.
+DoNotStoreClearPassword=Encrypt passwords stored in database.
 MainDbPasswordFileConfEncrypted=تشفير كلمة مرور قاعدة البيانات المخزنة في ملف conf.php. يوصى بشدة بتنشيط هذا الخيار.
 InstrucToEncodePass=لديك كلمة السر المشفرة في ملف <b>conf.php،</b> استبدال الخط <br> <b>$ dolibarr_main_db_pass = "..."؛</b> <br> بواسطة <br> <b>$ dolibarr_main_db_pass = "crypted:٪ ليالي".</b>
 InstrucToClearPass=لديك كلمة مرور فك الشفرة (واضح) في ملف <b>conf.php،</b> استبدال الخط <br> <b>$ dolibarr_main_db_pass = "crypted: ...".</b> <br> بواسطة <br> <b>$ dolibarr_main_db_pass = "%s".</b>
@@ -301,20 +303,20 @@ MAIN_MAIL_AUTOCOPY_TO= نسخ (نسخة كربونية) كل رسائل البر
 MAIN_DISABLE_ALL_MAILS=تعطيل جميع عمليات إرسال البريد الإلكتروني (لأغراض الاختبار أو العروض التوضيحية)
 MAIN_MAIL_FORCE_SENDTO=إرسال جميع رسائل البريد الإلكترونية الى (بدلا عن المستلم الحقيقي لاغراض التطوير والتجربة)
 MAIN_MAIL_ENABLED_USER_DEST_SELECT=اقتراح عناوين بريد الموظفين الإلكتروني (إذا كان موجودا) في حقل المستلمين عند ارنشاء رسالة بريد جديدة
-MAIN_MAIL_NO_WITH_TO_SELECTED=لا تحدد مستلمًا افتراضيًا حتى لو كان هناك خيار واحد فقط ممكن
-MAIN_MAIL_SENDMODE=Sending method
-MAIN_MAIL_SMTPS_ID=معرف SMTP (إذا كان خادم الإرسال يتطلب مصادقة)
-MAIN_MAIL_SMTPS_PW=كلمة مرور SMTP (إذا كان خادم الإرسال يتطلب مصادقة)
+MAIN_MAIL_NO_WITH_TO_SELECTED=Disable the selection of a default recipient when writing an email, even if there is only 1 possible choice
+MAIN_MAIL_SENDMODE=طريقة الإرسال
+MAIN_MAIL_SMTPS_ID=SMTP username or ID (if sending server requires an authentication)
+MAIN_MAIL_SMTPS_PW=SMTP password or token (if sending server requires an authentication)
 MAIN_MAIL_EMAIL_TLS=استخدم تشفير TLS (SSL)
 MAIN_MAIL_EMAIL_STARTTLS=استخدم تشفير TLS (STARTTLS)
-MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=تفويض الشهادات الموقعة ذاتيا
+MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED=Allow connection to mail servers that are using self-signed certificates
 MAIN_MAIL_EMAIL_DKIM_ENABLED=استخدم DKIM لإنشاء توقيع البريد الإلكتروني
 MAIN_MAIL_EMAIL_DKIM_DOMAIN=مجال البريد الإلكتروني للاستخدام مع dkim
 MAIN_MAIL_EMAIL_DKIM_SELECTOR=اسم محدد dkim
 MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY=المفتاح الخاص لتوقيع dkim
 MAIN_DISABLE_ALL_SMS=تعطيل كافة الرسائل النصية القصيرة (لأغراض التجربة و التطوير)
 MAIN_SMS_SENDMODE=طريقة إرسال الرسائل النصية القصيرة
-MAIN_MAIL_SMS_FROM=رقم هاتف المرسل الاولي لارسال الرسائل النصية القصيرة
+MAIN_SMS_FROM=رقم هاتف المرسل الاولي لارسال الرسائل النصية القصيرة
 MAIN_MAIL_DEFAULT_FROMTYPE=تم تحديد البريد الإلكتروني للمرسل الافتراضي مسبقًا في النماذج لإرسال رسائل البريد الإلكتروني
 UserEmail=البريد الالكتروني للمستخدم
 CompanyEmail=البريد الإلكتروني للشركة
@@ -341,7 +343,7 @@ MenuHandlers=قائمة مناولي
 MenuAdmin=قائمة تحرير
 DoNotUseInProduction=لا تستخدمها مع المنتج
 ThisIsProcessToFollow=إجراء الترقية:
-ThisIsAlternativeProcessToFollow=هذا إعداد بديل للمعالجة يدويًا:
+ThisIsAlternativeProcessToFollow=This is an alternative deployment process you can run manually:
 StepNb=الخطوة %s
 FindPackageFromWebSite=ابحث عن حزمة توفر الميزات التي تحتاجها (على سبيل المثال على موقع الويب الرسمي %s).
 DownloadPackageFromWebSite=قم بتنزيل الحزمة (على سبيل المثال من موقع الويب الرسمي %s).
@@ -363,13 +365,17 @@ UpdateServerOffline=خادم التحديث متواجد حاليا
 WithCounter=إدارة العداد
 GenericMaskCodes=يمكنك إدخال أي قناع ترقيم. في هذا القناع ، يمكن استخدام العلامات التالية: <br> <b> {000000} يتوافق </b> مع رقم سيتم زيادته في كل %s. أدخل أكبر عدد من الأصفار مثل الطول المطلوب للعداد. سيتم إكمال العداد بالأصفار من اليسار للحصول على أكبر عدد من الأصفار مثل القناع. <br> <b> {000000 + 000} </b> مثل الرقم السابق ولكن يتم تطبيق الإزاحة المقابلة للرقم الموجود على يمين علامة + بدءًا من أول %s. <br> <b> {000000 @ x} </b> مثل السابق ولكن تتم إعادة تعيين العداد إلى الصفر عند الوصول إلى الشهر x (x بين 1 و 12 ، أو 0 لاستخدام الأشهر الأولى من السنة المالية المحددة في التكوين الخاص بك ، أو 99 إلى إعادة تعيين إلى الصفر كل شهر). إذا تم استخدام هذا الخيار وكانت قيمة x 2 أو أعلى ، فسيكون التسلسل {yy} {mm} أو {yyyy} {mm} مطلوبًا أيضًا. <br> <b> {dd} </b> يوم (من 01 إلى 31). <br> <b> {mm} </b> شهر (من 01 إلى 12). <br> <b> {yy} </b>، <b> {yyyy} </b> أو <b> {y7 a039. <br>
 GenericMaskCodes2= <b> {cccc} </b> رمز العميل على أحرف n <br> <b> {cccc000} a09a4b739 هو الرمز المخصص للعميل a09a4b739 متبوعًا برمز العميل a09a4b739. يتم إعادة تعيين هذا العداد المخصص للعميل في نفس الوقت مع العداد العالمي. <br> <b> {tttt} </b> رمز نوع الطرف الثالث على أحرف n (انظر القائمة الصفحة الرئيسية - الإعداد - القاموس - أنواع الأطراف الثالثة). إذا أضفت هذه العلامة ، فسيكون العداد مختلفًا لكل نوع من أنواع الجهات الخارجية. <br>
+GenericMaskCodes2b=<b>{uuuu}</b> the n first characters of the lastname of the user that creates the object (n is number of "u").
 GenericMaskCodes3=جميع الشخصيات الاخرى في قناع سوف تظل سليمة. <br> المساحات غير مسموح بها. <br>
 GenericMaskCodes3EAN=ستبقى جميع الأحرف الأخرى في القناع سليمة (باستثناء * أو؟ في المركز الثالث عشر في EAN13). <br> غير مسموح بالمسافات. <br> في EAN13 ، يجب أن يكون الحرف الأخير بعد الأخير} في الموضع الثالث عشر * أو؟ . سيتم استبداله بالمفتاح المحسوب. <br>
 GenericMaskCodes4a=<u>مثال على اليوم التاسع والتسعين من %s للطرف الثالث TheCompany، بتاريخ 31-01-2023:</u><br>
 GenericMaskCodes4b=<u>مثال على جهة خارجية تم إنشاؤها بتاريخ 31-01-2023:</u><br>
 GenericMaskCodes4c=<u>مثال على المنتج الذي تم إنشاؤه بتاريخ 31-01-2023:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000</b> سيعطي <b>ABC2301-000099</b><br><b>{0000+100@1 }-ZZZ/{dd}/XXX</b> سيعطي <b>0199-ZZZ/31/XXX</b><br><b>IN{yy}{mm}-{0000}-{t}</b> سيعطي <b>IN2301-0099-A</b> إذا كان نوع شركة هو 'Responsable Inscripto' مع رمز للنوع 'A_RI'
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b>
+GenericMaskCodes5b=<b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=العودة للتخصيص وفقا لعدد محدد القناع.
+DateStartThatModel=Disable use of this numbering rule for all thirdparties created before
+DateStartThatModelHelp=You can disable elephant numbering rule for thirdparties created before a date (for example, because they were imported by a migration, from another software using a different rule). Let that field empty to have the rule applied on all thirdparties.
 ServerAvailableOnIPOrPort=الخدمة متاحة في معالجة <b>٪ ق %s</b> على الميناء
 ServerNotAvailableOnIPOrPort=الخدمة غير متاحة في التصدي <b>٪ ق %s</b> على الميناء
 DoTestServerAvailability=اختبار خدمة التوصيل
@@ -391,7 +397,7 @@ LanguageFile=ملف اللغة
 ExamplesWithCurrentSetup=أمثلة مع التكوين الحالي
 ListOfDirectories=قائمة الدلائل المفتوحة قوالب
 ListOfDirectoriesForModelGenODT=قائمة الدلائل التي تحتوي على قوالب ملفات مع شكل المفتوحة. <br><br> ضع هنا المسار الكامل من الدلائل. <br> إضافة إرجاع بين الدليل ايه. <br> لإضافة دليل وحدة GED، أضيف هنا <b>DOL_DATA_ROOT / ECM / yourdirectoryname.</b> <br><br> الملفات في هذه الدلائل يجب أن ينتهي <b>.odt</b> أو <b>.ods.</b>
-NumberOfModelFilesFound=عدد ملفات قوالب ODT / ODS الموجودة في هذه الدلائل
+NumberOfModelFilesFound=Number of ODT/ODS template files found
 ExampleOfDirectoriesForModelGen=أمثلة على بناء الجملة: <br> c: \\ myapp \\ mydocumentdir \\ mysubdir <br> / home / myapp / mydocumentdir / mysubdir <br> DOL_DATA_ROOT / ecm / ecmdir
 FollowingSubstitutionKeysCanBeUsed=<br> لمعرفة كيفية إنشاء قوالب المستند ODT، قبل تخزينها في تلك الدلائل، وقراءة وثائق ويكي:
 FullListOnOnlineDocumentation=https://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
@@ -456,6 +462,10 @@ ExtrafieldRadio=أزرار اختيار (خيار واحد فقط)
 ExtrafieldCheckBox=مربعات الاختيار
 ExtrafieldCheckBoxFromList=مربعات الاختيار من الجدول
 ExtrafieldLink=رابط إلى كائن
+ExtrafieldPointGeo=Geometric Point
+ExtrafieldMultiPointGeo=Geometric Multi Point
+ExtrafieldLinestringGeo=Geometric Linestring
+ExtrafieldPolygonGeo=Geometric Polygon
 ComputedFormula=المجال المحسوب
 ComputedFormulaDesc=يمكنك إدخال صيغة هنا باستخدام خصائص أخرى للكائن أو أي ترميز PHP للحصول على قيمة محسوبة ديناميكية. يمكنك استخدام أي صيغ متوافقة مع PHP بما في ذلك "؟" عامل تشغيل الحالة، و الكائن العام التالي: <strong>$db, $conf, $langs, $mysoc, $user, $objectoffield </strong>.<br><strong>تحذير</strong> : إذا كنت بحاجة إلى خصائص كائن لم يتم تحميله، فما عليك سوى جلب الكائن إلى الصيغة الخاصة بك كما في المثال الثاني.<br>يعني استخدام حقل محسوب أنه يمكنك' أدخل بنفسك أي قيمة من الواجهة. وأيضًا، إذا كان هناك خطأ في بناء الجملة، فقد لا تُرجع الصيغة شيئًا.<br><br>مثال على الصيغة:<br>$objectoffield->id < 10 ? round($objectoffield->id / 2, 2): ($objectoffield->id + 2 * $user->id) * ( int) substr($mysoc->zip, 1, 2)<br><br>مثال لإعادة تحميل الكائن<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0 ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj- >capital / 5: '-1')<br><br>مثال آخر لصيغة فرض تحميل الكائن و كائنه الأصلي:<br>(($reloadedobj = new مهمة($db)) && ($reloadedobj->fetchNoCompute($objectoffield->id) > 0) && ($ Secondloadedobj = جديد مشروع($db)) && ($ Secondloadedobj->fetchNoCompute($reloadedobj) ->fk_project) > 0)) ؟ $ Secondloadedobj->ref: 'لم يتم العثور على الأصل مشروع'
 Computedpersistent=تخزين المجال المحسوب
@@ -464,7 +474,7 @@ ExtrafieldParamHelpPassword=ترك هذا الحقل فارغًا يعني أن�
 ExtrafieldParamHelpselect=يجب أن تكون قائمة القيم أسطرًا بها مفتاح تنسيق ، القيمة (حيث لا يمكن أن يكون المفتاح "0") <br> <br> على سبيل المثال: <br> 1 ، value1 <br> 2 ، value2 a0342fccfda19bda019b code3f list depending on another complementary attribute list: <br> 1,value1|options_ <i> parent_list_code </i> :parent_key <br> 2,value2|options_ <i> parent_list_code </i> :parent_key  <br>  <br> In order to have the list depending on another list: <br> 1,value1| <i> parent_list_code </i>: parent_key <br> 2 ، value2 | <i> parent_list_code </i>: parent_key
 ExtrafieldParamHelpcheckbox=يجب أن تكون قائمة القيم أسطرًا تحتوي على مفتاح تنسيق ، القيمة (حيث لا يمكن أن يكون المفتاح "0") <br> <br> على سبيل المثال: <br> 1 ، value1 <br> 2 ، value2 a0342fccfda19bda19b342 ...
 ExtrafieldParamHelpradio=يجب أن تكون قائمة القيم أسطرًا تحتوي على مفتاح تنسيق ، القيمة (حيث لا يمكن أن يكون المفتاح '0') <br> <br> على سبيل المثال: <br> 1 ، value1 <br> 2 ، value2 a0342fccfda19bda19b342 ...
-ExtrafieldParamHelpsellist=تأتي قائمة القيم من جدول<br>بناء الجملة: table_name:label_field:id_field::filtersql<br>مثال: c_typent:libelle:id ::filtersql<br><br>- id_field هو بالضرورة مفتاح int أساسي<br> - Filtersql هو شرط SQL. يمكن أن يكون اختبارًا بسيطًا (على سبيل المثال active=1) لعرض القيمة النشطة فقط<br>يمكنك أيضًا استخدام $ID$ في الفلتر وهو المعرف الحالي للكائن الحالي<br>لاستخدام SELECT في الفلتر، استخدم الكلمة الأساسية $SEL$ لتجاوز الحماية ضد الحقن.<br>إذا كنت تريد التصفية على الحقول الإضافية استخدم بناء الجملة extra.fieldcode=... (حيث رمز الحقل هو رمز الحقل الإضافي)<br><br>في طلب للحصول على القائمة اعتمادًا على قائمة سمات تكميلية أخرى:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>في طلب للحصول على القائمة اعتمادًا على قائمة أخرى:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
+ExtrafieldParamHelpsellist=List of values comes from a table<br>Syntax: table_name:label_field:id_field::filtersql<br>Example: c_typent:libelle:id::filtersql<br><br>- id_field is necessarily a primary int key<br>- filtersql is a condition. It must use the USF syntax. Example: (active:=:1) to display only active value<br>You can also use $ID$ in filter which is the current id of current object<br>If you want to filter on extrafields use syntax  extra.fieldcode=... (where fieldcode is the code of extrafield)<br><br>In order to have the list depending on another complementary attribute list:<br>c_typent:libelle:id:options_<i>parent_list_code</i>|parent_column:filter <br><br>In order to have the list depending on another list:<br>c_typent:libelle:id:<i>parent_list_code</i>|parent_column:filter
 ExtrafieldParamHelpchkbxlst=قائمة القيم تأتي من جدول <br> التركيب: table_name: label_field: id_field :: Filtersql <br> مثال: c_typent: libelle: id :: Filtersql <br> <br> filter يمكن أن يكون عامل التصفية النشط a034b <br> فقط يمكن أيضًا استخدام $ ID $ in filter witch هو المعرف الحالي للكائن الحالي <br> للقيام بتحديد في عامل التصفية ، استخدم $ SEL $ <br> إذا كنت تريد التصفية على الحقول الإضافية ، استخدم بناء الجملة extra.fieldcode = ... (حيث يكون رمز الحقل هو code of extrafield) <br>  <br> In order to have the list depending on another complementary attribute list: <br> c_typent:libelle:id:options_ <i> parent_list_code </i> |parent_column:filter  <br>  <br> In order to have the list depending on another list: <br> c_typent: libelle: id: <i> parent_list_code </i> | parent_column: مرشح
 ExtrafieldParamHelplink=يجب أن تكون المعلمات ObjectName: Classpath <br> البنية: اسم الكائن: Classpath
 ExtrafieldParamHelpSeparator=احتفظ به فارغًا لفاصل بسيط <br> اضبط هذا على 1 لفاصل مطوي (يفتح افتراضيًا للجلسة الجديدة ، ثم يتم الاحتفاظ بالحالة لكل جلسة مستخدم) <br> اضبط هذا على 2 لفاصل مطوي (مطوي افتراضيًا لجلسة جديدة ، ثم يتم الاحتفاظ بالحالة قبل كل جلسة مستخدم)
@@ -504,8 +514,8 @@ ModuleCompanyCodeCustomerDigitaria=%s متبوعًا باسم العميل ال�
 ModuleCompanyCodeSupplierDigitaria=%s متبوعًا باسم المورد المقطوع بعدد الأحرف: %s لكود محاسبة المورد.
 Use3StepsApproval=بشكل افتراضي ، يجب إنشاء أوامر الشراء والموافقة عليها من قبل مستخدمين مختلفين (خطوة واحدة / مستخدم للإنشاء وخطوة واحدة / مستخدم للموافقة. لاحظ أنه إذا كان لدى المستخدم إذن للإنشاء والموافقة ، فستكون خطوة واحدة / مستخدم كافية) . يمكنك أن تطلب من خلال هذا الخيار تقديم خطوة ثالثة / موافقة مستخدم ، إذا كان المبلغ أعلى من قيمة مخصصة (لذلك ستكون 3 خطوات ضرورية: 1 = التحقق من الصحة ، 2 = الموافقة الأولى و 3 = الموافقة الثانية إذا كان المبلغ كافياً). <br> اضبط هذا على فارغ إذا كانت موافقة واحدة (خطوتان) كافية ، اضبطه على قيمة منخفضة جدًا (0.1) إذا كانت الموافقة الثانية (3 خطوات) مطلوبة دائمًا.
 UseDoubleApproval=استخدم موافقة من 3 خطوات عندما يكون المبلغ (بدون ضريبة) أعلى من ...
-WarningPHPMail=تحذير: يستخدم الإعداد لإرسال رسائل البريد الإلكتروني من التطبيق الإعداد العام الافتراضي. غالبًا ما يكون من الأفضل إعداد رسائل البريد الإلكتروني الصادرة لاستخدام خادم البريد الإلكتروني لموفر خدمة البريد الإلكتروني بدلاً من الإعداد الافتراضي لعدة أسباب:
-WarningPHPMailA=- يزيد استخدام خادم مزود خدمة البريد الإلكتروني من مصداقية بريدك الإلكتروني ، لذا فهو يزيد من إمكانية التسليم دون أن يتم وضع علامة عليه كرسائل اقتحامية
+WarningPHPMail=WARNING: The setup to send emails from the application is using the default generic setup. This choice needs no technical knowledge to complete the setup.<br>However, it is often better to setup outgoing emails to use the email server of your Email Service Provider instead of the default setup for several reasons:
+WarningPHPMailA=- Using the server of the Email Service Provider increases the trustworthiness of your email, so it increases the deliverability without being flagged as SPAM
 WarningPHPMailB=- لا يسمح لك بعض مزودي خدمة البريد الإلكتروني (مثل Yahoo) بإرسال بريد إلكتروني من خادم آخر غير الخادم الخاص بهم. يستخدم الإعداد الحالي الخاص بك خادم التطبيق لإرسال بريد إلكتروني وليس خادم مزود البريد الإلكتروني الخاص بك ، لذلك سيطلب بعض المستلمين (المتوافق مع بروتوكول DMARC المقيد) ، مزود البريد الإلكتروني الخاص بك ما إذا كان بإمكانهم قبول بريدك الإلكتروني وبعض موفري البريد الإلكتروني (مثل Yahoo) قد تستجيب بـ "لا" لأن الخادم ليس خادمهم ، لذلك قد لا يتم قبول عدد قليل من رسائل البريد الإلكتروني المرسلة للتسليم (كن حذرًا أيضًا من حصة الإرسال لمزود البريد الإلكتروني الخاص بك).
 WarningPHPMailC=- يعد استخدام خادم SMTP الخاص بموفر خدمة البريد الإلكتروني الخاص بك لإرسال رسائل البريد الإلكتروني أمرًا مثيرًا للاهتمام أيضًا ، لذا سيتم أيضًا حفظ جميع رسائل البريد الإلكتروني المرسلة من التطبيق في دليل "البريد المرسل" الخاص بصندوق البريد الخاص بك.
 WarningPHPMailD=ولذلك يوصى بتغيير طريقة إرسال رسائل البريد الإلكتروني إلى القيمة "SMTP".
@@ -533,6 +543,7 @@ WatermarkOnDraftExpenseReports=علامة مائية على مسودة تقار�
 ProjectIsRequiredOnExpenseReports=المشروع إلزامي لإدخال تقرير المصاريف
 PrefillExpenseReportDatesWithCurrentMonth=قم بملء تاريخي البدء والانتهاء لتقرير المصاريف الجديد مسبقًا بتواريخ البدء والانتهاء للشهر الحالي
 ForceExpenseReportsLineAmountsIncludingTaxesOnly=فرض إدخال مبالغ تقرير المصاريف دائمًا مع الضرائب
+BlockExpenseReportLineCreationIfNotBetweenDates=Block line creation if the date of the added line is not in the expense report range
 AttachMainDocByDefault=اضبط هذا على <b>نعم</b> إذا كنت تريد إرفاق المستند الرئيسي افتراضيًا بالبريد الإلكتروني (إن أمكن)
 FilesAttachedToEmail=أرفق ملف
 SendEmailsReminders=إرسال تذكير جدول الأعمال عن طريق رسائل البريد الإلكتروني
@@ -655,7 +666,7 @@ Module2200Desc=استخدم التعبيرات الرياضية للتوليد �
 Module2300Name=المهام المجدولة
 Module2300Desc=إدارة الوظائف المجدولة (الاسم المستعار كرون أو جدول كرونو)
 Module2400Name=الأحداث / الأجندة
-Module2400Desc=تتبع الأحداث. سجل الأحداث التلقائية لأغراض التتبع أو سجل الأحداث أو الاجتماعات اليدوية. هذه هي الوحدة الرئيسية للإدارة الجيدة لعلاقات العملاء أو البائعين.
+Module2400Desc=Manage manual and automatic events. Use the calendar to record events manually. Log also events automatically for tracking purposes or record manual events or meetings. This is the principal module for good Customer and/or Vendor Relationship Management.
 Module2430Name=جدولة المواعيد عبر الإنترنت
 Module2430Desc=يوفر نظام حجز المواعيد عبر الإنترنت. يتيح ذلك لأي شخص حجز موعد، وفقًا للنطاقات أو التوفر المحدد مسبقًا.
 Module2500Name=DMS / ECM
@@ -684,7 +695,7 @@ Module5000Desc=يسمح لك لإدارة الشركات المتعددة
 Module6000Name=سير العمل بين الوحدات
 Module6000Desc=إدارة سير العمل بين الوحدات النمطية المختلفة (الإنشاء التلقائي للكائن و / أو تغيير الحالة تلقائيًا)
 Module10000Name=مواقع الويب
-Module10000Desc=CMS to create websites with a WYSIWYG editor. This is a webmaster or developer oriented Content Management System (it is better to know HTML and CSS language). Just setup your web server (Apache, Nginx, ...) to point to the dedicated Dolibarr directory to have it online on the internet with your own domain name.
+Module10000Desc=CMS لإنشاء مواقع الويب باستخدام محرر WYSIWYG. هذا نظام إدارة محتوى موجه لمشرف الموقع أو المطور (من الأفضل معرفة لغة HTML و CSS). ما عليك سوى إعداد خادم الويب الخاص بك (Apache، Nginx، ...) للإشارة إلى دليل Dolibarr المخصص لجعله متصلاً بالإنترنت باستخدام اسم المجال الخاص بك.
 Module20000Name=إدارة طلب الإجازة
 Module20000Desc=تحديد وتتبع طلبات إجازة الموظفين
 Module39000Name=الكثير من المنتجات
@@ -788,6 +799,7 @@ Permission116=التحويلات بين الحسابات
 Permission117=إدارة إرسال الشيكات
 Permission121=قراءة الغير مرتبطة المستخدم
 Permission122=إنشاء / تغيير الغير مرتبطة المستخدم
+Permission122b=Not effective for external users (always limited to their third party).
 Permission125=حذف الغير مرتبطة المستخدم
 Permission126=الصادرات الغير
 Permission130=إنشاء / تعديل معلومات الدفع الخاصة بأطراف ثالثة
@@ -853,7 +865,9 @@ PermissionAdvanced253=إنشاء / تعديل المستخدمين خارجي / 
 Permission254=حذف أو تعطيل المستخدمين الآخرين
 Permission255=إنشاء / تعديل بلده معلومات المستخدم
 Permission256=تعديل بنفسه كلمة المرور
-Permission262=توسيع الوصول إلى جميع الأطراف الثالثة والأشياء الخاصة بهم (ليس فقط الأطراف الثالثة التي يكون المستخدم ممثل بيع لها). <br> غير فعال للمستخدمين الخارجيين (يقتصر الأمر دائمًا على أنفسهم فيما يتعلق بالعروض والأوامر والفواتير والعقود وما إلى ذلك). <br> غير فعال للمشاريع (فقط القواعد المتعلقة بأذونات المشروع والرؤية ومسائل التعيين).
+Permission262=Extend access to all third parties AND their objects (not only third parties for which the user is linked as a sale representative).
+Permission262b=Not effective for external users (always limited to themselves for proposals, orders, invoices, contracts, etc.).
+Permission262c=Not effective for projects (only rules on project permissions, visibility and assignment matters).
 Permission263=قم بتوسيع الوصول إلى جميع الأطراف الثالثة بدون كائناتهم (ليس فقط الأطراف الثالثة التي يكون المستخدم ممثل بيع لها). <br> غير فعال للمستخدمين الخارجيين (يقتصر الأمر دائمًا على أنفسهم فيما يتعلق بالعروض والأوامر والفواتير والعقود وما إلى ذلك). <br> غير فعال للمشاريع (فقط القواعد المتعلقة بأذونات المشروع والرؤية ومسائل التعيين).
 Permission271=قراءة في كاليفورنيا
 Permission272=قراءة الفواتير
@@ -886,13 +900,13 @@ Permission401=قراءة خصومات
 Permission402=إنشاء / تعديل الخصومات
 Permission403=تحقق من الخصومات
 Permission404=حذف خصومات
-Permission430=استخدم شريط التصحيح
+Permission431=Use Debug Bar
 Permission511=اقرأ الرواتب والمدفوعات (لك ومرؤوسيك)
 Permission512=إنشاء / تعديل الرواتب والمدفوعات
 Permission514=حذف الرواتب والمدفوعات
 Permission517=اقرأ الرواتب والمدفوعات للجميع
 Permission519=رواتب التصدير
-Permission520=قراءة القروض
+Permission521=قراءة القروض
 Permission522=إنشاء / تعديل القروض
 Permission524=حذف القروض
 Permission525=قرض الوصول آلة حاسبة
@@ -913,12 +927,12 @@ Permission609=احذف الملصقات
 Permission611=اقرأ سمات المتغيرات
 Permission612=إنشاء / تحديث سمات المتغيرات
 Permission613=حذف سمات المتغيرات
-Permission650=اقرأ فواتير المواد
-Permission651=إنشاء / تحديث فواتير المواد
-Permission652=حذف فواتير المواد
-Permission660=قراءة أمر التصنيع (MO)
-Permission661=إنشاء / تحديث أمر التصنيع (MO)
-Permission662=حذف أمر التصنيع (MO)
+Permission651=Read Bills of Materials
+Permission652=Create/Update Bills of Materials
+Permission653=Delete Bills of Materials
+Permission661=Read Manufacturing Order (MO)
+Permission662=Create/Update Manufacturing Order (MO)
+Permission663=Delete Manufacturing Order (MO)
 Permission701=قراءة التبرعات
 Permission702=إنشاء / تعديل والهبات
 Permission703=حذف التبرعات
@@ -990,7 +1004,7 @@ Permission2515=إعداد وثائق وأدلة
 Permission2610=إنشاء/تعديل مفتاح API للمستخدمين
 Permission2801=استخدام عميل FTP في وضع القراءة (تصفح وتحميل فقط)
 Permission2802=العميل استخدام بروتوكول نقل الملفات في وضع الكتابة (حذف أو تحميل الملفات)
-Permission3200=قراءة الأحداث المؤرشفة وبصمات الأصابع
+Permission3201=Read archived events and fingerprints
 Permission3301=إنشاء وحدات جديدة
 Permission4001=اقرأ المهارة / الوظيفة / المنصب
 Permission4002=إنشاء / تعديل المهارة / الوظيفة / المنصب
@@ -1027,9 +1041,9 @@ Permission50152=تحرير بنود المبيعات
 Permission50153=تحرير سطور المبيعات المطلوبة
 Permission50201=قراءة المعاملات
 Permission50202=استيراد المعاملات
-Permission50330=اقرأ كائنات زابير
-Permission50331=إنشاء / تحديث كائنات Zapier
-Permission50332=حذف كائنات زابير
+Permission50331=Read objects of Zapier
+Permission50332=Create/Update objects of Zapier
+Permission50333=Delete objects of Zapier
 Permission50401=ربط المنتجات والفواتير بحسابات محاسبية
 Permission50411=قراءة العمليات في دفتر الأستاذ
 Permission50412=كتابة / تحرير العمليات في دفتر الأستاذ
@@ -1054,16 +1068,16 @@ Permission63002=إنشاء / تعديل الموارد
 Permission63003=حذف الموارد
 Permission63004=ربط الموارد بأحداث جدول الأعمال
 Permission64001=السماح بالطباعة المباشرة
-Permission67000=السماح بطباعة الإيصالات
+Permission67001=Allow printing of receipts
 Permission68001=قراءة تقرير intracomm
 Permission68002=إنشاء / تعديل تقرير intracomm
 Permission68004=حذف تقرير intracomm
-Permission941601=قراءة الإيصالات
-Permission941602=إنشاء وتعديل الإيصالات
-Permission941603=تحقق من صحة الإيصالات
-Permission941604=إرسال الإيصالات عن طريق البريد الإلكتروني
-Permission941605=إيصالات التصدير
-Permission941606=حذف الإيصالات
+Permission941601=Read receptions
+Permission941602=Create and modify receptions
+Permission941603=Validate receptions
+Permission941604=Send receptions by email
+Permission941605=Export receptions
+Permission941606=Delete receptions
 DictionaryCompanyType=أنواع الجهات الخارجية
 DictionaryCompanyJuridicalType=الكيانات القانونية الخارجية
 DictionaryProspectLevel=المستوى المحتمل المحتمل للشركات
@@ -1118,11 +1132,12 @@ BackToModuleList=العودة إلى قائمة الوحدات
 BackToDictionaryList=رجوع إلى قائمة القواميس
 TypeOfRevenueStamp=نوع الطابع الضريبي
 VATManagement=إدارة ضريبة المبيعات
-VATIsUsedDesc=بشكل افتراضي، عند إنشاء إحتمالات، والفواتير، والأوامر، وما إلى ذلك. يتبع معدل ضريبة المبيعات القاعدة القياسية النشطة:<br>إذا كان البائع لا تخضع لضريبة المبيعات، فقيمة ضريبة المبيعات الافتراضية هي 0. نهاية القاعدة.<br>إذا كان (بلد البائع = بلد المشتري)، فإن ضريبة المبيعات بشكل افتراضي تساوي ضريبة المبيعات للمنتج في بلد البائع. نهاية القاعدة.<br>إذا كان البائع و موجودًا في الجماعة الأوروبية و البضائع هي منتجات متعلقة بالنقل (النقل والشحن وشركات الطيران)، وضريبة القيمة المضافة الافتراضية هي 0. تعتمد هذه القاعدة على بلد البائع - يرجى استشارة المحاسب الخاص بك. يجب أن يدفع المشتري ضريبة القيمة المضافة إلى مكتب الجمارك في بلده و وليس إلى البائع. نهاية القاعدة.<br>إذا كان البائع و موجودًا في الجماعة الأوروبية و المشتري ليس شركة (برقم ضريبة القيمة المضافة المسجل داخل المجتمع) ومن ثم تكون ضريبة القيمة المضافة افتراضية وفقًا لمعدل ضريبة القيمة المضافة في بلد البائع. نهاية القاعدة.<br>إذا كان البائع و موجودًا في الجماعة الأوروبية و المشتري هو شركة (برقم ضريبة القيمة المضافة المسجل داخل المجتمع)، وتكون ضريبة القيمة المضافة 0 افتراضيًا. نهاية القاعدة.<br>وفي أي حالة أخرى، يكون الإعداد الافتراضي المقترح هو ضريبة المبيعات=0. نهاية القاعدة.
+VATIsUsedStandard=When creating documents (proposals, invoices, orders...), the default Sales Tax rate is set according to the standard rules (depending on seller and buyer countries)
+VATIsUsedDesc=By default when creating proposals, invoices, orders etc. the Sales Tax rate follows the active standard rule:<br>If the seller is not subject to Sales tax, then Sales tax defaults to 0. End of rule.<br>If the (seller's country = buyer's country), then the Sales tax by default equals the Sales tax of the product in the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and goods are transport-related products (haulage, shipping, airline), the default VAT is 0. This rule is dependent on the seller's country - please consult with your accountant. The VAT should be paid by the buyer to the customs office in their country and not to the seller. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is not a company (with a registered intra-Community VAT number) then the VAT defaults to the VAT rate of the seller's country. End of rule.<br>If the seller and buyer are both in the European Community and the buyer is a company (with a registered intra-Community VAT number), then the VAT is 0 by default. End of rule.<br>In any other case the proposed default is Sales tax=0. End of rule.
 VATIsNotUsedDesc=بشكل افتراضي ، تكون ضريبة المبيعات المقترحة هي 0 والتي يمكن استخدامها في حالات مثل الجمعيات أو الأفراد أو الشركات الصغيرة.
 VATIsUsedExampleFR=في فرنسا ، يعني ذلك الشركات أو المؤسسات التي لديها نظام مالي حقيقي (حقيقي مبسط أو عادي حقيقي). نظام يتم فيه إعلان ضريبة القيمة المضافة.
 VATIsNotUsedExampleFR=في فرنسا ، يُقصد به الجمعيات غير المصرح بها عن ضريبة المبيعات أو الشركات أو المنظمات أو المهن الحرة التي اختارت النظام المالي للمؤسسات الصغيرة (ضريبة المبيعات في الامتياز) ودفعت ضريبة مبيعات الامتياز بدون أي إقرار بضريبة المبيعات. سيعرض هذا الاختيار المرجع "ضريبة المبيعات غير القابلة للتطبيق - المادة 293B من CGI" على الفواتير.
-VATType=VAT type
+VATType=Tax type
 ##### Local Taxes #####
 TypeOfSaleTaxes=نوع ضريبة المبيعات
 LTRate=معدل
@@ -1158,6 +1173,9 @@ NoLocalTaxXForThisCountry=وفقًا لإعداد الضرائب (انظر %s - 
 LabelUsedByDefault=العلامة التي يستخدمها التقصير إذا لم يمكن العثور على ترجمة للقانون
 LabelOnDocuments=علامة على وثائق
 LabelOrTranslationKey=التسمية أو مفتاح الترجمة
+TranslationFound=Translation found
+TheTranslationIsSearchedFromKey=The translation is searched from the translation key: <b>%s</b>
+TranslationKey=Translation key
 ValueOfConstantKey=قيمة ثابت التكوين
 ConstantIsOn=الخيار %s قيد التشغيل
 NbOfDays=لا أيام
@@ -1195,10 +1213,11 @@ DefaultMenuManager= معيار مدير القائمة
 DefaultMenuSmartphoneManager=الهاتف الذكي القائمة مدير
 Skin=التصميم
 DefaultSkin=التصميم الإفتراضي
-MaxSizeList=الحد الأقصى لطول قائمة
+MaxSizeList=Max length for lists
 DefaultMaxSizeList=افتراضي الطول الاقصى للقوائم
-DisplayGrandTotalInList=Display grand total (for all pages) in lists footer
+MaxSizeShortList=Max length for short lists
 DefaultMaxSizeShortList=الطول الأقصى الافتراضي للقوائم القصيرة (أي في بطاقة العميل)
+DisplayGrandTotalInList=عرض الإجمالي الكلي (لجميع الصفحات) في تذييل القوائم
 MessageOfDay=رسالة اليوم
 MessageLogin=ادخل صفحة الرسالة
 LoginPage=صفحة تسجيل الدخول
@@ -1206,7 +1225,8 @@ BackgroundImageLogin=صورة الخلفية
 PermanentLeftSearchForm=دائم البحث عن شكل القائمة اليمنى
 DefaultLanguage=اللغة الافتراضية
 EnableMultilangInterface=قم بتمكين دعم متعدد اللغات للعلاقات مع العملاء أو البائعين
-EnableShowLogo=إظهار شعار الشركة في القائمة
+EnableShowLogo=Show the company logos in the menu
+THEME_MENU_COLORLOGO=Show main menu images in color
 CompanyInfo=الشركة | المؤسسة
 CompanyIds=هويات الشركة / المنظمة
 CompanyAddress=عنوان
@@ -1268,6 +1288,7 @@ BrowserName=اسم المتصفح
 BrowserOS=متصفح OS
 ListOfSecurityEvents=قائمة الأحداث الأمنية لدوليبار
 SecurityEventsPurged=تم إزالة الأحداث الأمنية
+SecurityEvent=Security event
 TrackableSecurityEvents=الأحداث الأمنية التي يمكن تتبعها
 LogEventDesc=تمكين التسجيل لأحداث أمنية محددة. تسجيل المسؤولين عبر القائمة <b> %s - %s </b>. تحذير ، يمكن لهذه الميزة إنشاء كمية كبيرة من البيانات في قاعدة البيانات.
 AreaForAdminOnly=يمكن تعيين معطيات الإعدادات بواسطة المستخدم المسؤول <b> </b> فقط.
@@ -1331,6 +1352,7 @@ AdvancedNumRefModelDesc=إرجاع الرقم المرجعي بالتنسيق %s
 SimpleNumRefNoDateModelDesc=إرجاع الرقم المرجعي بالتنسيق %s-nnnn حيث nnnn عبارة عن رقم تزايد تلقائي متسلسل بدون إعادة تعيين
 ShowProfIdInAddress=إظهار الهوية المهنية مع العناوين
 ShowVATIntaInAddress=إخفاء رقم ضريبة القيمة المضافة داخل المجتمع
+ShowLegalFormInAddress=Show the legal form with addresses
 TranslationUncomplete=ترجمة جزئية
 MAIN_DISABLE_METEO=تعطيل الإبهام الطقس
 MeteoStdMod=الوضع القياسي
@@ -1406,7 +1428,7 @@ PreloadOPCode=يتم استخدام OPCode مسبقة التحميل
 AddRefInList=عرض مرجع العميل / البائع. في قوائم التحرير والسرد. <br> ستظهر الجهات الخارجية بتنسيق اسم "CC12345 - SC45678 - The Big Company corp." بدلاً من "The Big Company Corp".
 AddVatInList=عرض رقم ضريبة القيمة المضافة للعميل / البائع في قوائم التحرير والسرد.
 AddAdressInList=Display Customer/Vendor address into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
-AddEmailPhoneTownInContactList=عرض البريد الإلكتروني لجهة الاتصال (أو الهواتف إذا لم يتم تحديدها) و قائمة معلومات المدينة (اختر قائمة أو combobox)<br> ستظهر جهات الاتصال مع تنسيق الاسم "Dupond Durand - dupond.durand@example.com - Paris" أو "Dupond Durand - 06 07 59 65 66 - Paris" بدلاً من "Dupond Durand".
+AddEmailPhoneTownInContactList=Display Contact email (or phones if not defined) and town into combo lists.<br>Contacts will appear with a name format of "Dupond Durand - dupond.durand@example.com - Paris" or "Dupond Durand - 06 07 59 65 66 - Paris" instead of "Dupond Durand".
 AskForPreferredShippingMethod=اسأل عن طريقة الشحن المفضلة للأطراف الثالثة.
 FieldEdition=طبعة من ميدان%s
 FillThisOnlyIfRequired=مثال: +2 (ملء إلا إذا تعوض توقيت المشاكل من ذوي الخبرة)
@@ -1425,8 +1447,8 @@ DisableForgetPasswordLinkOnLogonPage=لا تعرض رابط "نسيت كلمة �
 UsersSetup=شاهد الإعداد وحدة
 UserMailRequired=البريد الإلكتروني مطلوب لإنشاء مستخدم جديد
 UserHideInactive=إخفاء المستخدمين غير النشطين من جميع قوائم التحرير والسرد للمستخدمين (غير مستحسن: قد يعني هذا أنك لن تتمكن من التصفية أو البحث عن المستخدمين القدامى في بعض الصفحات)
-UserHideExternal=Hide external users (not linked to a third party) from all combo lists of users (Not recommended: this may means you won't be able to filter or search on external users on some pages)
-UserHideNonEmployee=Hide non employee users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on non employee users on some pages)
+UserHideExternal=إخفاء المستخدمين الخارجيين (غير المرتبطين بجهة خارجية) من جميع قوائم التحرير والسرد الخاصة بالمستخدمين (غير مستحسن: قد يعني هذا أنك لن تتمكن من تصفية المستخدمين الخارجيين أو البحث عنهم في بعض الصفحات)
+UserHideNonEmployee=إخفاء المستخدمين غير الموظفين من جميع قوائم المستخدمين غير الموظفين (غير مستحسن: قد يعني هذا أنك لن تتمكن من تصفية المستخدمين غير الموظفين أو البحث عنهم في بعض الصفحات)
 UsersDocModules=قوالب المستندات للمستندات التي تم إنشاؤها من سجل المستخدم
 GroupsDocModules=قوالب المستندات للمستندات التي تم إنشاؤها من سجل المجموعة
 ##### HRM setup #####
@@ -1436,9 +1458,9 @@ CompanySetup=وحدة الإعداد للشركات
 CompanyCodeChecker=خيارات الإنشاء التلقائي لرموز العملاء / البائعين
 AccountCodeManager=خيارات الإنشاء التلقائي لأكواد محاسبة العملاء / البائعين
 NotificationsDesc=يمكن إرسال إشعارات البريد الإلكتروني تلقائيًا لبعض أحداث Dolibarr. <br> يمكن تحديد مستلمي الإخطارات:
-NotificationsDescUser=* لكل مستخدم ، مستخدم واحد في كل مرة.
-NotificationsDescContact=* لكل جهات اتصال خارجية (عملاء أو بائعين) ، جهة اتصال واحدة في كل مرة.
-NotificationsDescGlobal=* أو عن طريق تعيين عناوين البريد الإلكتروني العمومية في صفحة الإعداد للوحدة.
+NotificationsDescUser=* per user (on the tab "Notifications" of a user)
+NotificationsDescContact=* per third-party contacts (on the tab "Notifications" of a third party)
+NotificationsDescGlobal=* or by setting global email addresses (on the setup page of the module).
 ModelModules=قوالب المستندات
 DocumentModelOdt=إنشاء المستندات من قوالب OpenDocument (ملفات .ODT / .ODS من LibreOffice ، OpenOffice ، KOffice ، TextEdit ، ...)
 WatermarkOnDraft=علامة مائية على مشروع الوثيقة
@@ -1474,11 +1496,16 @@ InvoiceOptionCategoryOfOperations=اعرض "فئة العمليات" المذك�
 InvoiceOptionCategoryOfOperationsHelp=حسب الحالة ستظهر الإشارة على شكل:<br>- فئة العمليات: تسليم البضائع<br>- فئة العمليات العمليات: تقديم الخدمات<br>- فئة العمليات: مختلط - تسليم البضائع وتقديم الخدمات
 InvoiceOptionCategoryOfOperationsYes1=نعم، أسفل كتلة العنوان
 InvoiceOptionCategoryOfOperationsYes2=نعم، في الزاوية اليسرى السفلى
+InvoiceClassifyBilledSupplierOrderWithoutInvoice=Disallow the classification of an order as billed without invoice.
+InvoiceClassifyBilledSupplierOrderWithoutInvoiceHelp=An order can be classified as billed by default. If this conf is set to true, it will be not.
+##### Supplier Orders #####
+SupplierOrderClassifyBilledWithoutInvoice=Disallow the classification of a purchase order as billed without invoice.
+SupplierOrderClassifyBilledWithoutInvoiceHelp=A supplier order can be classified as billed by default. If this conf is set to true, it will be not.
 ##### Proposals #####
 PropalSetup=وحدة إعداد مقترحات تجارية
 ProposalsNumberingModules=اقتراح نماذج تجارية الترقيم
 ProposalsPDFModules=اقتراح نماذج الوثائق التجارية
-SuggestedPaymentModesIfNotDefinedInProposal=وضع المدفوعات المقترح عند الاقتراح بشكل افتراضي إذا لم يتم تحديده في الاقتراح
+SuggestedPaymentModesIfNotDefinedInProposal=Suggested payment mode by default if not defined on the proposal
 FreeLegalTextOnProposal=نص تجارية حرة على مقترحات
 WatermarkOnDraftProposal=العلامة المائية على مشاريع المقترحات التجارية (أي إذا فارغ)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=اسأل عن وجهة الحساب المصرفي للاقتراح
@@ -1520,8 +1547,8 @@ MemberCodeChecker=خيارات الإنشاء التلقائي لرموز عضو
 AdherentLoginRequired=إدارة معلومات تسجيل الدخول/كلمة المرور لكل عضو
 AdherentLoginRequiredDesc=أضف قيمة لتسجيل الدخول و وكلمة المرور في الملف عضو. إذا كان عضو مرتبطًا بمستخدم، فسيتم تحديث تسجيل الدخول عضو و ستقوم كلمة المرور أيضًا بتحديث كلمة مرور تسجيل دخول المستخدم و.
 AdherentMailRequired=البريد الإلكتروني مطلوب لإنشاء عضو جديد
-MemberSendInformationByMailByDefault=مربع لإرسال الرسائل للأعضاء تأكيدا على افتراضي
-MemberCreateAnExternalUserForSubscriptionValidated=قم بإنشاء تسجيل دخول مستخدم خارجي لكل اشتراك عضو جديد تم التحقق من صحته
+MemberSendInformationByMailByDefault=The checkbox to send an email confirmation to members (validation or new subscription) is on by default
+MemberCreateAnExternalUserForSubscriptionValidated=Create automatically an external user (with a login to connect to the application) after an online payment of a membership subscription
 VisitorCanChooseItsPaymentMode=يمكن للزائر الاختيار من بين أي طرق دفع متاحة
 MEMBER_REMINDER_EMAIL=قم بتمكين التذكير التلقائي <b> عبر البريد الإلكتروني </b> بالاشتراكات منتهية الصلاحية. ملاحظة: يجب تمكين الوحدة النمطية <strong> %s </strong> وإعدادها بشكل صحيح لإرسال التذكيرات.
 MembersDocModules=قوالب المستندات للوثائق التي تم إنشاؤها من سجل الأعضاء
@@ -1664,11 +1691,12 @@ LDAPDescUsers=تسمح لك هذه الصفحة لتحديد اسم LDAP الص�
 LDAPDescGroups=تسمح لك هذه الصفحة لتحديد اسم LDAP الصفات LDAP شجرة في كل البيانات التي وجدت على Dolibarr.
 LDAPDescMembers=تسمح لك هذه الصفحة لتحديد اسم LDAP الصفات LDAP شجرة في كل البيانات التي وجدت على Dolibarr أعضاء الوحدة.
 LDAPDescMembersTypes=تسمح لك هذه الصفحة بتعريف اسم سمات LDAP في شجرة LDAP لكل بيانات موجودة في أنواع أعضاء Dolibarr.
-LDAPDescValues=مثال قيم تهدف <b>لOpenLDAP</b> مع مخططات بعد تحميلها : <b>core.schema ، cosine.schema ، inetorgperson.schema).</b> إذا كنت تستخدم thoose القيم وOpenLDAP تعديل LDAP الخاص بك ملف <b>slapd.conf</b> لجميع مخططات thoose تحميله.
+LDAPDescValues=Example values are designed for <b>OpenLDAP</b> with following loaded schemas: <b>core.schema, cosine.schema, inetorgperson.schema</b>). If you use those values and OpenLDAP, modify your LDAP config file <b>slapd.conf</b> to have all those schemas loaded.
 ForANonAnonymousAccess=لصحتها accès (لكتابة الحصول على سبيل المثال)
 PerfDolibarr=الإعداد أداء / تحسين تقرير
 YouMayFindPerfAdviceHere=تقدم هذه الصفحة بعض الفحوصات أو النصائح المتعلقة بالأداء.
 NotInstalled=غير مثبت.
+Installed=Installed.
 NotSlowedDownByThis=لا تبطئ من قبل هذا.
 NotRiskOfLeakWithThis=لا يوجد خطر تسرب مع هذا.
 ApplicativeCache=مخبأ تطبيقي
@@ -1812,6 +1840,7 @@ DetailRight=شرط لعرض القوائم الرمادية غير المصرح 
 DetailLangs=لانغ لتسمية اسم ملف الترجمة مدونة
 DetailUser=المتدرب / خارجي / الكل
 Target=الهدف
+Targets=الأهداف
 DetailTarget=الهدف للروابط (_ blank top يفتح نافذة جديدة)
 DetailLevel=المستوى (-1 : الأعلى ، 0 : رأس القائمة ،&gt; 0 القائمة والقائمة الفرعية)
 ModifMenu=قائمة التغيير
@@ -1869,12 +1898,13 @@ ClickToDialUseTelLinkDesc=استخدم هذه الطريقة إذا كان ال�
 CashDesk=نقطة البيع
 CashDeskSetup=إعداد وحدة نقاط البيع
 CashDeskThirdPartyForSell=طرف ثالث عام افتراضي لاستخدامه في المبيعات
+ForbidSalesToTheDefaultCustomer=Do not allow to record sales on a generic third party (must use a different third party for each sale)
 CashDeskBankAccountForSell=الحساب النقدي لاستخدامها لتبيع
 CashDeskBankAccountForCheque=الحساب الافتراضي المراد استخدامه لتلقي المدفوعات بشيك
 CashDeskBankAccountForCB=حساب لاستخدام لاستلام المبالغ النقدية عن طريق بطاقات الائتمان
 CashDeskBankAccountForSumup=حساب مصرفي افتراضي لاستخدامه لتلقي المدفوعات عن طريق SumUp
-CashDeskDoNotDecreaseStock=Disable stock decrease when a sale is done from Point of Sale
-CashDeskDoNotDecreaseStockHelp=If "no", stock decrease is done for each sale done from POS, irrespective of the option set in module Stock.
+CashDeskDoNotDecreaseStock=تعطيل تخفيض المخزون عند إتمام عملية البيع من نقطة البيع
+CashDeskDoNotDecreaseStockHelp=إذا كانت الإجابة "لا"، فسيتم تخفيض المخزون لكل عملية بيع تتم من نقطة البيع، بغض النظر عن الخيار المحدد في مخزون نموذج.
 CashDeskIdWareHouse=قوة وتحد من مستودع لاستخدامها لانخفاض الأسهم
 StockDecreaseForPointOfSaleDisabled=انخفاض المخزون من نقطة البيع المعطلة
 StockDecreaseForPointOfSaleDisabledbyBatch=انخفاض المخزون في نقاط البيع غير متوافق مع إدارة المسلسل / اللوتية للوحدة النمطية (نشطة حاليًا) لذلك يتم تعطيل خفض المخزون.
@@ -1882,6 +1912,7 @@ CashDeskYouDidNotDisableStockDecease=لم تقم بتعطيل خفض المخز�
 CashDeskForceDecreaseStockLabel=تم فرض انخفاض مخزون المنتجات الدفعية.
 CashDeskForceDecreaseStockDesc=التقليل أولاً من خلال أقدم تواريخ الأكل والبيع.
 CashDeskReaderKeyCodeForEnter=رمز ASCII الرئيسي لـ "Enter" المحدد في قارئ الباركود (مثال: 13)
+CashDeskDefaultProject=Assign new POS sales (invoices) to a project
 ##### Bookmark #####
 BookmarkSetup=إعداد وحدة المرجعية
 BookmarkDesc=تسمح لك هذه الوحدة بإدارة الإشارات المرجعية. يمكنك أيضًا إضافة اختصارات إلى أي صفحات Dolibarr أو مواقع ويب خارجية في القائمة اليسرى.
@@ -1941,6 +1972,8 @@ CloseFiscalYear=فترة محاسبية قريبة
 DeleteFiscalYear=حذف فترة المحاسبة
 ConfirmDeleteFiscalYear=هل أنت متأكد من حذف هذه الفترة المحاسبية؟
 ShowFiscalYear=عرض فترة المحاسبة
+##### Assets #####
+AssetNumberingModules=Assets numbering module
 AlwaysEditable=يمكن دائما أن تعدل
 MAIN_APPLICATION_TITLE=إجبار اسم المرئي من التطبيق (تحذير: وضع اسمك هنا قد كسر ميزة تسجيل الدخول التدوين الآلي عند استخدام تطبيقات الهاتف المتحرك DoliDroid)
 NbMajMin=الحد الأدنى لعدد الأحرف الكبيرة
@@ -1953,6 +1986,7 @@ SortOrder=ترتيب
 Format=شكل
 TypePaymentDesc=0: طريقةالدفع العميل ، 1: نوع الدفع للبائع ، 2: طريقة الدفع العملاء و سداد الموردين
 IncludePath=يشمل المسار (المحدد في متغير%s)
+##### Expense reports #####
 ExpenseReportsSetup=إعداد تقارير المصروفات وحدة
 TemplatePDFExpenseReports=قوالب المستند لتوليد حساب ثيقة تقرير
 ExpenseReportsRulesSetup=إعداد تقارير نفقات الوحدة - القواعد
@@ -1988,6 +2022,7 @@ BackgroundColor=لون الخلفية
 TopMenuBackgroundColor=لون الخلفية لقائمة الأعلى
 TopMenuDisableImages=رمز أو نص في القائمة العلوية
 LeftMenuBackgroundColor=لون الخلفية القائمة اليمنى
+LeftmenuId=Left menu ID
 BackgroundTableTitleColor=لون الخلفية لخط عنوان الجدول
 BackgroundTableTitleTextColor=لون نص سطر عنوان الجدول
 BackgroundTableTitleTextlinkColor=لون النص لخط ارتباط عنوان الجدول
@@ -1997,6 +2032,7 @@ MinimumNoticePeriod=الحد الأدنى لمدة إشعار (يجب أن يت�
 NbAddedAutomatically=عدد الأيام تضاف إلى العدادات من المستخدمين (تلقائيا) كل شهر
 EnterAnyCode=يحتوي هذا الحقل على مرجع لتعريف الخط. أدخل أي قيمة من اختيارك ، ولكن بدون أحرف خاصة.
 Enter0or1=أدخل 0 أو 1
+EnterYesOrNo=Enter Yes or No
 UnicodeCurrency=أدخل هنا بين الأقواس ، قائمة رقم البايت الذي يمثل رمز العملة. على سبيل المثال: بالنسبة إلى $ ، أدخل [36] - للبرازيل ريال R $ [82،36] - لـ € ، أدخل [8364]
 ColorFormat=لون RGB بصيغة HEX ، على سبيل المثال: FF0000
 PictoHelp=اسم الأيقونة بالتنسيق:<br>- image.png لملف صورة في دليل السمة الحالي<br>- image.png@نموذج إذا كان الملف موجودًا في الدليل /img/ الخاص بوحدة نمطية<br>- fa-xxx لصورة FontAwesome fa-xxx<br>- Fontawesome_xxx_fa_color_size لصورة FontAwesome fa-xxx (مع بادئة، مجموعة حجم اللون و)
@@ -2029,6 +2065,7 @@ MailToSendContract=عقود
 MailToSendReception=حفلات الاستقبال
 MailToExpenseReport=تقارير المصاريف
 MailToThirdparty=أطراف ثالثة
+MailToContact=جهات الاتصال
 MailToMember=أعضاء
 MailToUser=المستخدمين
 MailToProject=مشاريع
@@ -2059,6 +2096,7 @@ AddMenus=أضف القوائم
 AddPermissions=أضف أذونات
 AddExportProfiles=إضافة ملفات تعريف التصدير
 AddImportProfiles=إضافة ملفات تعريف الاستيراد
+AddWebsiteTemplates=Add website templates for the website module
 AddOtherPagesOrServices=أضف صفحات أو خدمات أخرى
 AddModels=إضافة وثيقة أو قوالب ترقيم
 AddSubstitutions=أضف بدائل المفاتيح
@@ -2076,7 +2114,7 @@ BaseCurrency=العملة المرجعية للشركة (انتقل إلى إع�
 WarningNoteModuleInvoiceForFrenchLaw=هذه الوحدة %s متوافقة مع القوانين الفرنسية (Loi Finance 2016).
 WarningNoteModulePOSForFrenchLaw=تتوافق هذه الوحدة %s مع القوانين الفرنسية (Loi Finance 2016) لأنه يتم تنشيط الوحدة النمطية السجلات غير القابلة للعكس تلقائيًا.
 WarningInstallationMayBecomeNotCompliantWithLaw=أنت تحاول تثبيت الوحدة النمطية %s وهي وحدة خارجية. يعني تنشيط وحدة خارجية أنك تثق في ناشر هذه الوحدة وأنك متأكد من أن هذه الوحدة لا تؤثر سلبًا على سلوك التطبيق الخاص بك ، وأنها متوافقة مع قوانين بلدك (%s). إذا قدمت الوحدة ميزة غير قانونية ، فإنك تصبح مسؤولاً عن استخدام البرامج غير القانونية.
-
+WarningExperimentalFeatureInvoiceSituationNeedToUpgradeToProgressiveMode=If you are using the experimental mode for situation invoices, you will need to update your data to switch from the experimental mode to the official mode. You can contact a partner to help you with this task. A list of preferred partners is available by following <a href="%s" target="_blank">this link</a>
 MAIN_PDF_MARGIN_LEFT=الهامش الايسر على ملفات صيغة المستندات المتنقلة
 MAIN_PDF_MARGIN_RIGHT=الهامش الايمن لملفات صيغة المستندات المتنقلة
 MAIN_PDF_MARGIN_TOP=الهامش العلوي لصيغة المستندات المتنقلة
@@ -2095,7 +2133,7 @@ MAIN_PDF_HIDE_CUSTOMER_CODE=إخفاء رمز العميل
 MAIN_PDF_HIDE_SENDER_NAME=إخفاء اسم المرسل / الشركة في كتلة العنوان
 PROPOSAL_PDF_HIDE_PAYMENTTERM=إخفاء شروط المدفوعات
 PROPOSAL_PDF_HIDE_PAYMENTMODE=إخفاء وضع الدفع
-MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=أضف تسجيلًا إلكترونيًا بتنسيق PDF
+MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING=Add a hidden markup into the signature area to allow electronic signature tool to reuse it. May be used by external tools or in the future by the online signature feature.
 NothingToSetup=لا يوجد إعداد محدد مطلوب لهذه الوحدة.
 SetToYesIfGroupIsComputationOfOtherGroups=اضبط هذا على نعم إذا كانت هذه المجموعة عبارة عن حساب لمجموعات أخرى
 EnterCalculationRuleIfPreviousFieldIsYes=أدخل قاعدة الحساب إذا تم تعيين الحقل السابق على "نعم". <br> على سبيل المثال: <br> CODEGRP1 + CODEGRP2
@@ -2104,7 +2142,7 @@ RemoveSpecialChars=إزالة الأحرف الخاصة
 COMPANY_AQUARIUM_CLEAN_REGEX=مرشح Regex لتنظيف القيمة (COMPANY_AQUARIUM_CLEAN_REGEX)
 COMPANY_AQUARIUM_NO_PREFIX=لا تستخدم البادئة، فقط قم بنسخ الكود العميل أو مورد
 COMPANY_DIGITARIA_CLEAN_REGEX=مرشح Regex لتنظيف القيمة (COMPANY_DIGITARIA_CLEAN_REGEX)
-COMPANY_DIGITARIA_UNIQUE_CODE=مكرر غير مسموح به
+DuplicateForbidden=Duplicate forbidden
 RemoveSpecialWords=تنظيف كلمات معينة عند إنشاء حسابات فرعية للعملاء أو الموردين
 RemoveSpecialWordsHelp=حدد الكلمات المراد تنظيفها قبل حساب حساب العميل أو مورد. إستخدم "؛" بين كل كلمة
 GDPRContact=مسؤول حماية البيانات (DPO أو خصوصية البيانات أو جهة اتصال GDPR)
@@ -2115,6 +2153,8 @@ YouCanDeleteFileOnServerWith=يمكنك حذف هذا الملف على الخا
 ChartLoaded=تحميل الرسم البياني للحساب
 SocialNetworkSetup=إعداد وحدة الشبكات الاجتماعية
 EnableFeatureFor=تمكين الميزات لـ <strong> %s </strong>
+EnableModuleX=Enable module %s
+SetupModuleX=Setup module %s
 VATIsUsedIsOff=ملاحظة: تم تعيين خيار استخدام ضريبة المبيعات أو ضريبة القيمة المضافة على <strong> إيقاف </strong> في القائمة %s - %s ، لذلك ستكون ضريبة المبيعات أو ضريبة القيمة المضافة المستخدمة دائمًا صفرًا للمبيعات.
 SwapSenderAndRecipientOnPDF=إبدال مكان عنوان المرسل والمستقبل على ملفات صيغة المستندات المتنقلة
 FeatureSupportedOnTextFieldsOnly=تحذير ، الميزة مدعومة في الحقول النصية وقوائم التحرير والسرد فقط. أيضًا إجراء معلمة URL = إنشاء أو إجراء = يجب تعيين تعديل أو يجب أن ينتهي اسم الصفحة بـ "new.php" لتشغيل هذه الميزة.
@@ -2129,6 +2169,7 @@ oauthToken=رمز OAuth2
 accessType=نوع الوصول
 oauthService=خدمة أوث
 TokenMustHaveBeenCreated=نموذج يجب تمكين OAuth2 و يجب إنشاء رمز oauth2 المميز بالأذونات الصحيحة (على سبيل المثال النطاق "gmail_full" مع OAuth لجي ميل).
+TokenNotRequiredForOAuthLogin=Token unnecessary for OAuth entry used for Login
 ImapEncryption = طريقة تشفير IMAP
 ImapEncryptionHelp = على سبيل المثال: لا شيء، SSL، TLS، Notls
 NoRSH = استخدم تكوين NoRSH
@@ -2162,7 +2203,7 @@ NoNewEmailToProcess=لا يوجد بريد إلكتروني جديد (فلاتر
 NothingProcessed=لم يتم عمل شيء
 RecordEvent=تسجيل حدث في جدول الأعمال (مع نوع البريد الإلكتروني المرسل أو المستلم)
 CreateLeadAndThirdParty=قم بإنشاء عميل محتمل (وطرف ثالث إذا لزم الأمر)
-CreateTicketAndThirdParty=إنشاء تذكرة (مرتبطة بطرف ثالث إذا تم تحميل الطرف الثالث من خلال عملية سابقة أو تم تخمينه من متعقب في رأس البريد الإلكتروني ، دون طرف ثالث بخلاف ذلك)
+CreateTicketAndThirdParty=Create or complete a ticket (linked to a third party if the third party was loaded by a previous operation or was guessed from a tracker in email header, without third party otherwise)
 CodeLastResult=Latest result code
 NbOfEmailsInInbox=عدد رسائل البريد الإلكتروني في دليل المصدر
 LoadThirdPartyFromName=تحميل بحث الطرف الثالث على %s (تحميل فقط)
@@ -2207,7 +2248,7 @@ GeneralOptions=خيارات عامة
 LogsLinesNumber=عدد الأسطر المراد إظهارها في علامة تبويب السجلات
 UseDebugBar=استخدم شريط التصحيح
 DEBUGBAR_LOGS_LINES_NUMBER=عدد أسطر السجل الأخيرة التي يجب الاحتفاظ بها في وحدة التحكم
-WarningValueHigherSlowsDramaticalyOutput=تحذير ، القيم الأعلى تبطئ الإخراج الدرامي
+WarningValueHigherSlowsDramaticalyOutput=Warning, higher values slows dramatically output
 ModuleActivated=يتم تنشيط الوحدة النمطية %s وتبطئ الواجهة
 ModuleActivatedWithTooHighLogLevel=يتم تنشيط الوحدة النمطية %s بمستوى تسجيل مرتفع جدًا (حاول استخدام مستوى أقل للحصول على أداء وأمان أفضل)
 ModuleSyslogActivatedButLevelNotTooVerbose=تم تنشيط الوحدة النمطية %s ومستوى السجل (%s) صحيح (ليس مطولًا جدًا)
@@ -2231,13 +2272,14 @@ ConfirmDeleteEmailCollector=هل أنت متأكد أنك تريد حذف جام
 RecipientEmailsWillBeReplacedWithThisValue=سيتم دائمًا استبدال رسائل البريد الإلكتروني المستلم بهذه القيمة
 AtLeastOneDefaultBankAccountMandatory=يجب تحديد حساب مصرفي افتراضي واحد على الأقل
 RESTRICT_ON_IP=السماح بوصول واجهة برمجة التطبيقات إلى عناوين IP معينة للعميل فقط (غير مسموح باستخدام حرف البدل ، استخدم مسافة بين القيم). فارغ يعني أن كل عميل يمكنه الوصول.
+StaticIPsOfUsers=If applicable, list of all static IPs of users
 IPListExample=127.0.0.1 192.168.0.2 [:: 1]
 BaseOnSabeDavVersion=بناء على نسخة مكتبة SabreDAV
 NotAPublicIp=ليس IP عام
 MakeAnonymousPing=قم بعمل Ping مجهول "+1" لخادم مؤسسة Dolibarr (يتم إجراؤه مرة واحدة فقط بعد التثبيت) للسماح للمؤسسة بحساب عدد تثبيت Dolibarr.
 FeatureNotAvailableWithReceptionModule=الميزة غير متاحة عند تمكين استقبال الوحدة
 EmailTemplate=نموذج للبريد الإلكتروني
-EMailsWillHaveMessageID=ستحتوي رسائل البريد الإلكتروني على علامة "مراجع" تطابق بناء الجملة هذا
+EMailsWillHaveMessageID=Emails will have a 'Message-ID' header matching this syntax
 PDF_SHOW_PROJECT=عرض المشروع في المستند
 ShowProjectLabel=تسمية المشروع
 PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME=تضمين الاسم المستعار في اسم الطرف الثالث
@@ -2326,11 +2368,10 @@ TemplateforBusinessCards=قالب لبطاقة عمل بحجم مختلف
 InventorySetup= إعداد الجرد
 ExportUseLowMemoryMode=استخدم وضع ذاكرة منخفضة
 ExportUseLowMemoryModeHelp=استخدم وضع الذاكرة المنخفضة لإنشاء ملف التفريغ (يتم الضغط من خلال أنبوب بدلاً من ذاكرة PHP). لا تسمح هذه الطريقة بالتحقق من اكتمال الملف و ولا يمكن الإبلاغ عن رسالة الخطأ في حالة فشله. استخدمه إذا واجهت أخطاء غير كافية في الذاكرة.
-
 ModuleWebhookName = الويب هوك
 ModuleWebhookDesc = واجهة لالتقاط مشغلات dolibarr و لإرسال بيانات الحدث إلى عنوان URL
 WebhookSetup = إعداد Webhook
-WebhookSetupPage = صفحة إعداد Webhook
+WebhookSetupPage = Webhook setup page. To activate a webhook, go on the %s tab and create targets
 ShowQuickAddLink=أظهر زرًا لإضافة عنصر بسرعة في القائمة العلوية اليمنى
 ShowSearchAreaInTopMenu=إظهار البحث منطقة في القائمة العلوية
 HashForPing=تجزئة تستخدم لأداة ping
@@ -2339,7 +2380,6 @@ DEBUGBAR_USE_LOG_FILE=استخدم ملف <b> dolibarr.log </b> لتعويض ا�
 UsingLogFileShowAllRecordOfSubrequestButIsSlower=استخدم ملف dolibarr.log لتعويض السجلات بدلاً من اصطياد الذاكرة الحية. يسمح لك بالتقاط جميع السجلات بدلاً من تسجيل العملية الحالية فقط (لذلك بما في ذلك واحدة من صفحات طلبات ajax الفرعية) ولكنه سيجعل مثيلك بطيئًا جدًا. لا ينصح.
 FixedOrPercent=ثابت (استخدام الكلمة الرئيسية "ثابت") أو النسبة المئوية (استخدام الكلمة الرئيسية "النسبة المئوية")
 DefaultOpportunityStatus=حالة الفرصة الافتراضية (الحالة الأولى عند إنشاء العميل المتوقع)
-
 IconAndText=الرمز والنص
 TextOnly=نص فقط
 IconOnlyAllTextsOnHover=الأيقونة فقط - تظهر جميع النصوص أسفل الأيقونة الموجودة بالماوس فوق شريط القائمة
@@ -2347,10 +2387,15 @@ IconOnlyTextOnHover=الأيقونة فقط - يظهر نص الأيقونة أ�
 IconOnly=رمز فقط - نص على تلميح الأداة فقط
 INVOICE_ADD_ZATCA_QR_CODE=إظهار رمز الاستجابة السريعة ZATCA على الفواتير
 INVOICE_ADD_ZATCA_QR_CODEMore=تحتاج بعض الدول العربية إلى رمز الاستجابة السريعة هذا على فواتيرها
-INVOICE_ADD_SWISS_QR_CODE=أظهر رمز QR-Bill السويسري على الفواتير
+INVOICE_ADD_SWISS_QR_CODE=Show the swiss QR-Bill code on invoices (with a bank account defined for credit transfer)
 INVOICE_ADD_SWISS_QR_CODEMore=معيار سويسرا للفواتير؛ تأكد من ملء الرمز البريدي والمدينة و وأن الحسابات تحتوي على أرقام IBAN صالحة في سويسرا/ليختنشتاين.
+INVOICE_ADD_EPC_QR_CODE=Show the EPC QR code on invoices (with a bank account defined for credit transfer)
+INVOICE_ADD_EPC_QR_CODEMore=This feature allows you to add or remove an EPC QR Code on your invoices, which facilitates automatic SEPA credit transfers. Enabling this option helps your clients make payments easily by scanning the QR code, reducing manual entry errors. Use this feature if you have clients in countries like Austria, Belgium, Finland, Germany, and the Netherlands where this system is supported. Disable it if it's not required for your business operations or client base.
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
 INVOICE_SHOW_SHIPPING_ADDRESS=عرض عنوان الشحن
 INVOICE_SHOW_SHIPPING_ADDRESSMore=الإشارة الإجبارية في بعض البلدان (فرنسا،...)
+SUPPLIER_PROPOSAL_ADD_BILLING_CONTACT=Show billing contact on proposal
+SUPPLIER_PROPOSAL_ADD_BILLING_CONTACTMore=By default the contact only appears for billing
 UrlSocialNetworksDesc=رابط URL للشبكة الاجتماعية. استخدم {socialid} للجزء المتغير الذي يحتوي على معرف الشبكة الاجتماعية.
 IfThisCategoryIsChildOfAnother=إذا كانت هذه الفئة تابعة لفئة أخرى
 DarkThemeMode=وضع المظهر الداكن
@@ -2364,8 +2409,11 @@ HideAdvancedoptions= إخفاء الخيارات المتقدمة
 OauthNotAvailableForAllAndHadToBeCreatedBefore=مصادقة OAUTH2 غير متاحة لجميع المضيفين ، ويجب أن يكون قد تم إنشاء رمز مميز بالأذونات الصحيحة في المنبع باستخدام الوحدة النمطية OAUTH
 MAIN_MAIL_SMTPS_OAUTH_SERVICE=خدمة مصادقة OAUTH2
 DontForgetCreateTokenOauthMod=يجب إنشاء رمز مميز بالأذونات الصحيحة مع وحدة OAUTH النمطية
+AuthenticationMethod=Authentication method
 MAIN_MAIL_SMTPS_AUTH_TYPE=طريقة المصادقة
 UsePassword=استخدم كلمة مرور
+UseAUTHLOGIN=Use a password (AUTH LOGIN)
+UseAUTHPLAIN=Use a password (AUTH PLAIN)
 UseOauth=استخدم رمز OAUTH
 Images=الصور
 MaxNumberOfImagesInGetPost=الحد الأقصى لعدد الصور المسموح بها في حقل HTML المقدم في النموذج
@@ -2381,19 +2429,19 @@ CssOnEdit=CSS على صفحات التحرير
 CssOnView=CSS على صفحات العرض
 CssOnList=CSS في القوائم
 HelpCssOnEditDesc=CSS المستخدم عند تحرير الحقل.<br>مثال: "minwiwdth100 maxwidth500 widthcentpercentminusx"
-HelpCssOnViewDesc=CSS المستخدم عند عرض الحقل.
+HelpCssOnViewDesc=The CSS used when viewing the field.<br>Example: "longmessagecut"
 HelpCssOnListDesc=يتم استخدام CSS عندما يكون الحقل داخل جدول القائمة.<br>مثال: "tdoverflowmax200"
 RECEPTION_PDF_HIDE_ORDERED=إخفاء الكمية المطلوبة في المستندات التي تم إنشاؤها لحفلات الاستقبال
 MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT=إظهار السعر على المستندات التي تم إنشاؤها لحفلات الاستقبال
 WarningDisabled=التحذيرات معطلة
 LimitsAndMitigation=حدود الوصول و التخفيف
-RecommendMitigationOnURL=It is recommended to activate mitigation on critical URL. This is list of fail2ban rules you can use for the main important URLs.
+RecommendMitigationOnURL=يوصى بتنشيط التخفيف على عنوان URL المهم. هذه قائمة بقواعد Fail2ban التي يمكنك استخدامها لعناوين URL المهمة الرئيسية.
 DesktopsOnly=الاجهزة المكتبية فقط
 DesktopsAndSmartphones=للموبايل و الاجهزة المكتبية
 AllowOnlineSign=السماح بالتوقيع عبر الإنترنت
 AllowExternalDownload=السماح بالتنزيل الخارجي (بدون تسجيل الدخول، باستخدام رابط مشترك)
 DeadlineDayVATSubmission=الموعد النهائي لتقديم ضريبة القيمة المضافة في الشهر التالي
-MaxNumberOfAttachementOnForms=الحد الأقصى لعدد الملفات المرتبطة في النموذج
+MaxNumberOfAttachementOnForms=Max number of joined files in a form
 IfDefinedUseAValueBeetween=في حالة التحديد، استخدم قيمة بين %s و %s
 Reload=إعادة تحميل
 ConfirmReload=تأكيد إعادة تحميل نموذج
@@ -2409,6 +2457,7 @@ DefaultForTypeDesc=القالب المستخدم افتراضيًا عند إن�
 OptionXShouldBeEnabledInModuleY=يجب تمكين الخيار "<b>%s</b>" في نموذج <b>%s</b>
 OptionXIsCorrectlyEnabledInModuleY=تم تمكين الخيار "<b>%s</b>" في نموذج <b>%s</b>
 AllowOnLineSign=السماح بالتوقيع على الخط
+AllowOnLineSignDesc=A link to allow to sign online a bank document (mandate for direct debit for example) is available in list of payment modes of third parties for bank accounts
 AtBottomOfPage=في أسفل الصفحة
 FailedAuth=المصادقة الفاشلة
 MaxNumberOfFailedAuth=الحد الأقصى لعدد المصادقة الفاشلة خلال 24 ساعة لرفض تسجيل الدخول.
@@ -2423,23 +2472,72 @@ LargeModern=كبيرة - حديثة
 SpecialCharActivation=قم بتمكين الزر لفتح لوحة المفاتيح الافتراضية لإدخال أحرف خاصة
 DeleteExtrafield=حذف الملعب الإضافي
 ConfirmDeleteExtrafield=هل تؤكد حذف الحقل %s؟ سيتم حذف جميع البيانات المحفوظة في هذا الحقل بالتأكيد
+ConfirmDeleteSetup=هل أنت متأكد أنك تريد حذف الإعداد لـ %s؟
 ExtraFieldsSupplierInvoicesRec=السمات التكميلية (نماذج الفواتير)
-ExtraFieldsSupplierInvoicesLinesRec=Complementary attributes (template invoice lines)
+ExtraFieldsSupplierInvoicesLinesRec=السمات التكميلية (قالب فاتورة الأسطر)
 ParametersForTestEnvironment=معلمات بيئة الاختبار
 TryToKeepOnly=حاول الاحتفاظ بـ %s فقط.
 RecommendedForProduction=الموصى بها للإنتاج
 RecommendedForDebug=موصى به لتصحيح الأخطاء
 UrlPublicInterfaceLabelAdmin=رابط بديل للواجهة العامة
-UrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the virtual host server must act as a proxy on the standard URL)
-ExportUseForce=Use the parameter -f
-ExportUseForceHelp=Force to continue the export even when an error is found (Backup may not be reliable)
-CustomPrompt=Custom prompts
-AiDescription=AI (Artificial Intelligence) features
-AiDescriptionLong=Provides AI (Artificial Intelligence) features in different part of the application. Need external AI API.
-AI_KEY_API_CHATGPT= Key for ChatGPT IA api
-AiSetup=AI module setup
-AiCustomPrompt=AI customs prompt
-AI_CONFIGURATIONS_PROMPT=Custom prompt
-ImageGeneration=Image generation
-AIPromptForFeatures=AI custom prompts for features
-EnterAnIP=Enter an IP address
+UrlPublicInterfaceHelpAdmin=من الممكن تحديد اسم مستعار لخادم الويب و وبالتالي إتاحة الواجهة العامة بعنوان URL آخر (يجب أن يعمل خادم المضيف الظاهري كوكيل على عنوان URL القياسي)
+ExportUseForce=استخدم المعلمة -f
+ExportUseForceHelp=فرض مواصلة التصدير حتى عند العثور على خطأ (قد لا يكون النسخ الاحتياطي موثوقًا به)
+CustomPrompt=المطالبات المخصصة
+AiDescription=ميزات الذكاء الاصطناعي (AI).
+AiDescriptionLong=يوفر ميزات الذكاء الاصطناعي (AI) في أجزاء مختلفة من التطبيق. تحتاج إلى واجهة برمجة تطبيقات AI خارجية.
+AI_API_KEY=Key for AI api
+AI_API_URL=Endpoint URL for AI api
+AI_API_SERVICE=Service to use for AI features
+AiSetup=إعداد نموذج للذكاء الاصطناعي
+AiCustomPrompt=موجه مخصص لمنظمة العفو الدولية
+AI_CONFIGURATIONS_PROMPT=موجه مخصص
+TextGeneration=توليد النص
+ImageGeneration=توليد الصورة
+VideoGeneration=توليد الفيديو
+AudioGeneration=Audio generation
+AIPromptForFeatures=يطالب الذكاء الاصطناعي المخصص بالميزات
+EnterAnIP=أدخل عنوان IP
+ConvertInto=Convert into
+YouAreHere=You are here
+BARCODE_ON_SHIPPING_PDF=Show the barcode on the shipping PDF document
+BARCODE_ON_RECEPTION_PDF=Show the barcode on the reception PDF document
+BARCODE_ON_STOCKTRANSFER_PDF=Show the barcode on the stock transfer PDF document
+Unstable=Unstable
+ModuleZapierForDolibarrName=زابيا لدوليبار
+ModuleZapierForDolibarrDesc=وحدة زابيا لدوليبار
+ZapierForDolibarrSetup=إعدادات زابيا لدوليبار
+ZapierDescription=الربط مع زابيا
+ZapierAbout=عن وحدة زابيا
+ZapierSetupPage=لا حاجة للاعدادات من جانب دوليبار لاستخدام زابيا على دوليبار.\nلكن، لابد من إنشاء حزمة على جانب زابيا لاستخدام زابيا على دوليبار. راجع التوثيق <a href="https://wiki.dolibarr.org/index.php/Module_Zapier">على هذه الصفحة</a>
+TestWebhookTarget=Test WebHook
+DataToSendTrigger=Data sent to Url
+SendToUrl=Send to Url
+WebsiteTemplateWasCopied=The website template(s) "%s" provided by this module has been saved into the directory of website templates (/doctemplates/websites) and is ready to be imported as a new web site.
+EnabledByDefaultAtInstall=Enabled by default at install
+VulnerableToRCEAttack=You are vulnerable to RCE attacks by using the custom dol_json_decode function
+OpenIDconnectSetup=Configuration of the OpenID Connect module
+MainAuthenticationOidcClientIdName=Client ID
+MainAuthenticationOidcClientIdDesc=OpenID Connect Client ID
+MainAuthenticationOidcClientSecretName=Client secret
+MainAuthenticationOidcClientSecretDesc=OpenID Connect Client Secret
+MainAuthenticationOidcScopesName=Scopes
+MainAuthenticationOidcScopesDesc=OpenID scopes to allow access to user information
+MainAuthenticationOidcAuthorizeUrlName=Authorize URL
+MainAuthenticationOidcAuthorizeUrlDesc=(example: https://example.com/oauth2/authorize)
+MainAuthenticationOidcTokenUrlName=Token URL
+MainAuthenticationOidcTokenUrlDesc=(example: https://example.com/oauth2/token)
+MainAuthenticationOidcUserinfoUrlName=User info URL
+MainAuthenticationOidcUserinfoUrlDesc=(example: https://example.com/oauth2/userinfo)
+MainAuthenticationOidcLogoutUrlName=Logout URL
+MainAuthenticationOidcLogoutUrlDesc=(example: https://example.com/oauth2/logout)
+MainAuthenticationOidcRedirectUrlName=Redirect URL
+MainAuthenticationOidcRedirectUrlDesc=Redirect URL to authorize on the OpenID provider side
+MainAuthenticationOidcLogoutRedirectUrlName=Dolibarr logout URL
+MainAuthenticationOidcLogoutRedirectUrlDesc=Dolibarr logout URL to authorize on the OpenID provider side
+MainAuthenticationOidcLoginClaimName=Login claim
+MainAuthenticationOidcLoginClaimDesc=OpenID Connect claim matching the Dolibarr user login. If not set or empty, defaults to email
+BlackListWords=Black list of words
+AddBlackList=Add to black list
+AnOwnerMustBeSetIfEmailTemplateIsPrivate=An owner must be set if the email template is set as private
+ContactsDefaultRoles=For third parties of the "individual" type, a contact can be created simultaneously. Define here the roles that will be systematically assigned to this contact.

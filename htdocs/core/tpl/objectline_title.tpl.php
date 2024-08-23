@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -149,6 +149,9 @@ print '</th>';
 // Fields for situation invoice
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 	print '<th class="linecolcycleref right">'.$langs->trans('Progress').'</th>';
+	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
+	}
 	print '<th class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</th>';
 }
 
@@ -164,7 +167,8 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 
 	if (getDolGlobalString('DISPLAY_MARGIN_RATES') && $user->hasRight('margins', 'liretous')) {
 		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarginRate');
-		if ($user->hasRight("propal", "creer")) {
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
+		if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_proposal', 'order_supplier', 'invoice_supplier')) && $object->status == $object::STATUS_DRAFT) {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marginforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarginforalllines opacitymedium paddingleft cursorpointer"').'</a>';
 			if (GETPOST('mode', 'aZ09') == 'marginforalllines') {
 				print '<div class="classmarginforalllines inline-block nowraponall">';

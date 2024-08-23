@@ -47,6 +47,7 @@ DateContract=Shartnoma tuzilgan sana
 DateServiceActivate=Xizmatni yoqish sanasi
 ListOfServices=Xizmatlar ro'yxati
 ListOfInactiveServices=Faol bo'lmagan xizmatlarning ro'yxati
+ListOfNotExpiredServices=List of unexpired active services
 ListOfExpiredServices=Muddati o'tgan faol xizmatlarning ro'yxati
 ListOfClosedServices=Yopiq xizmatlarning ro'yxati
 ListOfRunningServices=Amaldagi xizmatlarning ro'yxati

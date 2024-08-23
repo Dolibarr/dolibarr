@@ -180,17 +180,18 @@ $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
 // Security check
 $socid = $object->socid;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 $hookmanager->initHooks(array('projectOverview'));
+
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
+$result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
 
 /*
@@ -204,7 +205,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_element');
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
@@ -701,6 +702,8 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 
 if (!empty($hookmanager->resArray)) {
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+} elseif ($resHook > 0 && !empty($hookmanager->resPrint)) {
+	$listofreferent = $hookmanager->resPrint;
 }
 
 if ($action == "addelement") {
@@ -929,8 +932,8 @@ foreach ($listofreferent as $key => $value) {
 
 				// Add total if we have to
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 				}
 			}
 
@@ -1169,7 +1172,7 @@ foreach ($listofreferent as $key => $value) {
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
-			print ''; // if $key == 'payment_various', we don't have any thirdparty
+			print $langs->trans("Label"); // complementary info about the payment
 		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'salary'))) {
 			print $langs->trans("User");
 		} else {
@@ -1317,8 +1320,8 @@ foreach ($listofreferent as $key => $value) {
 						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
 					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
-						$filename = get_exdir($element->id, 2, 0, 0, $element, 'product').dol_sanitizeFileName($element->ref);
-						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filename = get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
+						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.$filename;
 					}
 
 					print '<div class="inline-block valignmiddle">';
@@ -1426,6 +1429,8 @@ foreach ($listofreferent as $key => $value) {
 					}
 				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
+				} elseif ($tablename == 'payment_various') {	// payment label
+					print $element->label;
 				}
 				print '</td>';
 
@@ -1474,7 +1479,7 @@ foreach ($listofreferent as $key => $value) {
 
 					print '<td class="right">';
 					if ($othermessage) {
-						print $othermessage;
+						print '<span class="opacitymedium">'.$othermessage.'</span>';
 					}
 					if (isset($total_ht_by_line)) {
 						if (!$qualifiedfortotal) {
@@ -1565,8 +1570,8 @@ foreach ($listofreferent as $key => $value) {
 				print '</tr>';
 
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;

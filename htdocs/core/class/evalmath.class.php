@@ -1,6 +1,5 @@
 <?php
-/*
- * ================================================================================
+/* ================================================================================
  *
  * EvalMath - PHP Class to safely evaluate math expressions
  * Copyright (C) 2005 Miles Kaufmann <http://www.twmagic.com/>
@@ -214,7 +213,7 @@ class EvalMath
 	 *
 	 * @return array	Output
 	 */
-	private function funcs()
+	private function funcs() // @phpstan-ignore-line
 	{
 		$output = array();
 		foreach ($this->f as $fnn => $dat) {
@@ -360,11 +359,11 @@ class EvalMath
 				$index++; // into implicit multiplication if no operator is there)
 			}
 		}
-		while (!is_null($op = $stack->pop())) { // pop everything off the stack and push onto output
-			if ($op == '(') {
+		while (!is_null($ope = $stack->pop())) { // pop everything off the stack and push onto output
+			if ($ope == '(') {
 				return $this->trigger(11, "expecting ')'", ")"); // if there are (s on the stack, ()s were unbalanced
 			}
-			$output[] = $op;
+			$output[] = $ope;
 		}
 
 		return $output;
@@ -481,8 +480,10 @@ class EvalMath
  */
 class EvalMathStack
 {
+	/** @var mixed[] */
 	public $stack = array();
 
+	/** @var int */
 	public $count = 0;
 
 	/**
@@ -500,7 +501,7 @@ class EvalMathStack
 	/**
 	 * pop
 	 *
-	 * @return mixed Stack
+	 * @return ?mixed	Stack element
 	 */
 	public function pop()
 	{

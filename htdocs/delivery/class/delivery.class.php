@@ -6,8 +6,8 @@
  * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023-2024 Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,17 +89,12 @@ class Delivery extends CommonObject
 	public $ref_customer;
 
 	/**
-	 * @var integer|string Date really received
+	 * @var int|'' Date really received
 	 */
 	public $date_delivery;
 
 	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_valid
+	 * @var int|'' date_valid
 	 */
 	public $date_valid;
 
@@ -108,6 +103,9 @@ class Delivery extends CommonObject
 	 */
 	public $model_pdf;
 
+	/**
+	 * @var int ID of order
+	 */
 	public $commande_id;
 
 	/**
@@ -119,6 +117,11 @@ class Delivery extends CommonObject
 	 * @var int user_author_id
 	 */
 	public $user_author_id;
+
+
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_CANCELED = -1;
 
 
 	/**
@@ -269,9 +272,9 @@ class Delivery extends CommonObject
 	/**
 	 *	Create a line
 	 *
-	 *	@param	string	$origin_id				Id of order
+	 *	@param	int 	$origin_id				Id of order
 	 *	@param	string	$qty					Quantity
-	 *	@param	string	$fk_product				Id of predefined product
+	 *	@param	int 	$fk_product				Id of predefined product
 	 *	@param	string	$description			Description
 	 *  @param	array	$array_options			Array options
 	 *	@return	int								Return integer <0 if KO, >0 if OK
@@ -280,12 +283,11 @@ class Delivery extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$idprod = $fk_product;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."deliverydet (fk_delivery, fk_origin_line,";
 		$sql .= " fk_product, description, qty)";
 		$sql .= " VALUES (".$this->id.",".((int) $origin_id).",";
-		$sql .= " ".($idprod > 0 ? ((int) $idprod) : "null").",";
+		$sql .= " ".($fk_product > 0 ? ((int) $fk_product) : "null").",";
 		$sql .= " ".($description ? "'".$this->db->escape($description)."'" : "null").",";
 		$sql .= (price2num($qty, 'MS')).")";
 
@@ -360,7 +362,7 @@ class Delivery extends CommonObject
 				$this->label_incoterms = $obj->label_incoterms;
 				$this->db->free($result);
 
-				if ($this->statut == 0) {
+				if ($this->status == 0) {
 					$this->draft = 1;
 				}
 
@@ -422,7 +424,7 @@ class Delivery extends CommonObject
 					$soc->fetch($this->socid);
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
-						$numref = $objMod->delivery_get_num($soc, $this);
+						$numref = $objMod->getNextValue($soc, $this);
 					} else {
 						$numref = $this->ref;
 					}
@@ -514,7 +516,7 @@ class Delivery extends CommonObject
 						// Set new ref and current status
 						if (!$error) {
 							$this->ref = $numref;
-							$this->statut = 1;
+							$this->status = 1;
 						}
 
 						dol_syslog(get_class($this)."::valid ok");
@@ -655,7 +657,7 @@ class Delivery extends CommonObject
 	 */
 	public function deleteLine($lineid)
 	{
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
 			$sql .= " WHERE rowid = ".((int) $lineid);
 
@@ -767,7 +769,7 @@ class Delivery extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -917,7 +919,7 @@ class Delivery extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1001,7 +1003,7 @@ class Delivery extends CommonObject
 		$line->fk_product     = reset($prodids);
 		$line->qty_asked      = 10;
 		$line->qty_shipped    = 9;
-		$line->ref            = 'REFPROD';
+		$line->product_ref = 'REFPROD';
 		$line->label          = 'Specimen';
 		$line->description    = 'Description';
 		$line->price          = 100;

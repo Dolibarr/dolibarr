@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -217,6 +217,10 @@ body {
 	<?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 	/*transform: scale(1.2);
 	transform-origin: 0 0;*/
+	<?php
+	//print getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER') ? (getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER') > 100 ? 'zoom: '.getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER').'%;' : 'zoom: 150%;') : '';
+	?>
+	/* zoom: 105%; */	/* not supported by all browsers. pb for popup position with select2. */
 }
 
 /* Style used to protect html content in output to avoid attack by replacing full page with js content */
@@ -296,7 +300,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 	/* padding: 5px; */
 }
-.pageplusone, .divadvancedsearchfieldcompinput,
+.divadvancedsearchfieldcompinput,
 div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textarea.flat, div.tabBar form.flat select, div.tabBar select, div.tabBar select.flat, div.tabBar .dataTables_length label select
 {
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
@@ -305,7 +309,7 @@ div.tabBar input, div.tabBar input.flat, div.tabBar textarea, div.tabBar textare
 		background-color: #f8f8fa;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
-		<?php
+				<?php
 	}
 	?>
 }
@@ -322,7 +326,7 @@ input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 3px;
+	margin: 0 3px 0 1px;
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -403,7 +407,7 @@ div#cke_dp_desc {
 	margin-top: 5px;
 }
 textarea {
-	border-radius: 0;
+	border-radius: 3px;
 	border-top: solid 1px var(--inputbordercolor);
 	border-left: solid 1px var(--inputbordercolor);
 	border-right: solid 1px var(--inputbordercolor);
@@ -506,7 +510,7 @@ a.butStatus {
 	padding-right: 5px;
 	background-color: transparent;
 	color: var(--colortext) !important;
-	border: 2px solid var( --butactionbg) !important;
+	border: 1px solid #888 !important;
 	margin: 0 0.45em !important;
 }
 
@@ -533,11 +537,15 @@ td.onholidayallday:not(.weekend) input {
 	background-color: #f8f7f0;
 }
 td.weekend {	/* must be after td.onholidayallday */
-	background-color: #eee;
+	background-color: #f8f4f4;
 }
 td.weekend input {
-	background-color: #f8f8f8;
+	/* background-color: #f8f8f8; */
 }
+tr:hover td.weekend {
+	background: var(--colorbacklinepairhover) !important;
+}
+
 /*
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
@@ -548,6 +556,10 @@ td.leftborder, td.hide6 {
 */
 td.rightborder {
 	border-right: 1px solid #ccc;
+}
+
+td.linecoldescription.bomline {
+	width: 400px;
 }
 
 td.amount, span.amount, div.amount, b.amount {
@@ -568,6 +580,7 @@ input.pageplusone {
 	padding-bottom: 4px;
 	padding-top: 4px;
 	margin-right: 4px;
+	margin-left: 3px;
 }
 .paginationlastpage a {
 	padding-left: 8px;
@@ -603,6 +616,10 @@ input.pageplusone {
 }
 .colorblack {
 	color: var(--colorblack);
+}
+.colorblack.totalnboflines {
+	font-size: 90%;
+	opacity: 0.5;
 }
 .fontsizeunset {
 	font-size: unset !important;
@@ -963,6 +980,9 @@ td.wordbreak img, td.wordbreakimp img {
 .uppercase {
 	text-transform: uppercase;
 }
+.marginpopup {
+	margin: 20px;
+}
 .nounderline {
 	text-decoration: none;
 }
@@ -1011,11 +1031,17 @@ td.wordbreak img, td.wordbreakimp img {
 .paddingtop {
 	padding-top: 4px;
 }
+.paddingtopimp {
+	padding-top: 4px !important;
+}
 .paddingtop2 {
 	padding-top: 2px;
 }
 .paddingbottom {
 	padding-bottom: 4px;
+}
+.paddingbottomimp {
+	padding-bottom: 4px !important;
 }
 .paddingbottom2 {
 	padding-bottom: 2px;
@@ -1025,6 +1051,9 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
+}
+.paddinglarge {
+	padding: 6px !important;
 }
 .nowidthimp {
 	width: unset !important;
@@ -1063,8 +1092,14 @@ td.wordbreak img, td.wordbreakimp img {
 .text-warning{
 	color : <?php print $textWarning; ?>
 }
+/* CSS used for long description and extrafield text */
+.shortmessagecut {
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_SHORTMESSSAGECUT', 125); ?>px;
+	max-width: 100%;
+	overflow-y: auto;
+}
 .longmessagecut {
-	max-height: 250px;
+	max-height: <?php print getDolGlobalInt('MAIN_CSS_LONGMESSSAGECUT', 250); ?>px;
 	max-width: 100%;
 	overflow-y: auto;
 }
@@ -1212,7 +1247,7 @@ span.fa.fa-plus-circle.paddingleft {
 	font-size: 1em;
 }
 .listofinvoicetype {
-	height: 28px;
+	height: 2.2em;
 	vertical-align: middle;
 }
 .divsocialnetwork:not(:last-child) {
@@ -1676,7 +1711,11 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	overflow-y: hidden;
 	-ms-overflow-style: -ms-autohiding-scrollbar;
 }*/
+
 /* Style used for most tables */
+div.fiche>div.tabBar>form>div.div-table-responsive {
+	min-height: 392px;
+}
 .div-table-responsive, .div-table-responsive-no-min {
 	overflow-x: auto;
 	min-height: 0.01%;
@@ -1684,19 +1723,20 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 .div-table-responsive {
 	line-height: var(--heightrow);
 }
+
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
-div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
-	overflow-x: auto;
-}
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
 }
-div.fiche>div.tabBar>form>div.div-table-responsive {
+div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
+	overflow-x: auto;
+}
+
+/* Style used for table in public ticket */
+div.ticketpublicarealist>form>div.div-table-responsive {
 	min-height: 392px;
 }
-div.fiche {
-	/* text-align: justify; */
-}
+
 
 .display-flex {
 	display: flex;
@@ -1773,12 +1813,13 @@ maxscreenheightless200 {
 .clearboth  { clear:both; }
 
 .hideobject { display: none; }
+.showonsmartphone { display: none; }
 .minwidth25 { min-width: 25px; }
 .minwidth50 { min-width: 50px; }
 .minwidth75 { min-width: 75px; }
 .nominwidth { min-width: fit-content !important; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (min-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)	/* reduction 3 */
 {
 	.width20  { width: 20px; }
 	.width25  { width: 25px; }
@@ -1977,9 +2018,6 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 /* Force values for small screen 570 */
 @media only screen and (max-width: 570px)
 {
-	.box-flex-item {
-		margin: 3px 2px 3px 2px !important;
-	}
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ((int) $fontsize + 3).'px' : $fontsize; ?> !important;
 	}
@@ -2009,9 +2047,14 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
+	.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td,
+	div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 		height: 40px !important;
 	}
+	div.tabBar .listofinvoicetype table tr, div.tabBar .listofinvoicetype table tr td {
+		height: 2.2em !important;
+	}
+
 
 	div.tabs div.tab a.tab  {
 		max-width: 200px;
@@ -2064,8 +2107,8 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	.minwidth300imp { min-width: 120px !important; }
 	.minwidth400imp { min-width: 200px !important; }
 	.minwidth500imp { min-width: 250px !important; }
-	.titlefield { width: auto; min-width: unset; }
-	.titlefieldcreate { width: auto !important; }
+	.titlefield { width: auto; min-width: 125px; }
+	.titlefieldcreate { width: auto !important; min-width: 125px; }
 
 	#tooltip {
 		position: absolute;
@@ -2154,8 +2197,12 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
-	table-layout: fixed;
+	width: 100%;
+	<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
+		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+	<?php } ?>
+	/* table-layout: fixed; */
+
 }
 #id-right, #id-left {
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
@@ -2186,7 +2233,7 @@ td.showDragHandle {
 }
 .classforhorizontalscrolloftabs .side-nav {
 	display: block;
-	float: left;
+	float: <?php echo $left; ?>;
 }
 .classforhorizontalscrolloftabs #id-right {
 	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);
@@ -2209,7 +2256,7 @@ td.showDragHandle {
 */
 
 
-<?php if (!getDolGlobalString('THEME_DISABLE_STICKY_TOPMENU')) {  ?>
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') != 'disabled') {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
@@ -2224,7 +2271,13 @@ td.showDragHandle {
 }
 
 .side-nav {
+<?php if (getDolGlobalString('THEME_STICKY_TOPMENU') == 'scrollleftmenu_after_mainpage') { ?>
+	position: sticky;
+	top: 50px;
+	display: block;
+<?php } else { ?>
 	display: table-cell;
+<?php } ?>
 	border-<?php echo $right; ?>: 1px solid #ECECEC;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
@@ -2307,10 +2360,14 @@ div.vmenu, td.vmenu {
 
 
 .menuhider { display: none !important; }
+.menuhider .mainmenu.menu.topmenuimage {
+	margin-top: 0px !important;
+}
 
 
-/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+/* rule to reduce top menu - 3rd reduction: We hide the left menu */
+<?php if (!getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER')) { ?>
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)	/* reduction 3 */
 {
 	/* no side-nav */
 	body.sidebar-collapse .side-nav {
@@ -2333,6 +2390,8 @@ div.vmenu, td.vmenu {
 	.user-header { height: auto !important; color: var(--colortextbackhmenu); }
 
 	#id-container {
+		display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
+		table-layout: fixed;
 		width: 100%;
 	}
 	.side-nav {
@@ -2367,13 +2426,14 @@ div.vmenu, td.vmenu {
 	}
 }
 
-@media only screen and (min-width: 768px) and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (min-width: 768px) and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)	/* reduction 3 */
 {
 	div.fiche {
 		margin-<?php print $left; ?>: 13px !important;
 		margin-<?php print $right; ?>: 14px !important;
 	}
 }
+<?php } ?>
 
 
 div.fiche {
@@ -2452,7 +2512,9 @@ div.fichehalfright {
 div.secondcolumn div.box {
 	padding-left: 10px;
 }*/
-
+div.firstcolumn > table.noborder, div.secondcolumn > table.noborder, div.firstcolumn > div > table.noborder, div.secondcolumn > div > table.noborder {
+	margin-bottom: 14px;
+}
 
 /* Force values on one column for small screen */
 @media only screen and (max-width: 1024px)
@@ -2721,7 +2783,9 @@ img.photorefnoborder {
 <?php } else { ?>
 	background: var(--colorbackhmenu1);
 	/* background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, var(--colorbackhmenu1)); */
-	/* box-shadow: 0px 0px 5px #eee; */
+	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
+	box-shadow: 0px 0px 4px #ddd;
+	<?php } ?>
 <?php } ?>
 }
 
@@ -2729,7 +2793,7 @@ div#tmenu_tooltip {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
 	display:none;
 <?php } else { ?>
-	padding-<?php echo $right; ?>: <?php echo($maxwidthloginblock - 10); ?>px;
+	padding-<?php echo $right; ?>: <?php echo((float) $maxwidthloginblock - 10); ?>px;
 <?php } ?>
 
   -webkit-touch-callout: none; /* iOS Safari */
@@ -2763,7 +2827,6 @@ div.tmenudiv {
 	margin: 0px 0px 0px 0px;	/* t r b l */
 	font-size: 13px;
 	font-weight: normal;
-	color: #000000;
 	text-decoration: none;
 <?php } ?>
 }
@@ -2816,6 +2879,9 @@ ul.tmenu {	/* t r b l */
 }
 ul.tmenu li {	/* We need this to have background color when menu entry wraps on new lines */
 }
+li#mainmenutd_home {
+	margin-left: 5px;
+}
 li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu ? 'min-width: '.$minwidthtmenu.'px;' : ''; ?>
 	text-align: center;
@@ -2865,6 +2931,7 @@ div.tmenucenter
 {
 	padding-left: 2px;
 	padding-right: 2px;
+	color: var(--colortextbackhmenu);
 	<?php if ($disableimages) { ?>
 	padding-top: 8px;
 	height: 26px;
@@ -2891,6 +2958,7 @@ div.menu_titre {
 	padding-<?php print $right; ?>: 2px;
 	font-family: Roboto,<?php echo $fontlist; ?>;
 	font-weight: 400;
+	opacity: 0.9;
 }
 
 div.mainmenu {
@@ -2929,8 +2997,9 @@ a.tmenuimage:hover{
 }
 
 
-/* To show text of top menu on hover only (THEME_TOPMENU_DISABLE_IMAGE == 2) */
+/* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
+/* Text hidden by default */
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
 .tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
 	 display: none;
@@ -2943,9 +3012,16 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	margin-top: 8px !important;
 }
 
+div.tmenucenter {	/* we must have a field length of top menu to avoid size to change when in mode text on hover */
+	width: 80px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 <?php } ?>
+
+/* Test of picto visible on hover, for all picto */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-.tmenudiv:hover .tmenulabel:not(.menuhider), .tmenudiv:hover .tmenulabel:not(.menuhider)::before {
+ul.tmenu:hover .tmenulabel:not(.menuhider), .ul.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: block;
 	position: relative;
 	overflow: hidden;
@@ -2961,14 +3037,14 @@ span.tmenuimage:not(.menuhider), span.tmenuimage:not(.menuhider)::before {
 	color: var(--colortextbackhmenu);
 	top: 0px;
 }
-
-.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider)::before {
+ul.tmenu:hover .tmenuimage:not(.menuhider), ul.tmenu:hover .tmenuimage:not(.menuhider)::before {
 	/* For transition transition-delay: 1000ms;
 	transition-property: all; */
 	margin-top: 0px !important;
 }
-
 <?php } ?>
+
+/* Text of picto visible on hover the picto only */
 <?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 3) { ?>
 li.tmenu:hover .tmenulabel:not(.menuhider), li.tmenu:hover .tmenulabel:not(.menuhider)::before {
 	display: initial !important;
@@ -3389,7 +3465,6 @@ div.vmenu, td.vmenu {
 	padding: 0px;
 	padding-bottom: 0px;
 	padding-top: 1px;
-	width: <?php echo $leftmenuwidth; ?>px;
 }
 
 .vmenu {
@@ -3434,7 +3509,7 @@ a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu {
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
 	font-family: <?php print $fontlist ?>;
 	text-align: <?php print $left; ?>;
 	color: var(--colortextbackvmenu);
@@ -3646,8 +3721,8 @@ a.fmdirlia {
 div.tabs {
 	text-align: <?php print $left; ?>;
 	margin-top: 10px;
-	padding-left: 6px;
-	padding-right: 6px;
+	/*padding-left: 6px;
+	padding-right: 6px;*/
 	clear:both;
 	height:100%;
 }
@@ -3671,8 +3746,12 @@ div.tabBar {
 	border-top: 1px solid #BBB;
 	/* border-bottom: 1px solid #AAA; */
 	width: auto;
+	background: var(--colorbackbody);
+}
+table.noborder {
 	background: var(--colorbacktabcard1);
 }
+
 div.tabBar tr.titre td {
 	padding-top: 20px;
 }
@@ -3780,7 +3859,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-top: 1px solid transparent;
 	/*border-right: 1px solid #CCC !important;
 	border-left: 1px solid #CCC !important; */
+
+	<?php if ($colorbackhmenu1 == '255,255,255') { ?>
+	border-bottom: 3px solid var(--colortextbackhmenu) !important;
+	<?php } else { ?>
 	border-bottom: 3px solid var(--colorbackhmenu1) !important;
+	<?php } ?>
 }
 .tabunactive, a.tab#unactive {
 	border-right: 1px solid transparent;
@@ -3945,7 +4029,7 @@ table.borderplus {
 .border tbody tr, .bordernooddeven tbody tr, .border tbody tr td, .bordernooddeven tbody tr td,
 div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col,
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-	height: 28px;
+	height: 2.2em;
 }
 
 div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar .table-val-border-col {
@@ -4153,10 +4237,10 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 6px 10px 6px 12px;			/* t r b l */
 	/* line-height: 22px; This create trouble on cell login on list of last events of a contract*/
-	height: 28px;
+	height: 30px;
 }
 table.liste tr.trkanban td {
-	padding: 10px 12px 10px 12px;			/* t r b l */
+	padding: 12px 15px 12px 15px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 7px;			/* t r b l */
@@ -4255,7 +4339,10 @@ div.pagination li {
   padding-right: 0px;
   /* padding-top: 10px; */
   /* padding-bottom: 5px; */
-  font-size: 1.1em;
+  /* font-size: 1.1em; */
+}
+li.pagination.paginationpage.paginationpageleft, li.pagination.paginationpage.paginationpageright {
+	font-size: 1.1em;
 }
 .pagination {
   display: inline-block;
@@ -4365,7 +4452,9 @@ table.hidepaginationnext .paginationnext {
 	max-width: calc(30%);
 }
 .paginationafterarrows a.btnTitlePlus, .titre_right  a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
+	/* border: 1px solid var(--btncolorborder); */
+	border: unset;
+	background-color: unset;
 }
 .paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
 	/* text-shadow: 0px 0px 5px #ccc; */
@@ -4533,7 +4622,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 	font-family: <?php print $fontlist ?>;
 	font-weight: <?php echo $useboldtitle ? 'bold' : 'normal'; ?>;
 	vertical-align: middle;
-	height: 28px;
+	height: 2.2em;
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
@@ -4609,6 +4698,9 @@ table.tableforservicepart1 tr td {
 .paymenttable, .margintable {
 	border-top: none !important;
 	margin: 0px 0px 0px 0px !important;
+}
+.bordertopimp {
+	border-top: 1px solid var(--colortopbordertitle1) !important;
 }
 table.noborder.paymenttable {
 	border-bottom: none !important;
@@ -4694,7 +4786,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	min-height: 40px;
 	padding-right: 0px;
 	padding-left: 0px;
-	padding-bottom: 10px;
+	/* padding-bottom: 10px; */
 }
 .boxstatsborder {
 	/* border: 1px solid #CCC !important; */
@@ -4764,6 +4856,14 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		max-width: calc(50%);
 	}
 
+	div.pagination ul li {
+		margin-top: 3px;
+		margin-bottom: 3px;
+	}
+	div.pagination .button-title-separator {
+		display: none;
+	}
+
 	.clearbothonsmartphone {
 		clear: both;
 		display: block !important;
@@ -4774,6 +4874,9 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 		padding-right: 0!important;
 		margin-left: 0 !important;
 		margin-right: 0 !important;
+	}
+	table.liste tr.trkanban td {
+		padding: 10px 6px 10px 6px;			/* t r b l */
 	}
 
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
@@ -4923,6 +5026,9 @@ a.valignmiddle.dashboardlineindicator {
 .height30 {
 	height: 30px !important;
 }
+.height50 {
+	height: 50px !important;
+}
 
 tr.box_titre {
 	height: 26px;
@@ -4994,17 +5100,21 @@ div.info {
 	margin: 1em 0em 1em 0em;
 	background: #eff8fc;
 	color: #558;
+	border-radius: 3px;
 }
 
 /* Warning message */
-div.warning {
+div.warning, div.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
+}
+div.warning {
 	padding-top: 8px;
 	padding-left: 10px;
 	padding-right: 4px;
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
 	background: #fcf8e3;
+	border-radius: 3px;
 }
 div.warning a, div.info a, div.error a {
 	color: var(--colortextlink);
@@ -5018,12 +5128,13 @@ div.error {
 	padding-right: 4px;
 	padding-bottom: 8px;
 	margin: 1em 0em 1em 0em;
-  background: #EFCFCF;
+	background: #EFCFCF;
+	border-radius: 3px;
 }
 
 
 /*
- *   Liens Payes/Non payes
+ * Paid/Unpaid Links
  */
 
 a.normal:link { font-weight: normal }
@@ -5159,11 +5270,14 @@ div.titre {
 	color: var(--colortexttitlenotab2);
 }
 
-table.table-fiche-title .col-title div.titre, .col-right .btnTitle-icon {
+table.table-fiche-title .col-title div.titre, .col-center .btnTitle-icon, .col-right .btnTitle-icon {
 	line-height: 40px;
 }
 table.table-fiche-title {
-	margin-bottom: 12px;
+	margin-bottom: 16px;
+}
+.fichehalfleft table.table-fiche-title, .fichehalfright table.table-fiche-title {
+	margin-bottom: 8px;
 }
 
 
@@ -5396,7 +5510,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 
 
 /* ============================================================================== */
-/* Calendar                                                                       */
+/* Calendar date picker                                                           */
 /* ============================================================================== */
 
 .ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
@@ -5406,8 +5520,27 @@ html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button
 	border: unset;
 }
 
+div#ui-datepicker-div {
+	width: 300px;
+	box-shadow: 2px 5px 15px #aaa;
+	border: unset;
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 5px;
+}
+.ui-datepicker .ui-datepicker table {
+	font-size: unset;
+}
+.ui-datepicker .ui-widget-header {
+	border: unset;
+	background: unset;
+}
+
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
+select.ui-datepicker-year {
+	margin-left: 2px !important;
+}
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -5579,7 +5712,7 @@ span[phptag] {
 	/* display: inline-block; */
 	padding-<?php echo $right; ?>: 10px;
 	vertical-align: middle;
-	line-height: 28px;
+	line-height: 2.2em;
 }
 .websiteselectionsection {
 	font-size: 0.85em;
@@ -5661,7 +5794,7 @@ table.cal_month td { padding-left: 1px !important; padding-right: 1px !important
 .cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
-.cal_other_month   { /* opacity: 0.6; */ background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_other_month   { /* opacity: 0.6; */ background: #FAFAFA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { /* opacity: 0.6; */ background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px !important; }
 .cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
@@ -5695,13 +5828,16 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 table.cal_month tr td table.nobordernopadding tr td { padding: 0 2px 0 2px; }
 table.cal_month tr.liste_titre td.tdfordaytitle { min-width: 120px; }
 a.dayevent-aday {
-	padding-left: 8px;
+	margin-left: 8px;
+}
+td.small.cal_event {
+	font-size: 0.9em;
 }
 
 .calendarviewcontainertr { height: 100px; }
 
 td.cal_other_month {
-	opacity: 0.8;
+	opacity: 0.7;
 }
 
 td.event-past span  {
@@ -5849,10 +5985,49 @@ td.event-past span  {
 /*  CSS for color picker                                                          */
 /* ============================================================================== */
 
+div.jPicker table.jPicker {
+	padding-bottom: 20px;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+table.jPicker tr:first-of-type td {
+	height: 2px !important;
+	line-height: 2px;
+}
+.jPicker .Move {
+	background: unset !important;
+	border: unset !important;
+}
+.jPicker .Preview div span {
+	border: unset !important;
+	width: unset !important;
+	height: 50% !important;
+}
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
+	background-color: #f4f4f4 !important;
+	box-shadow: 0px 0px 10px #ccc;
 }
+.jPicker .Grid {
+	background-image: unset !important;
+}
+.jPicker .Grid span.QuickColor {
+	border: unset !important;
+}
+.jPicker td.Radio {
+	min-width: 34px;
+}
+.jPicker td.Text {
+	white-space: nowrap;
+}
+.jPicker td.Text input {
+	height: 1em !important;
+}
+.jPicker .Preview div {
+	height: 36px !important;
+}
+
 A.color, A.color:active, A.color:visited {
  position : relative;
  display : block;
@@ -5934,9 +6109,14 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 
 /* Style to overwrites JQuery styles */
 .ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-	border: 1px solid #888;
+	/* border: 1px solid #888; */
 	background: var(--colorbacktitle1);
 	color: unset;
+	font-weight: bold;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	background: #007fff !important;
+	color: #ffffff !important;
 }
 
 .ui-menu .ui-menu-item a {
@@ -6014,6 +6194,10 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
+}
+
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
@@ -6030,7 +6214,7 @@ a.cke_button, a.cke_combo_button {
 		right: 0;
 		bottom: 0;
 		background-color: #ebebeb;
-		height: 28px;
+		height: 2.2em;
 		line-height: 2.2em;
 }
 .ace_status-indicator {
@@ -6325,7 +6509,7 @@ div#ecm-layout-west {
 	vertical-align: top;
 }
 div#ecm-layout-center {
-	width: calc(100% - 390px);
+	width: calc(100% - 405px);
 	vertical-align: top;
 	float: right;
 }
@@ -6351,6 +6535,7 @@ div#ecm-layout-center {
 	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
+	padding-top: 10px !important;
 	word-wrap: break-word;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
@@ -6361,13 +6546,42 @@ div#ecm-layout-center {
 .jnotify-container .jnotify-notification-warning .jnotify-close, .jnotify-container .jnotify-notification-warning .jnotify-message {
 	color: #a28918 !important;
 }
+.jnotify-container .jnotify-close {
+	top: 4px !important;
+	font-size: 1.6em !important;
+}
 
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-	-webkit-box-shadow: 2px 2px 4px #888 !important;
-	box-shadow: 2px 2px 4px #888 !important;
+	-webkit-box-shadow: 2px 2px 4px #8888 !important;
+	box-shadow: 2px 2px 4px #8888 !important;
 }
+
+/* jnotify for the login page */
+.bodylogin .jnotify-container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100000;
+	max-width: unset;
+	padding-left: unset !important;
+	padding-right: unset !important;
+	padding-top: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification {
+	margin: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-background {
+	border-radius: unset !important;
+}
+.bodylogin .jnotify-container .jnotify-notification .jnotify-message {
+	text-align: center;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
 
 /* ============================================================================== */
 /*  blockUI                                                                      */
@@ -6517,14 +6731,13 @@ input.select2-input {
 	color: #FFF !important;
 }
 .select2-container .select2-selection--multiple {
-	min-height: 28px !important;
+	min-height: 2em !important;
 }
 .tableforfield .select2-container .select2-selection--single {
 	height: 25px;
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
-	margin-top: 5px !important;
 	border: none;
 }
 .select2-container--focus span.select2-selection.select2-selection--single {
@@ -6632,7 +6845,7 @@ input.select2-input {
 }
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
 	background-color: #ddd;
-	margin-top: 4px !important;
+	margin-top: 0.25em !important;
 }
 .select2-selection--multiple input.select2-search__field {
 	border-bottom: none !important;
@@ -6833,7 +7046,7 @@ select.multiselectononeline {
 	padding: 0;
 	vertical-align: middle;
 	min-height: unset;
-	height: 28px !important;
+	height: 2.2em !important;
 	opacity: 0;
 	/* width: 1px !important; */
 }
@@ -6841,15 +7054,15 @@ select.multiselectononeline {
 @media only screen and (min-width: 768px)
 {
 	/* CSS to have the dropdown boxes larger that the input search area */
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown.ui-dialog {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown.ui-dialog {
 		min-width: 230px !important;
 	}
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--below:not(.onrightofpage),
-	.select2-container.select2-container--open:not(.graphtype) .select2-dropdown--above:not(.onrightofpage) {
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--below:not(.onrightofpage),
+	.select2-container.select2-container--open:not(.graphtype):not(.yesno) .select2-dropdown--above:not(.onrightofpage) {
 		min-width: 230px !important;
 	}
 	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--below,
-	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above{
+	.onrightofpage span.select2-dropdown.ui-dialog.select2-dropdown--above {
 		min-width: 140px !important;
 	}
 	.combolargeelem.select2-container.select2-container--open .select2-dropdown.ui-dialog {
@@ -7419,7 +7632,7 @@ div.tabsElem a.tab {
 /* ============================================================================== */
 
 .ticketpublictable td {
-	height: 28px;
+	height: 2.2em;
 }
 
 .ticketpublicarea {
@@ -8027,6 +8240,10 @@ table.jPicker {
 		font-size: small;
 		width: 122px;
 	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
 }
 
 @media only screen and (max-width: 1024px)
@@ -8042,7 +8259,7 @@ table.jPicker {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1') ? round($nbtopmenuentries * 90, 0) + 340 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC1; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
 		width: <?php echo round(52); ?>px;	/* size of viewport */
@@ -8082,7 +8299,7 @@ table.jPicker {
 	}
 }
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again (<?php echo $nbtopmenuentries ?> menu entries) */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2', round($nbtopmenuentries * 69, 0) + 130); ?>px)	/* reduction 2 */
 {
 	li.tmenucompanylogo {
 		display: none;
@@ -8112,13 +8329,11 @@ table.jPicker {
 		max-width: 300px;
 	}
 }
-/* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+/* rule to reduce top menu - 3rd reduction: The menu for user is now on left */
+<?php if (!getDolUserInt('MAIN_OPTIMIZEFORTEXTBROWSER')) { ?>
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3', round($nbtopmenuentries * 47, 0) + 130); ?>px)	/* reduction 3 */
 {
 	<?php if (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 2) { ?>
-	.tmenudiv .tmenulabel span.mainmenuaspan {
-		display: none !important;
-	}
 	.tmenudiv:hover .tmenuimage:not(.menuhider), .tmenudiv:hover .tmenuimage:not(.menuhider):before {
 		margin-top: 8px !important;
 	}
@@ -8178,15 +8393,15 @@ table.jPicker {
 		height: 50px;
 
 		z-index: 202;
-		min-width: 200px;      /* must be width of menu + padding + padding of sidenav */
-		max-width: 200px;      /* must be width of menu + padding + padding of sidenav */
-		width: 200px;          /* must be width of menu + padding + padding of sidenav */
+		min-width: 245px;      /* must be width of menu + padding + padding of sidenav */
+		max-width: 245px;      /* must be width of menu + padding + padding of sidenav */
+		width: 245px;          /* must be width of menu + padding + padding of sidenav */
 	}
 	.loginbuttonexternal {
 		width: 260px;
 	}
 	.side-nav-vert .user-menu .dropdown-menu {
-		width: 234px !important;
+		width: 278px !important;	/* must be width of menu + padding + padding of sidenav */
 	}
 	div.login_block_other {
 		margin-right: unset;
@@ -8264,11 +8479,6 @@ table.jPicker {
 	}
 
 
-	div.fichehalfright {
-		margin-top: 30px;
-	}
-
-
 	.underbanner.underbanner-before-box {
 		border-bottom: none;
 	}
@@ -8301,6 +8511,8 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
+<?php } ?>
+
 
 @media only screen and (max-width: 320px)
 {

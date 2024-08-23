@@ -73,7 +73,7 @@ $urlpage = GETPOST('urlpage', 'alphanohtml');
 $key = GETPOST('key', 'alphanohtml');
 $value = GETPOST('value', 'restricthtml');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admindefaultvalues', 'globaladmin'));
 
 

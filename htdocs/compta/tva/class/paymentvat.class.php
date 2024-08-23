@@ -121,7 +121,7 @@ class PaymentVAT extends CommonObject
 	public $lib;
 
 	/**
-	 * @var integer|string datepaye
+	 * @var int|string datepaye
 	 */
 	public $datepaye;
 
@@ -146,7 +146,7 @@ class PaymentVAT extends CommonObject
 	public $bank_line;
 
 	/**
-	 * @var integer|string paiementtype
+	 * @var int|string paiementtype
 	 */
 	public $paiementtype;
 

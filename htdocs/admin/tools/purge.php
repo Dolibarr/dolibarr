@@ -92,6 +92,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'" />';
 print '<input type="hidden" name="action" value="purge" />';
 
+print '<div class="divsection wordbreak">';
 print '<table class="border centpercent">';
 
 print '<tr class="border"><td style="padding: 4px">';
@@ -123,6 +124,7 @@ if (getDolGlobalInt('MAIN_PURGE_ACCEPT_NBSECONDSOLD')) {
 	print 'NbSecondsOld = <input class="width50 right" type="text" name="nbsecondsold" value="'.$nbsecondsold.'">';
 }
 print '</td></tr></table>';
+print '</div>';
 
 //if ($choice != 'confirm_allfiles')
 //{

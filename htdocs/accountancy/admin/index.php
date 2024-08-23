@@ -259,7 +259,7 @@ $form = new Form($db);
 
 $title = $langs->trans('ConfigAccountingExpert');
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_index');
 
 
 $linkback = '';
@@ -329,19 +329,6 @@ if (getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTANCY_ER_DATE_RECORD").'</td>';
-if (getDolGlobalInt('ACCOUNTANCY_ER_DATE_RECORD')) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_ER_DATE_RECORD&value=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
-} else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_ER_DATE_RECORD&value=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
-}
-print '</tr>';
-
-print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX");
 print ' - <span class="opacitymedium">'.$langs->trans("NotRecommended").'</span>';
 print '</td>';
@@ -388,20 +375,6 @@ foreach ($list as $key) {
 	print '</td>';
 	print '</tr>';
 }
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("ACCOUNTING_BANK_CONCILIATED").'</td>';
-if (getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED') == 2) {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=1">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
-} else {
-	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=2">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
-}
-print '</tr>';
-
 
 print '</table>';
 print '</div>';
@@ -471,6 +444,34 @@ if (getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
 	print '</a></td>';
 } else {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setdisablebindingonexpensereports&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+if (!getDolGlobalString('ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS')) {
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("ACCOUNTANCY_ER_DATE_RECORD").'</td>';
+	if (getDolGlobalInt('ACCOUNTANCY_ER_DATE_RECORD')) {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_ER_DATE_RECORD&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTANCY_ER_DATE_RECORD&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+}
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_BANK_CONCILIATED").'</td>';
+if (getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED') == 2) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=1">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setACCOUNTING_BANK_CONCILIATED&value=2">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }

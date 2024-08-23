@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +96,7 @@ if ($action != 'delete' && empty($requestedpermissionsarray)) {
 // Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 try {
 	$apiService = $serviceFactory->createService(ucfirst(strtolower($genericstring)), $credentials, $storage, $requestedpermissionsarray);
+	'@phan-var-force  OAuth\OAuth2\Service\AbstractService|OAuth\OAuth1\Service\AbstractService $apiService'; // createService is only ServiceInterface
 } catch (Exception $e) {
 	print $e->getMessage();
 	exit;

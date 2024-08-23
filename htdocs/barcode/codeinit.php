@@ -87,7 +87,7 @@ if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
 					}
 
 					$modBarCodeThirdparty = new $file();
-					'@phan-var-force ModeleNumRefBarCode $module';
+					'@phan-var-force ModeleNumRefBarCode $modBarCodeThirdparty';
 					break;
 				}
 			}
@@ -184,7 +184,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 				if (preg_match('/^mod_barcode_product_.*php$/', $file)) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
-					if ($file == $conf->global->BARCODE_PRODUCT_ADDON_NUM) {
+					if ($file == getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						try {
 							dol_include_once($dirroot.$file.'.php');
 						} catch (Exception $e) {
@@ -192,7 +192,7 @@ if (getDolGlobalString('BARCODE_PRODUCT_ADDON_NUM')) {
 						}
 
 						$modBarCodeProduct = new $file();
-						'@phan-var-force ModeleNumRefBarCode $module';
+						'@phan-var-force ModeleNumRefBarCode $modBarCodeProduct';
 						break;
 					}
 				}

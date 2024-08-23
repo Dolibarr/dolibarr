@@ -67,10 +67,10 @@ $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-$object->getrights();
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
+$object->loadRights();
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('groupcard', 'globalcard'));
 
 // Security check
@@ -508,7 +508,7 @@ if ($action == 'create') {
 			// List of actions on element
 			/*include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1);*/
+			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1, '', $MAXEVENT);*/
 
 			print '</div></div>';
 		}

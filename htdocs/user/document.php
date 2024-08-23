@@ -75,6 +75,9 @@ if ($user->socid > 0) {
 }
 $feature2 = 'user';
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
 if ($user->id != $id && !$canreaduser) {
@@ -102,16 +105,11 @@ if (!$sortfield) {
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
-	$object->getrights();
+	$object->loadRights();
 	//$upload_dir = $conf->user->multidir_output[$object->entity] . "/" . $object->id ;
 	// For users, the upload_dir is always $conf->user->entity for the moment
 	$upload_dir = $conf->user->dir_output."/".$object->id;
 }
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'userdoc', 'globalcard'));
-
-
 
 /*
  * Actions

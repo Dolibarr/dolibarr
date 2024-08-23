@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Show extrafields. It also show fields from hook formAssetAccountancyCode. Need to have following variables defined:
+ * Show extrafields. It also shows fields from hook formAssetAccountancyCode. Need to have the following variables defined:
  * $object (asset, assetmodel, ...)
  * $assetaccountancycodes
  * $action
@@ -69,7 +69,7 @@ if (empty($reshook)) {
 				$accountancy_code = $assetaccountancycodes->accountancy_codes[$mode_key][$field_key];
 				if (isModEnabled('accounting')) {
 					$accountingaccount = new AccountingAccount($db);
-					$accountingaccount->fetch('', $accountancy_code, 1);
+					$accountingaccount->fetch(0, $accountancy_code, 1);
 
 					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 				} else {

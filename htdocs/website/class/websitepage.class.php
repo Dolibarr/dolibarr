@@ -105,16 +105,6 @@ class WebsitePage extends CommonObject
 	 */
 	public $status;
 
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_modification
-	 */
-	public $date_modification;
-
 	public $fk_user_creat;
 	public $fk_user_modif;
 
@@ -169,7 +159,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -373,7 +363,7 @@ class WebsitePage extends CommonObject
 	 * @param  string      	$filtermode   	No more used
 	 * @return WebSitePage[]|int<-1,-1>    	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($websiteid, $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
+	public function fetchAll($websiteid = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -405,7 +395,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.object_type,";
 		$sql .= " t.fk_object";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+		if (!empty($websiteid)) {
+			$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
+		}
 
 		// Deprecated. If we receive an array, we use it. Prefer using the USF syntax.
 		if (is_array($filter)) {
@@ -438,7 +430,11 @@ class WebsitePage extends CommonObject
 				}
 			}
 			if (count($sqlwhere) > 0) {
-				$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				if (!empty($websiteid)) {
+					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				} else {
+					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				}
 			}
 
 			$filter = '';

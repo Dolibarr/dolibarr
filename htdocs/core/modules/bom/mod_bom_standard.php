@@ -33,7 +33,7 @@ class mod_bom_standard extends ModeleNumRefBoms
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -116,7 +116,7 @@ class mod_bom_standard extends ModeleNumRefBoms
 	 *
 	 *  @param	Product	$objprod    Object product
 	 *  @param  Bom		$object		Object we need next value for
-	 *  @return string|-1      		Next value if OK, -1 if KO
+	 *  @return string|int<-1,-1>	Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objprod, $object)
 	{

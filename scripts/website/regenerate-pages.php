@@ -17,9 +17,9 @@
  */
 
 /**
- * \file scripts/website/regenerate-pages.php
+ * \file 	scripts/website/regenerate-pages.php
  * \ingroup scripts
- * \brief Regenerate all pages of a web site
+ * \brief 	Regenerate all pages of a web site on disk. Note: this can also be done from the website module.
  */
 
 if (!defined('NOSESSION')) {
@@ -80,8 +80,6 @@ if ($result <= 0) {
 }
 
 $websitepagestatic = new WebsitePage($db);
-
-$db->begin();
 
 $listofpages = $websitepagestatic->fetchAll($website->id, '', '', $max);
 

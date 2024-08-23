@@ -204,7 +204,7 @@ print dol_get_fiche_head($head, 'other', $langs->trans("Agenda"), -1, 'action');
  *  Miscellaneous
  */
 
-// Define array def of models
+// Define an array def of models
 $def = array();
 
 $sql = "SELECT nom";
@@ -255,6 +255,8 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 						require_once $dir.'/'.$file;
 						$module = new $classname($db, new ActionComm($db));
+
+						'@phan-var-force ModeleAction $module';
 
 						print '<tr class="oddeven">'."\n";
 						print "<td>";

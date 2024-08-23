@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,9 @@ $error = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
+
 $result = restrictedArea($user, 'ecm', 0);
 
 $permissiontoread = $user->hasRight('ecm', 'read');
@@ -88,9 +92,6 @@ $permissiontocreate = $user->hasRight('ecm', 'upload');
 $permissiontocreatedir = $user->hasRight('ecm', 'setup');
 $permissiontodelete = $user->hasRight('ecm', 'upload');
 $permissiontodeletedir = $user->hasRight('ecm', 'setup');
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('ecmindexcard', 'globalcard'));
 
 /*
  *	Actions
@@ -201,7 +202,7 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 	$diroutputslash .= '/';
 
 	// Scan directory tree on disk
-	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', '', 0);
+	$disktree = dol_dir_list($conf->ecm->dir_output, 'directories', 1, '', '^temp$', '', 0, 0);
 
 	// Scan directory tree in database
 	$sqltree = $ecmdirstatic->get_full_arbo(0);
@@ -331,7 +332,7 @@ $moreheadjs .= '<script type="text/javascript">'."\n";
 $moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
 $moreheadjs .= '</script>'."\n";
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', '', '', $morejs, '', 0, 0);
+llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 'mod-ecm page-index');
 
 $head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index', '', -1, '');

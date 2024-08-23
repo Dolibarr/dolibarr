@@ -67,12 +67,13 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('variouscard', 'globalcard'));
+
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('variouscard', 'globalcard'));
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 
@@ -658,7 +659,7 @@ if ($id) {
 			print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code, 'accountancy_code', 0, 1, '', 1);
 		} else {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $object->accountancy_code, 1);
+			$accountingaccount->fetch(0, $object->accountancy_code, 1);
 
 			print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
 		}

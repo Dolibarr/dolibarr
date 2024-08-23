@@ -44,7 +44,7 @@ $categid = GETPOST('categid');
 $label = GETPOST("label");
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $bankcateg = new BankCateg($db);
 
 
@@ -128,7 +128,7 @@ if ($action != 'edit') {
 
 
 $sql = "SELECT rowid, label";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql .= " FROM ".MAIN_DB_PREFIX."category_bank";
 $sql .= " WHERE entity = ".$conf->entity;
 $sql .= " ORDER BY rowid";
 

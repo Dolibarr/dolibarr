@@ -168,7 +168,7 @@ if ($source == 'proposal') {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('onlinesign'));
 
 $error = 0;
@@ -268,7 +268,7 @@ print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');
@@ -497,7 +497,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'fichinter') {
 	// Signature on fichinter
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -602,7 +602,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'expedition') {
 	// Signature on expedition
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 

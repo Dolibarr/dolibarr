@@ -125,6 +125,12 @@ print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? im
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
 
+if (getDolGlobalString('MAIN_SECURITY_SHOW_MORE_INFO')) {
+	print "<strong>PHP auto_prepend_file</strong> = ".(ini_get('auto_prepend_file') ? ini_get('auto_prepend_file') : '')."</span><br>\n";
+
+	print "<strong>PHP sendmail_path</strong> = ".(ini_get('sendmail_path') ? ini_get('sendmail_path') : '')."</span><br>\n";
+}
+
 print "<strong>PHP disable_functions</strong> = ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'dl,apache_note,apache_setenv,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,show_source,virtual');
@@ -153,12 +159,12 @@ foreach ($arrayoffunctionstodisable as $functiontodisable) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$todisabletext .= ' <span class="opacitymedium">'.$functiontodisable.'</span>';
 		$i++;
 	}
 }
 if ($todisabletext) {
-	print $langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
+	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
 $todisabletext = '';
@@ -168,19 +174,21 @@ foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
 		if ($i > 0) {
 			$todisabletext .= ', ';
 		}
-		$todisabletext .= img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' <span class="opacitymedium">'.$functiontodisable.'</span>';
+		$todisabletext .= ' <span class="opacitymedium">'.$functiontodisable.'</span>';
 		$i++;
 	}
 }
 if ($todisabletext) {
-	print $langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
+	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
 
-print $langs->trans("PHPFunctionsRequiredForCLI").': ';
 if (in_array($functiontokeep, $arrayoffunctionsdisabled)) {
-	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning');
+	print img_picto($langs->trans("PHPFunctionsRequiredForCLI"), 'warning', 'class="pictofixedwidth"');
+} else {
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
 }
+print $langs->trans("PHPFunctionsRequiredForCLI").': ';
 print '<span class="opacitymedium">'.$functiontokeep.'</span>';
 print '<br>';
 
@@ -190,10 +198,10 @@ print '<br>';
 print '<strong>JSON</strong>: ';
 $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 $test = !in_array('json', $loadedExtensions);
-if ($test) {
+if ($test || function_exists('dol_json_decode')) {
 	print img_picto('', 'error').' '.$langs->trans("NotInstalled").' - '.$langs->trans("VulnerableToRCEAttack");
 } else {
-	print img_picto('', 'tick').' '.$langs->trans("Available");
+	print img_picto('', 'tick').' '.$langs->trans("Available").' <span class="opacitymedium">(PHP native so not emulated, safe)</span>';
 }
 print '<br>';
 
@@ -332,8 +340,8 @@ print '<br>';
 
 print '<strong>$dolibarr_main_restrict_ip</strong>: ';
 if (empty($dolibarr_main_restrict_ip)) {
-	print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
-	//print ' <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("IPsOfUsers")).')</span>';
+	print $langs->trans("None");
+	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("StaticIPsOfUsers")).')</span>';
 } else {
 	print $dolibarr_main_restrict_ip;
 }
@@ -345,7 +353,7 @@ if (empty($dolibarr_main_restrict_os_commands)) {
 } else {
 	print $dolibarr_main_restrict_os_commands;
 }
-print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pgrestore, mariadb, mariadb-dump, clamdscan').')</span>';
+print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'mysqldump, mysql, pg_dump, pg_restore, mariadb, mariadb-dump, clamdscan').')</span>';
 print '<br>';
 
 if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
@@ -371,7 +379,7 @@ print '<span class="bold"> -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php').')</span>'."\n";
+	print(implode(',', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
 }
 print '</div>';
 
@@ -577,11 +585,12 @@ if (!$test) {
 }
 print '<br>';
 
-print '<br>';
 
 // Modules for Payments
 $test = isModEnabled('stripe');
 if ($test) {
+	print '<br>';
+
 	print '<strong>'.$langs->trans("Stripe").'</strong>: ';
 	if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 		print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Stripe"));
@@ -592,6 +601,8 @@ if ($test) {
 } else {
 	$test = isModEnabled('paypal');
 	if ($test) {
+		print '<br>';
+
 		print '<strong>'.$langs->trans("Paypal").'</strong>: ';
 		if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
 			print img_picto('', 'error').' '.$langs->trans("OptionXShouldBeEnabledInModuleY", $langs->transnoentities("SecurityTokenIsUnique"), $langs->transnoentities("Paypal"));
@@ -625,6 +636,10 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	}
 }
 
+print '<br>';
+
+print '<strong>API_DISABLE_LOGIN_API</strong> = '.getDolGlobalString('API_DISABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
+
 print '</div>';
 
 
@@ -645,7 +660,7 @@ print '<br>';
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
-	print '<span class="opacitymedium"> &nbsp; &nbsp; If unset: \'md5\'</span>';
+	print '<span class="opacitymedium"> &nbsp; &nbsp; (If unset: \'md5\')</span>';
 }
 if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '<br><strong>MAIN_SECURITY_SALT</strong> = '.getDolGlobalString('MAIN_SECURITY_SALT', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').'<br>';
@@ -659,7 +674,7 @@ if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 	print '- Go on home - setup - other and add constant MAIN_SECURITY_HASH_ALGO to value \'password_hash\'<br>';
 	print '- In same session, WITHOUT LOGGING OUT, go into your admin user record and set a new password<br>';
 	print '- You can now logout and login with this new password. You must now reset password of all other users.<br>';
-	print '</div><br>';
+	print '</div>';
 }
 print '<br>';
 
@@ -704,10 +719,19 @@ print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1 - does not work on HTML5 with some old libxml libs)</span>";
+
+// Test compatibility of MAIN_RESTRICTHTML_ONLY_VALID_HTML
+$savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES');
+$savMAIN_RESTRICTHTML_ONLY_VALID_HTML = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+$savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
 $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 $result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = $savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES;
+$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML;
+$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
+
 if ($result == 'InvalidHTMLStringCantBeCleaned') {
 	print ' &nbsp; - &nbsp; '.img_warning().' Your libxml seems to old to work correctly with this option. Disable it !';
 } else {
@@ -720,10 +744,18 @@ print '<br>';
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span> &nbsp; - &nbsp; Module "php-tidy" must be enabled (currently: '.((extension_loaded('tidy') && class_exists("tidy")) ? 'Enabled' : img_picto('', 'warning').' Not available').")";
 if (extension_loaded('tidy') && class_exists("tidy")) {
+	// Test compatibility of MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY
+	$savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = getDolGlobalString('MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES');
+	$savMAIN_RESTRICTHTML_ONLY_VALID_HTML = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML');
+	$savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY');
 	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 	$result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = $savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES;
+	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML;
+	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
+
 	if ($result == 'InvalidHTMLStringCantBeCleaned') {
 		print ' &nbsp; - &nbsp; '.img_warning().' Your libxml seems to old to work correctly with this option. Disable it !';
 	} else {

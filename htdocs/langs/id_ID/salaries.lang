@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "user" third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Akun (dari Bagan Akun) digunakan secara default untuk "pengguna" pada gaji
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Akun khusus yang ditentukan pada kartu pengguna hanya akan digunakan untuk akuntansi Subledger. Yang ini akan digunakan untuk Buku Besar Umum, tetapi juga sebagai nilai default akuntansi Subledger jika tidak ada akun akuntansi pengguna khusus yang ditentukan pada pengguna tersebut.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Akun akuntansi secara default untuk pembayaran upah
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Secara default, biarkan kosong opsi "Otomatis buat total pembayaran" saat membuat Gaji
 Salary=Gaji
 Salaries=Gaji
 NewSalary=Gaji baru
-AddSalary=Add salary
+AddSalary=Tambahkan gaji
 NewSalaryPayment=Kartu gaji baru
 AddSalaryPayment=Tambahkan pembayaran gaji
 SalaryPayment=Pembayaran Gaji
@@ -24,4 +24,10 @@ SalariesStatistics=Statistik gaji
 SalariesAndPayments=Gaji dan pembayaran
 ConfirmDeleteSalaryPayment=Apakah Anda ingin menghapus pembayaran gaji ini?
 FillFieldFirst=Isi kolom karyawan terlebih dahulu
-UpdateAmountWithLastSalary=Set amount with last salary
+UpdateAmountWithLastSalary=Tetapkan jumlah gaji terakhir
+MakeTransferRequest=Buat permintaan transfer
+VirementOrder=Permintaan transfer kredit
+BankTransferAmount=Jumlah transfer kredit
+WithdrawalReceipt=Perintah transfer kredit
+OrderWaiting=Pesanan tertunda
+FillEndOfMonth=Isi dengan akhir bulan

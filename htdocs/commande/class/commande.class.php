@@ -190,19 +190,19 @@ class Commande extends CommonOrder
 	public $demand_reason_code;
 
 	/**
-	 * @var int Date of order
+	 * @var null|int|'' Date of order
 	 */
 	public $date;
 
 	/**
-	 * @var int Date of order
+	 * @var null|int|'' Date of order
 	 * @deprecated
 	 * @see $date
 	 */
 	public $date_commande;
 
 	/**
-	 * @var int	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
+	 * @var null|int|''	Date expected of shipment (date of start of shipment, not the reception that occurs some days after)
 	 */
 	public $delivery_date;
 
@@ -217,6 +217,12 @@ class Commande extends CommonOrder
 	public $remise_percent;
 
 	public $source; // Order mode. How we received order (by phone, by email, ...)
+
+	/**
+	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
+	 * @var int
+	 */
+	public $signed_status = 0;
 
 	/**
 	 * @var int Warehouse Id
@@ -286,7 +292,7 @@ class Commande extends CommonOrder
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -307,6 +313,7 @@ class Commande extends CommonOrder
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'LocalTax2', 'enabled' => 1, 'visible' => -1, 'position' => 135, 'isameasure' => 1),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 140, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'TotalTTC', 'enabled' => 1, 'visible' => -1, 'position' => 145, 'isameasure' => 1),
+		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 146, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 9 => 'SignedAll')),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 150),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
@@ -363,12 +370,37 @@ class Commande extends CommonOrder
 	 * Shipment on process
 	 */
 	const STATUS_SHIPMENTONPROCESS = 2;		// We set this status when a shipment is validated
-	const STATUS_ACCEPTED = 2; 				// For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+
+	/**
+	 * For backward compatibility. Use key STATUS_SHIPMENTONPROCESS instead.
+	 * @deprecated
+	 */
+	const STATUS_ACCEPTED = 2;
 
 	/**
 	 * Closed (Sent, billed or not)
 	 */
 	const STATUS_CLOSED = 3;
+
+	/*
+	 * No signature
+	 */
+	const STATUS_NO_SIGNATURE    = 0;
+
+	/*
+	 * Signed by sender
+	 */
+	const STATUS_SIGNED_SENDER   = 1;
+
+	/*
+	 * Signed by receiver
+	 */
+	const STATUS_SIGNED_RECEIVER = 2;
+
+	/*
+	 * Signed by all
+	 */
+	const STATUS_SIGNED_ALL      = 9; // To handle future kind of signature (ex: tripartite contract)
 
 
 	/**
@@ -411,7 +443,7 @@ class Commande extends CommonOrder
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -611,7 +643,7 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->statut <= self::STATUS_DRAFT && !getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
 			return 0;
 		}
 
@@ -1131,7 +1163,7 @@ class Commande extends CommonOrder
 								$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 							}
 						} else {
-							dol_print_error($resqlcontact);
+							dol_print_error($this->db, $resqlcontact);
 						}
 					}
 
@@ -1978,9 +2010,9 @@ class Commande extends CommonOrder
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Add line of fixed discount in the order in DB
+	 *	Add a discount line into a sale order (as a sale order line) using an existing absolute discount (Consume the discount)
 	 *
-	 *	@param     int	$idremise			Id for the fixed discount
+	 *	@param     int	$idremise			Id for the fixed discount from table llx_societe_remise_except
 	 *	@return    int          			>0 if OK, <0 if KO
 	 */
 	public function insert_discount($idremise)
@@ -3755,9 +3787,9 @@ class Commande extends CommonOrder
 			$datas['RefCustomer'] = '<br><b>'.$langs->trans('RefCustomer').':</b> '.(empty($this->ref_customer) ? (empty($this->ref_client) ? '' : $this->ref_client) : $this->ref_customer);
 			if (!$nofetch) {
 				$langs->load('project');
-				if (empty($this->project)) {
+				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
 					$res = $this->fetch_project();
-					if ($res > 0 && !empty($this->project) && $this->project instanceof Project) {
+					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
 				}
@@ -3783,7 +3815,7 @@ class Commande extends CommonOrder
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      int			$withpicto                Add picto into link
 	 *	@param      string	    $option                   Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
@@ -4191,6 +4223,20 @@ class Commande extends CommonOrder
 
 		return $text;
 	}
+
+	/**
+	 * Set signed status
+	 *
+	 * @param  User   $user        Object user that modify
+	 * @param  int    $status      Newsigned  status to set (often a constant like self::STATUS_XXX)
+	 * @param  int    $notrigger   1 = Does not execute triggers, 0 = Execute triggers
+	 * @param  string $triggercode Trigger code to use
+	 * @return int                 0 < if KO, > 0 if OK
+	 */
+	public function setSignedStatus(User $user, int $status = 0, int $notrigger = 0, $triggercode = ''): int
+	{
+		return $this->setSignedStatusCommon($user, $status, $notrigger, $triggercode);
+	}
 }
 
 
@@ -4351,6 +4397,8 @@ class OrderLine extends CommonOrderLine
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+
+			$this->fetch_optionals();
 
 			$this->db->free($result);
 
