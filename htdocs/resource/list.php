@@ -27,7 +27,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
@@ -53,7 +53,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
 // Initialize a technical objects
-$object = new Resource($db);
+$object = new DolResource($db);
 $extrafields = new ExtraFields($db);
 
 // Fetch optionals attributes and labels
@@ -215,7 +215,7 @@ if ($reshook < 0) {
  */
 
 $form = new Form($db);
-$objectstatic = new Resource($db);
+$objectstatic = new DolResource($db);
 
 $help_url = '';
 $title = $langs->trans('Resources');
@@ -438,7 +438,7 @@ $newcardbutton = dolGetButtonTitle($langs->trans('NewResource'), '', 'fa fa-plus
 
 print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_'.$object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
-$objecttmp = new Resource($db);
+$objecttmp = new DolResource($db);
 $trackid = 'int'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 

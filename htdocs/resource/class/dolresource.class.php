@@ -18,7 +18,7 @@
  */
 
 /**
- * \file        class/resource.class.php
+ * \file        class/dolresource.class.php
  * \ingroup     resource
  * \brief       This file is a CRUD class file for Resource (Create/Read/Update/Delete)
  */
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  * Class for Resource
  */
-class Resource extends CommonObject
+class DolResource extends CommonObject
 {
 	/**
 	 * @var string 	ID of module.
@@ -797,6 +797,23 @@ class Resource extends CommonObject
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Load type label
+	 *
+	 * @return void
+	 */
+	public function loadTypeLabel()
+	{
+		// Load type label
+		$resql_label = "SELECT label FROM ".$this->db->prefix()."c_type_resource WHERE code = '".$this->fk_code_type_resource."'";
+
+		$result_label = $this->db->query($resql_label);
+		if ($result_label > 0) {
+			$obj = $this->db->fetch_object($result_label);
+		}
+		$this->type_label = $obj->label;
 	}
 
 	/**

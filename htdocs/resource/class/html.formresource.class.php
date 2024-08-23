@@ -26,7 +26,7 @@
  *       \brief      Class file to manage forms into resource module
  */
 require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
-require_once DOL_DOCUMENT_ROOT."/resource/class/resource.class.php";
+require_once DOL_DOCUMENT_ROOT."/resource/class/dolresource.class.php";
 
 
 /**
@@ -89,7 +89,7 @@ class FormResource
 		$out = '';
 		$outarray = array();
 
-		$resourcestat = new Resource($this->db);
+		$resourcestat = new DolResource($this->db);
 
 		$resources_used = $resourcestat->fetchAll('ASC', 't.rowid', $limit, 0, $filter);
 
@@ -182,7 +182,7 @@ class FormResource
 		// phpcs:enable
 		global $langs, $user;
 
-		$resourcestat = new Resource($this->db);
+		$resourcestat = new DolResource($this->db);
 
 		dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format, LOG_DEBUG);
 

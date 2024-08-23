@@ -27,7 +27,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 
 // Load translation files required by the page
@@ -44,7 +44,7 @@ if ($user->socid) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('resourcenote'));
 
-$object = new Resource($db);
+$object = new DolResource($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
@@ -91,6 +91,7 @@ if ($id > 0 || !empty($ref)) {
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
+	$object->loadTypeLabel();
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';

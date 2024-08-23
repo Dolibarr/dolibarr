@@ -2712,7 +2712,7 @@ function getModuleDirForApiClass($moduleobject)
 		$moduledirforclass = 'salaries';
 	} elseif ($moduleobject == 'paymentexpensereports') {
 		$moduledirforclass = 'expensereport';
-	} elseif ($moduleobject == 'resourcesapi') {
+	} elseif ($moduleobject == 'dolresources') {
 		$moduledirforclass = 'resource';
 	}
 

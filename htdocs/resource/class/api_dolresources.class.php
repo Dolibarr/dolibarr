@@ -18,7 +18,7 @@
 
 use Luracast\Restler\RestException;
 
-require_once __DIR__ . '/resource.class.php';
+require_once __DIR__ . '/dolresource.class.php';
 
 /**
  * API class for mymodule myobject
@@ -26,15 +26,15 @@ require_once __DIR__ . '/resource.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class ResourcesApi extends DolibarrApi
+class DolResources extends DolibarrApi
 {
 	/**
-	 * @var Resource $resource {@type Resource}
+	 * @var DolResource $resource {@type DolResource}
 	 */
 	/*
 	 * @var mixed TODO: set type
 	 */
-	public Resource $resource;
+	public DolResource $resource;
 
 	/**
 	 * Constructor
@@ -46,7 +46,7 @@ class ResourcesApi extends DolibarrApi
 	{
 		global $db;
 		$this->db = $db;
-		$this->resource = new Resource($this->db);
+		$this->resource = new DolResource($this->db);
 	}
 
 
@@ -57,10 +57,10 @@ class ResourcesApi extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of resource
 	 * @return  Object					Object with cleaned properties
-	 * @phan-return	Resource			Object with cleaned properties
-	 * @phpstan-return	Resource			Object with cleaned properties
+	 * @phan-return	DolResource			Object with cleaned properties
+	 * @phpstan-return	DolResource			Object with cleaned properties
 	 *
-	 * @phan-return  Resource
+	 * @phan-return  DolResource
 	 *
 	 *
 	 * @throws RestException 403 Not allowed
@@ -96,8 +96,8 @@ class ResourcesApi extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of Resource objects
-	 * @phan-return array<int,Resource>
-	 * @phpstan-return array<int,Resource>
+	 * @phan-return array<int,DolResource>
+	 * @phpstan-return array<int,DolResource>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
@@ -106,7 +106,7 @@ class ResourcesApi extends DolibarrApi
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
 		$obj_ret = array();
-		$tmpobject = new Resource($this->db);
+		$tmpobject = new DolResource($this->db);
 
 		if (!DolibarrApiAccess::$user->hasRight('resource', 'read')) {
 			throw new RestException(403);
@@ -167,7 +167,7 @@ class ResourcesApi extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($result);
-				$tmp_object = new Resource($this->db);
+				$tmp_object = new DolResource($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
@@ -235,10 +235,10 @@ class ResourcesApi extends DolibarrApi
 	 * @phan-param mixed[]	$request_data
 	 * @phpstan-param mixed[]	$request_data
 	 * @return 	Object						Object after update
-	 * @phan-return Resource
-	 * @phpstan-return Resource
+	 * @phan-return DolResource
+	 * @phpstan-return DolResource
 	 *
-	 * @phan-return  Resource
+	 * @phan-return  DolResource
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found

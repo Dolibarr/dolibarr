@@ -28,7 +28,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/resource/class/resource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -60,7 +60,7 @@ if ($user->socid > 0) {
 	accessforbidden();
 }
 
-$object = new Resource($db);
+$object = new DolResource($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -367,15 +367,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Print form confirm
 		print $formconfirm;
 
-		$resql_label = "SELECT label FROM ".$db->prefix()."c_type_resource WHERE code = '".$object->fk_code_type_resource."'";
-
-		$result_label = $db->query($resql_label);
-		if ($result_label > 0) {
-			$obj = $db->fetch_object($result_label);
-		}
-		$type_label = $obj->label;
-
-
+		$object->loadTypeLabel();
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -394,7 +386,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("ResourceType").'</td>';
 		print '<td>';
-		print $type_label ?? '';
+		print $object->type_label;
 		print '</td>';
 		print '</tr>';
 
