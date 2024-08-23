@@ -37,4 +37,4 @@ create table llx_payment_various
   fk_bank               integer,
   fk_user_author        integer,                    -- utilisateur qui a cree l'info
   fk_user_modif         integer                     -- utilisateur qui a modifié l'info
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
