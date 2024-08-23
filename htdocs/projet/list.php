@@ -192,6 +192,10 @@ if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
 }
 
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1';
+}
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Project($db);
 $hookmanager->initHooks(array('projectlist'));
@@ -352,6 +356,7 @@ if (empty($reshook)) {
 		$search_societe_alias = '';
 		$search_societe_country = '';
 		$search_status = -1;
+		$search_option = '';
 		$search_opp_status = -1;
 		$search_opp_amount = '';
 		$search_opp_percent = '';
@@ -637,6 +642,9 @@ if ($search_status != '' && $search_status != '-1') {
 	} else {
 		$sql .= " AND p.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 	}
+}
+if ($search_option == 'late') {
+	$sql .= " AND p.datee < '".$db->idate(dol_now() - $conf->project->warning_delay)."'";
 }
 if ($search_opp_status) {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) {
@@ -1009,6 +1017,9 @@ if ($search_societe_country != '') {
 if ($search_status != '' && $search_status != '-1') {
 	$param .= "&search_status=".urlencode($search_status);
 }
+if ($search_option) {
+	$param .= "&search_option=".urlencode($search_option);
+}
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'openedopp', 'notopenedopp', 'none'))) {
 	$param .= '&search_opp_status='.urlencode($search_opp_status);
 }
@@ -1192,6 +1203,11 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isMod
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_CUSTOMER, $searchCategoryCustomerList, 'minwidth300', $searchCategoryCustomerList ? $searchCategoryCustomerList : 0);
 }
+
+// alert on late date
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '</div>';
 
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {
 	//Checkbox for omitting child projects filter

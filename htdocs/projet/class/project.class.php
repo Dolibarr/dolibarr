@@ -2266,6 +2266,7 @@ class Project extends CommonObject
 		$response->label = $langs->trans("OpenedProjects");
 		$response->labelShort = $langs->trans("Opened");
 		$response->url = DOL_URL_ROOT.'/projet/list.php?search_project_user=-1&search_status=1&mainmenu=project';
+		$response->url_late = DOL_URL_ROOT.'/projet/list.php?search_option=late&mainmenu=project';
 		$response->img = img_object('', "projectpub");
 		$response->nbtodo = 0;
 		$response->nbtodolate = 0;
