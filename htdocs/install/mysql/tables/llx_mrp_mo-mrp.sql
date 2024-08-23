@@ -43,4 +43,4 @@ CREATE TABLE llx_mrp_mo(
 	last_main_doc varchar(255),
     fk_parent_line integer
     -- END MODULEBUILDER FIELDS
-) ENGINE=innodb;
+) ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
