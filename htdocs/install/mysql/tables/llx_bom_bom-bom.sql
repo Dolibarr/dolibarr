@@ -39,4 +39,4 @@ CREATE TABLE llx_bom_bom(
 	model_pdf varchar(255),
 	status integer NOT NULL
 	-- END MODULEBUILDER FIELDS
-) ENGINE=innodb;
+) ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
