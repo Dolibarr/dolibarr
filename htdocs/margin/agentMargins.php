@@ -104,7 +104,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"), '', '', 0, 0, '', '', '', 'mod-margin page-agentmargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);

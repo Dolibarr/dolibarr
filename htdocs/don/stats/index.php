@@ -66,7 +66,7 @@ $result = restrictedArea($user, 'don');
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-don page-stats_index');
 
 $dir = $conf->don->dir_temp;
 
