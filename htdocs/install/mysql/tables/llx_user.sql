@@ -114,4 +114,4 @@ create table llx_user
   default_c_exp_tax_cat  integer,
   national_registration_number  varchar(50),
   fk_warehouse           integer                              -- default warehouse of user
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
