@@ -74,4 +74,4 @@ create table llx_facture_rec
   nb_gen_max         integer DEFAULT NULL,		    -- maximum number of generation
   auto_validate      integer DEFAULT 0,		-- 0 to create in draft, 1 to create and validate the new invoice
   generate_pdf       integer DEFAULT 1      -- 0 disable pdf, 1 to generate pdf
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
