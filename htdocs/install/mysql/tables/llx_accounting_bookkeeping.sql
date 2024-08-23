@@ -53,4 +53,4 @@ CREATE TABLE llx_accounting_bookkeeping
   date_export	      	datetime DEFAULT NULL,		--
   import_key            varchar(14),				-- ID of import when data was inserted by a mass import
   extraparams           varchar(255)				-- for other parameters with json format
-) ENGINE=innodb;
+) ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
