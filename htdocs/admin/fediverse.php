@@ -148,6 +148,82 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes') {
 	}
 }
 
+if ($action == 'updatesocialnetwork') {
+	$error = 0;
+	$id = GETPOST('key', 'alpha');
+	$name = GETPOST('socialnetwork_name');
+	$url = GETPOST('socialnetwork_url');
+	$paramsKey = GETPOST('paramsKey', 'array');
+	$paramsVal = GETPOST('paramsVal', 'array');
+
+	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf);
+	$socialNetworkData = json_decode($result, true);
+
+	foreach ($paramsKey as $index => $key) {
+		if (empty($key) || empty($paramsVal[$index])) {
+			$error++;
+		}
+	}
+	// delete others params
+	foreach ($socialNetworkData as $key => $value) {
+		if ($key != 'title' && $key != 'url') {
+			unset($socialNetworkData[$key]);
+		}
+	}
+
+	// new keys and new values in array
+	$mergedParams = array();
+	foreach ($paramsKey as $index => $key) {
+		if (isset($paramsVal[$index])) {
+			$mergedParams[$key] = $paramsVal[$index];
+		}
+	}
+
+	 // Add new key, value if changed
+	foreach ($mergedParams as $newKey => $newValue) {
+		if (!isset($socialNetworkData[$newKey]) || $socialNetworkData[$newKey] !== $newValue) {
+			$socialNetworkData[$newKey] = $newValue;
+		}
+	}
+	if (!$error) {
+		$newData = json_encode($socialNetworkData);
+		$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$name, $newData, 'chaine', 0, '', $conf->entity);
+		if ($result) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]);
+			exit;
+		} else {
+			$db->rollback();
+			dol_print_error($db);
+		}
+	} else {
+		setEventMessages($langs->trans("ErrorInputRequired"), null, 'errors');
+		header("Location: ".$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.$id);
+		exit;
+	}
+}
+
+if ($action == 'editsocialnetwork' && GETPOST('confirm') == 'yes') {
+	$paramKey = GETPOST('paramkey', 'alpha');
+	$key = GETPOST('key', 'alpha');
+	$name = GETPOST('name');
+	$result = dolibarr_get_const($db, "SOCIAL_NETWORKS_DATA_".$name, $conf);
+	$socialNetworkData = json_decode($result, true);
+
+	unset($socialNetworkData[$paramKey]);
+	$newData = json_encode($socialNetworkData);
+
+	$result = dolibarr_set_const($db, "SOCIAL_NETWORKS_DATA_".$name, $newData, 'chaine', 0, '', $conf->entity);
+	if ($result) {
+		$db->commit();
+		header("Location: ".$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&key='.urlencode($key));
+		exit;
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
+}
+
 
 
 /*
@@ -242,6 +318,22 @@ if ($action == 'deletesocialnetwork') {
 	);
 	print $formconfirm;
 }
+// delete params of social network
+if ($action == 'editsocialnetwork' && GETPOST('paramkey', 'alpha')) {
+	$paramKey = GETPOST('paramkey', 'alpha');
+	$name = GETPOST('name', 'alpha');
+
+	$formconfirm = $form->formconfirm(
+		$_SERVER["PHP_SELF"].'?key='.urlencode(GETPOST('key', 'alpha')).'&paramkey='.urlencode($paramKey).'&name='.urlencode($name),
+		$langs->trans('Delete'),
+		$langs->trans('ConfirmDeleteParamOfSocialNetwork', $paramKey),
+		'editsocialnetwork',
+		'',
+		0,
+		1
+	);
+	print $formconfirm;
+}
 $sql = "SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql .= " WHERE file = 'box_fediverse.php'";
 $sql .= " ORDER BY note";
@@ -328,6 +420,39 @@ if ($resql) {
 		print '</a>';
 		print '</td>';
 		print '</tr>'."\n";
+
+		if ($action == 'editsocialnetwork' && $socialNetworkId == GETPOST('key')) {
+			foreach ($socialNetworkData as $k => $val) {
+				if ($k != 'title' && $k != 'url') {
+					print '<tr class="oddeven">';
+					print '<td><input type="text" class="flat minwidth200" name="paramsKey[]" value="'.dol_escape_htmltag($k).'"</td>';
+					if ($k == 'password') {
+						print '<td><input type="password" class="flat minwidth300" name="paramsVal[]" value="'.dol_escape_htmltag($val).'" />';
+					} else {
+						print '<td><input type="text" class="flat minwidth300" name="paramsVal[]" value="'.dol_escape_htmltag($val).'" />';
+					}
+					print '<button type="button" class="delete-param-btn" data-paramkey="'.htmlspecialchars($k).'">'.img_delete().'</button>';
+					print '</td>';
+					print '</tr>'."\n";
+				}
+			}
+
+			print '<tr class="oddeven">';
+			print '<td><input type="hidden" name="action" value="updatesocialnetwork" /></td>';
+			print '<td><input class="button " type="submit" name="update" value="'.$langs->trans('Modify').'" /></td>';
+			print '</tr>'."\n";
+
+			print '<script>
+					$(document).ready(function() {
+						$(\'.delete-param-btn\').on(\'click\', function() {
+							var paramKey = $(this).data(\'paramkey\');
+							var socialNetworkId = \''.htmlspecialchars($socialNetworkId).'\';
+							var socialNetworkName = \''.htmlspecialchars($socialNetworkTitle).'\';
+							window.location.href = \''.$_SERVER["PHP_SELF"].'?action=editsocialnetwork&token='.newToken().'&paramkey=\' + encodeURIComponent(paramKey) + \'&key=\' + encodeURIComponent(socialNetworkId) + \'&name=\' + encodeURIComponent(socialNetworkName);
+						});
+					});
+					</script>';
+		}
 
 		print '</table>'."\n";
 
