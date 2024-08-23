@@ -147,7 +147,7 @@ function getAttachments($jk, $mbox)
  * Get content of a joined file from its position into a given email
  *
  * @param integer $jk numéro du mail
- * @param integer $fpos position de la pièce jointe
+ * @param string $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
  * @param object $mbox object connection imap
  * @return mixed data
