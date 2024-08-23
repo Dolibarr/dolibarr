@@ -40,4 +40,4 @@ create table llx_paiement
   statut           smallint DEFAULT 0 NOT NULL,			-- Satut, 0 ou 1, 1 n'est plus supprimable
   fk_export_compta integer DEFAULT 0 NOT NULL,			-- fk_export_compta 0 pas exporte
   pos_change       double(24,8) DEFAULT 0  				-- Excess received in TakePOS cash payment
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
