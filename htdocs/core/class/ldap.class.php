@@ -307,7 +307,7 @@ class Ldap
 					if ($ldapdebug) {
 						dol_syslog(get_class($this)."::connect_bind serverPing true, we try ldap_connect to ".$host);
 					}
-					if (strnatcmp(phpversion(), '8.3.0') >= 0) {
+					if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
 						$uri = $host.':'.$this->serverPort;
 						$this->connection = ldap_connect($uri);
 					} else {
@@ -320,7 +320,7 @@ class Ldap
 						if ($ldapdebug) {
 							dol_syslog(get_class($this)."::connect_bind serverPing false, we try ldap_connect to ".$host);
 						}
-						if (strnatcmp(phpversion(), '8.3.0') >= 0) {
+						if (version_compare(PHP_VERSION, '8.3.0', '>=')) {
 							$uri = $host.':'.$this->serverPort;
 							$this->connection = ldap_connect($uri);
 						} else {
@@ -479,7 +479,7 @@ class Ldap
 	public function unbind()
 	{
 		$this->result = true;
-		if (strnatcmp(phpversion(), '8.1.0') >= 0) {
+		if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
 			if (is_object($this->connection)) {
 				try {
 					$this->result = ldap_unbind($this->connection);
