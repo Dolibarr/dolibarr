@@ -3315,13 +3315,13 @@ div.login_block_other {
 	vertical-align: middle;
 	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
 	padding-top: 0;
-	text-align: right;
-	margin-right: 8px;
+	text-align: <?php echo $right ?>;
+	margin-<?php echo $right ?>: 8px;
 	max-width: 200px;
 }
 
 .login_block_elem {
-	float: right;
+	float: <?php echo $right ?>;
 	vertical-align: top;
 	padding: 0px 3px 0px 4px !important;
 }
@@ -6482,7 +6482,7 @@ div#ecm-layout-west {
 div#ecm-layout-center {
 	width: calc(100% - 405px);
 	vertical-align: top;
-	float: right;
+	float: <?php echo $right; ?>;
 }
 
 .ecmjqft LI.directory { font-weight:normal; background: url(<?php echo dol_buildpath($path.'/theme/common/treemenu/folder2.png', 1); ?>) left top no-repeat; background-position-y: 8px; }
