@@ -13881,9 +13881,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 			$sql .= ", ".MAIN_DB_PREFIX."facture as o";
-    } elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
-          $sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
-        }
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
+			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
+		}
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!$force_filter_contact) {
@@ -13928,7 +13928,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= "AND a.fk_element = o.rowid";
-      }
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
