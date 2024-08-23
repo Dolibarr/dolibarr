@@ -42,4 +42,4 @@ CREATE TABLE llx_ecm_files
   note_private		text,
   note_public		text,
   acl				text							-- for future permission 'per file'
-) ENGINE=innodb;
+) ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
