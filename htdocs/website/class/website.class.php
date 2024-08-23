@@ -638,11 +638,12 @@ class Website extends CommonObject
 
 	/**
 	 * Purge website
-	 * Delete website directory content and all pages and medias. Differs from delete() because it does not delete the website entry.
+	 * Delete website directory content and all pages and medias. Differs from delete() because it does not delete the website entry and no trigger is called.
 	 *
+	 * @param User 	$user      	User that deletes
 	 * @return int 				Return integer <0 if KO, >0 if OK
 	 */
-	public function purge()
+	public function purge(User $user)
 	{
 		global $conf;
 
