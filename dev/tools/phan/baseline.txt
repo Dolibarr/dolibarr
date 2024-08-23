@@ -248,7 +248,6 @@ return [
         'htdocs/core/actions_extrafields.inc.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/actions_lineupdown.inc.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
         'htdocs/core/actions_linkedfiles.inc.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/core/actions_massactions.inc.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/actions_printing.inc.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/actions_sendmails.inc.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/core/actions_setmoduleoptions.inc.php' => ['PhanPluginUnknownObjectMethodCall', 'PhanPossiblyUndeclaredGlobalVariable'],
