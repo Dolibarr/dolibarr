@@ -53,4 +53,4 @@ create table llx_fichinter
 
   import_key        varchar(14),
   extraparams		varchar(255)				-- for other parameters with json format
-)ENGINE=innodb;
+)ENGINE=innodb DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
