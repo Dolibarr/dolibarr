@@ -121,7 +121,7 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 * 	Return next free value
 	 *
 	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  Object			$object		Object we need next value for
+	 *  @param  ?Paiement		$object		Object we need next value for
 	 *  @return string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object)
@@ -168,8 +168,8 @@ class mod_payment_cicada extends ModeleNumRefPayments
 	 *  Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object third party
-	 *  @param	string		$objforref	Object for number to search
-	 *  @return string|-1      			Next free value, -1 if KO
+	 *  @param	?Paiement	$objforref	Object for number to search
+	 *  @return string|int<-1,0> 		Next free value, -1 if KO
 	 */
 	public function payment_get_num($objsoc, $objforref)
 	{
