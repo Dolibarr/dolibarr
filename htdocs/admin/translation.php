@@ -596,6 +596,7 @@ if ($mode == 'searchkey') {
 				$sql .= " AND transkey = '".$db->escape($key)."'";
 				dol_syslog("translation::select from table", LOG_DEBUG);
 				$result = $db->query($sql);
+				$obj = null;
 				if ($result) {
 					$obj = $db->fetch_object($result);
 				}
@@ -627,10 +628,11 @@ if ($mode == 'searchkey') {
 			$sql .= " AND transkey = '".$db->escape($key)."'";
 			dol_syslog("translation::select from table", LOG_DEBUG);
 			$result = $db->query($sql);
+			$obj = null;
 			if ($result) {
 				$obj = $db->fetch_object($result);
 			}
-			if (is_object) {
+			if (is_object($obj)) {
 				print '<a class="editfielda reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode=overwrite&action=edit&token='.newToken().'">'.img_edit().'</a>';
 				print ' ';
 				print '<a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&mode='.urlencode($mode).'&action=delete&token='.newToken().'&mode='.urlencode($mode).'">'.img_delete().'</a>';
