@@ -77,7 +77,7 @@ If you push a bug fix on a very old version it is still going to be merged and p
 
 - As the Developer: Do not submit changes into files xx_XX/afile.lang. They are language files and are updated/synced automatically from Transifex. If you need to add a new language file, just add it for the en_US language.
 
-- As the Releaser: The releaser will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
+- As the Release Maintainer: The Release Maintainer will decide to make a new release as soon as the planning of the release is reached and the code in the branch to release reach the status of "No more known serious bugs". 
 
 
 <a name="commits"></a>
