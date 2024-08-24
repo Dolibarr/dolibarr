@@ -268,7 +268,7 @@ return [
 		'menumanager' => '\MenuManager',
 		'mysoc' => '\Societe',
 		'nblines' => '\int',
-		'obj' => '\CommonObject',     // Deprecated
+		// 'obj' => '\CommonObject',     // Deprecated
 		'object_rights' => 'int|stdClass',
 		'objectoffield' => '\CommonObject',
 		'objsoc' => '\Societe',
