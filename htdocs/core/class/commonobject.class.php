@@ -4975,7 +4975,7 @@ abstract class CommonObject
 		$totalToShip = '';
 
 		if (empty($this->lines)) {
-			return array();
+			return array('weight' => $totalWeight, 'volume' => $totalVolume, 'ordered' => $totalOrdered, 'toship' => $totalToShip);
 		}
 
 		foreach ($this->lines as $line) {
