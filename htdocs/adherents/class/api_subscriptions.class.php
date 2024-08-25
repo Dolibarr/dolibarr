@@ -113,7 +113,7 @@ class Subscriptions extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+		$sqlTotals = str_replace('SELECT rowid', 'SELECT count(rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
