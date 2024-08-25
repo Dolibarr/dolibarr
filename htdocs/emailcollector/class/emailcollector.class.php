@@ -3262,6 +3262,7 @@ class EmailCollector extends CommonObject
 
 										$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
 										$modModuleToUseForNextValue = new $classname();
+										'@phan-var-force ModeleNumRefTicket $modModuleToUseForNextValue';
 										$defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
 									}
 									$tickettocreate->ref = $defaultref;
