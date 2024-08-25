@@ -135,7 +135,7 @@ class Tickets extends DolibarrApi
 		if (($id < 0) && !$track_id && !$ref) {
 			throw new RestException(400, 'Wrong parameters');
 		}
-		if ($id == 0) {
+		if (empty($id) && empty($ref) && empty($track_id)) {
 			$result = $this->ticket->initAsSpecimen();
 		} else {
 			$result = $this->ticket->fetch($id, $ref, $track_id);
