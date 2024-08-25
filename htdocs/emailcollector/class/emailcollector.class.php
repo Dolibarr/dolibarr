@@ -456,7 +456,7 @@ class EmailCollector extends CommonObject
 	 * @param   string  $sortorder      sorting order
 	 * @param   int     $limit          sort limit
 	 * @param   int     $page           page to start on
-	 * @return  array   Array with key => EmailCollector object
+	 * @return  EmailCollector[]		Array with key => EmailCollector object
 	 */
 	public function fetchAll(User $user, $activeOnly = 0, $sortfield = 's.rowid', $sortorder = 'ASC', $limit = 100, $page = 0)
 	{
@@ -1578,7 +1578,7 @@ class EmailCollector extends CommonObject
 				if ($f) {
 					$folder = $f[0];
 					if ($folder instanceof Webklex\PHPIMAP\Folder) {
-						$Query = $folder->messages()->where($criteria);
+						$Query = $folder->messages()->where($criteria); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					} else {
 						$error++;
 						$this->error = "Source directory ".$sourcedir." not found";
@@ -1605,6 +1605,7 @@ class EmailCollector extends CommonObject
 				return -1;
 			}
 
+			'@phan-var-force Webklex\PHPIMAP\Query\Query $Query';
 			try {
 				//var_dump($Query->count());
 				if ($mode > 0) {
@@ -1665,7 +1666,8 @@ class EmailCollector extends CommonObject
 
 				// GET header and overview datas
 				if (getDolGlobalString('MAIN_IMAP_USE_PHPIMAP')) {
-					$header = $imapemail->getHeader()->raw;
+					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
+					$header = $imapemail->getHeader()->raw;  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 					$overview = $imapemail->getAttributes();
 				} else {
 					$header = imap_fetchheader($connection, $imapemail, FT_UID);
@@ -1700,6 +1702,7 @@ class EmailCollector extends CommonObject
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
+					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					// $operationslog .= " - ".dol_escape_htmltag((string) $imapemail);
 					$msgid = str_replace(array('<', '>'), '', $overview['message_id']);
 				} else {
@@ -1853,6 +1856,7 @@ class EmailCollector extends CommonObject
 
 				if (getDolGlobalInt('MAIN_IMAP_USE_PHPIMAP')) {
 					/** @var Webklex\PHPIMAP\Message $imapemail */
+					'@phan-var-force Webklex\PHPIMAP\Message $imapemail';
 					if ($imapemail->hasHTMLBody()) {
 						$htmlmsg = $imapemail->getHTMLBody();
 					}
@@ -1962,8 +1966,8 @@ class EmailCollector extends CommonObject
 					$sendtocc = empty($overview['cc']) ? '' : $overview['cc'];
 					$sendtobcc = empty($overview['bcc']) ? '' : $overview['bcc'];
 
-					$tmpdate = $overview['date']->toDate();
-					$tmptimezone = $tmpdate->getTimezone()->getName();
+					$tmpdate = $overview['date']->toDate();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+					$tmptimezone = $tmpdate->getTimezone()->getName();  // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 
 					$dateemail = dol_stringtotime((string) $overview['date'], 'gmt');    // if $overview['timezone'] is "+00:00"
 					if (preg_match('/^([+\-])(\d\d):(\d\d)/', $tmptimezone, $reg)) {
@@ -3122,6 +3126,7 @@ class EmailCollector extends CommonObject
 
 										$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 										$modModuleToUseForNextValue = new $classname();
+										'@phan-var-force ModeleNumRefProjects $modModuleToUseForNextValue';
 										$defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
 									}
 									$projecttocreate->ref = $defaultref;
