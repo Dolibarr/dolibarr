@@ -82,6 +82,7 @@ class Subscriptions extends DolibarrApi
 	 * @param int       $limit     			Limit for list
 	 * @param int       $page       		Page number
 	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
+	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array 						Array of subscription objects
 	 *
