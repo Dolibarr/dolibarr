@@ -179,7 +179,12 @@ class PaymentVarious extends CommonObject
 	/**
 	 * Draft status
 	 */
-	const STATUS_DRAFT = 0;
+	//const STATUS_DRAFT = 0;
+
+	/**
+	 * Paid status
+	 */
+	const STATUS_PAID = 1;
 
 
 	/**
@@ -631,14 +636,16 @@ class PaymentVarious extends CommonObject
 		global $langs;
 
 		if (empty($status)) {
-			$status = 0;
+			$status = 1;
 		}
 
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatus[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+			//$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			//$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			//$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
+			$this->labelStatusShort[self::STATUS_PAID] = $langs->transnoentitiesnoconv('Paid');
+			//$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			//$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
 			//$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
