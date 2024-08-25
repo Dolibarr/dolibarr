@@ -3,6 +3,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
  * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,27 +51,27 @@ class Import
 	public $errno;
 
 	/**
-	 * @var array
+	 * @var array<array{position_of_profile:string,module:DolibarrModules}>
 	 */
 	public $array_import_module;
 
 	/**
-	 * @var array
+	 * @var bool[]
 	 */
 	public $array_import_perms;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $array_import_icon;
 
 	/**
-	 * @var array
+	 * @var string[]
 	 */
 	public $array_import_code;
 
 	/**
-	 * @var array
+	 * @var string
 	 */
 	public $array_import_label;
 
@@ -272,7 +273,7 @@ class Import
 						// Sql request to run after import
 						$this->array_import_run_sql_after[$i] = (isset($module->import_run_sql_after_array[$r]) ? $module->import_run_sql_after_array[$r] : '');
 						// Module
-						$this->array_import_module[$i] = array('position_of_profile'=>($module->module_position.'-'.$module->import_code[$r]), 'module'=>$module);
+						$this->array_import_module[$i] = array('position_of_profile' => ($module->module_position.'-'.$module->import_code[$r]), 'module' => $module);
 
 						dol_syslog("Import loaded for module ".$modulename." with index ".$i.", dataset=".$module->import_code[$r].", nb of fields=".count($module->import_fields_array[$r]));
 						$i++;
