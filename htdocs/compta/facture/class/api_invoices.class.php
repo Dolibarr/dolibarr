@@ -176,7 +176,7 @@ class Invoices extends DolibarrApi
 	 * @param int		$limit			  Limit for list
 	 * @param int		$page			  Page number
 	 * @param string	$thirdparty_ids	  Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$status			  Filter by invoice status : draft | unpaid | paid | cancelled
+	 * @param string	$status			  Filter by invoice status : STATUS_DRAFT | STATUS_VALIDATED | STATUS_CLOSED | STATUS_ABANDONED
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	      Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
@@ -217,19 +217,15 @@ class Invoices extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
+
 		// Filter by status
-		if ($status == 'draft') {
-			$sql .= " AND t.fk_statut IN (0)";
+		if (in_array($status, array('STATUS_DRAFT', 'STATUS_VALIDATED', 'STATUS_CLOSED', 'STATUS_ABANDONED'))) {
+			$const_status = (int) constant('Facture::'.$status); // To pass phpunit test
+			$sql .=  " AND t.fk_statut IN (".$this->db->sanitize($const_status).")";
+		} elseif (!empty($status)) {
+			throw new RestException(400, 'Invalid invoice status');
 		}
-		if ($status == 'unpaid') {
-			$sql .= " AND t.fk_statut IN (1)";
-		}
-		if ($status == 'paid') {
-			$sql .= " AND t.fk_statut IN (2)";
-		}
-		if ($status == 'cancelled') {
-			$sql .= " AND t.fk_statut IN (3)";
-		}
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
