@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=Gardez-le ouvert si vous avez encore besoin de suivre d
 ReOpenAProject=Rouvrir projet
 ConfirmReOpenAProject=Êtes-vous sûr de vouloir rouvrir ce projet ?
 ProjectContact=Contacts du projet
+ProjectContactTypeManager=Affectez-moi comme contact avec le type
 TaskContact=Contact de tâche
 ActionsOnProject=Événements sur le projet
 YouAreNotContactOfProject=Vous n'êtes pas contact de ce projet privé

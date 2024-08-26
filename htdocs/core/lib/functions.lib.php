@@ -12304,7 +12304,8 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	if (empty($userRight)) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
-		$attr['title'] = (($label && $text && $label != $text) ? $label : $langs->trans('NotEnoughPermissions'));
+		$attr['title'] = (($label && $text && $label != $text) ? $label : '');
+		$attr['title'] = ($attr['title'] ? $attr['title'].'<br>' : '').$langs->trans('NotEnoughPermissions');
 	}
 
 	if (!empty($id)) {

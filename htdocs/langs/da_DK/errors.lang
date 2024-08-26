@@ -422,3 +422,4 @@ OperNotDefined=Betalingsmetode ikke defineret
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s er allerede defineret som kontaktperson for denne type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=Kontakterne med denne gruppe er allerede defineret som kontaktpersoner for denne type.
 EmptyMessageNotAllowedError=Tom besked er ikke tilladt
+ErrorIsNotInError=%s er ikke i fejl
