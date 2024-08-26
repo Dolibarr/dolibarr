@@ -78,7 +78,7 @@ class box_factures_imp extends ModeleBoxes
 		$textHead = $langs->trans("BoxTitleOldestUnpaidCustomerBills");
 		$this->info_box_head = array(
 			'text' => $langs->trans("BoxTitleOldestUnpaidCustomerBills", $this->max).'<a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=customer_bills&search_status=1&sortfield=f.date_lim_reglement,f.ref&sortorder=ASC,ASC"><span class="badge">...</span></a>',
-			'limit' => dol_strlen($textHead));
+		);
 
 		if ($user->hasRight('facture', 'lire')) {
 			$sql1 = "SELECT s.rowid as socid, s.nom as name, s.name_alias, s.code_client, s.client";
