@@ -119,7 +119,7 @@ return [
         'htdocs/admin/mails_templates.php' => ['PhanPluginUnknownArrayFunctionParamType', 'PhanPossiblyUndeclaredGlobalVariable', 'PhanRedefineFunction', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/menus.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/menus/edit.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
-        'htdocs/admin/modulehelp.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchDimFetchNullable', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/admin/modulehelp.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/admin/modules.php' => ['PhanEmptyFQSENInClasslike', 'PhanInvalidFQSENInClasslike', 'PhanPluginEmptyStatementIf', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/admin/mrp.php' => ['PhanPossiblyUndeclaredGlobalVariable'],
         'htdocs/admin/mrp_extrafields.php' => ['PhanUndeclaredGlobalVariable'],
