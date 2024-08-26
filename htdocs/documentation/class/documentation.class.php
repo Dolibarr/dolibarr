@@ -24,7 +24,7 @@
 /**
  *	Class to manage documentation
  */
-class Documentation 
+class Documentation
 {
 
 	/**
@@ -67,7 +67,8 @@ class Documentation
 	/**
 	 *	Output header + body
 	 *
-	 *  @param	string	$title		Title of page
+	 *  @param	string		$title		Title of page
+	 *  @return string		Documentation header
 	 */
 	public function docHeader($title = '')
 	{
@@ -92,6 +93,7 @@ class Documentation
 	/**
 	 *	Output close body + html
 	 *
+	 *  @return string		Documentation Footer
 	 */
 	public function docFooter()
 	{
@@ -106,6 +108,7 @@ class Documentation
 	/**
 	 *	Output sidebar
 	 *
+	 *  @return string		Documentation Sidebar
 	 */
 	public function showSidebar()
 	{
@@ -114,7 +117,7 @@ class Documentation
 			// LOGO
 			print '<div class="sidebar-logo">';
 				if (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')){
-		     		print '<img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg'.'" />';
+		     		//print '<img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg'.'" />';
 				}
 			print '</div>';
 
@@ -133,6 +136,7 @@ class Documentation
 	 * 
 	 *  @param		array		$menu      $this->menu or submenus
 	 *  @param		int			$level     level of menu
+	 *  @return 	string		Documentation Menu
 	 */
 	private function displayMenu($menu, $level = 0)
 	{
@@ -161,6 +165,7 @@ class Documentation
 	/**
 	 *	Output breadcrumb
 	 *
+	 *  @return string		Documentation Breadcrumb
 	 */
 	public function showBreadcrumb()
 	{
@@ -191,7 +196,8 @@ class Documentation
 	/**
 	 *	Output a View Code area
 	 *
-	 *  @param	array	$lines 		Lines of code to show
+	 *  @param	array		$lines 		Lines of code to show
+	 *  @return string		Area of code
 	 */
 	public function showCode($lines = array())
 	{
