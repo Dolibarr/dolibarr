@@ -959,7 +959,8 @@ class Contrat extends CommonObject
 					$this->nbofservicesclosed++;
 				}
 
-				$total_ttc += $objp->total_ttc; // TODO Not saved into database
+				// TODO Not saved into database
+				$total_ttc += $objp->total_ttc;
 				$total_vat += $objp->total_tva;
 				$total_ht += $objp->total_ht;
 

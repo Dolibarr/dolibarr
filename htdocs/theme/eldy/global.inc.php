@@ -2233,7 +2233,7 @@ td.showDragHandle {
 }
 .classforhorizontalscrolloftabs .side-nav {
 	display: block;
-	float: left;
+	float: <?php echo $left; ?>;
 }
 .classforhorizontalscrolloftabs #id-right {
 	width: calc(100% - <?php echo $leftmenuwidth + 20 ?>px);

@@ -572,7 +572,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
  *	Delete a constant
  *
  *	@param	    DoliDB		$db         Database handler
- *	@param	    string|int	$name		Name of constant or rowid of line
+ *	@param	    int|string	$name		Name of constant or rowid of line
  *	@param	    int			$entity		Multi company id, -1 for all entities
  *	@return     int         			Return integer <0 if KO, >0 if OK
  *
@@ -602,8 +602,8 @@ function dolibarr_del_const($db, $name, $entity = 1)
 	}
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape($name)."'";
-	if (is_numeric($name)) {
+	$sql .= " WHERE (".$db->decrypt('name')." = '".$db->escape((string) $name)."'";
+	if (is_numeric($name)) {	// This case seems used in the setup of constant page only, to delete a line.
 		$sql .= " OR rowid = ".((int) $name);
 	}
 	$sql .= ")";
@@ -659,7 +659,7 @@ function dolibarr_get_const($db, $name, $entity = 1)
  *
  *	@param	    DoliDB		$db         Database handler
  *	@param	    string		$name		Name of constant
- *	@param	    string		$value		Value of constant
+ *	@param	    int|string	$value		Value of constant
  *	@param	    string		$type		Type of constant. Deprecated, only strings are allowed for $value. Caller must json encode/decode to store other type of data.
  *	@param	    int			$visible	Is constant visible in Setup->Other page (0 by default)
  *	@param	    string		$note		Note on parameter
@@ -684,6 +684,8 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
+
+	$value = (string) $value;	// We force type string (may be int)
 
 	$parameters = array(
 		'name' => $name,
@@ -741,7 +743,6 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		$conf->global->$name = $value;
 		return 1;
 	} else {
-		$error = $db->lasterror();
 		$db->rollback();
 		return -1;
 	}

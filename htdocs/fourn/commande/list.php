@@ -11,6 +11,7 @@
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +134,10 @@ if (GETPOSTISARRAY('search_status')) {
 	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
 	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : GETPOST('statut', 'intcomma'));
+}
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1,2';
 }
 
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
@@ -285,6 +290,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_ttc = '';
 		$search_project_ref = '';
 		$search_status = '';
+		$search_option = '';
 		$search_date_order_startday = '';
 		$search_date_order_startmonth = '';
 		$search_date_order_startyear = '';
@@ -629,6 +635,9 @@ if (empty($reshook)) {
 			if ($search_status != '') {
 				$param .= '&search_status='.urlencode($search_status);
 			}
+			if ($search_option) {
+				$param .= '&search_option='.urlencode($search_option);
+			}
 			if ($search_date_order_startday) {
 				$param .= '&search_date_order_startday='.urlencode((string) ($search_date_order_startday));
 			}
@@ -871,6 +880,9 @@ if (GETPOST('statut', 'intcomma') !== '') {
 }
 if ($search_status != '' && $search_status != '-1') {
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
+}
+if ($search_option == 'late') {
+	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
 }
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";
@@ -1173,6 +1185,9 @@ if ($resql) {
 	if ($search_status != '' && $search_status != '-1') {
 		$param .= "&search_status=".urlencode($search_status);
 	}
+	if ($search_option) {
+		$param .= "&search_option=".urlencode($search_option);
+	}
 	if ($search_project_ref >= 0) {
 		$param .= "&search_project_ref=".urlencode($search_project_ref);
 	}
@@ -1331,6 +1346,10 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
 		$moreforfilter .= '</div>';
 	}
+	// alert on late date
+	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= '</div>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {

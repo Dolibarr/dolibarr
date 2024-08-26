@@ -566,9 +566,9 @@ if ($step == 2 && $datatoexport) {
 	print '<td>'.$langs->trans("Object").'</td>';
 	print '<td>'.$langs->trans("ExportableFields").'</td>';
 	print '<td width="100" class="center">';
-	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
+	print '<a class="liste_titre commonlink" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all&token='.newToken().'">'.$langs->trans("All")."</a>";
 	print ' / ';
-	print '<a class="liste_titre commonlink" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
+	print '<a class="liste_titre commonlink" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all&token='.newToken().'">'.$langs->trans("None")."</a>";
 	print '</td>';
 	print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
 	print '</tr>';
