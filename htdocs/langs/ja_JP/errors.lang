@@ -303,8 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=取引先またはパートナーシップ�
 ErrorFailedToWriteInTempDirectory=一時ディレクトリへの書き込みに失敗
 ErrorQuantityIsLimitedTo=数量限定 %s
 ErrorFailedToLoadThirdParty=id=%s, email=%s, name=%s からの取引先の検索/読込に失敗した
-ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
-ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
+ErrorThisPaymentModeIsNotDirectDebit=支払い方法は口座引き落としではない
+ErrorThisPaymentModeIsNotCreditTransfer=支払い方法は口座振替ではない
 ErrorStripeCustomerNotFoundCreateFirst=Stripe 顧客は、この取引先に対して未設定 (または、Stripe 側で削除済の値に設定)。まずそれを作成 (または再アタッチ) する。
 ErrorCharPlusNotSupportedByImapForSearch=IMAP 検索は、文字 + を含む文字列での送信者または受信者を検索できない
 ErrorTableNotFound=テーブル <b> %s </b> が見つかりません
@@ -422,3 +422,4 @@ OperNotDefined=支払い方法が定義されていない
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s は、このタイプの連絡先としてすでに定義されている。
 ErrorThisGroupIsAlreadyDefinedAsThisType=このグループの連絡先は、このタイプの連絡先としてすでに定義されている。
 EmptyMessageNotAllowedError=空のメッセージは許可されない
+ErrorIsNotInError=%s is not in error
