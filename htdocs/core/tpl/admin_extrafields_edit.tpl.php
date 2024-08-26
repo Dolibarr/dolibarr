@@ -223,7 +223,8 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 	}
 	print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : $type, $typewecanchangeinto);
 } else {
-	print getPictoForType($type).$type2label[$type];
+	print getPictoForType($type);
+	print $type2label[$type];
 	print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }
 ?>

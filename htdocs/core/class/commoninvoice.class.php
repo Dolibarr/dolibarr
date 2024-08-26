@@ -177,7 +177,7 @@ abstract class CommonInvoice extends CommonObject
 
 	/**
 	 * Proforma invoice.
-	 * @deprectad Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
+	 * @deprecated Remove this. A "proforma invoice" is an order with a look of invoice, not an invoice !
 	 */
 	const TYPE_PROFORMA = 4;
 
@@ -676,7 +676,7 @@ abstract class CommonInvoice extends CommonObject
 		} elseif ($this->type == CommonInvoice::TYPE_DEPOSIT) {
 			$labellong = "InvoiceDeposit";
 			$labelshort = "Deposit";
-		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) {
+		} elseif ($this->type == CommonInvoice::TYPE_PROFORMA) { // @phan-suppress-current-line PhanDeprecatedClassConstant
 			$labellong = "InvoiceProForma"; // Not used.
 			$labelshort = "ProForma";
 		} elseif ($this->type == CommonInvoice::TYPE_SITUATION) {
@@ -943,9 +943,9 @@ abstract class CommonInvoice extends CommonObject
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 			$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
 
-			$date_piece = dol_mktime(0, 0, 0, date('m', $datelim), date('d', $datelim), date('Y', $datelim)); // Sans les heures minutes et secondes
-			$date_lim_current = dol_mktime(0, 0, 0, date('m', $datelim), $cdr_decalage, date('Y', $datelim)); // Sans les heures minutes et secondes
-			$date_lim_next = dol_time_plus_duree($date_lim_current, 1, 'm'); // Add 1 month
+			$date_piece = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) date('d', $datelim), (int) date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_current = dol_mktime(0, 0, 0, (int) date('m', $datelim), (int) $cdr_decalage, (int) date('Y', $datelim)); // Sans les heures minutes et secondes
+			$date_lim_next = dol_time_plus_duree((int) $date_lim_current, 1, 'm'); // Add 1 month
 
 			$diff = $date_piece - $date_lim_current;
 
@@ -1203,7 +1203,7 @@ abstract class CommonInvoice extends CommonObject
 					$arrayzerounitcurrency = ['BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'];
 					$amountstripe = $amounttopay;
 					if (!in_array($currency, $arrayzerounitcurrency)) {
-						$amountstripe = $amountstripe * 100;
+						$amountstripe *= 100;
 					}
 
 					$fk_bank_account = getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS');		// Bank account used for SEPA direct debit or credit transfer. Must be the Stripe account in Dolibarr.

@@ -40,13 +40,13 @@ $socid = GETPOSTINT('socid');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+$hookmanager->initHooks(['cabyuserreportlist']);
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['cabyuserreportlist']);
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = getDolGlobalString('ACCOUNTING_MODE');
 if (GETPOST("modecompta")) {

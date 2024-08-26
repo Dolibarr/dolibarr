@@ -494,7 +494,7 @@ if ($projectid > 0) {
 	// Show message
 	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
-	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
 
@@ -513,7 +513,7 @@ if ($projectid > 0) {
 	// Show message
 	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
-	$message .= "&project=".$projectid.'&module='.urlencode('conforbooth@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+	$message .= "&project=".$projectid.'&module='.urlencode('conforbooth@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'-conforbooth.ics').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
 

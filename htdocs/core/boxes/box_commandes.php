@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ class box_commandes extends ModeleBoxes
 
 		if ($user->hasRight('commande', 'lire')) {
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.name_alias";
-			$sql .= ", s.code_client, s.code_compta, s.client";
+			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= ", c.ref, c.tms";
 			$sql .= ", c.rowid";
@@ -137,7 +138,8 @@ class box_commandes extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
+					$societestatic->code_compta = $objp->code_compta_client;
+					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
 					$societestatic->email = $objp->email;
@@ -187,7 +189,7 @@ class box_commandes extends ModeleBoxes
 				if ($num == 0) {
 					$this->info_box_contents[$line][0] = array(
 					'td' => 'class="center"',
-					'text'=> '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
+					'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedOrders").'</span>'
 					);
 				}
 
@@ -195,7 +197,7 @@ class box_commandes extends ModeleBoxes
 			} else {
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -210,9 +212,9 @@ class box_commandes extends ModeleBoxes
 	/**
 	 *	Method to show box
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
+	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

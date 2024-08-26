@@ -303,7 +303,8 @@ ErrorThirpdartyOrMemberidIsMandatory=Trešās puses vai partnerības dalībnieka
 ErrorFailedToWriteInTempDirectory=Neizdevās ierakstīt pagaidu direktorijā
 ErrorQuantityIsLimitedTo=Daudzums ir ierobežots līdz %s
 ErrorFailedToLoadThirdParty=Neizdevās atrast/ielādēt trešo pusi no id=%s, email=%s, name= %s
-ErrorThisPaymentModeIsNotSepa=Šis maksājuma veids nav bankas konts
+ErrorThisPaymentModeIsNotDirectDebit=The payment mode is not direct debit
+ErrorThisPaymentModeIsNotCreditTransfer=The payment mode is not credit transfer
 ErrorStripeCustomerNotFoundCreateFirst=Stripe klients šai trešajai pusei nav iestatīts (vai ir iestatīta vērtība, kas svītrota pusē). Vispirms izveidojiet (vai pievienojiet to atkārtoti).
 ErrorCharPlusNotSupportedByImapForSearch=IMAP meklēšana nevar meklēt sūtītājā vai adresātā virkni, kurā ir rakstzīme +
 ErrorTableNotFound=Tabula <b> %s </b> nav atrasta
@@ -334,9 +335,9 @@ ErrorDictionaryNotFound=Vārdnīca <b>%s</b>
 ErrorFailedToCreateSymLinkToMedias=Neizdevās izveidot simbolisko saiti %s, lai norādītu uz %s
 ErrorCheckTheCommandInsideTheAdvancedOptions=Pārbaudiet eksportēšanai izmantoto komandu eksportēšanas papildu opcijās
 ErrorEndTimeMustBeGreaterThanStartTime=Beigu laikam ir jābūt lielākam par sākuma laiku
-ErrorIncoherentDates=Sākuma datumam ir jābūt mazākam par beigu datumu
-ErrorEndHourIsNull=Beigu datums nevar būt nulle
-ErrorStartHourIsNull=Sākuma datums nevar būt nulle
+ErrorIncoherentDates=Start date must be earlier than end date
+ErrorEndHourIsNull=End date field cannot be empty
+ErrorStartHourIsNull=Start date field cannot be empty
 ErrorTooManyLinesToProcessPleaseUseAMoreSelectiveFilter=Pārāk daudz rindu, lai apstrādātu. Lūdzu, izmantojiet selektīvāku filtru.
 ErrorEmptyValueForQty=Daudzums nevar būt nulle.
 # Warnings

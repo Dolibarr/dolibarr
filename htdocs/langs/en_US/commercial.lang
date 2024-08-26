@@ -14,6 +14,7 @@ ConfirmDeleteAction=Are you sure you want to delete this event?
 CardAction=Event card
 ActionOnCompany=Related company
 ActionOnContact=Related contact
+ActionOnUser=Related user
 TaskRDVWith=Meeting with %s
 ShowTask=Show task
 ShowAction=Show event

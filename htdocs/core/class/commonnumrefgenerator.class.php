@@ -36,7 +36,7 @@ abstract class CommonNumRefGenerator
 	public $name = '';
 
 	/**
-	 * @var string              Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'experimental'|'dolibarr'	Version
 	 */
 	public $version = '';
 
@@ -84,6 +84,7 @@ abstract class CommonNumRefGenerator
 	 * @var int<0,1>             The third party prefix field must be filled in when using {pre}
 	 */
 	public $prefixIsRequired;
+
 
 	/** Return model name
 	 *
@@ -164,4 +165,12 @@ abstract class CommonNumRefGenerator
 		}
 		return $langs->trans("NotAvailable");
 	}
+
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

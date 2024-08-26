@@ -382,13 +382,13 @@ if (empty($reshook)) {
 													$mult = 3600 * 24 * 7;
 													break;
 												case 'm':
-													$mult = (int) 3600 * 24 * (365 / 12); // Average month duration
+													$mult = (int) (3600 * 24 * (365 / 12)); // Average month duration
 													break;
 												case 'y':
 													$mult = 3600 * 24 * 365;
 													break;
 											}
-											$duration = $prod->duration_value * $mult * $lines[$i]->qty;
+											$duration = (int) $prod->duration_value * $mult * $lines[$i]->qty;
 										}
 
 										$desc = $lines[$i]->product_ref;
@@ -749,7 +749,7 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'update_extras') {
+	if ($action == 'update_extras' && $user->hasRight('ficheinter', 'creer')) {
 		$object->oldcopy = dol_clone($object, 2);
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 

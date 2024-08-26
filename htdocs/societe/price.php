@@ -59,13 +59,14 @@ $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 if ($user->socid) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
+
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize objects
 $object = new Societe($db);
-
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-$hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
 
 $error = 0;
 

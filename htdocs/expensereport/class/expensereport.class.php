@@ -1785,7 +1785,7 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param  	string 	$option                		Where point the link ('', 'document', ..)
@@ -2743,7 +2743,7 @@ class ExpenseReport extends CommonObject
 
 		$currentUser = new User($db);
 		$currentUser->fetch($this->fk_user);
-		$currentUser->getrights('expensereport');
+		$currentUser->loadRights('expensereport');
 		//Clean
 		$qty = (float) price2num($qty);
 
@@ -2817,9 +2817,9 @@ class ExpenseReport extends CommonObject
 	/**
 	 *	Return clickable link of object (with optional picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

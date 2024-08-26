@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013  Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2022-2023  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2023 	    Nick Fragoulis
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@
  */
 function facturefourn_prepare_head(FactureFournisseur $object)
 {
-	global $db, $langs, $conf;
+	global $db, $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -123,6 +124,40 @@ function facturefourn_prepare_head(FactureFournisseur $object)
 	$head[$h][2] = 'info';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/agenda.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
+		$cachekey = 'count_events_facture_'.$object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
+			$sql .= " WHERE fk_element = ".((int) $object->id);
+			$sql .= " AND elementtype = 'invoice_supplier'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'add', 'external');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'supplier_invoice', 'remove');
@@ -178,12 +213,12 @@ function ordersupplier_prepare_head(CommandeFournisseur $object)
 			$nbDispachedLines = count($dispachedLines);
 
 			for ($line = 0 ; $line < $nbDispachedLines; $line++) {
-				$sumQtyAllreadyDispatched = $sumQtyAllreadyDispatched + $dispachedLines[$line]['qty'];
+				$sumQtyAllreadyDispatched += $dispachedLines[$line]['qty'];
 			}
 			for ($line = 0 ; $line < $nbLinesOrdered; $line++) {
 				//If line is a product of conf to manage stocks for services
 				if ($object->lines[$line]->product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-					$sumQtyOrdered = $sumQtyOrdered + $object->lines[$line]->qty;
+					$sumQtyOrdered += $object->lines[$line]->qty;
 				}
 			}
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.price2num($sumQtyAllreadyDispatched, 'MS').' / '.price2num($sumQtyOrdered, 'MS').'</span>';

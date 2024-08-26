@@ -709,7 +709,7 @@ class Fichinter extends CommonObject
 				}
 			}
 
-			// Set new ref and define current statut
+			// Set new ref and define current status
 			if (!$error) {
 				$this->ref = $num;
 				$this->status = self::STATUS_VALIDATED;
@@ -860,7 +860,7 @@ class Fichinter extends CommonObject
 		// Init/load array of translation of status
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			$langs->load("fichinter");
+			$langs->load("interventions");
 
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Validated');
@@ -890,7 +890,7 @@ class Fichinter extends CommonObject
 	{
 		global $conf, $langs;
 
-		$langs->load('fichinter');
+		$langs->load('interventions');
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
@@ -903,7 +903,7 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Return clicable name (with picto eventually)
+	 *	Return clickable name (with picto eventually)
 	 *
 	 *	@param		int		$withpicto					0=_No picto, 1=Includes the picto in the linkn, 2=Picto only
 	 *	@param		string	$option						Options
@@ -1026,7 +1026,7 @@ class Fichinter extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
@@ -1603,11 +1603,11 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
