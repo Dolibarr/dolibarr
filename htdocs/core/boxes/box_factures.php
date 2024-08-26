@@ -73,7 +73,7 @@ class box_factures extends ModeleBoxes
 
 		$text = $langs->trans("BoxTitleLast".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
-			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/compta/facture/list.php?sortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
+			'text' => $text.'<a class="paddingleft" href="'.DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=billing&leftmenu=custommers_billssortfield=f.tms&sortorder=DESC"><span class="badge">...</span></a>',
 			'limit' => dol_strlen($text)
 		);
 

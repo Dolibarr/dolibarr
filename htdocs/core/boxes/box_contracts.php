@@ -67,7 +67,7 @@ class box_contracts extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 		$this->info_box_head = array(
-			'text' => '<span class="valignmiddle">'.$langs->trans("BoxTitleLastContracts", $max).'</span><a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
+			'text' => '<span class="valignmiddle">'.$langs->trans("BoxTitleLastContracts", $max).'</span><a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?mainmenu=commercial&leftmenu=contracts&sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'
 		);
 
 		if ($user->hasRight('contrat', 'lire')) {
